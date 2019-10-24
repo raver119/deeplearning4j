@@ -171,9 +171,8 @@ public class Deconvolution2DLayer extends ConvolutionLayer {
                     + " " + layerId());
         }
 
-        // FIXME: int cast
-        int inDepth = (int) weights.size(0);
-        int outDepth = (int) weights.size(1);
+        long inDepth = weights.size(0);
+        long outDepth = weights.size(1);
 
         if (input.size(1) != inDepth && input.size(3) == inDepth) {
             input = input.permute(0, 3, 1, 2);
@@ -187,8 +186,8 @@ public class Deconvolution2DLayer extends ConvolutionLayer {
                     + Arrays.toString(input.shape()) + "; expected" + " input channels = " + inDepth + ") "
                     + layerId());
         }
-        int kH = (int) weights.size(2);
-        int kW = (int) weights.size(3);
+        long kH = weights.size(2);
+        long kW = weights.size(3);
 
         int[] dilation = layerConf().getDilation();
         int[] kernel = layerConf().getKernelSize();
@@ -216,7 +215,7 @@ public class Deconvolution2DLayer extends ConvolutionLayer {
         int sameMode = (convolutionMode == ConvolutionMode.Same) ? 1 : 0;
 
         int[] args = new int[] {
-                kH, kW, strides[0], strides[1],
+                (int)kH, (int)kW, strides[0], strides[1],
                 pad[0], pad[1], dilation[0], dilation[1], sameMode, 0   //Last arg: 0 for nchw
         };
 

@@ -109,10 +109,10 @@ public class MergeVertex extends GraphVertex {
                 }
 
                 otherConv = (InputType.InputTypeConvolutional3D) vertexInputs[i];
-                val od = (int) otherConv.getDepth();
-                val ow = (int) otherConv.getWidth();
-                val oh = (int) otherConv.getHeight();
-                val oc = (int) otherConv.getChannels();
+                val od = otherConv.getDepth();
+                val ow = otherConv.getWidth();
+                val oh = otherConv.getHeight();
+                val oc = otherConv.getChannels();
 
                 if (fd != od || fw != ow || fh != oh) {
                     throw new InvalidInputTypeException("Invalid input: MergeVertex cannot merge CNN3D activations of different width/heights:" + "first [channels,width,height] = [" + fd + "," + fw + "," + fh
@@ -194,10 +194,9 @@ public class MergeVertex extends GraphVertex {
 
                 InputType.InputTypeConvolutional otherConv = (InputType.InputTypeConvolutional) vertexInputs[i];
 
-                // FIXME: int cast
-                val od = (int) otherConv.getChannels();
-                val ow = (int) otherConv.getWidth();
-                val oh = (int) otherConv.getHeight();
+                val od = otherConv.getChannels();
+                val ow = otherConv.getWidth();
+                val oh = otherConv.getHeight();
 
                 if (fw != ow || fh != oh) {
                     throw new InvalidInputTypeException(
