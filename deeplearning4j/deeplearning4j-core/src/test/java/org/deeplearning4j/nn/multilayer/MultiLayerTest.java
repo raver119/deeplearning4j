@@ -215,8 +215,8 @@ public class MultiLayerTest extends BaseDL4JTest {
         DataSet x2 = all.asList().get(0);
 
         //x1 and x2 contain identical data
-        assertArrayEquals(x1.getFeatures().toFloatVector(), x2.getFeatures().toFloatVector(), 0.0f);
-        assertArrayEquals(x1.getLabels().toFloatVector(), x2.getLabels().toFloatVector(), 0.0f);
+        assertArrayEquals(asFloat(x1.getFeatures()), asFloat(x2.getFeatures()), 0.0f);
+        assertArrayEquals(asFloat(x1.getLabels()), asFloat(x2.getLabels()), 0.0f);
         assertEquals(x1, x2);
 
         //Set inputs/outputs so gradient can be calculated:
@@ -317,7 +317,7 @@ public class MultiLayerTest extends BaseDL4JTest {
         return conf;
     }
 
-    /*public static float[] asFloat(INDArray arr) {
+    public static float[] asFloat(INDArray arr) {
         long len = arr.length();
 
         // FIXME: int cast
@@ -325,7 +325,7 @@ public class MultiLayerTest extends BaseDL4JTest {
         for (int i = 0; i < len; i++)
             f[i] = arr.getFloat(i);
         return f;
-    }*/
+    }
 
     @Test
     public void testFeedForwardToLayer() {

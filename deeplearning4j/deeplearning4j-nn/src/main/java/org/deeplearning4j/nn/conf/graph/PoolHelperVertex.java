@@ -131,11 +131,12 @@ public class PoolHelperVertex extends GraphVertex {
             //CNN inputs... also check that the channels, width and heights match:
             InputType.InputTypeConvolutional firstConv = (InputType.InputTypeConvolutional) first;
 
-            val fd = firstConv.getChannels();
-            val fw = firstConv.getWidth();
-            val fh = firstConv.getHeight();
+            // FIXME: int cast
+            val fd = (int) firstConv.getChannels();
+            val fw = (int) firstConv.getWidth();
+            val fh = (int) firstConv.getHeight();
 
-            long depthSum = fd;
+            int depthSum = fd;
 
             for (int i = 1; i < vertexInputs.length; i++) {
                 if (vertexInputs[i].getType() != InputType.Type.CNN) {
@@ -147,9 +148,10 @@ public class PoolHelperVertex extends GraphVertex {
 
                 InputType.InputTypeConvolutional otherConv = (InputType.InputTypeConvolutional) vertexInputs[i];
 
-                long od = otherConv.getChannels();
-                long ow = otherConv.getWidth();
-                long oh = otherConv.getHeight();
+                // FIXME: int cast
+                int od = (int) otherConv.getChannels();
+                int ow = (int) otherConv.getWidth();
+                int oh = (int) otherConv.getHeight();
 
                 if (fw != ow || fh != oh) {
                     throw new InvalidInputTypeException(

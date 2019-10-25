@@ -87,8 +87,9 @@ public class LastTimeStepVertex extends BaseGraphVertex {
 
         INDArray out;
         if (mask == null) {
+            // FIXME: int cast
             //No mask array -> extract same (last) column for all
-            long lastTS = inputs[0].size(2) - 1;
+            int lastTS = (int) inputs[0].size(2) - 1;
             out = inputs[0].get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.point(lastTS));
             out = workspaceMgr.dup(ArrayType.ACTIVATIONS, out);
             fwdPassTimeSteps = null; //Null -> last time step for all examples
@@ -98,7 +99,8 @@ public class LastTimeStepVertex extends BaseGraphVertex {
 
             //Want the index of the last non-zero entry in the mask array.
             //Check a little here by using mulRowVector([0,1,2,3,...]) and argmax
-            long maxTsLength = fwdPassShape[2];
+            // FIXME: int cast
+            int maxTsLength = (int) fwdPassShape[2];
             INDArray row = Nd4j.linspace(0, maxTsLength - 1, maxTsLength, mask.dataType());
             INDArray temp = mask.mulRowVector(row);
             INDArray lastElementIdx = Nd4j.argMax(temp, 1);

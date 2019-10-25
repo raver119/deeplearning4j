@@ -193,7 +193,7 @@ public class TimeSeriesUtils {
     }
 
 
-    public static INDArray reshape2dTo3d(INDArray in, long miniBatchSize, LayerWorkspaceMgr workspaceMgr, ArrayType arrayType) {
+    public static INDArray reshape2dTo3d(INDArray in, int miniBatchSize, LayerWorkspaceMgr workspaceMgr, ArrayType arrayType) {
         if (in.rank() != 2)
             throw new IllegalArgumentException("Invalid input: expect NDArray with rank 2");
         //Based on: RnnToFeedForwardPreProcessor
