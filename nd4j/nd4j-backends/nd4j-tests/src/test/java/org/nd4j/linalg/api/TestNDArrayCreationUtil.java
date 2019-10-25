@@ -38,27 +38,32 @@ public class TestNDArrayCreationUtil extends BaseNd4jTest {
     @Test
     public void testShapes() {
 
-        long[] shape2d = {2L, 3L};
+        // FIXME: int cast
+        long[] shape2d = {2, 3};
         for (Pair<INDArray, String> p : NDArrayCreationUtil.getAllTestMatricesWithShape(2, 3, 12345, DataType.DOUBLE)) {
             assertArrayEquals(p.getSecond(), shape2d, p.getFirst().shape());
         }
 
-        long[] shape3d = {2L, 3L, 4L};
+        // FIXME: int cast
+        long[] shape3d = {2, 3, 4};
         for (Pair<INDArray, String> p : NDArrayCreationUtil.getAll3dTestArraysWithShape(12345, shape3d, DataType.DOUBLE)) {
             assertArrayEquals(p.getSecond(), shape3d, p.getFirst().shape());
         }
 
-        long[] shape4d = {2L, 3L, 4L, 5L};
+        // FIXME: int cast
+        long[] shape4d = {2, 3, 4, 5};
         for (Pair<INDArray, String> p : NDArrayCreationUtil.getAll4dTestArraysWithShape(12345, ArrayUtil.toInts(shape4d), DataType.DOUBLE)) {
             assertArrayEquals(p.getSecond(), shape4d, p.getFirst().shape());
         }
 
-        long[] shape5d = {2L, 3L, 4L, 5L, 6L};
+        // FIXME: int cast
+        long[] shape5d = {2, 3, 4, 5, 6};
         for (Pair<INDArray, String> p : NDArrayCreationUtil.getAll5dTestArraysWithShape(12345, ArrayUtil.toInts(shape5d), DataType.DOUBLE)) {
             assertArrayEquals(p.getSecond(), shape5d, p.getFirst().shape());
         }
 
-        long[] shape6d = {2L, 3L, 4L, 5L, 6L, 7L};
+        // FIXME: int cast
+        long[] shape6d = {2, 3, 4, 5, 6, 7};
         for (Pair<INDArray, String> p : NDArrayCreationUtil.getAll6dTestArraysWithShape(12345, ArrayUtil.toInts(shape6d), DataType.DOUBLE)) {
             assertArrayEquals(p.getSecond(), shape6d, p.getFirst().shape());
         }
