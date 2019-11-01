@@ -36,6 +36,7 @@ import org.nd4j.imports.tensorflow.TFImportOverride;
 import org.nd4j.imports.tensorflow.TFOpImportFilter;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.shade.guava.primitives.Floats;
 import org.nd4j.shade.guava.primitives.Ints;
 import org.nd4j.shade.protobuf.InvalidProtocolBufferException;
@@ -253,6 +254,29 @@ public class TFGraphMapper {
                         org.tensorflow.framework.DataType tfDtype = attrMap.get("dtype").getType();
                         org.nd4j.linalg.api.buffer.DataType dt = convertType(tfDtype);
                         sd.placeHolder(name, dt, shape);
+                    } else if("Variable".equals(opName) || "VariableV2".equals(opName)){
+
+                        //Get array, create a variable
+                        Map<String,AttrValue> attrs = nd.getAttrMap();
+//                        TensorProto tfTensor = nd.getAttrOrThrow("value").getTensor();
+//                        TFTensorMapper m = TFTensorMappers.newMapper(tfTensor);
+//                        INDArray arr = m.toNDArray();
+
+                        long[] shape;
+                        boolean shapeAvailable = attrs.containsKey("shape");
+                        if (shapeAvailable) {
+                            TensorShapeProto shapeProto = attrs.get("shape").getShape();
+                            shape = shapeFromShapeProto(shapeProto);
+                        } else {
+                            //Some placeholders don't have any shape restrictions - i.e., accept anything...
+                            shape = null;
+                        }
+
+                        org.tensorflow.framework.DataType tfDtype = attrs.get("dtype").getType();
+                        org.nd4j.linalg.api.buffer.DataType dt = convertType(tfDtype);
+                        INDArray arr = Nd4j.createUninitialized(dt, shape);
+
+                        sd.var(name, arr);
                     } else {
                         /*
                         Normal ops. Process in the following order:
@@ -307,12 +331,18 @@ public class TFGraphMapper {
                                 continue;
                             }
 
+                            if(v == null)
+                                continue;
+
                             if (!isControlDep && (v.getInputsForOp() == null || !v.getInputsForOp().contains(name))) {
                                 //May already be present - for example, add(x,x)
                                 if (v.getInputsForOp() == null)
                                     v.setInputsForOp(new ArrayList<String>());
                                 v.getInputsForOp().add(name);
                             } else if (isControlDep) {
+                                if(v == null)
+                                    continue;
+
                                 if (v.getControlDepsForOp() == null)
                                     v.setControlDepsForOp(new ArrayList<String>());
                                 if (!v.getControlDepsForOp().contains(name)) {
@@ -351,6 +381,8 @@ public class TFGraphMapper {
                         } else {
                             for (String s : newInNames) {
                                 SDVariable v = sd.getVariable(s);
+                                if( v == null)
+                                    continue;
                                 newInDtypes.add(v.dataType());
                             }
                         }
@@ -425,7 +457,8 @@ public class TFGraphMapper {
                             continue;
                         }
                         //Should never happen
-                        throw new IllegalStateException("Could not find op definition for op to import: " + nextOp);
+//                        throw new IllegalStateException("Could not find op definition for op to import: " + nextOp);
+                        continue;
                     }
 
                     int nInNext = nextOpDef.getInputCount();

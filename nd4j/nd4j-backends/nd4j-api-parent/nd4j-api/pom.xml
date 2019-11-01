@@ -165,6 +165,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+
+        <dependency>
           <groupId>com.jakewharton.byteunits</groupId>
           <artifactId>byteunits</artifactId>
           <version>0.9.1</version>
