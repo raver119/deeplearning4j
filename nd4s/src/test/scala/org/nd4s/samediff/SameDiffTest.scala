@@ -60,11 +60,11 @@ class SameDiffTest extends FlatSpec with Matchers {
     sd.associateArrayWithVariable(inputArr, input)
     sd.associateArrayWithVariable(labelArr, label)
 
-    val result: INDArray = sd.execAndEndResult
+    val result: INDArray = avgMSE.eval
     assertEquals(1, result.length)
 
     val emptyMap = new HashMap[String, INDArray]()
-    sd.execBackwards(emptyMap)
+    sd.calculateGradients(emptyMap, "in", "label")
   }
 
   "SameDiff" should "run test dense layer forward pass" in {
@@ -84,10 +84,10 @@ class SameDiffTest extends FlatSpec with Matchers {
     val expMmul = iInput.mmul(iWeights)
     val expZ = expMmul.addRowVector(iBias)
     val expOut = Transforms.sigmoid(expZ, true)
-    sd.exec(new HashMap[String, INDArray](), sd.outputs)
-    assertEquals(expMmul, mmul.getArr)
-    assertEquals(expZ, z.getArr)
-    assertEquals(expOut, out.getArr)
+    val map = sd.outputAll(new HashMap[String, INDArray]())
+    assertEquals(expMmul, map.get(mmul.name()))
+    assertEquals(expZ, map.get(z.name()))
+    assertEquals(expOut, map.get(out.name()))
   }
 
   "SameDiff" should "convert placeholder to constant" in {
