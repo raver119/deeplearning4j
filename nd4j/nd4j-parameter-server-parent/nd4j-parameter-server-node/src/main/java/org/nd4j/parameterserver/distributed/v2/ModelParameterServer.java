@@ -46,10 +46,9 @@ import org.nd4j.parameterserver.distributed.v2.util.MeshOrganizer;
 import org.nd4j.parameterserver.distributed.v2.util.UpdaterParametersHolder;
 import org.reactivestreams.Subscriber;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -381,6 +380,21 @@ public final class ModelParameterServer {
             log.info("About to launch transport as master");
             transport.launchAsMaster();
             log.info("Launched transport as master");
+
+            try {
+                Enumeration e = NetworkInterface.getNetworkInterfaces();
+                while (e.hasMoreElements()) {
+                    NetworkInterface n = (NetworkInterface) e.nextElement();
+                    Enumeration ee = n.getInetAddresses();
+                    while (ee.hasMoreElements()) {
+                        InetAddress i = (InetAddress) ee.nextElement();
+                        log.info("Master network interface: {} - {} - address {}", n, ee, i);
+                    }
+                }
+            } catch (Throwable t){
+                log.warn("Error getting network interfaces", t);
+            }
+
         } else {
             log.info("About to launch transport for worker");
             transport.launch();
