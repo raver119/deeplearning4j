@@ -216,10 +216,13 @@ public final class ModelParameterServer {
      */
     public synchronized void launch() {
         log.info("ModelParameterServer starting");
-        if (launchLock.get())
+        if (launchLock.get()) {
+            log.info("Returning, already launched...");
             return;
+        }
 
         configuration.setUnicastControllerPort(configuration.getPortSupplier().getPort());
+        log.info("Port: {}", configuration.getUnicastControllerPort());
 
         transport.setRestartCallback(new RestartCallback() {
             @Override
@@ -374,10 +377,14 @@ public final class ModelParameterServer {
         });
 
         // we start transport only once we're ready
-        if (this.masterMode)
+        if (this.masterMode) {
+            log.info("About to launch transport as master");
             transport.launchAsMaster();
-        else {
+            log.info("Launched transport as master");
+        } else {
+            log.info("About to launch transport for worker");
             transport.launch();
+            log.info("Launched transport for worker");
         }
 
         // instance can be stopped now
