@@ -28,6 +28,7 @@ import org.nd4j.parameterserver.distributed.v2.chunks.VoidChunk;
 import org.nd4j.parameterserver.distributed.v2.messages.VoidMessage;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -113,6 +114,7 @@ public class InmemoryChunksTracker<T extends VoidMessage> implements ChunksTrack
             return SerializationUtils.deserialize(bais);
         } catch (Exception e) {
             log.error("Exception: {}",e);
+            log.error(Arrays.toString(buffer));
             throw new RuntimeException(e);
         }
     }
