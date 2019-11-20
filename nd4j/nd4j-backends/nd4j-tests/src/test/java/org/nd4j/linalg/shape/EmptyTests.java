@@ -320,6 +320,31 @@ public class EmptyTests extends BaseNd4jTest {
         Nd4j.exec(op);
     }
 
+    @Test
+    public void testEmptyArrays() {
+        INDArray emptyRank1 = Nd4j.create(0);
+
+        INDArray emptyRank2_0 = Nd4j.create(0,0);
+        INDArray emptyRank2_1 = Nd4j.create(0,1);
+        INDArray emptyRank2_2 = Nd4j.create(1,0);
+
+        INDArray emptyRank3_1 = Nd4j.create(0,0, 0);
+        INDArray emptyRank3_2 = Nd4j.create(0,1, 0);
+        INDArray emptyRank3_3 = Nd4j.create(1,1, 0);
+        INDArray emptyRank3_4 = Nd4j.create(1,0, 1);
+
+        assertTrue(emptyRank1.isEmpty());
+
+        assertTrue(emptyRank2_0.isEmpty());
+        assertTrue(emptyRank2_1.isEmpty());
+        assertTrue(emptyRank2_2.isEmpty());
+
+        assertTrue(emptyRank3_1.isEmpty());
+        assertTrue(emptyRank3_2.isEmpty());
+        assertTrue(emptyRank3_3.isEmpty());
+        assertTrue(emptyRank3_4.isEmpty());
+    }
+
     @Override
     public char ordering() {
         return 'c';
