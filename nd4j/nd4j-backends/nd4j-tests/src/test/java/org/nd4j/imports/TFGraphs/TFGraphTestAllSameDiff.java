@@ -1,5 +1,6 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -128,6 +129,13 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             "resize_bilinear/int32.*"
     };
 
+    /* As per TFGraphTestList.printArraysDebugging - this field defines a set of regexes for test cases that should have
+       all arrays printed during execution.
+       If a test name matches any regex here, an ExecPrintListener will be added to the listeners, and all output
+       arrays will be printed during execution
+     */
+    private final List<String> debugModeRegexes = null; //Arrays.asList("resize_nearest_neighbor/.*", "add_n.*");
+
     @BeforeClass
     public static void beforeClass() {
         Nd4j.setDataType(DataType.FLOAT);
@@ -193,8 +201,18 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
         Double maxRE = (precisionOverride == null ? null : precisionOverride.getFirst());
         Double minAbs = (precisionOverride == null ? null : precisionOverride.getSecond());
 
+        boolean verboseDebugMode = false;
+        if(debugModeRegexes != null){
+            for(String regex : debugModeRegexes){
+                if(modelName.matches(regex)){
+                    verboseDebugMode = true;
+                    break;
+                }
+            }
+        }
+
         try {
-            TFGraphTestAllHelper.checkOnlyOutput(inputs, predictions, modelName, BASE_DIR, MODEL_FILENAME, EXECUTE_WITH, TFGraphTestAllHelper.LOADER, maxRE, minAbs);
+            TFGraphTestAllHelper.checkOnlyOutput(inputs, predictions, modelName, BASE_DIR, MODEL_FILENAME, EXECUTE_WITH, TFGraphTestAllHelper.LOADER, maxRE, minAbs, verboseDebugMode);
             //TFGraphTestAllHelper.checkIntermediate(inputs, modelName, BASE_DIR, MODEL_FILENAME, EXECUTE_WITH, localTestDir);
         } catch (Throwable t){
             log.error("ERROR Executing test: {} - input keys {}", modelName, (inputs == null ? null : inputs.keySet()), t);
