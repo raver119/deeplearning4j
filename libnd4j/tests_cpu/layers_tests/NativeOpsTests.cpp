@@ -1421,6 +1421,8 @@ TEST_F(NativeOpsTests, mmapTests_1) {
     ASSERT_NE(nullptr, ft);
     ASSERT_NE(nullptr, (void *)ft[0]);
 
+    reinterpret_cast<int8_t*>(ft[0])[0] = 11;
+
     ::munmapFile(nullptr, ft, 1024);
 }
 
