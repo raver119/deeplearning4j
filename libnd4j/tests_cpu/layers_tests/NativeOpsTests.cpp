@@ -1412,17 +1412,17 @@ TEST_F(NativeOpsTests, SortTests_6) {
     ASSERT_EQ(ev, v);
 }
 
-//TEST_F(NativeOpsTests, MapTests_1) {
-//#ifdef __CUDABLAS__
-//    return ;
-//#endif
-//#ifdef GTEST_OS_LINUX
-//    auto ptrMap = ::mmapFile(nullptr, "/tmp/maptest.$$$", 100LL);
-//
-//    ::munmapFile(nullptr, ptrMap, 100LL);
-//#endif
-//
-//}
+TEST_F(NativeOpsTests, mmapTests_1) {
+    if (!nd4j::Environment::getInstance()->isCPU())
+        return;
+
+    auto ft = ::mmapFile(nullptr, "./tmp.file", 1024);
+
+    ASSERT_NE(nullptr, ft);
+    ASSERT_NE(nullptr, (void *)ft[0]);
+
+    ::munmapFile(nullptr, ft, 1024);
+}
 
 TEST_F(NativeOpsTests, MapTests_1) {
     //printf("Custom ops: %s\n", ::getAllCustomOps());
