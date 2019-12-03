@@ -53,7 +53,7 @@ namespace nd4j {
                 numBits = INT_ARG(0);
             bool narrowed = false;
             if (block.getBArguments() && block.getBArguments()->size()) {
-                narrowed = B_ARG(1);
+                narrowed = B_ARG(0);
             }
             REQUIRE_TRUE(numBits > 1 && numBits < 17, 0, "fake_quant_with_min_max_vars: Number of bits for quatization should be in between 2 and 16, but %i was given.", numBits);
             helpers::fakeQuantWithMinMaxVars(x, min, max, numBits, narrowed, output);
