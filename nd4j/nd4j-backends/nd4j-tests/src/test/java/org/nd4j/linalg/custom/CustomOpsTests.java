@@ -929,23 +929,22 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(expected, output);
     }
 
-    @Ignore(" 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8402")
+    //@Ignore(" 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8402")
     @Test
     public void testFakeQuantAgainstTF_1() {
         INDArray x = Nd4j.createFromArray(new float[]{ 0.7788f,    0.8012f,    0.7244f,    0.2309f,    0.7271f,
      0.1804f,    0.5056f,    0.8925f,    0.5461f,    0.9234f,
      0.0856f,    0.7938f,    0.6591f,    0.5555f,    0.1596f}).reshape(3,5);
-        INDArray min = Nd4j.createFromArray(new float[]{ -0.2283f,   -0.0719f,   -0.0154f,   -0.5162f,   -0.3567f});
-        INDArray max = Nd4j.createFromArray(new float[]{ 0.9441f,    0.5957f,    0.8669f,    0.3502f,    0.5100f});
+        INDArray min = Nd4j.createFromArray(new float[]{ -0.2283f,   -0.0719f,   -0.0154f,   -0.5162f,   -0.3567f}).reshape(5);
+        INDArray max = Nd4j.createFromArray(new float[]{ 0.9441f,    0.5957f,    0.8669f,    0.3502f,    0.5100f}).reshape(5);
 
-        INDArray expected = Nd4j.createFromArray(new float[]{0.7801f,    0.5966f,    0.7260f,    0.2320f,    0.5084f,
-             0.1800f,    0.5046f,    0.8684f,    0.3513f,    0.5084f,
-             0.0877f,    0.5966f,    0.6600f,    0.3513f,    0.1604f}).reshape(3,5);
+        INDArray expected = Nd4j.createFromArray(new float[]{ 0.77700233f, 0.596913f, 0.72314f, 0.23104f, 0.50982356f,
+            0.17930824f, 0.50528157f, 0.86846f, 0.34995764f, 0.50982356f,
+            0.08735529f, 0.596913f, 0.6574f, 0.34995764f, 0.15974471f}).reshape(3,5);
 
-        INDArray out = Nd4j.createUninitialized(x.shape());
-        val op = new FakeQuantWithMinMaxVarsPerChannel(x,min,max,out);
-        Nd4j.exec(op);
-        assertEquals(expected, out);
+        val op = new FakeQuantWithMinMaxVarsPerChannel(x,min,max,8,false);
+        INDArray[] res = Nd4j.exec(op);
+        assertEquals(expected, res[0]);
 
         /*TF: [[    0.7801,    0.5966,    0.7260,    0.2320,    0.5084],
  [    0.1800,    0.5046,    0.8684,    0.3513,    0.5084],

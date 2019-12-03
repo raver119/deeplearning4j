@@ -28,13 +28,40 @@ import java.util.List;
 public class FakeQuantWithMinMaxVarsPerChannel extends DynamicCustomOp {
     public FakeQuantWithMinMaxVarsPerChannel() {}
 
+    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max, int num_bits, boolean narrow) {
+        Preconditions.checkArgument(min.isVector() && max.isVector() &&
+                        min.length() == max.length(),
+                "FakeQuantWithMinMaxVarsPerChannel: min and max should be 1D tensors with the same length");
+        addInputArgument(x,min,max);
+        addIArgument(num_bits);
+        addBArgument(narrow);
+    }
+
+    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max, int num_bits) {
+        Preconditions.checkArgument(min.isVector() && max.isVector() &&
+                        min.length() == max.length(),
+                "FakeQuantWithMinMaxVarsPerChannel: min and max should be 1D tensors with the same length");
+        addInputArgument(x,min,max);
+        addIArgument(num_bits);
+        addBArgument(false);
+    }
+
+    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max, boolean narrow) {
+        Preconditions.checkArgument(min.isVector() && max.isVector() &&
+                        min.length() == max.length(),
+                "FakeQuantWithMinMaxVarsPerChannel: min and max should be 1D tensors with the same length");
+        addInputArgument(x,min,max);
+        addIArgument(8);
+        addBArgument(narrow);
+    }
+
     public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max) {
         Preconditions.checkArgument(min.isVector() && max.isVector() &&
                         min.length() == max.length(),
                 "FakeQuantWithMinMaxVarsPerChannel: min and max should be 1D tensors with the same length");
-        inputArguments.add(x);
-        inputArguments.add(min);
-        inputArguments.add(max);
+        addInputArgument(x,min,max);
+        addIArgument(8);
+        addBArgument(false);
     }
 
     public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max,
@@ -43,8 +70,12 @@ public class FakeQuantWithMinMaxVarsPerChannel extends DynamicCustomOp {
         outputArguments.add(output);
     }
 
-    public FakeQuantWithMinMaxVarsPerChannel(SameDiff sameDiff, SDVariable x, SDVariable min, SDVariable max) {
+    public FakeQuantWithMinMaxVarsPerChannel(SameDiff sameDiff, SDVariable x, SDVariable min, SDVariable max,
+                                             int num_bits, boolean narrow) {
         super("", sameDiff, new SDVariable[]{x, min, max});
+        //addIArgument(num_bits);
+        addIArgument(num_bits, narrow ? 1 : 0);
+        //addBArgument(narrow);
     }
 
     @Override
