@@ -46,6 +46,13 @@ With Deeplearning4j, you add a layer by calling layer on the NeuralNetConfigurat
 
 Once you have configured your net, you can train the model with `model.fit`.
 
+## Keras Model Import
+
+[Keras model import](https://github.com/eclipse/deeplearning4j/tree/master/deeplearning4j/deeplearning4j-modelimport/src/main/java/org/deeplearning4j/nn/modelimport/keras) provides routines for importing neural network models originally configured and trained using Keras, a popular Python deep learning library.
+
+Once you have imported your model into DL4J, our full production stack is at your disposal. We support import of all Keras model types, most layers and practically all utility functionality. Please check [here](http://deeplearning4j.org/docs/latest/keras-import-supported-features) for a complete list of supported Keras features.
+
+Learn more about Keras model import here: [deeplearning4j.org/docs/latest/keras-import-overview](http://deeplearning4j.org/docs/latest/keras-import-overview)
 
 ## Install
 
