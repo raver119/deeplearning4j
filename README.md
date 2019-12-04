@@ -1,7 +1,7 @@
 
 
 <p align="center">
-  <img src="https://www.zeljkoobrenovic.com/tools/tech/images/eclipse_deeplearning4j.png">
+  <img src="logo.png">
 </p>
 
  [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](https://deeplearning4j.org/docs/latest/)
