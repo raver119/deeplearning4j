@@ -22,5 +22,6 @@
     Example: jenkinsBuilder platforms: []
  */
 
+// @Library('konduit-ci-scripts@bugfix/ci-setup') _
 jenkinsBuilder()
 
