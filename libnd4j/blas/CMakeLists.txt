@@ -154,8 +154,9 @@ if(CUDA_BLAS)
         # the only difference for debug mode here is host/device debug symbols
         set(CMAKE_CUDA_FLAGS_DEBUG " -G -g")
 
-        # we need -fPIC on Linux
-        if (LINUX)
+        # we need -fPIC on Linux/GCC
+        if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+            message("Enabling fPIC...")
             set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=-fPIC")
         endif()
 
