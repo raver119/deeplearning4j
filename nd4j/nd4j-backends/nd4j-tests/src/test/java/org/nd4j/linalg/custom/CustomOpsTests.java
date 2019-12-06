@@ -1358,7 +1358,5 @@ public class CustomOpsTests extends BaseNd4jTest {
         val result = Nd4j.exec(new Create(shape, 'c', true, DataType.INT))[0];
 
         assertEquals(exp, result);
-        Nd4j.rand(DataType.FLOAT, 1,1,1,256);
-
     }
 }
