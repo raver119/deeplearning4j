@@ -71,9 +71,6 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             //Still failing 2019/09/11
             "slogdet/.*",
 
-            // Failing 2019/11/14 - |https://github.com/eclipse/deeplearning4j/issues/8374
-            /*"adjust_contrast/*",
-            "adjust_contrast/.*",*/
             //Failing 2019/09/11 - https://github.com/eclipse/deeplearning4j/issues/7965
             "bincount/.*",
             // Failing 2019/11/14 https://github.com/eclipse/deeplearning4j/issues/8393
@@ -113,9 +110,6 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
 
             // 2019/11/15 - missing dtype argument in nd4j, tests are useless https://github.com/eclipse/deeplearning4j/issues/8398
             "zeros_like/rank2_float32_dtype_int.*",
-
-            // 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8403
-            "resize_bilinear/int32.*",
 
             // 11.26.2019 failing - https://github.com/eclipse/deeplearning4j/issues/8450
             "betainc.*",

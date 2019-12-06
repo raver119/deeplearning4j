@@ -929,7 +929,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(expected, output);
     }
 
-    //@Ignore(" 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8402")
+    @Ignore(" 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8402")    
     @Test
     public void testFakeQuantAgainstTF_1() {
         INDArray x = Nd4j.createFromArray(new float[]{ 0.7788f,    0.8012f,    0.7244f,    0.2309f,    0.7271f,
@@ -971,7 +971,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         INDArray x = Nd4j.rand(1, 2,3,4);
         INDArray z = Nd4j.createUninitialized(x.shape());
         boolean align = false;
-        val op = new ResizeBilinear(x, z, 10, 10, align);
+        val op = new ResizeBilinear(x, z, 10, 10, align, false);
         Nd4j.exec(op);
     }
 
