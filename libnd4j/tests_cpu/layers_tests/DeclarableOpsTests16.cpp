@@ -40,7 +40,7 @@ public:
 };
 
 TEST_F(DeclarableOpsTests16, scatter_upd_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 1, 1});
+    auto x = NDArrayFactory::create<float>('c', {3}, {1.f, 1.f, 1.f});
     auto y = NDArrayFactory::create<int>(0);
     auto w = NDArrayFactory::create<float>(3.0f);
     auto e = NDArrayFactory::create<float>('c', {3}, {3.f, 1.f, 1.f});
@@ -76,6 +76,16 @@ TEST_F(DeclarableOpsTests16, scatter_upd_2) {
     delete result;
 }
 
+TEST_F(DeclarableOpsTests16, scatter_upd_3) {
+
+    NDArray x('c', {10, 3}, nd4j::DataType::FLOAT32);
+    NDArray indices('c', {2}, {20,5}, nd4j::DataType::INT32);
+    NDArray updates('c', {2, 3}, {100,101,102,  200,201,202}, nd4j::DataType::FLOAT32);
+    NDArray output('c', {10, 3}, nd4j::DataType::FLOAT32);
+
+    nd4j::ops::scatter_upd op;
+    ASSERT_ANY_THROW(op.execute({&x, &indices, &updates}, {&output}, {}, {}, {true, true}));
+}
 
 TEST_F(DeclarableOpsTests16, test_size_dtype_1) {
     auto x = NDArrayFactory::create<float>('c', {3}, {1, 1, 1});
@@ -186,4 +196,45 @@ TEST_F(DeclarableOpsTests16, test_range_2) {
     ASSERT_TRUE(shape::shapeEquals(z.shapeInfo(), shapes->at(0)));
 
     delete shapes;
+}
+
+TEST_F(DeclarableOpsTests16, test_reverse_1) {
+    std::vector<Nd4jLong> rows = {3, 5, 7, 8, 9, 10, 119, 211};
+    std::vector<Nd4jLong> columns = {6, 5, 10, 100, 153, 171, 635};
+
+    for (auto r : rows) {
+        for (auto c : columns) {
+            //nd4j_printf("Trying [%i, %i]\n", r, c);
+            auto array = NDArrayFactory::create<float>('c', {r, c});
+            auto exp = NDArrayFactory::create<float>('c', {r, c});
+            auto reversed = NDArrayFactory::create<float>('c', {r, c});
+
+            auto rowOriginal = NDArrayFactory::create<float>('c', {c});
+            auto rowReversed = NDArrayFactory::create<float>('c', {c});
+
+            for (int e = 0; e < c; e++) {
+                rowOriginal.p(e, (float) e);
+                rowReversed.p(c - e - 1, (float) e);
+            }
+
+
+            auto listI = array.allTensorsAlongDimension({1});
+            auto listE = exp.allTensorsAlongDimension({1});
+
+            for (int e = 0; e < r; e++) {
+                listI->at(e)->assign(rowOriginal);
+                listE->at(e)->assign(rowReversed);
+            }
+
+            delete listI;
+            delete listE;
+
+            nd4j::ops::reverse op;
+            Nd4jLong axis  = 1;
+            auto status = op.execute({&array}, {&reversed}, {}, {axis}, {});
+            ASSERT_EQ(Status::OK(), status);
+
+            ASSERT_EQ(exp, reversed);
+        }
+    }
 }

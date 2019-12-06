@@ -73,6 +73,8 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
 
     private static Integer instancePort;
 
+    private TrainModule trainModule;
+
     public static VertxUIServer getInstance() {
         return getInstance(null, multiSession.get(), null);
     }
@@ -136,6 +138,17 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
         instance.stop();
     }
 
+    /**
+     * Auto-attach StatsStorage if an unknown session ID is passed as URL path parameter in multi-session mode
+     * @param statsStorageProvider function that returns a StatsStorage containing the given session ID
+     */
+    public void autoAttachStatsStorageBySessionId(Function<String, StatsStorage> statsStorageProvider) {
+        if (statsStorageProvider != null) {
+            this.statsStorageLoader = new StatsStorageLoader(statsStorageProvider);
+            this.trainModule.setSessionLoader(this.statsStorageLoader);
+        }
+    }
+
     @Override
     public void start() throws Exception {
         //Create REST endpoints
@@ -181,7 +194,8 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
 
 
         uiModules.add(new DefaultModule(isMultiSession())); //For: navigation page "/"
-        uiModules.add(new TrainModule(isMultiSession(), statsStorageLoader, this::getAddress));
+        trainModule = new TrainModule(isMultiSession(), statsStorageLoader, this::getAddress);
+        uiModules.add(trainModule);
         uiModules.add(new ConvolutionalListenerModule());
         uiModules.add(new TsneModule());
         uiModules.add(new SameDiffModule());
@@ -240,6 +254,9 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
         uiEventRoutingThread = new Thread(new StatsEventRouterRunnable());
         uiEventRoutingThread.setDaemon(true);
         uiEventRoutingThread.start();
+
+        String address = UIServer.getInstance().getAddress();
+        log.info("Deeplearning4j UI server started at: {}", address);
     }
 
     private List<String> extractArgsFromRoute(String path, RoutingContext rc) {
@@ -303,7 +320,7 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
 
     @Override
     public String getAddress() {
-        return "https://localhost:" + server.actualPort();
+        return "http://localhost:" + server.actualPort();
     }
 
     @Override
@@ -407,7 +424,7 @@ public class VertxUIServer extends AbstractVerticle implements UIServer {
         }
 
         private void runHelper() throws Exception {
-            log.info("VertxUIServer.StatsEventRouterRunnable started");
+            log.trace("VertxUIServer.StatsEventRouterRunnable started");
             //Idea: collect all event stats, and route them to the appropriate modules
             while (!shutdown.get()) {
 

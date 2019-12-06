@@ -4584,6 +4584,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  returns reference on array element with given index
         */
 
+
         /**
         *  returns array element with given index
         *  i - element index in array
@@ -5171,11 +5172,15 @@ NDArray& NDArray::operator()(const Nd4jLong* idx) {
 
 
 
-////////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////
 
+
+////////////////////////////////////////////////////////////////////////
+
+
+    
 
     
 
@@ -7627,9 +7632,9 @@ public static final int PREALLOC_SIZE = 33554432;
  * the given shape info buffer
  * represents a scalar shape
  */
-    @Namespace("shape") public static native int isScalar(@Cast("Nd4jLong*") LongPointer info);
-    @Namespace("shape") public static native int isScalar(@Cast("Nd4jLong*") LongBuffer info);
-    @Namespace("shape") public static native int isScalar(@Cast("Nd4jLong*") long[] info);
+    @Namespace("shape") public static native int isScalar(@Cast("const Nd4jLong*") LongPointer info);
+    @Namespace("shape") public static native int isScalar(@Cast("const Nd4jLong*") LongBuffer info);
+    @Namespace("shape") public static native int isScalar(@Cast("const Nd4jLong*") long[] info);
 
 /**
  * Returns whether
@@ -8033,6 +8038,9 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongPointer shape, IntPointer coords);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongBuffer shape, IntBuffer coords);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") long[] shape, int[] coords);
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
@@ -9102,6 +9110,8 @@ public static final int PREALLOC_SIZE = 33554432;
     //////////////////////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 
