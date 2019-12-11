@@ -184,7 +184,7 @@ if (NOT DEFINED ENV{CLION_IDE})
     if(BUILD_TESTS)
         # tests are always compiled with all ops included
         set(LIBND4J_ALL_OPS true)
-        set(LIBND4J_BUILD_MINIFIER true)
+        set(LIBND4J_BUILD_MINIFIER true) 
         add_subdirectory(tests_cpu)
     endif()
 endif ()
@@ -265,3 +265,6 @@ elseif(DISTRIBUTION STREQUAL "CentOS")
 endif()
 
 include(CPack)
+
+message("&& ${CMAKE_CXX_FLAGS_DEBUG}")
+message("&& ${CMAKE_CXX_FLAGS}")
