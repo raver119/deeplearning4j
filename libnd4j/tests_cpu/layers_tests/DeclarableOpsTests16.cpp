@@ -422,7 +422,7 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_5) {
     auto rgbs = NDArrayFactory::create<float>('c', { 3 },
         { 213.f, 220.f, 164.f });
     auto expected = NDArrayFactory::create<float>('c', { 3 },
-        { 6.75000000e+01, 2.54545455e-01, 8.62745098e-01 });
+        { 6.75000000e+01f, 2.54545455e-01f, 8.62745098e-01f });
 
 
     auto actual = NDArrayFactory::create<float>('c', { 3 });
@@ -639,7 +639,7 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_5) {
     auto expected = NDArrayFactory::create<float>('c', { 3 },
         { 213.f, 220.f, 164.f });
     auto hsvs = NDArrayFactory::create<float>('c', { 3 },
-        { 6.75000000e+01, 2.54545455e-01, 8.62745098e-01 });
+        { 6.75000000e+01f, 2.54545455e-01f, 8.62745098e-01f });
 
 
     auto actual = NDArrayFactory::create<float>('c', { 3 });
