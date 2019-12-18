@@ -222,29 +222,6 @@ namespace nd4j {
         #if NOT_EXCLUDED(OP_histogram)
         DECLARE_CUSTOM_OP(histogram, 1, 1, false, 0, 1);
         #endif
-
-
-        /**
-         * Rgb To Hsv
-         * Input arrays:
-         * 0 - input array with rank >= 3, must have at least one dimension equal 3, that is dimension containing channels. 
-         * Int arguments:
-         * 0 - optional argument, corresponds to dimension with 3 channels
-         */
-        #if NOT_EXCLUDED(OP_rgb_to_hsv)
-        DECLARE_CONFIGURABLE_OP(rgb_to_hsv, 1, 1, false, 0, 0);
-        #endif
-
-        /**
-         * Hsv To Rgb
-         * Input arrays:
-         * 0 - input array with rank >= 3, must have at least one dimension equal 3, that is dimension containing channels.
-         * Int arguments:
-         * 0 - optional argument, corresponds to dimension with 3 channels
-         */
-        #if NOT_EXCLUDED(OP_hsv_to_rgb)
-        DECLARE_CONFIGURABLE_OP(hsv_to_rgb, 1, 1, false, 0, 0);
-        #endif
     }
 }
 
