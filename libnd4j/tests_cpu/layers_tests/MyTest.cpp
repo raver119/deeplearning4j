@@ -772,3 +772,71 @@ TEST_F(MyTests, test_hsv_to_rgb_6) {
     ASSERT_TRUE(expected.equalsTo(actual));
 
 }
+
+
+
+
+TEST_F(MyTests, test_hsv_to_rgb_999) {
+    /*
+      2D
+    */
+    auto expected = NDArrayFactory::create<float>('c', { 1,3 },
+        { 0.53442812f *255.f,0.144007295f * 255.f,0.724374652f *255.f});
+    auto hsvs = NDArrayFactory::create<float>('c', { 1,3 },
+        { 0.7788f*360,    0.8012f,    0.7244f });
+
+
+    auto actual = NDArrayFactory::create<float>('c', { 1,3 });
+
+    Context ctx(1);
+    ctx.setInputArray(0, &hsvs);
+    ctx.setOutputArray(0, &actual);
+
+    nd4j::ops::hsv_to_rgb op;
+    auto status = op.execute(&ctx);
+#if 1
+    //visual check
+    hsvs.printBuffer("hsvs ");
+    actual.printBuffer("rgb ");
+    expected.printBuffer("exp");
+#endif
+    ASSERT_EQ(ND4J_STATUS_OK, status);
+    ASSERT_TRUE(expected.equalsTo(actual));
+
+}
+
+
+
+
+TEST_F(MyTests, test_rgb_to_hsv_999) {
+     
+    auto rgbs = NDArrayFactory::create<float>('c', { 1,2, 3 },
+        {
+           0.7788f/*255*/ ,0.8012f/*255*/,0.7244f/*255*/,
+           0.2309f/*255*/,0.7271f/*255*/,0.1804f/*255*/
+        });
+    auto expected = NDArrayFactory::create<float>('c', { 1, 2, 3 },
+        {
+         0.215289578f*360 ,    0.095885336f,    0.801197767f,
+                0.317938268f*360,    0.751917899f,    0.727141261f
+        });
+
+
+    auto actual = NDArrayFactory::create<float>('c', { 1,2,3 });
+
+    Context ctx(1);
+    ctx.setInputArray(0, &rgbs);
+    ctx.setOutputArray(0, &actual);
+    /// lets call wrongly 
+    nd4j::ops::hsv_to_rgb op;
+    auto status = op.execute(&ctx);
+#if 1
+    //visual check
+    rgbs.printBuffer("rgbs ");
+    actual.printBuffer("HSV ");
+    expected.printBuffer("exp");
+#endif
+    ASSERT_EQ(ND4J_STATUS_OK, status);
+    ASSERT_TRUE(expected.equalsTo(actual));
+
+}
