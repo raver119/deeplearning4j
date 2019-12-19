@@ -1,9 +1,6 @@
 package org.datavec.python;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import static org.bytedeco.cpython.global.python.*;
 
@@ -14,17 +11,12 @@ import static org.bytedeco.cpython.global.python.*;
  */
 
 public class Python {
-    public final static PythonObject builtins = importModule("builtins");
-    private final static PythonObject globals = builtins.attr("globals");
-    public final static PythonObject None = dict().attr("get").call(new PythonObject(""));
-    public final static PythonObject True = bool(new PythonObject(1));
-    public final static PythonObject False = bool(new PythonObject(0));
 
     public static PythonObject importModule(String moduleName){
         return new PythonObject(PyImport_ImportModule(moduleName));
     }
     public static PythonObject attr(String attrName){
-        return builtins.attr(attrName);
+        return builtins().attr(attrName);
     }
     public static PythonObject len(PythonObject pythonObject){
         return attr("len").call(pythonObject);
@@ -98,7 +90,7 @@ public class Python {
     }
 
     public static PythonObject globals(){
-        return globals.call();
+        return builtins().attr("globals").call();
     }
 
     public static PythonObject type(PythonObject obj){
@@ -116,4 +108,21 @@ public class Python {
     public static PythonObject eval(String code){
         return eval(new PythonObject(code));
     }
+
+    public static PythonObject builtins(){
+        return importModule("builtins");
+    }
+
+    public static PythonObject None(){
+        return eval("None");
+    }
+
+    public static PythonObject True(){
+        return eval("True");
+    }
+    public static PythonObject False(){
+        return eval("False");
+    }
+
+
 }

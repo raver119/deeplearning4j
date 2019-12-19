@@ -21,7 +21,7 @@ import static org.datavec.python.Python.*;
 public class FastPythonExecutioner {
 
 
-    public class GIL implements AutoCloseable{
+    public static class GIL implements AutoCloseable{
         public GIL(){
             FastPythonExecutioner.acquireGIL();
         }
@@ -228,9 +228,7 @@ public class FastPythonExecutioner {
 
     }
 
-    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs){
-        setVariables(inputs);
-        _exec(getWrappedCode(code));
+    public static PythonVariables getAllVariables(){
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys"));
@@ -261,6 +259,11 @@ public class FastPythonExecutioner {
             }
         }
         return out;
+    }
+    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs){
+        setVariables(inputs);
+        _exec(getWrappedCode(code));
+      return getAllVariables();
     }
     public static GIL lock(){
         return new GIL();

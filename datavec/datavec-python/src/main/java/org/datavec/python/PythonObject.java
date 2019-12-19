@@ -296,6 +296,20 @@ public class PythonObject {
         return new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
     }
 
+    public PythonObject callWithArgs(PythonObject args){
+        PyObject tuple = PyList_AsTuple(args.nativePythonObject);
+        return new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
+    }
+    public PythonObject callWithKargs(PythonObject kwargs){
+        PyObject tuple = PyTuple_New(0);
+        return new PythonObject(PyObject_Call(nativePythonObject, tuple, kwargs.nativePythonObject));
+    }
+
+    public PythonObject callWithArgsAndKwargs(PythonObject args, PythonObject kwargs){
+        PyObject tuple = PyList_AsTuple(args.nativePythonObject);
+        PyObject dict = kwargs.nativePythonObject;
+        return new PythonObject(PyObject_Call(nativePythonObject, tuple, dict));
+    }
     public PythonObject call(Map kwargs){
         PyObject dict = new PythonObject(kwargs).nativePythonObject;
         PyObject tuple = PyTuple_New(0);
