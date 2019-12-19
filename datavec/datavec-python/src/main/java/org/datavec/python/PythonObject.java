@@ -320,6 +320,9 @@ public class PythonObject {
 
         );
     }
+    public PythonObject get(String key){
+        return get(new PythonObject(key));
+    }
 
     public void set(PythonObject key, PythonObject value){
         PyObject_SetItem(nativePythonObject, key.nativePythonObject, value.nativePythonObject);
