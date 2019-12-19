@@ -1,8 +1,5 @@
 package org.datavec.python;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PythonJob {
 
     private String code;
@@ -14,15 +11,18 @@ public class PythonJob {
         setup();
     }
 
+    public String getContext(){
+        return "_job" + name;
+    }
     public void clearState(){
         PythonContextManager.setContext("main");
-        PythonContextManager.deleteContext(name);
+        PythonContextManager.deleteContext(getContext());
         setup();
     }
 
     public void setup(){
         try (FastPythonExecutioner.GIL gil = FastPythonExecutioner.lock()){
-            PythonContextManager.setContext(name);
+            PythonContextManager.setContext(getContext());
             PythonObject runF = FastPythonExecutioner.getVariable("run");
             if (runF.isNone()){
                 FastPythonExecutioner.exec(code);
