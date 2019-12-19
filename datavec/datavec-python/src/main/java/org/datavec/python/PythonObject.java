@@ -2,12 +2,12 @@ package org.datavec.python;
 
 
 import org.bytedeco.cpython.PyObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.bytedeco.cpython.global.python.*;
 import static org.bytedeco.cpython.global.python.PyObject_SetItem;
@@ -22,6 +22,17 @@ public class PythonObject {
     private PyObject nativePythonObject;
     private static PyObject np = PyImport_AddModule("numpy");
     private static PyObject ctypes = PyImport_AddModule("ctypes");
+    private static Map<String, PythonObject> ndarraySerializer = new HashMap<>();
+    static {
+        ndarraySerializer.put("default",
+                Python.eval(
+                        "f = lambda x: " +
+                                "{'address':" +
+                                "x.__array_interface__['data'][0]," +
+                                "'shape':x.shape,'strides':x.strides," +
+                                "'dtype': str(x.dtype),'_is_numpy_array': True}" +
+                                " if str(type(x))== \"<class 'numpy.ndarray'>\" else x"));
+    }
     public PythonObject(PyObject pyObject){
         nativePythonObject = pyObject;
     }
@@ -274,6 +285,13 @@ public class PythonObject {
         return new PythonObject(PyObject_GetAttrString(nativePythonObject, attr));
     }
     public PythonObject call(Object... args){
+        if (args[args.length - 1] instanceof Map){
+            List<Object> args2 = new ArrayList<>();
+            for (int i=0; i<args.length - 1; i++){
+                args2.add(args[i]);
+            }
+            return call(args2, (Map)args[args.length-1]);
+        }
         PyObject tuple = PyList_AsTuple(new PythonObject(Arrays.asList(args)).nativePythonObject);
         return new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
     }
@@ -332,6 +350,29 @@ public class PythonObject {
         Py_DecRef(nativePythonObject);
         nativePythonObject = null;
     }
+
+    public JSONArray toJSONArray(){
+        PythonObject json = Python.importModule("json");
+        PythonObject serialized = json.call("dumps").call(this, ndarraySerializer);
+        String jsonString = serialized.toString();
+        return new JSONArray(jsonString);
+
+    }
+
+    public JSONObject toJSONObject(){
+        PythonObject json = Python.importModule("json");
+        PythonObject serialized = json.call("dumps").call(this, ndarraySerializer);
+        String jsonString = serialized.toString();
+        return new JSONObject(jsonString);
+    }
+
+    public List toList(){
+        return PythonUtils.toList(toJSONArray());
+    }
+    public Map toMap(){
+        return PythonUtils.toMap(toJSONObject());
+    }
+
 
 
 }

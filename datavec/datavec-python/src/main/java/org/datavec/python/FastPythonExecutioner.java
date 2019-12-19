@@ -5,13 +5,17 @@ import org.apache.commons.io.IOUtils;
 import org.bytedeco.cpython.PyThreadState;
 import org.bytedeco.numpy.global.numpy;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.io.ClassPathResource;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
 
 import static org.bytedeco.cpython.global.python.*;
 import static org.bytedeco.cpython.global.python.PyThreadState_Get;
+import static org.datavec.python.Python.*;
 
 @Slf4j
 public class FastPythonExecutioner {
@@ -83,7 +87,7 @@ public class FastPythonExecutioner {
                 throw new RuntimeException("Unsupported type: " + varType);
 
         }
-        Python.globals().call().set(new PythonObject(varName), pythonObject);
+        Python.globals().set(new PythonObject(varName), pythonObject);
     }
 
     public static void setVariables(PythonVariables pyVars){
@@ -93,7 +97,7 @@ public class FastPythonExecutioner {
     }
 
     public static Object getVariable(String varName, PythonVariables.Type varType){
-        PythonObject pythonObject = Python.globals().call().get(varName);
+        PythonObject pythonObject = Python.globals().get(varName);
         switch (varType){
             case INT:
                 return pythonObject.toLong();
@@ -114,6 +118,110 @@ public class FastPythonExecutioner {
             pyVars.setValue(varName, getVariable(varName, pyVars.getType(varName)));
         }
     }
-    
+
+
+    private static String getWrappedCode(String code) {
+        try(InputStream is = new ClassPathResource("pythonexec/pythonexec.py").getInputStream()) {
+            String base = IOUtils.toString(is, Charset.defaultCharset());
+            StringBuffer indentedCode = new StringBuffer();
+            for(String split : code.split("\n")) {
+                indentedCode.append("    " + split + "\n");
+
+            }
+
+            String out = base.replace("    pass",indentedCode);
+            return out;
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to read python code!",e);
+        }
+
+    }
+
+    private static synchronized void acquireGIL() {
+        log.info("acquireGIL()");
+        log.info("CPython: PyEval_SaveThread()");
+        mainThreadState = PyEval_SaveThread();
+        log.info("CPython: PyThreadState_New()");
+        PyThreadState ts = PyThreadState_New(mainThreadState.interp());
+        log.info("CPython: PyEval_RestoreThread()");
+        PyEval_RestoreThread(ts);
+        log.info("CPython: PyThreadState_Swap()");
+        PyThreadState_Swap(ts);
+
+    }
+
+    private static synchronized void releaseGIL() {
+        log.info("CPython: PyEval_SaveThread()");
+        PyEval_SaveThread();
+        log.info("CPython: PyEval_RestoreThread()");
+        PyEval_RestoreThread(mainThreadState);
+    }
+    public static void exec(String code){
+        acquireGIL();
+        _exec(getWrappedCode(code));
+        releaseGIL();
+    }
+
+    public static void exec(String code, PythonVariables outputVariables){
+        acquireGIL();
+        _exec(getWrappedCode(code));
+        getVariables(outputVariables);
+        releaseGIL();
+    }
+
+    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables){
+        acquireGIL();
+        setVariables(inputVariables);
+        _exec(getWrappedCode(code));
+        getVariables(outputVariables);
+        releaseGIL();
+    }
+
+    public static PythonVariables execAndReturnAllVariables(String code) {
+        acquireGIL();
+        _exec(getWrappedCode(code));
+        PythonVariables out = new PythonVariables();
+        PythonObject globals = Python.globals();
+        PythonObject keysList = Python.list(globals.attr("keys"));
+        int numKeys = Python.len(keysList).toInt();
+        PythonObject[] allowedTypes = new PythonObject[]{
+                attr("list"),
+                attr("int"),
+                attr("float"),
+                attr("str"),
+                attr("dict"),
+                attr("bool"),
+                Python.type(Python.None)
+        };
+        for (int i=0;i<numKeys;i++){
+            PythonObject key = keysList.get(i);
+            String keyStr = key.toString();
+            if (!keyStr.startsWith("_")){
+                PythonObject val = globals.get(key);
+                if (Python.isinstance(val, intType()).toBoolean()){
+                    out.addInt(keyStr, val.toInt());
+                }
+                else if (Python.isinstance(val, floatType()).toBoolean()){
+                    out.addFloat(keyStr, val.toDouble());
+                }
+                else if (Python.isinstance(val, strType()).toBoolean()){
+                    out.addStr(keyStr, val.toString());
+                }
+                else if (Python.isinstance(val, boolType()).toBoolean()){
+                    out.addBool(keyStr, val.toBoolean());
+                }
+                else if (Python.isinstance(val, listType()).toBoolean()){
+                    out.addList(keyStr, val.toList().toArray(new Object[0]));
+                }
+                else if (Python.isinstance(val, dictType()).toBoolean()){
+                    out.addDict(keyStr, val.toMap());
+                }
+            }
+        }
+
+        return out;
+
+    }
+
 
 }
