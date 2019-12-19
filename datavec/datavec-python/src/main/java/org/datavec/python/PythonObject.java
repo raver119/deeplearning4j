@@ -20,6 +20,8 @@ import static org.bytedeco.cpython.global.python.PyObject_SetItem;
 
 public class PythonObject {
     private PyObject nativePythonObject;
+    private static PyObject np = PyImport_AddModule("numpy");
+    private static PyObject ctypes = PyImport_AddModule("ctypes");
     public PythonObject(PyObject pyObject){
         nativePythonObject = pyObject;
     }
@@ -27,8 +29,6 @@ public class PythonObject {
         this(new NumpyArray(npArray));
     }
     public PythonObject(NumpyArray npArray){
-        PyObject np = PyImport_AddModule("numpy");
-        PyObject ctypes = PyImport_AddModule("ctypes");
         PyObject ctype;
         switch (npArray.getDtype()){
             case DOUBLE:
@@ -325,6 +325,10 @@ public class PythonObject {
         PyObject_SetItem(nativePythonObject, key.nativePythonObject, value.nativePythonObject);
     }
 
+    public void del(){
+        Py_DecRef(nativePythonObject);
+        nativePythonObject = null;
+    }
 
 
 }

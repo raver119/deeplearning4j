@@ -34,31 +34,8 @@ public class TestPythonWrapper {
         var pyZeros = np.attr("zeros").call(Arrays.asList(Arrays.asList(32, 16)));
         INDArray zeros = pyZeros.toNumpy().getNd4jArray();
         assertArrayEquals(zeros.shape(), new long[]{32, 16});
-
     }
 
-    @Test
-    public void testPythonWrappersWithTF(){
-        PythonExecutioner.init();
-        // import stuff
-        var tf = Python.importModule("tensorflow");
-        var keras = tf.attr("keras");
-
-        // build model
-        var model = keras.attr("models").attr("Sequential").call();
-        Map denseArgs = new HashMap();
-        denseArgs.put("units", 10);
-        denseArgs.put("input_dim", 5);
-        var denseLayer = keras.attr("layers").attr("Dense").call(denseArgs);
-        model.attr("add").call(denseLayer);
-
-        //prediction
-        INDArray input = Nd4j.rand(12, 5);
-        INDArray output =  model.attr("predict").call(input).toNumpy().getNd4jArray();
-
-        assertArrayEquals(output.shape(), new long[]{12, 10});
-
-    }
 
 
 }
