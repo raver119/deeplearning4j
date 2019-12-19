@@ -20,6 +20,17 @@ import static org.datavec.python.Python.*;
 @Slf4j
 public class FastPythonExecutioner {
 
+
+    public class GIL implements AutoCloseable{
+        public GIL(){
+            FastPythonExecutioner.acquireGIL();
+        }
+        @Override
+        public void close(){
+            FastPythonExecutioner.releaseGIL();
+        }
+    }
+
     private static boolean init;
     private static PyThreadState mainThreadState;
 
@@ -51,6 +62,9 @@ public class FastPythonExecutioner {
         }
     }
 
+    public static void setVariable(String varName, PythonObject pythonObject){
+        Python.globals().set(new PythonObject(varName), pythonObject);
+    }
     public static void setVariable(String varName, PythonVariables.Type varType, Object value){
         PythonObject pythonObject;
         switch(varType){
@@ -87,7 +101,7 @@ public class FastPythonExecutioner {
                 throw new RuntimeException("Unsupported type: " + varType);
 
         }
-        Python.globals().set(new PythonObject(varName), pythonObject);
+        setVariable(varName, pythonObject);
     }
 
     public static void setVariables(PythonVariables pyVars){
@@ -96,8 +110,14 @@ public class FastPythonExecutioner {
         }
     }
 
+    public static PythonObject getVariable(String varName){
+        return Python.globals().attr("get").call(varName);
+    }
     public static Object getVariable(String varName, PythonVariables.Type varType){
-        PythonObject pythonObject = Python.globals().get(varName);
+        PythonObject pythonObject = getVariable(varName);
+        if (pythonObject.isNone()){
+            throw new RuntimeException("Variable not found: " + varName);
+        }
         switch (varType){
             case INT:
                 return pythonObject.toLong();
@@ -163,36 +183,22 @@ public class FastPythonExecutioner {
     }
 
     public static void exec(String code, PythonVariables outputVariables){
-        acquireGIL();
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
-        releaseGIL();
     }
 
     public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables){
-        acquireGIL();
         setVariables(inputVariables);
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
-        releaseGIL();
     }
 
     public static PythonVariables execAndReturnAllVariables(String code) {
-        acquireGIL();
         _exec(getWrappedCode(code));
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys"));
         int numKeys = Python.len(keysList).toInt();
-        PythonObject[] allowedTypes = new PythonObject[]{
-                attr("list"),
-                attr("int"),
-                attr("float"),
-                attr("str"),
-                attr("dict"),
-                attr("bool"),
-                Python.type(Python.None)
-        };
         for (int i=0;i<numKeys;i++){
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
@@ -218,10 +224,46 @@ public class FastPythonExecutioner {
                 }
             }
         }
-
         return out;
 
     }
 
+    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs){
+        setVariables(inputs);
+        _exec(getWrappedCode(code));
+        PythonVariables out = new PythonVariables();
+        PythonObject globals = Python.globals();
+        PythonObject keysList = Python.list(globals.attr("keys"));
+        int numKeys = Python.len(keysList).toInt();
+        for (int i=0;i<numKeys;i++){
+            PythonObject key = keysList.get(i);
+            String keyStr = key.toString();
+            if (!keyStr.startsWith("_")){
+                PythonObject val = globals.get(key);
+                if (Python.isinstance(val, intType()).toBoolean()){
+                    out.addInt(keyStr, val.toInt());
+                }
+                else if (Python.isinstance(val, floatType()).toBoolean()){
+                    out.addFloat(keyStr, val.toDouble());
+                }
+                else if (Python.isinstance(val, strType()).toBoolean()){
+                    out.addStr(keyStr, val.toString());
+                }
+                else if (Python.isinstance(val, boolType()).toBoolean()){
+                    out.addBool(keyStr, val.toBoolean());
+                }
+                else if (Python.isinstance(val, listType()).toBoolean()){
+                    out.addList(keyStr, val.toList().toArray(new Object[0]));
+                }
+                else if (Python.isinstance(val, dictType()).toBoolean()){
+                    out.addDict(keyStr, val.toMap());
+                }
+            }
+        }
+        return out;
+    }
+    public static GIL lock(){
+        return new GIL();
+    }
 
 }

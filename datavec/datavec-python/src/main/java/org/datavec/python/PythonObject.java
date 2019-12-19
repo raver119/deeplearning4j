@@ -373,6 +373,9 @@ public class PythonObject {
         return PythonUtils.toMap(toJSONObject());
     }
 
+    public boolean isNone(){
+        return nativePythonObject == null;
+    }
 
 
 }
