@@ -26,7 +26,7 @@ public class PythonObject {
     static {
         ndarraySerializer.put("default",
                 Python.eval(
-                        "f = lambda x: " +
+                        "lambda x: " +
                                 "{'address':" +
                                 "x.__array_interface__['data'][0]," +
                                 "'shape':x.shape,'strides':x.strides," +
