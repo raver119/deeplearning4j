@@ -285,7 +285,7 @@ public class PythonObject {
         return new PythonObject(PyObject_GetAttrString(nativePythonObject, attr));
     }
     public PythonObject call(Object... args){
-        if (args[args.length - 1] instanceof Map){
+        if (args.length > 0 && args[args.length - 1] instanceof Map){
             List<Object> args2 = new ArrayList<>();
             for (int i=0; i<args.length - 1; i++){
                 args2.add(args[i]);
