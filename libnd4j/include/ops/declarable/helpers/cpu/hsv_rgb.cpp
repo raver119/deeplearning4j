@@ -84,6 +84,8 @@ namespace nd4j {
                 BUILD_SINGLE_SELECTOR(input->dataType(), rgb_hsv, (input, output, dimC), FLOAT_TYPES);
             }
 
+
+
         }
     }
 }

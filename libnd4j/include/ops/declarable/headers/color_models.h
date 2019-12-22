@@ -50,6 +50,28 @@ namespace nd4j {
         DECLARE_CONFIGURABLE_OP(hsv_to_rgb, 1, 1, false, 0, 0);
 #endif
  
+
+        /**
+         * Rgb To Yiq
+         * Input arrays:
+         * 0 - input array with rank >= 1, must have at least one dimension equal 3, that is dimension containing channels.
+         * Int arguments:
+         * 0 - optional argument, corresponds to dimension with 3 channels
+         */
+#if NOT_EXCLUDED(OP_rgb_to_yiq)
+        DECLARE_CONFIGURABLE_OP(rgb_to_yiq, 1, 1, false, 0, 0);
+#endif
+
+        /**
+         * Yiq To Rgb
+         * Input arrays:
+         * 0 - input array with rank >= 1, must have at least one dimension equal 3, that is dimension containing channels.
+         * Int arguments:
+         * 0 - optional argument, corresponds to dimension with 3 channels
+         */
+#if NOT_EXCLUDED(OP_yiq_to_rgb)
+        DECLARE_CONFIGURABLE_OP(yiq_to_rgb, 1, 1, false, 0, 0);
+#endif
     }
 }
 
