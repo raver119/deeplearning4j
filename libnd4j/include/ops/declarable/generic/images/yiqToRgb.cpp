@@ -14,8 +14,11 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
+//
+// @author AbdelRauf    (rauf@konduit.ai)
+// 
 
-#include <ops/declarable/headers/color_models.h>
+#include <ops/declarable/headers/images.h>
 #include <ops/declarable/CustomOperations.h>  
 #include <helpers/ConstantTadHelper.h>
 #include <execution/Threads.h>
@@ -41,45 +44,18 @@ namespace nd4j {
             if (arg_size > 0) {
                 REQUIRE_TRUE(dimC >= 0 && dimC < rank, 0, "Index of the Channel dimension out of range: %i not in [%i,%i) ", INT_ARG(0), -rank, rank);
             }
-            REQUIRE_TRUE(input->sizeAt(dimC) == 3, 0, "YIQtoRGB: operation expects 3 channels (H, S, V), but got %i instead", input->sizeAt(dimC));
+            REQUIRE_TRUE(input->sizeAt(dimC) == 3, 0, "YIQtoRGB: operation expects 3 channels (Y, I, Q), but got %i instead", input->sizeAt(dimC));
 
-           // helpers::transform_yiq_rgb(block.launchContext(), input, output, dimC);
-
-            return Status::OK();
-        }
-
-        CONFIGURABLE_OP_IMPL(rgb_to_yiq, 1, 1, false, 0, 0) {
-
-            auto input = INPUT_VARIABLE(0);
-            auto output = OUTPUT_VARIABLE(0);
-
-            if (input->isEmpty())
-                return Status::OK();
-
-            const int rank = input->rankOf();
-            const int arg_size = block.getIArguments()->size();
-            const int dimC = arg_size > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
-
-            REQUIRE_TRUE(rank >= 1, 0, "RGBtoYIQ: Fails to meet the rank requirement: %i >= 1 ", rank);
-            if (arg_size > 0) {
-                REQUIRE_TRUE(dimC >= 0 && dimC < rank, 0, "Index of the Channel dimension out of range: %i not in [%i,%i) ", INT_ARG(0), -rank, rank);
-            }
-            REQUIRE_TRUE(input->sizeAt(dimC) == 3, 0, "RGBtoYIQ: operation expects 3 channels (H, S, V), but got %i instead", input->sizeAt(dimC));
-
-            //helpers::transform_rgb_yiq(block.launchContext(), input, output, dimC);
+            helpers::transformYiqRgb(block.launchContext(), input, output, dimC);
 
             return Status::OK();
         }
-
+         
 
         DECLARE_TYPES(yiq_to_rgb) {
             getOpDescriptor()->setAllowedInputTypes({ ALL_FLOATS })
                 ->setSameMode(true);
         }
-
-        DECLARE_TYPES(rgb_to_yiq) {
-            getOpDescriptor()->setAllowedInputTypes({ ALL_FLOATS })
-                ->setSameMode(true);
-        }
+         
     }
 }

@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 //
-// @author Adel Rauf    (rauf@konduit.ai)
+// @author AbdelRauf    (rauf@konduit.ai)
 // 
 
 #include <ops/declarable/headers/images.h>
