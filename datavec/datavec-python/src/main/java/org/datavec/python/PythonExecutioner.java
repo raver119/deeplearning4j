@@ -265,7 +265,6 @@ public class PythonExecutioner {
         init = true;
         interpreters.put(MAIN_INTERPRETER_NAME, PyThreadState_Get());
         numpy._import_array();
-        applyPatches();
     }
 
 
@@ -1085,60 +1084,4 @@ public class PythonExecutioner {
         return outputCode;
     }
 
-
-    /*-----monkey patch for numpy-----*/
-    private static List<String[]> _getPatches() {
-        exec("import numpy as np");
-        exec( "__overrides_path = np.core.overrides.__file__");
-        exec("__random_path = np.random.__file__");
-
-        List<String[]> patches = new ArrayList<>();
-
-        patches.add(new String[]{
-                "pythonexec/patch0.py",
-                evalString("__overrides_path")
-        });
-        patches.add(new String[]{
-                "pythonexec/patch1.py",
-                evalString("__random_path")
-        });
-
-        return patches;
-    }
-
-    private static void _applyPatch(String src, String dest){
-        try(InputStream is = new ClassPathResource(src).getInputStream()) {
-            String patch = IOUtils.toString(is, Charset.defaultCharset());
-            FileUtils.write(new File(dest), patch, "utf-8");
-        }
-        catch(IOException e){
-            log.warn("Error patching numpy: " + e);
-        }
-    }
-
-    private static boolean _checkPatchApplied(String dest) {
-        try {
-            return FileUtils.readFileToString(new File(dest), "utf-8").startsWith("#patch");
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    private static void applyPatches() {
-        // We patch numpy for partial support of multiple interpreters
-        for (String[] patch : _getPatches()){
-            if (_checkPatchApplied(patch[1])){
-                log.info("Patch already applied for " + patch[1]);
-            }
-            else{
-                _applyPatch(patch[0], patch[1]);
-                log.info("Applied patch for " + patch[1]);
-            }
-        }
-        for (String[] patch: _getPatches()){
-            if (!_checkPatchApplied(patch[1])){
-                log.warn("Error patching numpy");
-            }
-        }
-    }
 }
