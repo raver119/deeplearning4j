@@ -1050,7 +1050,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test8) {
 
 
     auto testData = NDArrayFactory::create<float>('c', {2,9,9,1}, {
-           0.230286f,        0.510566354f,        0.794997215f,        0.931386113f,        0.817130804f,        0.402811885f,        0.045073099f,        0.134639814f,        0.368967354f,
+        0.230286514f,        0.510566354f,        0.794997215f,        0.931386113f,        0.817130804f,        0.402811885f,        0.045073099f,        0.134639814f,        0.368967354f,
         0.483021289f,        0.501266003f,        0.521932304f,        0.572325349f,        0.534847379f,        0.267853439f,        0.105112493f,        0.349290252f,        0.674043298f,
         0.684575737f,        0.478224277f,        0.272685468f,        0.239882097f,         0.27701965f,        0.191148892f,         0.23814784f,        0.590989769f,        0.951120198f,
         0.622912169f,        0.441326082f,        0.266387194f,        0.232538164f,        0.301838756f,        0.356378645f,        0.495445013f,        0.756725252f,        0.981704295f,
@@ -1081,7 +1081,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test8) {
     NDArray* result = results->at(0);
 
 //    result->printBuffer("Resized to 9x9");
-//    expected.printBuffer("Expect for 9x9");
+//    testData.printBuffer("Expect for 9x9");
     ASSERT_TRUE(testData.isSameShape(result));
     ASSERT_TRUE(testData.equalsTo(result));
     delete results;
@@ -2785,11 +2785,11 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test8) {
 TEST_F(DeclarableOpsTests11, SafeDivideMixed_Test1) {
 
     NDArray labels('c', {2, 3}, {1.0, 2.0, 3.0, -1.0, 2.0, 1.0});
-    auto sumDiff = labels.reduceAlongDims(reduce::Sum, {1}, true);
+    auto sumDiff = labels.reduceAlongDimension(reduce::Sum, {1}, true);
 
     NDArray numOfNonZero(sumDiff.getShapeInfo(), nd4j::DataType::INT64, false);
     numOfNonZero.assign(1);
-    sumDiff.applyPairwiseTransform(pairwise::SafeDivide, &numOfNonZero, &sumDiff, nullptr);
+    sumDiff.applyPairwiseTransform(pairwise::SafeDivide, numOfNonZero, sumDiff);
 }
 
 /////////////////////////////////////////////////////////////////
