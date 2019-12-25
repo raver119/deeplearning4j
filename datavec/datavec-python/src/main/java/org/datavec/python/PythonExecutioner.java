@@ -24,6 +24,7 @@ import org.bytedeco.numpy.global.numpy;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.io.ClassPathResource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -39,20 +40,21 @@ public class PythonExecutioner {
 
 
     private static boolean init;
-
+    public final static String DEFAULT_PYTHON_PATH_PROPERTY = "org.datavec.python.path";
+    public final static String JAVACPP_PYTHON_APPEND_TYPE = "org.datavec.python.javacpp.path.append";
+    public final static String DEFAULT_APPEND_TYPE = "before";
 
     static{init();}
     private static synchronized  void init() {
         if(init) {
             return;
         }
+        setPythonPath();
         init = true;
-
         log.info("CPython: PyEval_InitThreads()");
         PyEval_InitThreads();
         log.info("CPython: Py_InitializeEx()");
         Py_InitializeEx(0);
-        log.info("CPython: PyThreadState_Get()");
         numpy._import_array();
     }
 
@@ -257,4 +259,77 @@ public class PythonExecutioner {
       return getAllVariables();
     }
 
+    /**
+     * One of a few desired values
+     * for how we should handle
+     * using javacpp's python path.
+     * BEFORE: Prepend the python path alongside a defined one
+     * AFTER: Append the javacpp python path alongside the defined one
+     * NONE: Don't use javacpp's python path at all
+     */
+    public enum JavaCppPathType {
+        BEFORE,AFTER,NONE
+    }
+
+    /**
+     * Set the python path.
+     * Generally you can just use the PYTHONPATH environment variable,
+     * but if you need to set it from code, this can work as well.
+     */
+
+    public static synchronized void setPythonPath() {
+        if(!init) {
+            try {
+                String path = System.getProperty(DEFAULT_PYTHON_PATH_PROPERTY);
+                if(path == null) {
+                    log.info("Setting python default path");
+                    File[] packages = numpy.cachePackages();
+                    Py_SetPath(packages);
+                }
+                else {
+                    log.info("Setting python path " + path);
+                    StringBuffer sb = new StringBuffer();
+                    File[] packages = numpy.cachePackages();
+
+                    JavaCppPathType pathAppendValue = JavaCppPathType.valueOf(System.getProperty(JAVACPP_PYTHON_APPEND_TYPE,DEFAULT_APPEND_TYPE).toUpperCase());
+                    switch(pathAppendValue) {
+                        case BEFORE:
+                            for(File cacheDir : packages) {
+                                sb.append(cacheDir);
+                                sb.append(java.io.File.pathSeparator);
+                            }
+
+                            sb.append(path);
+
+                            log.info("Prepending javacpp python path " + sb.toString());
+                            break;
+                        case AFTER:
+                            sb.append(path);
+
+                            for(File cacheDir : packages) {
+                                sb.append(cacheDir);
+                                sb.append(java.io.File.pathSeparator);
+                            }
+
+                            log.info("Appending javacpp python path " + sb.toString());
+                            break;
+                        case NONE:
+                            log.info("Not appending javacpp path");
+                            sb.append(path);
+                            break;
+                    }
+
+                    //prepend the javacpp packages
+                    log.info("Final python path " + sb.toString());
+
+                    Py_SetPath(sb.toString());
+                }
+            } catch (IOException e) {
+                log.error("Failed to set python path.", e);
+            }
+        }
+        else {
+            throw new IllegalStateException("Unable to reset python path. Already initialized.");
+        }
+    }
 }

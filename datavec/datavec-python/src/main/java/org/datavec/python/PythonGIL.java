@@ -29,6 +29,7 @@ import static org.bytedeco.cpython.global.python.PyEval_SaveThread;
 public class PythonGIL implements AutoCloseable{
     private static PyThreadState mainThreadState;
     static{
+        log.info("CPython: PyThreadState_Get()");
         mainThreadState = PyThreadState_Get();
     }
 
