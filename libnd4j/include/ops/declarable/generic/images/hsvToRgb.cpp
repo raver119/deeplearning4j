@@ -26,7 +26,7 @@
 namespace nd4j {
 namespace ops {
 
-CONFIGURABLE_OP_IMPL(hsv_to_rgb, 1, 1, false, 0, 0) {
+CONFIGURABLE_OP_IMPL(hsv_to_rgb, 1, 1, true, 0, 0) {
 
     auto input  = INPUT_VARIABLE(0);
     auto output = OUTPUT_VARIABLE(0);
