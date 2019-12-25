@@ -10,6 +10,9 @@ public class PythonJob {
     private String context;
     private boolean setupRunMode;
     PythonObject runF;
+    static{
+        new FastPythonExecutioner();
+    }
     public PythonJob(String name, String code, boolean setupRunMode){
         this.name = name;
         this.code = code;
