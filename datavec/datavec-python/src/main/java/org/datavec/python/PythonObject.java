@@ -20,18 +20,26 @@ import static org.bytedeco.cpython.global.python.PyObject_SetItem;
 
 public class PythonObject {
     private PyObject nativePythonObject;
-    private static PyObject np = PyImport_AddModule("numpy");
-    private static PyObject ctypes = PyImport_AddModule("ctypes");
-    private static Map<String, PythonObject> ndarraySerializer = new HashMap<>();
     static {
+
+    }
+
+    private static Map<String, PythonObject> _getNDArraySerializer(){
+         Map<String, PythonObject> ndarraySerializer = new HashMap<>();
+         PythonObject lambda =  Python.eval(
+                 "lambda x: " +
+                         "{'address':" +
+                         "x.__array_interface__['data'][0]," +
+                         "'shape':x.shape,'strides':x.strides," +
+                         "'dtype': str(x.dtype),'_is_numpy_array': True}" +
+                         " if str(type(x))== \"<class 'numpy.ndarray'>\" else x");
+         if (lambda.isNone()){
+             System.out.println("lambda is none!");
+         }
         ndarraySerializer.put("default",
-                Python.eval(
-                        "lambda x: " +
-                                "{'address':" +
-                                "x.__array_interface__['data'][0]," +
-                                "'shape':x.shape,'strides':x.strides," +
-                                "'dtype': str(x.dtype),'_is_numpy_array': True}" +
-                                " if str(type(x))== \"<class 'numpy.ndarray'>\" else x"));
+               lambda);
+        return ndarraySerializer;
+
     }
     public PythonObject(PyObject pyObject){
         nativePythonObject = pyObject;
@@ -40,6 +48,8 @@ public class PythonObject {
         this(new NumpyArray(npArray));
     }
     public PythonObject(NumpyArray npArray){
+        PyObject ctypes = Python.importModule("ctypes").getNativePythonObject();
+        PyObject np = Python.importModule("numpy").getNativePythonObject();
         PyObject ctype;
         switch (npArray.getDtype()){
             case DOUBLE:
@@ -64,16 +74,14 @@ public class PythonObject {
 
         PythonObject ptrType = new PythonObject(PyObject_GetAttrString(ctypes, "POINTER")).call(ctype);
         PythonObject ptr = new PythonObject(PyObject_GetAttrString(ctypes, "cast")).call(npArray.getAddress(), ptrType);
+        List<Long> shapeList = new ArrayList();
+        for (long dim: npArray.getShape()){
+            shapeList.add(dim);
+        }
         nativePythonObject = new PythonObject(np).attr("ctypeslib").attr("as_array").call(
                 ptr,
-                new PythonObject(
-                        PyList_AsTuple(
-                                (new PythonObject(Arrays.asList(
-                                        npArray.getShape()
-                                )).nativePythonObject
-                                )
-                        )
-                )).nativePythonObject;
+                Python.tuple(new PythonObject(shapeList))
+                ).nativePythonObject;
 
     }
 
@@ -101,12 +109,15 @@ public class PythonObject {
     }
     /*---collection constructors---*/
 
-    public PythonObject(List data){
-        PyObject pyList = PyList_New((long)data.size());
-        for(int i=0; i < data.size(); i++){
-            Object item = data.get(i);
+    public PythonObject(Object[] data){
+        PyObject pyList = PyList_New((long)data.length);
+        for(int i=0; i < data.length; i++){
+            Object item = data[i];
             if (item instanceof PythonObject){
                 PyList_SetItem(pyList, (long)i, ((PythonObject)item).nativePythonObject);
+            }
+            else if (item instanceof PyObject){
+                PyList_SetItem(pyList, (long)i, (PyObject)item);
             }
             else if (item instanceof INDArray){
                 PyList_SetItem(pyList, (long)i, new PythonObject((INDArray) item).nativePythonObject);
@@ -116,6 +127,9 @@ public class PythonObject {
             }
             else if(item instanceof List){
                 PyList_SetItem(pyList, (long)i, new PythonObject((List)item).nativePythonObject);
+            }
+            else if (item instanceof Object[]){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Object[])item).nativePythonObject);
             }
             else if(item instanceof Map){
                 PyList_SetItem(pyList, (long)i, new PythonObject((Map)item).nativePythonObject);
@@ -139,7 +153,57 @@ public class PythonObject {
                 PyList_SetItem(pyList, (long)i, new PythonObject((Boolean) item).nativePythonObject);
             }
             else{
-                throw new RuntimeException("Unsupported item in list");
+                throw new RuntimeException("Unsupported item in list: " + item);
+            }
+
+        }
+        nativePythonObject = pyList;
+    }
+    public PythonObject(List data){
+        PyObject pyList = PyList_New((long)data.size());
+        for(int i=0; i < data.size(); i++){
+            Object item = data.get(i);
+            if (item instanceof PythonObject){
+                PyList_SetItem(pyList, (long)i, ((PythonObject)item).nativePythonObject);
+            }
+            else if (item instanceof PyObject){
+                PyList_SetItem(pyList, (long)i, (PyObject)item);
+            }
+            else if (item instanceof INDArray){
+                PyList_SetItem(pyList, (long)i, new PythonObject((INDArray) item).nativePythonObject);
+            }
+            else if (item instanceof NumpyArray){
+                PyList_SetItem(pyList, (long)i, new PythonObject((NumpyArray) item).nativePythonObject);
+            }
+            else if(item instanceof List){
+                PyList_SetItem(pyList, (long)i, new PythonObject((List)item).nativePythonObject);
+            }
+            else if (item instanceof Object[]){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Object[])item).nativePythonObject);
+            }
+            else if(item instanceof Map){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Map)item).nativePythonObject);
+            }
+            else if (item instanceof String){
+                PyList_SetItem(pyList, (long)i, new PythonObject((String)item).nativePythonObject);
+            }
+            else if (item instanceof Double){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Double)item).nativePythonObject);
+            }
+            else if (item instanceof Float){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Float)item).nativePythonObject);
+            }
+            else if (item instanceof Long){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Long)item).nativePythonObject);
+            }
+            else if (item instanceof Integer){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Integer)item).nativePythonObject);
+            }
+            else if (item instanceof Boolean){
+                PyList_SetItem(pyList, (long)i, new PythonObject((Boolean) item).nativePythonObject);
+            }
+            else{
+                throw new RuntimeException("Unsupported item in list: " + item);
             }
 
         }
@@ -178,6 +242,9 @@ public class PythonObject {
             if (v instanceof PythonObject){
                 pyVal = (PythonObject)v;
             }
+            else if (v instanceof PyObject){
+                pyVal = new PythonObject((PyObject)v);
+            }
             else if (v instanceof INDArray){
                 pyVal = new PythonObject((INDArray)v);
             }
@@ -212,8 +279,12 @@ public class PythonObject {
                 throw new RuntimeException("Unsupported value in map");
             }
 
+            System.out.println(pyKey.isNone());
+            System.out.println(pyVal.isNone());
             PyDict_SetItem(pyDict, pyKey.nativePythonObject, pyVal.nativePythonObject);
+
         }
+        nativePythonObject = pyDict;
     }
 
 
@@ -367,15 +438,17 @@ public class PythonObject {
 
     public JSONArray toJSONArray(){
         PythonObject json = Python.importModule("json");
-        PythonObject serialized = json.call("dumps").call(this, ndarraySerializer);
+        PythonObject serialized = json.attr("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
-        return new JSONArray(jsonString);
+        JSONArray arr= new JSONArray(jsonString);
+        System.out.println(arr);
+        return arr;
 
     }
 
     public JSONObject toJSONObject(){
         PythonObject json = Python.importModule("json");
-        PythonObject serialized = json.call("dumps").call(this, ndarraySerializer);
+        PythonObject serialized = json.call("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
         return new JSONObject(jsonString);
     }

@@ -30,7 +30,7 @@ public class TestPythonExecutioner {
 
     @org.junit.Test
     public void testPythonSysVersion() {
-        PythonExecutioner.exec("import sys; print(sys.version)");
+        FastPythonExecutioner.exec("import sys; print(sys.version)");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + ' ' + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
 
         String z = pyOutputs.getStrValue("z");
 
@@ -68,7 +68,7 @@ public class TestPythonExecutioner {
         pyOutputs.addInt("z");
 
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
 
         long z = pyOutputs.getIntValue("z");
 
@@ -92,7 +92,7 @@ public class TestPythonExecutioner {
         pyOutputs.addList("z");
 
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
 
         Object[] z = pyOutputs.getListValue("z");
 
@@ -135,7 +135,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
         INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
@@ -145,7 +145,7 @@ public class TestPythonExecutioner {
 
     @Test
     public void testTensorflowCustomAnaconda() {
-        PythonExecutioner.exec("import tensorflow as tf");
+        FastPythonExecutioner.exec("import tensorflow as tf");
     }
 
     @Test
@@ -159,7 +159,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
         INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
@@ -176,7 +176,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
         INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
@@ -194,7 +194,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
         INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
@@ -212,7 +212,7 @@ public class TestPythonExecutioner {
 
         String code = "z = x + y";
 
-        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        FastPythonExecutioner.exec(code, pyInputs, pyOutputs);
         INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);

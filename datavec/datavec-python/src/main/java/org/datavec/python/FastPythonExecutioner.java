@@ -21,18 +21,8 @@ import static org.datavec.python.Python.*;
 public class FastPythonExecutioner {
 
 
-    public static class GIL implements AutoCloseable{
-        public GIL(){
-            FastPythonExecutioner.acquireGIL();
-        }
-        @Override
-        public void close(){
-            FastPythonExecutioner.releaseGIL();
-        }
-    }
-
     private static boolean init;
-    private static PyThreadState mainThreadState;
+
 
     static{init();}
     private static synchronized  void init() {
@@ -46,7 +36,6 @@ public class FastPythonExecutioner {
         log.info("CPython: Py_InitializeEx()");
         Py_InitializeEx(0);
         log.info("CPython: PyThreadState_Get()");
-        mainThreadState = PyThreadState_Get();
         numpy._import_array();
     }
 
@@ -105,6 +94,7 @@ public class FastPythonExecutioner {
     }
 
     public static void setVariables(PythonVariables pyVars){
+        if (pyVars == null)return;
         for (String varName: pyVars.getVariables()){
             setVariable(varName, pyVars.getType(varName), pyVars.getValue(varName));
         }
@@ -129,6 +119,10 @@ public class FastPythonExecutioner {
                 return pythonObject.toString();
             case BOOL:
                 return pythonObject.toBoolean();
+            case LIST:
+                return pythonObject.toList();
+            case DICT:
+                return pythonObject.toMap();
                 default:
                     throw new RuntimeException("Unsupported type: " + varType);
         }
@@ -157,29 +151,9 @@ public class FastPythonExecutioner {
 
     }
 
-    private static synchronized void acquireGIL() {
-        log.info("acquireGIL()");
-        log.info("CPython: PyEval_SaveThread()");
-        mainThreadState = PyEval_SaveThread();
-        log.info("CPython: PyThreadState_New()");
-        PyThreadState ts = PyThreadState_New(mainThreadState.interp());
-        log.info("CPython: PyEval_RestoreThread()");
-        PyEval_RestoreThread(ts);
-        log.info("CPython: PyThreadState_Swap()");
-        PyThreadState_Swap(ts);
 
-    }
-
-    private static synchronized void releaseGIL() {
-        log.info("CPython: PyEval_SaveThread()");
-        PyEval_SaveThread();
-        log.info("CPython: PyEval_RestoreThread()");
-        PyEval_RestoreThread(mainThreadState);
-    }
     public static void exec(String code){
-        acquireGIL();
         _exec(getWrappedCode(code));
-        releaseGIL();
     }
 
     public static void exec(String code, PythonVariables outputVariables){
@@ -264,9 +238,6 @@ public class FastPythonExecutioner {
         setVariables(inputs);
         _exec(getWrappedCode(code));
       return getAllVariables();
-    }
-    public static GIL lock(){
-        return new GIL();
     }
 
 }

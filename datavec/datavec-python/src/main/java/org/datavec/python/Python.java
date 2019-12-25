@@ -2,6 +2,10 @@ package org.datavec.python;
 
 
 
+import org.bytedeco.cpython.PyCodeObject;
+import org.bytedeco.cpython.PyObject;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 import static org.bytedeco.cpython.global.python.*;
 
 /**
@@ -13,7 +17,11 @@ import static org.bytedeco.cpython.global.python.*;
 public class Python {
 
     public static PythonObject importModule(String moduleName){
-        return new PythonObject(PyImport_ImportModule(moduleName));
+        PythonObject module = new PythonObject(PyImport_ImportModule(moduleName));
+        if (module.isNone()){
+            throw new RuntimeException("Error importing module: " + moduleName);
+        }
+        return module;
     }
     public static PythonObject attr(String attrName){
         return builtins().attr(attrName);
@@ -90,7 +98,7 @@ public class Python {
     }
 
     public static PythonObject globals(){
-        return builtins().attr("globals").call();
+        return new PythonObject(PyModule_GetDict(PyImport_ImportModule("__main__")));
     }
 
     public static PythonObject type(PythonObject obj){
@@ -101,13 +109,14 @@ public class Python {
         return attr("isinstance").call(obj, type);
     }
 
-    public static PythonObject eval(PythonObject code){
-        return attr("eval").call(code);
+    public static PythonObject eval(String code){
+        PyObject compiledCode =Py_CompileString(code, "", Py_eval_input);
+        PyObject globals = globals().getNativePythonObject();
+        PyObject locals = Python.dict().getNativePythonObject();
+        return new PythonObject(PyEval_EvalCode(compiledCode, globals, locals));
     }
 
-    public static PythonObject eval(String code){
-        return eval(new PythonObject(code));
-    }
+
 
     public static PythonObject builtins(){
         return importModule("builtins");
