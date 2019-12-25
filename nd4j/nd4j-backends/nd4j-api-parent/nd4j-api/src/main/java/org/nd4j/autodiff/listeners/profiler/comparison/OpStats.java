@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
@@ -13,18 +13,20 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
+package org.nd4j.autodiff.listeners.profiler.comparison;
 
-#include <op_boilerplate.h>
-#include <templatemath.h>
-#include <NDArray.h>
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.nd4j.list.NDArrayList;
 
-namespace nd4j {
-    namespace ops {
-        namespace helpers {
-             
-            void transform_hsv_rgb(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
-            void transform_rgb_hsv(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
-         
-        }
-    }
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class OpStats {
+    private String opInstanceName;
+    private String opName;
+    private int count;
+    private NDArrayList timesUs;
+    private Long sumUs;
 }
