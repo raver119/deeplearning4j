@@ -21,7 +21,7 @@ import static org.bytedeco.cpython.global.python.PyObject_SetItem;
 public class PythonObject {
     private PyObject nativePythonObject;
     static {
-        new FastPythonExecutioner();
+        new PythonExecutioner();
     }
 
     private static Map<String, PythonObject> _getNDArraySerializer(){

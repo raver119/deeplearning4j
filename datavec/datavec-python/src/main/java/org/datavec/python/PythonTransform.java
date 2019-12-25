@@ -24,11 +24,12 @@ import org.datavec.api.transform.ColumnType;
 import org.datavec.api.transform.Transform;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.api.writable.*;
+import org.json.JSONPropertyIgnore;
 import org.nd4j.base.Preconditions;
 import org.nd4j.jackson.objectmapper.holder.ObjectMapperHolder;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
-
+import org.nd4j.shade.jackson.annotation.JsonIgnoreProperties;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;

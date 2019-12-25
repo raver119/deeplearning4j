@@ -20,7 +20,7 @@ public class PythonContextManager {
     static {init();}
     private static void init(){
         if (init) return;
-        new FastPythonExecutioner();
+        new PythonExecutioner();
         init = true;
         currentContext = "main";
         contexts.add(currentContext);
