@@ -113,6 +113,9 @@ public class Python {
     public static PythonObject tuple(){
         return attr("tuple").call();
     }
+    public static PythonObject tupleType(){
+        return attr("tuple");
+    }
 
     public static PythonObject globals(){
         return new PythonObject(PyModule_GetDict(PyImport_ImportModule("__main__")));

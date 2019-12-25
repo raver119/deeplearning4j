@@ -286,18 +286,18 @@ public class PythonUtils {
         else{
             throw new RuntimeException("Unsupported array type " + dtypeName + ".");
         }
-        List shapeList = (List)map.get("shape");
+        List shapeList = map.getJSONArray("shape").toList();
         long[] shape = new long[shapeList.size()];
         for (int i = 0; i < shape.length; i++) {
-            shape[i] = (Long)shapeList.get(i);
+            shape[i] = ((Number)shapeList.get(i)).longValue();
         }
 
-        List strideList = (List)map.get("shape");
+        List strideList = map.getJSONArray("shape").toList();
         long[] stride = new long[strideList.size()];
         for (int i = 0; i < stride.length; i++) {
-            stride[i] = (Long)strideList.get(i);
+            stride[i] = ((Number)strideList.get(i)).longValue();
         }
-        long address = (Long)map.get("address");
+        long address = ((Number)map.get("address")).longValue();
         NumpyArray numpyArray = new NumpyArray(address, shape, stride, true,dtype);
         return numpyArray;
     }

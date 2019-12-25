@@ -442,16 +442,54 @@ public class PythonObject {
 
     public JSONObject toJSONObject(){
         PythonObject json = Python.importModule("json");
-        PythonObject serialized = json.call("dumps").call(this, _getNDArraySerializer());
+        PythonObject serialized = json.attr("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
         return new JSONObject(jsonString);
     }
 
     public List toList(){
-        return PythonUtils.toList(toJSONArray());
+        List list = new ArrayList();
+        int n = Python.len(this).toInt();
+        for(int i=0;i<n;i++){
+            PythonObject o = get(i);
+            if (Python.isinstance(o, Python.strType()).toBoolean()){
+                list.add(o.toString());
+            }
+            else if (Python.isinstance(o, Python.intType()).toBoolean()){
+                list.add(o.toLong());
+            }
+            else if (Python.isinstance(o, Python.floatType()).toBoolean()){
+                list.add(o.toDouble());
+            }
+            else if (Python.isinstance(o, Python.boolType()).toBoolean()){
+                list.add(o.toBoolean());
+            }
+            else if (Python.isinstance(o, Python.listType(), Python.tupleType()).toBoolean()){
+                list.add(o.toList());
+            }
+            else if (Python.isinstance(o, Python.importModule("numpy").attr("ndarray")).toBoolean()){
+                list.add(o.toNumpy().getNd4jArray());
+            }
+            else if (Python.isinstance(o, Python.dictType()).toBoolean()){
+                list.add(o.toMap());
+            }
+            else{
+                throw new RuntimeException("Error while converting python" +
+                        " list to java List: Unable to serialize python " +
+                        "object of type " + Python.type(this).toString());
+            }
+        }
+
+        return list;
     }
     public Map toMap(){
-        return PythonUtils.toMap(toJSONObject());
+        Map map = new HashMap();
+        List keys = Python.list(attr("keys").call()).toList();
+        List values = Python.list(attr("values").call()).toList();
+        for (int i=0; i < keys.size(); i++){
+            map.put(keys.get(i), values.get(i));
+        }
+        return map;
     }
 
     public boolean isNone(){

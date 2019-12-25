@@ -24,10 +24,7 @@ import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -36,46 +33,47 @@ import static org.junit.Assert.assertEquals;
 public class TestPythonList {
 
     @Test
-    public void testPythonListFromIntArray(){
+    public void testPythonListFromIntArray() {
         PythonObject pyList = new PythonObject(new Integer[]{1, 2, 3, 4, 5});
         pyList.attr("append").call(6);
         pyList.attr("append").call(7);
         pyList.attr("append").call(8);
         assertEquals(8, Python.len(pyList).toInt());
-        for (int i=0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             assertEquals(i + 1, pyList.get(i).toInt());
         }
 
     }
 
     @Test
-    public void testPythonListFromLongArray(){
+    public void testPythonListFromLongArray() {
         PythonObject pyList = new PythonObject(new Long[]{1L, 2L, 3L, 4L, 5L});
         pyList.attr("append").call(6);
         pyList.attr("append").call(7);
         pyList.attr("append").call(8);
         assertEquals(8, Python.len(pyList).toInt());
-        for (int i=0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             assertEquals(i + 1, pyList.get(i).toInt());
         }
 
     }
 
     @Test
-    public void testPythonListFromDoubleArray(){
+    public void testPythonListFromDoubleArray() {
         PythonObject pyList = new PythonObject(new Double[]{1., 2., 3., 4., 5.});
         pyList.attr("append").call(6);
         pyList.attr("append").call(7);
         pyList.attr("append").call(8);
         assertEquals(8, Python.len(pyList).toInt());
-        for (int i=0; i < 8; i++){
+        for (int i = 0; i < 8; i++) {
             assertEquals(i + 1, pyList.get(i).toInt());
             assertEquals((double) i + 1, pyList.get(i).toDouble(), 1e-5);
         }
 
     }
+
     @Test
-    public void testPythonListFromStringArray(){
+    public void testPythonListFromStringArray() {
         PythonObject pyList = new PythonObject(new String[]{"abcd", "efg"});
         pyList.attr("append").call("hijk");
         pyList.attr("append").call("lmnop");
@@ -102,8 +100,9 @@ public class TestPythonList {
                 "'a', 'b', 'c']}], {'arr': array([1., 2., 3.," +
                 " 4.], dtype=float32), 1: 'a', 'a': ['a', 'b', 'c']}]";
         assertEquals(expectedStr, pyList.toString());
+        List objs2 = pyList.toList();
+        PythonObject pyList2 = new PythonObject(objs2);
+        assertEquals(pyList.toString(), pyList2.toString());
     }
-
-
 
 }
