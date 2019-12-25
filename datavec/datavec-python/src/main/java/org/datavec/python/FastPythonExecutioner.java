@@ -205,7 +205,7 @@ public class FastPythonExecutioner {
     public static PythonVariables getAllVariables(){
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
-        PythonObject keysList = Python.list(globals.attr("keys"));
+        PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
         for (int i=0;i<numKeys;i++){
             PythonObject key = keysList.get(i);

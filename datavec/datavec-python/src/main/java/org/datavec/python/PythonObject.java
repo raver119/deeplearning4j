@@ -33,9 +33,6 @@ public class PythonObject {
                          "'shape':x.shape,'strides':x.strides," +
                          "'dtype': str(x.dtype),'_is_numpy_array': True}" +
                          " if str(type(x))== \"<class 'numpy.ndarray'>\" else x");
-         if (lambda.isNone()){
-             System.out.println("lambda is none!");
-         }
         ndarraySerializer.put("default",
                lambda);
         return ndarraySerializer;
@@ -310,6 +307,7 @@ public class PythonObject {
         return PyLong_AsLong(nativePythonObject);
     }
     public boolean toBoolean(){
+        if (isNone()) return false;
         return toInt() != 0;
     }
 
@@ -438,9 +436,7 @@ public class PythonObject {
         PythonObject json = Python.importModule("json");
         PythonObject serialized = json.attr("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
-        JSONArray arr= new JSONArray(jsonString);
-        System.out.println(arr);
-        return arr;
+        return new JSONArray(jsonString);
 
     }
 
@@ -461,6 +457,5 @@ public class PythonObject {
     public boolean isNone(){
         return nativePythonObject == null;
     }
-
 
 }

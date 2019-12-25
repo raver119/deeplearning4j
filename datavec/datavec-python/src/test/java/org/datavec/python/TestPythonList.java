@@ -70,6 +70,7 @@ public class TestPythonList {
         Map<Object, Object> map = new HashMap<>();
         map.put(1, "a");
         map.put("a", Arrays.asList("a", "b", "c"));
+        map.put("arr", Nd4j.linspace(1, 4, 4));
         Object[] objs = new Object[]{
                 1, 2, "a", 3f, 4L, 5.0, Arrays.asList(10,
                 20, "b", 30f, 40L, 50.0, map
@@ -77,8 +78,15 @@ public class TestPythonList {
         ), map
         };
         PythonObject pyList = new PythonObject(objs);
-        String expectedStr = "[1, 2, 'a', 3.0, 4, 5.0, [10, 20, 'b', 30.0, 40, 50.0, {1: 'a', 'a': ['a', 'b', 'c']}], {1: 'a', 'a': ['a', 'b', 'c']}]";
+        System.out.println(pyList.toString());
+        String expectedStr = "[1, 2, 'a', 3.0, 4, 5.0, [10" +
+                ", 20, 'b', 30.0, 40, 50.0, {'arr': array([1.," +
+                " 2., 3., 4.], dtype=float32), 1: 'a', 'a': [" +
+                "'a', 'b', 'c']}], {'arr': array([1., 2., 3.," +
+                " 4.], dtype=float32), 1: 'a', 'a': ['a', 'b', 'c']}]";
         assertEquals(expectedStr, pyList.toString());
     }
+
+
 
 }

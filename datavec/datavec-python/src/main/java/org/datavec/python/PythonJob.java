@@ -18,6 +18,9 @@ public class PythonJob {
         this.code = code;
         this.setupRunMode = setupRunMode;
         context = "__job_" + name;
+        if (PythonContextManager.hasContext(context)){
+            throw new RuntimeException("Unable to create python job " + name + ". Context " + context + " already exists!");
+        }
         if (setupRunMode)setup();
     }
 

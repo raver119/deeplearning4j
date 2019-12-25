@@ -51,7 +51,7 @@ public class PythonContextManager {
         return "__collapsed__" + contextName + "__";
     }
     private static String _getCollapsedVarNameForContext(String varName, String contextName){
-        return _getContextPrefix(contextName) + "__" + varName;
+        return _getContextPrefix(contextName) + varName;
     }
 
     private static String _expandCollapsedVarName(String varName, String contextName){
@@ -63,13 +63,13 @@ public class PythonContextManager {
 
     }
     private static void _collapseContext(String contextName){
-        PythonObject globals = Python.globals().call();
+        PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
         for(int i=0;i<numKeys;i++){
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (!(keyStr.startsWith("__") && keyStr.endsWith("__"))){
+            if (!((keyStr.startsWith("__") && keyStr.endsWith("__"))|| keyStr.startsWith("__collapsed_"))){
                 String collapsedKey = _getCollapsedVarNameForContext(keyStr, contextName);
                 PythonObject val = globals.attr("pop").call(key);
                 globals.set(new PythonObject(collapsedKey), val);
@@ -78,7 +78,7 @@ public class PythonContextManager {
     }
     private static void _expandContext(String contextName){
         String prefix = _getContextPrefix(contextName);
-        PythonObject globals = Python.globals().call();
+        PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
         for(int i=0;i<numKeys;i++){
@@ -118,7 +118,7 @@ public class PythonContextManager {
             throw new RuntimeException("Can not delete current context!");
         }
         String prefix = _getContextPrefix(contextName);
-        PythonObject globals = Python.globals().call();
+        PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
         for(int i=0;i<numKeys;i++){
@@ -129,6 +129,15 @@ public class PythonContextManager {
             }
         }
 
+    }
+
+    public static void deleteNonMainContexts(){
+        setContext("main");
+        for(String c: contexts.toArray(new String[0])){
+            if (!c.equals("main")){
+                deleteContext(c);
+            }
+        }
     }
 
     public String[] getContexts(){

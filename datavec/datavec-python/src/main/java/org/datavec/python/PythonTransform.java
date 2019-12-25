@@ -58,6 +58,7 @@ public class PythonTransform implements Transform {
     private String outputDict;
     private boolean returnAllVariables;
     private boolean setupAndRun = false;
+    private PythonJob pythonJob;
 
 
     @Builder
@@ -78,23 +79,12 @@ public class PythonTransform implements Transform {
             this.inputs = inputs;
         if(outputs != null)
             this.outputs = outputs;
-
         if(name != null)
             this.name = name;
         if (outputDict != null) {
             this.outputDict = outputDict;
             this.outputs = new PythonVariables();
             this.outputs.addDict(outputDict);
-
-            String helpers;
-            try(InputStream is = new ClassPathResource("pythonexec/serialize_array.py").getInputStream()) {
-                helpers = IOUtils.toString(is, Charset.defaultCharset());
-
-            }catch (IOException e){
-                throw  new RuntimeException("Error reading python code");
-            }
-            this.code += "\n\n" + helpers;
-            this.code += "\n" + outputDict + " = __recursive_serialize_dict(" + outputDict + ")";
         }
 
         try {
@@ -114,7 +104,7 @@ public class PythonTransform implements Transform {
         }catch(Exception e) {
             throw new IllegalStateException(e);
         }
-
+        pythonJob = new PythonJob("a" + UUID.randomUUID().toString().replace("-", "_"), code, setupAndRun);
     }
 
 
@@ -168,27 +158,16 @@ public class PythonTransform implements Transform {
 
         try{
             if (returnAllVariables) {
-                if (setupAndRun){
-                    return getWritablesFromPyOutputs(PythonExecutioner.execWithSetupRunAndReturnAllVariables(code, pyInputs));
-                }
-                return getWritablesFromPyOutputs(PythonExecutioner.execAndReturnAllVariables(code, pyInputs));
+                return getWritablesFromPyOutputs(pythonJob.execAndReturnAllVariables(pyInputs));
             }
 
             if (outputDict != null) {
-                if (setupAndRun) {
-                    PythonExecutioner.execWithSetupAndRun(this, pyInputs);
-                }else{
-                    PythonExecutioner.exec(this, pyInputs);
-                }
+                pythonJob.exec(pyInputs, outputs);
                 PythonVariables out = PythonUtils.expandInnerDict(outputs, outputDict);
                 return getWritablesFromPyOutputs(out);
             }
             else {
-                if (setupAndRun) {
-                    PythonExecutioner.execWithSetupAndRun(code, pyInputs, outputs);
-                }else{
-                    PythonExecutioner.exec(code, pyInputs, outputs);
-                }
+                pythonJob.exec(pyInputs, outputs);
 
                 return getWritablesFromPyOutputs(outputs);
             }

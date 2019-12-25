@@ -106,7 +106,8 @@ public class Python {
     }
 
     public static PythonObject isinstance(PythonObject obj, PythonObject... type){
-        return attr("isinstance").call(obj, type);
+        return new PythonObject(PyObject_IsInstance(obj.getNativePythonObject(),
+                PyList_AsTuple(new PythonObject(type).getNativePythonObject())));
     }
 
     public static PythonObject eval(String code){

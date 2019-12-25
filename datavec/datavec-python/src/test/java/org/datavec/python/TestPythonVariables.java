@@ -36,16 +36,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TestPythonVariables {
 
-
-
-    @Test
-    public void testImportNumpy(){
-        Nd4j.scalar(1.0);
-        System.out.println(System.getProperty("org.bytedeco.openblas.load"));
-        PythonExecutioner.exec("import numpy as np");
-    }
-
-
     @Test
     public void testDataAssociations() {
         PythonVariables pythonVariables = new PythonVariables();
