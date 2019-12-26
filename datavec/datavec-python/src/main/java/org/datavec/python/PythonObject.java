@@ -367,7 +367,7 @@ public class PythonObject {
         PyObject tuple = PyList_AsTuple(args.nativePythonObject);
         return new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
     }
-    public PythonObject callWithKargs(PythonObject kwargs){
+    public PythonObject callWithKwargs(PythonObject kwargs){
         PyObject tuple = PyTuple_New(0);
         return new PythonObject(PyObject_Call(nativePythonObject, tuple, kwargs.nativePythonObject));
     }

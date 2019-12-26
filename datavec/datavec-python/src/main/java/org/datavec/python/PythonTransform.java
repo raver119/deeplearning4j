@@ -155,8 +155,6 @@ public class PythonTransform implements Transform {
     public List<Writable> map(List<Writable> writables) {
         PythonVariables pyInputs = getPyInputsFromWritables(writables);
         Preconditions.checkNotNull(pyInputs,"Inputs must not be null!");
-
-
         try{
             if (returnAllVariables) {
                 return getWritablesFromPyOutputs(pythonJob.execAndReturnAllVariables(pyInputs));

@@ -77,7 +77,7 @@ public class PythonJob {
                 }
                 runargs.set(arg, val);
             }
-            PythonObject outDict = runF.callWithKargs(runargs);
+            PythonObject outDict = runF.callWithKwargs(runargs);
             Python.globals().attr("update").call(outDict);
 
             PythonExecutioner.getVariables(outputs);
@@ -102,7 +102,7 @@ public class PythonJob {
                 }
                 runargs.set(arg, val);
             }
-            PythonObject outDict = runF.callWithKargs(runargs);
+            PythonObject outDict = runF.callWithKwargs(runargs);
             Python.globals().attr("update").call(outDict);
             return PythonExecutioner.getAllVariables();
         }

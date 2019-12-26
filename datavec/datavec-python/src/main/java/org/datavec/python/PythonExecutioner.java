@@ -249,9 +249,13 @@ public class PythonExecutioner {
                 else if (Python.isinstance(val, dictType())){
                     out.addDict(keyStr, val.toMap());
                 }
-                else if (Python.isinstance(val, Python.importModule("numpy").attr("ndarray"))){
-                    out.addNDArray(keyStr, val.toNumpy());
+                else{
+                   PythonObject np = importModule("numpy");
+                   if (Python.isinstance(val, np.attr("ndarray"), np.attr("generic"))){
+                       out.addNDArray(keyStr, val.toNumpy());
+                   }
                 }
+
             }
         }
         return out;
