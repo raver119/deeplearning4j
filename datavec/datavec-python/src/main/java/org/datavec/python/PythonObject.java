@@ -452,25 +452,25 @@ public class PythonObject {
         int n = Python.len(this).toInt();
         for(int i=0;i<n;i++){
             PythonObject o = get(i);
-            if (Python.isinstance(o, Python.strType()).toBoolean()){
+            if (Python.isinstance(o, Python.strType())){
                 list.add(o.toString());
             }
-            else if (Python.isinstance(o, Python.intType()).toBoolean()){
+            else if (Python.isinstance(o, Python.intType())){
                 list.add(o.toLong());
             }
-            else if (Python.isinstance(o, Python.floatType()).toBoolean()){
+            else if (Python.isinstance(o, Python.floatType())){
                 list.add(o.toDouble());
             }
-            else if (Python.isinstance(o, Python.boolType()).toBoolean()){
-                list.add(o.toBoolean());
+            else if (Python.isinstance(o, Python.boolType())){
+                list.add(o);
             }
-            else if (Python.isinstance(o, Python.listType(), Python.tupleType()).toBoolean()){
+            else if (Python.isinstance(o, Python.listType(), Python.tupleType())){
                 list.add(o.toList());
             }
-            else if (Python.isinstance(o, Python.importModule("numpy").attr("ndarray")).toBoolean()){
+            else if (Python.isinstance(o, Python.importModule("numpy").attr("ndarray"))){
                 list.add(o.toNumpy().getNd4jArray());
             }
-            else if (Python.isinstance(o, Python.dictType()).toBoolean()){
+            else if (Python.isinstance(o, Python.dictType())){
                 list.add(o.toMap());
             }
             else{

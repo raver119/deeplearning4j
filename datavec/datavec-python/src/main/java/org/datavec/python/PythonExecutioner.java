@@ -197,22 +197,22 @@ public class PythonExecutioner {
             String keyStr = key.toString();
             if (!keyStr.startsWith("_")){
                 PythonObject val = globals.get(key);
-                if (Python.isinstance(val, intType()).toBoolean()){
+                if (Python.isinstance(val, intType())){
                     out.addInt(keyStr, val.toInt());
                 }
-                else if (Python.isinstance(val, floatType()).toBoolean()){
+                else if (Python.isinstance(val, floatType())){
                     out.addFloat(keyStr, val.toDouble());
                 }
-                else if (Python.isinstance(val, strType()).toBoolean()){
+                else if (Python.isinstance(val, strType())){
                     out.addStr(keyStr, val.toString());
                 }
-                else if (Python.isinstance(val, boolType()).toBoolean()){
+                else if (Python.isinstance(val, boolType())){
                     out.addBool(keyStr, val.toBoolean());
                 }
-                else if (Python.isinstance(val, listType()).toBoolean()){
+                else if (Python.isinstance(val, listType())){
                     out.addList(keyStr, val.toList().toArray(new Object[0]));
                 }
-                else if (Python.isinstance(val, dictType()).toBoolean()){
+                else if (Python.isinstance(val, dictType())){
                     out.addDict(keyStr, val.toMap());
                 }
             }
@@ -231,22 +231,22 @@ public class PythonExecutioner {
             String keyStr = key.toString();
             if (!keyStr.startsWith("_")){
                 PythonObject val = globals.get(key);
-                if (Python.isinstance(val, intType()).toBoolean()){
+                if (Python.isinstance(val, intType())){
                     out.addInt(keyStr, val.toInt());
                 }
-                else if (Python.isinstance(val, floatType()).toBoolean()){
+                else if (Python.isinstance(val, floatType())){
                     out.addFloat(keyStr, val.toDouble());
                 }
-                else if (Python.isinstance(val, strType()).toBoolean()){
+                else if (Python.isinstance(val, strType())){
                     out.addStr(keyStr, val.toString());
                 }
-                else if (Python.isinstance(val, boolType()).toBoolean()){
+                else if (Python.isinstance(val, boolType())){
                     out.addBool(keyStr, val.toBoolean());
                 }
-                else if (Python.isinstance(val, listType()).toBoolean()){
+                else if (Python.isinstance(val, listType())){
                     out.addList(keyStr, val.toList().toArray(new Object[0]));
                 }
-                else if (Python.isinstance(val, dictType()).toBoolean()){
+                else if (Python.isinstance(val, dictType())){
                     out.addDict(keyStr, val.toMap());
                 }
             }

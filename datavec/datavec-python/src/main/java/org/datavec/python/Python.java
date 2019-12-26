@@ -125,9 +125,9 @@ public class Python {
         return attr("type").call(obj);
     }
 
-    public static PythonObject isinstance(PythonObject obj, PythonObject... type){
-        return new PythonObject(PyObject_IsInstance(obj.getNativePythonObject(),
-                PyList_AsTuple(new PythonObject(type).getNativePythonObject())));
+    public static boolean isinstance(PythonObject obj, PythonObject... type){
+        return PyObject_IsInstance(obj.getNativePythonObject(),
+                PyList_AsTuple(new PythonObject(type).getNativePythonObject())) != 0;
     }
 
     public static PythonObject eval(String code){
