@@ -69,7 +69,7 @@ public class PythonJob {
             PythonObject argsList = argspec.attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
-            for(int i=0; i <argsCount; i++){
+            for(int i = 0; i < argsCount; i++){
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if(val.isNone()){
@@ -94,7 +94,7 @@ public class PythonJob {
             PythonObject argsList = inspect.attr("getfullargspec").call(runF).attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
-            for(int i=0; i <argsCount; i++){
+            for(int i = 0; i < argsCount; i++){
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if(val.isNone()){

@@ -45,7 +45,7 @@ public class PythonContextManager {
     }
 
     public static void addContext(String contextName){
-        if(!_validateContextName(contextName)){
+        if(!validateContextName(contextName)){
             throw new RuntimeException("Invalid context name: " + contextName);
         }
         contexts.add(contextName);
@@ -56,8 +56,8 @@ public class PythonContextManager {
     }
 
 
-    public static boolean _validateContextName(String s) {
-        if(s.length()==0)   return false;
+    public static boolean validateContextName(String s) {
+        if(s.length() == 0) return false;
         if(!Character.isJavaIdentifierStart(s.charAt(0)))   return false;
         for (int i = 1; i < s.length(); i++)
             if (!Character.isJavaIdentifierPart(s.charAt(i)))
@@ -65,14 +65,14 @@ public class PythonContextManager {
         return true;
     }
 
-    private static String _getContextPrefix(String contextName){
+    private static String getContextPrefix(String contextName){
         return "__collapsed__" + contextName + "__";
     }
-    private static String _getCollapsedVarNameForContext(String varName, String contextName){
-        return _getContextPrefix(contextName) + varName;
+    private static String getCollapsedVarNameForContext(String varName, String contextName){
+        return getContextPrefix(contextName) + varName;
     }
 
-    private static String _expandCollapsedVarName(String varName, String contextName){
+    private static String expandCollapsedVarName(String varName, String contextName){
         String prefix = "__collapsed__" + contextName + "__";
         if (!(varName.startsWith(prefix))){
             throw new RuntimeException("Invalid variable name.");
@@ -80,7 +80,7 @@ public class PythonContextManager {
         return varName.substring(prefix.length());
 
     }
-    private static void _collapseContext(String contextName){
+    private static void collapseContext(String contextName){
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
@@ -88,14 +88,14 @@ public class PythonContextManager {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
             if (!((keyStr.startsWith("__") && keyStr.endsWith("__"))|| keyStr.startsWith("__collapsed_"))){
-                String collapsedKey = _getCollapsedVarNameForContext(keyStr, contextName);
+                String collapsedKey = getCollapsedVarNameForContext(keyStr, contextName);
                 PythonObject val = globals.attr("pop").call(key);
                 globals.set(new PythonObject(collapsedKey), val);
             }
         }
     }
-    private static void _expandContext(String contextName){
-        String prefix = _getContextPrefix(contextName);
+    private static void expandContext(String contextName){
+        String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
@@ -103,7 +103,7 @@ public class PythonContextManager {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
             if (keyStr.startsWith(prefix)){
-                String expandedKey = _expandCollapsedVarName(keyStr, contextName);
+                String expandedKey = expandCollapsedVarName(keyStr, contextName);
                 PythonObject val = globals.attr("pop").call(key);
                 globals.set(new PythonObject(expandedKey), val);
             }
@@ -112,14 +112,14 @@ public class PythonContextManager {
     }
 
     public static void setContext(String contextName){
-        if (contextName == currentContext){
+        if (contextName.equals(currentContext)){
             return;
         }
         if (!hasContext(contextName)){
             addContext(contextName);
         }
-        _collapseContext(currentContext);
-        _expandContext(contextName);
+        collapseContext(currentContext);
+        expandContext(contextName);
         currentContext = contextName;
 
     }
@@ -135,7 +135,7 @@ public class PythonContextManager {
         if (contextName.equals(currentContext)){
             throw new RuntimeException("Can not delete current context!");
         }
-        String prefix = _getContextPrefix(contextName);
+        String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();

@@ -18,11 +18,7 @@
 package org.datavec.python;
 
 
-
-import org.bytedeco.cpython.PyCodeObject;
 import org.bytedeco.cpython.PyObject;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 import static org.bytedeco.cpython.global.python.*;
 
 /**

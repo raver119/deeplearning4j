@@ -37,6 +37,7 @@ public class PythonGIL implements AutoCloseable{
         acquire();
     }
 
+    @Override
     public void close(){
         release();
     }
