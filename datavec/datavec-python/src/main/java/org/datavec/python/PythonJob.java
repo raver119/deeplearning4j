@@ -40,11 +40,11 @@ public class PythonJob {
         try (PythonGIL gil = PythonGIL.lock()){
             PythonContextManager.setContext(context);
             PythonObject runF = PythonExecutioner.getVariable("run");
-            if (runF.isNone()){
+            if (runF.isNone() || !Python.callable(runF)){
                 PythonExecutioner.exec(code);
             }
-            PythonExecutioner.getVariable("run");
-            if (runF.isNone()){
+            runF = PythonExecutioner.getVariable("run");
+            if (runF.isNone() || !Python.callable(runF)){
                 throw new RuntimeException("run() method not found!");
             }
             this.runF = runF;
@@ -62,8 +62,11 @@ public class PythonJob {
                 return;
             }
             PythonExecutioner.setVariables(inputs);
+
             PythonObject inspect = Python.importModule("inspect");
-            PythonObject argsList = inspect.attr("getfullargspec").call(runF).attr("args");
+            PythonObject getfullargspec = inspect.attr("getfullargspec");
+            PythonObject argspec = getfullargspec.call(runF);
+            PythonObject argsList = argspec.attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
             for(int i=0; i <argsCount; i++){

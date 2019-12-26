@@ -146,7 +146,7 @@ public class PythonContextManager {
                 globals.attr("__delitem__").call(key);
             }
         }
-
+        contexts.remove(contextName);
     }
 
     public static void deleteNonMainContexts(){

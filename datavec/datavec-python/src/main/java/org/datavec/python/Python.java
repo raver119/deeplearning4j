@@ -144,15 +144,19 @@ public class Python {
     }
 
     public static PythonObject None(){
-        return eval("None");
+        return dict().attr("get").call(0);
     }
 
     public static PythonObject True(){
-        return eval("True");
+        return boolType().call(1);
     }
     public static PythonObject False(){
-        return eval("False");
+        return boolType().call(0);
+
     }
 
+    public static boolean callable(PythonObject pythonObject){
+        return PyCallable_Check(pythonObject.getNativePythonObject()) == 1;
+    }
 
 }
