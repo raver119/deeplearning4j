@@ -710,6 +710,17 @@ public class Schema implements Serializable {
             return this;
         }
 
+
+        /**
+         * Add a bytes column representing
+         * arbitrary bytes string data
+         * @param name the name of the column
+         * @return
+         */
+        public Builder addColumnBytes(String name) {
+            return addColumn(new BinaryMetaData(name));
+        }
+
         /**
          * Add a String column with no restrictions on the allowable values.
          *

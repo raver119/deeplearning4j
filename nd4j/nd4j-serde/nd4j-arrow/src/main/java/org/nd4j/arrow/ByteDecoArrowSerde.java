@@ -196,10 +196,21 @@ public class ByteDecoArrowSerde {
         }
     }
 
+    /**
+     *
+     * @param arrowBuffer
+     * @param dataType
+     * @return
+     */
     public static DataBuffer fromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
         return Nd4j.createBuffer(arrowBuffer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
     }
 
+    /**
+     *
+     * @param dataBuffer
+     * @return
+     */
     public static Pair<ArrowBuffer,DataType> fromNd4jBuffer(DataBuffer dataBuffer) {
         return Pair.of(new ArrowBuffer(dataBuffer.pointer()),arrowDataTypeForNd4j(dataBuffer.dataType()));
     }

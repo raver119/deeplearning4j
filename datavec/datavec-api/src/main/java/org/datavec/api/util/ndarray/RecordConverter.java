@@ -127,7 +127,7 @@ public class RecordConverter {
         INDArray arr = Nd4j.create(1, length);
 
         int k = 0;
-        for (Writable w : record ) {
+        for (Writable w : record) {
             if (w instanceof NDArrayWritable) {
                 INDArray toPut = ((NDArrayWritable) w).get();
                 arr.put(new INDArrayIndex[] {NDArrayIndex.point(0),
