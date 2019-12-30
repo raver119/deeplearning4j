@@ -36,7 +36,9 @@ public class Nd4jArrowOpRunnerTest {
         INDArray verifySecond = ByteDecoArrowSerde.ndarrayFromArrowArray(conversionTwo).reshape(new long[0]);
         assertEquals(arr,verifyFirst);
         assertEquals(arr2,verifySecond);
-        Nd4jArrowOpRunner.runOpOn(new PrimitiveArray[]{conversionOne,conversionTwo},"add");
+        PrimitiveArray[] primitiveArrays = Nd4jArrowOpRunner.runOpOn(new PrimitiveArray[]{conversionOne, conversionOne}, "add");
+        INDArray outputArr = ByteDecoArrowSerde.ndarrayFromArrowArray(primitiveArrays[0]);
+        assertEquals(2.0,outputArr.sumNumber().doubleValue(),1e-3);
 
 
     }

@@ -17,19 +17,32 @@
 
 package org.nd4j.arrow;
 
-import org.bytedeco.arrow.Array;
 import org.bytedeco.arrow.PrimitiveArray;
-import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.DynamicCustomOp.DynamicCustomOpsBuilder;
 import org.nd4j.linalg.factory.Nd4j;
 
-import static org.nd4j.arrow.ByteDecoArrowSerde.convertToNdArray;
+import static org.nd4j.arrow.ByteDecoArrowSerde.ndarrayFromArrowArray;
 
+/**
+ * Runs {@link DynamicCustomOp}
+ * on arrow based data types.
+ *
+ * @author Adam Gibson
+ */
 public class Nd4jArrowOpRunner {
 
-    public static void runOpOn(PrimitiveArray[] array,String opName,Object...args) {
+    /**
+     * Runs operations
+     * @param array the input {@link PrimitiveArray}
+     * @param opName the op name to run
+     * @param args the args (booleans, integers,..)
+     * @return the {@link PrimitiveArray} equivalents
+     * from the outputs from the execution of {@link DynamicCustomOp}
+     * derived from the input names.
+     */
+    public static PrimitiveArray[] runOpOn(PrimitiveArray[] array,String opName,Object...args) {
         DynamicCustomOpsBuilder opBuilder =  DynamicCustomOp.builder(opName);
         for(Object arg : args) {
             if(arg instanceof Integer || arg instanceof Long) {
@@ -48,13 +61,20 @@ public class Nd4jArrowOpRunner {
 
         INDArray[] inputs = new INDArray[array.length];
         for(int i = 0; i < inputs.length; i++) {
-            inputs[i] = convertToNdArray(array[i]);
+            inputs[i] = ndarrayFromArrowArray(array[i]);
         }
 
         opBuilder.addInputs(inputs);
 
         DynamicCustomOp build = opBuilder.build();
         Nd4j.getExecutioner().exec(build);
+        INDArray[] ret =  build.outputArguments();
+        PrimitiveArray[] outputArrays = new PrimitiveArray[ret.length];
+        for(int i = 0; i < ret.length; i++) {
+            outputArrays[i] = ByteDecoArrowSerde.arrayFromExistingINDArray(ret[i]);
+        }
+
+        return outputArrays;
     }
 
 

@@ -3701,9 +3701,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         if (this.length() < 2 && (newShape == null || newShape.length == 0) && this.elementWiseStride() == 1) {
             return Nd4j.create(this.data(), new int[0], new int[0], 0);
         }
-        else if(length() >= 2) {
-            throw new IllegalStateException("Shape was " + Arrays.toString(shape()));
-        }
+
 
         if (newShape == null || newShape.length < 1)
             throw new ND4JIllegalStateException(

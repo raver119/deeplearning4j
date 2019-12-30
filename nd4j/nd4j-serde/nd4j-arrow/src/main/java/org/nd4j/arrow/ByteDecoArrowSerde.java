@@ -17,6 +17,7 @@
 package org.nd4j.arrow;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.arrow.*;
+import org.bytedeco.javacpp.BytePointer;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -200,7 +201,8 @@ public class ByteDecoArrowSerde {
      * @return
      */
     public static DataBuffer fromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
-        return Nd4j.createBuffer(arrowBuffer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
+        BytePointer bytePointer = arrowBuffer.data().capacity(arrowBuffer.capacity() * dataBufferTypeTypeForArrow(dataType).width());
+        return Nd4j.createBuffer(bytePointer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
     }
 
     /**
@@ -211,7 +213,9 @@ public class ByteDecoArrowSerde {
      * @return the pair
      */
     public static Pair<ArrowBuffer,DataType> fromNd4jBuffer(DataBuffer dataBuffer) {
-        return Pair.of(new ArrowBuffer(dataBuffer.pointer()),arrowDataTypeForNd4j(dataBuffer.dataType()));
+        BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.length() * dataBuffer.getElementSize());
+        return Pair.of(arrowBuffer,arrowDataTypeForNd4j(dataBuffer.dataType()));
     }
 
 
@@ -221,7 +225,7 @@ public class ByteDecoArrowSerde {
      * @return the equivalent {@link INDArray} zero copied
      */
     public static INDArray ndarrayFromArrowArray(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.length());
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
     }
@@ -254,17 +258,5 @@ public class ByteDecoArrowSerde {
         return primitiveArray;
     }
 
-
-    /**
-     *
-     * @param array
-     * @return
-     */
-    public static INDArray convertToNdArray(Array array) {
-        org.nd4j.linalg.api.buffer.DataType dataType = ByteDecoArrowSerde.dataBufferTypeTypeForArrow(array.type());
-        DataBuffer dataBuffer = Nd4j.createBuffer(array,array.length(),dataType);
-        INDArray arr = Nd4j.create(dataBuffer,array.length());
-        return arr;
-    }
 
 }
