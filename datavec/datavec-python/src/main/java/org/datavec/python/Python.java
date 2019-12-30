@@ -34,6 +34,7 @@ public class Python {
         if (module.isNone()){
             throw new RuntimeException("Error importing module: " + moduleName);
         }
+        PythonMemoryManager.markAsBorrowedReference(module);
         return module;
     }
     public static PythonObject attr(String attrName){

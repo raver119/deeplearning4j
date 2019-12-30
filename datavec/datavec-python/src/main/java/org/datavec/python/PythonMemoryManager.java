@@ -4,7 +4,7 @@ import org.bytedeco.cpython.PyObject;
 
 import java.util.*;
 
-import static org.bytedeco.cpython.global.python.Py_DecRef;
+import static org.bytedeco.cpython.global.python.*;
 
 public class PythonMemoryManager {
 
@@ -12,15 +12,12 @@ public class PythonMemoryManager {
     private PythonSession currentSession = new PythonSession();
     private List<PyObject> gcQueue = new ArrayList<>();
     private static PythonMemoryManager instance = new PythonMemoryManager();
-    private static Set<PyObject> borrowedReferences = new HashSet<>();
+    private Set<PyObject> borrowedReferences = new HashSet<>();
 
     private PythonMemoryManager(){
         // only single instance allowed!
     }
 
-    public static PythonMemoryManager getInstance(){
-        return instance;
-    }
 
     public class PythonSession implements AutoCloseable{
         private PythonSession parentSession;
@@ -37,14 +34,17 @@ public class PythonMemoryManager {
         }
         @Override
         public void close(){
+
             for(PythonObject obj: objects){
-                PythonMemoryManager.getInstance().deleteObject(obj);
+                PythonMemoryManager.deleteObject(obj);
             }
-            PythonMemoryManager.getInstance().collect();
-            PythonMemoryManager.getInstance().currentSession = parentSession;
+            PythonMemoryManager.collect();
+            PythonMemoryManager.instance.currentSession = parentSession;
+            System.out.println("-----close----");
         }
 
-        public PythonSession forkSession(){
+        private PythonSession forkSession(){
+            System.out.println("----open----");
             PythonSession pythonSession = new PythonSession();
             pythonSession.parentSession = this;
             return pythonSession;
@@ -59,44 +59,54 @@ public class PythonMemoryManager {
 
     }
 
-    public void markAsBorrowedReference(PythonObject pythonObject){
-        borrowedReferences.add(pythonObject.getNativePythonObject());
+    public static void markAsBorrowedReference(PythonObject pythonObject){
+        instance.borrowedReferences.add(pythonObject.getNativePythonObject());
     }
-    public  void registerObject(PythonObject pythonObject){
+    public  static void  registerObject(PythonObject pythonObject){
         PyObject nativeObject = pythonObject.getNativePythonObject();
-        if (!objectMap.containsKey(nativeObject)){
-            objectMap.put(nativeObject, new HashSet<PythonObject>());
+        if (!instance.objectMap.containsKey(nativeObject)){
+            instance.objectMap.put(nativeObject, new HashSet<PythonObject>());
         }
-        objectMap.get(nativeObject).add(pythonObject);
-        currentSession.registerObject(pythonObject);
+        instance.objectMap.get(nativeObject).add(pythonObject);
+
+        instance.currentSession.registerObject(pythonObject);
     }
 
-    public void deleteObject(PythonObject pythonObject){
+    public static void deleteObject(PythonObject pythonObject){
         PyObject nativeObject = pythonObject.getNativePythonObject();
-        Set<PythonObject> pythonObjects = objectMap.get(nativeObject);
+        Set<PythonObject> pythonObjects = instance.objectMap.get(nativeObject);
         pythonObjects.remove(pythonObject);
         if (pythonObjects.size() == 0){
-            gcQueue.add(nativeObject);
+            instance.gcQueue.add(nativeObject);
         }
     }
 
-    public void collect(){
-        for(PyObject pyObject: gcQueue){
-            if (!borrowedReferences.contains(pyObject)){
-                System.out.println("-----Py_DecRef----");
+    public static void collect(){
+        for(PyObject pyObject: instance.gcQueue){
+            if (!instance.borrowedReferences.contains(pyObject)){
+                PyObject repr = PyObject_Str(pyObject);
+                PyObject str = PyUnicode_AsEncodedString(repr, "utf-8", "~E~");
+                String jstr = PyBytes_AsString(str).getString();
+                Py_DecRef(repr);
+                Py_DecRef(str);
+                System.out.println(jstr);
+                if (pyObject.ob_refcnt() > 0)
                 Py_DecRef(pyObject);
+
             }
         }
-        gcQueue.clear();
+        instance.gcQueue.clear();
     }
 
     public static PythonSession getSession(){
-        return instance.currentSession.forkSession();
+        PythonSession sess = instance.currentSession.forkSession();
+        instance.currentSession = sess;
+        return sess;
     }
 
-    public void clearAllObjects(){
-        while(currentSession != null){
-            currentSession.close();
+    public static void clearAllObjects(){
+        while(instance.currentSession != null){
+            instance.currentSession.close();
         }
         collect();
     }

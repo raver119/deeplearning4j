@@ -39,7 +39,7 @@ public class PythonObject {
 
     }
     private void registerObject(){
-        PythonMemoryManager.getInstance().registerObject(this);
+        PythonMemoryManager.registerObject(this);
     }
     public PythonObject(PyObject pyObject){
         nativePythonObject = pyObject;
@@ -88,6 +88,7 @@ public class PythonObject {
 
         registerObject();
         sess.moveObjectToParentSession(this);
+        System.out.println("---close---91");
     }
 
     }
@@ -117,6 +118,9 @@ public class PythonObject {
     /*---collection constructors---*/
 
     public PythonObject(Object[] data){
+        try (PythonMemoryManager.PythonSession sess = PythonMemoryManager.getSession()){
+
+
         PyObject pyList = PyList_New((long)data.length);
         for(int i=0; i < data.length; i++){
             Object item = data[i];
@@ -166,6 +170,9 @@ public class PythonObject {
         }
         nativePythonObject = pyList;
         registerObject();
+        sess.moveObjectToParentSession(this);
+            System.out.println("---close---174");
+        }
     }
     public PythonObject(List data){
         PyObject pyList = PyList_New((long)data.size());
@@ -314,7 +321,11 @@ public class PythonObject {
         return (float)PyFloat_AsDouble(nativePythonObject);
     }
     public int toInt(){
-        return (int)PyLong_AsLong(nativePythonObject);
+        System.out.println("----okok----");
+        int ret = (int)PyLong_AsLong(nativePythonObject);
+        System.out.println(ret);
+        return ret;
+
     }
     public long toLong(){
         return PyLong_AsLong(nativePythonObject);
@@ -406,6 +417,21 @@ public class PythonObject {
         return new PythonObject(PyObject_Call(nativePythonObject, tuple, dict));
     }
     private PythonObject get(PyObject key){
+        if (Python.isinstance(this, Python.listType())){
+            PyObject item = PyList_GetItem(nativePythonObject, PyLong_AsLong(key));
+            Py_IncRef(item);
+            return new PythonObject(item);
+        }
+        else if (Python.isinstance(this, Python.tupleType())){
+            PyObject item = PyTuple_GetItem(nativePythonObject, PyLong_AsLong(key));
+            Py_IncRef(item);
+            return new PythonObject(item);
+        }
+        else if (Python.isinstance(this, Python.dictType())){
+            PyObject item = PyDict_GetItem(nativePythonObject, key);
+            Py_IncRef(item);
+            return new PythonObject(item);
+        }
         return new PythonObject(
                 PyObject_GetItem(nativePythonObject, key)
         );
@@ -441,7 +467,7 @@ public class PythonObject {
     }
 
     public void del(){
-        PythonMemoryManager.getInstance().deleteObject(this);
+        PythonMemoryManager.deleteObject(this);
         nativePythonObject = null;
     }
 

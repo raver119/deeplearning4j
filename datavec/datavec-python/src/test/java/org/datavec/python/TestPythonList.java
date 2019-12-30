@@ -64,6 +64,7 @@ public class TestPythonList {
         pyList.attr("append").call(6);
         pyList.attr("append").call(7);
         pyList.attr("append").call(8);
+
         assertEquals(8, Python.len(pyList).toInt());
         for (int i = 0; i < 8; i++) {
             assertEquals(i + 1, pyList.get(i).toInt());
