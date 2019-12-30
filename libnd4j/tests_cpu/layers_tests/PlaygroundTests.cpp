@@ -60,6 +60,44 @@ public:
     }
 };
 
+
+TEST_F(PlaygroundTests, test_s_1) {
+    auto x0 = NDArrayFactory::create<float>('c', {32, 56, 56, 192});
+    auto x1 = NDArrayFactory::create<float>('c', {32, 56, 56, 32});
+
+    auto y = NDArrayFactory::create<int>(3);
+    auto z = NDArrayFactory::create<float>('c', {32, 56, 56, 224});
+
+    Context ctx(1);
+    ctx.setInputArray(0, &x0);
+    ctx.setInputArray(1, &x1);
+
+
+    ctx.setInputArray(2, &y);
+    ctx.setOutputArray(0, &z);
+    ctx.setBArguments({true});
+
+    std::vector<Nd4jLong> values;
+
+    nd4j::ops::concat op;
+    op.execute(&ctx);
+
+    for (int e = 0; e < 1000; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        op.execute(&ctx);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+}
+
 /*
 TEST_F(PlaygroundTests, test_s_0) {
     auto x = NDArrayFactory::create<float>('c', {32, 112, 112, 16});
