@@ -214,7 +214,6 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         setShapeInformation(Nd4j.getShapeInfoProvider().createShapeInformation(shape, stride,
                 Shape.elementWiseStride(shape, stride, ordering == 'f'), ordering, type, false));
         init(shape, stride);
-        // Shape.setElementWiseStride(this.shapeInfo(),Shape.elementWiseStride(shape, stride, ordering == 'f'));
     }
 
     public BaseNDArray(DataBuffer buffer, long[] shape, long[] stride, char ordering, DataType type, MemoryWorkspace workspace) {
@@ -222,7 +221,6 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         setShapeInformation(Nd4j.getShapeInfoProvider().createShapeInformation(shape, stride,
                 Shape.elementWiseStride(shape, stride, ordering == 'f'), ordering, type, false));
         init(shape, stride);
-        // Shape.setElementWiseStride(this.shapeInfo(),Shape.elementWiseStride(shape, stride, ordering == 'f'));
     }
 
     public BaseNDArray(DataBuffer buffer,  DataType dataType, long[] shape, long[] stride, long offset, char ordering) {
@@ -230,7 +228,6 @@ public abstract class BaseNDArray implements INDArray, Iterable {
         setShapeInformation(Nd4j.getShapeInfoProvider().createShapeInformation(shape, stride,
                 Shape.elementWiseStride(shape, stride, ordering == 'f'), ordering, dataType, false));
         init(shape, stride);
-        // Shape.setElementWiseStride(this.shapeInfo(),Shape.elementWiseStride(shape, stride, ordering == 'f'));
     }
 
     /**
@@ -3694,12 +3691,18 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     }
 
     @Override
-    public INDArray reshape(char order, boolean enforceView, long... newShape){
+    public INDArray reshape(char order, boolean enforceView, long... newShape) {
         Nd4j.getCompressor().autoDecompress(this);
 
+        if(this.elementWiseStride() > 1) {
+            throw new IllegalStateException("Element wise stride is off");
+        }
         // special case for empty reshape
-        if (this.length() == 1 && (newShape == null || newShape.length == 0) && this.elementWiseStride() == 1) {
+        if (this.length() < 2 && (newShape == null || newShape.length == 0) && this.elementWiseStride() == 1) {
             return Nd4j.create(this.data(), new int[0], new int[0], 0);
+        }
+        else if(length() >= 2) {
+            throw new IllegalStateException("Shape was " + Arrays.toString(shape()));
         }
 
         if (newShape == null || newShape.length < 1)

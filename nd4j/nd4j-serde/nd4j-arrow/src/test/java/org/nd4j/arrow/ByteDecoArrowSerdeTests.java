@@ -16,8 +16,8 @@
 
 package org.nd4j.arrow;
 
-import org.bytedeco.arrow.ArrowBuffer;
-import org.bytedeco.arrow.Tensor;
+import org.bytedeco.arrow.*;
+import org.bytedeco.javacpp.Pointer;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -69,4 +69,11 @@ public class ByteDecoArrowSerdeTests {
         assertEquals(buffer1,buffer1);
     }
 
+    @Test
+    public void testConvertToNdArray() {
+        INDArray arr = Nd4j.scalar(1.0).reshape(1,1);
+        PrimitiveArray array1 = ByteDecoArrowSerde.arrayFromExistingINDArray(arr);
+        INDArray convertBack = ByteDecoArrowSerde.ndarrayFromArrowArray(array1).reshape(1,1);
+        assertEquals(arr,convertBack);
+    }
 }

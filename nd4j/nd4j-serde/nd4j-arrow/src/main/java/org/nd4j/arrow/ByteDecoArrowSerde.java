@@ -16,7 +16,6 @@
 
 package org.nd4j.arrow;
 import org.bytedeco.arrow.global.arrow;
-import org.bytedeco.javacpp.*;
 import org.bytedeco.arrow.*;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataBuffer;
@@ -24,8 +23,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.linalg.util.ArrayUtil;
-
-import static org.bytedeco.arrow.global.arrow.*;
 
 
 /**
@@ -207,12 +204,67 @@ public class ByteDecoArrowSerde {
     }
 
     /**
-     *
-     * @param dataBuffer
-     * @return
+     * Create a {@link Pair}
+     * of {@link ArrowBuffer} and {@link org.nd4j.linalg.api.buffer.DataType}
+     * based on the input {@link DataBuffer}
+     * @param dataBuffer the input data buffer
+     * @return the pair
      */
     public static Pair<ArrowBuffer,DataType> fromNd4jBuffer(DataBuffer dataBuffer) {
         return Pair.of(new ArrowBuffer(dataBuffer.pointer()),arrowDataTypeForNd4j(dataBuffer.dataType()));
+    }
+
+
+    /**
+     * Creates an {@link INDArray} from an arrow {@link Array}
+     * @param array the input {@link Array}
+     * @return the equivalent {@link INDArray} zero copied
+     */
+    public static INDArray ndarrayFromArrowArray(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.length());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
+    }
+
+    /**
+     * Create an {@link Array}
+     * from the given {@link INDArray}
+     * with zero copy
+     * @param input the input {@link INDArray}
+     * @return the equivalent wrapped {@link Array}
+     * for the given input {@link INDArray}
+     */
+    public static PrimitiveArray arrayFromExistingINDArray(INDArray input) {
+        Pair<ArrowBuffer, DataType> fromNd4jBuffer = fromNd4jBuffer(input.data());
+        ArrowBuffer arrowBuffer = fromNd4jBuffer.getFirst();
+        return createArrayFromArrayData(arrowBuffer,input.dataType());
+    }
+
+
+
+    /**
+     * Create an {@link Array}
+     * with the passed in {@link ArrayData}
+     * @param arrowBuffer the array data to create the {@link Array} from
+     * @param dataType the {@link DataType} for the array
+     * @return the created {@link Array}
+     */
+    public static PrimitiveArray createArrayFromArrayData(ArrowBuffer arrowBuffer, org.nd4j.linalg.api.buffer.DataType dataType) {
+        PrimitiveArray primitiveArray = new PrimitiveArray(arrowDataTypeForNd4j(dataType),arrowBuffer.size(),arrowBuffer);
+        return primitiveArray;
+    }
+
+
+    /**
+     *
+     * @param array
+     * @return
+     */
+    public static INDArray convertToNdArray(Array array) {
+        org.nd4j.linalg.api.buffer.DataType dataType = ByteDecoArrowSerde.dataBufferTypeTypeForArrow(array.type());
+        DataBuffer dataBuffer = Nd4j.createBuffer(array,array.length(),dataType);
+        INDArray arr = Nd4j.create(dataBuffer,array.length());
+        return arr;
     }
 
 }
