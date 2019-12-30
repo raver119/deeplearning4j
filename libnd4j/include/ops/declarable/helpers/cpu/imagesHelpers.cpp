@@ -219,63 +219,6 @@ FORCEINLINE static void tripleTransformer(const NDArray* input, NDArray* output,
 }
 
 
-template <typename T>
-FORCEINLINE static void tripleTransformer(const NDArray* input, NDArray* output, const int dimC ,  T (&tr)[3][3] ) {
-
-    const int rank = input->rankOf();
-
-    const T* x = input->bufferAsT<T>();
-    T* z = output->bufferAsT<T>();
-    // TODO: Use tensordot or other optimizied helpers to see if we can get better performance. 
-
-    if (dimC == rank - 1 && input->ews() == 1 && output->ews() == 1 && input->ordering() == 'c' && output->ordering() == 'c') {
-
-        auto func = PRAGMA_THREADS_FOR{
-            for (auto i = start; i < stop; i += increment) { 
-                //simple M*v //tr.T*v.T // v * tr  //rule: (AB)' =B'A'
-                // v.shape (1,3) row vector
-                T x0, x1, x2;
-                x0 = x[i]; //just additional hint
-                x1 = x[i + 1];
-                x2 = x[i + 2];
-                z[i]   = x0 * tr[0][0] + x1 * tr[1][0] + x2 * tr[2][0];
-                z[i+1] = x0 * tr[0][1] + x1 * tr[1][1] + x2 * tr[2][1];
-                z[i+2] = x0 * tr[0][2] + x1 * tr[1][2] + x2 * tr[2][2];
-                
-            }
-        };
-
-        samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
-    }
-    else {
-        auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
-        auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
-
-        const Nd4jLong numOfTads = packX.numberOfTads();
-        const Nd4jLong xDimCstride = input->stridesOf()[dimC];
-        const Nd4jLong zDimCstride = output->stridesOf()[dimC];
-
-        auto func = PRAGMA_THREADS_FOR{
-            for (auto i = start; i < stop; i += increment) {
-                const T* xTad = x + packX.platformOffsets()[i];
-                T* zTad = z + packZ.platformOffsets()[i];
-                //simple M*v //tr.T*v
-                T x0, x1, x2;
-                x0 = xTad[0];
-                x1 = xTad[xDimCstride];
-                x2 = xTad[2 * xDimCstride];
-                zTad[0]               = x0 * tr[0][0] + x1 * tr[1][0] + x2 * tr[2][0];
-                zTad[zDimCstride]     = x0 * tr[0][1] + x1 * tr[1][1] + x2 * tr[2][1];
-                zTad[2 * zDimCstride] = x0 * tr[0][2] + x1 * tr[1][2] + x2 * tr[2][2];
-
-            }
-        };
-
-        samediff::Threads::parallel_tad(func, 0, numOfTads);
-    }
-}
-
-
 
 
 template <typename T>

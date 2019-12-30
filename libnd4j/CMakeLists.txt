@@ -43,7 +43,7 @@ elseif(WIN32)
         set(CMAKE_CXX_FLAGS_DEBUG  " -g -O2 -fPIC -fmax-errors=2")
     endif()
 else()
-    set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -fPIC -fmax-errors=2 -D_RELEASE=true")
+    set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -fPIC -fmax-errors=2 -D_RELEASE=true ")
     set(CMAKE_CXX_FLAGS_DEBUG  " -g -O0 -fPIC -fmax-errors=2")
 
     if (CPU_BLAS)

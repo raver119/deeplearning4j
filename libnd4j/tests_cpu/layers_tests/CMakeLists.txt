@@ -123,7 +123,7 @@ endif()
 #elseif (CUDA_BLAS)
 #	file(GLOB_RECURSE TEST_SOURCES false ./*.cpp ./*.cu ./*.h)
 #endif() 
-set(TEST_SOURCES "MyTest.cpp")
+set(TEST_SOURCES "PlaygroundTests.cpp")
 # Filter out any source files from */CMakeFiles/* paths. these tend to cause problems such a multiple main definitions.
 set (EXCLUDE_DIR "/CMakeFiles/")
 foreach (TMP_PATH ${TEST_SOURCES})
