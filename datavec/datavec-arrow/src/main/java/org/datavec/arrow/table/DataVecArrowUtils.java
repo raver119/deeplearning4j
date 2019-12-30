@@ -105,7 +105,8 @@ public class DataVecArrowUtils {
                     fields[i] = new Field(schema.getName(i),int32());
                     break;
                 case Time:
-                    fields[i] = new Field(schema.getName(i),date32());
+                    //note datavec times are stored as longs
+                    fields[i] = new Field(schema.getName(i),int64());
                     break;
                 case Categorical:
                     fields[i] = new Field(schema.getName(i),utf8());
@@ -147,10 +148,10 @@ public class DataVecArrowUtils {
                 schemaBuilder.addColumnInteger(field.name());
             }
             else if(dataType.equals(arrow.uint32())) {
-                schemaBuilder.addColumnInteger(field.name());
+                schemaBuilder.addColumnLong(field.name());
             }
             else if(dataType.equals(arrow.uint64())) {
-                schemaBuilder.addColumnInteger(field.name());
+                schemaBuilder.addColumnLong(field.name());
             }
             else if(dataType.equals(arrow.int8())) {
                 schemaBuilder.addColumnInteger(field.name());
@@ -165,6 +166,7 @@ public class DataVecArrowUtils {
                 schemaBuilder.addColumnLong(field.name());
             }
             else if(dataType.equals(arrow.float16())) {
+                schemaBuilder.addColumnFloat(field.name());
             }
             else if(dataType.equals(arrow.float32())) {
                 schemaBuilder.addColumnFloat(field.name());
