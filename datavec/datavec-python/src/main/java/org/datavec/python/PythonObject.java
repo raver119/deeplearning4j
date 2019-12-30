@@ -38,13 +38,19 @@ public class PythonObject {
         return ndarraySerializer;
 
     }
+    private void registerObject(){
+        PythonMemoryManager.getInstance().registerObject(this);
+    }
     public PythonObject(PyObject pyObject){
         nativePythonObject = pyObject;
+        registerObject();
     }
     public PythonObject(INDArray npArray){
         this(new NumpyArray(npArray));
     }
     public PythonObject(NumpyArray npArray){
+        try(PythonMemoryManager.PythonSession sess = PythonMemoryManager.getSession()){
+
         PyObject ctypes = Python.importModule("ctypes").getNativePythonObject();
         PyObject np = Python.importModule("numpy").getNativePythonObject();
         PyObject ctype;
@@ -80,6 +86,10 @@ public class PythonObject {
                 Python.tuple(new PythonObject(shapeList))
                 ).nativePythonObject;
 
+        registerObject();
+        sess.moveObjectToParentSession(this);
+    }
+
     }
 
     /*---primitve constructors---*/
@@ -88,21 +98,21 @@ public class PythonObject {
     }
 
     public PythonObject(String data){
-        nativePythonObject = PyUnicode_FromString(data);
+        this(PyUnicode_FromString(data));
     }
     public PythonObject(int data){
-        nativePythonObject = PyLong_FromLong((long)data);
+        this(PyLong_FromLong((long)data));
     }
     public PythonObject(long data){
-        nativePythonObject = PyLong_FromLong(data);
+        this(PyLong_FromLong(data));
     }
 
     public PythonObject(double data){
-        nativePythonObject = PyFloat_FromDouble(data);
+        this(PyFloat_FromDouble(data));
     }
 
     public PythonObject(boolean data){
-        nativePythonObject = PyBool_FromLong(data?1:0);
+        this(PyBool_FromLong(data?1:0));
     }
     /*---collection constructors---*/
 
@@ -155,6 +165,7 @@ public class PythonObject {
 
         }
         nativePythonObject = pyList;
+        registerObject();
     }
     public PythonObject(List data){
         PyObject pyList = PyList_New((long)data.size());
@@ -205,6 +216,7 @@ public class PythonObject {
 
         }
         nativePythonObject = pyList;
+        registerObject();
     }
     public PythonObject(Map data){
         PyObject pyDict = PyDict_New();
@@ -280,6 +292,7 @@ public class PythonObject {
 
         }
         nativePythonObject = pyDict;
+        registerObject();
     }
 
 
@@ -428,7 +441,7 @@ public class PythonObject {
     }
 
     public void del(){
-        Py_DecRef(nativePythonObject);
+        PythonMemoryManager.getInstance().deleteObject(this);
         nativePythonObject = null;
     }
 
