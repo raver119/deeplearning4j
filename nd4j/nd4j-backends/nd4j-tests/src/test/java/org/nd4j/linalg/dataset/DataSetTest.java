@@ -71,6 +71,18 @@ public class DataSetTest extends BaseNd4jTest {
     }
 
     @Test
+    public void testSingleInstance() {
+        Random random = new Random();
+        double [] randomData = new double[10];
+        for (int i=0;i<10;i++) {
+            randomData[i] = random.nextDouble();
+        }
+        DataSet ds = new DataSet(Nd4j.create(Arrays.copyOfRange(randomData,0,8)),Nd4j.create(Arrays.copyOfRange(randomData,8,10)));
+        System.out.println(ds);
+        assertEquals(1,ds.numExamples());
+    }
+
+    @Test
     public void  testViewIterator2(){
 
         INDArray f = Nd4j.linspace(1,100,100, DataType.DOUBLE).reshape('c', 10, 10);
