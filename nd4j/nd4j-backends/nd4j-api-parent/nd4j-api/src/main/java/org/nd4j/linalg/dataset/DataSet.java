@@ -105,14 +105,6 @@ public class DataSet implements org.nd4j.linalg.dataset.api.DataSet {
      * @param labelsMask Mask array for labels, may be null
      */
     public DataSet(INDArray features, INDArray labels, INDArray featuresMask, INDArray labelsMask) {
-        if (features.isVector()) {
-            long dim = features.size(0);
-            features = features.reshape(1,dim);
-        }
-        if (labels.isVector()) {
-            long dim = labels.size(0);
-            labels = labels.reshape(1,dim);
-        }
         this.features = features;
         this.labels = labels;
         this.featuresMask = featuresMask;
@@ -1146,10 +1138,16 @@ public class DataSet implements org.nd4j.linalg.dataset.api.DataSet {
 
     @Override
     public int numExamples() {
-        if (getFeatures() != null)
+        if (getFeatures() != null) {
+            if (getFeatures().isVector())
+                return 1;
             return (int) getFeatures().size(0);
-        else if (getLabels() != null)
+        }
+        else if (getLabels() != null) {
+            if (getLabels().isVector())
+                return 1;
             return (int) getLabels().size(0);
+        }
         return 0;
     }
 
