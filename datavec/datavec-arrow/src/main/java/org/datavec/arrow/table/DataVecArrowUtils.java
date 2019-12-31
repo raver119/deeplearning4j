@@ -17,14 +17,20 @@
 
 package org.datavec.arrow.table;
 
+import org.apache.arrow.vector.VarBinaryVector;
 import org.bytedeco.arrow.*;
 import org.bytedeco.arrow.global.arrow;
+import org.bytedeco.javacpp.BytePointer;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.api.transform.schema.Schema.Builder;
+import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.TimeZone;
 
 import static org.bytedeco.arrow.global.arrow.*;
+import static org.nd4j.arrow.ByteDecoArrowSerde.fromArrowBuffer;
 
 /**
  * Utilities for interop between data vec types
@@ -124,6 +130,149 @@ public class DataVecArrowUtils {
         }
 
         return new org.bytedeco.arrow.Schema(schemaVector);
+    }
+
+
+    /**
+     * Convert the given input
+     * to a boolean array
+     * @param array the input
+     * @return the equivalent boolean data
+     */
+    public static boolean[] convertArrayToBoolean(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asBoolean();
+    }
+
+    /**
+     * Convert the given input
+     * to a float array
+     * @param array the input
+     * @return the equivalent float data
+     */
+    public static float[] convertArrayToFloat(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asFloat();
+    }
+
+    /**
+     * Convert the given input
+     * to a double array
+     * @param array the input
+     * @return the equivalent double data
+     */
+    public static double[] convertArrayToDouble(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asDouble();
+    }
+
+    /**
+     * Convert the given input
+     * to a string array
+     * @param array the input
+     * @return the equivalent string data
+     */
+    public static String[] convertArrayToString(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asUtf8();
+    }
+
+    /**
+     * Convert the given input
+     * to a long array
+     * @param array the input
+     * @return the equivalent long data
+     */
+    public static long[] convertArrayToLong(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asLong();
+    }
+
+    /**
+     * Convert the given input
+     * to a int array
+     * @param array the input
+     * @return the equivalent int data
+     */
+    public static int[] convertArrayToInt(PrimitiveArray array) {
+        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+        return nd4jBuffer.asInt();
+    }
+
+    /**
+     * Convert a boolean array to a {@link BooleanArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertBooleanArray(boolean[] input) {
+        DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.BOOL,input);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+    }
+
+
+    /**
+     * Convert a long array to a {@link Int64Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertLongArray(long[] input) {
+        DataBuffer dataBuffer = Nd4j.createBuffer(input);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+    }
+
+    /**
+     * Convert a double array to a {@link DoubleArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertDoubleArray(double[] input) {
+        DataBuffer dataBuffer = Nd4j.createBuffer(input);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+    }
+
+    /**
+     * Convert a float array to a {@link FloatArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertFloatArray(float[] input) {
+        DataBuffer dataBuffer = Nd4j.createBuffer(input);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+    }
+
+
+    /**
+     * Convert an int array to a {@link Int32Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertIntArray(int[] input) {
+        DataBuffer dataBuffer = Nd4j.createBuffer(input);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+    }
+
+
+    /**
+     * Convert a string array to a {@link PrimitiveArray}
+     * @param input the input data
+     * @return the converted array
+     */
+    public static PrimitiveArray convertStringArray(String[] input) {
+        DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.UTF8,input);
+        BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,bytePointer.capacity());
+        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
 

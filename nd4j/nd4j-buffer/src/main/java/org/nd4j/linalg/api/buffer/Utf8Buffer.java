@@ -159,6 +159,7 @@ public class Utf8Buffer extends BaseDataBuffer {
         super(buffer, length);
     }
 
+    @Override
     public String getString(long index) {
         if (index > numWords)
             throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + numWords + "]");

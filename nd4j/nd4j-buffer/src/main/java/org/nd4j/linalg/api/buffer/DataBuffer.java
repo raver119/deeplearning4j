@@ -454,6 +454,14 @@ public interface DataBuffer extends Serializable, AutoCloseable {
     long[] asLong();
 
 
+    boolean[] asBoolean();
+
+    boolean getBool(long i);
+
+    String getUtf8(long i);
+
+    String[] asUtf8();
+
     /**
      * Get element i in the buffer as a double
      *

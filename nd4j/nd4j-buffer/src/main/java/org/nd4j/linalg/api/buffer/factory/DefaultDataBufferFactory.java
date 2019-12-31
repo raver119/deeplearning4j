@@ -30,6 +30,7 @@ import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.util.ArrayUtil;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Normal data buffer creation
@@ -121,6 +122,93 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
     @Override
     public DataBuffer createInt(long offset, int length) {
         return new IntBuffer(length, 4, offset);
+    }
+
+    @Override
+    public DataBuffer createBufferOfType(DataType dataType, long length) {
+        switch(dataType) {
+            case FLOAT:
+                return new FloatBuffer(length);
+            case HALF:
+                return new HalfBuffer(length);
+            case UINT64:
+                return new UInt64Buffer(length);
+            case INT:
+                return new IntBuffer(length);
+            case UINT16:
+                return new UInt16Buffer(length);
+            case BFLOAT16:
+                return new BFloat16Buffer(length);
+            case UTF8:
+                return new Utf8Buffer(length);
+            case DOUBLE:
+                return new DoubleBuffer(length);
+            case LONG:
+                return new LongBuffer(length);
+            case BOOL:
+                return new BoolBuffer(length);
+            case UINT32:
+                return new UInt32Buffer(length);
+            case UBYTE:
+                return new UInt8Buffer(length);
+            case BYTE:
+                return new Int8Buffer(length);
+            case SHORT:
+                return new Int16Buffer(length);
+            case COMPRESSED:
+            case UNKNOWN:
+            default:
+                throw new IllegalArgumentException("Illegal type " + dataType);
+        }
+    }
+
+    @Override
+    public DataBuffer createBufferOfType(DataType dataType, Object input) {
+        switch(dataType) {
+            case FLOAT:
+                float[] inputFloatArr = (float[]) input;
+                return new FloatBuffer(inputFloatArr);
+            case INT:
+                int[] inputIntArr = (int[]) input;
+                return new IntBuffer(inputIntArr);
+            case UTF8:
+                String[] inputStringArr = (String[]) input;
+                return new Utf8Buffer(Arrays.asList(inputStringArr));
+            case DOUBLE:
+                double[] inputDoubleArr = (double[]) input;
+                return new DoubleBuffer(inputDoubleArr);
+            case LONG:
+                long[] inputLongArr = (long[]) input;
+                return new LongBuffer(inputLongArr);
+            case BOOL:
+                boolean[] inputBooleanArr = (boolean[]) input;
+                BoolBuffer retBuffer = new BoolBuffer(inputBooleanArr.length);
+                for(int i = 0; i < inputBooleanArr.length; i++) {
+                    retBuffer.put(i,inputBooleanArr[i]);
+                }
+                return retBuffer;
+            case BYTE:
+                byte[] inputByteArr = (byte[]) input;
+                return new Int8Buffer(inputByteArr,inputByteArr.length);
+            case SHORT:
+                short[] inputShortArr = (short[]) input;
+                Int16Buffer retShortBuffer =  new Int16Buffer(inputShortArr.length);
+                for(int i = 0; i < inputShortArr.length; i++) {
+                    retShortBuffer.putByDestinationType(i,inputShortArr[i],DataType.SHORT);
+                }
+                return retShortBuffer;
+            case UBYTE:
+            case COMPRESSED:
+            case UINT32:
+            case UNKNOWN:
+            case HALF:
+            case UINT64:
+            case UINT16:
+            case BFLOAT16:
+            default:
+                throw new IllegalArgumentException("Illegal data type " + dataType);
+
+        }
     }
 
     @Override
@@ -737,6 +825,8 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
                 return new FloatBuffer(pointer, indexer, length);
             case DOUBLE:
                 return new DoubleBuffer(pointer, indexer, length);
+            case UTF8:
+                return new Utf8Buffer(pointer,indexer,length);
         }
         throw new IllegalArgumentException("Invalid opType " + type);
     }

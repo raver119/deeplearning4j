@@ -23,9 +23,11 @@ import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 
+import java.util.Iterator;
+
 import static org.bytedeco.arrow.global.arrow.int32;
 
-public class IntColumn extends BaseDataVecColumn {
+public class IntColumn extends BaseDataVecColumn<Integer> {
 
     public IntColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
@@ -33,6 +35,15 @@ public class IntColumn extends BaseDataVecColumn {
 
     public IntColumn(String name, PrimitiveArray values) {
         super(name, values);
+    }
+
+    public IntColumn(String name, Integer[] input) {
+        super(name, input);
+    }
+
+    @Override
+    public void setValues(Integer[] values) {
+
     }
 
     @Override
@@ -43,5 +54,20 @@ public class IntColumn extends BaseDataVecColumn {
     @Override
     public DataType arrowDataType() {
         return int32();
+    }
+
+    @Override
+    public boolean contains(Integer input) {
+        return false;
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return null;
+    }
+
+    @Override
+    public int compare(Integer o1, Integer o2) {
+        return Integer.compare(o1,o2);
     }
 }

@@ -24,7 +24,9 @@ import org.bytedeco.arrow.global.arrow;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 
-public class BooleanColumn extends BaseDataVecColumn {
+import java.util.Iterator;
+
+public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
     public BooleanColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
@@ -32,6 +34,15 @@ public class BooleanColumn extends BaseDataVecColumn {
 
     public BooleanColumn(String name, PrimitiveArray values) {
         super(name, values);
+    }
+
+    public BooleanColumn(String name, Boolean[] input) {
+        super(name, input);
+    }
+
+    @Override
+    public void setValues(Boolean[] values) {
+
     }
 
     @Override
@@ -42,5 +53,20 @@ public class BooleanColumn extends BaseDataVecColumn {
     @Override
     public DataType arrowDataType() {
         return arrow._boolean();
+    }
+
+    @Override
+    public boolean contains(Boolean input) {
+        return false;
+    }
+
+    @Override
+    public Iterator<Boolean> iterator() {
+        return null;
+    }
+
+    @Override
+    public int compare(Boolean o1, Boolean o2) {
+        return Boolean.compare(o1,o2);
     }
 }

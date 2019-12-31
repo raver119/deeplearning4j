@@ -16,6 +16,7 @@
 
 package org.nd4j.linalg.api.buffer;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -63,7 +64,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
         if(s != null ){
             try {
                 TO_STRING_MAX = Integer.parseInt(s);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 log.warn("Invalid value for key {}: \"{}\"", ND4JSystemProperties.DATABUFFER_TO_STRING_MAX_ELEMENTS, s);
                 TO_STRING_MAX = 1000;
             }
@@ -157,7 +158,6 @@ public abstract class BaseDataBuffer implements DataBuffer {
 
     protected void pickReferent(BaseDataBuffer referent) {
         referenced.compareAndSet(false, true);
-        //references.add(new WeakReference<BaseDataBuffer>(this));
     }
 
     /**
@@ -997,7 +997,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             throw new IllegalArgumentException("Indices and data length must be the same");
         if (indices.length > length())
             throw new IllegalArgumentException("More elements than space to assign. This buffer is of length "
-                            + length() + " where the indices are of length " + data.length);
+                    + length() + " where the indices are of length " + data.length);
         for (int i = 0; i < indices.length; i++) {
             put(indices[i], data[i]);
         }
@@ -1060,7 +1060,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             throw new IllegalArgumentException("Indices and data length must be the same");
         if (indices.length > length())
             throw new IllegalArgumentException("More elements than space to assign. This buffer is of length "
-                            + length() + " where the indices are of length " + data.length);
+                    + length() + " where the indices are of length " + data.length);
         for (int i = 0; i < indices.length; i += inc) {
             put(indices[i], data[i]);
         }
@@ -1070,7 +1070,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
     public void assign(DataBuffer data) {
         if (data.length() != length())
             throw new IllegalArgumentException("Unable to assign buffer of length " + data.length()
-                            + " to this buffer of length " + length());
+                    + " to this buffer of length " + length());
 
         for (int i = 0; i < data.length(); i++) {
             put(i, data.getDouble(i));
@@ -1282,7 +1282,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             case SHORT:
                 try{
                     for (int i = 0; i < length(); i++) {
-                            dos.writeShort(getShort(i));
+                        dos.writeShort(getShort(i));
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -1354,8 +1354,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
                     if(ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
                         //Switch endianness to big endian
                         for (int i = 0; i < temp3.length / 4; i++) {
-                            for( int j=0; j<4; j++ ){
-                                dos.write(temp3[4 * i + (3-j)]);
+                            for( int j = 0; j < 4; j++ ){
+                                dos.write(temp3[4 * i + (3 - j)]);
                             }
                         }
                     } else {
@@ -1421,6 +1421,81 @@ public abstract class BaseDataBuffer implements DataBuffer {
         return ret;
     }
 
+
+    @Override
+    public boolean[] asBoolean() {
+        if (length >= Integer.MAX_VALUE)
+            throw new IllegalArgumentException("Unable to create array of length " + length);
+        boolean[] ret = new boolean[(int) length];
+        for (int i = 0; i < length; i++)
+            ret[i] = getBool(i);
+        return ret;
+    }
+
+    @Override
+    public boolean getBool(long i) {
+        switch(dataType()) {
+            case UTF8:
+                return Boolean.parseBoolean(getUtf8(i));
+            default:
+                return getLong(i) > 0;
+        }
+    }
+
+    @Override
+    public String getUtf8(long i) {
+        if (released)
+            throw new IllegalStateException("You can't use DataBuffer once it was released");
+
+        if (indexer == null) {
+            throw new IllegalStateException("Indexer must never be null");
+        }
+        switch (dataType()) {
+            case FLOAT:
+                return String.valueOf(((FloatIndexer) indexer).get(offset() + i));
+            case UINT32:
+            case INT:
+                return String.valueOf(((IntIndexer) indexer).get(offset() + i));
+            case BFLOAT16:
+                return String.valueOf(((Bfloat16Indexer) indexer).get(offset() + i));
+            case HALF:
+                return String.valueOf(((HalfIndexer) indexer).get(offset() + i));
+            case UINT16:
+                return String.valueOf(((UShortIndexer) indexer).get(offset() + i));
+            case SHORT:
+                return String.valueOf(((ShortIndexer) indexer).get(offset() + i));
+            case UINT64:
+            case LONG:
+                return String.valueOf(((LongIndexer) indexer).get(offset() + i));
+            case BOOL:
+                return String.valueOf(((BooleanIndexer) indexer).get(offset() + i) ? 1.0 : 0.0);
+            case DOUBLE:
+                return String.valueOf(((DoubleIndexer) indexer).get(offset() + i));
+            case BYTE:
+                return String.valueOf(((ByteIndexer) indexer).get(offset() + i));
+            case UBYTE:
+                return String.valueOf(((UByteIndexer) indexer).get(offset() + i));
+            case UTF8:
+                return getString(i);
+            default:
+                throw new UnsupportedOperationException("Cannot get double value from buffer of type " + dataType());
+        }
+    }
+
+    protected String getString(long index) {
+        throw new IllegalStateException("Illegal buffer type. Please use Utf8Buffer.");
+    }
+
+    @Override
+    public String[] asUtf8() {
+        if (length >= Integer.MAX_VALUE)
+            throw new IllegalArgumentException("Unable to create array of length " + length);
+        String[] ret = new String[(int) length];
+        for (int i = 0; i < length; i++)
+            ret[i] = getUtf8(i);
+        return ret;
+    }
+
     @Override
     public double getDouble(long i) {
         if (released)
@@ -1478,15 +1553,15 @@ public abstract class BaseDataBuffer implements DataBuffer {
                 return ((LongIndexer) indexer).get(offset() + i);
             case UINT32:
             case INT:
-                return (long) ((IntIndexer) indexer).get(offset() + i);
+                return ((IntIndexer) indexer).get(offset() + i);
             case UINT16:
-                return (long) ((UShortIndexer) indexer).get(offset() + i);
+                return ((UShortIndexer) indexer).get(offset() + i);
             case SHORT:
-                return (long) ((ShortIndexer) indexer).get(offset() + i);
+                return ((ShortIndexer) indexer).get(offset() + i);
             case BYTE:
-                return (long) ((ByteIndexer) indexer).get(offset() + i);
+                return ((ByteIndexer) indexer).get(offset() + i);
             case UBYTE:
-                return (long) ((UByteIndexer) indexer).get(offset() + i);
+                return ((UByteIndexer) indexer).get(offset() + i);
             case BOOL:
                 return  ((BooleanIndexer) indexer).get(offset() + i) ? 1L : 0L;
             default:
@@ -1519,7 +1594,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             case SHORT:
                 return ((ShortIndexer) indexer).get(offset() + i);
             case BYTE:
-                return  (short) ((ByteIndexer) indexer).get(offset() + i);
+                return ((ByteIndexer) indexer).get(offset() + i);
             case UINT64:
             case LONG:
                 return (short) ((LongIndexer) indexer).get(offset() + i);
@@ -1536,7 +1611,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
      * @return
      */
     public static short fromFloat(float v) {
-        return ArrayUtil.fromFloat(v);        
+        return ArrayUtil.fromFloat(v);
     }
 
     @Override
@@ -1555,7 +1630,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             case UINT16:
                 return ((UShortIndexer) indexer).get(offset() + i);
             case SHORT:
-                return (float) ((ShortIndexer) indexer).get(offset() + i);
+                return ((ShortIndexer) indexer).get(offset() + i);
             case BFLOAT16:
                 return ((Bfloat16Indexer) indexer).get(offset() + i);
             case HALF:
@@ -1563,7 +1638,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
             case UBYTE:
                 return (float) ((UByteIndexer) indexer).get(offset() + i);
             case BYTE:
-                return (float) ((ByteIndexer) indexer).get(offset() + i);
+                return ((ByteIndexer) indexer).get(offset() + i);
             case UINT64:
             case LONG:
                 return (float)  ((LongIndexer) indexer).get(offset() + i);
@@ -2080,7 +2155,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
     public void assign(long[] offsets, long[] strides, long n, DataBuffer... buffers) {
         if (offsets.length != strides.length || strides.length != buffers.length)
             throw new IllegalArgumentException(
-                            "Unable to assign buffers, please specify equal lengths strides, offsets, and buffers");
+                    "Unable to assign buffers, please specify equal lengths strides, offsets, and buffers");
         int count = 0;
         for (int i = 0; i < buffers.length; i++) {
             //note here that the final put will take care of the offset
@@ -2432,8 +2507,8 @@ public abstract class BaseDataBuffer implements DataBuffer {
             mant &= 0x3ff; // discard subnormal bit
         } // else +/-0 -> +/-0
         return Float.intBitsToFloat( // combine all parts
-                        (hbits & 0x8000) << 16 // sign  << ( 31 - 15 )
-                                        | (exp | mant) << 13); // value << ( 23 - 10 )
+                (hbits & 0x8000) << 16 // sign  << ( 31 - 15 )
+                        | (exp | mant) << 13); // value << ( 23 - 10 )
     }
 
 

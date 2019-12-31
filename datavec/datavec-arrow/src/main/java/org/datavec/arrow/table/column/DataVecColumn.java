@@ -17,11 +17,14 @@
 
 package org.datavec.arrow.table.column;
 
+import org.bytedeco.arrow.ArrayVisitor;
 import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
 
-public interface DataVecColumn {
+import java.util.Comparator;
+
+public interface DataVecColumn<T> extends Iterable<T>, Comparator<T> {
 
     ColumnType type();
 
@@ -33,4 +36,13 @@ public interface DataVecColumn {
 
     DataVecColumn op(String name, DataVecColumn[] columnParams, ColumnType outputType, Object... otherArgs);
 
+    boolean contains(T input);
+
+    default boolean rowIsNull(int row) {
+        return values().IsNull(row);
+    }
+
+    default long numValuesMissing() {
+        return values().null_count();
+    }
 }

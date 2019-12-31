@@ -60,29 +60,35 @@ public interface DataBufferFactory {
     DataBuffer create(DataBuffer underlyingBuffer, long offset, long length);
 
     /**
-     * Create int buffer
-     * @param buffer
-     * @param length
-     * @return
+     * Create an int data buffer based on the input {@link ByteBuffer}
+     * @param buffer the buffer to create a int buffer from
+     * @param length the number of elements in the buffer
+     * @return the data buffer for the given {@link ByteBuffer}
      */
     DataBuffer createInt(long offset, ByteBuffer buffer, int length);
 
     /**
-     * Create a float data buffer
-     * @param buffer
-     * @param length
-     * @return
+     * Create a float data buffer based on the input {@link ByteBuffer}
+     * @param buffer the buffer to create a float buffer from
+     * @param length the number of elements in the buffer
+     * @return the data buffer for the given {@link ByteBuffer}
      */
     DataBuffer createFloat(long offset, ByteBuffer buffer, int length);
 
     /**
-     * Creates a double data buffer
-     * @param buffer
-     * @param length
-     * @return
+     * Create a Double data buffer based on the input {@link ByteBuffer}
+     * @param buffer the buffer to create a double buffer from
+     * @param length the number of elements in the buffer
+     * @return the data buffer for the given {@link ByteBuffer}
      */
     DataBuffer createDouble(long offset, ByteBuffer buffer, int length);
 
+    /**
+     * Create a long data buffer based on the input {@link ByteBuffer}
+     * @param buffer the buffer to create a long buffer from
+     * @param length the number of elements in the buffer
+     * @return the data buffer for the given {@link ByteBuffer}
+     */
     DataBuffer createLong(ByteBuffer buffer, int length);
 
     /**
@@ -122,6 +128,21 @@ public interface DataBufferFactory {
      */
     DataBuffer createInt(long offset, int length);
 
+    /**
+     * Create a buffer of a specified data type
+     * @param dataType the data type to create
+     * @param length the length of the buffer
+     * @return the created data buffer
+     */
+    DataBuffer createBufferOfType(DataType dataType, long length);
+
+    /**
+     * Create a buffer of a specified data type
+     * @param dataType the data type to create
+     * @param input  the input to use (should be a type of array)
+     * @return the created data buffer
+     */
+    DataBuffer createBufferOfType(DataType dataType,Object input);
 
     /**
      * Creates a double data buffer
@@ -155,6 +176,14 @@ public interface DataBufferFactory {
      */
     DataBuffer createDouble(long offset, double[] data);
 
+    /**
+     * Create a double data buffer based on the
+     * given input data
+     * @param offset the offset for the buffer to start from
+     * @param data the data to use
+     * @param workspace the workspace to use for allocation
+     * @return the created buffer
+     */
     DataBuffer createDouble(long offset, double[] data, MemoryWorkspace workspace);
 
 
@@ -206,6 +235,14 @@ public interface DataBufferFactory {
      */
     DataBuffer createFloat(long offset, float[] data);
 
+    /**
+     * Creates a float data buffer
+     *
+     * @param offset the offset to use to create the buffer
+     * @param data the data to create the buffer from
+     * @param workspace  the workspace to use to manage the buffer
+     * @return the new buffer
+     */
     DataBuffer createFloat(long offset, float[] data, MemoryWorkspace workspace);
 
     /**

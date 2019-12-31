@@ -24,9 +24,11 @@ import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 import org.datavec.arrow.table.column.DataVecColumn;
 
+import java.util.Iterator;
+
 import static org.bytedeco.arrow.global.arrow.float32;
 
-public class FloatColumn extends BaseDataVecColumn {
+public class FloatColumn extends BaseDataVecColumn<Float> {
 
     public FloatColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
@@ -34,6 +36,15 @@ public class FloatColumn extends BaseDataVecColumn {
 
     public FloatColumn(String name, PrimitiveArray values) {
         super(name, values);
+    }
+
+    public FloatColumn(String name, Float[] input) {
+        super(name, input);
+    }
+
+    @Override
+    public void setValues(Float[] values) {
+
     }
 
     @Override
@@ -46,5 +57,19 @@ public class FloatColumn extends BaseDataVecColumn {
         return float32();
     }
 
+    @Override
+    public boolean contains(Float input) {
+        return false;
+    }
 
+
+    @Override
+    public Iterator<Float> iterator() {
+        return null;
+    }
+
+    @Override
+    public int compare(Float o1, Float o2) {
+        return Float.compare(o1,o2);
+    }
 }

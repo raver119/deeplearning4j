@@ -22,19 +22,15 @@ import org.bytedeco.javacpp.FloatPointer;
 import org.bytedeco.javacpp.IntPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.*;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.buffer.LongBuffer;
-import org.nd4j.linalg.api.buffer.Utf8Buffer;
+import org.nd4j.linalg.api.buffer.*;
 import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.jcublas.buffer.*;
 import org.nd4j.linalg.util.ArrayUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Creates cuda buffers
@@ -100,6 +96,92 @@ public class CudaDataBufferFactory implements DataBufferFactory {
         }
     }
 
+    @Override
+    public DataBuffer createBufferOfType(DataType dataType, long length) {
+        switch(dataType) {
+            case FLOAT:
+                return new CudaFloatDataBuffer(length);
+            case HALF:
+                return new CudaHalfDataBuffer(length);
+            case UINT64:
+                return new CudaUInt64DataBuffer(length);
+            case INT:
+                return new CudaIntDataBuffer(length);
+            case UINT16:
+                return new CudaUInt16DataBuffer(length);
+            case BFLOAT16:
+                return new CudaBfloat16DataBuffer(length);
+            case UTF8:
+                return new Utf8Buffer(length);
+            case DOUBLE:
+                return new CudaDoubleDataBuffer(length);
+            case LONG:
+                return new CudaLongDataBuffer(length);
+            case BOOL:
+                return new CudaBoolDataBuffer(length);
+            case UINT32:
+                return new CudaUInt32DataBuffer(length);
+            case UBYTE:
+                return new CudaUByteDataBuffer(length);
+            case BYTE:
+                return new CudaByteDataBuffer(length);
+            case SHORT:
+                return new CudaShortDataBuffer(length);
+            case COMPRESSED:
+            case UNKNOWN:
+            default:
+                throw new IllegalArgumentException("Illegal type " + dataType);
+        }
+    }
+
+    @Override
+    public DataBuffer createBufferOfType(DataType dataType, Object input) {
+        switch(dataType) {
+            case FLOAT:
+                float[] inputFloatArr = (float[]) input;
+                return new CudaFloatDataBuffer(inputFloatArr);
+            case INT:
+                int[] inputIntArr = (int[]) input;
+                return new CudaIntDataBuffer(inputIntArr);
+            case UTF8:
+                String[] inputStringArr = (String[]) input;
+                return new Utf8Buffer(Arrays.asList(inputStringArr));
+            case DOUBLE:
+                double[] inputDoubleArr = (double[]) input;
+                return new CudaDoubleDataBuffer(inputDoubleArr);
+            case LONG:
+                long[] inputLongArr = (long[]) input;
+                return new CudaLongDataBuffer(inputLongArr);
+            case BOOL:
+                boolean[] inputBooleanArr = (boolean[]) input;
+                CudaBoolDataBuffer retBuffer = new CudaBoolDataBuffer(inputBooleanArr.length);
+                for(int i = 0; i < inputBooleanArr.length; i++) {
+                    retBuffer.put(i,inputBooleanArr[i]);
+                }
+                return retBuffer;
+            case BYTE:
+                byte[] inputByteArr = (byte[]) input;
+                return new CudaByteDataBuffer(inputByteArr,inputByteArr.length);
+            case SHORT:
+                short[] inputShortArr = (short[]) input;
+                CudaShortDataBuffer retShortBuffer =  new CudaShortDataBuffer(inputShortArr.length);
+                for(int i = 0; i < inputShortArr.length; i++) {
+                    retShortBuffer.putByDestinationType(i,inputShortArr[i],DataType.SHORT);
+                }
+                return retShortBuffer;
+            case UBYTE:
+            case COMPRESSED:
+            case UINT32:
+            case UNKNOWN:
+            case HALF:
+            case UINT64:
+            case UINT16:
+            case BFLOAT16:
+            default:
+                throw new IllegalArgumentException("Illegal data type " + dataType);
+
+        }
+    }
     /**
      * This method will create new DataBuffer of the same dataType & same length
      *

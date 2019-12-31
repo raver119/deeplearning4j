@@ -23,11 +23,16 @@ import org.datavec.api.transform.ColumnType;
 
 import static org.nd4j.arrow.Nd4jArrowOpRunner.runOpOn;
 
-public abstract class BaseDataVecColumn implements DataVecColumn  {
+public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
 
     protected String name;
     protected PrimitiveArray values;
     protected ChunkedArray chunkedArray;
+
+    public BaseDataVecColumn(String name,T[] input)  {
+        setValues(input);
+        this.name = name;
+    }
 
     public BaseDataVecColumn(String name,ChunkedArray chunkedArray) {
         this.name = name;
@@ -60,5 +65,7 @@ public abstract class BaseDataVecColumn implements DataVecColumn  {
 
         return null;
     }
+
+    public abstract void setValues(T[] values);
 
 }
