@@ -176,7 +176,7 @@ public class DataVecArrowUtils {
      * @return the equivalent string data
      */
     public static String[] convertArrayToString(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+        ArrowBuffer arrowBuffer = array.values();
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asUtf8();
     }
@@ -235,7 +235,7 @@ public class DataVecArrowUtils {
      */
     public static PrimitiveArray convertDoubleArray(double[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
-        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),dataBuffer.byteLength());
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
@@ -271,7 +271,7 @@ public class DataVecArrowUtils {
     public static PrimitiveArray convertStringArray(String[] input) {
         DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.UTF8,input);
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
-        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,bytePointer.capacity());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 

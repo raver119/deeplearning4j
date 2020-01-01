@@ -18,15 +18,11 @@
 package org.datavec.arrow.table;
 
 import org.bytedeco.arrow.PrimitiveArray;
-import org.bytedeco.arrow.Schema;
-import org.bytedeco.javacpp.Pointer;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class DataVecArrowUtilsTest {
 
@@ -61,7 +57,7 @@ public class DataVecArrowUtilsTest {
                     assertArrayEquals(inputDouble,doubles,1e-3);
                     break;
                 case UTF8:
-                    String[] inputString = {"input"};
+                    String[] inputString = {"input","input2"};
                     PrimitiveArray primitiveArray = DataVecArrowUtils.convertStringArray(inputString);
                     String[] strings = DataVecArrowUtils.convertArrayToString(primitiveArray);
                     assertArrayEquals(inputString,strings);

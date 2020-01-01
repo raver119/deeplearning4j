@@ -523,6 +523,8 @@ public interface DataBuffer extends Serializable, AutoCloseable {
     void put(long i, boolean element);
 
 
+    long byteLength();
+
     /**
      * Returns the length of the buffer
      *

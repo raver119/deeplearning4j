@@ -89,6 +89,7 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
         } else if (underlyingBuffer.dataType() == DataType.HALF) {
             return new HalfBuffer(underlyingBuffer, length, offset);
         } else if (underlyingBuffer.dataType() == DataType.UTF8) {
+            Utf8Buffer utf8Buffer = (Utf8Buffer) underlyingBuffer;
             return new Utf8Buffer(underlyingBuffer, length, offset);
         }
         return null;
@@ -827,6 +828,7 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
                 return new DoubleBuffer(pointer, indexer, length);
             case UTF8:
                 return new Utf8Buffer(pointer,indexer,length);
+
         }
         throw new IllegalArgumentException("Invalid opType " + type);
     }

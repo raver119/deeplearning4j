@@ -201,8 +201,17 @@ public class ByteDecoArrowSerde {
      * @return
      */
     public static DataBuffer fromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
-        BytePointer bytePointer = arrowBuffer.data().capacity(arrowBuffer.capacity() * dataBufferTypeTypeForArrow(dataType).width());
-        return Nd4j.createBuffer(bytePointer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
+        org.nd4j.linalg.api.buffer.DataType dataType1 = dataBufferTypeTypeForArrow(dataType);
+        if(dataType1 != org.nd4j.linalg.api.buffer.DataType.UTF8) {
+            BytePointer bytePointer = arrowBuffer.data().capacity(arrowBuffer.capacity() * dataBufferTypeTypeForArrow(dataType).width());
+            return Nd4j.createBuffer(bytePointer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
+
+        }
+        else {
+            BytePointer bytePointer = arrowBuffer.data();
+            return Nd4j.createBuffer(bytePointer,arrowBuffer.size(),dataBufferTypeTypeForArrow(dataType));
+
+        }
     }
 
     /**

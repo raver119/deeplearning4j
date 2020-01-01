@@ -1117,6 +1117,7 @@ public class Nd4j {
             case SHORT:
                 return ShortIndexer.create((ShortPointer) pointer);
             case BYTE:
+                return ByteIndexer.create((BytePointer) pointer);
             case UTF8:
                 return ByteIndexer.create((BytePointer) pointer);
             case UBYTE:
