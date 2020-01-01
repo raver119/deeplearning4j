@@ -22,6 +22,7 @@ import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.bytedeco.arrow.global.arrow;
 import org.datavec.api.transform.ColumnType;
+import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 
 import java.util.Iterator;
@@ -42,7 +43,8 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
     @Override
     public void setValues(Boolean[] values) {
-
+        this.values = DataVecArrowUtils.convertBooleanArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
     }
 
     @Override

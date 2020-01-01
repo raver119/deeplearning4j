@@ -219,7 +219,7 @@ public class Utf8Buffer extends BaseDataBuffer {
         return size;
     }
 
-    public void setNumWordsFromByteLength(long byteLength) {
+    private void setNumWordsFromByteLength(long byteLength) {
         long position = 0;
         long index = 0;
         while(position < byteLength) {
@@ -229,16 +229,6 @@ public class Utf8Buffer extends BaseDataBuffer {
 
             if (end - start > Integer.MAX_VALUE)
                 throw new IllegalStateException("Array is too long for Java");
-
-         /*   val dataLength = (int) (end - start);
-            val bytes = new byte[dataLength];
-
-            val headerLength = (numWords + 1) * 8;
-
-            for (int e = 0; e < dataLength; e++) {
-                val idx = headerLength + start + e;
-                bytes[e] = dataPointer.get(idx);
-            }*/
 
             //2 headers
             position += 16;

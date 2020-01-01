@@ -21,6 +21,7 @@ import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
+import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 
 import java.util.Iterator;
@@ -43,7 +44,8 @@ public class IntColumn extends BaseDataVecColumn<Integer> {
 
     @Override
     public void setValues(Integer[] values) {
-
+        this.values = DataVecArrowUtils.convertIntArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
     }
 
     @Override

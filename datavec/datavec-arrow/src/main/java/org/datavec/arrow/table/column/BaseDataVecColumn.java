@@ -41,6 +41,7 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
 
     public BaseDataVecColumn(String name, PrimitiveArray values) {
         this.name = name;
+        this.chunkedArray = new ChunkedArray(values);
         this.values = values;
     }
 

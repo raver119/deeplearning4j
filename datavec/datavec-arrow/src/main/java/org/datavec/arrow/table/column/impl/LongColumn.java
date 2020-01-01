@@ -21,6 +21,7 @@ import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
+import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 
 import java.util.Iterator;
@@ -43,7 +44,8 @@ public class LongColumn extends BaseDataVecColumn<Long> {
 
     @Override
     public void setValues(Long[] values) {
-
+        this.values = DataVecArrowUtils.convertLongArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
     }
 
     @Override

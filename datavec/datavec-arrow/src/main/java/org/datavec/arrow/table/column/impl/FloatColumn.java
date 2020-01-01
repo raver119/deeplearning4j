@@ -21,6 +21,7 @@ import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
+import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 import org.datavec.arrow.table.column.DataVecColumn;
 
@@ -44,7 +45,8 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
 
     @Override
     public void setValues(Float[] values) {
-
+        this.values = DataVecArrowUtils.convertFloatArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
     }
 
     @Override

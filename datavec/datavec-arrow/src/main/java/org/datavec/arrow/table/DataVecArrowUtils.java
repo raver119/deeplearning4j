@@ -18,6 +18,7 @@
 package org.datavec.arrow.table;
 
 import org.apache.arrow.vector.VarBinaryVector;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bytedeco.arrow.*;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.javacpp.BytePointer;
@@ -27,6 +28,7 @@ import org.nd4j.arrow.ByteDecoArrowSerde;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.factory.Nd4j;
 
+import java.util.Arrays;
 import java.util.TimeZone;
 
 import static org.bytedeco.arrow.global.arrow.*;
@@ -216,6 +218,23 @@ public class DataVecArrowUtils {
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
+    /**
+     * Convert a boolean array to a {@link BooleanArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertBooleanArray(Boolean[] input) {
+        return convertBooleanArray(ArrayUtils.toPrimitive(input));
+    }
+
+    /**
+     * Convert a long array to a {@link Int64Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertLongArray(Long[] input) {
+        return convertLongArray(ArrayUtils.toPrimitive(input));
+    }
 
     /**
      * Convert a long array to a {@link Int64Array}
@@ -239,6 +258,15 @@ public class DataVecArrowUtils {
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
+
+    /**
+     * Convert a double array to a {@link DoubleArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertDoubleArray(Double[] input) {
+        return convertDoubleArray(ArrayUtils.toPrimitive(input));
+    }
     /**
      * Convert a float array to a {@link FloatArray}
      * @param input the input
@@ -250,6 +278,14 @@ public class DataVecArrowUtils {
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
+    /**
+     * Convert a float array to a {@link FloatArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertFloatArray(Float[] input) {
+        return convertFloatArray(ArrayUtils.toPrimitive(input));
+    }
 
     /**
      * Convert an int array to a {@link Int32Array}
@@ -263,6 +299,16 @@ public class DataVecArrowUtils {
     }
 
 
+
+    /**
+     * Convert an int array to a {@link Int32Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static PrimitiveArray convertIntArray(Integer[] input) {
+        return convertIntArray(ArrayUtils.toPrimitive(input));
+    }
+    
     /**
      * Convert a string array to a {@link PrimitiveArray}
      * @param input the input data

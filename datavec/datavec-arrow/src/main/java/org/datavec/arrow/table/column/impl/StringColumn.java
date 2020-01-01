@@ -22,6 +22,7 @@ import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.api.transform.sequence.comparator.StringComparator;
+import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
 import org.datavec.arrow.table.column.DataVecColumn;
 
@@ -46,7 +47,8 @@ public class StringColumn extends BaseDataVecColumn<String> {
 
     @Override
     public void setValues(String[] values) {
-
+        this.values = DataVecArrowUtils.convertStringArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
     }
 
     @Override
