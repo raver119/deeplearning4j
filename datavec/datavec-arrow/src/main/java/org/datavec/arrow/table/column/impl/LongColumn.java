@@ -19,7 +19,8 @@ package org.datavec.arrow.table.column.impl;
 
 import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.PrimitiveArray;
+import org.bytedeco.arrow.FlatArray;
+import org.bytedeco.arrow.Int64Array;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
@@ -30,22 +31,33 @@ import static org.bytedeco.arrow.global.arrow.int64;
 
 public class LongColumn extends BaseDataVecColumn<Long> {
 
+    private Int64Array int64Array;
+
     public LongColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
+        this.int64Array = (Int64Array) chunkedArray.chunk(0);
     }
 
-    public LongColumn(String name, PrimitiveArray values) {
+    public LongColumn(String name, FlatArray values) {
         super(name, values);
+        this.int64Array = (Int64Array) values;
     }
 
     public LongColumn(String name, Long[] input) {
         super(name, input);
+        setValues(input);
     }
 
     @Override
     public void setValues(Long[] values) {
         this.values = DataVecArrowUtils.convertLongArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
+        this.int64Array = (Int64Array) this.values;
+    }
+
+    @Override
+    public Long elementAtRow(int rowNumber) {
+        return int64Array.Value(rowNumber);
     }
 
     @Override

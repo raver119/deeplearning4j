@@ -2055,6 +2055,11 @@ public abstract class BaseDataBuffer implements DataBuffer {
     }
 
     @Override
+    public void put(long i, String element) {
+        throw new UnsupportedOperationException("Only UTF8 buffers are supported");
+    }
+
+    @Override
     @Deprecated
     public boolean dirty() {
         return false;

@@ -19,7 +19,8 @@ package org.datavec.arrow.table.column.impl;
 
 import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.PrimitiveArray;
+import org.bytedeco.arrow.DoubleArray;
+import org.bytedeco.arrow.FlatArray;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
@@ -30,16 +31,21 @@ import static org.bytedeco.arrow.global.arrow.float64;
 
 public class DoubleColumn extends BaseDataVecColumn<Double> {
 
+    private DoubleArray doubleArray;
+
     public DoubleColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
+        this.doubleArray = (DoubleArray) chunkedArray.chunk(0);
     }
 
-    public DoubleColumn(String name, PrimitiveArray values) {
+    public DoubleColumn(String name, FlatArray values) {
         super(name, values);
+        this.doubleArray = (DoubleArray) values;
     }
 
     public DoubleColumn(String name, Double[] input) {
         super(name, input);
+        setValues(input);
     }
 
     @Override
@@ -48,6 +54,11 @@ public class DoubleColumn extends BaseDataVecColumn<Double> {
         this.chunkedArray = new ChunkedArray(this.values);
     }
 
+
+    @Override
+    public Double elementAtRow(int rowNumber) {
+        return doubleArray.Value(rowNumber);
+    }
 
     @Override
     public ColumnType type() {

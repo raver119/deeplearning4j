@@ -17,6 +17,7 @@
 
 package org.nd4j.arrow;
 
+import org.bytedeco.arrow.FlatArray;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
@@ -42,7 +43,7 @@ public class Nd4jArrowOpRunner {
      * from the outputs from the execution of {@link DynamicCustomOp}
      * derived from the input names.
      */
-    public static PrimitiveArray[] runOpOn(PrimitiveArray[] array,String opName,Object...args) {
+    public static FlatArray[] runOpOn(FlatArray[] array, String opName, Object...args) {
         DynamicCustomOpsBuilder opBuilder =  DynamicCustomOp.builder(opName);
         for(Object arg : args) {
             if(arg instanceof Integer || arg instanceof Long) {
@@ -69,7 +70,7 @@ public class Nd4jArrowOpRunner {
         DynamicCustomOp build = opBuilder.build();
         Nd4j.getExecutioner().exec(build);
         INDArray[] ret =  build.outputArguments();
-        PrimitiveArray[] outputArrays = new PrimitiveArray[ret.length];
+        FlatArray[] outputArrays = new FlatArray[ret.length];
         for(int i = 0; i < ret.length; i++) {
             outputArrays[i] = ByteDecoArrowSerde.arrayFromExistingINDArray(ret[i]);
         }

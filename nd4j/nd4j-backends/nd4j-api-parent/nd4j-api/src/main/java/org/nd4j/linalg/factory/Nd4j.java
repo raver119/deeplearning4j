@@ -1040,8 +1040,7 @@ public class Nd4j {
      */
     public static DataBuffer createBuffer(int[] shape, DataType type, long offset) {
         int length = ArrayUtil.prod(shape);
-        return type == DataType.DOUBLE ? createBuffer(new double[length], offset)
-                : createBuffer(new float[length], offset);
+        return createBufferOfType(type,offset,length);
     }
 
     /**

@@ -17,6 +17,7 @@
 
 package org.datavec.arrow.table;
 
+import org.bytedeco.arrow.FlatArray;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -36,13 +37,13 @@ public class DataVecArrowUtilsTest {
                     break;
                 case BOOL:
                     boolean[] inputBoolean = {true};
-                    PrimitiveArray primitiveArrayBoolean = DataVecArrowUtils.convertBooleanArray(inputBoolean);
+                    FlatArray primitiveArrayBoolean = DataVecArrowUtils.convertBooleanArray(inputBoolean);
                     boolean[] booleans = DataVecArrowUtils.convertArrayToBoolean(primitiveArrayBoolean);
                     assertArrayEquals(inputBoolean,booleans);
                     break;
                 case LONG:
                     long[] input = {1};
-                    PrimitiveArray primitiveArrayLong = DataVecArrowUtils.convertLongArray(input);
+                    FlatArray primitiveArrayLong = DataVecArrowUtils.convertLongArray(input);
                     long[] longs = DataVecArrowUtils.convertArrayToLong(primitiveArrayLong);
                     assertArrayEquals(input,longs);
                     break;
@@ -52,13 +53,13 @@ public class DataVecArrowUtilsTest {
                     break;
                 case DOUBLE:
                     double[] inputDouble = {1.0};
-                    PrimitiveArray primitiveArrayDouble = DataVecArrowUtils.convertDoubleArray(inputDouble);
+                    FlatArray primitiveArrayDouble = DataVecArrowUtils.convertDoubleArray(inputDouble);
                     double[] doubles = DataVecArrowUtils.convertArrayToDouble(primitiveArrayDouble);
                     assertArrayEquals(inputDouble,doubles,1e-3);
                     break;
                 case UTF8:
                     String[] inputString = {"input","input2"};
-                    PrimitiveArray primitiveArray = DataVecArrowUtils.convertStringArray(inputString);
+                    FlatArray primitiveArray = DataVecArrowUtils.convertStringArray(inputString);
                     String[] strings = DataVecArrowUtils.convertArrayToString(primitiveArray);
                     assertArrayEquals(inputString,strings);
                     break;
@@ -68,7 +69,7 @@ public class DataVecArrowUtilsTest {
                     break;
                 case INT:
                     int[] ret = {1};
-                    PrimitiveArray primitiveArray1 = DataVecArrowUtils.convertIntArray(ret);
+                    FlatArray primitiveArray1 = DataVecArrowUtils.convertIntArray(ret);
                     int[] ints = DataVecArrowUtils.convertArrayToInt(primitiveArray1);
                     assertArrayEquals(ret,ints);
                     break;
@@ -80,7 +81,7 @@ public class DataVecArrowUtilsTest {
                     break;
                 case FLOAT:
                     float[] retFloat = {1.0f};
-                    PrimitiveArray primitiveArrayFloat = DataVecArrowUtils.convertFloatArray(retFloat);
+                    FlatArray primitiveArrayFloat = DataVecArrowUtils.convertFloatArray(retFloat);
                     float[] floats = DataVecArrowUtils.convertArrayToFloat(primitiveArrayFloat);
                     assertArrayEquals(retFloat,floats,1e-3f);
                     break;

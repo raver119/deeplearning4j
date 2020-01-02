@@ -17,6 +17,7 @@
 
 package org.nd4j.arrow;
 
+import org.bytedeco.arrow.FlatArray;
 import org.bytedeco.arrow.PrimitiveArray;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -30,13 +31,13 @@ public class Nd4jArrowOpRunnerTest {
     public void testOpExec() {
         INDArray arr = Nd4j.scalar(1.0);
         INDArray arr2 = Nd4j.scalar(2.0);
-        PrimitiveArray conversionOne = ByteDecoArrowSerde.arrayFromExistingINDArray(arr);
-        PrimitiveArray conversionTwo = ByteDecoArrowSerde.arrayFromExistingINDArray(arr2);
+        FlatArray conversionOne = ByteDecoArrowSerde.arrayFromExistingINDArray(arr);
+        FlatArray conversionTwo = ByteDecoArrowSerde.arrayFromExistingINDArray(arr2);
         INDArray verifyFirst = ByteDecoArrowSerde.ndarrayFromArrowArray(conversionOne).reshape(new long[0]);
         INDArray verifySecond = ByteDecoArrowSerde.ndarrayFromArrowArray(conversionTwo).reshape(new long[0]);
         assertEquals(arr,verifyFirst);
         assertEquals(arr2,verifySecond);
-        PrimitiveArray[] primitiveArrays = Nd4jArrowOpRunner.runOpOn(new PrimitiveArray[]{conversionOne, conversionOne}, "add");
+        FlatArray[] primitiveArrays = Nd4jArrowOpRunner.runOpOn(new FlatArray[]{conversionOne, conversionOne}, "add");
         INDArray outputArr = ByteDecoArrowSerde.ndarrayFromArrowArray(primitiveArrays[0]);
         assertEquals(2.0,outputArr.sumNumber().doubleValue(),1e-3);
 

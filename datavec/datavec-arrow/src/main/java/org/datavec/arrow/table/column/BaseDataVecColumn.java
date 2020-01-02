@@ -18,15 +18,19 @@
 package org.datavec.arrow.table.column;
 
 import org.bytedeco.arrow.ChunkedArray;
-import org.bytedeco.arrow.PrimitiveArray;
-import org.datavec.api.transform.ColumnType;
+import org.bytedeco.arrow.FlatArray;
+import org.datavec.arrow.table.DataVecArrowUtils;
 
 import static org.nd4j.arrow.Nd4jArrowOpRunner.runOpOn;
 
+/**
+ * Abstract class for the column.
+ * @param <T> the type of the class
+ */
 public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
 
     protected String name;
-    protected PrimitiveArray values;
+    protected FlatArray values;
     protected ChunkedArray chunkedArray;
 
     public BaseDataVecColumn(String name,T[] input)  {
@@ -39,7 +43,7 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
         this.chunkedArray = chunkedArray;
     }
 
-    public BaseDataVecColumn(String name, PrimitiveArray values) {
+    public BaseDataVecColumn(String name, FlatArray values) {
         this.name = name;
         this.chunkedArray = new ChunkedArray(values);
         this.values = values;
@@ -51,20 +55,25 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
     }
 
     @Override
-    public PrimitiveArray values() {
+    public FlatArray values() {
         return values;
     }
 
     @Override
-    public DataVecColumn op(String name, DataVecColumn[] columnParams, ColumnType outputType, Object... otherArgs) {
-        PrimitiveArray[] primitiveArrays = new PrimitiveArray[columnParams.length];
+    public DataVecColumn[] op(String opName, DataVecColumn[] columnParams, String[] outputColumnNames, Object... otherArgs) {
+        FlatArray[] primitiveArrays = new FlatArray[columnParams.length];
         for(int i = 0; i < columnParams.length; i++) {
             primitiveArrays[i] = columnParams[i].values();
         }
 
-        PrimitiveArray[] primitiveArrays1 = runOpOn(primitiveArrays, name, otherArgs);
+        return DataVecArrowUtils.convertPrimitiveArraysToColumns(runOpOn(primitiveArrays, opName, otherArgs),outputColumnNames);
+    }
 
-        return null;
+
+
+    @Override
+    public ChunkedArray chunkedValues() {
+        return chunkedArray;
     }
 
     public abstract void setValues(T[] values);

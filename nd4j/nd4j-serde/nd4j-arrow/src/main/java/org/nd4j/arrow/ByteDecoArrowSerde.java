@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 package org.nd4j.arrow;
+import lombok.val;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.arrow.*;
 import org.bytedeco.javacpp.BytePointer;
@@ -27,7 +28,10 @@ import org.nd4j.linalg.util.ArrayUtil;
 
 
 /**
+ * Arrow serialization utilities
+ * using the javacpp arrow bindings.
  *
+ * @author Adam Gibson
  */
 public class ByteDecoArrowSerde {
 
@@ -223,7 +227,7 @@ public class ByteDecoArrowSerde {
      */
     public static Pair<ArrowBuffer,DataType> fromNd4jBuffer(DataBuffer dataBuffer) {
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
-        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.length() * dataBuffer.getElementSize());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
         return Pair.of(arrowBuffer,arrowDataTypeForNd4j(dataBuffer.dataType()));
     }
 
@@ -233,10 +237,20 @@ public class ByteDecoArrowSerde {
      * @param array the input {@link Array}
      * @return the equivalent {@link INDArray} zero copied
      */
-    public static INDArray ndarrayFromArrowArray(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
+    public static INDArray ndarrayFromArrowArray(FlatArray array) {
+        if(array instanceof PrimitiveArray) {
+            PrimitiveArray primitiveArray = (PrimitiveArray) array;
+            ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
+            DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+            return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
+        }
+        else {
+            StringArray stringArray = (StringArray) array;
+            ArrowBuffer arrowBuffer = stringArray.value_data().capacity(array.capacity()).limit(array.limit());
+            DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
+            return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
+        }
+
     }
 
     /**
@@ -247,7 +261,7 @@ public class ByteDecoArrowSerde {
      * @return the equivalent wrapped {@link Array}
      * for the given input {@link INDArray}
      */
-    public static PrimitiveArray arrayFromExistingINDArray(INDArray input) {
+    public static FlatArray arrayFromExistingINDArray(INDArray input) {
         Pair<ArrowBuffer, DataType> fromNd4jBuffer = fromNd4jBuffer(input.data());
         ArrowBuffer arrowBuffer = fromNd4jBuffer.getFirst();
         return createArrayFromArrayData(arrowBuffer,input.dataType());
@@ -262,11 +276,60 @@ public class ByteDecoArrowSerde {
      * @param dataType the {@link DataType} for the array
      * @return the created {@link Array}
      */
-    public static PrimitiveArray createArrayFromArrayData(ArrowBuffer arrowBuffer, org.nd4j.linalg.api.buffer.DataType dataType) {
-        PrimitiveArray primitiveArray = new PrimitiveArray(arrowDataTypeForNd4j(dataType),arrowBuffer.size(),arrowBuffer);
-        return primitiveArray;
+    public static FlatArray createArrayFromArrayData(ArrowBuffer arrowBuffer, org.nd4j.linalg.api.buffer.DataType dataType) {
+        ArrayData arrayData = arrayDataFromArrowBuffer(arrowBuffer,arrowDataTypeForNd4j(dataType));
+        switch (dataType) {
+            case DOUBLE:
+                return new DoubleArray(arrayData);
+            case BOOL:
+                return new BooleanArray(arrayData);
+            case FLOAT:
+                return new FloatArray(arrayData);
+            case INT:
+                return new Int32Array(arrayData);
+            case UTF8:
+                return new StringArray(arrayData);
+            case LONG:
+                return new Int64Array(arrayData);
+            case UINT32:
+                return new UInt32Array(arrayData);
+            case HALF:
+                return new HalfFloatArray(arrayData);
+            case UINT64:
+                return new UInt64Array(arrayData);
+            case BYTE:
+                return new BinaryArray(arrayData);
+            case UINT16:
+                return new UInt16Array(arrayData);
+
+            default:
+                throw new IllegalArgumentException("Illegal type for array creation " + dataType);
+
+        }
     }
 
+    /**
+     * Create an {@link ArrayData}
+     * from a {@link DataBuffer}
+     * @param buffer the buffer to create array data from
+     * @return the wrapped data buffer
+     */
+    public static ArrayData makeArrayData(DataBuffer buffer) {
+        val bufferDataTypePair = fromNd4jBuffer(buffer);
+        return arrayDataFromArrowBuffer(bufferDataTypePair.getFirst(),bufferDataTypePair.getRight());
+    }
+
+
+    /**
+     * Create array data for a given arrow buffer and data type
+     * @param arrowBuffer
+     * @param dataType
+     * @return
+     */
+    public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
+        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(arrowBuffer);
+        return ArrayData.Make(dataType,arrowBuffer.size(),arrowBufferVector);
+    }
 
 
 }

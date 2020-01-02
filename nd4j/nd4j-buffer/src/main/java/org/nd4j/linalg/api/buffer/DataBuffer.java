@@ -518,11 +518,36 @@ public interface DataBuffer extends Serializable, AutoCloseable {
      */
     void put(long i, int element);
 
+    /**
+     * Insert the element
+     * @param i the index
+     * @param element the element
+     */
     void put(long i, long element);
 
+    /**
+     *
+     * @param i
+     * @param element
+     */
     void put(long i, boolean element);
 
 
+    /**
+     * Assign an element in the buffer to the specified index
+     *
+     * @param i       the index
+     * @param element the element to assign
+     */
+    void put(long i, String element);
+
+
+    /**
+     * The total byte length of the array.
+     * Typically it's the data type * the number of elements.
+     * For strings, it's variable.
+     * @return
+     */
     long byteLength();
 
     /**

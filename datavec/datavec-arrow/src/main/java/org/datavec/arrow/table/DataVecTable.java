@@ -17,11 +17,16 @@
 
 package org.datavec.arrow.table;
 
+import org.bytedeco.arrow.Array;
+import org.bytedeco.arrow.ArrayVector;
 import org.bytedeco.arrow.Table;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.arrow.table.column.DataVecColumn;
 import org.datavec.arrow.table.column.impl.*;
+import org.datavec.arrow.table.row.Row;
+import org.nd4j.base.Preconditions;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -74,6 +79,16 @@ public class DataVecTable {
 
 
 
+    public DataVecTable addRow(Row row) {
+        Preconditions.checkState(schema.getColumnNames().equals(row.columnNames()));
+        Array[] inputData = new Array[schema.numColumns()];
+        for(int i = 0; i < schema.numColumns(); i++) {
+
+        }
+        //ArrayVector arrayVector = new ArrayVector(inputData);
+        throw new UnsupportedOperationException();
+    }
+
     public org.bytedeco.arrow.Schema arrowSchema() {
         return DataVecArrowUtils.toArrowSchema(schema);
     }
@@ -82,6 +97,12 @@ public class DataVecTable {
         return schema;
     }
 
+
+    public DataVecColumn column(int columnIndex) {
+        return column(schema.getName(columnIndex));
+    }
+
+
     public DataVecColumn column(String name) {
         return columns.get(name);
     }
@@ -89,4 +110,50 @@ public class DataVecTable {
     public static DataVecTable create(Table table) {
         return new DataVecTable(table);
     }
+
+
+    /**
+     * Create a {@link DataVecColumn} of the specified type
+     * @param name the name of the column
+     * @param dataWith the data to create teh column with
+     * @param <T> the type
+     * @return
+     */
+    public static <T> DataVecColumn<T> createColumnOfType(String name,T[] dataWith) {
+        Class<T> clazz = (Class<T>) dataWith[0].getClass();
+        DataVecColumn<T> ret = null;
+        if(clazz.equals(Boolean.class)) {
+            Boolean[] casted = (Boolean[]) dataWith;
+            ret = (DataVecColumn<T>) new BooleanColumn(name,casted);
+        }
+        else if(clazz.equals(Double.class)) {
+            Double[] casted = (Double[]) dataWith;
+            ret = (DataVecColumn<T>) new DoubleColumn(name,casted);
+
+        }
+        else if(clazz.equals(Float.class)) {
+            Float[] casted = (Float[]) dataWith;
+            ret = (DataVecColumn<T>) new FloatColumn(name,casted);
+        }
+        else if(clazz.equals(String.class)) {
+            String[] casted = (String[]) dataWith;
+            ret = (DataVecColumn<T>) new StringColumn(name,casted);
+        }
+        else if(clazz.equals(Long.class)) {
+            Long[] casted = (Long[]) dataWith;
+            ret = (DataVecColumn<T>) new LongColumn(name,casted);
+        }
+        else if(clazz.equals(Integer.class)) {
+            Integer[] casted = (Integer[]) dataWith;
+            ret = (DataVecColumn<T>) new IntColumn(name,casted);
+
+        }
+        else {
+            throw new IllegalArgumentException("Illegal type " + clazz.getName());
+        }
+
+        return ret;
+
+    }
+
 }

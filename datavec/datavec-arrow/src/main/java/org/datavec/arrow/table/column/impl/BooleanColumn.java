@@ -17,9 +17,10 @@
 
 package org.datavec.arrow.table.column.impl;
 
+import org.bytedeco.arrow.BooleanArray;
 import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.PrimitiveArray;
+import org.bytedeco.arrow.FlatArray;
 import org.bytedeco.arrow.global.arrow;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
@@ -29,22 +30,34 @@ import java.util.Iterator;
 
 public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
+    private BooleanArray booleanArray;
+
     public BooleanColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
+        this.booleanArray = (BooleanArray) chunkedArray.chunk(0);
     }
 
-    public BooleanColumn(String name, PrimitiveArray values) {
+    public BooleanColumn(String name, FlatArray values) {
         super(name, values);
+        this.booleanArray = (BooleanArray) values;
     }
 
     public BooleanColumn(String name, Boolean[] input) {
         super(name, input);
+        setValues(input);
     }
 
     @Override
     public void setValues(Boolean[] values) {
         this.values = DataVecArrowUtils.convertBooleanArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
+        this.booleanArray = (BooleanArray) this.values;
+    }
+
+
+    @Override
+    public Boolean elementAtRow(int rowNumber) {
+        return booleanArray.Value(rowNumber);
     }
 
     @Override

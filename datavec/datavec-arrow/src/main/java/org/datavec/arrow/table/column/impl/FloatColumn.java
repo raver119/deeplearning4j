@@ -19,11 +19,11 @@ package org.datavec.arrow.table.column.impl;
 
 import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.PrimitiveArray;
+import org.bytedeco.arrow.FlatArray;
+import org.bytedeco.arrow.FloatArray;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
-import org.datavec.arrow.table.column.DataVecColumn;
 
 import java.util.Iterator;
 
@@ -31,22 +31,32 @@ import static org.bytedeco.arrow.global.arrow.float32;
 
 public class FloatColumn extends BaseDataVecColumn<Float> {
 
+    private FloatArray floatArray;
+
     public FloatColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
+        this.floatArray = (FloatArray) chunkedArray.chunk(0);
     }
 
-    public FloatColumn(String name, PrimitiveArray values) {
+    public FloatColumn(String name, FlatArray values) {
         super(name, values);
+        this.floatArray = (FloatArray) values;
     }
 
     public FloatColumn(String name, Float[] input) {
         super(name, input);
+        setValues(input);
     }
 
     @Override
     public void setValues(Float[] values) {
         this.values = DataVecArrowUtils.convertFloatArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
+    }
+
+    @Override
+    public Float elementAtRow(int rowNumber) {
+        return floatArray.Value(rowNumber);
     }
 
     @Override

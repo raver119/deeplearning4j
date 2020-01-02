@@ -23,7 +23,9 @@ import lombok.val;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.indexer.ByteIndexer;
 import org.bytedeco.javacpp.indexer.Indexer;
+import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 
 import java.io.UnsupportedEncodingException;
@@ -57,6 +59,11 @@ public class Utf8Buffer extends BaseDataBuffer {
 
     public Utf8Buffer(long length) {
         super(length);
+        this.length = 1;
+        this.numWords = this.length;
+        this.byteLength = length;
+        pointer = new BytePointer(byteLength());
+        setIndexer(ByteIndexer.create((BytePointer) pointer));
     }
 
     public Utf8Buffer(long length, boolean initialize) {
@@ -133,6 +140,7 @@ public class Utf8Buffer extends BaseDataBuffer {
         val dataPointer = new BytePointer(this.pointer);
 
         numWords = strings.size();
+        this.length = strings.size();
 
         long cnt = 0;
         long currentLength = 0;
@@ -156,6 +164,31 @@ public class Utf8Buffer extends BaseDataBuffer {
 
     public Utf8Buffer(ByteBuffer buffer, int length) {
         super(buffer, length);
+    }
+
+    @Override
+    public void put(long i, String element) {
+        Preconditions.checkState(numWords != 0,"Number of words must not be zero!");
+        // at this point we should have fully allocated buffer, time to fill length
+        val headerLength = (numWords + 1) * 8;
+        val headerPointer = new LongPointer(this.pointer);
+        val dataPointer = new BytePointer(this.pointer);
+
+        long currentLength = 0;
+        headerPointer.put(i, currentLength);
+        val length = element.length();
+        val chars = element.toCharArray();
+
+        // putting down chars
+        for (int e = 0; e < length; e++) {
+            val b = (byte) chars[e];
+            val idx = headerLength + currentLength + e;
+            dataPointer.put(idx, b);
+        }
+
+        currentLength += length;
+        headerPointer.put(i + 1, currentLength);
+
     }
 
     @Override

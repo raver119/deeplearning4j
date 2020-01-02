@@ -17,18 +17,19 @@
 
 package org.datavec.arrow.table;
 
-import org.apache.arrow.vector.VarBinaryVector;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bytedeco.arrow.*;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.javacpp.BytePointer;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.api.transform.schema.Schema.Builder;
+import org.datavec.arrow.table.column.DataVecColumn;
+import org.datavec.arrow.table.column.impl.*;
 import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.util.Arrays;
 import java.util.TimeZone;
 
 import static org.bytedeco.arrow.global.arrow.*;
@@ -141,8 +142,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent boolean data
      */
-    public static boolean[] convertArrayToBoolean(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+    public static boolean[] convertArrayToBoolean(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asBoolean();
     }
@@ -153,8 +155,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent float data
      */
-    public static float[] convertArrayToFloat(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+    public static float[] convertArrayToFloat(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asFloat();
     }
@@ -165,8 +168,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent double data
      */
-    public static double[] convertArrayToDouble(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+    public static double[] convertArrayToDouble(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asDouble();
     }
@@ -177,8 +181,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent string data
      */
-    public static String[] convertArrayToString(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values();
+    public static String[] convertArrayToString(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values();
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asUtf8();
     }
@@ -189,8 +194,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent long data
      */
-    public static long[] convertArrayToLong(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+    public static long[] convertArrayToLong(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asLong();
     }
@@ -201,8 +207,9 @@ public class DataVecArrowUtils {
      * @param array the input
      * @return the equivalent int data
      */
-    public static int[] convertArrayToInt(PrimitiveArray array) {
-        ArrowBuffer arrowBuffer = array.values().capacity(array.capacity()).limit(array.limit());
+    public static int[] convertArrayToInt(FlatArray array) {
+        PrimitiveArray primitiveArray = (PrimitiveArray) array;
+        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
         DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
         return nd4jBuffer.asInt();
     }
@@ -212,7 +219,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertBooleanArray(boolean[] input) {
+    public static FlatArray convertBooleanArray(boolean[] input) {
         DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.BOOL,input);
         ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
@@ -223,7 +230,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertBooleanArray(Boolean[] input) {
+    public static FlatArray convertBooleanArray(Boolean[] input) {
         return convertBooleanArray(ArrayUtils.toPrimitive(input));
     }
 
@@ -232,7 +239,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertLongArray(Long[] input) {
+    public static FlatArray convertLongArray(Long[] input) {
         return convertLongArray(ArrayUtils.toPrimitive(input));
     }
 
@@ -241,7 +248,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertLongArray(long[] input) {
+    public static FlatArray convertLongArray(long[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
         ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
@@ -252,7 +259,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertDoubleArray(double[] input) {
+    public static FlatArray convertDoubleArray(double[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
         ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),dataBuffer.byteLength());
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
@@ -264,7 +271,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertDoubleArray(Double[] input) {
+    public static FlatArray convertDoubleArray(Double[] input) {
         return convertDoubleArray(ArrayUtils.toPrimitive(input));
     }
     /**
@@ -272,7 +279,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertFloatArray(float[] input) {
+    public static FlatArray convertFloatArray(float[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
         ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
@@ -283,7 +290,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertFloatArray(Float[] input) {
+    public static FlatArray convertFloatArray(Float[] input) {
         return convertFloatArray(ArrayUtils.toPrimitive(input));
     }
 
@@ -292,7 +299,7 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertIntArray(int[] input) {
+    public static FlatArray convertIntArray(int[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
         ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),input.length);
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
@@ -305,16 +312,16 @@ public class DataVecArrowUtils {
      * @param input the input
      * @return the converted array
      */
-    public static PrimitiveArray convertIntArray(Integer[] input) {
+    public static FlatArray convertIntArray(Integer[] input) {
         return convertIntArray(ArrayUtils.toPrimitive(input));
     }
-    
+
     /**
      * Convert a string array to a {@link PrimitiveArray}
      * @param input the input data
      * @return the converted array
      */
-    public static PrimitiveArray convertStringArray(String[] input) {
+    public static FlatArray convertStringArray(String[] input) {
         DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.UTF8,input);
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
         ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
@@ -391,6 +398,52 @@ public class DataVecArrowUtils {
         }
 
         return schemaBuilder.build();
+    }
+
+
+    /**
+     * Convert a set of {@link PrimitiveArray}
+     * to {@link DataVecColumn}
+     * @param primitiveArrays the primitive arrays
+     * @param names the names of the columns
+     * @return the equivalent {@link DataVecColumn}s
+     * given the types of {@link PrimitiveArray}
+     */
+    public static DataVecColumn[] convertPrimitiveArraysToColumns(FlatArray[] primitiveArrays, String[] names) {
+        Preconditions.checkState(primitiveArrays != null && names != null && primitiveArrays.length == names.length,
+                "Arrays and names must not be null and must be same length arrays");
+        DataVecColumn[] ret = new DataVecColumn[primitiveArrays.length];
+        for(int i = 0; i < ret.length; i++) {
+            switch(ByteDecoArrowSerde.dataBufferTypeTypeForArrow(primitiveArrays[i].data().type())) {
+                case UTF8:
+                    StringColumn stringColumn = new StringColumn(names[i],primitiveArrays[i]);
+                    ret[i] = stringColumn;
+                    break;
+                case INT:
+                    IntColumn intColumn = new IntColumn(names[i],primitiveArrays[i]);
+                    ret[i] = intColumn;
+                    break;
+                case DOUBLE:
+                    DoubleColumn doubleColumn = new DoubleColumn(names[i],primitiveArrays[i]);
+                    ret[i] = doubleColumn;
+                    break;
+                case LONG:
+                    LongColumn longColumn = new LongColumn(names[i],primitiveArrays[i]);
+                    ret[i] = longColumn;
+                    break;
+                case BOOL:
+                    BooleanColumn booleanColumn = new BooleanColumn(names[i],primitiveArrays[i]);
+                    ret[i] = booleanColumn;
+                    break;
+                case FLOAT:
+                    FloatColumn floatColumn = new FloatColumn(names[i],primitiveArrays[i]);
+                    ret[i] = floatColumn;
+                    break;
+
+            }
+        }
+
+        return ret;
     }
 
 }
