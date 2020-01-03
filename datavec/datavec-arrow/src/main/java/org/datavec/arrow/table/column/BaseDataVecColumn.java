@@ -26,6 +26,8 @@ import static org.nd4j.arrow.Nd4jArrowOpRunner.runOpOn;
 /**
  * Abstract class for the column.
  * @param <T> the type of the class
+ *
+ * @author Adam Gibson
  */
 public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
 

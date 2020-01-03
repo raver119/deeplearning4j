@@ -18,7 +18,6 @@
 package org.datavec.arrow.table;
 
 import org.bytedeco.arrow.FlatArray;
-import org.bytedeco.arrow.PrimitiveArray;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 

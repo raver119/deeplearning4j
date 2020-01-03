@@ -21,6 +21,7 @@ import org.bytedeco.arrow.*;
 import org.bytedeco.javacpp.BytePointer;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.buffer.Utf8Buffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
@@ -268,6 +269,42 @@ public class ByteDecoArrowSerde {
     }
 
 
+    /**
+     * Create an {@link ArrowBuffer} and {@link org.nd4j.linalg.api.buffer.DataType}
+     * pair for the offsets of a string/utf8 buffer. The databuffer
+     * will come from {@link Utf8Buffer#binaryOffsets()}
+     * @param stringBuffer the input data buffer where offsets are. The
+     *                     input data buffer must be a Utf8 buffer
+     * @return the arrow buffer for the offsets accompanied by the data type
+     */
+    public static Pair<ArrowBuffer, DataType> arrowBufferForStringOffsets(DataBuffer stringBuffer) {
+        Preconditions.checkState(stringBuffer.dataType() == org.nd4j.linalg.api.buffer.DataType.UTF8,"Passed in data buffer has to be a utf8 buffer.");
+        DataBuffer offsets = stringBuffer.binaryOffsets();
+        return fromNd4jBuffer(offsets);
+    }
+
+    /**
+     * Create an {@link Array}
+     * with the passed in {@link ArrayData}
+     *
+     * @param numElements the number of elements in the array
+     * @param arrowBuffer the array data to create the {@link Array} from
+     * @param offsets  the offsets for each string
+     * @param dataType the {@link DataType} for the array
+     * @return the created {@link Array}
+     */
+    public static FlatArray createArrayFromArrayData(long numElements, ArrowBuffer arrowBuffer, ArrowBuffer offsets, org.nd4j.linalg.api.buffer.DataType dataType) {
+        switch (dataType) {
+            case UTF8:
+                //note the size - 1 here is due to appending the final boundary
+                ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) numElements],numElements);
+                nullVectorBitMap.fill(1);
+                return new StringArray(numElements,offsets,arrowBuffer,nullVectorBitMap,0,0);
+            default:
+                throw new IllegalArgumentException("Illegal type for array creation. For other data types, please avoid specifying offsets." + dataType);
+
+        }
+    }
 
     /**
      * Create an {@link Array}
@@ -288,7 +325,7 @@ public class ByteDecoArrowSerde {
             case INT:
                 return new Int32Array(arrayData);
             case UTF8:
-                return new StringArray(arrayData);
+                throw new UnsupportedOperationException("Please use createArrayFromArrayData that forces specifications of offsets.");
             case LONG:
                 return new Int64Array(arrayData);
             case UINT32:
@@ -322,13 +359,29 @@ public class ByteDecoArrowSerde {
 
     /**
      * Create array data for a given arrow buffer and data type
+     * @param arrowBuffer the input data
+     * @param offsets  the offsets
+     * @param dataType the data type
+     * @return
+     */
+    public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,ArrowBuffer offsets,DataType dataType) {
+        //see: https://github.com/apache/arrow/blob/d0126e713c82e6a8d62944430a38c4b7cd652178/cpp/src/arrow/array.h#L473
+        ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
+        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,offsets,arrowBuffer);
+        return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
+    }
+
+    /**
+     * Create array data for a given arrow buffer and data type
      * @param arrowBuffer
      * @param dataType
      * @return
      */
     public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
-        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(arrowBuffer);
-        return ArrayData.Make(dataType,arrowBuffer.size(),arrowBufferVector);
+        //see: https://github.com/apache/arrow/blob/d0126e713c82e6a8d62944430a38c4b7cd652178/cpp/src/arrow/array.h#L473
+        ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
+        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,arrowBuffer);
+        return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
     }
 
 

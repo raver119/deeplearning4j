@@ -30,6 +30,10 @@ import java.util.Iterator;
 
 import static org.bytedeco.arrow.global.arrow.utf8;
 
+/**
+ * String type column
+ * @author Adam Gibson
+ */
 public class StringColumn extends BaseDataVecColumn<String> {
 
     private StringArray stringArray;

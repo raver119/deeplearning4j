@@ -175,6 +175,18 @@ public class DataVecArrowUtils {
         return nd4jBuffer.asDouble();
     }
 
+
+    public static String elementAt(StringArray stringArray,long i) {
+        long valLength = stringArray.value_length(i);
+        long offset = stringArray.value_offset(i);
+        ArrowBuffer currData = stringArray.value_data();
+        long masksAndOffsets = stringArray.value_offsets().size() * 2;
+        return currData.data().position(offset + masksAndOffsets)
+                .capacity(valLength)
+                .limit(offset + masksAndOffsets + valLength)
+                .getString();
+    }
+
     /**
      * Convert the given input
      * to a string array
@@ -182,10 +194,13 @@ public class DataVecArrowUtils {
      * @return the equivalent string data
      */
     public static String[] convertArrayToString(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values();
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asUtf8();
+        StringArray primitiveArray = (StringArray) array;
+        String[] ret = new String[(int) primitiveArray.length()];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = elementAt(primitiveArray,i);
+        }
+
+        return ret;
     }
 
     /**
@@ -324,9 +339,19 @@ public class DataVecArrowUtils {
     public static FlatArray convertStringArray(String[] input) {
         DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.UTF8,input);
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
+        ArrowBuffer offsets = ByteDecoArrowSerde.arrowBufferForStringOffsets(dataBuffer).getFirst();
+
+        /**
+         *  public StringArray(@Cast("int64_t") long length, @Const @SharedPtr @ByRef ArrowBuffer value_offsets,
+         *                 @Const @SharedPtr @ByRef ArrowBuffer data,
+         *                 @Const @SharedPtr @ByRef(nullValue = "std::shared_ptr<arrow::Buffer>(nullptr)") ArrowBuffer null_bitmap,
+         *                 @Cast("int64_t") long null_count/*=arrow::kUnknownNullCount
+         @Cast("int64_t") long offset=0)
+         */
         ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
-        return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
+        return ByteDecoArrowSerde.createArrayFromArrayData(input.length, arrowBuffer, offsets, dataBuffer.dataType());
     }
+
 
 
     /**

@@ -29,6 +29,11 @@ import java.util.Iterator;
 
 import static org.bytedeco.arrow.global.arrow.float64;
 
+/**
+ * Double type column
+ *
+ * @author Adam Gibson
+ */
 public class DoubleColumn extends BaseDataVecColumn<Double> {
 
     private DoubleArray doubleArray;
@@ -52,6 +57,7 @@ public class DoubleColumn extends BaseDataVecColumn<Double> {
     public void setValues(Double[] values) {
         this.values = DataVecArrowUtils.convertDoubleArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
+        this.doubleArray = (DoubleArray) this.values;
     }
 
 

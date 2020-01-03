@@ -29,6 +29,11 @@ import java.util.Iterator;
 
 import static org.bytedeco.arrow.global.arrow.int64;
 
+/**
+ * Long type column
+ *
+ * @author Adam Gibson
+ */
 public class LongColumn extends BaseDataVecColumn<Long> {
 
     private Int64Array int64Array;

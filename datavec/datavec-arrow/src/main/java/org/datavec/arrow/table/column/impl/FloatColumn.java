@@ -29,6 +29,11 @@ import java.util.Iterator;
 
 import static org.bytedeco.arrow.global.arrow.float32;
 
+/**
+ * Float type column
+ *
+ * @author Adam Gibson
+ */
 public class FloatColumn extends BaseDataVecColumn<Float> {
 
     private FloatArray floatArray;
@@ -52,6 +57,7 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
     public void setValues(Float[] values) {
         this.values = DataVecArrowUtils.convertFloatArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
+        this.floatArray = (FloatArray) this.values;
     }
 
     @Override

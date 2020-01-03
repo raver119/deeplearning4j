@@ -367,6 +367,13 @@ public interface DataBufferFactory {
      */
     DataBuffer createDouble(long length, boolean initialize);
 
+    /**
+     *
+     * @param length
+     * @param initialize
+     * @param workspace
+     * @return
+     */
     DataBuffer createDouble(long length, boolean initialize, MemoryWorkspace workspace);
 
     /**

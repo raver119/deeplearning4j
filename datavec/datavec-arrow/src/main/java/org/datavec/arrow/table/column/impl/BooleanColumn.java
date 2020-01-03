@@ -28,6 +28,11 @@ import org.datavec.arrow.table.column.BaseDataVecColumn;
 
 import java.util.Iterator;
 
+/**
+ * Boolean type column
+ *
+ * @author Adam Gibson
+ */
 public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
     private BooleanArray booleanArray;

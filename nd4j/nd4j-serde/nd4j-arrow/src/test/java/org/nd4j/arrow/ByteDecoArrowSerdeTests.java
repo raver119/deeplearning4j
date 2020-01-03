@@ -49,6 +49,12 @@ public class ByteDecoArrowSerdeTests {
 
     }
 
+    @Test
+    public void testStringOffsetsGeneration() {
+        DataBuffer dataBuffer = Nd4j.createBufferOfType(DataType.UTF8,new String[]{"hello1","hello2"});
+        DataBuffer offsets = dataBuffer.binaryOffsets();
+        assertEquals(dataBuffer.length(),offsets.length());
+    }
 
     @Test
     public void testToTensor() {

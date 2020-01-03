@@ -30,6 +30,11 @@ import java.util.Iterator;
 
 import static org.bytedeco.arrow.global.arrow.int32;
 
+/**
+ * Int type column
+ *
+ * @author Adam Gibson
+ */
 public class IntColumn extends BaseDataVecColumn<Integer> {
 
     private Int32Array intArray;

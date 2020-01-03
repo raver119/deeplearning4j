@@ -16,11 +16,9 @@
 
 package org.nd4j.linalg.api.buffer;
 
-import lombok.NonNull;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
-import org.nd4j.linalg.primitives.Triple;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -626,6 +624,12 @@ public interface DataBuffer extends Serializable, AutoCloseable {
      * @param buffers the buffers to assign
      */
     void assign(DataBuffer... buffers);
+
+    /**
+     * Returns an n + 1 length buffer
+     * @return
+     */
+    DataBuffer binaryOffsets();
 
     /**
      * Assign the given buffers to this buffer
