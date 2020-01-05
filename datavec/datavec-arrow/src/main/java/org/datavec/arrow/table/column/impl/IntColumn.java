@@ -17,14 +17,10 @@
 
 package org.datavec.arrow.table.column.impl;
 
-import org.bytedeco.arrow.ChunkedArray;
-import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.FlatArray;
-import org.bytedeco.arrow.Int32Array;
+import org.bytedeco.arrow.*;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
-import org.nd4j.linalg.collection.IntArrayKeyMap.IntArray;
 
 import java.util.Iterator;
 
@@ -41,24 +37,28 @@ public class IntColumn extends BaseDataVecColumn<Integer> {
 
     public IntColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.intArray = (Int32Array) chunkedArray.chunk(0);
+        this.intArray = new Int32Array(chunkedArray.chunk(0));
+        this.length = intArray.data().buffers().get()[1].size();
     }
 
     public IntColumn(String name, FlatArray values) {
         super(name, values);
         this.intArray = (Int32Array) values;
+        this.length = intArray.data().buffers().get()[1].size();
+
     }
 
     public IntColumn(String name, Integer[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
     public void setValues(Integer[] values) {
         this.values = DataVecArrowUtils.convertIntArray(values);
-        this.chunkedArray = new ChunkedArray(this.values);
+        this.chunkedArray = new ChunkedArray(new ArrayVector(this.values));
         this.intArray = (Int32Array) this.values;
+        this.length = intArray.data().buffers().get()[1].size();
+
     }
 
     @Override

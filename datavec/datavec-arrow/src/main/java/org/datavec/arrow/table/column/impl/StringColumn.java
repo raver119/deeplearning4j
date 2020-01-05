@@ -40,18 +40,20 @@ public class StringColumn extends BaseDataVecColumn<String> {
 
     public StringColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.stringArray = (StringArray) chunkedArray.chunk(0);
+        this.stringArray = new StringArray(chunkedArray.chunk(0));
+        this.length = stringArray.data().buffers().get()[2].size();
     }
 
     public StringColumn(String name, FlatArray values) {
         super(name, values);
         this.stringArray = (StringArray) values;
+        this.length = stringArray.data().buffers().get()[2].size();
+
 
     }
 
     public StringColumn(String name, String[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
@@ -59,11 +61,12 @@ public class StringColumn extends BaseDataVecColumn<String> {
         this.values = DataVecArrowUtils.convertStringArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.stringArray = (StringArray) this.values;
+        this.length = stringArray.data().buffers().get()[2].size();
     }
 
     @Override
     public String elementAtRow(int rowNumber) {
-        return stringArray.GetValue(0,new IntPointer()).getString();
+        return  DataVecArrowUtils.elementAt(stringArray,rowNumber,length);
     }
 
     @Override

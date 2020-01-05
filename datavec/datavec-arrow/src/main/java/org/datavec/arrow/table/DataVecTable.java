@@ -17,19 +17,25 @@
 
 package org.datavec.arrow.table;
 
-import org.bytedeco.arrow.Array;
-import org.bytedeco.arrow.ArrayVector;
-import org.bytedeco.arrow.Table;
+import org.bytedeco.arrow.*;
 import org.datavec.api.transform.schema.Schema;
+import org.datavec.api.transform.schema.Schema.Builder;
 import org.datavec.arrow.table.column.DataVecColumn;
 import org.datavec.arrow.table.column.impl.*;
 import org.datavec.arrow.table.row.Row;
+import org.datavec.arrow.table.row.RowImpl;
 import org.nd4j.base.Preconditions;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
+/**
+ * A table representing a data frame like datastructure
+ * for accessing columnar data
+ *
+ * @author Adam Gibson
+ */
 public class DataVecTable {
 
     private Table table;
@@ -89,26 +95,143 @@ public class DataVecTable {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Returns the arrow schema {@link org.bytedeco.arrow.Schema}
+     * @return
+     */
     public org.bytedeco.arrow.Schema arrowSchema() {
         return DataVecArrowUtils.toArrowSchema(schema);
     }
 
+    /**
+     * Returns the {@link Schema}
+     * for this tbale
+     * @return
+     */
     public Schema schema() {
         return schema;
     }
 
+    /**
+     * Get the name of the column
+     * at the specified index
+     * @param index the indes to get the column name at
+     * @return the name of the column at the specified index
+     */
+    public String columnNameAt(int index) {
+        return schema.getName(index);
+    }
 
+    /**
+     * Returns the column of the table
+     * at the given index
+     * @param columnIndex the index of the column
+     *                    to get
+     * @return the column at the specified index
+     */
     public DataVecColumn column(int columnIndex) {
         return column(schema.getName(columnIndex));
     }
 
 
-    public DataVecColumn column(String name) {
+    /**
+     * Returns the column in the table with
+     * the given name
+     * @param name the name of the column
+     * @return the column with the given name
+     */
+    public <T> DataVecColumn<T> column(String name) {
+        Preconditions.checkState(columns.containsKey(name),"No column named " + name + " present in table!");
         return columns.get(name);
     }
 
+
+
+    /**
+     * Create a {@link Row}
+     * using this table given the row number
+     * @param rowNum the row number
+     * @return
+     */
+    public Row row(int rowNum) {
+        Row row = new RowImpl(this,rowNum);
+        return row;
+    }
+
+    /**
+     * Create a {@link DataVecTable}
+     * using the given {@link Table}
+     * @param table the table to use
+     * @return the created table
+     */
     public static DataVecTable create(Table table) {
         return new DataVecTable(table);
+    }
+
+
+    /**
+     * Create a {@link DataVecTable}
+     * based on the columns
+     * @param columns the input columns
+     * @return the created table
+     */
+    public static DataVecTable create(DataVecColumn...columns) {
+        Preconditions.checkNotNull(columns,"Passed in column array was null!");
+        Schema.Builder schemaBuilder = new Builder();
+        ArrayVector arrayVector = null;
+        Array[] arrays = new Array[columns.length];
+        for(int i = 0; i < columns.length; i++) {
+            Preconditions.checkNotNull(columns[i],"Column " + i + " was null!");
+            switch(columns[i].type()) {
+                case Boolean:
+                    schemaBuilder.addColumnBoolean(columns[i].name());
+                    break;
+                case Float:
+                    schemaBuilder.addColumnFloat(columns[i].name());
+                    break;
+                case Double:
+                    schemaBuilder.addColumnDouble(columns[i].name());
+                    break;
+                case Integer:
+                    schemaBuilder.addColumnInteger(columns[i].name());
+                    break;
+                case String:
+                    schemaBuilder.addColumnString(columns[i].name());
+                    break;
+                case Long:
+                    schemaBuilder.addColumnLong(columns[i].name());
+                    break;
+                case Time:
+                    schemaBuilder.addColumnTime(columns[i].name(), TimeZone.getDefault());
+                    break;
+            }
+
+            FlatArray flatArray = columns[i].values();
+            arrays[i] = flatArray;
+        }
+
+        arrayVector = new ArrayVector(arrays);
+        Schema dataVecSchema = schemaBuilder.build();
+        org.bytedeco.arrow.Schema arrowSchema = DataVecArrowUtils.toArrowSchema(dataVecSchema);
+        Table table = Table.Make(arrowSchema,arrayVector);
+        return new DataVecTable(table);
+    }
+
+
+    /**
+     * Returns the number of rows in the table
+     * @return
+     */
+    public long numRows() {
+        return columns.get(schema.getName(0)).rows();
+    }
+
+    /**
+     * Returns the number of columns in the table
+     * @return
+     */
+    public long numColumns() {
+        return table.num_columns();
     }
 
 

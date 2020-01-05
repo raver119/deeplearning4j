@@ -40,17 +40,18 @@ public class LongColumn extends BaseDataVecColumn<Long> {
 
     public LongColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.int64Array = (Int64Array) chunkedArray.chunk(0);
+        this.int64Array = new Int64Array(chunkedArray.chunk(0));
+        this.length = int64Array.data().buffers().get()[1].size();
     }
 
     public LongColumn(String name, FlatArray values) {
         super(name, values);
         this.int64Array = (Int64Array) values;
+        this.length = int64Array.data().buffers().get()[1].size();
     }
 
     public LongColumn(String name, Long[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class LongColumn extends BaseDataVecColumn<Long> {
         this.values = DataVecArrowUtils.convertLongArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.int64Array = (Int64Array) this.values;
+        this.length = int64Array.data().buffers().get()[1].size();
     }
 
     @Override

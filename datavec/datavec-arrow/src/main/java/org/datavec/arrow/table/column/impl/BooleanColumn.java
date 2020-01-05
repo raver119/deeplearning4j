@@ -39,17 +39,19 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
     public BooleanColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.booleanArray = (BooleanArray) chunkedArray.chunk(0);
+        this.booleanArray = new BooleanArray(chunkedArray.chunk(0));
+        this.length = booleanArray.data().buffers().get()[1].size();
+
     }
 
     public BooleanColumn(String name, FlatArray values) {
         super(name, values);
         this.booleanArray = (BooleanArray) values;
+        this.length = booleanArray.data().buffers().get()[1].size();
     }
 
     public BooleanColumn(String name, Boolean[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
@@ -57,6 +59,8 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
         this.values = DataVecArrowUtils.convertBooleanArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.booleanArray = (BooleanArray) this.values;
+        this.length = booleanArray.data().buffers().get()[1].size();
+
     }
 
 

@@ -98,6 +98,10 @@ public interface DataVecColumn<T> extends Iterable<T>, Comparator<T> {
         return values().null_count();
     }
 
+    /**
+     * Returns the number of rows in the column
+     * @return
+     */
     default long rows() {
         return values().data().length();
     }

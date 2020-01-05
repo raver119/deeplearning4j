@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.bytedeco.arrow.*;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.LongPointer;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.api.transform.schema.Schema.Builder;
 import org.datavec.arrow.table.column.DataVecColumn;
@@ -42,6 +43,21 @@ import static org.nd4j.arrow.ByteDecoArrowSerde.fromArrowBuffer;
  * @author Adam Gibson
  */
 public class DataVecArrowUtils {
+
+
+    /**
+     * Returns the number of elements in the given
+     * {@link FlatArray}.
+     * This accesses buffer[buffer.length - 1] and returns its size
+     * @param flatArray the flat array to return the number
+     *                  of elements for
+     * @return
+     */
+    public static long numberOfElementsInBuffer(FlatArray flatArray) {
+        long indexOfBuffer = flatArray.data().buffers().size() - 1;
+        Preconditions.checkState(flatArray.data().length() > 1,"Flat array size must be at least size 2.");
+        return flatArray.data().buffers().get(indexOfBuffer).size();
+    }
 
 
     /**
@@ -95,7 +111,7 @@ public class DataVecArrowUtils {
      */
     public static org.bytedeco.arrow.Schema toArrowSchema(Schema schema) {
         Field[] fields = new Field[schema.numColumns()];
-        FieldVector schemaVector = new FieldVector(fields);
+        FieldVector schemaVector = null;
         for(int i = 0; i < schema.numColumns(); i++) {
             switch(schema.getType(i)) {
                 case Double:
@@ -132,6 +148,7 @@ public class DataVecArrowUtils {
             }
         }
 
+        schemaVector = new FieldVector(fields);
         return new org.bytedeco.arrow.Schema(schemaVector);
     }
 
@@ -143,10 +160,14 @@ public class DataVecArrowUtils {
      * @return the equivalent boolean data
      */
     public static boolean[] convertArrayToBoolean(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asBoolean();
+        BooleanArray primitiveArray = (BooleanArray) array;
+        long length = numberOfElementsInBuffer(array);
+        boolean[] ret = new boolean[(int)  length];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = primitiveArray.Value(i);
+        }
+
+        return ret;
     }
 
     /**
@@ -156,10 +177,14 @@ public class DataVecArrowUtils {
      * @return the equivalent float data
      */
     public static float[] convertArrayToFloat(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asFloat();
+        FloatArray primitiveArray = (FloatArray) array;
+        long length = numberOfElementsInBuffer(array);
+        float[] ret = new float[(int) length];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = primitiveArray.Value(i);
+        }
+
+        return ret;
     }
 
     /**
@@ -169,21 +194,45 @@ public class DataVecArrowUtils {
      * @return the equivalent double data
      */
     public static double[] convertArrayToDouble(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asDouble();
+        DoubleArray primitiveArray = (DoubleArray) array;
+        long length = numberOfElementsInBuffer(array);
+        double[] ret = new double[(int) length];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = primitiveArray.Value(i);
+        }
+        return ret;
     }
 
 
+    /**
+     * Find the element at a particular ror
+     * in the {@link StringArray}
+     * @param stringArray the string array to get the item from
+     * @param i the index
+     * @return the string at the specified index
+     */
     public static String elementAt(StringArray stringArray,long i) {
+        long numElements = numberOfElementsInBuffer(stringArray);
+        return elementAt(stringArray,i,numElements);
+    }
+
+    /**
+     * Find the element at a particular ror
+     * in the {@link StringArray}
+     * @param stringArray the string array to get the item from
+     * @param i the index
+     * @param length  the number of elements
+     * @return the string at the specified index
+     */
+    public static String elementAt(StringArray stringArray,long i,long length) {
         long valLength = stringArray.value_length(i);
         long offset = stringArray.value_offset(i);
         ArrowBuffer currData = stringArray.value_data();
-        long masksAndOffsets = stringArray.value_offsets().size() * 2;
-        return currData.data().position(offset + masksAndOffsets)
+        //offsets: each begin/end for each element that isn't the last
+        long offsetSize = (length + 1) * 8;
+        return currData.data().position(offset + offsetSize)
                 .capacity(valLength)
-                .limit(offset + masksAndOffsets + valLength)
+                .limit(offset + offsetSize + valLength)
                 .getString();
     }
 
@@ -195,7 +244,8 @@ public class DataVecArrowUtils {
      */
     public static String[] convertArrayToString(FlatArray array) {
         StringArray primitiveArray = (StringArray) array;
-        String[] ret = new String[(int) primitiveArray.length()];
+        long length = numberOfElementsInBuffer(array);
+        String[] ret = new String[(int) length];
         for(int i = 0; i < ret.length; i++) {
             ret[i] = elementAt(primitiveArray,i);
         }
@@ -210,10 +260,14 @@ public class DataVecArrowUtils {
      * @return the equivalent long data
      */
     public static long[] convertArrayToLong(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asLong();
+        Int64Array primitiveArray = (Int64Array) array;
+        long length = numberOfElementsInBuffer(array);
+        long[] ret = new long[(int) length];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = primitiveArray.Value(i);
+        }
+
+        return ret;
     }
 
     /**
@@ -223,10 +277,13 @@ public class DataVecArrowUtils {
      * @return the equivalent int data
      */
     public static int[] convertArrayToInt(FlatArray array) {
-        PrimitiveArray primitiveArray = (PrimitiveArray) array;
-        ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
-        DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
-        return nd4jBuffer.asInt();
+        Int32Array primitiveArray = (Int32Array) array;
+        long length = numberOfElementsInBuffer(array);
+        int[] ret = new int[(int) length];
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = primitiveArray.Value(i);
+        }
+        return ret;
     }
 
     /**
@@ -276,7 +333,7 @@ public class DataVecArrowUtils {
      */
     public static FlatArray convertDoubleArray(double[] input) {
         DataBuffer dataBuffer = Nd4j.createBuffer(input);
-        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),dataBuffer.byteLength());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(new BytePointer(dataBuffer.pointer()),dataBuffer.length());
         return ByteDecoArrowSerde.createArrayFromArrayData(arrowBuffer,dataBuffer.dataType());
     }
 
@@ -340,15 +397,7 @@ public class DataVecArrowUtils {
         DataBuffer dataBuffer = Nd4j.createBufferOfType(org.nd4j.linalg.api.buffer.DataType.UTF8,input);
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
         ArrowBuffer offsets = ByteDecoArrowSerde.arrowBufferForStringOffsets(dataBuffer).getFirst();
-
-        /**
-         *  public StringArray(@Cast("int64_t") long length, @Const @SharedPtr @ByRef ArrowBuffer value_offsets,
-         *                 @Const @SharedPtr @ByRef ArrowBuffer data,
-         *                 @Const @SharedPtr @ByRef(nullValue = "std::shared_ptr<arrow::Buffer>(nullptr)") ArrowBuffer null_bitmap,
-         *                 @Cast("int64_t") long null_count/*=arrow::kUnknownNullCount
-         @Cast("int64_t") long offset=0)
-         */
-        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.length());
         return ByteDecoArrowSerde.createArrayFromArrayData(input.length, arrowBuffer, offsets, dataBuffer.dataType());
     }
 

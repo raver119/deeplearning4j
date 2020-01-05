@@ -23,6 +23,7 @@ import org.nd4j.linalg.api.buffer.DataType;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DataVecArrowUtilsTest {
 
@@ -51,14 +52,17 @@ public class DataVecArrowUtilsTest {
                 case SHORT:
                     break;
                 case DOUBLE:
-                    double[] inputDouble = {1.0};
+                    double[] inputDouble = {1.0,2.0,3.0};
                     FlatArray primitiveArrayDouble = DataVecArrowUtils.convertDoubleArray(inputDouble);
+                    assertEquals(inputDouble.length,DataVecArrowUtils.numberOfElementsInBuffer(primitiveArrayDouble));
                     double[] doubles = DataVecArrowUtils.convertArrayToDouble(primitiveArrayDouble);
                     assertArrayEquals(inputDouble,doubles,1e-3);
                     break;
                 case UTF8:
-                    String[] inputString = {"input","input2"};
+                    String[] inputString = {"input","input2","input3"};
                     FlatArray primitiveArray = DataVecArrowUtils.convertStringArray(inputString);
+                    assertEquals(inputString.length,DataVecArrowUtils.numberOfElementsInBuffer(primitiveArray));
+
                     String[] strings = DataVecArrowUtils.convertArrayToString(primitiveArray);
                     assertArrayEquals(inputString,strings);
                     break;

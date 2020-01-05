@@ -40,17 +40,18 @@ public class DoubleColumn extends BaseDataVecColumn<Double> {
 
     public DoubleColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.doubleArray = (DoubleArray) chunkedArray.chunk(0);
+        this.doubleArray = new DoubleArray(chunkedArray.chunk(0));
+        this.length = doubleArray.data().buffers().get()[1].size();
     }
 
     public DoubleColumn(String name, FlatArray values) {
         super(name, values);
         this.doubleArray = (DoubleArray) values;
+        this.length = doubleArray.data().buffers().get()[1].size();
     }
 
     public DoubleColumn(String name, Double[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class DoubleColumn extends BaseDataVecColumn<Double> {
         this.values = DataVecArrowUtils.convertDoubleArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.doubleArray = (DoubleArray) this.values;
+        this.length = doubleArray.data().buffers().get()[1].size();
     }
 
 

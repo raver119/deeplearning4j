@@ -18,13 +18,33 @@
 package org.datavec.arrow.table.row;
 
 import org.datavec.arrow.table.DataVecTable;
+import org.datavec.arrow.table.column.DataVecColumn;
 
 import java.util.List;
 
+/**
+ * Row implementation.
+ * Represents multiple  {@link org.datavec.arrow.table.column.DataVecColumn}
+ * that have all
+ * of the same row index.
+ *
+ * @author Adam Gibson
+ */
 public class RowImpl implements Row {
 
     private DataVecTable table;
     private int rowNum;
+
+    /**
+     * An implementation of a row.
+     * @param table the table to provide the view for
+     * @param rowNum the row number representative for the
+     *               view
+     */
+    public RowImpl(DataVecTable table, int rowNum) {
+        this.table = table;
+        this.rowNum = rowNum;
+    }
 
     @Override
     public DataVecTable table() {
@@ -38,12 +58,13 @@ public class RowImpl implements Row {
 
     @Override
     public <T> T elementAtColumn(int column) {
-        return (T) table.column(column).elementAtRow(rowNumber());
+        return elementAtColumn(table.columnNameAt(column));
     }
 
     @Override
     public <T> T elementAtColumn(String columnName) {
-        return null;
+        DataVecColumn<T> column = table.column(columnName);
+        return column.elementAtRow(rowNumber());
     }
 
     @Override

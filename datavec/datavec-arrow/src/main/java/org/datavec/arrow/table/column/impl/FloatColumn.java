@@ -40,17 +40,19 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
 
     public FloatColumn(String name, ChunkedArray chunkedArray) {
         super(name, chunkedArray);
-        this.floatArray = (FloatArray) chunkedArray.chunk(0);
+        this.floatArray = new FloatArray(chunkedArray.chunk(0));
+        this.length = floatArray.data().buffers().get()[1].size();
     }
 
     public FloatColumn(String name, FlatArray values) {
         super(name, values);
         this.floatArray = (FloatArray) values;
+        this.length = floatArray.data().buffers().get()[1].size();
+
     }
 
     public FloatColumn(String name, Float[] input) {
         super(name, input);
-        setValues(input);
     }
 
     @Override
@@ -58,6 +60,8 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
         this.values = DataVecArrowUtils.convertFloatArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.floatArray = (FloatArray) this.values;
+        this.length = floatArray.data().buffers().get()[1].size();
+
     }
 
     @Override

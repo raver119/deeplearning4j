@@ -15,7 +15,6 @@
  ******************************************************************************/
 
 package org.nd4j.arrow;
-import lombok.val;
 import org.bytedeco.arrow.global.arrow;
 import org.bytedeco.arrow.*;
 import org.bytedeco.javacpp.BytePointer;
@@ -69,6 +68,8 @@ public class ByteDecoArrowSerde {
      * @return
      */
     public static Tensor toTensor(INDArray input) {
+        if(input.dataType() == org.nd4j.linalg.api.buffer.DataType.BOOL)
+            throw new IllegalArgumentException("Arrow does not currently support converting boolean arrays to tensors.");
         ArrowBuffer arrowBuffer = fromNd4jBuffer(input.data()).getFirst();
         long[] shape = input.shape();
         long[] stride = input.stride();
@@ -208,8 +209,8 @@ public class ByteDecoArrowSerde {
     public static DataBuffer fromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
         org.nd4j.linalg.api.buffer.DataType dataType1 = dataBufferTypeTypeForArrow(dataType);
         if(dataType1 != org.nd4j.linalg.api.buffer.DataType.UTF8) {
-            BytePointer bytePointer = arrowBuffer.data().capacity(arrowBuffer.capacity() * dataBufferTypeTypeForArrow(dataType).width());
-            return Nd4j.createBuffer(bytePointer,arrowBuffer.capacity(),dataBufferTypeTypeForArrow(dataType));
+            BytePointer bytePointer = arrowBuffer.data().capacity(arrowBuffer.size() * dataType1.width());
+            return Nd4j.createBuffer(bytePointer,arrowBuffer.size(),dataBufferTypeTypeForArrow(dataType));
 
         }
         else {
@@ -228,7 +229,7 @@ public class ByteDecoArrowSerde {
      */
     public static Pair<ArrowBuffer,DataType> fromNd4jBuffer(DataBuffer dataBuffer) {
         BytePointer bytePointer = new BytePointer(dataBuffer.pointer());
-        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.byteLength());
+        ArrowBuffer arrowBuffer = new ArrowBuffer(bytePointer,dataBuffer.length());
         return Pair.of(arrowBuffer,arrowDataTypeForNd4j(dataBuffer.dataType()));
     }
 
@@ -241,7 +242,7 @@ public class ByteDecoArrowSerde {
     public static INDArray ndarrayFromArrowArray(FlatArray array) {
         if(array instanceof PrimitiveArray) {
             PrimitiveArray primitiveArray = (PrimitiveArray) array;
-            ArrowBuffer arrowBuffer = primitiveArray.values().capacity(array.capacity()).limit(array.limit());
+            ArrowBuffer arrowBuffer = primitiveArray.values();
             DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
             return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
         }
@@ -314,47 +315,49 @@ public class ByteDecoArrowSerde {
      * @return the created {@link Array}
      */
     public static FlatArray createArrayFromArrayData(ArrowBuffer arrowBuffer, org.nd4j.linalg.api.buffer.DataType dataType) {
-        ArrayData arrayData = arrayDataFromArrowBuffer(arrowBuffer,arrowDataTypeForNd4j(dataType));
+        ArrayData arrayData = arrayDataFromArrowBuffer(arrowBuffer,arrowDataTypeForNd4j(dataType), true);
+        FlatArray flatArray = null;
         switch (dataType) {
             case DOUBLE:
-                return new DoubleArray(arrayData);
+                flatArray = new DoubleArray(arrayData);
+                break;
             case BOOL:
-                return new BooleanArray(arrayData);
+                flatArray = new BooleanArray(arrayData);
+                break;
             case FLOAT:
-                return new FloatArray(arrayData);
+                flatArray = new FloatArray(arrayData);
+                break;
             case INT:
-                return new Int32Array(arrayData);
+                flatArray = new Int32Array(arrayData);
+                break;
             case UTF8:
                 throw new UnsupportedOperationException("Please use createArrayFromArrayData that forces specifications of offsets.");
             case LONG:
-                return new Int64Array(arrayData);
+                flatArray = new Int64Array(arrayData);
+                break;
             case UINT32:
-                return new UInt32Array(arrayData);
+                flatArray = new UInt32Array(arrayData);
+                break;
             case HALF:
-                return new HalfFloatArray(arrayData);
+                flatArray = new HalfFloatArray(arrayData);
+                break;
             case UINT64:
-                return new UInt64Array(arrayData);
+                flatArray = new UInt64Array(arrayData);
+                break;
             case BYTE:
-                return new BinaryArray(arrayData);
+                flatArray = new BinaryArray(arrayData);
+                break;
             case UINT16:
-                return new UInt16Array(arrayData);
+                flatArray = new UInt16Array(arrayData);
+                break;
 
-            default:
-                throw new IllegalArgumentException("Illegal type for array creation " + dataType);
 
         }
+
+        return flatArray;
     }
 
-    /**
-     * Create an {@link ArrayData}
-     * from a {@link DataBuffer}
-     * @param buffer the buffer to create array data from
-     * @return the wrapped data buffer
-     */
-    public static ArrayData makeArrayData(DataBuffer buffer) {
-        val bufferDataTypePair = fromNd4jBuffer(buffer);
-        return arrayDataFromArrowBuffer(bufferDataTypePair.getFirst(),bufferDataTypePair.getRight());
-    }
+
 
 
     /**
@@ -365,8 +368,9 @@ public class ByteDecoArrowSerde {
      * @return
      */
     public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,ArrowBuffer offsets,DataType dataType) {
-        //see: https://github.com/apache/arrow/blob/d0126e713c82e6a8d62944430a38c4b7cd652178/cpp/src/arrow/array.h#L473
         ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
+        //all items are present
+        nullVectorBitMap.fill(1);
         ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,offsets,arrowBuffer);
         return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
     }
@@ -375,13 +379,22 @@ public class ByteDecoArrowSerde {
      * Create array data for a given arrow buffer and data type
      * @param arrowBuffer
      * @param dataType
+     * @param nullBitMaskIncluded
      * @return
      */
-    public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,DataType dataType) {
-        //see: https://github.com/apache/arrow/blob/d0126e713c82e6a8d62944430a38c4b7cd652178/cpp/src/arrow/array.h#L473
-        ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
-        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,arrowBuffer);
-        return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
+    public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer, DataType dataType, boolean nullBitMaskIncluded) {
+       if(nullBitMaskIncluded) {
+           ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
+           //all items are present
+           nullVectorBitMap.fill(1);
+           ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,arrowBuffer);
+           return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
+       }
+       else {
+           ArrowBufferVector arrowBufferVector = new ArrowBufferVector(arrowBuffer);
+           return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
+       }
+
     }
 
 

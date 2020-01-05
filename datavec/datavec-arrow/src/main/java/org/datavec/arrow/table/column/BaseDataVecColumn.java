@@ -34,6 +34,7 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
     protected String name;
     protected FlatArray values;
     protected ChunkedArray chunkedArray;
+    protected  long length;
 
     public BaseDataVecColumn(String name,T[] input)  {
         setValues(input);
@@ -49,6 +50,11 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
         this.name = name;
         this.chunkedArray = new ChunkedArray(values);
         this.values = values;
+    }
+
+    @Override
+    public long rows() {
+        return length;
     }
 
     @Override
