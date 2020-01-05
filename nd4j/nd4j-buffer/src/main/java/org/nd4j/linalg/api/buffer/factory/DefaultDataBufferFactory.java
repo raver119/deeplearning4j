@@ -826,6 +826,8 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
                 return new FloatBuffer(pointer, indexer, length);
             case DOUBLE:
                 return new DoubleBuffer(pointer, indexer, length);
+            case UTF8:
+                return new Utf8Buffer(pointer,indexer,length);
 
         }
         throw new IllegalArgumentException("Invalid data type for creation " + type);

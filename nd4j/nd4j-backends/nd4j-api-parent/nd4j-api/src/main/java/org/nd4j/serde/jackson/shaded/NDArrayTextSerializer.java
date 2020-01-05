@@ -78,7 +78,7 @@ public class NDArrayTextSerializer extends JsonSerializer<INDArray> {
                 break;
             case UTF8:
                 Utf8Buffer utf8B = ((Utf8Buffer)arr.data());
-                long n = utf8B.getNumWords();
+                long n = utf8B.length();
                 for( int j=0; j<n; j++ ) {
                     String s = utf8B.getString(j);
                     jg.writeString(s);

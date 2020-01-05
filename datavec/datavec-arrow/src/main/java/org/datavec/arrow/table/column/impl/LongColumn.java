@@ -24,8 +24,13 @@ import org.bytedeco.arrow.Int64Array;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
+import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.bytedeco.arrow.global.arrow.int64;
 
@@ -50,6 +55,10 @@ public class LongColumn extends BaseDataVecColumn<Long> {
         this.length = int64Array.data().buffers().get()[1].size();
     }
 
+    public LongColumn(String name, List<Long> input) {
+        super(name, input);
+    }
+
     public LongColumn(String name, Long[] input) {
         super(name, input);
     }
@@ -60,6 +69,21 @@ public class LongColumn extends BaseDataVecColumn<Long> {
         this.chunkedArray = new ChunkedArray(this.values);
         this.int64Array = (Int64Array) this.values;
         this.length = int64Array.data().buffers().get()[1].size();
+    }
+
+    @Override
+    public void setValues(List<Long> values) {
+        this.values = DataVecArrowUtils.convertLongArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
+        this.int64Array = (Int64Array) this.values;
+        this.length = int64Array.data().buffers().get()[1].size();
+    }
+
+    @Override
+    public INDArray toNdArray() {
+        DataBuffer dataBuffer = ByteDecoArrowSerde.fromArrowBuffer(int64Array.values(),arrowDataType());
+        INDArray ret =  Nd4j.create(dataBuffer);
+        return ret;
     }
 
     @Override
@@ -78,17 +102,9 @@ public class LongColumn extends BaseDataVecColumn<Long> {
     }
 
     @Override
-    public boolean contains(Long input) {
-        return false;
-    }
-
-    @Override
-    public Iterator<Long> iterator() {
-        return null;
-    }
-
-    @Override
     public int compare(Long o1, Long o2) {
         return Long.compare(o1,o2);
     }
+
+
 }

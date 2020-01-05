@@ -359,22 +359,6 @@ public class ByteDecoArrowSerde {
 
 
 
-
-    /**
-     * Create array data for a given arrow buffer and data type
-     * @param arrowBuffer the input data
-     * @param offsets  the offsets
-     * @param dataType the data type
-     * @return
-     */
-    public static ArrayData arrayDataFromArrowBuffer(ArrowBuffer arrowBuffer,ArrowBuffer offsets,DataType dataType) {
-        ArrowBuffer nullVectorBitMap = new ArrowBuffer(new byte[(int) arrowBuffer.size()],arrowBuffer.size());
-        //all items are present
-        nullVectorBitMap.fill(1);
-        ArrowBufferVector arrowBufferVector = new ArrowBufferVector(nullVectorBitMap,offsets,arrowBuffer);
-        return ArrayData.Make(dataType,arrowBufferVector.size(),arrowBufferVector,0,0);
-    }
-
     /**
      * Create array data for a given arrow buffer and data type
      * @param arrowBuffer

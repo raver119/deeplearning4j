@@ -25,8 +25,13 @@ import org.bytedeco.javacpp.IntPointer;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
+import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.bytedeco.arrow.global.arrow.utf8;
 
@@ -52,12 +57,31 @@ public class StringColumn extends BaseDataVecColumn<String> {
 
     }
 
+    public StringColumn(String name, List<String> input) {
+        super(name, input);
+    }
+
     public StringColumn(String name, String[] input) {
         super(name, input);
     }
 
     @Override
     public void setValues(String[] values) {
+        this.values = DataVecArrowUtils.convertStringArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
+        this.stringArray = (StringArray) this.values;
+        this.length = stringArray.data().buffers().get()[2].size();
+    }
+
+    @Override
+    public INDArray toNdArray() {
+        DataBuffer dataBuffer = ByteDecoArrowSerde.fromArrowBuffer(stringArray.value_data(),arrowDataType());
+        INDArray ret =  Nd4j.create(dataBuffer);
+        return ret;
+    }
+
+    @Override
+    public void setValues(List<String> values) {
         this.values = DataVecArrowUtils.convertStringArray(values);
         this.chunkedArray = new ChunkedArray(this.values);
         this.stringArray = (StringArray) this.values;
@@ -78,17 +102,6 @@ public class StringColumn extends BaseDataVecColumn<String> {
     @Override
     public DataType arrowDataType() {
         return utf8();
-    }
-
-    @Override
-    public boolean contains(String input) {
-        return false;
-    }
-
-
-    @Override
-    public Iterator<String> iterator() {
-        return null;
     }
 
     @Override

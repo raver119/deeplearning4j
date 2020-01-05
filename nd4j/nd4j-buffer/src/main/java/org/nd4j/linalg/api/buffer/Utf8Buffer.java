@@ -41,10 +41,6 @@ import java.util.Collection;
 public class Utf8Buffer extends BaseDataBuffer {
 
     protected Collection<Pointer> references = new ArrayList<>();
-
-    @Getter
-    protected long numWords = 0;
-
     /**
      * Meant for creating another view of a buffer
      *
@@ -55,14 +51,12 @@ public class Utf8Buffer extends BaseDataBuffer {
     public Utf8Buffer(Pointer pointer, Indexer indexer, long length) {
         super(pointer, indexer, length);
         this.length = length;
-        setNumWordsFromByteLength(length);
+        setLength(length);
     }
 
     public Utf8Buffer(long length) {
         super(length);
-        this.length = 1;
-        this.numWords = this.length;
-        this.byteLength = length;
+        setLength(length);
         pointer = new BytePointer(byteLength());
         setIndexer(ByteIndexer.create((BytePointer) pointer));
     }
@@ -88,7 +82,7 @@ public class Utf8Buffer extends BaseDataBuffer {
 
         val bp = (BytePointer) pointer;
         bp.put(data);
-        this.numWords = numWords;
+        this.length = numWords;
     }
 
     public Utf8Buffer(double[] data, boolean copy) {
@@ -129,7 +123,7 @@ public class Utf8Buffer extends BaseDataBuffer {
 
     public Utf8Buffer(DataBuffer underlyingBuffer, long length, long offset) {
         super(underlyingBuffer, length, offset);
-        this.numWords = length;
+        this.length = length;
     }
 
     public Utf8Buffer(@NonNull Collection<String> strings) {
@@ -139,8 +133,6 @@ public class Utf8Buffer extends BaseDataBuffer {
         val headerLength = (strings.size() + 1) * 8;
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = new BytePointer(this.pointer);
-
-        numWords = strings.size();
         this.length = strings.size();
 
         long cnt = 0;
@@ -169,9 +161,9 @@ public class Utf8Buffer extends BaseDataBuffer {
 
     @Override
     public void put(long i, String element) {
-        Preconditions.checkState(numWords != 0,"Number of words must not be zero!");
+        Preconditions.checkState(length != 0,"Number of words must not be zero!");
         // at this point we should have fully allocated buffer, time to fill length
-        val headerLength = (numWords + 1) * 8;
+        val headerLength = (length + 1) * 8;
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = new BytePointer(this.pointer);
 
@@ -194,8 +186,8 @@ public class Utf8Buffer extends BaseDataBuffer {
 
     @Override
     public String getString(long index) {
-        if (index > numWords)
-            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + numWords + "]");
+        if (index > length)
+            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + length + "]");
 
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = (BytePointer) (this.pointer);
@@ -209,7 +201,7 @@ public class Utf8Buffer extends BaseDataBuffer {
         val dataLength = (int) (end - start);
         val bytes = new byte[dataLength];
 
-        val headerLength = (numWords + 1) * 8;
+        val headerLength = (length + 1) * 8;
 
         for (int e = 0; e < dataLength; e++) {
             val idx = headerLength + start + e;
@@ -255,13 +247,17 @@ public class Utf8Buffer extends BaseDataBuffer {
         return size;
     }
 
-    private void setNumWordsFromByteLength(long byteLength) {
+    private void setLength(long length) {
         val headerPointer = new LongPointer(this.pointer);
-        val start = headerPointer.get(0);
+        this.length = length;
+        long newByteLength = 0;
+        for(int i = 0; i < length + 1; i++) {
+            long currLength = headerPointer.get(i);
+            newByteLength += 8;
+            newByteLength += currLength;
+        }
 
-        this.numWords = start;
-        this.length = start;
-        this.byteLength = byteLength;
+        this.byteLength = newByteLength;
     }
 
     /**

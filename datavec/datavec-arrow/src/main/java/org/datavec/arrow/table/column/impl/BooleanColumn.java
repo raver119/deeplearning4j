@@ -25,8 +25,13 @@ import org.bytedeco.arrow.global.arrow;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
+import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Boolean type column
@@ -54,6 +59,10 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
         super(name, input);
     }
 
+    public BooleanColumn(String name, List<Boolean> input) {
+        super(name, input);
+    }
+
     @Override
     public void setValues(Boolean[] values) {
         this.values = DataVecArrowUtils.convertBooleanArray(values);
@@ -63,6 +72,21 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
 
     }
 
+    @Override
+    public void setValues(List<Boolean> values) {
+        this.values = DataVecArrowUtils.convertBooleanArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
+        this.booleanArray = (BooleanArray) this.values;
+        this.length = booleanArray.data().buffers().get()[1].size();
+
+    }
+
+    @Override
+    public INDArray toNdArray() {
+        DataBuffer dataBuffer = ByteDecoArrowSerde.fromArrowBuffer(booleanArray.values(),arrowDataType());
+        INDArray ret =  Nd4j.create(dataBuffer);
+        return ret;
+    }
 
     @Override
     public Boolean elementAtRow(int rowNumber) {
@@ -77,16 +101,6 @@ public class BooleanColumn extends BaseDataVecColumn<Boolean> {
     @Override
     public DataType arrowDataType() {
         return arrow._boolean();
-    }
-
-    @Override
-    public boolean contains(Boolean input) {
-        return false;
-    }
-
-    @Override
-    public Iterator<Boolean> iterator() {
-        return null;
     }
 
     @Override

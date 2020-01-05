@@ -24,8 +24,13 @@ import org.bytedeco.arrow.FloatArray;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecArrowUtils;
 import org.datavec.arrow.table.column.BaseDataVecColumn;
+import org.nd4j.arrow.ByteDecoArrowSerde;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static org.bytedeco.arrow.global.arrow.float32;
 
@@ -55,6 +60,10 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
         super(name, input);
     }
 
+    public FloatColumn(String name, List<Float> input) {
+        super(name, input);
+    }
+
     @Override
     public void setValues(Float[] values) {
         this.values = DataVecArrowUtils.convertFloatArray(values);
@@ -62,6 +71,21 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
         this.floatArray = (FloatArray) this.values;
         this.length = floatArray.data().buffers().get()[1].size();
 
+    }
+
+    @Override
+    public void setValues(List<Float> values) {
+        this.values = DataVecArrowUtils.convertFloatArray(values);
+        this.chunkedArray = new ChunkedArray(this.values);
+        this.floatArray = (FloatArray) this.values;
+        this.length = floatArray.data().buffers().get()[1].size();
+    }
+
+    @Override
+    public INDArray toNdArray() {
+        DataBuffer dataBuffer = ByteDecoArrowSerde.fromArrowBuffer(floatArray.values(),arrowDataType());
+        INDArray ret =  Nd4j.create(dataBuffer);
+        return ret;
     }
 
     @Override
@@ -77,17 +101,6 @@ public class FloatColumn extends BaseDataVecColumn<Float> {
     @Override
     public DataType arrowDataType() {
         return float32();
-    }
-
-    @Override
-    public boolean contains(Float input) {
-        return false;
-    }
-
-
-    @Override
-    public Iterator<Float> iterator() {
-        return null;
     }
 
     @Override

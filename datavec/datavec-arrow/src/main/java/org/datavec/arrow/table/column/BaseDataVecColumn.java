@@ -21,6 +21,10 @@ import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.FlatArray;
 import org.datavec.arrow.table.DataVecArrowUtils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.nd4j.arrow.Nd4jArrowOpRunner.runOpOn;
 
 /**
@@ -35,6 +39,11 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
     protected FlatArray values;
     protected ChunkedArray chunkedArray;
     protected  long length;
+
+    public BaseDataVecColumn(String name,List<T> input)  {
+        setValues(input);
+        this.name = name;
+    }
 
     public BaseDataVecColumn(String name,T[] input)  {
         setValues(input);
@@ -78,12 +87,47 @@ public abstract class BaseDataVecColumn<T> implements DataVecColumn<T>  {
     }
 
 
+    @Override
+    public boolean contains(T input) {
+        for(int i = 0; i < rows(); i++) {
+            if(elementAtRow(i).equals(input))
+                return true;
+        }
+        return false;
+    }
 
     @Override
     public ChunkedArray chunkedValues() {
         return chunkedArray;
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return new ColumnIterator<>(this);
+    }
+
+    @Override
+    public List<T> toList() {
+        List<T> ret = new ArrayList<>();
+        for(T item : this) {
+            ret.add(item);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Set the values for this column using
+     * the specified array
+     * @param values the array of values to use
+     */
+    public abstract void setValues(List<T> values);
+
+    /**
+     * Set the values for this column using
+     * the specified array
+     * @param values the array of values to use
+     */
     public abstract void setValues(T[] values);
 
 }

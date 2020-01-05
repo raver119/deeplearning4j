@@ -30,7 +30,9 @@ import org.nd4j.arrow.ByteDecoArrowSerde;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.shade.guava.primitives.*;
 
+import java.util.List;
 import java.util.TimeZone;
 
 import static org.bytedeco.arrow.global.arrow.*;
@@ -306,6 +308,16 @@ public class DataVecArrowUtils {
         return convertBooleanArray(ArrayUtils.toPrimitive(input));
     }
 
+
+    /**
+     * Convert a boolean array to a {@link BooleanArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static FlatArray convertBooleanArray(List<Boolean> input) {
+        return convertBooleanArray(Booleans.toArray(input));
+    }
+
     /**
      * Convert a long array to a {@link Int64Array}
      * @param input the input
@@ -314,6 +326,16 @@ public class DataVecArrowUtils {
     public static FlatArray convertLongArray(Long[] input) {
         return convertLongArray(ArrayUtils.toPrimitive(input));
     }
+
+    /**
+     * Convert a long array to a {@link Int64Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static FlatArray convertLongArray(List<Long> input) {
+        return convertLongArray(Longs.toArray(input));
+    }
+
 
     /**
      * Convert a long array to a {@link Int64Array}
@@ -346,6 +368,16 @@ public class DataVecArrowUtils {
     public static FlatArray convertDoubleArray(Double[] input) {
         return convertDoubleArray(ArrayUtils.toPrimitive(input));
     }
+
+    /**
+     * Convert a double array to a {@link DoubleArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static FlatArray convertDoubleArray(List<Double> input) {
+        return convertDoubleArray(Doubles.toArray(input));
+    }
+
     /**
      * Convert a float array to a {@link FloatArray}
      * @param input the input
@@ -364,6 +396,16 @@ public class DataVecArrowUtils {
      */
     public static FlatArray convertFloatArray(Float[] input) {
         return convertFloatArray(ArrayUtils.toPrimitive(input));
+    }
+
+
+    /**
+     * Convert a float array to a {@link FloatArray}
+     * @param input the input
+     * @return the converted array
+     */
+    public static FlatArray convertFloatArray(List<Float> input) {
+        return convertFloatArray(Floats.toArray(input));
     }
 
     /**
@@ -386,6 +428,26 @@ public class DataVecArrowUtils {
      */
     public static FlatArray convertIntArray(Integer[] input) {
         return convertIntArray(ArrayUtils.toPrimitive(input));
+    }
+
+    /**
+     * Convert an int array to a {@link Int32Array}
+     * @param input the input
+     * @return the converted array
+     */
+    public static FlatArray convertIntArray(List<Integer> input) {
+        return convertIntArray(Ints.toArray(input));
+    }
+
+
+
+    /**
+     * Convert a string array to a {@link PrimitiveArray}
+     * @param input the input data
+     * @return the converted array
+     */
+    public static FlatArray convertStringArray(List<String> input) {
+        return convertStringArray(input.toArray(new String[input.size()]));
     }
 
     /**

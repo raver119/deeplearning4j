@@ -21,8 +21,10 @@ import org.bytedeco.arrow.ChunkedArray;
 import org.bytedeco.arrow.DataType;
 import org.bytedeco.arrow.FlatArray;
 import org.datavec.api.transform.ColumnType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * A column abstraction on top of {@link org.nd4j.linalg.api.ndarray.INDArray}
@@ -32,6 +34,18 @@ import java.util.Comparator;
  */
 public interface DataVecColumn<T> extends Iterable<T>, Comparator<T> {
 
+
+    /**
+     * Converts this column to a java list.
+     * @return
+     */
+    List<T> toList();
+
+    /**
+     * Converts this column to an {@link INDArray}
+     * @return
+     */
+    INDArray toNdArray();
 
     /**
      * Returns the element at the given row number
