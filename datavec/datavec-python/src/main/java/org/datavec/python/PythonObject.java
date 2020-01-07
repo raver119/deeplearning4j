@@ -46,7 +46,7 @@ public class PythonObject {
     }
     public PythonObject(NumpyArray npArray){
         PyObject ctypes = Python.importModule("ctypes").getNativePythonObject();
-        PyObject np = Python.importModule("numpy").getNativePythonObject();
+        PythonObject np = Python.importModule("numpy");
         PyObject ctype;
         switch (npArray.getDtype()){
             case DOUBLE:
@@ -70,15 +70,33 @@ public class PythonObject {
         }
 
         PythonObject ptrType = new PythonObject(PyObject_GetAttrString(ctypes, "POINTER")).call(ctype);
-        PythonObject ptr = new PythonObject(PyObject_GetAttrString(ctypes, "cast")).call(npArray.getAddress(), ptrType);
+        PythonObject cast = new PythonObject(PyObject_GetAttrString(ctypes, "cast"));
+        PythonObject ptr = cast.call(npArray.getAddress(), ptrType);
         List<Long> shapeList = new ArrayList();
         for (long dim: npArray.getShape()){
             shapeList.add(dim);
         }
-        nativePythonObject = new PythonObject(np).attr("ctypeslib").attr("as_array").call(
+        PythonObject pyShape = new PythonObject(shapeList);
+        PythonObject pyShapeTuple = Python.tuple(pyShape);
+        PythonObject ctypeslib = np.attr("ctypeslib");
+        PythonObject asArray = ctypeslib.attr("as_array");
+        nativePythonObject = asArray.call(
                 ptr,
-                Python.tuple(new PythonObject(shapeList))
+                pyShapeTuple
                 ).nativePythonObject;
+
+        np.del();
+        ptrType.del();
+        cast.del();
+        ptr.del();
+        pyShape.del();
+        pyShapeTuple.del();
+        ctypeslib.del();
+        asArray.del();
+        ptrType.del();
+        ptr.del();
+        Py_DecRef(ctypes);
+        Py_DecRef(ctype);
 
     }
 
