@@ -125,105 +125,62 @@ public class PythonObject {
     public PythonObject(boolean data){
         nativePythonObject = PyBool_FromLong(data?1:0);
     }
-    /*---collection constructors---*/
 
+    private static PythonObject j2pyObject(Object item){
+        if (item instanceof PythonObject){
+            return (PythonObject)item;
+        }
+        else if (item instanceof PyObject){
+            return new PythonObject((PyObject)item);
+        }
+        else if (item instanceof INDArray){
+            return new PythonObject((INDArray) item);
+        }
+        else if (item instanceof NumpyArray){
+            return new PythonObject((NumpyArray) item);
+        }
+        else if(item instanceof List){
+            return new PythonObject((List)item);
+        }
+        else if (item instanceof Object[]){
+            return new PythonObject((Object[])item);
+        }
+        else if(item instanceof Map){
+            return new PythonObject((Map)item);
+        }
+        else if (item instanceof String){
+            return new PythonObject((String)item);
+        }
+        else if (item instanceof Double){
+            return new PythonObject((Double)item);
+        }
+        else if (item instanceof Float){
+            return new PythonObject((Float)item);
+        }
+        else if (item instanceof Long){
+            return new PythonObject((Long)item);
+        }
+        else if (item instanceof Integer){
+            return new PythonObject((Integer)item);
+        }
+        else if (item instanceof Boolean){
+            return new PythonObject((Boolean) item);
+        }
+        else{
+            throw new RuntimeException("Unsupported item in list: " + item);
+        }
+    }
     public PythonObject(Object[] data){
         PyObject pyList = PyList_New((long)data.length);
         for(int i=0; i < data.length; i++){
-            Object item = data[i];
-            if (item instanceof PythonObject){
-                PyList_SetItem(pyList, (long)i, ((PythonObject)item).nativePythonObject);
-            }
-            else if (item instanceof PyObject){
-                PyList_SetItem(pyList, (long)i, (PyObject)item);
-            }
-            else if (item instanceof INDArray){
-                PyList_SetItem(pyList, (long)i, new PythonObject((INDArray) item).nativePythonObject);
-            }
-            else if (item instanceof NumpyArray){
-                PyList_SetItem(pyList, (long)i, new PythonObject((NumpyArray) item).nativePythonObject);
-            }
-            else if(item instanceof List){
-                PyList_SetItem(pyList, (long)i, new PythonObject((List)item).nativePythonObject);
-            }
-            else if (item instanceof Object[]){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Object[])item).nativePythonObject);
-            }
-            else if(item instanceof Map){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Map)item).nativePythonObject);
-            }
-            else if (item instanceof String){
-                PyList_SetItem(pyList, (long)i, new PythonObject((String)item).nativePythonObject);
-            }
-            else if (item instanceof Double){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Double)item).nativePythonObject);
-            }
-            else if (item instanceof Float){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Float)item).nativePythonObject);
-            }
-            else if (item instanceof Long){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Long)item).nativePythonObject);
-            }
-            else if (item instanceof Integer){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Integer)item).nativePythonObject);
-            }
-            else if (item instanceof Boolean){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Boolean) item).nativePythonObject);
-            }
-            else{
-                throw new RuntimeException("Unsupported item in list: " + item);
-            }
-
+            PyList_SetItem(pyList, i, j2pyObject(data[i]).nativePythonObject);
         }
         nativePythonObject = pyList;
     }
     public PythonObject(List data){
         PyObject pyList = PyList_New((long)data.size());
         for(int i=0; i < data.size(); i++){
-            Object item = data.get(i);
-            if (item instanceof PythonObject){
-                PyList_SetItem(pyList, (long)i, ((PythonObject)item).nativePythonObject);
-            }
-            else if (item instanceof PyObject){
-                PyList_SetItem(pyList, (long)i, (PyObject)item);
-            }
-            else if (item instanceof INDArray){
-                PyList_SetItem(pyList, (long)i, new PythonObject((INDArray) item).nativePythonObject);
-            }
-            else if (item instanceof NumpyArray){
-                PyList_SetItem(pyList, (long)i, new PythonObject((NumpyArray) item).nativePythonObject);
-            }
-            else if(item instanceof List){
-                PyList_SetItem(pyList, (long)i, new PythonObject((List)item).nativePythonObject);
-            }
-            else if (item instanceof Object[]){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Object[])item).nativePythonObject);
-            }
-            else if(item instanceof Map){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Map)item).nativePythonObject);
-            }
-            else if (item instanceof String){
-                PyList_SetItem(pyList, (long)i, new PythonObject((String)item).nativePythonObject);
-            }
-            else if (item instanceof Double){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Double)item).nativePythonObject);
-            }
-            else if (item instanceof Float){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Float)item).nativePythonObject);
-            }
-            else if (item instanceof Long){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Long)item).nativePythonObject);
-            }
-            else if (item instanceof Integer){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Integer)item).nativePythonObject);
-            }
-            else if (item instanceof Boolean){
-                PyList_SetItem(pyList, (long)i, new PythonObject((Boolean) item).nativePythonObject);
-            }
-            else{
-                throw new RuntimeException("Unsupported item in list: " + item);
-            }
-
+            PyList_SetItem(pyList, i, j2pyObject(data.get(i)).nativePythonObject);
         }
         nativePythonObject = pyList;
     }
@@ -390,8 +347,15 @@ public class PythonObject {
             }
             return call(args2, (Map)args[args.length-1]);
         }
-        PyObject tuple = PyList_AsTuple(new PythonObject(Arrays.asList(args)).nativePythonObject);
-        return new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
+        if (args.length == 0){
+            return new PythonObject(PyObject_CallObject(nativePythonObject, null));
+        }
+        PyObject tuple = PyTuple_New(args.length); // leaky; tuple may contain borrowed references, so can not be de-allocated.
+        for(int i = 0; i < args.length; i++){
+            PyTuple_SetItem(tuple, i, j2pyObject(args[i]).nativePythonObject);
+        }
+        PythonObject ret = new PythonObject(PyObject_Call(nativePythonObject, tuple, null));
+        return ret;
     }
 
     public PythonObject callWithArgs(PythonObject args){
