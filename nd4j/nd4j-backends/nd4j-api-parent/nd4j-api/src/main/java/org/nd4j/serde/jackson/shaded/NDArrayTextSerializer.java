@@ -17,7 +17,8 @@
 package org.nd4j.serde.jackson.shaded;
 
 
-import org.nd4j.linalg.api.buffer.Utf8Buffer;
+
+import lombok.val;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.serde.base64.Nd4jBase64;
@@ -78,7 +79,7 @@ public class NDArrayTextSerializer extends JsonSerializer<INDArray> {
                 break;
             case UTF8:
                 Utf8Buffer utf8B = ((Utf8Buffer)arr.data());
-                long n = utf8B.length();
+                long n = utf8B.getNumWords();
                 for( int j=0; j<n; j++ ) {
                     String s = utf8B.getString(j);
                     jg.writeString(s);

@@ -206,6 +206,7 @@ public class InferenceSession extends AbstractSession<INDArray, SameDiffOp> {
     @Override
     public INDArray[] getOutputs(SameDiffOp op, FrameIter outputFrameIter, Set<VarId> opInputs, Set<VarId> allIterInputs,
                                  Set<String> constAndPhInputs, List<Listener> listeners, At at, MultiDataSet batch, Set<String> allReqVariables) {
+        at.setFrameIter(outputFrameIter);
         if (listeners != null && listeners.size() > 0) {
             SameDiffOp sdOp = sameDiff.getOps().get(op.getOp().getOwnName());
             for (Listener l : listeners) {
@@ -477,11 +478,11 @@ public class InferenceSession extends AbstractSession<INDArray, SameDiffOp> {
                 }
                 throw new IllegalStateException(s);
             }
-            return ((Assert) op).outputArguments();
+            return ((Assert) op).outputArguments().toArray(new INDArray[0]);
         } else if (op instanceof CustomOp) {
             CustomOp c = (CustomOp) op;
             Nd4j.exec(c);
-            return c.outputArguments();
+            return c.outputArguments().toArray(new INDArray[0]);
         } else if (op instanceof Op) {
             Op o = (Op) op;
             Nd4j.exec(o);
