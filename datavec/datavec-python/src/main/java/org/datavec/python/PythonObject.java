@@ -45,8 +45,8 @@ public class PythonObject {
         this(new NumpyArray(npArray));
     }
     public PythonObject(NumpyArray npArray){
-        PyObject ctypes = Python.importModule("ctypes").getNativePythonObject();
-        PythonObject np = Python.importModule("numpy");
+        PyObject ctypes = PyImport_ImportModule("ctypes");
+        PyObject np = PyImport_ImportModule("numpy");
         PyObject ctype;
         switch (npArray.getDtype()){
             case DOUBLE:
@@ -69,34 +69,37 @@ public class PythonObject {
                 throw new RuntimeException("Unsupported dtype.");
         }
 
-        PythonObject ptrType = new PythonObject(PyObject_GetAttrString(ctypes, "POINTER")).call(ctype);
-        PythonObject cast = new PythonObject(PyObject_GetAttrString(ctypes, "cast"));
-        PythonObject ptr = cast.call(npArray.getAddress(), ptrType);
-        List<Long> shapeList = new ArrayList();
-        for (long dim: npArray.getShape()){
-            shapeList.add(dim);
-        }
-        PythonObject pyShape = new PythonObject(shapeList);
-        PythonObject pyShapeTuple = Python.tuple(pyShape);
-        PythonObject ctypeslib = np.attr("ctypeslib");
-        PythonObject asArray = ctypeslib.attr("as_array");
-        nativePythonObject = asArray.call(
-                ptr,
-                pyShapeTuple
-                ).nativePythonObject;
+        PyObject ctypesPointer = PyObject_GetAttrString(ctypes, "POINTER");
+        PyObject argsTuple = PyTuple_New(1);
+        PyTuple_SetItem(argsTuple, 0, ctype);
+        PyObject ptrType = PyObject_Call(ctypesPointer, argsTuple, null);
 
-        np.del();
-        ptrType.del();
-        cast.del();
-        ptr.del();
-        pyShape.del();
-        pyShapeTuple.del();
-        ctypeslib.del();
-        asArray.del();
-        ptrType.del();
-        ptr.del();
-        Py_DecRef(ctypes);
-        Py_DecRef(ctype);
+        PyObject cast = PyObject_GetAttrString(ctypes, "cast");
+        PyObject address = PyLong_FromLong(npArray.getAddress());
+        PyObject argsTuple2 = PyTuple_New(2);
+        PyTuple_SetItem(argsTuple2, 0, address);
+        PyTuple_SetItem(argsTuple2, 1, ptrType);
+        PyObject ptr = PyObject_Call(cast, argsTuple2, null);
+        PyObject shapeTuple = PyTuple_New(npArray.getShape().length);
+        for(int i = 0; i < npArray.getShape().length; i++){
+            PyObject dim = PyLong_FromLong(npArray.getShape()[i]);
+            PyTuple_SetItem(shapeTuple, i, dim);
+            Py_DecRef(dim);
+        }
+        PyObject ctypesLib = PyObject_GetAttrString(np, "ctypeslib");
+        PyObject asArray = PyObject_GetAttrString(ctypesLib, "as_array");
+        PyObject argsTuple3 = PyTuple_New(2);
+        PyTuple_SetItem(argsTuple3, 0, ptr);
+        PyTuple_SetItem(argsTuple3, 1, shapeTuple);
+        nativePythonObject = PyObject_Call(asArray, argsTuple3, null);
+
+        Py_DecRef(ctypesPointer);
+        Py_DecRef(ctypesLib);
+        Py_DecRef(argsTuple);
+        Py_DecRef(argsTuple2);
+        Py_DecRef(argsTuple3);
+        Py_DecRef(cast);
+        Py_DecRef(asArray);
 
     }
 
@@ -303,13 +306,16 @@ public class PythonObject {
 
     /*------*/
 
-    public String toString(){
-        PyObject repr = PyObject_Str(nativePythonObject);
+    private static String pyObjectToString(PyObject pyObject){
+        PyObject repr = PyObject_Str(pyObject);
         PyObject str = PyUnicode_AsEncodedString(repr, "utf-8", "~E~");
         String jstr = PyBytes_AsString(str).getString();
         Py_DecRef(repr);
         Py_DecRef(str);
         return jstr;
+    }
+    public String toString(){
+        return pyObjectToString(nativePythonObject);
     }
 
     public double toDouble(){
@@ -330,10 +336,15 @@ public class PythonObject {
     }
 
     public NumpyArray toNumpy(){
-        PyObject arrInterface = PyObject_GetAttrString(nativePythonObject, "__array_interface__");
+        PyObject arrInterface = PyObject_GetAttrString(nativePythonObject, "__array_interface__"); // borrowed reference; DO NOT Py_DecRef() !
         PyObject data = PyDict_GetItemString(arrInterface, "data");
-        long address = PyLong_AsLong(PyTuple_GetItem(data, 0));
-        String dtypeName = attr("dtype").attr("name").toString();
+        PyObject pyAddress = PyTuple_GetItem(data, 0);
+        long address = PyLong_AsLong(pyAddress);
+        PyObject pyDtype = PyObject_GetAttrString(nativePythonObject, "dtype");
+        PyObject pyDtypeName = PyObject_GetAttrString(pyDtype, "name");
+        String dtypeName = pyObjectToString(pyDtypeName);
+        Py_DecRef(pyDtype);
+        Py_DecRef(pyDtypeName);
         PyObject shape = PyObject_GetAttrString(nativePythonObject, "shape");
         PyObject strides = PyObject_GetAttrString(nativePythonObject, "strides");
         int ndim = (int)PyObject_Size(shape);
@@ -343,6 +354,8 @@ public class PythonObject {
             jshape[i] = PyLong_AsLong(PyTuple_GetItem(shape, i));
             jstrides[i] = PyLong_AsLong(PyTuple_GetItem(strides, i));
         }
+        Py_DecRef(shape);
+        Py_DecRef(strides);
         DataType dtype;
         if (dtypeName.equals("float64")){
             dtype = DataType.DOUBLE;
