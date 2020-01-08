@@ -97,6 +97,45 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
     }
 
 
+
+
+    @Override
+    public DataBuffer createBufferOfType(DataType dataType, Object input) {
+        switch(dataType) {
+            case FLOAT:
+                float[] inputFloatArr = (float[]) input;
+                return new FloatBuffer(inputFloatArr);
+            case INT:
+                int[] inputIntArr = (int[]) input;
+                return new IntBuffer(inputIntArr);
+            case UTF8:
+                String[] inputStringArr = (String[]) input;
+                return new Utf8Buffer(Arrays.asList(inputStringArr));
+            case DOUBLE:
+                double[] inputDoubleArr = (double[]) input;
+                return new DoubleBuffer(inputDoubleArr);
+            case LONG:
+                long[] inputLongArr = (long[]) input;
+                return new LongBuffer(inputLongArr);
+            case BOOL:
+                boolean[] inputBooleanArr = (boolean[]) input;
+                BoolBuffer retBuffer = new BoolBuffer(inputBooleanArr.length);
+                for(int i = 0; i < inputBooleanArr.length; i++) {
+                    retBuffer.put(i,inputBooleanArr[i]);
+                }
+                return retBuffer;
+            case COMPRESSED:
+            case UINT32:
+            case UNKNOWN:
+            case UINT64:
+            case UINT16:
+            case BFLOAT16:
+            default:
+                throw new IllegalArgumentException("Illegal data type " + dataType);
+
+        }
+    }
+
     @Override
     public DataBuffer createDouble(long offset, int length) {
         return new DoubleBuffer(length, 8, offset);
@@ -150,54 +189,6 @@ public class DefaultDataBufferFactory implements DataBufferFactory {
         }
     }
 
-    @Override
-    public DataBuffer createBufferOfType(DataType dataType, Object input) {
-        switch(dataType) {
-            case FLOAT:
-                float[] inputFloatArr = (float[]) input;
-                return new FloatBuffer(inputFloatArr);
-            case INT:
-                int[] inputIntArr = (int[]) input;
-                return new IntBuffer(inputIntArr);
-            case UTF8:
-                String[] inputStringArr = (String[]) input;
-                return new Utf8Buffer(Arrays.asList(inputStringArr));
-            case DOUBLE:
-                double[] inputDoubleArr = (double[]) input;
-                return new DoubleBuffer(inputDoubleArr);
-            case LONG:
-                long[] inputLongArr = (long[]) input;
-                return new LongBuffer(inputLongArr);
-            case BOOL:
-                boolean[] inputBooleanArr = (boolean[]) input;
-                BoolBuffer retBuffer = new BoolBuffer(inputBooleanArr.length);
-                for(int i = 0; i < inputBooleanArr.length; i++) {
-                    retBuffer.put(i,inputBooleanArr[i]);
-                }
-                return retBuffer;
-            case BYTE:
-                byte[] inputByteArr = (byte[]) input;
-                return new Int8Buffer(inputByteArr,inputByteArr.length);
-            case SHORT:
-                short[] inputShortArr = (short[]) input;
-                Int16Buffer retShortBuffer =  new Int16Buffer(inputShortArr.length);
-                for(int i = 0; i < inputShortArr.length; i++) {
-                    retShortBuffer.putByDestinationType(i,inputShortArr[i],DataType.SHORT);
-                }
-                return retShortBuffer;
-            case UBYTE:
-            case COMPRESSED:
-            case UINT32:
-            case UNKNOWN:
-            case HALF:
-            case UINT64:
-            case UINT16:
-            case BFLOAT16:
-            default:
-                throw new IllegalArgumentException("Illegal data type " + dataType);
-
-        }
-    }
 
     @Override
     public DataBuffer createDouble(long offset, int[] data) {

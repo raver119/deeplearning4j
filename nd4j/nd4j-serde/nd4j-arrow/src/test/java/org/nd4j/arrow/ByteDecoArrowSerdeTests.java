@@ -16,26 +16,16 @@
 
 package org.nd4j.arrow;
 
-import lombok.val;
-import org.bytedeco.arrow.ArrayData;
 import org.bytedeco.arrow.ArrowBuffer;
 import org.bytedeco.arrow.FlatArray;
 import org.bytedeco.arrow.Tensor;
-import org.bytedeco.javacpp.BytePointer;
-import org.bytedeco.javacpp.Pointer;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.buffer.Utf8Buffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class ByteDecoArrowSerdeTests {

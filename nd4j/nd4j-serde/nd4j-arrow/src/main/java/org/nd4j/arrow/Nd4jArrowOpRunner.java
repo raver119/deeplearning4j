@@ -69,7 +69,7 @@ public class Nd4jArrowOpRunner {
 
         DynamicCustomOp build = opBuilder.build();
         Nd4j.getExecutioner().exec(build);
-        INDArray[] ret =  build.outputArguments();
+        INDArray[] ret = build.outputArguments().toArray(new INDArray[0]);
         FlatArray[] outputArrays = new FlatArray[ret.length];
         for(int i = 0; i < ret.length; i++) {
             outputArrays[i] = ByteDecoArrowSerde.arrayFromExistingINDArray(ret[i]);

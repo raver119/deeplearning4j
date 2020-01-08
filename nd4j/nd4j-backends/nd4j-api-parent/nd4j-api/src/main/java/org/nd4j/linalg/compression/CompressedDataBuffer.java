@@ -150,6 +150,11 @@ public class CompressedDataBuffer extends BaseDataBuffer {
     }
 
     @Override
+    public DataBuffer binaryOffsets() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public long length() {
         return compressionDescriptor.getNumberOfElements();
     }

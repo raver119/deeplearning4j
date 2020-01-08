@@ -1190,26 +1190,7 @@ public abstract class BaseDataBuffer implements DataBuffer {
         return ret;
     }
 
-    /**
-     * Returns the offsets for each element
-     * in the buffer.
-     * This is only used in variable length
-     * binary buffers.
-     * @return
-     */
-    @Override
-    public DataBuffer binaryOffsets() {
-        val headerPointer = new LongPointer(this.pointer);
-        val offsetBuffer = new org.nd4j.linalg.api.buffer.IntBuffer(length() + 1);
-        long stringByteLength = 0;
-        for(int i = 0; i < length(); i++) {
-            offsetBuffer.put(i,headerPointer.get(i));
-            stringByteLength += getString(i).length();
-        }
 
-        offsetBuffer.put(length(),stringByteLength);
-        return offsetBuffer;
-    }
 
     /**
      * Create with length

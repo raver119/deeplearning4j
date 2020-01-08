@@ -49,6 +49,22 @@ public interface DataBufferFactory {
     DataBuffer.AllocationMode allocationMode();
 
     /**
+     * Create a buffer of a specified data type
+     * @param dataType the data type to create
+     * @param length the length of the buffer
+     * @return the created data buffer
+     */
+    DataBuffer createBufferOfType(DataType dataType, long length);
+
+    /**
+     * Create a buffer of a specified data type
+     * @param dataType the data type to create
+     * @param input  the input to use (should be a type of array)
+     * @return the created data buffer
+     */
+    DataBuffer createBufferOfType(DataType dataType,Object input);
+
+    /**
      * Create a databuffer wrapping another one
      * this allows you to create a view of a buffer
      * with a different offset and length

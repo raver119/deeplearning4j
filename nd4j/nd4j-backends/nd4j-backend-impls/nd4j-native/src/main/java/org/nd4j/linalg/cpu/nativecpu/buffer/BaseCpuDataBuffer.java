@@ -409,6 +409,27 @@ public abstract class BaseCpuDataBuffer extends BaseDataBuffer implements Deallo
             throw new IllegalArgumentException("Unknown datatype: " + dataType());
     }
 
+    /**
+     * Returns the offsets for each element
+     * in the buffer.
+     * This is only used in variable length
+     * binary buffers.
+     * @return
+     */
+    @Override
+    public DataBuffer binaryOffsets() {
+        val headerPointer = new LongPointer(this.pointer);
+        val offsetBuffer = Nd4j.createBufferOfType(DataType.INT32,length() + 1);
+        long stringByteLength = 0;
+        for(int i = 0; i < length(); i++) {
+            offsetBuffer.put(i,headerPointer.get(i));
+            stringByteLength += getString(i).length();
+        }
+
+        offsetBuffer.put(length(),stringByteLength);
+        return offsetBuffer;
+    }
+
     @Override
     public Pointer addressPointer() {
         // we're fetching actual pointer right from C++
