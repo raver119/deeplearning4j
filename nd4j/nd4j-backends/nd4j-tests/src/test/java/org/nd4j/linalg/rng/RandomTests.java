@@ -1510,6 +1510,21 @@ public class RandomTests extends BaseNd4jTest {
         assertEquals(res[0], res1[0]);
     }
 
+    @Test
+    public void testRngRepeatabilityMultinomial(){
+        Nd4j.getRandom().setSeed(12345);
+        INDArray in1 = Nd4j.create(DataType.FLOAT, 3,3);
+        INDArray out1 = Nd4j.create(DataType.INT32, 3,3);
+        INDArray posz = Nd4j.createFromArray(new int[]{3});
+        Nd4j.exec(new RandomMultinomial(in1, posz, out1));
+
+        Nd4j.getRandom().setSeed(12345);
+        INDArray out2 = Nd4j.create(DataType.INT32, 3,3);
+        Nd4j.exec(new RandomMultinomial(in1, posz, out2));
+
+        assertEquals(out1, out2);
+    }
+
     @Override
     public char ordering() {
         return 'c';
