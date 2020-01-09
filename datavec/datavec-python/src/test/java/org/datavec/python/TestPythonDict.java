@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 public class TestPythonDict {
 
     @Test
-    public void testPythonDictFromMap(){
+    public void testPythonDictFromMap() throws Exception{
         Map<Object, Object> map = new HashMap<>();
         map.put("a", 1);
         map.put("b", "a");

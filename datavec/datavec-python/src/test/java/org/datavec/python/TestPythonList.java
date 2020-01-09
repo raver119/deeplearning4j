@@ -81,7 +81,7 @@ public class TestPythonList {
     }
 
     @Test
-    public void testPythonListFromMixedArray() {
+    public void testPythonListFromMixedArray()throws Exception {
         Map<Object, Object> map = new HashMap<>();
         map.put(1, "a");
         map.put("a", Arrays.asList("a", "b", "c"));

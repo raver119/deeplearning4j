@@ -28,7 +28,7 @@ import org.nd4j.linalg.factory.Nd4j;
 public class TestPythonContextManager {
 
     @Test
-    public void testInt(){
+    public void testInt() throws Exception{
         PythonContextManager.setContext("context1");
         PythonExecutioner.exec("a = 1");
         PythonContextManager.setContext("context2");
@@ -50,7 +50,7 @@ public class TestPythonContextManager {
     }
 
     @Test
-    public void testNDArray(){
+    public void testNDArray() throws Exception{
         PythonContextManager.setContext("context1");
         PythonExecutioner.exec("import numpy as np");
         PythonExecutioner.exec("a = np.zeros((3,2)) + 1");

@@ -15,6 +15,7 @@
  ******************************************************************************/
 
 package org.datavec.python;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -29,12 +30,12 @@ public class TestPythonExecutioner {
 
 
     @org.junit.Test
-    public void testPythonSysVersion() {
+    public void testPythonSysVersion() throws PythonException {
         PythonExecutioner.exec("import sys; print(sys.version)");
     }
 
     @Test
-    public void testStr() throws Exception{
+    public void testStr() throws Exception {
 
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
@@ -56,7 +57,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testInt()throws Exception{
+    public void testInt() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -77,7 +78,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testList() throws Exception{
+    public void testList() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -99,23 +100,21 @@ public class TestPythonExecutioner {
         Assert.assertEquals(z.length, x.length + y.length);
 
         for (int i = 0; i < x.length; i++) {
-            if(x[i] instanceof Number) {
+            if (x[i] instanceof Number) {
                 Number xNum = (Number) x[i];
                 Number zNum = (Number) z[i];
                 Assert.assertEquals(xNum.intValue(), zNum.intValue());
-            }
-            else {
+            } else {
                 Assert.assertEquals(x[i], z[i]);
             }
 
         }
-        for (int i = 0; i < y.length; i++){
-            if(y[i] instanceof Number) {
+        for (int i = 0; i < y.length; i++) {
+            if (y[i] instanceof Number) {
                 Number yNum = (Number) y[i];
                 Number zNum = (Number) z[x.length + i];
                 Assert.assertEquals(yNum.intValue(), zNum.intValue());
-            }
-            else {
+            } else {
                 Assert.assertEquals(y[i], z[x.length + i]);
 
             }
@@ -125,7 +124,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testNDArrayFloat()throws Exception{
+    public void testNDArrayFloat() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -144,12 +143,12 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testTensorflowCustomAnaconda() {
+    public void testTensorflowCustomAnaconda() throws PythonException {
         PythonExecutioner.exec("import tensorflow as tf");
     }
 
     @Test
-    public void testNDArrayDouble()throws Exception {
+    public void testNDArrayDouble() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -166,7 +165,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testNDArrayShort()throws Exception{
+    public void testNDArrayShort() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -184,7 +183,7 @@ public class TestPythonExecutioner {
 
 
     @Test
-    public void testNDArrayInt()throws Exception{
+    public void testNDArrayInt() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -202,7 +201,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testNDArrayLong()throws Exception{
+    public void testNDArrayLong() throws Exception {
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 

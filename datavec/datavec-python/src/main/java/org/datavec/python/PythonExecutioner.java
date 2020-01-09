@@ -62,7 +62,7 @@ public class PythonExecutioner {
         numpy._import_array();
     }
 
-    private static synchronized void _exec(String code) {
+    private static synchronized void _exec(String code) throws PythonException{
         log.debug(code);
         log.info("CPython: PyRun_SimpleStringFlag()");
 
@@ -70,15 +70,28 @@ public class PythonExecutioner {
         if (result != 0) {
             log.info("CPython: PyErr_Print");
             PyErr_Print();
-            throw new RuntimeException("exec failed");
+            throw new PythonException("exec failed"); // TODO: Surface actual python error here
         }
     }
 
-    public static void setVariable(String varName, PythonObject pythonObject) {
+    public static boolean validateVariableName(String s) {
+        if (s.length() == 0) return false;
+        if (!Character.isJavaIdentifierStart(s.charAt(0))) return false;
+        for (int i = 1; i < s.length(); i++)
+            if (!Character.isJavaIdentifierPart(s.charAt(i)))
+                return false;
+        return true;
+    }
+
+
+    public static void setVariable(String varName, PythonObject pythonObject) throws Exception{
+        if (!validateVariableName(varName)){
+            throw new Exception("Invalid variable name: " + varName);
+        }
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
 
-    public static void setVariable(String varName, PythonVariables.Type varType, Object value) {
+    public static void setVariable(String varName, PythonVariables.Type varType, Object value) throws Exception {
         PythonObject pythonObject;
         switch (varType) {
             case STR:
@@ -99,7 +112,7 @@ public class PythonExecutioner {
                 } else if (value instanceof INDArray) {
                     pythonObject = new PythonObject((INDArray) value);
                 } else {
-                    throw new RuntimeException("Invalid value for type NDARRAY");
+                    throw new Exception("Invalid value for type NDARRAY");
                 }
                 break;
             case LIST:
@@ -109,13 +122,13 @@ public class PythonExecutioner {
                 pythonObject = new PythonObject((Map) value);
                 break;
             default:
-                throw new RuntimeException("Unsupported type: " + varType);
+                throw new Exception("Unsupported type: " + varType);
 
         }
         setVariable(varName, pythonObject);
     }
 
-    public static void setVariables(PythonVariables pyVars) {
+    public static void setVariables(PythonVariables pyVars) throws Exception{
         if (pyVars == null) return;
         for (String varName : pyVars.getVariables()) {
             setVariable(varName, pyVars.getType(varName), pyVars.getValue(varName));
@@ -126,10 +139,10 @@ public class PythonExecutioner {
         return Python.globals().attr("get").call(varName);
     }
 
-    public static Object getVariable(String varName, PythonVariables.Type varType) {
+    public static Object getVariable(String varName, PythonVariables.Type varType) throws Exception{
         PythonObject pythonObject = getVariable(varName);
         if (pythonObject.isNone()) {
-            throw new RuntimeException("Variable not found: " + varName);
+            throw new IllegalAccessException("Variable not found: " + varName);
         }
         switch (varType) {
             case INT:
@@ -147,11 +160,11 @@ public class PythonExecutioner {
             case DICT:
                 return pythonObject.toMap();
             default:
-                throw new RuntimeException("Unsupported type: " + varType);
+                throw new Exception("Unsupported type: " + varType);
         }
     }
 
-    public static void getVariables(PythonVariables pyVars) {
+    public static void getVariables(PythonVariables pyVars) throws Exception {
         for (String varName : pyVars.getVariables()) {
             pyVars.setValue(varName, getVariable(varName, pyVars.getType(varName)));
         }
@@ -176,22 +189,22 @@ public class PythonExecutioner {
     }
 
 
-    public static void exec(String code) {
+    public static void exec(String code) throws PythonException {
         _exec(getWrappedCode(code));
     }
 
-    public static void exec(String code, PythonVariables outputVariables) {
+    public static void exec(String code, PythonVariables outputVariables)throws Exception {
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
     }
 
-    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) {
+    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) throws Exception {
         setVariables(inputVariables);
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
     }
 
-    public static PythonVariables execAndReturnAllVariables(String code) {
+    public static PythonVariables execAndReturnAllVariables(String code) throws PythonException {
         _exec(getWrappedCode(code));
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
@@ -221,7 +234,7 @@ public class PythonExecutioner {
 
     }
 
-    public static PythonVariables getAllVariables() {
+    public static PythonVariables getAllVariables() throws PythonException{
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
@@ -255,7 +268,7 @@ public class PythonExecutioner {
         return out;
     }
 
-    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs) {
+    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs) throws Exception{
         setVariables(inputs);
         _exec(getWrappedCode(code));
         return getAllVariables();

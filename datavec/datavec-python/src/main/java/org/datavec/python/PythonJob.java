@@ -17,31 +17,31 @@ public class PythonJob {
     private String name;
     private String context;
     private boolean setupRunMode;
-    PythonObject runF;
+    private PythonObject runF;
 
     static {
         new PythonExecutioner();
     }
 
     @Builder
-    public PythonJob(@Nonnull String name,@Nonnull String code, boolean setupRunMode) {
+    public PythonJob(@Nonnull String name, @Nonnull String code, boolean setupRunMode) throws Exception {
         this.name = name;
         this.code = code;
         this.setupRunMode = setupRunMode;
         context = "__job_" + name;
         if (PythonContextManager.hasContext(context)) {
-            throw new RuntimeException("Unable to create python job " + name + ". Context " + context + " already exists!");
+            throw new Exception("Unable to create python job " + name + ". Context " + context + " already exists!");
         }
         if (setupRunMode) setup();
     }
 
-    public void clearState() {
+    public void clearState() throws Exception {
         PythonContextManager.setContext("main");
         PythonContextManager.deleteContext(context);
         setup();
     }
 
-    public void setup() {
+    public void setup() throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
             PythonObject runF = PythonExecutioner.getVariable("run");
@@ -60,7 +60,7 @@ public class PythonJob {
         }
     }
 
-    public void exec(PythonVariables inputs, PythonVariables outputs) {
+    public void exec(PythonVariables inputs, PythonVariables outputs) throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
             if (!setupRunMode) {
@@ -90,7 +90,7 @@ public class PythonJob {
         }
     }
 
-    public PythonVariables execAndReturnAllVariables(PythonVariables inputs) {
+    public PythonVariables execAndReturnAllVariables(PythonVariables inputs) throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
             if (!setupRunMode) {
                 return PythonExecutioner.execAndReturnAllVariables(code, inputs);

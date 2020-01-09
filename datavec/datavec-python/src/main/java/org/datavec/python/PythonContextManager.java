@@ -48,9 +48,9 @@ public class PythonContextManager {
         contexts.add(currentContext);
     }
 
-    public static void addContext(String contextName) {
+    public static void addContext(String contextName) throws Exception {
         if (!validateContextName(contextName)) {
-            throw new RuntimeException("Invalid context name: " + contextName);
+            throw new Exception("Invalid context name: " + contextName);
         }
         contexts.add(contextName);
     }
@@ -79,9 +79,6 @@ public class PythonContextManager {
 
     private static String expandCollapsedVarName(String varName, String contextName) {
         String prefix = "__collapsed__" + contextName + "__";
-        if (!(varName.startsWith(prefix))) {
-            throw new RuntimeException("Invalid variable name.");
-        }
         return varName.substring(prefix.length());
 
     }
@@ -118,7 +115,7 @@ public class PythonContextManager {
 
     }
 
-    public static void setContext(String contextName) {
+    public static void setContext(String contextName) throws Exception{
         if (contextName.equals(currentContext)) {
             return;
         }
@@ -135,12 +132,12 @@ public class PythonContextManager {
         return currentContext;
     }
 
-    public static void deleteContext(String contextName) {
+    public static void deleteContext(String contextName) throws Exception {
         if (contextName.equals("main")) {
-            throw new RuntimeException("Can not delete main context!");
+            throw new Exception("Can not delete main context!");
         }
         if (contextName.equals(currentContext)) {
-            throw new RuntimeException("Can not delete current context!");
+            throw new Exception("Can not delete current context!");
         }
         String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
@@ -157,12 +154,16 @@ public class PythonContextManager {
     }
 
     public static void deleteNonMainContexts() {
-        setContext("main");
+        try{
+            setContext("main"); // will never fail
+
+
         for (String c : contexts.toArray(new String[0])) {
             if (!c.equals("main")) {
-                deleteContext(c);
+                deleteContext(c); // will never fail
             }
         }
+        }catch(Exception e){}
     }
 
     public String[] getContexts() {

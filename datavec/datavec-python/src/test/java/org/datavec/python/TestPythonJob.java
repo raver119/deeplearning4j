@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class TestPythonJob {
 
     @Test
-    public void testPythonJobBasic(){
+    public void testPythonJobBasic() throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code = "c = a + b";
@@ -72,7 +72,7 @@ public class TestPythonJob {
     }
 
     @Test
-    public void testPythonJobReturnAllVariables(){
+    public void testPythonJobReturnAllVariables()throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code = "c = a + b";
@@ -106,7 +106,7 @@ public class TestPythonJob {
     }
 
     @Test
-    public void testMultiplePythonJobsParallel(){
+    public void testMultiplePythonJobsParallel()throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code1 = "c = a + b";
@@ -164,7 +164,7 @@ public class TestPythonJob {
         assertEquals(Nd4j.zeros(3, 2).sub(1), outputs.getNDArrayValue("c").getNd4jArray());
     }
     @Test
-    public void testPythonJobSetupRun(){
+    public void testPythonJobSetupRun()throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code = "five=None\n" +
@@ -213,7 +213,7 @@ public class TestPythonJob {
         assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c").getNd4jArray());
     }
     @Test
-    public void testPythonJobSetupRunAndReturnAllVariables(){
+    public void testPythonJobSetupRunAndReturnAllVariables()throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code = "five=None\n" +
@@ -253,7 +253,7 @@ public class TestPythonJob {
     }
 
     @Test
-    public void testMultiplePythonJobsSetupRunParallel(){
+    public void testMultiplePythonJobsSetupRunParallel()throws Exception{
         PythonContextManager.deleteNonMainContexts();
 
         String code1 = "five=None\n" +

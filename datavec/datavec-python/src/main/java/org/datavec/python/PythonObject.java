@@ -412,7 +412,7 @@ public class PythonObject {
         nativePythonObject = null;
     }
 
-    public JSONArray toJSONArray() {
+    public JSONArray toJSONArray() throws PythonException {
         PythonObject json = Python.importModule("json");
         PythonObject serialized = json.attr("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
@@ -420,14 +420,14 @@ public class PythonObject {
 
     }
 
-    public JSONObject toJSONObject() {
+    public JSONObject toJSONObject() throws PythonException {
         PythonObject json = Python.importModule("json");
         PythonObject serialized = json.attr("dumps").call(this, _getNDArraySerializer());
         String jsonString = serialized.toString();
         return new JSONObject(jsonString);
     }
 
-    public List toList() {
+    public List toList() throws PythonException{
         List list = new ArrayList();
         int n = Python.len(this).toInt();
         for (int i = 0; i < n; i++) {
@@ -456,7 +456,7 @@ public class PythonObject {
         return list;
     }
 
-    public Map toMap() {
+    public Map toMap() throws PythonException{
         Map map = new HashMap();
         List keys = Python.list(attr("keys").call()).toList();
         List values = Python.list(attr("values").call()).toList();

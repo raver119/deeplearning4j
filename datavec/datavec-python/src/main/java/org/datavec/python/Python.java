@@ -30,10 +30,10 @@ import static org.bytedeco.cpython.global.python.*;
 
 public class Python {
 
-    public static PythonObject importModule(String moduleName) {
+    public static PythonObject importModule(String moduleName) throws PythonException{
         PythonObject module = new PythonObject(PyImport_ImportModule(moduleName));
         if (module.isNone()) {
-            throw new RuntimeException("Error importing module: " + moduleName);
+            throw new PythonException("Error importing module: " + moduleName);
         }
         return module;
     }
@@ -159,8 +159,13 @@ public class Python {
     }
 
 
-    public static PythonObject builtins() {
-        return importModule("builtins");
+    public static PythonObject builtins(){
+        try{
+            return importModule("builtins");
+        }catch (PythonException pe){
+            throw new IllegalStateException("Unable to import builtins: " + pe); // this should never happen
+        }
+
     }
 
     public static PythonObject None() {
