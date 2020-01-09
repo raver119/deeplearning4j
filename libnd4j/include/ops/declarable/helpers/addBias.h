@@ -36,18 +36,59 @@ namespace helpers {
 //<editor-fold desc="EXPERIMENTAL_COORDS_HELPERS">
 #pragma region EXPERIMENTAL_COORDS_HELPERS
 	//ODR RULE:  templates and inline functions
-	 
-	template<size_t Rank,size_t Index, bool C_Order = true>
+#if defined (_MSC_VER)
+ #define likely(x)  (x)
+ #define unlikely(x)  (x)
+#define prefetch(x)  
+
+#define prefetchw(x)  
+
+#define prefetch_range_r(x ,len) 
+#define prefetch_range_w(x ,len) 
+#else
+#define PREFETCH_STRIDE 64 
+#define likely(x) __builtin_expect( (x), 1)	 
+#define unlikely(x) __builtin_expect( (x), 0)	
+#define prefetch(x) __builtin_prefetch(x,0,1)
+#define prefetchw(x) __builtin_prefetch(x,1,1)
+#define prefetchl(x) __builtin_prefetch(x,0,3)
+#define prefetchwl(x) __builtin_prefetch(x,1,3)
+	inline void prefetch_range(char* addr_r, char* addr_w, size_t len)
+	{ 
+		for (size_t i= 0; i < len; i += PREFETCH_STRIDE) {
+			prefetch(&addr_r[i]); 
+			prefetchw(&addr_w[i]);
+		}
+	}
+ 
+inline void prefetch_range_rl(char* addr, size_t len)
+ { 
+			  char* cp;
+		      char* end = addr + len;
+		      for (cp = addr; cp < end; cp += PREFETCH_STRIDE)
+			                 prefetchl(cp); 
+ }
+inline void prefetch_range_wl(char* addr, size_t len)
+{
+	char* cp;
+	char* end = addr + len;
+	for (cp = addr; cp < end; cp += PREFETCH_STRIDE)
+		prefetchwl(cp);
+}
+#endif
+
+
+	template<size_t Rank,size_t Index, bool Last_Index_Faster = true>
 	constexpr size_t StridesOrderInd() {
-		return C_Order ? Rank - Index - 1 : Index;
+		return Last_Index_Faster ? Rank - Index - 1 : Index;
 	}
 
-	template<size_t Rank, size_t Index, bool C_Order = true>
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
 	FORCEINLINE
 		typename std::enable_if<(Rank - 1 == Index), size_t>::type
-		coord_add(Nd4jLong* bases, Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], Nd4jLong carry, size_t offset) {
+		coord_add(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], Nd4jLong carry, size_t offset) {
 
-		constexpr size_t Ind = StridesOrderInd<Rank, Index, C_Order>();
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
 		//add_Ind is always C order
 		constexpr size_t base_Ind = StridesOrderInd<Rank, Index, true>();
 		Nd4jLong val = coords[Ind] + add_coords[base_Ind] + carry;
@@ -56,33 +97,32 @@ namespace helpers {
 		return offset;
 	}
 
-	template<size_t Rank, size_t Index, bool C_Order = true>
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
 	FORCEINLINE
 		typename std::enable_if<(Rank - 1 != Index), size_t >::type
-		coord_add(Nd4jLong* bases, Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], Nd4jLong carry, size_t offset) {
+		coord_add(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], Nd4jLong carry, size_t offset) {
 
-		constexpr size_t Ind = StridesOrderInd<Rank, Index, C_Order>();
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
 		//add_Ind is always C order
 		constexpr size_t base_Ind = StridesOrderInd<Rank, Index, true>();
 		Nd4jLong val = coords[Ind] + add_coords[base_Ind] + carry;
 		coords[Ind] = val >= bases[Ind] ? val - bases[Ind] : val;
 		carry = val >= bases[Ind] ? 1 : 0;
 		offset += coords[Ind] * strides[Ind];
-		return coord_add<Rank, Index + 1, C_Order>(bases, strides, coords, add_coords, carry, offset);
+		return coord_add<Rank, Index + 1, Last_Index_Faster>(bases, strides, coords, add_coords, carry, offset);
 	}
 
-	template<size_t Rank, bool C_Order = true> 
-	FORCEINLINE size_t move_by_coords(Nd4jLong* bases, Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK]) {
+	template<size_t Rank, size_t Index=0, bool Last_Index_Faster = true>
+	FORCEINLINE size_t move_by_coords(const Nd4jLong* bases, const  Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK]) {
 
-		return coord_add<Rank,0,C_Order>(bases, strides, coords, add_coords, 0, 0);
+		return coord_add<Rank,Index,Last_Index_Faster>(bases, strides, coords, add_coords, 0, 0);
 	}
 
-	template<bool C_Order=true>
-	FORCEINLINE size_t move_by_coords(Nd4jLong* bases, Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], size_t rank) {
+	template<bool Last_Index_Faster=true>
+	FORCEINLINE size_t move_by_coords(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], size_t rank) {
 		Nd4jLong carry = 0;
 		Nd4jLong tmp, val = 0;
-		size_t offset = 0;
-		if (rank > 0) {
+		size_t offset = 0; 
 			for (int i = rank - 1; i >= 1; i--) {
 				val = coords[i] + add_coords[i] + carry;
 				if (val >= bases[i]) {
@@ -100,18 +140,16 @@ namespace helpers {
 
 			val = coords[0] + add_coords[0] + carry;
 			coords[0] = val >= bases[0] ? val - bases[0] : val;
-			offset += val * strides[0];
-		}
+			offset += val * strides[0]; 
 		return offset;
 	}
 
 	template<>
-	FORCEINLINE size_t move_by_coords<false>(Nd4jLong* bases, Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], size_t rank) {
+	FORCEINLINE size_t move_by_coords<false>(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong(&coords)[MAX_RANK], const Nd4jLong(&add_coords)[MAX_RANK], size_t rank) {
 		Nd4jLong carry = 0;
 		Nd4jLong tmp, val = 0;
 		size_t offset = 0;
-		
-		if (rank > 0) {
+ 
 			const Nd4jLong* rev_add_cords = add_coords+rank-1;
 			int i = 0;
 			for (; i <rank-1 ; i++) {
@@ -132,11 +170,297 @@ namespace helpers {
 
 			val = coords[i] + *rev_add_cords + carry;
 			coords[i] = val >= bases[i] ? val - bases[i] : val;
-			offset += val * strides[i];
+			offset += val * strides[i]; 
+		return offset;
+	}
+
+
+	INLINEDEF void   index2coords_F(Nd4jLong index, const Nd4jLong rank, const Nd4jLong *bases, Nd4jLong* coords) {
+
+		for (size_t i = 0; i <rank-1; i++) {
+			coords[i ] = index % bases[i];
+			index /= bases[i];
+		}
+		coords[rank-1] = index;      // last iteration
+	}
+
+	FORCEINLINE size_t offset_from_coords(const Nd4jLong* strides, Nd4jLong *coords,  size_t rank) {
+		 
+		size_t offset = 0; 
+		size_t rank_4 = rank & -4;
+		for (int i = 0; i <rank_4; i+=4) {
+					offset = offset
+						+ coords[i] * strides[i]  
+						+ coords[i+1] * strides[i+1] 
+					    + coords[i+2] * strides[i+2]
+					    + coords[i+3] * strides[i+3];
+		} 
+		for (int i = rank_4; i < rank ; i ++) {
+			offset += coords[i] * strides[i];
 		}
 		return offset;
 	}
 
+
+
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
+	FORCEINLINE
+		typename std::enable_if<(Rank - 1 == Index), size_t>::type
+		coord_inc(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong* coords, Nd4jLong carry, size_t last_offset,   size_t adjust_stride) {
+
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
+		Nd4jLong val = coords[Ind] + carry;
+		if (likely(val < bases[Ind])) {
+			last_offset +=  strides[Ind] - adjust_stride;
+			coords[Ind] = val;
+			return last_offset;
+		}
+		//overflow case should not happen
+		coords[Ind] = 0;
+		last_offset = 0;// last_offset + strides[Ind] - adjust_stride;
+		return last_offset;
+	}
+
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
+	FORCEINLINE
+		typename std::enable_if<(Rank - 1 != Index), size_t >::type
+		coord_inc(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong* coords, Nd4jLong carry, size_t last_offset,size_t adjust_stride) {
+
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
+
+		Nd4jLong val = coords[Ind] + carry;
+		Nd4jLong tmp;
+		if (likely(val < bases[Ind])) {
+			last_offset = last_offset +  strides[Ind] - adjust_stride;
+			coords[Ind] = val;
+
+		}
+		else {
+			
+			//lets adjust offset
+			adjust_stride += coords[Ind] *strides[Ind] ;
+			coords[Ind] = 0;
+			last_offset = coord_inc<Rank, Index + 1, Last_Index_Faster>(bases, strides, coords, 1, last_offset, adjust_stride);
+		}
+
+		return last_offset;
+
+	}
+
+	template<size_t Rank, size_t Index=0, bool Last_Index_Faster = true>
+	FORCEINLINE size_t inc_by_coords(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong* coords,size_t last_offset) {
+
+		return coord_inc<Rank, Index, Last_Index_Faster>(bases, strides, coords, 1, last_offset,0);
+	}
+
+	template<bool Last_Index_Faster = true>
+	FORCEINLINE size_t inc_by_coords(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong* coords, size_t last_offset, const size_t rank, const size_t skip = 0) {
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust = 0;
+		for (int i = rank -skip- 1; i >= 0; i--) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				last_offset += strides[i] - adjust;
+				break;
+			}
+			else { 
+				adjust += coords[i] * strides[i];
+				coords[i] = 0;
+			}
+		}
+
+		return last_offset;
+	}
+
+	template<>
+	FORCEINLINE size_t inc_by_coords<false>(const Nd4jLong* bases, const Nd4jLong* strides, Nd4jLong* coords, size_t last_offset, const size_t rank, const size_t skip ) {
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust = 0;
+
+		for (int i = skip; i < rank; i++) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				last_offset += strides[i] - adjust; 
+				break;
+			}
+			else { 
+ 
+				adjust += coords[i] * strides[i];
+				coords[i] = 0;
+			}
+		}
+		return last_offset;
+	}
+
+
+	FORCEINLINE void get_adjusts_for_inc(const Nd4jLong* strides, const Nd4jLong* bases, Nd4jLong* adjusts, size_t rank) {
+
+		size_t offset = 0;
+		size_t rank_4 = rank & -4;
+		for (int i = 0; i < rank_4; i += 4) {
+			adjusts[i] = (bases[i] - 1) * strides[i];
+			adjusts[i+1] = (bases[i+2] - 1) * strides[i+2];
+			adjusts[i+2] = (bases[i+3] - 1) * strides[i+3];
+			adjusts[i+3] = (bases[i+4] - 1) * strides[i+4];
+		}
+		for (int i = rank_4; i < rank; i++) {
+			adjusts[i] = (bases[i] - 1) * strides[i];
+		}
+		return  ;
+	}
+
+
+
+	template<bool Last_Index_Faster = true>
+	FORCEINLINE size_t inc_by_coords2(const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong* adjusts, Nd4jLong* coords, size_t last_offset, const size_t rank, const size_t skip=0 ) {
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust = 0;
+		for (int i = rank -skip- 1; i >= 0; i--) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				last_offset += strides[i] - adjust;
+				break;
+			}
+			else { 
+				adjust += adjusts[i];
+				coords[i] = 0;
+			}
+		}
+
+		return last_offset;
+	}
+
+	template<>
+	FORCEINLINE size_t inc_by_coords2<false>(const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong* adjusts, Nd4jLong* coords, size_t last_offset, const size_t rank, const size_t skip  ) {
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust = 0;
+
+		for (int i = skip; i < rank; i++) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				last_offset += strides[i] - adjust;
+				break;
+			}
+			else { 
+				adjust += adjusts[i];
+				coords[i] = 0;
+			}
+		}
+		return last_offset;
+	}
+
+
+	using pair_size_t = std::pair<size_t, size_t>;
+
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
+	FORCEINLINE
+		typename std::enable_if<(Rank - 1 == Index), pair_size_t>::type
+		coord_inc_zip(const Nd4jLong* bases, const  Nd4jLong* x_strides, const  Nd4jLong* z_strides, Nd4jLong* coords, Nd4jLong carry,
+			pair_size_t last_offset, size_t adjust_stride_x, size_t adjust_stride_z) {
+
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
+		Nd4jLong val = coords[Ind] + carry;
+		if (likely(val < bases[Ind])) {
+			last_offset.first += x_strides[Ind] - adjust_stride_x;
+			last_offset.second += z_strides[Ind] - adjust_stride_z;
+			coords[Ind] = val;
+			return last_offset;
+		}
+		//overflow case should not happen
+		coords[Ind] = 0;
+		last_offset = {};// last_offset + x_strides[Ind] - adjust_stride;
+
+		return last_offset;
+	}
+
+	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
+	FORCEINLINE
+		typename std::enable_if<(Rank - 1 != Index), pair_size_t >::type
+		coord_inc_zip(const Nd4jLong* bases, const  Nd4jLong* x_strides, const  Nd4jLong* z_strides, Nd4jLong* coords, Nd4jLong carry,
+			pair_size_t last_offset, size_t adjust_stride_x, size_t adjust_stride_z) {
+
+		constexpr size_t Ind = StridesOrderInd<Rank, Index, Last_Index_Faster>();
+
+		Nd4jLong val = coords[Ind] + carry;
+		Nd4jLong tmp;
+		if (likely(val < bases[Ind])) {
+			last_offset.first += x_strides[Ind] - adjust_stride_x;
+			last_offset.second += z_strides[Ind] - adjust_stride_z;
+			coords[Ind] = val;
+			return last_offset;
+		}
+		//lets adjust offset
+		adjust_stride_x += coords[Ind] * x_strides[Ind];
+		adjust_stride_z += coords[Ind] * z_strides[Ind];
+		coords[Ind] = 0;
+		return coord_inc_zip<Rank, Index + 1, Last_Index_Faster>(bases, x_strides, z_strides, coords, 1, last_offset, adjust_stride_x, adjust_stride_z);
+
+
+	}
+
+	template<size_t Rank, size_t Index =0, bool Last_Index_Faster = true>
+	FORCEINLINE pair_size_t inc_by_coords_zip(const Nd4jLong* bases,const Nd4jLong* x_strides,const Nd4jLong* z_strides, Nd4jLong* coords, pair_size_t last_offset) {
+
+		return coord_inc_zip<Rank, Index, Last_Index_Faster>(bases, x_strides, z_strides, coords, 1, last_offset, 0, 0);
+	}
+
+	template<bool Last_Index_Faster = true>
+	FORCEINLINE pair_size_t inc_by_coords_zip(const Nd4jLong* bases, const Nd4jLong* x_strides, const  Nd4jLong* z_strides, Nd4jLong* coords, pair_size_t last_offset, const size_t rank , const size_t skip =0) {
+
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust_x = 0;
+		size_t adjust_z = 0;
+		for (int i = rank - skip- 1; i >= 0; i--) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				last_offset.first += x_strides[i] - adjust_x;
+				last_offset.second += z_strides[i] - adjust_z;
+				break;
+			}
+			else {
+				adjust_x += coords[i] * x_strides[i];
+				adjust_z += coords[i] * z_strides[i];
+				coords[i] = 0;
+			}
+		}
+
+		return last_offset;
+	}
+
+	template<>
+	FORCEINLINE pair_size_t inc_by_coords_zip<false>(const Nd4jLong* bases, const Nd4jLong* x_strides,const  Nd4jLong* z_strides, Nd4jLong* coords, pair_size_t last_offset, const size_t rank,  const size_t skip  ) {
+		Nd4jLong carry = 1;
+		Nd4jLong  val = 0;
+		size_t adjust_x = 0;
+		size_t adjust_z = 0;
+
+		for (int i = skip; i < rank; i++) {
+			val = coords[i] + carry;
+			if (likely(val < bases[i])) {
+				coords[i] = val;
+				
+				last_offset.first += x_strides[i] - adjust_x;
+				last_offset.second += z_strides[i] - adjust_z;
+				break;
+			}
+			else { 
+				adjust_x += coords[i] * x_strides[i];
+				adjust_z += coords[i] * z_strides[i];
+				coords[i] = 0;
+			}
+		}
+		return last_offset;
+	}
 
 #pragma endregion
 //</editor-fold>
