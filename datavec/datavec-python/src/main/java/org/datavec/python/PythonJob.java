@@ -1,8 +1,10 @@
 package org.datavec.python;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,8 @@ public class PythonJob {
         new PythonExecutioner();
     }
 
-    public PythonJob(String name, String code, boolean setupRunMode) {
+    @Builder
+    public PythonJob(@Nonnull String name,@Nonnull String code, boolean setupRunMode) {
         this.name = name;
         this.code = code;
         this.setupRunMode = setupRunMode;

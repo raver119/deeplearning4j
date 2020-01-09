@@ -106,7 +106,11 @@ public class PythonTransform implements Transform {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        pythonJob = new PythonJob("a" + UUID.randomUUID().toString().replace("-", "_"), code, setupAndRun);
+        pythonJob = PythonJob.builder()
+                .name("a" + UUID.randomUUID().toString().replace("-", "_"))
+                .code(code)
+                .setupRunMode(setupAndRun)
+                .build();
     }
 
 
