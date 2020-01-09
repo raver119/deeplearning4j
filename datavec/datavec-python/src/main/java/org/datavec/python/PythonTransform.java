@@ -30,6 +30,7 @@ import org.nd4j.jackson.objectmapper.holder.ObjectMapperHolder;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
 import org.nd4j.shade.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -53,7 +54,7 @@ public class PythonTransform implements Transform {
     private String code;
     private PythonVariables inputs;
     private PythonVariables outputs;
-    private String name =  UUID.randomUUID().toString();
+    private String name = UUID.randomUUID().toString();
     private Schema inputSchema;
     private Schema outputSchema;
     private String outputDict;
@@ -72,15 +73,15 @@ public class PythonTransform implements Transform {
                            String outputDict,
                            boolean returnAllInputs,
                            boolean setupAndRun) {
-        Preconditions.checkNotNull(code,"No code found to run!");
+        Preconditions.checkNotNull(code, "No code found to run!");
         this.code = code;
         this.returnAllVariables = returnAllInputs;
         this.setupAndRun = setupAndRun;
-        if(inputs != null)
+        if (inputs != null)
             this.inputs = inputs;
-        if(outputs != null)
+        if (outputs != null)
             this.outputs = outputs;
-        if(name != null)
+        if (name != null)
             this.name = name;
         if (outputDict != null) {
             this.outputDict = outputDict;
@@ -89,20 +90,20 @@ public class PythonTransform implements Transform {
         }
 
         try {
-            if(inputSchema != null) {
+            if (inputSchema != null) {
                 this.inputSchema = inputSchema;
-                if(inputs == null || inputs.isEmpty()) {
+                if (inputs == null || inputs.isEmpty()) {
                     this.inputs = schemaToPythonVariables(inputSchema);
                 }
             }
 
-            if(outputSchema != null) {
+            if (outputSchema != null) {
                 this.outputSchema = outputSchema;
-                if(outputs == null || outputs.isEmpty()) {
+                if (outputs == null || outputs.isEmpty()) {
                     this.outputs = schemaToPythonVariables(outputSchema);
                 }
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
         pythonJob = new PythonJob("a" + UUID.randomUUID().toString().replace("-", "_"), code, setupAndRun);
@@ -111,21 +112,21 @@ public class PythonTransform implements Transform {
 
     @Override
     public void setInputSchema(Schema inputSchema) {
-        Preconditions.checkNotNull(inputSchema,"No input schema found!");
+        Preconditions.checkNotNull(inputSchema, "No input schema found!");
         this.inputSchema = inputSchema;
-        try{
+        try {
             inputs = schemaToPythonVariables(inputSchema);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        if (outputSchema == null && outputDict == null){
+        if (outputSchema == null && outputDict == null) {
             outputSchema = inputSchema;
         }
 
     }
 
     @Override
-    public Schema getInputSchema(){
+    public Schema getInputSchema() {
         return inputSchema;
     }
 
@@ -149,13 +150,11 @@ public class PythonTransform implements Transform {
     }
 
 
-
-
     @Override
     public List<Writable> map(List<Writable> writables) {
         PythonVariables pyInputs = getPyInputsFromWritables(writables);
-        Preconditions.checkNotNull(pyInputs,"Inputs must not be null!");
-        try{
+        Preconditions.checkNotNull(pyInputs, "Inputs must not be null!");
+        try {
             if (returnAllVariables) {
                 return getWritablesFromPyOutputs(pythonJob.execAndReturnAllVariables(pyInputs));
             }
@@ -164,39 +163,38 @@ public class PythonTransform implements Transform {
                 pythonJob.exec(pyInputs, outputs);
                 PythonVariables out = PythonUtils.expandInnerDict(outputs, outputDict);
                 return getWritablesFromPyOutputs(out);
-            }
-            else {
+            } else {
                 pythonJob.exec(pyInputs, outputs);
 
                 return getWritablesFromPyOutputs(outputs);
             }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public String[] outputColumnNames(){
+    public String[] outputColumnNames() {
         return outputs.getVariables();
     }
 
     @Override
-    public String outputColumnName(){
+    public String outputColumnName() {
         return outputColumnNames()[0];
     }
+
     @Override
-    public String[] columnNames(){
+    public String[] columnNames() {
         return outputs.getVariables();
     }
 
     @Override
-    public String columnName(){
+    public String columnName() {
         return columnNames()[0];
     }
 
-    public Schema transform(Schema inputSchema){
+    public Schema transform(Schema inputSchema) {
         return outputSchema;
     }
 
@@ -204,33 +202,31 @@ public class PythonTransform implements Transform {
     private PythonVariables getPyInputsFromWritables(List<Writable> writables) {
         PythonVariables ret = new PythonVariables();
 
-        for (String name: inputs.getVariables()) {
+        for (String name : inputs.getVariables()) {
             int colIdx = inputSchema.getIndexOfColumn(name);
             Writable w = writables.get(colIdx);
             PythonVariables.Type pyType = inputs.getType(name);
-            switch (pyType){
+            switch (pyType) {
                 case INT:
-                    if (w instanceof LongWritable){
-                        ret.addInt(name, ((LongWritable)w).get());
-                    }
-                    else{
-                        ret.addInt(name, ((IntWritable)w).get());
+                    if (w instanceof LongWritable) {
+                        ret.addInt(name, ((LongWritable) w).get());
+                    } else {
+                        ret.addInt(name, ((IntWritable) w).get());
                     }
 
                     break;
                 case FLOAT:
                     if (w instanceof DoubleWritable) {
-                        ret.addFloat(name, ((DoubleWritable)w).get());
-                    }
-                    else{
-                        ret.addFloat(name, ((FloatWritable)w).get());
+                        ret.addFloat(name, ((DoubleWritable) w).get());
+                    } else {
+                        ret.addFloat(name, ((FloatWritable) w).get());
                     }
                     break;
                 case STR:
                     ret.addStr(name, w.toString());
                     break;
                 case NDARRAY:
-                    ret.addNDArray(name,((NDArrayWritable)w).get());
+                    ret.addNDArray(name, ((NDArrayWritable) w).get());
                     break;
                 default:
                     throw new RuntimeException("Unsupported input type:" + pyType);
@@ -248,7 +244,7 @@ public class PythonTransform implements Transform {
         for (int i = 0; i < varNames.length; i++) {
             String name = varNames[i];
             PythonVariables.Type pyType = pyOuts.getType(name);
-            switch (pyType){
+            switch (pyType) {
                 case INT:
                     schemaBuilder.addColumnLong(name);
                     break;
@@ -275,7 +271,7 @@ public class PythonTransform implements Transform {
             String name = varNames[i];
             PythonVariables.Type pyType = pyOuts.getType(name);
 
-            switch (pyType){
+            switch (pyType) {
                 case INT:
                     out.add(new LongWritable(pyOuts.getIntValue(name)));
                     break;
@@ -292,8 +288,8 @@ public class PythonTransform implements Transform {
                 case DICT:
                     Map<?, ?> dictValue = pyOuts.getDictValue(name);
                     Map noNullValues = new java.util.HashMap<>();
-                    for(Map.Entry entry : dictValue.entrySet()) {
-                        if(entry.getValue() != org.json.JSONObject.NULL) {
+                    for (Map.Entry entry : dictValue.entrySet()) {
+                        if (entry.getValue() != org.json.JSONObject.NULL) {
                             noNullValues.put(entry.getKey(), entry.getValue());
                         }
                     }
@@ -318,8 +314,6 @@ public class PythonTransform implements Transform {
         }
         return out;
     }
-
-
 
 
 }

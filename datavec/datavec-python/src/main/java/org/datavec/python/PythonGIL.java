@@ -26,23 +26,24 @@ import static org.bytedeco.cpython.global.python.PyEval_SaveThread;
 
 
 @Slf4j
-public class PythonGIL implements AutoCloseable{
+public class PythonGIL implements AutoCloseable {
     private static PyThreadState mainThreadState;
-    static{
+
+    static {
         log.info("CPython: PyThreadState_Get()");
         mainThreadState = PyThreadState_Get();
     }
 
-    private PythonGIL(){
+    private PythonGIL() {
         acquire();
     }
 
     @Override
-    public void close(){
+    public void close() {
         release();
     }
 
-    public static PythonGIL lock(){
+    public static PythonGIL lock() {
         return new PythonGIL();
     }
 

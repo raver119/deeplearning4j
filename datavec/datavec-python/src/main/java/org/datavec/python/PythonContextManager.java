@@ -21,6 +21,7 @@ package org.datavec.python;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Emulates multiples interpreters in a single interpreter
@@ -32,77 +33,83 @@ import java.util.Set;
 public class PythonContextManager {
 
     private static Set<String> contexts = new HashSet<>();
-    private static boolean init = false;
+    private static AtomicBoolean init = new AtomicBoolean(false);
     private static String currentContext;
 
-    static {init();}
-    private static void init(){
-        if (init) return;
+    static {
+        init();
+    }
+
+    private static void init() {
+        if (init.get()) return;
         new PythonExecutioner();
-        init = true;
+        init.set(true);
         currentContext = "main";
         contexts.add(currentContext);
     }
 
-    public static void addContext(String contextName){
-        if(!validateContextName(contextName)){
+    public static void addContext(String contextName) {
+        if (!validateContextName(contextName)) {
             throw new RuntimeException("Invalid context name: " + contextName);
         }
         contexts.add(contextName);
     }
 
-    public static boolean hasContext(String contextName){
+    public static boolean hasContext(String contextName) {
         return contexts.contains(contextName);
     }
 
 
     public static boolean validateContextName(String s) {
-        if(s.length() == 0) return false;
-        if(!Character.isJavaIdentifierStart(s.charAt(0)))   return false;
+        if (s.length() == 0) return false;
+        if (!Character.isJavaIdentifierStart(s.charAt(0))) return false;
         for (int i = 1; i < s.length(); i++)
             if (!Character.isJavaIdentifierPart(s.charAt(i)))
                 return false;
         return true;
     }
 
-    private static String getContextPrefix(String contextName){
+    private static String getContextPrefix(String contextName) {
         return "__collapsed__" + contextName + "__";
     }
-    private static String getCollapsedVarNameForContext(String varName, String contextName){
+
+    private static String getCollapsedVarNameForContext(String varName, String contextName) {
         return getContextPrefix(contextName) + varName;
     }
 
-    private static String expandCollapsedVarName(String varName, String contextName){
+    private static String expandCollapsedVarName(String varName, String contextName) {
         String prefix = "__collapsed__" + contextName + "__";
-        if (!(varName.startsWith(prefix))){
+        if (!(varName.startsWith(prefix))) {
             throw new RuntimeException("Invalid variable name.");
         }
         return varName.substring(prefix.length());
 
     }
-    private static void collapseContext(String contextName){
+
+    private static void collapseContext(String contextName) {
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
-        for(int i=0;i<numKeys;i++){
+        for (int i = 0; i < numKeys; i++) {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (!((keyStr.startsWith("__") && keyStr.endsWith("__"))|| keyStr.startsWith("__collapsed_"))){
+            if (!((keyStr.startsWith("__") && keyStr.endsWith("__")) || keyStr.startsWith("__collapsed_"))) {
                 String collapsedKey = getCollapsedVarNameForContext(keyStr, contextName);
                 PythonObject val = globals.attr("pop").call(key);
                 globals.set(new PythonObject(collapsedKey), val);
             }
         }
     }
-    private static void expandContext(String contextName){
+
+    private static void expandContext(String contextName) {
         String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
-        for(int i=0;i<numKeys;i++){
+        for (int i = 0; i < numKeys; i++) {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (keyStr.startsWith(prefix)){
+            if (keyStr.startsWith(prefix)) {
                 String expandedKey = expandCollapsedVarName(keyStr, contextName);
                 PythonObject val = globals.attr("pop").call(key);
                 globals.set(new PythonObject(expandedKey), val);
@@ -111,11 +118,11 @@ public class PythonContextManager {
 
     }
 
-    public static void setContext(String contextName){
-        if (contextName.equals(currentContext)){
+    public static void setContext(String contextName) {
+        if (contextName.equals(currentContext)) {
             return;
         }
-        if (!hasContext(contextName)){
+        if (!hasContext(contextName)) {
             addContext(contextName);
         }
         collapseContext(currentContext);
@@ -124,41 +131,41 @@ public class PythonContextManager {
 
     }
 
-    public static String getCurrentContext(){
+    public static String getCurrentContext() {
         return currentContext;
     }
 
-    public static void deleteContext(String contextName){
-        if(contextName.equals("main")){
+    public static void deleteContext(String contextName) {
+        if (contextName.equals("main")) {
             throw new RuntimeException("Can not delete main context!");
         }
-        if (contextName.equals(currentContext)){
+        if (contextName.equals(currentContext)) {
             throw new RuntimeException("Can not delete current context!");
         }
         String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
-        for(int i=0;i<numKeys;i++){
+        for (int i = 0; i < numKeys; i++) {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (keyStr.startsWith(prefix)){
+            if (keyStr.startsWith(prefix)) {
                 globals.attr("__delitem__").call(key);
             }
         }
         contexts.remove(contextName);
     }
 
-    public static void deleteNonMainContexts(){
+    public static void deleteNonMainContexts() {
         setContext("main");
-        for(String c: contexts.toArray(new String[0])){
-            if (!c.equals("main")){
+        for (String c : contexts.toArray(new String[0])) {
+            if (!c.equals("main")) {
                 deleteContext(c);
             }
         }
     }
 
-    public String[] getContexts(){
+    public String[] getContexts() {
         return contexts.toArray(new String[0]);
     }
 

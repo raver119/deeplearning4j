@@ -16,48 +16,51 @@ public class PythonJob {
     private String context;
     private boolean setupRunMode;
     PythonObject runF;
-    static{
+
+    static {
         new PythonExecutioner();
     }
-    public PythonJob(String name, String code, boolean setupRunMode){
+
+    public PythonJob(String name, String code, boolean setupRunMode) {
         this.name = name;
         this.code = code;
         this.setupRunMode = setupRunMode;
         context = "__job_" + name;
-        if (PythonContextManager.hasContext(context)){
+        if (PythonContextManager.hasContext(context)) {
             throw new RuntimeException("Unable to create python job " + name + ". Context " + context + " already exists!");
         }
-        if (setupRunMode)setup();
+        if (setupRunMode) setup();
     }
 
-    public void clearState(){
+    public void clearState() {
         PythonContextManager.setContext("main");
         PythonContextManager.deleteContext(context);
         setup();
     }
 
-    public void setup(){
-        try (PythonGIL gil = PythonGIL.lock()){
+    public void setup() {
+        try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
             PythonObject runF = PythonExecutioner.getVariable("run");
-            if (runF.isNone() || !Python.callable(runF)){
+            if (runF.isNone() || !Python.callable(runF)) {
                 PythonExecutioner.exec(code);
             }
             runF = PythonExecutioner.getVariable("run");
-            if (runF.isNone() || !Python.callable(runF)){
+            if (runF.isNone() || !Python.callable(runF)) {
                 throw new RuntimeException("run() method not found!");
             }
             this.runF = runF;
             PythonObject setupF = PythonExecutioner.getVariable("setup");
-            if (!setupF.isNone()){
+            if (!setupF.isNone()) {
                 setupF.call();
             }
         }
     }
-    public void exec(PythonVariables inputs, PythonVariables outputs){
-        try (PythonGIL gil = PythonGIL.lock()){
+
+    public void exec(PythonVariables inputs, PythonVariables outputs) {
+        try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
-            if (!setupRunMode){
+            if (!setupRunMode) {
                 PythonExecutioner.exec(code, inputs, outputs);
                 return;
             }
@@ -69,10 +72,10 @@ public class PythonJob {
             PythonObject argsList = argspec.attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
-            for(int i = 0; i < argsCount; i++){
+            for (int i = 0; i < argsCount; i++) {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
-                if(val.isNone()){
+                if (val.isNone()) {
                     throw new RuntimeException("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);
@@ -84,9 +87,9 @@ public class PythonJob {
         }
     }
 
-    public PythonVariables execAndReturnAllVariables(PythonVariables inputs){
-        try (PythonGIL gil = PythonGIL.lock()){
-            if (!setupRunMode){
+    public PythonVariables execAndReturnAllVariables(PythonVariables inputs) {
+        try (PythonGIL gil = PythonGIL.lock()) {
+            if (!setupRunMode) {
                 return PythonExecutioner.execAndReturnAllVariables(code, inputs);
             }
             PythonExecutioner.setVariables(inputs);
@@ -94,10 +97,10 @@ public class PythonJob {
             PythonObject argsList = inspect.attr("getfullargspec").call(runF).attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
-            for(int i = 0; i < argsCount; i++){
+            for (int i = 0; i < argsCount; i++) {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
-                if(val.isNone()){
+                if (val.isNone()) {
                     throw new RuntimeException("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);

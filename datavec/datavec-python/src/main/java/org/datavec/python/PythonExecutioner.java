@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.bytedeco.cpython.global.python.*;
 import static org.bytedeco.cpython.global.python.PyThreadState_Get;
@@ -39,18 +40,21 @@ import static org.datavec.python.Python.*;
 public class PythonExecutioner {
 
 
-    private static boolean init;
+    private static AtomicBoolean init = new AtomicBoolean(false);
     public final static String DEFAULT_PYTHON_PATH_PROPERTY = "org.datavec.python.path";
     public final static String JAVACPP_PYTHON_APPEND_TYPE = "org.datavec.python.javacpp.path.append";
     public final static String DEFAULT_APPEND_TYPE = "before";
 
-    static{init();}
-    private static synchronized  void init() {
-        if(init) {
+    static {
+        init();
+    }
+
+    private static synchronized void init() {
+        if (init.get()) {
             return;
         }
         setPythonPath();
-        init = true;
+        init.set(true);
         log.info("CPython: PyEval_InitThreads()");
         PyEval_InitThreads();
         log.info("CPython: Py_InitializeEx()");
@@ -70,40 +74,39 @@ public class PythonExecutioner {
         }
     }
 
-    public static void setVariable(String varName, PythonObject pythonObject){
+    public static void setVariable(String varName, PythonObject pythonObject) {
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
-    public static void setVariable(String varName, PythonVariables.Type varType, Object value){
+
+    public static void setVariable(String varName, PythonVariables.Type varType, Object value) {
         PythonObject pythonObject;
-        switch(varType){
+        switch (varType) {
             case STR:
-                pythonObject = new PythonObject((String)value);
+                pythonObject = new PythonObject((String) value);
                 break;
             case INT:
-                pythonObject = new PythonObject(((Number)value).longValue());
+                pythonObject = new PythonObject(((Number) value).longValue());
                 break;
             case FLOAT:
-                pythonObject = new PythonObject(((Number)value).floatValue());
+                pythonObject = new PythonObject(((Number) value).floatValue());
                 break;
             case BOOL:
-                pythonObject = new PythonObject((boolean)value);
+                pythonObject = new PythonObject((boolean) value);
                 break;
             case NDARRAY:
-                if (value instanceof NumpyArray){
+                if (value instanceof NumpyArray) {
                     pythonObject = new PythonObject((NumpyArray) value);
-                }
-                else if (value instanceof INDArray){
+                } else if (value instanceof INDArray) {
                     pythonObject = new PythonObject((INDArray) value);
-                }
-                else{
+                } else {
                     throw new RuntimeException("Invalid value for type NDARRAY");
                 }
                 break;
             case LIST:
-                pythonObject = new PythonObject(Arrays.asList((Object[])value));
+                pythonObject = new PythonObject(Arrays.asList((Object[]) value));
                 break;
             case DICT:
-                pythonObject = new PythonObject((Map)value);
+                pythonObject = new PythonObject((Map) value);
                 break;
             default:
                 throw new RuntimeException("Unsupported type: " + varType);
@@ -112,22 +115,23 @@ public class PythonExecutioner {
         setVariable(varName, pythonObject);
     }
 
-    public static void setVariables(PythonVariables pyVars){
-        if (pyVars == null)return;
-        for (String varName: pyVars.getVariables()){
+    public static void setVariables(PythonVariables pyVars) {
+        if (pyVars == null) return;
+        for (String varName : pyVars.getVariables()) {
             setVariable(varName, pyVars.getType(varName), pyVars.getValue(varName));
         }
     }
 
-    public static PythonObject getVariable(String varName){
+    public static PythonObject getVariable(String varName) {
         return Python.globals().attr("get").call(varName);
     }
-    public static Object getVariable(String varName, PythonVariables.Type varType){
+
+    public static Object getVariable(String varName, PythonVariables.Type varType) {
         PythonObject pythonObject = getVariable(varName);
-        if (pythonObject.isNone()){
+        if (pythonObject.isNone()) {
             throw new RuntimeException("Variable not found: " + varName);
         }
-        switch (varType){
+        switch (varType) {
             case INT:
                 return pythonObject.toLong();
             case FLOAT:
@@ -142,45 +146,46 @@ public class PythonExecutioner {
                 return pythonObject.toList();
             case DICT:
                 return pythonObject.toMap();
-                default:
-                    throw new RuntimeException("Unsupported type: " + varType);
+            default:
+                throw new RuntimeException("Unsupported type: " + varType);
         }
     }
-    public static void getVariables(PythonVariables pyVars){
-        for (String varName: pyVars.getVariables()){
+
+    public static void getVariables(PythonVariables pyVars) {
+        for (String varName : pyVars.getVariables()) {
             pyVars.setValue(varName, getVariable(varName, pyVars.getType(varName)));
         }
     }
 
 
     private static String getWrappedCode(String code) {
-        try(InputStream is = new ClassPathResource("pythonexec/pythonexec.py").getInputStream()) {
+        try (InputStream is = new ClassPathResource("pythonexec/pythonexec.py").getInputStream()) {
             String base = IOUtils.toString(is, Charset.defaultCharset());
             StringBuffer indentedCode = new StringBuffer();
-            for(String split : code.split("\n")) {
+            for (String split : code.split("\n")) {
                 indentedCode.append("    " + split + "\n");
 
             }
 
-            String out = base.replace("    pass",indentedCode);
+            String out = base.replace("    pass", indentedCode);
             return out;
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to read python code!",e);
+            throw new IllegalStateException("Unable to read python code!", e);
         }
 
     }
 
 
-    public static void exec(String code){
+    public static void exec(String code) {
         _exec(getWrappedCode(code));
     }
 
-    public static void exec(String code, PythonVariables outputVariables){
+    public static void exec(String code, PythonVariables outputVariables) {
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
     }
 
-    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables){
+    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) {
         setVariables(inputVariables);
         _exec(getWrappedCode(code));
         getVariables(outputVariables);
@@ -192,27 +197,22 @@ public class PythonExecutioner {
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys"));
         int numKeys = Python.len(keysList).toInt();
-        for (int i=0;i<numKeys;i++){
+        for (int i = 0; i < numKeys; i++) {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (!keyStr.startsWith("_")){
+            if (!keyStr.startsWith("_")) {
                 PythonObject val = globals.get(key);
-                if (Python.isinstance(val, intType())){
+                if (Python.isinstance(val, intType())) {
                     out.addInt(keyStr, val.toInt());
-                }
-                else if (Python.isinstance(val, floatType())){
+                } else if (Python.isinstance(val, floatType())) {
                     out.addFloat(keyStr, val.toDouble());
-                }
-                else if (Python.isinstance(val, strType())){
+                } else if (Python.isinstance(val, strType())) {
                     out.addStr(keyStr, val.toString());
-                }
-                else if (Python.isinstance(val, boolType())){
+                } else if (Python.isinstance(val, boolType())) {
                     out.addBool(keyStr, val.toBoolean());
-                }
-                else if (Python.isinstance(val, listType())){
+                } else if (Python.isinstance(val, listType())) {
                     out.addList(keyStr, val.toList().toArray(new Object[0]));
-                }
-                else if (Python.isinstance(val, dictType())){
+                } else if (Python.isinstance(val, dictType())) {
                     out.addDict(keyStr, val.toMap());
                 }
             }
@@ -221,49 +221,44 @@ public class PythonExecutioner {
 
     }
 
-    public static PythonVariables getAllVariables(){
+    public static PythonVariables getAllVariables() {
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys").call());
         int numKeys = Python.len(keysList).toInt();
-        for (int i=0;i<numKeys;i++){
+        for (int i = 0; i < numKeys; i++) {
             PythonObject key = keysList.get(i);
             String keyStr = key.toString();
-            if (!keyStr.startsWith("_")){
+            if (!keyStr.startsWith("_")) {
                 PythonObject val = globals.get(key);
-                if (Python.isinstance(val, intType())){
+                if (Python.isinstance(val, intType())) {
                     out.addInt(keyStr, val.toInt());
-                }
-                else if (Python.isinstance(val, floatType())){
+                } else if (Python.isinstance(val, floatType())) {
                     out.addFloat(keyStr, val.toDouble());
-                }
-                else if (Python.isinstance(val, strType())){
+                } else if (Python.isinstance(val, strType())) {
                     out.addStr(keyStr, val.toString());
-                }
-                else if (Python.isinstance(val, boolType())){
+                } else if (Python.isinstance(val, boolType())) {
                     out.addBool(keyStr, val.toBoolean());
-                }
-                else if (Python.isinstance(val, listType())){
+                } else if (Python.isinstance(val, listType())) {
                     out.addList(keyStr, val.toList().toArray(new Object[0]));
-                }
-                else if (Python.isinstance(val, dictType())){
+                } else if (Python.isinstance(val, dictType())) {
                     out.addDict(keyStr, val.toMap());
-                }
-                else{
-                   PythonObject np = importModule("numpy");
-                   if (Python.isinstance(val, np.attr("ndarray"), np.attr("generic"))){
-                       out.addNDArray(keyStr, val.toNumpy());
-                   }
+                } else {
+                    PythonObject np = importModule("numpy");
+                    if (Python.isinstance(val, np.attr("ndarray"), np.attr("generic"))) {
+                        out.addNDArray(keyStr, val.toNumpy());
+                    }
                 }
 
             }
         }
         return out;
     }
-    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs){
+
+    public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs) {
         setVariables(inputs);
         _exec(getWrappedCode(code));
-      return getAllVariables();
+        return getAllVariables();
     }
 
     /**
@@ -275,7 +270,7 @@ public class PythonExecutioner {
      * NONE: Don't use javacpp's python path at all
      */
     public enum JavaCppPathType {
-        BEFORE,AFTER,NONE
+        BEFORE, AFTER, NONE
     }
 
     /**
@@ -285,23 +280,22 @@ public class PythonExecutioner {
      */
 
     public static synchronized void setPythonPath() {
-        if(!init) {
+        if (!init.get()) {
             try {
                 String path = System.getProperty(DEFAULT_PYTHON_PATH_PROPERTY);
-                if(path == null) {
+                if (path == null) {
                     log.info("Setting python default path");
                     File[] packages = numpy.cachePackages();
                     Py_SetPath(packages);
-                }
-                else {
+                } else {
                     log.info("Setting python path " + path);
                     StringBuffer sb = new StringBuffer();
                     File[] packages = numpy.cachePackages();
 
-                    JavaCppPathType pathAppendValue = JavaCppPathType.valueOf(System.getProperty(JAVACPP_PYTHON_APPEND_TYPE,DEFAULT_APPEND_TYPE).toUpperCase());
-                    switch(pathAppendValue) {
+                    JavaCppPathType pathAppendValue = JavaCppPathType.valueOf(System.getProperty(JAVACPP_PYTHON_APPEND_TYPE, DEFAULT_APPEND_TYPE).toUpperCase());
+                    switch (pathAppendValue) {
                         case BEFORE:
-                            for(File cacheDir : packages) {
+                            for (File cacheDir : packages) {
                                 sb.append(cacheDir);
                                 sb.append(java.io.File.pathSeparator);
                             }
@@ -313,7 +307,7 @@ public class PythonExecutioner {
                         case AFTER:
                             sb.append(path);
 
-                            for(File cacheDir : packages) {
+                            for (File cacheDir : packages) {
                                 sb.append(cacheDir);
                                 sb.append(java.io.File.pathSeparator);
                             }
@@ -334,8 +328,7 @@ public class PythonExecutioner {
             } catch (IOException e) {
                 log.error("Failed to set python path.", e);
             }
-        }
-        else {
+        } else {
             throw new IllegalStateException("Unable to reset python path. Already initialized.");
         }
     }
