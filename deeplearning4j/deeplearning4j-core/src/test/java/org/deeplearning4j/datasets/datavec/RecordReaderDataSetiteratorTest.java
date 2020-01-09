@@ -72,7 +72,7 @@ import static org.nd4j.linalg.indexing.NDArrayIndex.point;
 public class RecordReaderDataSetiteratorTest extends BaseDL4JTest {
 
     @Rule
-    protected Timeout timeout = Timeout.seconds(300);
+    public Timeout timeout = Timeout.seconds(300);
 
     @Override
     public DataType getDataType(){
@@ -1006,7 +1006,9 @@ public class RecordReaderDataSetiteratorTest extends BaseDL4JTest {
             for (RecordMetaData m : meta) {
                 Record r = csv.loadFromMetaData(m);
                 INDArray row = ds.getFeatures().getRow(i);
-                System.out.println(m.getLocation() + "\t" + r.getRecord() + "\t" + row);
+                if(i <= 3) {
+                    System.out.println(m.getLocation() + "\t" + r.getRecord() + "\t" + row);
+                }
 
                 for (int j = 0; j < 4; j++) {
                     double exp = r.getRecord().get(j).toDouble();

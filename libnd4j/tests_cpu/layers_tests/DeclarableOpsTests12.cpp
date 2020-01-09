@@ -810,9 +810,10 @@ TEST_F(DeclarableOpsTests12, pullRows_1) {
 #ifdef __CUDABLAS__
     nativeStart[1] = (x.getContext()->getCudaStream());
 #endif
-
-    pullRows(nativeStart, x.buffer(), x.getShapeInfo(), x.getSpecialBuffer(), x.getSpecialShapeInfo(),
-                         z.buffer(), z.getShapeInfo(), z.specialBuffer(), z.specialShapeInfo(),
+    OpaqueDataBuffer xBuf(x.dataBuffer());
+    OpaqueDataBuffer zBuf(z.dataBuffer());
+    pullRows(nativeStart, &xBuf, x.getShapeInfo(), x.getSpecialShapeInfo(),
+                         &zBuf, z.getShapeInfo(), z.specialShapeInfo(),
                          4, pidx,
                          xTadPack.platformShapeInfo(), xTadPack.platformOffsets(),
                          zTadPack.platformShapeInfo(), zTadPack.platformOffsets());
@@ -844,8 +845,10 @@ TEST_F(DeclarableOpsTests12, pullRows_2) {
 #ifdef __CUDABLAS__
     nativeStart[1] = (x.getContext()->getCudaStream());
 #endif
-    pullRows(nativeStart, x.buffer(), x.getShapeInfo(), x.specialBuffer(), x.specialShapeInfo(),
-                         z.buffer(), z.getShapeInfo(), z.specialBuffer(), z.specialShapeInfo(),
+    OpaqueDataBuffer xBuf(x.dataBuffer());
+    OpaqueDataBuffer zBuf(z.dataBuffer());
+    pullRows(nativeStart, &xBuf, x.getShapeInfo(), x.specialShapeInfo(),
+                         &zBuf, z.getShapeInfo(), z.specialShapeInfo(),
                          4, pidx,
                          xTadPack.platformShapeInfo(), xTadPack.platformOffsets(),
                          zTadPack.platformShapeInfo(), zTadPack.platformOffsets());
@@ -2672,6 +2675,60 @@ TEST_F(DeclarableOpsTests12, LU_Test_3_3) {
     auto p = res->at(1);
 //    z->printIndexedBuffer("Triangulars3_3");
 //    p->printIndexedBuffer("Permutaions3_3");
+
+    ASSERT_TRUE(expLU.equalsTo(z));
+    ASSERT_TRUE(expP.equalsTo(p));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, LU_Test_4_1) {
+
+    auto in = NDArrayFactory::create<float>('c', {2, 2,2}, {0.7788f, 0.8012f,
+                                                             0.7244f,    0.2309f,
+                                                             0.7271f,    0.1804f,
+                                                             0.5056f,    0.8925f});
+    auto expLU = NDArrayFactory::create<float>('c', {2, 2,2}, {
+            0.7788f, 0.8012f, 0.930149f, -0.514335f,
+            0.7271f, 0.1804f, 0.695365f, 0.767056f
+    });
+
+    auto expP = NDArrayFactory::create<int>('c', {2,2}, {0, 1, 0, 1});
+    nd4j::ops::lu op;
+
+    auto res = op.execute({&in}, {}, {});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+    auto p = res->at(1);
+//    z->printIndexedBuffer("Triangulars4_1");
+//    p->printIndexedBuffer("Permutaions4_1");
+
+    ASSERT_TRUE(expLU.equalsTo(z));
+    ASSERT_TRUE(expP.equalsTo(p));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, LU_Test_4_2) {
+
+    auto in = NDArrayFactory::create<float>('c', {2, 2,2}, {0.7788f, 0.8012f,
+                                                            0.7244f,    0.2309f,
+                                                            0.7271f,    0.1804f,
+                                                            0.5056f,    0.8925f});
+    auto expLU = NDArrayFactory::create<float>('c', {2, 2,2}, {
+            0.7788f, 0.8012f, 0.930149f, -0.514335f,
+            0.7271f, 0.1804f, 0.695365f, 0.767056f
+    });
+
+    auto expP = NDArrayFactory::create<Nd4jLong>('c', {2,2}, {0, 1, 0, 1});
+    nd4j::ops::lu op;
+
+    auto res = op.execute({&in}, {}, {nd4j::DataType::INT64});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+    auto p = res->at(1);
+//    z->printIndexedBuffer("Triangulars4_2");
+//    p->printIndexedBuffer("Permutaions4_2");
 
     ASSERT_TRUE(expLU.equalsTo(z));
     ASSERT_TRUE(expP.equalsTo(p));
