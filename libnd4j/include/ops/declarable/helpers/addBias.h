@@ -31,7 +31,12 @@ namespace helpers {
 
 	void addBias(graph::Context& block, const NDArray& input, const NDArray& bias, NDArray& output, const bool isNCHW);
    
-    void addBias_Experimental(graph::Context& block, const NDArray& input, const NDArray& bias, NDArray& output, const bool isNCHW, const bool check_strides);
+    void addBias_Experimental(graph::Context& block, const NDArray& input, const NDArray& bias, NDArray& output, const bool isNCHW
+#if 1
+		, const bool force_non_continuous
+#endif			
+	
+	);
      
 //<editor-fold desc="EXPERIMENTAL_COORDS_HELPERS">
 #pragma region EXPERIMENTAL_COORDS_HELPERS
@@ -77,6 +82,7 @@ inline void prefetch_range_wl(char* addr, size_t len)
 }
 #endif
 
+    using pair_size_t = std::pair<size_t, size_t>;
 
 	template<size_t Rank,size_t Index, bool Last_Index_Faster = true>
 	constexpr size_t StridesOrderInd() {
@@ -174,6 +180,13 @@ inline void prefetch_range_wl(char* addr, size_t len)
 		return offset;
 	}
 
+	INLINEDEF void   index2coords_C(Nd4jLong index, const Nd4jLong rank, const Nd4jLong* bases, Nd4jLong* coords) {
+		for (size_t i = rank-1; i > 0; --i) {
+			coords[i] = index % bases[i];
+			index /= bases[i];
+		}
+		coords[0] = index;      // last iteration 
+	}
 
 	INLINEDEF void   index2coords_F(Nd4jLong index, const Nd4jLong rank, const Nd4jLong *bases, Nd4jLong* coords) {
 
@@ -184,7 +197,7 @@ inline void prefetch_range_wl(char* addr, size_t len)
 		coords[rank-1] = index;      // last iteration
 	}
 
-	FORCEINLINE size_t offset_from_coords(const Nd4jLong* strides, Nd4jLong *coords,  size_t rank) {
+	FORCEINLINE size_t offset_from_coords(const Nd4jLong* strides, const Nd4jLong *coords,const  Nd4jLong &rank) {
 		 
 		size_t offset = 0; 
 		size_t rank_4 = rank & -4;
@@ -197,6 +210,52 @@ inline void prefetch_range_wl(char* addr, size_t len)
 		} 
 		for (int i = rank_4; i < rank ; i ++) {
 			offset += coords[i] * strides[i];
+		}
+		return offset;
+	}
+
+	FORCEINLINE bool check_continuity(const char order ,const Nd4jLong* bases, const Nd4jLong* x_strides, const Nd4jLong &rank) {
+		bool continuous = true;
+		Nd4jLong calc_stride = 1;
+		if (order == 'c') {
+			for (Nd4jLong i = rank - 1; i >= 0; i--) {
+				bool is_eq = (calc_stride == x_strides[i]);
+				continuous &= is_eq;
+				if (!continuous) break;
+				calc_stride = bases[i] * calc_stride;
+			} 
+		}
+		else {
+			for (Nd4jLong i = 0; i < rank; i++) {
+				bool is_eq = (calc_stride == x_strides[i]);
+				continuous &= is_eq;
+				if (!continuous) break;
+				calc_stride = bases[i] * calc_stride;
+			}
+		}
+		return continuous;
+	}
+
+
+	FORCEINLINE pair_size_t offset_from_coords(const Nd4jLong* &x_strides, const Nd4jLong*& z_strides, const Nd4jLong* coords, const Nd4jLong &rank) {
+
+		pair_size_t offset = { 0,0 };
+		size_t rank_4 = rank & -4;
+		for (int i = 0; i < rank_4; i += 4) {
+			offset.first = offset.first
+				+ coords[i] * x_strides[i]
+				+ coords[i + 1] * x_strides[i + 1]
+				+ coords[i + 2] * x_strides[i + 2]
+				+ coords[i + 3] * x_strides[i + 3];
+			offset.second = offset.second
+				+ coords[i] * z_strides[i]
+				+ coords[i + 1] * z_strides[i + 1]
+				+ coords[i + 2] * z_strides[i + 2]
+				+ coords[i + 3] * z_strides[i + 3];
+		}
+		for (int i = rank_4; i < rank; i++) {
+			offset.first += coords[i] * x_strides[i];
+			offset.second += coords[i] * z_strides[i];
 		}
 		return offset;
 	}
@@ -358,7 +417,7 @@ inline void prefetch_range_wl(char* addr, size_t len)
 	}
 
 
-	using pair_size_t = std::pair<size_t, size_t>;
+
 
 	template<size_t Rank, size_t Index, bool Last_Index_Faster = true>
 	FORCEINLINE

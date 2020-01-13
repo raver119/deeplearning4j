@@ -62,9 +62,9 @@ public:
 		fflush(stdout);
 	}
 };
+#define BENCH_RELEASE 1
+#if defined(BENCH_RELEASE)
 
- 
- 
 int bnch_cases[][4] = {
 	{40, 2, 4, 2056},
 	{2056, 2, 4, 19 },
@@ -74,14 +74,40 @@ int bnch_cases[][4] = {
     {32, 32, 32, 16},
     {32, 600, 600, 3},
     {32, 112, 112, 32},
-    {32, 7, 7, 1024}
+    {32, 7, 7, 1024},
+	 {2,3,1,32}
 };
 
 constexpr int coords_k =   6;
+#else
+int bnch_cases[][4] = {
+	{7,3,5,9},
+	 {2,3,1,32},
+     {32,32,2,2}
+};
 
-int outter_loops = 10;// 10;
-int inner_loops = 10;// 10;// 100;
+constexpr int coords_k = 0;
 
+#endif
+
+#define BENCH_TEST_F_ORDER 1
+#define BENCH_TEST_F_ORDER_NC 1
+#define BENCH_TEST_C_ORDER 1
+#define BENCH_TEST_C_ORDER_NC 1
+#define BENCH_TEST_MIXED_ORDERS 1
+//#define BENCH_RELEASE 1
+#if defined(BENCH_RELEASE)
+int outter_loops =    10;
+int inner_loops =   10;// 100;
+#else
+int outter_loops = 1;//  10;
+int inner_loops = 1;// 10;// 100;
+#endif
+#if defined (_MSC_VER)
+#define use(x)
+#define escape(x)
+#define clobber()
+#else
 template<typename T>
 void use(T&& t) {
 	__asm__ __volatile__("" :: "g" (t));
@@ -94,7 +120,8 @@ void escape(void* p) {
 void clobber() {
 	__asm__ __volatile__("" : : : "memory");
 }
-#define bench_coords 1
+#endif
+//#define bench_coords 1
 template<typename Op,typename... Args>
 void time_it(Op op,Nd4jLong totalFlops, Args&&... args) {
 	std::vector<double> values;
@@ -170,7 +197,7 @@ void check_correctness_with_base(Context& ctx, const NDArray& x, const NDArray& 
 	ASSERT_TRUE(expected.equalsTo(z));
 
 }
-#if 1
+#if defined(BENCH_TEST_C_ORDER)
 TEST_F(PlaygroundTests, test_bias_base) {
 	 
 
@@ -215,7 +242,7 @@ TEST_F(PlaygroundTests, test_bias_experimental_coords_strided) {
 	 
 }
 
-TEST_F(PlaygroundTests, test_bias_experimental_continous) {
+TEST_F(PlaygroundTests, test_bias_experimental_continuous) {
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
 
@@ -232,13 +259,323 @@ TEST_F(PlaygroundTests, test_bias_experimental_continous) {
 		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
 		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
 		 
-	    //check for correctness with  strided experimental
+	    
 		check_correctness_with_experimental(ctx, x, y, z, false);
 	};
 
 }
+
+
+TEST_F(PlaygroundTests, test_bias_experimental_continuous2) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<double>('c', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<double>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
+
+		
+		check_correctness_with_base(ctx, x, y, z, false);
+	};
+
+}
+
 #endif
-TEST_F(PlaygroundTests, test_bias_different_order_inF_out_C) {
+#if defined(BENCH_TEST_C_ORDER_NC)
+TEST_F(PlaygroundTests, test_bias_NC_base) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, true);
+
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_NC_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+
+	};
+
+}
+
+TEST_F(PlaygroundTests, test_bias_NC_experimental_continuous) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+
+}
+
+
+TEST_F(PlaygroundTests, test_bias_NC_experimental_continuous2) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<double>('c', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<double>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+
+}
+
+#endif
+
+#if defined(BENCH_TEST_F_ORDER)
+TEST_F(PlaygroundTests, test_bias_Fortran_base) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
+
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_Fortran_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, true);
+
+		check_correctness_with_base(ctx, x, y, z, false);
+
+	};
+
+
+
+}
+
+TEST_F(PlaygroundTests, test_bias_Fortran_experimental_continuous) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
+
+
+		check_correctness_with_base(ctx, x, y, z, false);
+	};
+
+}
+
+
+TEST_F(PlaygroundTests, test_bias_Fortran_experimental_continuous2) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<double>('f', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<double>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
+
+
+		check_correctness_with_base(ctx, x, y, z, false);
+	};
+
+}
+
+#endif
+
+#if defined(BENCH_TEST_F_ORDER_NC)
+TEST_F(PlaygroundTests, test_bias_Fortran_NC_base) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, true);
+
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+
+	};
+
+}
+
+TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_continuous) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+
+}
+
+
+TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_continuous2) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<double>('f', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<double>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+
+}
+
+#endif
+
+#if defined(BENCH_TEST_MIXED_ORDERS)
+TEST_F(PlaygroundTests, test_bias_base_different_order_inF_out_C) {
 
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
@@ -247,21 +584,22 @@ TEST_F(PlaygroundTests, test_bias_different_order_inF_out_C) {
 		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
 		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
 		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
-		
+
 		Context ctx(1);
 
 		fill_random<float>(x);
 		fill_random<float>(y);
 		//nd4j::ops::biasadd op;  
 		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false,false);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
 
 		//check for correctness with base to see if they are equal
 		check_correctness_with_base(ctx, x, y, z, false);
 	};
 }
- 
-TEST_F(PlaygroundTests, test_bias_different_order_inC_outF) {
+
+
+TEST_F(PlaygroundTests, test_bias_base_different_order_inC_outF) {
 
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
@@ -277,12 +615,61 @@ TEST_F(PlaygroundTests, test_bias_different_order_inC_outF) {
 		fill_random<float>(y);
 		//nd4j::ops::biasadd op;  
 		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
 
 		//check for correctness with base to see if they are equal
-		check_correctness_with_base(ctx, x, y, z, false);
+		//check_correctness_with_base(ctx, x, y, z, false);
 	};
 }
+
+TEST_F(PlaygroundTests, test_bias_different_order_NC_inF_out_C) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+		
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true,false);
+
+		//check for correctness with base to see if they are equal
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_different_order_NC_inC_outF) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check for correctness with base to see if they are equal
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+}
+
+#endif
+
 #if defined(bench_coords) 
 
 TEST_F(PlaygroundTests, test_coord1) {
