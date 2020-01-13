@@ -11,6 +11,11 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
+/**
+ * PythonJob is the right abstraction for executing multiple python scripts
+ * in a multi thread stateful environment. The setup-and-run mode allows your
+ * "setup" code (imports, model loading etc) to be executed only once.
+ */
 public class PythonJob {
 
     private String code;
@@ -35,9 +40,15 @@ public class PythonJob {
         if (setupRunMode) setup();
     }
 
+
+    /**
+     * Clears all variables in current context and calls setup()
+     */
     public void clearState() throws Exception {
+        String context = this.context;
         PythonContextManager.setContext("main");
         PythonContextManager.deleteContext(context);
+        this.context = context;
         setup();
     }
 
@@ -50,7 +61,7 @@ public class PythonJob {
             }
             runF = PythonExecutioner.getVariable("run");
             if (runF.isNone() || !Python.callable(runF)) {
-                throw new RuntimeException("run() method not found!");
+                throw new Exception("run() method not found!");
             }
             this.runF = runF;
             PythonObject setupF = PythonExecutioner.getVariable("setup");
@@ -79,7 +90,7 @@ public class PythonJob {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if (val.isNone()) {
-                    throw new RuntimeException("Input value not received for run() argument: " + arg.toString());
+                    throw new Exception("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);
             }
@@ -104,7 +115,7 @@ public class PythonJob {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if (val.isNone()) {
-                    throw new RuntimeException("Input value not received for run() argument: " + arg.toString());
+                    throw new Exception("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);
             }

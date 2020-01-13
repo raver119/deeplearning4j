@@ -23,13 +23,19 @@ import org.bytedeco.cpython.PyObject;
 import static org.bytedeco.cpython.global.python.*;
 
 /**
- * Swift like python wrapper for J
+ * Swift like python wrapper for Java
  *
  * @author Fariz Rahman
  */
 
 public class Python {
 
+    /**
+     * Imports a python module, similar to python import statement.
+     * @param moduleName name of the module to be imported
+     * @return reference to the module object
+     * @throws PythonException
+     */
     public static PythonObject importModule(String moduleName) throws PythonException{
         PythonObject module = new PythonObject(PyImport_ImportModule(moduleName));
         if (module.isNone()) {
