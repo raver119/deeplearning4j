@@ -22,7 +22,6 @@ public class PythonJob {
     private String name;
     private String context;
     private boolean setupRunMode;
-    private PythonObject runF;
 
     static {
         new PythonExecutioner();
@@ -52,7 +51,7 @@ public class PythonJob {
         setup();
     }
 
-    public void setup() throws Exception {
+    public synchronized void setup() throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
             PythonObject runF = PythonExecutioner.getVariable("run");
@@ -63,7 +62,6 @@ public class PythonJob {
             if (runF.isNone() || !Python.callable(runF)) {
                 throw new Exception("run() method not found!");
             }
-            this.runF = runF;
             PythonObject setupF = PythonExecutioner.getVariable("setup");
             if (!setupF.isNone()) {
                 setupF.call();
@@ -71,7 +69,7 @@ public class PythonJob {
         }
     }
 
-    public void exec(PythonVariables inputs, PythonVariables outputs) throws Exception {
+    public synchronized void exec(PythonVariables inputs, PythonVariables outputs) throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
             PythonContextManager.setContext(context);
             if (!setupRunMode) {
@@ -82,6 +80,7 @@ public class PythonJob {
 
             PythonObject inspect = Python.importModule("inspect");
             PythonObject getfullargspec = inspect.attr("getfullargspec");
+            PythonObject runF = PythonExecutioner.getVariable("run");
             PythonObject argspec = getfullargspec.call(runF);
             PythonObject argsList = argspec.attr("args");
             PythonObject runargs = Python.dict();
@@ -107,6 +106,7 @@ public class PythonJob {
                 return PythonExecutioner.execAndReturnAllVariables(code, inputs);
             }
             PythonExecutioner.setVariables(inputs);
+            PythonObject runF = PythonExecutioner.getVariable("run");
             PythonObject inspect = Python.importModule("inspect");
             PythonObject argsList = inspect.attr("getfullargspec").call(runF).attr("args");
             PythonObject runargs = Python.dict();

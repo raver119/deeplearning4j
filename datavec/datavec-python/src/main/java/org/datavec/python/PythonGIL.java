@@ -18,20 +18,20 @@
 package org.datavec.python;
 
 import lombok.extern.slf4j.Slf4j;
+import org.bytedeco.cpython.PyInterpreterState;
 import org.bytedeco.cpython.PyThreadState;
 
 import static org.bytedeco.cpython.global.python.*;
-import static org.bytedeco.cpython.global.python.PyEval_RestoreThread;
-import static org.bytedeco.cpython.global.python.PyEval_SaveThread;
 
 
 @Slf4j
 public class PythonGIL implements AutoCloseable {
-    private static PyThreadState mainThreadState;
+    private static  PyThreadState savedThreadState;
+    private static PyInterpreterState interpreterState;
 
     static {
-        log.info("CPython: PyThreadState_Get()");
-        mainThreadState = PyThreadState_Get();
+        new PythonExecutioner();
+        interpreterState = PyThreadState_Get().interp();
     }
 
     private PythonGIL() {
@@ -48,21 +48,31 @@ public class PythonGIL implements AutoCloseable {
     }
 
     private static synchronized void acquire() {
-        log.info("acquireGIL()");
+        if (savedThreadState != null){
+            throw new RuntimeException("GIL already acquired!");
+        }
+        log.info("acquire()");
+        log.info("thread id: " + Thread.currentThread().getId());
         log.info("CPython: PyEval_SaveThread()");
-        mainThreadState = PyEval_SaveThread();
+        savedThreadState = PyEval_SaveThread();
         log.info("CPython: PyThreadState_New()");
-        PyThreadState ts = PyThreadState_New(mainThreadState.interp());
-        log.info("CPython: PyEval_RestoreThread()");
+        PyThreadState ts = PyThreadState_New(interpreterState);
+        log.info("PyEval_RestoreThread()");
         PyEval_RestoreThread(ts);
-        log.info("CPython: PyThreadState_Swap()");
+        log.info("PyThreadState_Swap()");
         PyThreadState_Swap(ts);
+
     }
 
     private static synchronized void release() {
-        log.info("CPython: PyEval_SaveThread()");
+        log.info("release()");
+        log.info("thread id: " + Thread.currentThread().getId());
+        //log.info("CPython: PyGILState_Release()");
+        log.info("PyEval_SaveThread()");
         PyEval_SaveThread();
-        log.info("CPython: PyEval_RestoreThread()");
-        PyEval_RestoreThread(mainThreadState);
+        log.info("PyEval_RestoreThread()");
+        PyEval_RestoreThread(savedThreadState);
+        savedThreadState = null;
+        //PyGILState_Release(gilState);
     }
 }
