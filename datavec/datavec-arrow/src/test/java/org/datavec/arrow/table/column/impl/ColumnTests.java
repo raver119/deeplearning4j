@@ -70,6 +70,8 @@ public class ColumnTests {
             assertEquals(inputData[i],column.elementAtRow(i));
         }
 
+        column.op("sum",new DataVecColumn[]{},new String[]{},null);
+
     }
 
 }

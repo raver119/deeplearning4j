@@ -475,7 +475,7 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     @Override
     public DataBuffer binaryOffsets() {
         val headerPointer = new LongPointer(this.pointer);
-        val offsetBuffer = Nd4j.createBufferOfType(DataType.INT32,length() + 1);
+        val offsetBuffer = Nd4j.createBufferOfType(DataType.INT32, length() + 1);
         long stringByteLength = 0;
         for(int i = 0; i < length(); i++) {
             offsetBuffer.put(i,headerPointer.get(i));

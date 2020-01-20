@@ -150,7 +150,7 @@ public class CudaDataBufferFactory implements DataBufferFactory {
             case BFLOAT16:
                 return new CudaBfloat16DataBuffer(length);
             case UTF8:
-                return new Utf8Buffer(length);
+                return new CudaUtf8Buffer(length);
             case DOUBLE:
                 return new CudaDoubleDataBuffer(length);
             case LONG:
@@ -183,7 +183,7 @@ public class CudaDataBufferFactory implements DataBufferFactory {
                 return new CudaIntDataBuffer(inputIntArr);
             case UTF8:
                 String[] inputStringArr = (String[]) input;
-                return new Utf8Buffer(Arrays.asList(inputStringArr));
+                return new CudaUtf8Buffer(Arrays.asList(inputStringArr));
             case DOUBLE:
                 double[] inputDoubleArr = (double[]) input;
                 return new CudaDoubleDataBuffer(inputDoubleArr);
@@ -197,9 +197,6 @@ public class CudaDataBufferFactory implements DataBufferFactory {
                     retBuffer.put(i,inputBooleanArr[i]);
                 }
                 return retBuffer;
-            case BYTE:
-                byte[] inputByteArr = (byte[]) input;
-                return new CudaByteDataBuffer(inputByteArr,inputByteArr.length);
             case SHORT:
                 short[] inputShortArr = (short[]) input;
                 CudaShortDataBuffer retShortBuffer =  new CudaShortDataBuffer(inputShortArr.length);

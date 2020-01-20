@@ -1038,6 +1038,18 @@ public class Nd4j {
     public static DataBuffer createBufferOfType(DataType dataType,Object input) {
         return DATA_BUFFER_FACTORY_INSTANCE.createBufferOfType(dataType,input);
     }
+
+
+    /**
+     * Create a buffer of a specified data type
+     * @param dataType the data type to create
+     * @param length  the input to use (should be a type of array)
+     * @return the created data buffer
+     */
+    public static DataBuffer createBufferOfType(DataType dataType,long length) {
+        return DATA_BUFFER_FACTORY_INSTANCE.createBufferOfType(dataType,length);
+    }
+
     /**
      * Create a buffer equal of length prod(shape)
      *
