@@ -56,9 +56,9 @@ TEST_F(CnmlTests, helpers_includer) {
 }
 
 TEST_F(CnmlTests, basic_add_test_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
-    auto y = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
-    auto e = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f});
+    auto x = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
+    auto y = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f});
+    auto e = NDArrayFactory::create<float>('c', {2, 2, 2, 2}, {2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f});
     auto z = x.ulike();
 
     nd4j::ops::add op;
