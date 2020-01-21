@@ -90,7 +90,7 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnrtMalloc failed");
 
                 cnrtMalloc(&yBuffer, length + 1024);
-                cnrtMalloc(&zBuffer, length + 1023);
+                cnrtMalloc(&zBuffer, length + 1024);
 
                 res = cnrtMemcpy(xBuffer, x->buffer(), length, CNRT_MEM_TRANS_DIR_HOST2DEV);
                 if (res != CNRT_RET_SUCCESS)
