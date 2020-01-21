@@ -34,6 +34,8 @@ namespace nd4j {
                 cnrtDev_t dev;
                 cnrtQueue_t queue;
 
+                auto length = x->lengthOf() * DataTypeUtils::sizeOf(x->dataType());
+
                 auto res = cnrtInit(0);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtInit failed");
@@ -83,19 +85,19 @@ namespace nd4j {
                 cnmlSetTensorDataType(output_tensor, CNML_DATA_FLOAT32);
 
                 void *xBuffer, *yBuffer, *zBuffer;
-                res = cnrtMalloc(&xBuffer, x->memoryFootprint());
+                res = cnrtMalloc(&xBuffer, length);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtMalloc failed");
 
-                cnrtMalloc(&yBuffer, y->memoryFootprint());
-                cnrtMalloc(&zBuffer, z->memoryFootprint());
+                cnrtMalloc(&yBuffer, length);
+                cnrtMalloc(&zBuffer, length);
 
-                res = cnrtMemcpy(xBuffer, x->buffer(), x->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                res = cnrtMemcpy(xBuffer, x->buffer(), length, CNRT_MEM_TRANS_DIR_HOST2DEV);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtMemcpy failed");
 
-                cnrtMemcpy(yBuffer, y->buffer(), y->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
-                cnrtMemcpy(zBuffer, z->buffer(), z->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                cnrtMemcpy(yBuffer, y->buffer(), length, CNRT_MEM_TRANS_DIR_HOST2DEV);
+                cnrtMemcpy(zBuffer, z->buffer(), length, CNRT_MEM_TRANS_DIR_HOST2DEV);
 
                 // creating an op
                 cnmlBaseOp_t op;
@@ -114,7 +116,7 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnrtSyncQueue failed");
 
                 // FIXME: temporary code. we typically assume that arrays at this point
-                res = cnrtMemcpy(z->buffer(), zBuffer, z->memoryFootprint(), CNRT_MEM_TRANS_DIR_DEV2HOST);
+                res = cnrtMemcpy(z->buffer(), zBuffer, length, CNRT_MEM_TRANS_DIR_DEV2HOST);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtMemcpy final failed");
 
