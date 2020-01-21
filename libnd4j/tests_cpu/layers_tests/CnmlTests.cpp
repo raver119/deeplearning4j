@@ -54,3 +54,16 @@ TEST_F(CnmlTests, helpers_includer) {
     printer({&add});
 #endif
 }
+
+TEST_F(CnmlTests, basic_add_test_1) {
+    auto x = NDArrayFactory::create<float>('c', {1, 1, 2, 2}, {1.f, 1.f, 1.f, 1.f});
+    auto y = NDArrayFactory::create<float>('c', {1, 1, 2, 2}, {1.f, 1.f, 1.f, 1.f});
+    auto e = NDArrayFactory::create<float>('c', {1, 1, 2, 2}, {2.f, 2.f, 2.f, 2.f});
+    auto z = x.ulike();
+
+    nd4j::ops::add op;
+    auto status = op.execute({&x, &y}, {&z}, {}, {}, {});
+    ASSERT_EQ(Status::OK(), status);
+
+    ASSERT_EQ(z, e);
+}

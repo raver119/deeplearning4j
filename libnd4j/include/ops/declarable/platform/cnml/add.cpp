@@ -24,11 +24,21 @@ namespace nd4j {
     namespace ops {
         namespace platforms {
             PLATFORM_IMPL(add, ENGINE_MLU) {
+
                 return Status::OK();
             }
 
             PLATFORM_CHECK(add, ENGINE_MLU) {
-                return true;
+                auto x = INPUT_VARIABLE(0);
+                auto y = INPUT_VARIABLE(1);
+                auto z = OUTPUT_VARIABLE(0);
+
+
+
+                auto r = x->dataType() == y->dataType() && x->dataType() == z->dataType() && (x->dataType() = nd4j::DataType::FLOAT32 || x->dataType() = nd4j::DataType::HALF) && x->rankOf() == 4 && y->rankOf() == 4;
+
+                nd4j_printf("CNML add platform: %s\n", r ? "true" : false);
+                return r;
             }
         }
     }
