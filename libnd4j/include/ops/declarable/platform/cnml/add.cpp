@@ -57,6 +57,31 @@ namespace nd4j {
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlCreateTensor_V2 failed");
 
+                cnmlCreateTensor_V2(&input_tensor_2, type);
+                cnmlCreateTensor_V2(&output_tensor, type);
+
+                int xShape[] = {x->sizeAt(0), x->sizeAt(1), x->sizeAt(2), x->sizeAt(3)};
+                int yShape[] = {y->sizeAt(0), y->sizeAt(1), y->sizeAt(2), y->sizeAt(3)};
+                int zShape[] = {z->sizeAt(0), z->sizeAt(1), z->sizeAt(2), z->sizeAt(3)};
+
+                int xStrides[] = {x->strideAt(0), x->strideAt(1), x->strideAt(2), x->strideAt(3)};
+                int yStrides[] = {y->strideAt(0), y->strideAt(1), y->strideAt(2), y->strideAt(3)};
+                int zStrides[] = {z->strideAt(0), z->strideAt(1), z->strideAt(2), z->strideAt(3)};
+
+                status = cnmlSetTensorShape_V2(input_tensor_1, 4, xShape, xStrides);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlSetTensorShape_V2 failed");
+
+                cnmlSetTensorShape_V2(input_tensor_2, 4, yShape, yStrides);
+                cnmlSetTensorShape_V2(output_tensor, 4, zShape, zStrides);
+
+                status = cnmlSetTensorDataType(input_tensor_1, CNML_DATA_FLOAT32);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlSetTensorDataType failed");
+
+                cnmlSetTensorDataType(input_tensor_2, CNML_DATA_FLOAT32);
+                cnmlSetTensorDataType(output_tensor, CNML_DATA_FLOAT32);
+
                 // creating an op
                 cnmlBaseOp_t op;
                 status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
