@@ -24,6 +24,30 @@ namespace nd4j {
     namespace ops {
         namespace platforms {
             PLATFORM_IMPL(add, ENGINE_MLU) {
+                // that's our inputs/outputs, and we assume they all have proper dtype and shapy by now
+                auto x = INPUT_VARIABLE(0);
+                auto y = INPUT_VARIABLE(1);
+                auto z = OUTPUT_VARIABLE(0);
+
+                // FIXME: temporary code. we want to assume that arrays at this point have CNML Tensor representation
+                // creating tensors
+                cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
+
+                // creating an op
+                cnmlBaseOp_t op;
+                auto status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlCreateAddOp failed");
+
+                // executing an op
+                status = cnmlComputeAddOpForward_V4(op, input_tensor1, nullptr, input_tensor2, nullptr, output_tensor, nullptr, queue, nullptr);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlComputeAddOpForward_V4 failed");
+
+                // FIXME: temporary code. we typically assume that arrays at this point
+
+                // destroy stuff
+                cnmlDestroyBaseOp(op);
 
                 return Status::OK();
             }
