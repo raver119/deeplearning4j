@@ -200,7 +200,7 @@ if (${HELPERS_cudnn})
 endif()
 
 # Cambricon CNML helpers
-if (${HELPERS_neuware})
+if (${HELPERS_cnml})
     SET(CNML_LIBNAME "cnml")
 
     set(CNML_ROOT_DIR "/usr/local/neuware" CACHE PATH "Folder contains CNML")

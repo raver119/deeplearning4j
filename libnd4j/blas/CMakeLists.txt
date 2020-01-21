@@ -136,6 +136,11 @@ if (HAVE_MKLDNN)
     file(GLOB_RECURSE CUSTOMOPS_MKLDNN_SOURCES false ../include/ops/declarable/platform/mkldnn/*.cpp ../include/ops/declarable/platform/mkldnn/mkldnnUtils.h)
 endif()
 
+#if MKLDNN is enabled - we're building mkldnn-powered helpers
+if (HAVE_CNML)
+    file(GLOB_RECURSE CUSTOMOPS_CNML_SOURCES false ../include/ops/declarable/platform/cnml/*.cpp ../include/ops/declarable/platform/cnml/cnmlUtils.h)
+endif()
+
 if(CUDA_BLAS)
     message("Build cublas")
     find_package(CUDA)
@@ -289,7 +294,7 @@ elseif(CPU_BLAS)
             ../include/cnpy/cnpy.cpp  ../include/nd4jmemset.h ../include/nd4jmalloc.h
             Environment.cpp Environment.h ${LOOPS_SOURCES} ${HELPERS_SOURCES} ${EXEC_SOURCES} ${ARRAY_SOURCES} ${TYPES_SOURCES}
             ${MEMORY_SOURCES} ${GRAPH_SOURCES} ${CUSTOMOPS_SOURCES} ${EXCEPTIONS_SOURCES} ${INDEXING_SOURCES} ${CUSTOMOPS_MKLDNN_SOURCES} ${CUSTOMOPS_GENERIC_SOURCES}
-            ${OPS_SOURCES} ${PERF_SOURCES})
+            ${OPS_SOURCES} ${PERF_SOURCES} ${CUSTOMOPS_CNML_SOURCES})
     if(IOS)
         add_library(${LIBND4J_NAME}       STATIC $<TARGET_OBJECTS:nd4jobj>)
     else()
@@ -310,7 +315,7 @@ elseif(CPU_BLAS)
     if ("${LIBND4J_ALL_OPS}" AND "${LIBND4J_BUILD_MINIFIER}")
         message(STATUS "Building minifier...")
         add_executable(minifier ../minifier/minifier.cpp ../minifier/graphopt.cpp)
-        target_link_libraries(minifier ${LIBND4J_NAME}static ${MKLDNN_LIBRARIES} ${OPENBLAS_LIBRARIES} ${MKLDNN} ${BLAS_LIBRARIES})
+        target_link_libraries(minifier ${LIBND4J_NAME}static ${MKLDNN_LIBRARIES} ${OPENBLAS_LIBRARIES} ${MKLDNN} ${BLAS_LIBRARIES} ${CNML})
     endif()
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND "${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 4.9)

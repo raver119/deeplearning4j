@@ -15,18 +15,21 @@
  ******************************************************************************/
 
 //
-// @author raver119@gmail.com
+// Created by raver119 on 21.01.2020.
 //
 
-#ifndef SD_ENGINE_H
-#define SD_ENGINE_H
+#include "cnmlUtils.h"
 
-namespace samediff {
-    enum Engine {
-        ENGINE_CPU = 0,
-        ENGINE_CUDA = 1,
-        ENGINE_MLU = 10,
-    };
+namespace nd4j {
+    namespace ops {
+        namespace platforms {
+            PLATFORM_IMPL(add, ENGINE_MLU) {
+                return Status::OK();
+            }
+
+            PLATFORM_CHECK(add, ENGINE_MLU) {
+                return true;
+            }
+        }
+    }
 }
-
-#endif //SD_ENGINE_H

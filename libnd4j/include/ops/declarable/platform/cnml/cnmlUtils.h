@@ -18,15 +18,22 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_ENGINE_H
-#define SD_ENGINE_H
+#ifndef SD_CNMLUTILS_H
+#define SD_CNMLUTILS_H
 
-namespace samediff {
-    enum Engine {
-        ENGINE_CPU = 0,
-        ENGINE_CUDA = 1,
-        ENGINE_MLU = 10,
-    };
+#include <cnml.h>
+
+#include <execution/Engine.h>
+#include <ops/declarable/PlatformHelper.h>
+#include <ops/declarable/OpRegistrator.h>
+#include <platform_boilerplate.h>
+
+namespace nd4j {
+    namespace ops {
+        namespace platforms {
+            DECLARE_PLATFORM(add, ENGINE_MLU);
+        }
+    }
 }
 
-#endif //SD_ENGINE_H
+#endif //SD_CNMLUTILS_H
