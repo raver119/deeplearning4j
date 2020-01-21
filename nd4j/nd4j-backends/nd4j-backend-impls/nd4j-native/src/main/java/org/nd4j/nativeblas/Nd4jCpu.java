@@ -21162,6 +21162,36 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
 //         #endif
+        /*
+         * multinomial (categorical) random generator draws samples from a multinomial distribution
+         *
+         * Input array:
+         *    0 - 2D ndarray with unnormalized log-probabilities with shape [batch_size (N), num_classes (K)]
+         *    1 - array with one int value of samples number, number of independent samples to draw for each experiment 1,N.
+         * Int arguments:
+         *    0 - optional argument, corresponds to dimension with batch_size
+         *    1 - optional argument, integer type to use for the output. Default int64.
+         *
+         * Output array:
+         *    0 - 2D ndarray with the drawn samples of shape [batch_size, num_samples]
+         */
+//         #if NOT_EXCLUDED(OP_random_multinomial)
+        @Namespace("nd4j::ops") public static class random_multinomial extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public random_multinomial(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public random_multinomial(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public random_multinomial position(long position) {
+                return (random_multinomial)super.position(position);
+            }
+        
+                                                                                    public random_multinomial() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
 
 //         #if NOT_EXCLUDED(OP_random_normal)
         @Namespace("nd4j::ops") public static class random_normal extends DeclarableCustomOp {

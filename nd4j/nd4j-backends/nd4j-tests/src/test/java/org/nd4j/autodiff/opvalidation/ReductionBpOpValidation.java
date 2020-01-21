@@ -943,4 +943,92 @@ public class ReductionBpOpValidation extends BaseOpValidation {
             assertNull(err);
         }
     }
+
+    @Test
+    public void testSquaredNormBp() {
+
+        for (boolean keepDims : new boolean[]{false, true}) {
+
+            INDArray preReduceInput1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray preReduceInput2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray dLdOut;
+            if (keepDims) {
+                dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
+            } else {
+                dLdOut = Nd4j.scalar(0.5);
+            }
+            INDArray dLdInExpected = Nd4j.valueArrayOf(preReduceInput1.shape(), 0.5 / preReduceInput1.length());
+            INDArray dLdIn = Nd4j.createUninitialized(3, 4);
+            String err = OpValidation.validate(new OpTestCase(new SquaredNormBp(preReduceInput1, dLdOut, dLdIn, keepDims))
+                    .expectedOutput(0, dLdInExpected));
+
+            assertNull(err);
+        }
+    }
+
+    @Test
+    public void testStdDeviationBP() {
+
+        for (boolean keepDims : new boolean[]{false, true}) {
+
+            INDArray preReduceInput1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray preReduceInput2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray dLdOut;
+            if (keepDims) {
+                dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
+            } else {
+                dLdOut = Nd4j.scalar(0.5);
+            }
+            INDArray dLdInExpected = Nd4j.valueArrayOf(preReduceInput1.shape(), 0.5 / preReduceInput1.length());
+            INDArray dLdIn = Nd4j.createUninitialized(3, 4);
+            String err = OpValidation.validate(new OpTestCase(new StandardDeviationBp(preReduceInput1, dLdOut, dLdIn, false, keepDims))
+                    .expectedOutput(0, dLdInExpected));
+
+            assertNull(err);
+        }
+    }
+
+    @Test
+    public void testSumBP() {
+
+        for (boolean keepDims : new boolean[]{false, true}) {
+
+            INDArray preReduceInput1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray preReduceInput2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray dLdOut;
+            if (keepDims) {
+                dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
+            } else {
+                dLdOut = Nd4j.scalar(0.5);
+            }
+            INDArray dLdInExpected = Nd4j.valueArrayOf(preReduceInput1.shape(), 0.5 / preReduceInput1.length());
+            INDArray dLdIn = Nd4j.createUninitialized(3, 4);
+            String err = OpValidation.validate(new OpTestCase(new SumBp(preReduceInput1, dLdOut, dLdIn, keepDims))
+                    .expectedOutput(0, dLdInExpected));
+
+            assertNull(err);
+        }
+    }
+
+    @Test
+    public void testVarianceBp() {
+
+        for (boolean keepDims : new boolean[]{false, true}) {
+
+            INDArray preReduceInput1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray preReduceInput2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray dLdOut;
+            if (keepDims) {
+                dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
+            } else {
+                dLdOut = Nd4j.scalar(0.5);
+            }
+            INDArray dLdInExpected = Nd4j.valueArrayOf(preReduceInput1.shape(), 0.5 / preReduceInput1.length());
+            INDArray dLdIn = Nd4j.createUninitialized(3, 4);
+            String err = OpValidation.validate(new OpTestCase(new VarianceBp(preReduceInput1, dLdOut, dLdIn, false, keepDims))
+                    .expectedOutput(0, dLdInExpected));
+
+            assertNull(err);
+        }
+    }
 }
