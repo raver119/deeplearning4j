@@ -35,7 +35,7 @@ namespace nd4j {
                 cnrtQueue_t queue;
 
                 auto res = cnrtInit(0);
-                if(res != CNRT_RET_SUCCESS)
+                if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtInit failed");
 
                 res = cnrtGetDeviceHandle(&dev, 0);
@@ -82,6 +82,21 @@ namespace nd4j {
                 cnmlSetTensorDataType(input_tensor_2, CNML_DATA_FLOAT32);
                 cnmlSetTensorDataType(output_tensor, CNML_DATA_FLOAT32);
 
+                void *xBuffer, *yBuffer, *zBuffer;
+                res = cnrtMalloc(&xBuffer, x->memoryFootprint());
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtMalloc failed");
+
+                cnrtMalloc(&yBuffer, y->memoryFootprint());
+                cnrtMalloc(&zBuffer, z->memoryFootprint());
+
+                res = cnrtMemcpy(xBuffert, x->buffer(), x->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtMemcpy failed");
+
+                cnrtMemcpy(yBuffert, y->buffer(), y->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                cnrtMemcpy(zBuffert, z->buffer(), z->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+
                 // creating an op
                 cnmlBaseOp_t op;
                 status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
@@ -89,7 +104,7 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnmlCreateAddOp failed");
 
                 // executing an op
-                status = cnmlComputeAddOpForward_V4(op, input_tensor_1, nullptr, input_tensor_2, nullptr, output_tensor, nullptr, queue, nullptr);
+                status = cnmlComputeAddOpForward_V4(op, input_tensor_1, xBuffer, input_tensor_2, yBuffer, output_tensor, zBuffer, queue, nullptr);
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlComputeAddOpForward_V4 failed");
 
@@ -99,6 +114,9 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnrtSyncQueue failed");
 
                 // FIXME: temporary code. we typically assume that arrays at this point
+                res = cnrtMemcpy(z->buffer(), zBuffer, z->memoryFootprint(), CNRT_MEM_TRANS_DIR_DEV2HOST);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtMemcpy final failed");
 
                 // destroy stuff
                 cnmlDestroyBaseOp(&op);
