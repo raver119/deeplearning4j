@@ -32,7 +32,7 @@ namespace nd4j {
                 // FIXME: temporary code. we want to assume that arrays at this point have CNML Tensor representation
                 // creating tensors
                 cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
-                cnmlQueue queue;
+                cnrtQueue_t queue;
 
                 // creating an op
                 cnmlBaseOp_t op;
