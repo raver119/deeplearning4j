@@ -118,8 +118,10 @@ namespace nd4j {
 
                 // sync the queue
                 res = cnrtSyncQueue(queue);
-                if (res != CNRT_RET_SUCCESS)
+                if (res != CNRT_RET_SUCCESS) {
+                    nd4j_printf("Error code: %i\n", (int) res);
                     throw std::runtime_error("MLU add: cnrtSyncQueue failed");
+                }
 
                 // FIXME: temporary code. we typically assume that arrays at this point
                 res = cnrtMemcpy(z->buffer(), zBuffer, length, CNRT_MEM_TRANS_DIR_DEV2HOST);
