@@ -203,14 +203,14 @@ endif()
 if (${HELPERS_neuware})
     SET(CNML_LIBNAME "cnml")
 
-    set(CNML_ROOT_DIR "" CACHE PATH "Folder contains CNML")
+    set(CNML_ROOT_DIR "/usr/local/neuware" CACHE PATH "Folder contains CNML")
 
     find_path(CNML_INCLUDE_DIR cnml.h
-            HINTS ${CNML_ROOT_DIR} "/usr/local"
+            HINTS ${CNML_ROOT_DIR}
             PATH_SUFFIXES neuware/include include)
 
-    find_library(CNML_LIBRARY ${CUDNN_LIBNAME}
-            HINTS ${CNML_ROOT_DIR} "/usr/local"
+    find_library(CNML_LIBRARY ${CNML_LIBNAME}
+            HINTS ${CNML_ROOT_DIR}
             PATH_SUFFIXES lib lib64 neuware/lib neuware/lib64 lib/x64)
 
     if (CNML_LIBRARY)
