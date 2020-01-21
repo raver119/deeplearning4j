@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * This works by simply obfuscating/de-obfuscating variable names
  * such that only the required subset of the global namespace is "visible"
  * at any given time.
+ * By default, there exists a "main" context emulating the default interpreter
+ * and cannot be deleted.
  * @author Fariz Rahman
  */
 
@@ -49,6 +51,7 @@ public class PythonContextManager {
         currentContext = "main";
         contexts.add(currentContext);
     }
+
 
     public static void addContext(String contextName) throws Exception {
         if (!validateContextName(contextName)) {
@@ -158,8 +161,6 @@ public class PythonContextManager {
     public static void deleteNonMainContexts() {
         try{
             setContext("main"); // will never fail
-
-
         for (String c : contexts.toArray(new String[0])) {
             if (!c.equals("main")) {
                 deleteContext(c); // will never fail

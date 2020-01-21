@@ -62,7 +62,7 @@ public class PythonExecutioner {
         numpy._import_array();
     }
 
-    private static synchronized void _exec(String code) throws PythonException{
+    private static synchronized void simpleExec(String code) throws PythonException{
         log.debug(code);
         log.info("CPython: PyRun_SimpleStringFlag()");
 
@@ -75,7 +75,7 @@ public class PythonExecutioner {
     }
 
     public static boolean validateVariableName(String s) {
-        if (s.length() == 0) return false;
+        if (s.isEmpty()) return false;
         if (!Character.isJavaIdentifierStart(s.charAt(0))) return false;
         for (int i = 1; i < s.length(); i++)
             if (!Character.isJavaIdentifierPart(s.charAt(i)))
@@ -84,6 +84,14 @@ public class PythonExecutioner {
     }
 
 
+    /**
+     * Sets a variable in the global scope of the current context (See @PythonContextManager).
+     * This is equivalent to `exec("a = b");` where a is the variable name
+     * and b is the variable value.
+     * @param varName Name of the python variable being set. Should be a valid python identifier string
+     * @param pythonObject Value for the python variable
+     * @throws Exception
+     */
     public static void setVariable(String varName, PythonObject pythonObject) throws Exception{
         if (!validateVariableName(varName)){
             throw new Exception("Invalid variable name: " + varName);
@@ -190,22 +198,22 @@ public class PythonExecutioner {
 
 
     public static void exec(String code) throws PythonException {
-        _exec(getWrappedCode(code));
+        simpleExec(getWrappedCode(code));
     }
 
     public static void exec(String code, PythonVariables outputVariables)throws Exception {
-        _exec(getWrappedCode(code));
+        simpleExec(getWrappedCode(code));
         getVariables(outputVariables);
     }
 
     public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) throws Exception {
         setVariables(inputVariables);
-        _exec(getWrappedCode(code));
+        simpleExec(getWrappedCode(code));
         getVariables(outputVariables);
     }
 
     public static PythonVariables execAndReturnAllVariables(String code) throws PythonException {
-        _exec(getWrappedCode(code));
+        simpleExec(getWrappedCode(code));
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys"));
@@ -270,7 +278,7 @@ public class PythonExecutioner {
 
     public static PythonVariables execAndReturnAllVariables(String code, PythonVariables inputs) throws Exception{
         setVariables(inputs);
-        _exec(getWrappedCode(code));
+        simpleExec(getWrappedCode(code));
         return getAllVariables();
     }
 
