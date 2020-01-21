@@ -202,6 +202,7 @@ endif()
 # Cambricon CNML helpers
 if (${HELPERS_cnml})
     SET(CNML_LIBNAME "cnml")
+    SET(CNRT_LIBNAME "cnrt")
 
     set(CNML_ROOT_DIR "/usr/local/neuware" CACHE PATH "Folder contains CNML")
 
@@ -213,9 +214,13 @@ if (${HELPERS_cnml})
             HINTS ${CNML_ROOT_DIR}
             PATH_SUFFIXES lib lib64 neuware/lib neuware/lib64 lib/x64)
 
+    find_library(CNRT_LIBRARY ${CNRT_LIBNAME}
+            HINTS ${CNML_ROOT_DIR}
+            PATH_SUFFIXES lib lib64 neuware/lib neuware/lib64 lib/x64)
+
     if (CNML_LIBRARY)
         set(HAVE_CNML true)
-        set(CNML ${CNML_LIBRARY})
+        set(CNML ${CNML_LIBRARY} ${CNRT_LIBRARY})
         message("Using CNML library found at ${CNML_LIBRARY}")
         include_directories(${CNML_INCLUDE_DIR})
     else()
