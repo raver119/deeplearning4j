@@ -58,8 +58,8 @@ public class PythonJob {
             PythonObject runF = PythonExecutioner.getVariable("run");
             if (runF.isNone() || !Python.callable(runF)) {
                 PythonExecutioner.exec(code);
+                runF = PythonExecutioner.getVariable("run");
             }
-            runF = PythonExecutioner.getVariable("run");
             if (runF.isNone() || !Python.callable(runF)) {
                 throw new Exception("run() method not found!");
             }
@@ -98,6 +98,10 @@ public class PythonJob {
             Python.globals().attr("update").call(outDict);
 
             PythonExecutioner.getVariables(outputs);
+            inspect.del();
+            getfullargspec.del();
+            argspec.del();
+            runargs.del();
         }
     }
 
@@ -108,7 +112,9 @@ public class PythonJob {
             }
             PythonExecutioner.setVariables(inputs);
             PythonObject inspect = Python.importModule("inspect");
-            PythonObject argsList = inspect.attr("getfullargspec").call(runF).attr("args");
+            PythonObject getfullargspec = inspect.attr("getfullargspec");
+            PythonObject argspec = getfullargspec.call(runF);
+            PythonObject argsList = argspec.attr("args");
             PythonObject runargs = Python.dict();
             int argsCount = Python.len(argsList).toInt();
             for (int i = 0; i < argsCount; i++) {
@@ -121,6 +127,10 @@ public class PythonJob {
             }
             PythonObject outDict = runF.callWithKwargs(runargs);
             Python.globals().attr("update").call(outDict);
+            inspect.del();
+            getfullargspec.del();
+            argspec.del();
+            runargs.del();
             return PythonExecutioner.getAllVariables();
         }
     }
