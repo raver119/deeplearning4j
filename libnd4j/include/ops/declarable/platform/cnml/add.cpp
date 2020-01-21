@@ -48,7 +48,7 @@ namespace nd4j {
                 // FIXME: temporary code. we typically assume that arrays at this point
 
                 // destroy stuff
-                cnmlDestroyBaseOp(op);
+                cnmlDestroyBaseOp(&op);
 
                 return Status::OK();
             }
