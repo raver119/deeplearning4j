@@ -49,6 +49,11 @@ namespace nd4j {
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlComputeAddOpForward_V4 failed");
 
+                // sync the queue
+                res = cnrtSyncQueue(queue);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtSyncQueue failed");
+
                 // FIXME: temporary code. we typically assume that arrays at this point
 
                 // destroy stuff
