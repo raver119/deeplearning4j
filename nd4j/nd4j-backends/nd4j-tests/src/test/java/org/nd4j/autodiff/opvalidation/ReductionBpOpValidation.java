@@ -921,4 +921,26 @@ public class ReductionBpOpValidation extends BaseOpValidation {
             assertNull(err, err);
         }
     }
+
+    @Test
+    public void testDotBP() {
+
+        for (boolean keepDims : new boolean[]{false, true}) {
+
+            INDArray preReduceInput1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray preReduceInput2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+            INDArray dLdOut;
+            if (keepDims) {
+                dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
+            } else {
+                dLdOut = Nd4j.scalar(0.5);
+            }
+            INDArray dLdInExpected = Nd4j.valueArrayOf(preReduceInput1.shape(), 0.5 / preReduceInput1.length());
+            INDArray dLdIn = Nd4j.createUninitialized(3, 4);
+            String err = OpValidation.validate(new OpTestCase(new DotBp(preReduceInput1, preReduceInput2, dLdOut, dLdIn, keepDims))
+                    .expectedOutput(0, dLdInExpected));
+
+            assertNull(err);
+        }
+    }
 }
