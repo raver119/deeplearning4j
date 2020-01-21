@@ -175,7 +175,6 @@ if (${HELPERS_cudnn})
 
     set(CUDNN_ROOT_DIR "" CACHE PATH "Folder contains NVIDIA cuDNN")
 
-    # FIXME: we don't want static library in master
     SET(CUDNN_LIBNAME "cudnn")
     SET(CULIBOS_LIBNAME "culibos")
 
@@ -197,6 +196,29 @@ if (${HELPERS_cudnn})
         set(CUDNN ${CUDNN_LIBRARY} ${CULIBOS_LIBRARY})
     else()
         message(FATAL_ERROR "Unable to find cuDNN")
+    endif()
+endif()
+
+# Cambricon CNML helpers
+if (${HELPERS_neuware})
+    SET(CNML_LIBNAME "cnml")
+
+    set(CNML_ROOT_DIR "" CACHE PATH "Folder contains CNML")
+
+    find_path(CNML_INCLUDE_DIR cnml.h
+            HINTS ${CNML_ROOT_DIR} "/usr/local"
+            PATH_SUFFIXES neuware/include include)
+
+    find_library(CNML_LIBRARY ${CUDNN_LIBNAME}
+            HINTS ${CNML_ROOT_DIR} "/usr/local"
+            PATH_SUFFIXES lib lib64 neuware/lib neuware/lib64 lib/x64)
+
+    if (CNML_LIBRARY)
+        set(HAVE_CNML true)
+        set(CNML ${CNML_LIBRARY})
+        message("Using CNML library found at ${CNML_LIBRARY})
+    else()
+        message(FATAL_ERROR "Unable to find CNML")
     endif()
 endif()
 
