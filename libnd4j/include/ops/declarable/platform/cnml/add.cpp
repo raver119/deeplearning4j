@@ -107,8 +107,10 @@ namespace nd4j {
 
                 // executing an op
                 status = cnmlComputeAddOpForward_V4(op, input_tensor_1, xBuffer, input_tensor_2, yBuffer, output_tensor, zBuffer, queue, nullptr);
-                if (status != CNML_STATUS_SUCCESS)
+                if (status != CNML_STATUS_SUCCESS) {
+                    nd4j_printf("Error code: %i\n", (int) status);
                     throw std::runtime_error("MLU add: cnmlComputeAddOpForward_V4 failed");
+                }
 
                 // sync the queue
                 res = cnrtSyncQueue(queue);
