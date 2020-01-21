@@ -17,4 +17,8 @@
 
 #cmakedefine DEFAULT_ENGINE @DEFAULT_ENGINE@
 
+#cmakedefine HAVE_CNML
+
+#cmakedefine CNML_PATH "@CNML_PATH@"
+
 #endif
