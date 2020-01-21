@@ -85,12 +85,12 @@ namespace nd4j {
                 cnmlSetTensorDataType(output_tensor, CNML_DATA_FLOAT32);
 
                 void *xBuffer, *yBuffer, *zBuffer;
-                res = cnrtMalloc(&xBuffer, length);
+                res = cnrtMalloc(&xBuffer, length + 1024);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtMalloc failed");
 
-                cnrtMalloc(&yBuffer, length);
-                cnrtMalloc(&zBuffer, length);
+                cnrtMalloc(&yBuffer, length + 1024);
+                cnrtMalloc(&zBuffer, length + 1023);
 
                 res = cnrtMemcpy(xBuffer, x->buffer(), length, CNRT_MEM_TRANS_DIR_HOST2DEV);
                 if (res != CNRT_RET_SUCCESS)
