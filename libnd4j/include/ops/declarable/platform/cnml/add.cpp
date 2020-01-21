@@ -30,13 +30,24 @@ namespace nd4j {
                 auto z = OUTPUT_VARIABLE(0);
 
                 // FIXME: temporary code. we want to assume that arrays at this point have CNML Tensor representation
-                // creating tensors
-                cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
+                // setting current device
+                cnrtDev_t dev;
                 cnrtQueue_t queue;
 
-                auto res = cnrtCreateQueue(&queue);
+                auto res = cnrtGetDeviceHandle(&pdev, 0);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtGetDeviceHandle failed");
+
+                res = cnrtSetCurrentDevice(dev);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtSetCurrentDevice failed");
+
+                res = cnrtCreateQueue(&queue);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtCreateQueue failed");
+
+                // creating tensors
+                cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
 
                 // creating an op
                 cnmlBaseOp_t op;
