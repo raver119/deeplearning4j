@@ -534,9 +534,21 @@ namespace nd4j {
 
             // platform helpers use might be forbidden for various reasons, so we'll check it out first
             if (block->helpersAllowed() && nd4j::Environment::getInstance()->helpersAllowed()) {
-                // if we have platform-specific helper for this op - invoke it
+                // if we have platform-specific helper for this op - invoke it.
+                // we check for "the same engine" first
                 if (OpRegistrator::getInstance()->hasHelper(this->getOpHash(), block->engine())) {
                     auto helper = OpRegistrator::getInstance()->getPlatformHelper(this->getOpHash(), block->engine());
+                    if (helper->isUsable(*block)) {
+                        status = helper->invokeHelper(*block);
+                        hasHelper = true;
+                    }
+                }
+
+                // now we check for additional engines
+                // TODO: make this configurable in runtime
+                auto engine = samediff::Engine::ENGINE_MLU;
+                if (OpRegistrator::getInstance()->hasHelper(this->getOpHash(), engine)) {
+                    auto helper = OpRegistrator::getInstance()->getPlatformHelper(this->getOpHash(), engine);
                     if (helper->isUsable(*block)) {
                         status = helper->invokeHelper(*block);
                         hasHelper = true;
