@@ -90,12 +90,12 @@ namespace nd4j {
                 cnrtMalloc(&yBuffer, y->memoryFootprint());
                 cnrtMalloc(&zBuffer, z->memoryFootprint());
 
-                res = cnrtMemcpy(xBuffert, x->buffer(), x->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                res = cnrtMemcpy(xBuffer, x->buffer(), x->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtMemcpy failed");
 
-                cnrtMemcpy(yBuffert, y->buffer(), y->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
-                cnrtMemcpy(zBuffert, z->buffer(), z->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                cnrtMemcpy(yBuffer, y->buffer(), y->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
+                cnrtMemcpy(zBuffer, z->buffer(), z->memoryFootprint(), CNRT_MEM_TRANS_DIR_HOST2DEV);
 
                 // creating an op
                 cnmlBaseOp_t op;
