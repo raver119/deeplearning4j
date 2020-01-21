@@ -32,6 +32,7 @@ namespace nd4j {
                 // FIXME: temporary code. we want to assume that arrays at this point have CNML Tensor representation
                 // creating tensors
                 cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
+                cnmlQueue_t queue;
 
                 // creating an op
                 cnmlBaseOp_t op;
@@ -40,7 +41,7 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnmlCreateAddOp failed");
 
                 // executing an op
-                status = cnmlComputeAddOpForward_V4(op, input_tensor1, nullptr, input_tensor2, nullptr, output_tensor, nullptr, queue, nullptr);
+                status = cnmlComputeAddOpForward_V4(op, input_tensor_1, nullptr, input_tensor_2, nullptr, output_tensor, nullptr, queue, nullptr);
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlComputeAddOpForward_V4 failed");
 
