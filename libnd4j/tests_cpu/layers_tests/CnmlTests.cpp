@@ -28,7 +28,7 @@
 
 #ifdef HAVE_CNML
 
-#include <ops/declarable/platform/cudnn/cudnnUtils.h>
+#include <ops/declarable/platform/cnml/cnmlUtils.h>
 
 #endif
 
