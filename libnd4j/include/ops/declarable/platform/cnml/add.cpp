@@ -34,7 +34,7 @@ namespace nd4j {
                 cnrtDev_t dev;
                 cnrtQueue_t queue;
 
-                auto res = cnrtGetDeviceHandle(&pdev, 0);
+                auto res = cnrtGetDeviceHandle(&dev, 0);
                 if (res != CNRT_RET_SUCCESS)
                     throw std::runtime_error("MLU add: cnrtGetDeviceHandle failed");
 
