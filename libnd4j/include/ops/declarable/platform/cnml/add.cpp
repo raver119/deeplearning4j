@@ -34,6 +34,10 @@ namespace nd4j {
                 cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
                 cnrtQueue_t queue;
 
+                auto res = cnrtCreateQueue(&queue);
+                if (res != CNRT_RET_SUCCESS)
+                    throw std::runtime_error("MLU add: cnrtCreateQueue failed");
+
                 // creating an op
                 cnmlBaseOp_t op;
                 auto status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
