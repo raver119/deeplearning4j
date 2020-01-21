@@ -52,10 +52,14 @@ namespace nd4j {
 
                 // creating tensors
                 cnmlTensor_t input_tensor_1, input_tensor_2, output_tensor;
+                cnmlTensorType_t type = CNML_TENSOR;
+                auto status = cnmlCreateTensor_V2(&input_tensor_1, type);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlCreateTensor_V2 failed");
 
                 // creating an op
                 cnmlBaseOp_t op;
-                auto status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
+                status = cnmlCreateAddOp(&op, input_tensor_1, input_tensor_2, output_tensor);
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlCreateAddOp failed");
 
