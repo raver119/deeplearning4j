@@ -110,7 +110,7 @@ namespace nd4j {
                     throw std::runtime_error("MLU add: cnmlSetTensorComputingLayoutInOperation failed");
 
                 cnmlSetTensorComputingLayoutInOperation(op, input_tensor_2, CNML_NCHW);
-                cnmlSetTensorComputingLayoutInOperation(op, output_tensor, CNML_NCHW);
+                //cnmlSetTensorComputingLayoutInOperation(op, output_tensor, CNML_NCHW);
 
                 status = cnmlCompileBaseOp_V2(op);
                 if (status != CNML_STATUS_SUCCESS)
