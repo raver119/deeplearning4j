@@ -94,7 +94,7 @@ public class PythonExecutioner {
      */
     public static void setVariable(String varName, PythonObject pythonObject) throws Exception{
         if (!validateVariableName(varName)){
-            throw new Exception("Invalid variable name: " + varName);
+            throw new PythonException("Invalid variable name: " + varName);
         }
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
@@ -120,7 +120,7 @@ public class PythonExecutioner {
                 } else if (value instanceof INDArray) {
                     pythonObject = new PythonObject((INDArray) value);
                 } else {
-                    throw new Exception("Invalid value for type NDARRAY");
+                    throw new PythonException("Invalid value for type NDARRAY");
                 }
                 break;
             case LIST:
@@ -130,7 +130,7 @@ public class PythonExecutioner {
                 pythonObject = new PythonObject((Map) value);
                 break;
             default:
-                throw new Exception("Unsupported type: " + varType);
+                throw new PythonException("Unsupported type: " + varType);
 
         }
         setVariable(varName, pythonObject);
@@ -168,7 +168,7 @@ public class PythonExecutioner {
             case DICT:
                 return pythonObject.toMap();
             default:
-                throw new Exception("Unsupported type: " + varType);
+                throw new PythonException("Unsupported type: " + varType);
         }
     }
 

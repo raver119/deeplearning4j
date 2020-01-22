@@ -35,7 +35,7 @@ public class PythonJob {
         this.setupRunMode = setupRunMode;
         context = "__job_" + name;
         if (PythonContextManager.hasContext(context)) {
-            throw new Exception("Unable to create python job " + name + ". Context " + context + " already exists!");
+            throw new PythonException("Unable to create python job " + name + ". Context " + context + " already exists!");
         }
         if (setupRunMode) setup();
     }
@@ -61,7 +61,7 @@ public class PythonJob {
                 runF = PythonExecutioner.getVariable("run");
             }
             if (runF.isNone() || !Python.callable(runF)) {
-                throw new Exception("run() method not found!");
+                throw new PythonException("run() method not found!");
             }
             this.runF = runF;
             PythonObject setupF = PythonExecutioner.getVariable("setup");
@@ -90,7 +90,7 @@ public class PythonJob {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if (val.isNone()) {
-                    throw new Exception("Input value not received for run() argument: " + arg.toString());
+                    throw new PythonException("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);
             }
@@ -121,7 +121,7 @@ public class PythonJob {
                 PythonObject arg = argsList.get(i);
                 PythonObject val = Python.globals().get(arg);
                 if (val.isNone()) {
-                    throw new Exception("Input value not received for run() argument: " + arg.toString());
+                    throw new PythonException("Input value not received for run() argument: " + arg.toString());
                 }
                 runargs.set(arg, val);
             }
