@@ -53,9 +53,9 @@ public class PythonContextManager {
     }
 
 
-    public static void addContext(String contextName) throws Exception {
+    public static void addContext(String contextName) throws PythonException {
         if (!validateContextName(contextName)) {
-            throw new Exception("Invalid context name: " + contextName);
+            throw new PythonException("Invalid context name: " + contextName);
         }
         contexts.add(contextName);
     }
@@ -120,7 +120,7 @@ public class PythonContextManager {
 
     }
 
-    public static void setContext(String contextName) throws Exception{
+    public static void setContext(String contextName) throws PythonException{
         if (contextName.equals(currentContext)) {
             return;
         }
@@ -137,12 +137,12 @@ public class PythonContextManager {
         return currentContext;
     }
 
-    public static void deleteContext(String contextName) throws Exception {
+    public static void deleteContext(String contextName) throws PythonException {
         if (contextName.equals("main")) {
-            throw new Exception("Can not delete main context!");
+            throw new PythonException("Can not delete main context!");
         }
         if (contextName.equals(currentContext)) {
-            throw new Exception("Can not delete current context!");
+            throw new PythonException("Can not delete current context!");
         }
         String prefix = getContextPrefix(contextName);
         PythonObject globals = Python.globals();
