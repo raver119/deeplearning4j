@@ -70,6 +70,9 @@ namespace nd4j {
                 int yStrides[] = {y->strideAt(0), y->strideAt(1), y->strideAt(2), y->strideAt(3)};
                 int zStrides[] = {z->strideAt(0), z->strideAt(1), z->strideAt(2), z->strideAt(3)};
 
+                nd4j_printf("X shape: [%i, %i, %i, %i]\n", xShape[0], xShape[1], xShape[2], xShape[3]);
+                nd4j_printf("Y shape: [%i, %i, %i, %i]\n", yShape[0], yShape[1], yShape[2], yShape[3]);
+
                 status = cnmlSetTensorShape_V2(input_tensor_1, 4, xShape, xStrides);
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlSetTensorShape_V2 failed");
