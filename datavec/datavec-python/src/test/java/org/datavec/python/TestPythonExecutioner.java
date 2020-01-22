@@ -219,4 +219,26 @@ public class TestPythonExecutioner {
 
     }
 
+    @Test
+    public void testBadCode() {
+        PythonVariables pyInputs = new PythonVariables();
+        PythonVariables pyOutputs = new PythonVariables();
+
+        pyInputs.addNDArray("x", Nd4j.zeros(DataType.LONG, 2, 3));
+        pyInputs.addNDArray("y", Nd4j.ones(DataType.LONG, 2, 3));
+        pyOutputs.addNDArray("z");
+
+        String code = "z = x + a";
+
+        boolean errored = false;
+        try {
+            PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        }
+        catch (PythonException pe){
+            errored = true;
+        }
+
+        Assert.assertEquals(true, errored);
+    }
+
 }

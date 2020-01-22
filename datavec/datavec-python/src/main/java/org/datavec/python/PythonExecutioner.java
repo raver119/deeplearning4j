@@ -92,14 +92,14 @@ public class PythonExecutioner {
      * @param pythonObject Value for the python variable
      * @throws Exception
      */
-    public static void setVariable(String varName, PythonObject pythonObject) throws Exception{
+    public static void setVariable(String varName, PythonObject pythonObject) throws PythonException{
         if (!validateVariableName(varName)){
             throw new PythonException("Invalid variable name: " + varName);
         }
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
 
-    public static void setVariable(String varName, PythonVariables.Type varType, Object value) throws Exception {
+    public static void setVariable(String varName, PythonVariables.Type varType, Object value) throws PythonException {
         PythonObject pythonObject;
         switch (varType) {
             case STR:
@@ -136,7 +136,7 @@ public class PythonExecutioner {
         setVariable(varName, pythonObject);
     }
 
-    public static void setVariables(PythonVariables pyVars) throws Exception{
+    public static void setVariables(PythonVariables pyVars) throws PythonException{
         if (pyVars == null) return;
         for (String varName : pyVars.getVariables()) {
             setVariable(varName, pyVars.getType(varName), pyVars.getValue(varName));
@@ -147,32 +147,54 @@ public class PythonExecutioner {
         return Python.globals().attr("get").call(varName);
     }
 
-    public static Object getVariable(String varName, PythonVariables.Type varType) throws Exception{
+    public static Object getVariable(String varName, PythonVariables.Type varType) throws PythonException{
         PythonObject pythonObject = getVariable(varName);
         if (pythonObject.isNone()) {
-            throw new IllegalAccessException("Variable not found: " + varName);
+            throw new PythonException("Variable not found: " + varName);
         }
         switch (varType) {
             case INT:
+                if (!Python.isinstance(pythonObject, Python.intType())){
+                    throw new PythonException("Expected " + varName + " to be int, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toLong();
             case FLOAT:
+                if (!Python.isinstance(pythonObject, Python.floatType())){
+                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toDouble();
             case NDARRAY:
+                PythonObject np = importModule("numpy");
+                if (!Python.isinstance(pythonObject, np.attr("ndarray"), np.attr("generic"))){
+                    throw new PythonException("Expected " + varName + " to be numpy.ndarray, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toNumpy();
             case STR:
+                if (!Python.isinstance(pythonObject, Python.strType())){
+                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toString();
             case BOOL:
+                if (!Python.isinstance(pythonObject, Python.boolType())){
+                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toBoolean();
             case LIST:
+                if (!Python.isinstance(pythonObject, Python.listType())){
+                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toList();
             case DICT:
+                if (!Python.isinstance(pythonObject, Python.dictType())){
+                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
+                }
                 return pythonObject.toMap();
             default:
                 throw new PythonException("Unsupported type: " + varType);
         }
     }
 
-    public static void getVariables(PythonVariables pyVars) throws Exception {
+    public static void getVariables(PythonVariables pyVars) throws PythonException {
         for (String varName : pyVars.getVariables()) {
             pyVars.setValue(varName, getVariable(varName, pyVars.getType(varName)));
         }
@@ -206,7 +228,7 @@ public class PythonExecutioner {
         getVariables(outputVariables);
     }
 
-    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) throws Exception {
+    public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) throws PythonException {
         setVariables(inputVariables);
         simpleExec(getWrappedCode(code));
         getVariables(outputVariables);
