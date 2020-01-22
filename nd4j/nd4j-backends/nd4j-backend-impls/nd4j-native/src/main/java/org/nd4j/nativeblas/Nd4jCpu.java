@@ -16808,7 +16808,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
- * Copyright (c) 2019 Konduit K.K.
+ * Copyright (c) 2019-2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -19022,6 +19022,39 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
         /**
+         * triangular_solve op. - reverse Gaussian method for solve systems of linear equations.
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * M) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * boolean args:
+         *    0 - lower - default is true (optional) - left part is lower triangular matrix
+         *    1 - adjoint - default is false (optional) - indicate input matrix or its adjoint (hermitian addition) should be used
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * M * K) with solutions
+         *
+         */
+//         #if NOT_EXCLUDED(OP_triangular_solve)
+        @Namespace("nd4j::ops") public static class triangular_solve extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public triangular_solve(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public triangular_solve(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public triangular_solve position(long position) {
+                return (triangular_solve)super.position(position);
+            }
+        
+                                                                                    public triangular_solve() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
+
+        /**
          * lu op. - make LUP decomposition of given batch of 2D square matricies
          *
          * input params:
@@ -20479,6 +20512,41 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
             }
         
                                                                                     public resize_bicubic() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
+
+       /**
+        * This op make area interpolated resize (as OpenCV INTER_AREA algorithm) for given tensor
+        *
+        * input array:
+        *    0 - images - 4D-Tensor with shape (batch, sizeX, sizeY, channels)
+        *    1 - size -   1D-Tensor with 2 values (newWidth, newHeight) (if missing a pair of integer args should be provided).
+        *
+        * int args: - proveded only when size tensor is missing
+        *    0 - new height
+        *    1 - new width
+        * boolean args:
+        *    0 - align_corners - optional (default is false)
+        *
+        * output array:
+        *   the 4D-Tensor with resized image (shape is {batch, newWidth, newHeight, channels})
+        *
+        */
+//         #if NOT_EXCLUDED(OP_resize_area)
+        @Namespace("nd4j::ops") public static class resize_area extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public resize_area(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public resize_area(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public resize_area position(long position) {
+                return (resize_area)super.position(position);
+            }
+        
+                                                                                    public resize_area() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
