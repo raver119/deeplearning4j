@@ -223,7 +223,6 @@ public class PythonTransform implements Transform {
                     } else {
                         ret.addInt(name, ((IntWritable) w).get());
                     }
-
                     break;
                 case FLOAT:
                     if (w instanceof DoubleWritable) {
@@ -237,6 +236,9 @@ public class PythonTransform implements Transform {
                     break;
                 case NDARRAY:
                     ret.addNDArray(name, ((NDArrayWritable) w).get());
+                    break;
+                case BOOL:
+                    ret.addBool(name, ((BooleanWritable) w).get());
                     break;
                 default:
                     throw new RuntimeException("Unsupported input type:" + pyType);
@@ -269,6 +271,9 @@ public class PythonTransform implements Transform {
                 case NDARRAY:
                     NumpyArray arr = pyOuts.getNDArrayValue(name);
                     schemaBuilder.addColumnNDArray(name, arr.getShape());
+                    break;
+                case BOOL:
+                    schemaBuilder.addColumnBoolean(name);
                     break;
                 default:
                     throw new IllegalStateException("Unable to support type " + pyType.name());
@@ -317,6 +322,9 @@ public class PythonTransform implements Transform {
                     } catch (JsonProcessingException e) {
                         throw new IllegalStateException("Unable to serialize list vlaue " + name + " to json!");
                     }
+                    break;
+                case BOOL:
+                    out.add(new BooleanWritable(pyOuts.getBooleanValue(name)));
                     break;
                 default:
                     throw new IllegalStateException("Unable to support type " + pyType.name());

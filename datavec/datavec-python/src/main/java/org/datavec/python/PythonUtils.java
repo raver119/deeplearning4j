@@ -126,6 +126,9 @@ public class PythonUtils {
                 case NDArray:
                     pyVars.addNDArray(colName);
                     break;
+                case Boolean:
+                    pyVars.addBool(colName);
+                    break;
                 default:
                     throw new Exception("Unsupported python input type: " + colType.toString());
             }
