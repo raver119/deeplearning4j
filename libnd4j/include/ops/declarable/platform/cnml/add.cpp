@@ -105,6 +105,13 @@ namespace nd4j {
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlCreateAddOp failed");
 
+                status = cnmlSetTensorComputingLayoutInOperation(op, input_tensor_1, CNML_NCHW);
+                if (status != CNML_STATUS_SUCCESS)
+                    throw std::runtime_error("MLU add: cnmlSetTensorComputingLayoutInOperation failed");
+
+                cnmlSetTensorComputingLayoutInOperation(op, input_tensor_2, CNML_NCHW);
+                cnmlSetTensorComputingLayoutInOperation(op, output_tensor, CNML_NCHW);
+
                 status = cnmlCompileBaseOp_V2(op);
                 if (status != CNML_STATUS_SUCCESS)
                     throw std::runtime_error("MLU add: cnmlCompileBaseOp_V2 failed");
