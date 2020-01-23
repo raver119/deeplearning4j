@@ -14,11 +14,13 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.optimize.solvers.accumulation;
+package org.deeplearning4j.optimize.solver.accumulation;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.deeplearning4j.BaseDL4JTest;
+import org.deeplearning4j.optimize.solvers.accumulation.EncodedGradientsAccumulator;
+import org.deeplearning4j.optimize.solvers.accumulation.EncodingHandler;
 import org.deeplearning4j.optimize.solvers.accumulation.encoding.threshold.FixedThresholdAlgorithm;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -68,8 +70,8 @@ public class EncodedGradientsAccumulatorTest extends BaseDL4JTest {
                 accumulator.receiveUpdate(encoded);
 
                 // just purge updates, like they were consumed
-                for (int i = 0; i < accumulator.messages.size(); i++) {
-                    accumulator.messages.get(i).clear();
+                for (int i = 0; i < accumulator.getMessages().size(); i++) {
+                    accumulator.getMessages().get(i).clear();
                 }
             }
         }

@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.optimize.solvers.accumulation;
+package org.deeplearning4j.optimize.solver.accumulation;
 
 import org.deeplearning4j.BaseDL4JTest;
 import org.deeplearning4j.optimize.solvers.accumulation.encoding.ThresholdAlgorithm;

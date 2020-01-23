@@ -14,12 +14,13 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.optimize.solvers.accumulation;
+package org.deeplearning4j.optimize.solver.accumulation;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.deeplearning4j.BaseDL4JTest;
+import org.deeplearning4j.optimize.solvers.accumulation.SmartFancyBlockingQueue;
 import org.deeplearning4j.util.ThreadUtils;
 import org.junit.Ignore;
 import org.junit.Test;

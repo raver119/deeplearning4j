@@ -1,5 +1,6 @@
-package org.deeplearning4j.optimize.listeners;
+package org.deeplearning4j.optimizer.listener;
 
+import org.deeplearning4j.optimize.listeners.CollectScoresIterationListener;
 import org.junit.Ignore;
 import org.junit.Test;
 

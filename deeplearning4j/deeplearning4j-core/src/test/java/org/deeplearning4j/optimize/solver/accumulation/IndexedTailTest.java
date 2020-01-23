@@ -14,12 +14,13 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.optimize.solvers.accumulation;
+package org.deeplearning4j.optimize.solver.accumulation;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.deeplearning4j.BaseDL4JTest;
+import org.deeplearning4j.optimize.solvers.accumulation.IndexedTail;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.factory.Nd4j;
@@ -97,9 +98,9 @@ public class IndexedTailTest extends BaseDL4JTest {
         assertEquals(-1, tail.maxAppliedIndexEverywhere());
 
         // 2 consumers consumed 2 elements, and 1 consumer consumed 3 elements
-        tail.positions.get(11L).set(2);
-        tail.positions.get(22L).set(2);
-        tail.positions.get(33L).set(3);
+        tail.getPositions().get(11L).set(2);
+        tail.getPositions().get(22L).set(2);
+        tail.getPositions().get(33L).set(3);
 
         // all elements including this index are safe to remove, because they were consumed everywhere
         assertEquals(2, tail.maxAppliedIndexEverywhere());
@@ -197,10 +198,10 @@ public class IndexedTailTest extends BaseDL4JTest {
             Nd4j.getExecutioner().commit();
         }
 
-        assertTrue(tail.collapsedMode.get());
+        assertTrue(tail.getCollapsedMode().get());
         assertEquals(1, tail.updatesSize());
 
-        val array = tail.updates.get(32L);
+        val array = tail.getUpdates().get(32L);
         assertNotNull(array);
         assertEquals(sum, (int) array.getDouble(0));
     }
