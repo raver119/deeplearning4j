@@ -794,6 +794,7 @@ public class ArrowConverter {
                     long timeSet = TypeConversion.getInstance().convertLong(value);
                     setLongInTime(fieldVector, row, timeSet);
                     break;
+                case Bytes:
                 case NDArray:
                     NDArrayWritable arr = (NDArrayWritable) value;
                     VarBinaryVector nd4jArrayVector = (VarBinaryVector) fieldVector;
@@ -1220,6 +1221,7 @@ public class ArrowConverter {
             case Time:
                 //TODO: need to look at closer
                 return new LongWritable(getLongFromFieldVector(item,from));
+            case Bytes:
             case NDArray:
                 VarBinaryVector valueVector = (VarBinaryVector) from;
                 byte[] bytes = valueVector.get(item);
