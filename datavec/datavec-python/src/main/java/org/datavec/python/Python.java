@@ -144,6 +144,16 @@ public class Python {
         return attr("tuple");
     }
 
+    public static PythonObject bytes(PythonObject pythonObject){
+        return attr("bytes").call(pythonObject);
+    }
+    public static PythonObject bytes(){
+        return attr("bytes").call();
+    }
+    public static PythonObject bytesType(){
+        return attr("bytes");
+    }
+
     public static PythonObject globals() {
         return new PythonObject(PyModule_GetDict(PyImport_ImportModule("__main__")));
     }
