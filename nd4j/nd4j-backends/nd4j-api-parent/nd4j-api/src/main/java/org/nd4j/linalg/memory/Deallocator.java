@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory;
+package org.nd4j.linalg.memory;
 
 /**
  * This interface describes callback which will be executed from unified reference tracking system context

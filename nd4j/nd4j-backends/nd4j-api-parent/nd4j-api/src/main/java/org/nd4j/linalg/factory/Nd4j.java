@@ -16,8 +16,8 @@
 
 package org.nd4j.linalg.factory;
 
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.factory.ops.NDBitwise;
 import org.nd4j.linalg.factory.ops.NDMath;
@@ -46,8 +46,8 @@ import org.nd4j.linalg.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
 import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.concurrency.BasicAffinityManager;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
-import org.nd4j.linalg.api.memory.MemoryWorkspaceManager;
+import org.nd4j.linalg.memory.MemoryWorkspace;
+import org.nd4j.linalg.memory.MemoryWorkspaceManager;
 import org.nd4j.linalg.api.ndarray.*;
 import org.nd4j.linalg.api.ops.CustomOp;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;

@@ -25,9 +25,9 @@ import org.bytedeco.javacpp.indexer.DoubleIndexer;
 import org.bytedeco.javacpp.indexer.FloatIndexer;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.bytedeco.javacpp.indexer.IntIndexer;
-import org.nd4j.linalg.api.buffer.*;
-import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.buffer.*;
+import org.nd4j.linalg.buffer.factory.DataBufferFactory;
+import org.nd4j.linalg.memory.MemoryWorkspace;
 import org.nd4j.linalg.util.ArrayUtil;
 
 import java.nio.ByteBuffer;

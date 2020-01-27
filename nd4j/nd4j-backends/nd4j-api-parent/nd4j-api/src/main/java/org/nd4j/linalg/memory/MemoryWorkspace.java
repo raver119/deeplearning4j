@@ -14,13 +14,13 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory;
+package org.nd4j.linalg.memory;
 
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.memory.conf.WorkspaceConfiguration;
-import org.nd4j.linalg.api.memory.enums.MemoryKind;
-import org.nd4j.linalg.api.memory.pointers.PagedPointer;
+import org.nd4j.linalg.memory.enums.MemoryKind;
+import org.nd4j.linalg.memory.pointers.PagedPointer;
 
 /**
  * This interface describes reusable memory chunks abstraction

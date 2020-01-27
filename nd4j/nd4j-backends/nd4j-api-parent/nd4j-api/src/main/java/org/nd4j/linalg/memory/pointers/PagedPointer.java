@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory.pointers;
+package org.nd4j.linalg.memory.pointers;
 
 import lombok.Data;
 import lombok.Getter;

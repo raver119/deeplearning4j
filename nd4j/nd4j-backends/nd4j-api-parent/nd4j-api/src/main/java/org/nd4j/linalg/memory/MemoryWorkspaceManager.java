@@ -14,13 +14,13 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory;
+package org.nd4j.linalg.memory;
 
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.memory.conf.WorkspaceConfiguration;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.nd4j.linalg.api.memory.enums.DebugMode;
+import org.nd4j.linalg.memory.enums.DebugMode;
 
 import java.util.List;
 

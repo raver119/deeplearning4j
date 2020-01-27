@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory.enums;
+package org.nd4j.linalg.memory.enums;
 
 /**
  * This enum describes possible debug modes for Nd4j workspaces

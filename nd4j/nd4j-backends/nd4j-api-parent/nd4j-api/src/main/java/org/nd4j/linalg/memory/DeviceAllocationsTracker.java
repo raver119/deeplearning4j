@@ -14,12 +14,12 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.memory;
+package org.nd4j.linalg.memory;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.nd4j.linalg.api.memory.enums.AllocationKind;
+import org.nd4j.linalg.memory.enums.AllocationKind;
 
 import java.util.HashMap;
 import java.util.Map;
