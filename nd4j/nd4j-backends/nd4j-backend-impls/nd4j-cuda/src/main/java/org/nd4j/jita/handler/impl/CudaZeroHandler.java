@@ -45,7 +45,7 @@ import org.nd4j.jita.flow.FlowController;
 import org.nd4j.jita.flow.impl.GridFlowController;
 import org.nd4j.jita.handler.MemoryHandler;
 import org.nd4j.jita.memory.MemoryProvider;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;

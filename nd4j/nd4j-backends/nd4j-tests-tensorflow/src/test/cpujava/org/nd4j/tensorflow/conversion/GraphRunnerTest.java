@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 import org.bytedeco.tensorflow.TF_Tensor;
 import org.nd4j.BaseND4JTest;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.resources.Resources;
 import org.nd4j.shade.protobuf.Descriptors;
 import org.nd4j.shade.protobuf.util.JsonFormat;

@@ -18,7 +18,7 @@ package org.nd4j.linalg.cpu.nativecpu.blas;
 
 import lombok.val;
 import org.nd4j.linalg.api.blas.impl.BaseLapack;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.exception.ND4JArraySizeException;
 import org.nd4j.linalg.factory.Nd4j;

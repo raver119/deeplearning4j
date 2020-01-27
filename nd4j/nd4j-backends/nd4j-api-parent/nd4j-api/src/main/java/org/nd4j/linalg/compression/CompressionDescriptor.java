@@ -17,8 +17,8 @@
 package org.nd4j.linalg.compression;
 
 import lombok.Data;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 
 import java.io.Serializable;
 import java.nio.Buffer;

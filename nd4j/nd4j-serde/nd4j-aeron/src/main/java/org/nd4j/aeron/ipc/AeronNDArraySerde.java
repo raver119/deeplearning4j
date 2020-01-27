@@ -20,7 +20,7 @@ import org.agrona.DirectBuffer;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.nd4j.linalg.primitives.Pair;
 import org.bytedeco.javacpp.BytePointer;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.compression.CompressedDataBuffer;

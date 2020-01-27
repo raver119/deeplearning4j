@@ -19,8 +19,8 @@ package org.nd4j.arrow;
 import com.google.flatbuffers.FlatBufferBuilder;
 import com.google.flatbuffers.Struct;
 import lombok.Getter;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
 import org.nd4j.linalg.factory.Nd4j;
 

@@ -31,7 +31,7 @@ import org.nd4j.autodiff.samediff.SameDiffNoArgSingleLambda;
 import org.nd4j.autodiff.samediff.SameDiffSingleLambda;
 import org.nd4j.autodiff.samediff.internal.SameDiffOp;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge;
 import org.nd4j.linalg.api.ops.impl.shape.OneHot;
 import org.nd4j.linalg.api.ops.impl.transforms.gradient.GradientBackwardsMarker;

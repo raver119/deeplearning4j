@@ -21,7 +21,7 @@ import org.nd4j.shade.guava.primitives.Longs;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.nd4j.base.Preconditions;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.exception.ND4JArraySizeException;

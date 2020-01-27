@@ -16,7 +16,7 @@
 
 package org.nd4j.linalg.jcublas.util;
 
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 
 /**
  * @author Adam Gibson

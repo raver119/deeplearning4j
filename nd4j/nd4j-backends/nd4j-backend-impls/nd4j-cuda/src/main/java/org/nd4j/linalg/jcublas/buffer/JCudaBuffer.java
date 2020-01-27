@@ -17,7 +17,7 @@
 package org.nd4j.linalg.jcublas.buffer;
 
 import org.bytedeco.javacpp.Pointer;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 
 import java.nio.Buffer;
 

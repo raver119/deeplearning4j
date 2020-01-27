@@ -22,7 +22,7 @@ import org.nd4j.autodiff.samediff.transform.*;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.imports.tensorflow.TFImportOverride;
 import org.nd4j.imports.tensorflow.TFOpImportFilter;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 
 import java.io.File;
 import java.io.IOException;

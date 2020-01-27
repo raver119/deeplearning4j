@@ -14,7 +14,7 @@ import org.nd4j.graph.UIGraphStructure;
 import org.nd4j.graph.UIStaticInfoRecord;
 import org.nd4j.graph.ui.LogFileWriter;
 import org.nd4j.linalg.BaseNd4jTest;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.IrisDataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;

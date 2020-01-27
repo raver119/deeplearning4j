@@ -28,7 +28,7 @@ import org.nd4j.autodiff.listeners.profiler.data.TraceEvent;
 import org.nd4j.autodiff.listeners.profiler.data.TraceEvents;
 import org.nd4j.base.Preconditions;
 import org.nd4j.imports.converters.DifferentialFunctionClassHolder;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.list.NDArrayList;

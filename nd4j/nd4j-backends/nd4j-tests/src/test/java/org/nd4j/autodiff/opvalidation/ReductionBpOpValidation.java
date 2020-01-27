@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nd4j.autodiff.validation.OpTestCase;
 import org.nd4j.autodiff.validation.OpValidation;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.reduce.bp.*;
 import org.nd4j.linalg.factory.Nd4j;

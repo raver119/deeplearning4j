@@ -24,7 +24,7 @@ import org.junit.rules.TemporaryFolder;
 import org.nd4j.autodiff.functions.DifferentialFunction;
 import org.nd4j.graph.*;
 import org.nd4j.linalg.BaseNd4jTest;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling3DConfig;
 import org.nd4j.linalg.dataset.DataSet;

@@ -17,7 +17,7 @@
 package org.nd4j.linalg.api.ops.impl.reduce;
 
 import org.nd4j.base.Preconditions;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.shade.guava.primitives.Ints;
 import org.nd4j.shade.guava.primitives.Longs;
 import lombok.NoArgsConstructor;

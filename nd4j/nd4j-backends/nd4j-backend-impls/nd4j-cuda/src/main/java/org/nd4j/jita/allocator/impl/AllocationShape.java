@@ -18,8 +18,8 @@ package org.nd4j.jita.allocator.impl;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 
 /**
  * @author raver119@gmail.com

@@ -351,15 +351,15 @@ public class TFGraphMapper {
 
                         //DType calculate for output variables (set/correct if necessary)
                         List<String> newInNames = sd.getOps().get(name).getInputsToOp();        //Just in case import has modified this, like for concat case
-                        List<org.nd4j.linalg.api.buffer.DataType> newInDtypes = new ArrayList<>(newInNames.size());
+                        List<org.nd4j.linalg.buffer.DataType> newInDtypes = new ArrayList<>(newInNames.size());
                         if (df instanceof Merge) {
                             //Merge op: as noted elsewhere, we allow merge to be processed when only one of the inputs is available
                             // to break cycles for loops
                             //We know that Merge op has the restriction of the same datatype for both inputs, so we'll
                             SDVariable v1 = sd.getVariable(newInNames.get(0));
                             SDVariable v2 = sd.getVariable(newInNames.get(1));
-                            org.nd4j.linalg.api.buffer.DataType dt1 = (v1 == null ? v2.dataType() : v1.dataType());
-                            org.nd4j.linalg.api.buffer.DataType dt2 = (v2 == null ? v1.dataType() : v2.dataType());
+                            org.nd4j.linalg.buffer.DataType dt1 = (v1 == null ? v2.dataType() : v1.dataType());
+                            org.nd4j.linalg.buffer.DataType dt2 = (v2 == null ? v1.dataType() : v2.dataType());
                             newInDtypes.add(dt1);
                             newInDtypes.add(dt2);
                         } else {
@@ -369,14 +369,14 @@ public class TFGraphMapper {
                             }
                         }
 
-                        List<org.nd4j.linalg.api.buffer.DataType> outDTypes = df.calculateOutputDataTypes(newInDtypes);
+                        List<org.nd4j.linalg.buffer.DataType> outDTypes = df.calculateOutputDataTypes(newInDtypes);
                         SDVariable[] outSDVars = new SDVariable[outDTypes.size()];
                         Variable[] outVars = new Variable[outDTypes.size()];
                         List<String> outNames = new ArrayList<>(outDTypes.size());
 
                         //Create output variables and add to graph
                         for (int i = 0; i < outDTypes.size(); i++) {
-                            org.nd4j.linalg.api.buffer.DataType dt = outDTypes.get(i);
+                            org.nd4j.linalg.buffer.DataType dt = outDTypes.get(i);
                             String varName = name + (i == 0 ? "" : ":" + i);
                             outSDVars[i] = sd.var(varName, VariableType.ARRAY, null, dt, (long[]) null);
                             outNames.add(varName);
@@ -537,30 +537,30 @@ public class TFGraphMapper {
      * @param tfType TF datatype
      * @return ND4J datatype
      */
-    public static org.nd4j.linalg.api.buffer.DataType convertType(org.tensorflow.framework.DataType tfType) {
+    public static org.nd4j.linalg.buffer.DataType convertType(org.tensorflow.framework.DataType tfType) {
         switch (tfType) {
             case DT_DOUBLE:
-                return org.nd4j.linalg.api.buffer.DataType.DOUBLE;
+                return org.nd4j.linalg.buffer.DataType.DOUBLE;
             case DT_FLOAT:
-                return org.nd4j.linalg.api.buffer.DataType.FLOAT;
+                return org.nd4j.linalg.buffer.DataType.FLOAT;
             case DT_HALF:
-                return org.nd4j.linalg.api.buffer.DataType.HALF;
+                return org.nd4j.linalg.buffer.DataType.HALF;
             case DT_BFLOAT16:
-                return org.nd4j.linalg.api.buffer.DataType.BFLOAT16;
+                return org.nd4j.linalg.buffer.DataType.BFLOAT16;
             case DT_INT8:
-                return org.nd4j.linalg.api.buffer.DataType.BYTE;
+                return org.nd4j.linalg.buffer.DataType.BYTE;
             case DT_INT16:
-                return org.nd4j.linalg.api.buffer.DataType.SHORT;
+                return org.nd4j.linalg.buffer.DataType.SHORT;
             case DT_INT32:
-                return org.nd4j.linalg.api.buffer.DataType.INT;
+                return org.nd4j.linalg.buffer.DataType.INT;
             case DT_INT64:
-                return org.nd4j.linalg.api.buffer.DataType.LONG;
+                return org.nd4j.linalg.buffer.DataType.LONG;
             case DT_UINT8:
-                return org.nd4j.linalg.api.buffer.DataType.UBYTE;
+                return org.nd4j.linalg.buffer.DataType.UBYTE;
             case DT_STRING:
-                return org.nd4j.linalg.api.buffer.DataType.UTF8;
+                return org.nd4j.linalg.buffer.DataType.UTF8;
             case DT_BOOL:
-                return org.nd4j.linalg.api.buffer.DataType.BOOL;
+                return org.nd4j.linalg.buffer.DataType.BOOL;
 
             default:
                 return org.nd4j.linalg.api.buffer.DataType.UNKNOWN;

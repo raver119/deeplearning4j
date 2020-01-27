@@ -18,7 +18,7 @@ package org.nd4j.linalg.profiler;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ndarray.INDArrayStatistics;
 import org.nd4j.linalg.api.ops.*;

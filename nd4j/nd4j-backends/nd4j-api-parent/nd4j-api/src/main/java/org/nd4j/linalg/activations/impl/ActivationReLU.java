@@ -18,7 +18,7 @@ package org.nd4j.linalg.activations.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ops.impl.scalar.*;
 import org.nd4j.linalg.api.ops.impl.transforms.gradient.LeakyReLUBp;
 import org.nd4j.linalg.api.ops.impl.transforms.gradient.LeakyReLUDerivative;

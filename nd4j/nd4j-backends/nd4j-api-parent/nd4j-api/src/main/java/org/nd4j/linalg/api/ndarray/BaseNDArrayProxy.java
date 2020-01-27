@@ -19,7 +19,7 @@ package org.nd4j.linalg.api.ndarray;
 
 import lombok.val;
 import org.nd4j.linalg.api.buffer.BaseDataBuffer;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.io.IOException;

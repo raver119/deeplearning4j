@@ -19,9 +19,9 @@ package org.nd4j.linalg.factory;
 
 import org.bytedeco.javacpp.Pointer;
 import org.nd4j.linalg.api.blas.*;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
+import org.nd4j.linalg.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.rng.distribution.Distribution;
 import org.nd4j.linalg.buffer.DataTypeEx;

@@ -35,7 +35,7 @@ import org.nd4j.autodiff.samediff.internal.Variable;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.evaluation.classification.Evaluation.Metric;
 import org.nd4j.linalg.BaseNd4jTest;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.IrisDataSetIterator;

@@ -22,7 +22,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.nd4j.evaluation.custom.CustomEvaluation;
 import org.nd4j.linalg.BaseNd4jTest;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.primitives.Pair;

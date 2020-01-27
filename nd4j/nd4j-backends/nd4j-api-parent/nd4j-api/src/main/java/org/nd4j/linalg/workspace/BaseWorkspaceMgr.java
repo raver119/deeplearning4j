@@ -18,7 +18,7 @@ package org.nd4j.linalg.workspace;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.memory.conf.WorkspaceConfiguration;
 import org.nd4j.linalg.api.ndarray.INDArray;

@@ -22,7 +22,7 @@ import lombok.NonNull;
 import org.nd4j.base.Preconditions;
 import org.nd4j.evaluation.classification.*;
 import org.nd4j.evaluation.regression.RegressionEvaluation;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.broadcast.BroadcastTo;
 import org.nd4j.linalg.api.shape.Shape;

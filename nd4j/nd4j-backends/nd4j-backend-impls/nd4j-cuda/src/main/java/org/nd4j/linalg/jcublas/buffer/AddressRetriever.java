@@ -18,7 +18,7 @@ package org.nd4j.linalg.jcublas.buffer;
 
 import org.bytedeco.javacpp.Pointer;
 import org.nd4j.jita.allocator.impl.AtomicAllocator;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.jcublas.context.CudaContext;
 
 

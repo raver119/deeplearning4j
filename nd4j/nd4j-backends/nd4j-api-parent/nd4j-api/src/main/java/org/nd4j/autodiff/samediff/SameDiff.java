@@ -45,7 +45,7 @@ import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.evaluation.classification.ROC;
 import org.nd4j.graph.*;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.BaseOp;
@@ -2750,7 +2750,7 @@ public class SameDiff extends SDBaseOps {
      * @param weightInitScheme the weight initialization scheme
      * @return the created variable
      */
-    public SDVariable var(@NonNull String name, @NonNull WeightInitScheme weightInitScheme, @NonNull org.nd4j.linalg.api.buffer.DataType dataType, @NonNull long... shape) {
+    public SDVariable var(@NonNull String name, @NonNull WeightInitScheme weightInitScheme, @NonNull org.nd4j.linalg.buffer.DataType dataType, @NonNull long... shape) {
         return var(name, VariableType.VARIABLE, weightInitScheme, dataType, shape);
     }
 
@@ -2766,7 +2766,7 @@ public class SameDiff extends SDBaseOps {
      * @return the created variable
      */
     public SDVariable var(@NonNull String name, @NonNull VariableType variableType, WeightInitScheme weightInitScheme,
-                          org.nd4j.linalg.api.buffer.DataType dataType, long... shape) {
+                          org.nd4j.linalg.buffer.DataType dataType, long... shape) {
         if(shape != null) {
             for (long l : shape) {
                 Preconditions.checkArgument(l != 0, "Cannot create variable with a shape that contains zeros (empty array shape) - got shape %s", shape);

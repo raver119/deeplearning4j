@@ -16,8 +16,8 @@
 
 package org.nd4j.linalg.cache;
 
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 
 /**
  * This interface describes

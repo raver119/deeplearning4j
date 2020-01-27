@@ -26,7 +26,7 @@ import org.junit.rules.TestName;
 import org.junit.rules.Timeout;
 import org.nd4j.base.Preconditions;
 import org.nd4j.config.ND4JSystemProperties;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.factory.Nd4j;
