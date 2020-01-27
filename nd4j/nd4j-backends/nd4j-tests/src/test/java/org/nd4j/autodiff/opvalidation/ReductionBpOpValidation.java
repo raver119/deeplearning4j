@@ -34,8 +34,6 @@ import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertNull;
 
 @Slf4j
@@ -183,8 +181,8 @@ public class ReductionBpOpValidation extends BaseOpValidation {
     @Test
     public void testMeanBP_Rank1() {
         INDArray dLdOut = Nd4j.scalar(0.5);
-        INDArray preReduceInput = Nd4j.create(new double[]{2,3,4}, new long[]{3});
-        INDArray dLdInExp = Nd4j.valueArrayOf(new long[]{3}, 0.5/3);
+        INDArray preReduceInput = Nd4j.create(new double[]{2, 3, 4}, new long[]{3});
+        INDArray dLdInExp = Nd4j.valueArrayOf(new long[]{3}, 0.5 / 3);
 
         INDArray dLdIn = Nd4j.createUninitialized(new long[]{3});
 
@@ -203,7 +201,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
 
         for (boolean keepDims : new boolean[]{false, true}) {
             long[] reducedShape_0 = (keepDims ? new long[]{1, 4} : new long[]{4});
-            INDArray preReduceInput = Nd4j.linspace(1, 12, 12).reshape('c',3, 4);
+            INDArray preReduceInput = Nd4j.linspace(1, 12, 12).reshape('c', 3, 4);
             INDArray dLdOut_0 = Nd4j.create(new double[]{1, 2, 3, 4}, reducedShape_0);
             INDArray dLdInExpected_0 = Nd4j.createUninitialized(preReduceInput.shape());
             for (int i = 0; i < 3; i++) {
@@ -528,7 +526,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
     @Test
     public void testStdevBP_Rank1() {
         INDArray dLdOut = Nd4j.scalar(0.5);
-        INDArray preReduceInput = Nd4j.create(new double[]{2,3,4}, new long[]{3});
+        INDArray preReduceInput = Nd4j.create(new double[]{2, 3, 4}, new long[]{3});
         double stdev = preReduceInput.stdNumber(true).doubleValue();
         double mean = preReduceInput.meanNumber().doubleValue();
 
@@ -581,7 +579,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
                 INDArray dLdInExpected_1 = preReduceInput.dup();
                 dLdInExpected_1.subiColumnVector(mean_1)
                         .diviColumnVector(stdev_1.mul(divisor))
-                        .muliColumnVector(dLdOut_1.reshape(3,1));
+                        .muliColumnVector(dLdOut_1.reshape(3, 1));
 
                 dLdIn = Nd4j.createUninitialized(3, 4);
                 err = OpValidation.validate(new OpTestCase(new StandardDeviationBp(preReduceInput, dLdOut_1, dLdIn, biasCorrected, keepDims, 1))
@@ -657,7 +655,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
                 INDArray mean_1 = preReduceInput.mean(1);
                 INDArray dLdInExpected_1 = preReduceInput.dup();
                 dLdInExpected_1.subiColumnVector(mean_1).muli(2.0 / divisor)
-                        .muliColumnVector(dLdOut_1.reshape(3,1));
+                        .muliColumnVector(dLdOut_1.reshape(3, 1));
 
 
                 dLdIn = Nd4j.createUninitialized(3, 4);
@@ -692,17 +690,16 @@ public class ReductionBpOpValidation extends BaseOpValidation {
         //          = cumSumExclusive(dL/dOut_j)
 
 
-
-        for(boolean exclusive : new boolean[]{false, true}) {
-            for(boolean reverse : new boolean[]{false, true}) {
+        for (boolean exclusive : new boolean[]{false, true}) {
+            for (boolean reverse : new boolean[]{false, true}) {
 
                 INDArray preReduceInput = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-                INDArray dLdOut = Nd4j.valueArrayOf(new long[]{3,4}, 0.5);
+                INDArray dLdOut = Nd4j.valueArrayOf(new long[]{3, 4}, 0.5);
                 INDArray dLdIn = Nd4j.createUninitialized(3, 4);
 
                 INDArray dLdInExpected;
-                if(exclusive){
-                    if(reverse){
+                if (exclusive) {
+                    if (reverse) {
                         dLdInExpected = Nd4j.create(new double[][]{
                                 {0.0, 0.0, 0.0, 0.0},
                                 {0.5, 0.5, 0.5, 0.5},
@@ -714,7 +711,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
                                 {0.0, 0.0, 0.0, 0.0}});
                     }
                 } else {
-                    if(reverse){
+                    if (reverse) {
                         dLdInExpected = Nd4j.create(new double[][]{
                                 {0.5, 0.5, 0.5, 0.5},
                                 {1.0, 1.0, 1.0, 1.0},
@@ -731,7 +728,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
                 String err = OpValidation.validate(new OpTestCase(
                         new CumSumBp(preReduceInput, dLdOut, dLdIn, exclusive, reverse, 0))
                         .expectedOutput(0, dLdInExpected));
-                if(err != null){
+                if (err != null) {
                     err = err + " - exclusive=" + exclusive + ", reverse=" + reverse;
                 }
                 assertNull(err);
@@ -741,7 +738,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
 
 
     @Test
-    public void testNorm2Bp(){
+    public void testNorm2Bp() {
         //dL/dIn = dL/dOut * dOut/dIn
         //       = dL/dOut * x/|x|_2
 
@@ -801,7 +798,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
     }
 
     @Test
-    public void testNorm1Bp(){
+    public void testNorm1Bp() {
         //dL/dIn = dL/dOut * dOut/dIn
         //       = dL/dOut * sgn(in)
 
@@ -860,7 +857,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
     }
 
     @Test
-    public void testNormMaxBp(){
+    public void testNormMaxBp() {
         //out = max_i (|in_i|)
         //dL/dIn = dL/dOut * dOut/dIn
         //       = dL/dOut * (0 if |x_i| is not max; or sgn(x_i) otherwise)
@@ -870,8 +867,8 @@ public class ReductionBpOpValidation extends BaseOpValidation {
             INDArray preReduceInput = Nd4j.linspace(-5, 6, 12).reshape(3, 4);
 
             INDArray sgn = Transforms.sign(preReduceInput, true);
-            INDArray max = Nd4j.create(3,4);
-            max.putScalar(2,3,1.0);
+            INDArray max = Nd4j.create(3, 4);
+            max.putScalar(2, 3, 1.0);
 
             INDArray dLdOut;
             if (keepDims) {
@@ -900,7 +897,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
             long[] reducedShape_0 = (keepDims ? new long[]{1, 4} : new long[]{4});
             INDArray preReduceInput = Nd4j.linspace(1, 12, 12).reshape(3, 4);
             INDArray sgn = Transforms.sign(preReduceInput, true);
-            INDArray max_0 = Nd4j.create(3,4);
+            INDArray max_0 = Nd4j.create(3, 4);
             max_0.getRow(2).assign(1.0);
             INDArray dLdOut_0 = Nd4j.create(new double[]{1, 2, 3, 4}, reducedShape_0);
             INDArray dLdInExpected_0 = sgn.mul(max_0).mulRowVector(dLdOut_0);
@@ -914,7 +911,7 @@ public class ReductionBpOpValidation extends BaseOpValidation {
 
             long[] reducedShape_1 = (keepDims ? new long[]{3, 1} : new long[]{3});
             INDArray dLdOut_1 = Nd4j.create(new double[]{1, 2, 3}, reducedShape_1);
-            INDArray max_1 = Nd4j.create(3,4);
+            INDArray max_1 = Nd4j.create(3, 4);
             max_1.getColumn(3).assign(1.0);
             INDArray dLdInExpected_1 = sgn.mul(max_1).mulColumnVector(dLdOut_1);
             dLdIn = Nd4j.createUninitialized(3, 4);
@@ -925,87 +922,5 @@ public class ReductionBpOpValidation extends BaseOpValidation {
             assertNull(err, err);
         }
     }
-
-    @Test
-    public void testPowBP() {
-
-        for (boolean keepDims : new boolean[]{false, true}) {
-
-            INDArray preReduceInput_1 = Nd4j.createFromArray(new double[]{
-                    4,3,2,5,7,8,-9,-12
-            }).reshape(2,2,2);
-            INDArray preReduceInput_2 = Nd4j.createFromArray(new double[]{
-                    2,3,-2,4,-1,-4,10,8
-            }).reshape(2,2,2);
-            INDArray preReduceInput_3 = Nd4j.linspace(1, 8, 8).reshape(2, 2,2);
-            INDArray gradOutput = Nd4j.valueArrayOf(new long[]{2, 2, 2}, 1.0);
-            INDArray dLdInExpected_1 = Nd4j.createFromArray(new double[]{
-                    8,  27, -0.25,  500, -0.0204082, -0.000122, -3.87420e+09, -2.86654e+08
-            }).reshape(2,2,2);
-            INDArray dLdInExpected_2 = Nd4j.createFromArray(new double[]{
-                    22.18071, 29.66253, 0.17329, 1005.89874, 0.27799, 0.00051, 0, 0
-            }).reshape(2,2,2);
-            INDArray output1 = Nd4j.createUninitialized(2, 2,2);
-            INDArray output2 = Nd4j.createUninitialized(2, 2,2);
-
-            String err = OpValidation.validate(new OpTestCase(new PowBp(preReduceInput_1, preReduceInput_2,
-                    gradOutput, output1, output2))
-                    .expectedOutput(0, dLdInExpected_1).expectedOutput(1, dLdInExpected_2));
-
-            assertNull(err);
-        }
-    }
-
-    @Test
-    public void testPowBP1() {
-
-            INDArray preReduceInput_1 = Nd4j.createFromArray(new float[]{
-                     0.0714f,    0.4735f,   -0.1249f,    0.4482f,
-                   -0.1376f,    0.5218f,    0.5558f,    0.2444f,
-                   -0.5297f,    0.4291f,    0.4913f,   -0.1178f
-            }).reshape(3,4);
-            INDArray preReduceInput_2 = Nd4j.scalar(2.0000f);
-
-            INDArray gradOutput = Nd4j.valueArrayOf(new long[]{3, 4}, 1.0f);
-
-            INDArray output1 = Nd4j.createUninitialized(DataType.FLOAT, 3,4);
-            INDArray output2 = Nd4j.scalar(DataType.FLOAT, 1.0); //Nd4j.createUninitialized(DataType.FLOAT, 3,4);
-
-            INDArray expected1 = Nd4j.createFromArray(new float[]{
-                    0.1428f,    0.9470f,   -0.2498f,    0.8964f,
-                   -0.2752f,    1.0436f,    1.1116f,    0.4888f,
-                   -1.0594f,    0.8582f,    0.9826f,   -0.2356f
-            }).reshape(3,4);
-            INDArray expected2 = Nd4j.scalar(DataType.FLOAT, -1.112316132);
-            String err = OpValidation.validate(new OpTestCase(new PowBp(preReduceInput_1, preReduceInput_2,
-                    gradOutput, output1, output2)).expectedOutput(0, expected1).expectedOutput(1, expected2));
-            assertNull(err);
-    }
-
-    @Test
-    public void testDotBP() {
-        for (boolean keepDims : new boolean[]{false, true}) {
-
-            INDArray preReduceInput1 = Nd4j.linspace(1,12,12).reshape(3,4);
-            INDArray preReduceInput2 = Nd4j.linspace(1,12,12).reshape(3,4);
-            INDArray dLdInExpected1 = Nd4j.createFromArray(new double[]{
-                    0.5000, 1.0000, 1.5000, 2.0000,
-                    2.5000, 3.0000, 3.5000, 4.0000,
-                    4.5000, 5.0000, 5.5000, 6.0000
-            }).reshape(3, 4);
-            INDArray dLdInExpected2 = Nd4j.createFromArray(new double[]{
-                    0.5000, 1.0000, 1.5000, 2.0000,
-                    2.5000, 3.0000, 3.5000, 4.0000,
-                    4.5000, 5.0000, 5.5000, 6.0000
-            }).reshape(3, 4);
-            INDArray dLdOut = Nd4j.valueArrayOf(new long[]{1, 1}, 0.5);
-            INDArray output1 = Nd4j.createUninitialized(3, 4);
-            INDArray output2 = Nd4j.createUninitialized(3, 4);
-            String err = OpValidation.validate(new OpTestCase(new DotBp(preReduceInput1, preReduceInput2, dLdOut,
-                    output1, output2, keepDims))
-                    .expectedOutput(0, dLdInExpected1).expectedOutput(1, dLdInExpected2));
-
-            assertNull(err);
-        }
-    }
 }
+

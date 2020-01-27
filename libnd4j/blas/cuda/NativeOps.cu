@@ -3602,7 +3602,13 @@ void deleteGraphContext(nd4j::graph::Context* ptr) {
 
 
 nd4j::graph::RandomGenerator* createRandomGenerator(Nd4jLong rootSeed, Nd4jLong nodeSeed) {
-    return new nd4j::graph::RandomGenerator(rootSeed, nodeSeed);
+    try {
+        return new nd4j::graph::RandomGenerator(rootSeed, nodeSeed);
+    } catch (std::exception &e) {
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+        return nullptr;
+    }
 }
 
 Nd4jLong getRandomGeneratorRootState(nd4j::graph::RandomGenerator* ptr) {
@@ -3774,9 +3780,22 @@ void ctxAllowHelpers(OpaqueContext* ptr, bool reallyAllow) {
     ptr->allowHelpers(reallyAllow);
 }
 
+void ctxSetExecutionMode(OpaqueContext* ptr, int execMode) {
+    if (execMode < 0 || execMode > 2)
+        execMode = 0;
+
+    ptr->setExecutionMode((samediff::ExecutionMode) execMode);
+}
+
 OpaqueDataBuffer* allocateDataBuffer(Nd4jLong elements, int dataType, bool allocateBoth) {
-    auto dtype = DataTypeUtils::fromInt(dataType);
-    return new nd4j::InteropDataBuffer(elements * DataTypeUtils::sizeOf(dtype) , dtype, allocateBoth);
+    try {
+        auto dtype = DataTypeUtils::fromInt(dataType);
+        return new nd4j::InteropDataBuffer(elements * DataTypeUtils::sizeOf(dtype), dtype, allocateBoth);
+    } catch (std::exception &e) {
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+        return nullptr;
+    }
 }
 
 Nd4jPointer dbPrimaryBuffer(OpaqueDataBuffer *dataBuffer) {
@@ -3808,7 +3827,12 @@ void dbAllocateSpecialBuffer(OpaqueDataBuffer *dataBuffer) {
 }
 
 void dbExpandBuffer(OpaqueDataBuffer *dataBuffer, Nd4jLong elements) {
-    dataBuffer->dataBuffer()->expand(elements * DataTypeUtils::sizeOf(dataBuffer->dataBuffer()->getDataType()));
+    try {
+        dataBuffer->dataBuffer()->expand(elements * DataTypeUtils::sizeOf(dataBuffer->dataBuffer()->getDataType()));
+    } catch (std::exception &e) {
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+    }
 }
 
 OpaqueDataBuffer* dbCreateView(OpaqueDataBuffer *dataBuffer, Nd4jLong length, Nd4jLong offset) {
