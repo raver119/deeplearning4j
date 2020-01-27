@@ -19,8 +19,8 @@ package org.nd4j.linalg.buffer;
 import lombok.NonNull;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.Indexer;
-import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.buffer.DataType;
+import org.nd4j.linalg.memory.MemoryWorkspace;
 import org.nd4j.linalg.primitives.Triple;
 
 import java.io.*;

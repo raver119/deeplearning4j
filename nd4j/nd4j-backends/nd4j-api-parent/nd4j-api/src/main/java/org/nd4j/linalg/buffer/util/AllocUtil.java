@@ -17,7 +17,7 @@
 package org.nd4j.linalg.api.buffer.util;
 
 import org.nd4j.context.Nd4jContext;
-import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataBuffer;
 
 /**
  * Used for manipulating the  allocation

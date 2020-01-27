@@ -17,8 +17,8 @@
 package org.nd4j.linalg.memory.deallocation;
 
 import lombok.Data;
-import org.nd4j.linalg.api.memory.Deallocatable;
-import org.nd4j.linalg.api.memory.Deallocator;
+import org.nd4j.linalg.memory.Deallocatable;
+import org.nd4j.linalg.memory.Deallocator;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;

@@ -17,7 +17,7 @@
 package org.nd4j.linalg.cpu.nativecpu.buffer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.nd4j.linalg.api.memory.Deallocator;
+import org.nd4j.linalg.memory.Deallocator;
 import org.nd4j.nativeblas.NativeOpsHolder;
 import org.nd4j.nativeblas.OpaqueDataBuffer;
 

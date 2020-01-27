@@ -25,9 +25,9 @@ import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.nd4j.linalg.api.buffer.BaseDataBuffer;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
+import org.nd4j.linalg.memory.MemoryWorkspace;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;

@@ -20,7 +20,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
-import org.nd4j.linalg.api.memory.Deallocatable;
+import org.nd4j.linalg.memory.Deallocatable;
 import org.nd4j.linalg.factory.Nd4j;
 
 

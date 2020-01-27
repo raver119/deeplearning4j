@@ -20,13 +20,13 @@ import lombok.val;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.indexer.*;
 import org.nd4j.linalg.api.buffer.BaseDataBuffer;
-import org.nd4j.linalg.api.buffer.DataBuffer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataBuffer;
+import org.nd4j.linalg.buffer.DataType;
 import org.nd4j.linalg.api.buffer.util.AllocUtil;
-import org.nd4j.linalg.api.memory.Deallocatable;
-import org.nd4j.linalg.api.memory.Deallocator;
-import org.nd4j.linalg.api.memory.MemoryWorkspace;
-import org.nd4j.linalg.api.memory.pointers.PagedPointer;
+import org.nd4j.linalg.memory.Deallocatable;
+import org.nd4j.linalg.memory.Deallocator;
+import org.nd4j.linalg.memory.MemoryWorkspace;
+import org.nd4j.linalg.memory.pointers.PagedPointer;
 import org.nd4j.linalg.cpu.nativecpu.ops.NativeOpExecutioner;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.memory.deallocation.DeallocatorService;
@@ -36,8 +36,8 @@ import org.nd4j.nativeblas.OpaqueDataBuffer;
 
 import java.nio.ByteBuffer;
 
-import static org.nd4j.linalg.api.buffer.DataType.INT16;
-import static org.nd4j.linalg.api.buffer.DataType.INT8;
+import static org.nd4j.linalg.buffer.DataType.INT16;
+import static org.nd4j.linalg.buffer.DataType.INT8;
 
 /**
  * Base implementation for DataBuffer for CPU-like backend

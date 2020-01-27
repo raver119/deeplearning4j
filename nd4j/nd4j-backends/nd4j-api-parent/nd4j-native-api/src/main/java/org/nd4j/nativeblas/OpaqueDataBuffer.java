@@ -21,7 +21,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bytedeco.javacpp.Pointer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.DataType;
 
 import java.util.concurrent.locks.LockSupport;
 
