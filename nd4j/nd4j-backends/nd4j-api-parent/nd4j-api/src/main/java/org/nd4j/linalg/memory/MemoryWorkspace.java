@@ -18,7 +18,7 @@ package org.nd4j.linalg.memory;
 
 import org.nd4j.linalg.buffer.DataBuffer;
 import org.nd4j.linalg.buffer.DataType;
-import org.nd4j.linalg.api.memory.conf.WorkspaceConfiguration;
+import org.nd4j.linalg.memory.conf.WorkspaceConfiguration;
 import org.nd4j.linalg.memory.enums.MemoryKind;
 import org.nd4j.linalg.memory.pointers.PagedPointer;
 
