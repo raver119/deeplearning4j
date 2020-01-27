@@ -16,6 +16,9 @@
 
 package org.nd4j.linalg.factory;
 
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.factory.ops.NDBitwise;
 import org.nd4j.linalg.factory.ops.NDMath;
 import org.nd4j.linalg.factory.ops.NDNN;
@@ -39,7 +42,7 @@ import org.nd4j.context.Nd4jContext;
 import org.nd4j.graph.FlatArray;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
 import org.nd4j.linalg.api.buffer.*;
-import org.nd4j.linalg.api.buffer.factory.DataBufferFactory;
+import org.nd4j.linalg.buffer.factory.DataBufferFactory;
 import org.nd4j.linalg.api.buffer.util.DataTypeUtil;
 import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.concurrency.BasicAffinityManager;

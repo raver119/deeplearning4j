@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.buffer.allocation;
+package org.nd4j.linalg.buffer.allocation;
 
 
 import org.nd4j.linalg.api.buffer.DataBuffer;
