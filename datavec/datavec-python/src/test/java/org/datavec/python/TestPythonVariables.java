@@ -22,9 +22,11 @@
 
 package org.datavec.python;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.junit.Test;
 import org.nd4j.linalg.factory.Nd4j;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -48,18 +50,25 @@ public class TestPythonVariables {
                 PythonVariables.Type.LIST,
                 PythonVariables.Type.LIST,
                 PythonVariables.Type.FILE,
-                PythonVariables.Type.NDARRAY
+                PythonVariables.Type.NDARRAY,
+                PythonVariables.Type.BYTES
         };
 
         NumpyArray npArr = new NumpyArray(Nd4j.scalar(1.0));
+        ByteBuffer bb = ByteBuffer.allocateDirect(3);
+        bb.put((byte)'a');
+        bb.put((byte)'b');
+        bb.put((byte)'c');
+        bb.rewind();
         Object[] values = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, Arrays.asList(1),"type", npArr
+                new Object[]{1}, Arrays.asList(1),"type", npArr,
+                bb
         };
 
         Object[] expectedValues = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, new Object[]{1},"type", npArr
+                new Object[]{1}, new Object[]{1},"type", npArr, new BytePointer(bb)
         };
 
         for(int i = 0; i < types.length; i++) {

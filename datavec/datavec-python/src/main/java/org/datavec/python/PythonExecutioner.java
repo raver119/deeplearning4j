@@ -20,6 +20,7 @@ package org.datavec.python;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.bytedeco.cpython.PyThreadState;
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.numpy.global.numpy;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.io.ClassPathResource;
@@ -27,6 +28,7 @@ import org.nd4j.linalg.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
@@ -128,6 +130,19 @@ public class PythonExecutioner {
                 break;
             case DICT:
                 pythonObject = new PythonObject((Map) value);
+                break;
+            case BYTES:
+                BytePointer bp;
+                if (value instanceof ByteBuffer){
+                   bp = new BytePointer((ByteBuffer)value);
+                }
+                else if (value instanceof BytePointer){
+                    bp = (BytePointer)value;
+                }
+                else {
+                    throw new PythonException("Invalid value for type BYTES");
+                }
+                pythonObject = new PythonObject(bp);
                 break;
             default:
                 throw new PythonException("Unsupported type: " + varType);

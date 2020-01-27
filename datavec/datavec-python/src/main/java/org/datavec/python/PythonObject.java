@@ -118,15 +118,14 @@ public class PythonObject {
         PyObject pySize = PyLong_FromLong(size);
         PyObject ctypes = PyImport_ImportModule("ctypes");
         PyObject cChar = PyObject_GetAttrString(ctypes, "c_char");
-        PyObject mul = PyObject_GetAttrString(cChar, "__mul__");
-        PyObject arr = PyObject_CallObject(mul, pySize);
+        PyObject arr = PyNumber_Multiply(cChar, pySize);
         PyObject fromAddress = PyObject_GetAttrString(arr, "from_address");
+        System.out.println("----ok----");
         nativePythonObject = PyObject_CallObject(fromAddress, pyAddress);
+
         Py_DecRef(pyAddress);
         Py_DecRef(ctypes);
         Py_DecRef(cChar);
-        Py_DecRef(mul);
-        Py_DecRef(mul);
         Py_DecRef(arr);
         Py_DecRef(fromAddress);
     }
@@ -505,10 +504,10 @@ public class PythonObject {
             PyObject arr = PyObject_CallObject(mul, pySize.nativePythonObject);
             PyObject fromBuffer = PyObject_GetAttrString(arr, "from_buffer");
             cArr = PyObject_CallObject(fromBuffer, nativePythonObject);
-            Py_DecRef(cChar);
-            Py_DecRef(mul);
-            Py_DecRef(arr);
-            Py_DecRef(fromBuffer);
+//            Py_DecRef(cChar);
+//            Py_DecRef(mul);
+//            Py_DecRef(arr);
+//            Py_DecRef(fromBuffer);
         }
         else{
             cArr = nativePythonObject;

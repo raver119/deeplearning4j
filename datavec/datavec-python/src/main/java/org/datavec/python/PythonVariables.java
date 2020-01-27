@@ -17,11 +17,13 @@
 package org.datavec.python;
 
 import lombok.Data;
+import org.bytedeco.javacpp.BytePointer;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -42,20 +44,22 @@ public class PythonVariables implements java.io.Serializable {
         NDARRAY,
         LIST,
         FILE,
+        BYTES,
         DICT
 
     }
 
-    private java.util.Map<String, String> strVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Long> intVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Double> floatVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Boolean> boolVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, NumpyArray> ndVars = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Object[]> listVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, String> fileVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, java.util.Map<?, ?>> dictVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Type> vars = new java.util.LinkedHashMap<>();
-    private java.util.Map<Type, java.util.Map> maps = new java.util.LinkedHashMap<>();
+    private Map<String, String> strVariables = new LinkedHashMap<>();
+    private Map<String, Long> intVariables = new LinkedHashMap<>();
+    private Map<String, Double> floatVariables = new LinkedHashMap<>();
+    private Map<String, Boolean> boolVariables = new LinkedHashMap<>();
+    private Map<String, NumpyArray> ndVars = new LinkedHashMap<>();
+    private Map<String, Object[]> listVariables = new LinkedHashMap<>();
+    private Map<String, String> fileVariables = new LinkedHashMap<>();
+    private Map<String, BytePointer> bytesVariables = new LinkedHashMap<>();
+    private Map<String, Map<?, ?>> dictVariables = new LinkedHashMap<>();
+    private Map<String, Type> vars = new LinkedHashMap<>();
+    private Map<Type, Map> maps = new LinkedHashMap<>();
 
 
     /**
@@ -86,6 +90,7 @@ public class PythonVariables implements java.io.Serializable {
         maps.put(PythonVariables.Type.LIST, listVariables);
         maps.put(PythonVariables.Type.FILE, fileVariables);
         maps.put(PythonVariables.Type.DICT, dictVariables);
+        maps.put(PythonVariables.Type.BYTES, bytesVariables);
 
     }
 
@@ -127,6 +132,9 @@ public class PythonVariables implements java.io.Serializable {
                 break;
             case DICT:
                 addDict(name);
+                break;
+            case BYTES:
+                addBytes(name);
         }
     }
 
@@ -370,11 +378,25 @@ public class PythonVariables implements java.io.Serializable {
      * @param name  the field to add
      * @param value the value to add
      */
-    public void addDict(String name, java.util.Map value) {
+    public void addDict(String name, Map value) {
         vars.put(name, PythonVariables.Type.DICT);
         dictVariables.put(name, value);
     }
 
+    public void addBytes(String name){
+        vars.put(name, Type.BYTES);
+        bytesVariables.put(name, null);
+    }
+
+
+    public void addBytes(String name, BytePointer value){
+        vars.put(name, Type.BYTES);
+        bytesVariables.put(name, value);
+    }
+
+    public void addBytes(String name, ByteBuffer value){
+        addBytes(name, new BytePointer(value));
+    }
     /**
      * @param name  name of the variable
      * @param value new value for the variable
@@ -413,10 +435,24 @@ public class PythonVariables implements java.io.Serializable {
                 listVariables.put(name, (Object[]) value);
             }
         } else if (type == PythonVariables.Type.DICT) {
-            dictVariables.put(name, (java.util.Map<?, ?>) value);
+            dictVariables.put(name, (Map<?, ?>) value);
         } else if (type == PythonVariables.Type.FILE) {
             fileVariables.put(name, (String) value);
-        } else {
+        }
+        else if (type == PythonVariables.Type.BYTES){
+            BytePointer bp;
+            if (value instanceof BytePointer){
+                bp = (BytePointer)value;
+            }
+            else if (value instanceof ByteBuffer){
+                bp = new BytePointer((ByteBuffer) value);
+            }
+            else {
+                throw new RuntimeException("Unsupported type: " + value.getClass().toString());
+            }
+            bytesVariables.put(name, bp);
+        }
+        else {
             strVariables.put(name, (String) value);
         }
     }
@@ -431,7 +467,7 @@ public class PythonVariables implements java.io.Serializable {
      */
     public Object getValue(String name) {
         Type type = vars.get(name);
-        java.util.Map map = maps.get(type);
+        Map map = maps.get(type);
         return map.get(name);
     }
 
@@ -450,7 +486,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the variable name
      * @return the dictionary value
      */
-    public java.util.Map<?, ?> getDictValue(String name) {
+    public Map<?, ?> getDictValue(String name) {
         return dictVariables.get(name);
     }
 
@@ -505,6 +541,14 @@ public class PythonVariables implements java.io.Serializable {
     }
 
     /**
+     * @param name the variable name
+     * @return the BytePointer value
+     */
+    public BytePointer getBytesValue(String name){
+        return bytesVariables.get(name);
+    }
+
+    /**
      * Returns the type for the given variable name
      *
      * @param name the name of the variable to get the type for
@@ -550,9 +594,9 @@ public class PythonVariables implements java.io.Serializable {
      * @param inputTypes the input types to convert
      * @return the schema from the given map
      */
-    public static PythonVariables schemaFromMap(java.util.Map<String, String> inputTypes) {
+    public static PythonVariables schemaFromMap(Map<String, String> inputTypes) {
         PythonVariables ret = new PythonVariables();
-        for (java.util.Map.Entry<String, String> entry : inputTypes.entrySet()) {
+        for (Map.Entry<String, String> entry : inputTypes.entrySet()) {
             ret.add(entry.getKey(), PythonVariables.Type.valueOf(entry.getValue()));
         }
 

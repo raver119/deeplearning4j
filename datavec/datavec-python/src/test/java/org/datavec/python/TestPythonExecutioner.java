@@ -16,11 +16,14 @@
 
 package org.datavec.python;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+
+import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -220,7 +223,26 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testBadCode() {
+    public void testByteBuffer() throws Exception{
+        PythonVariables pyInputs = new PythonVariables();
+        PythonVariables pyOutputs = new PythonVariables();
+
+        ByteBuffer buff = ByteBuffer.allocateDirect(3);
+        buff.put((byte)'a');
+        buff.put((byte)'b');
+        buff.put((byte)'c');
+        pyInputs.addBytes("buff", buff);
+        pyOutputs.addStr("out", "abc");
+        String code = "out = 'abc'";
+        PythonExecutioner.exec(code, pyInputs, pyOutputs);
+        String out = pyOutputs.getStrValue("out");
+        assertEquals("abc", out);
+
+    }
+
+    @Test
+    public void testBadCode() throws Exception{
+        PythonContextManager.setContext("badCodeTest");
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -239,6 +261,7 @@ public class TestPythonExecutioner {
         }
 
         Assert.assertEquals(true, errored);
+        PythonContextManager.setContext("main");
     }
 
 }
