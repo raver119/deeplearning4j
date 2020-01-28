@@ -78,7 +78,7 @@ void lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
     // params[4]  - alpha value for gates activation
     // params[5]  - beta value for gates activation
 
-    // params[6]  - activation ID for cell state (c)
+    // params[6]  - activation ID for cell state (c')
     // params[7]  - alpha value for cell state activation
     // params[8]  - beta value for cell state activation
 

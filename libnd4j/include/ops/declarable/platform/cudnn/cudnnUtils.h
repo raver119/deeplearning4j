@@ -46,6 +46,8 @@ namespace platforms {
     DECLARE_PLATFORM(batchnorm, ENGINE_CUDA);
     DECLARE_PLATFORM(batchnorm_bp, ENGINE_CUDA);
 
+    DECLARE_PLATFORM(lstmLayer, ENGINE_CUDA);
+
 //////////////////////////////////////////////////////////////////////////
 FORCEINLINE cudnnDataType_t cudnnDataType(nd4j::DataType dataType) {
     switch (dataType) {

@@ -126,7 +126,7 @@ CUSTOM_OP_IMPL(lstmLayer, 3, 1, false, 1, 5) {
 
     // integer numbers corresponding to activations: 0=tanh, 1=relu, 2=sigmoid, 3=affine, 4=leaky relu, 5= thresholded relu, 6=scaled tanh, 7=hard sigmoid, 8=ELU, 9=softsign, 10=softplus
     const auto gateAct       = INT_ARG(2);    // activation for input (i), forget (f) and output (o) gates
-    const auto cellAct       = INT_ARG(3);    // activation for cell state (c)
+    const auto cellAct       = INT_ARG(3);    // activation for cell state (c')
     const auto outAct        = INT_ARG(4);    // activation for output (h)
 
     const auto hasBiases  = B_ARG(0);   // indicates whether biases array is provided
