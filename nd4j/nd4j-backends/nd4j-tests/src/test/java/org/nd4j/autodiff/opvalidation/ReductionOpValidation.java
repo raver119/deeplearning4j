@@ -1332,4 +1332,30 @@ public class ReductionOpValidation extends BaseOpValidation {
             }
         }
     }
+
+    @Test
+    public void testSufficientStatisticsOp() {
+        INDArray data = Nd4j.createFromArray(new double[]{
+                5.5, 0.,  0.3, 5.5,1.5, 0.,  1.3, 6.5,8.6, 0.,   0., 0.4,2.5, 1.,  0.3, 4.5,1.5, 1.,
+                        1.3, 1.5,3.5, 0.,  1.3, 2.5,2.6, 2.,   3., 1.4,4.5, 1.,  0.3, 0.5
+        }).reshape(2,2,2,4);
+        INDArray axes = Nd4j.linspace(DataType.LONG, 0, 3, 1);
+
+        OpTestCase op = new OpTestCase(new SufficientStatistics(data, axes));
+
+        INDArray expected1 = Nd4j.scalar(8.0);
+        INDArray expected2 = Nd4j.createFromArray(new double[]{
+                30.2, 5., 7.8, 22.8
+        });
+        INDArray expected3 = Nd4j.createFromArray(new double[]{
+                154.22,   7.,    14.34, 103.62
+        });
+
+        op.expectedOutput(0, expected1);
+        op.expectedOutput(1, expected2);
+        op.expectedOutput(2, expected3);
+
+        String err = OpValidation.validate(op);
+        assertNull(err);
+    }
 }
