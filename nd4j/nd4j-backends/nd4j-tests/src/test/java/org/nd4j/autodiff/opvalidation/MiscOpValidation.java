@@ -513,7 +513,7 @@ public class MiscOpValidation extends BaseOpValidation {
     @Test
     public void testTrace(){
         //TODO need to work out how to handle shape_op for scalars...
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
         Nd4j.getRandom().setSeed(12345);
         for( int[] inShape : new int[][]{{3,3}}){
 

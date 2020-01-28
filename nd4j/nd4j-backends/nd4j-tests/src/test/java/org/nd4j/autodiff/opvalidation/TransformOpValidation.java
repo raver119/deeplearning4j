@@ -303,7 +303,7 @@ public class TransformOpValidation extends BaseOpValidation {
 
     @Test
     public void testBatchToSpace() {
-        OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
+        //OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
         Nd4j.getRandom().setSeed(1337);
 
         int miniBatch = 4;

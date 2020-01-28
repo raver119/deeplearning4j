@@ -1016,7 +1016,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testConstant(){
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
 
         //Case 0: no shape
         SameDiff sd = SameDiff.create();

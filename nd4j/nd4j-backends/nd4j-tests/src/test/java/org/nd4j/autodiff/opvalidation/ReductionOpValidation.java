@@ -159,7 +159,7 @@ public class ReductionOpValidation extends BaseOpValidation {
 
     @Test
     public void testReductionGradientsSimple() {
-        OpValidationSuite.ignoreFailing();  //TODO TEMPORARY DUE TO CRASHES
+        //OpValidationSuite.ignoreFailing();  //TODO TEMPORARY DUE TO CRASHES
         //Test reductions: final and only function
         Nd4j.getRandom().setSeed(12345);
 
