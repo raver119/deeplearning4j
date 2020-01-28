@@ -37,6 +37,7 @@ import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
 import org.nd4j.linalg.api.ops.impl.indexaccum.IAMin;
 import org.nd4j.linalg.api.ops.impl.reduce.Moments;
 import org.nd4j.linalg.api.ops.impl.reduce.NormalizeMoments;
+import org.nd4j.linalg.api.ops.impl.reduce.SufficientStatistics;
 import org.nd4j.linalg.api.ops.impl.reduce.floating.AMean;
 import org.nd4j.linalg.api.ops.impl.reduce.same.ASum;
 import org.nd4j.linalg.api.ops.impl.reduce3.*;
@@ -49,10 +50,7 @@ import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.linalg.primitives.Pair;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -159,7 +157,7 @@ public class ReductionOpValidation extends BaseOpValidation {
 
     @Test
     public void testReductionGradientsSimple() {
-        OpValidationSuite.ignoreFailing();  //TODO TEMPORARY DUE TO CRASHES
+        //OpValidationSuite.ignoreFailing();  //TODO TEMPORARY DUE TO CRASHES
         //Test reductions: final and only function
         Nd4j.getRandom().setSeed(12345);
 
@@ -768,7 +766,6 @@ public class ReductionOpValidation extends BaseOpValidation {
     }
 
     @Test
-    @Ignore("AB 2019/06/24 - Failing: Ignored to get to all passing baseline to prevent regressions via CI - see issue #7912")
     public void testNormalizeMomentsOp() {
         INDArray data = Nd4j.linspace(1, 100, 100, DataType.DOUBLE).reshape(10, 10);
         INDArray ssSum = data.sum(0);
@@ -780,7 +777,7 @@ public class ReductionOpValidation extends BaseOpValidation {
         INDArray mean = Nd4j.createUninitialized(DataType.DOUBLE, meanExp.shape());
         INDArray var = Nd4j.createUninitialized(DataType.DOUBLE, varExp.shape());
 
-        OpTestCase op = new OpTestCase(new NormalizeMoments(Nd4j.scalar(DataType.INT, 10), ssSum, ssSqSum, mean, var));
+        OpTestCase op = new OpTestCase(new NormalizeMoments(Nd4j.scalar(DataType.DOUBLE, 10), ssSum, ssSqSum, mean, var));
         op.expectedOutput(0, meanExp);
         op.expectedOutput(1, varExp);
 
