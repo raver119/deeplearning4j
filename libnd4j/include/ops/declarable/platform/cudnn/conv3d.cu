@@ -15,7 +15,6 @@
  ******************************************************************************/
 
 //
-// @author raver119@gmail.com
 // @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
