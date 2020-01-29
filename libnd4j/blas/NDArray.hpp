@@ -3885,7 +3885,7 @@ NDArray NDArray::like() {
 }
 
 ////////////////////////////////////////////////////////////////////////
-NDArray NDArray::ulike() {
+NDArray NDArray::ulike() const{
 
     return NDArray(this, false, getContext());
 }

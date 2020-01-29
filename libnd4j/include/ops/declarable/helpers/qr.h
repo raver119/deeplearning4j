@@ -26,7 +26,7 @@ namespace nd4j {
 namespace ops {
 namespace helpers {
 
-    void qr(nd4j::LaunchContext * context, NDArray* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies);
+    void qr(nd4j::LaunchContext * context, NDArray const* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies);
 
 
 }
