@@ -21,6 +21,7 @@
 #include <NDArray.h>
 #include <execution/Threads.h>
 #include <MmulHelper.h>
+#include <ShapeUtils.h>
 
 #include "../lup.h"
 #include "../triangular_solve.h"
@@ -36,10 +37,13 @@ namespace helpers {
         if (fast) { // Cholesky decomposition approach
             // Equation for solve A^T * Ax = A^T * b, so
             // 1. Computing A2:
-            NDArray leftOutput(leftInput, false, context); leftOutput.nullify();
+            auto tAtShape = ShapeUtils::evalShapeForMatmul(leftInput->getShapeInfo(), leftInput->getShapeInfo(), true, false);
+            //tAtShape[tAtShape.size() - 2] = output->sizeAt(-2);
+            NDArray leftOutput('c', tAtShape, output->dataType(), context);
             MmulHelper::matmul(leftInput, leftInput, &leftOutput, true, false); // Computing A2 = A^T * A
             // 2. Computing B' = A^T * b
-            auto rightOutput = rightInput->ulike();
+            auto rightOutput = output->ulike();
+
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
             // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
 //            auto regularizer = leftOutput.ulike();
