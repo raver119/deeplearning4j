@@ -303,7 +303,7 @@ public class TransformOpValidation extends BaseOpValidation {
 
     @Test
     public void testBatchToSpace() {
-        OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
+        //OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
         Nd4j.getRandom().setSeed(1337);
 
         int miniBatch = 4;
@@ -340,7 +340,7 @@ public class TransformOpValidation extends BaseOpValidation {
 
     @Test
     public void testSpaceToBatch() {
-        OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
+        //OpValidationSuite.ignoreFailing();          //TODO: https://github.com/deeplearning4j/deeplearning4j/issues/6863
 
         Nd4j.getRandom().setSeed(7331);
 
@@ -1600,7 +1600,7 @@ public class TransformOpValidation extends BaseOpValidation {
 
     @Test
     public void testTopK(){
-        OpValidationSuite.ignoreFailing();  //Can't assume sorted here
+        //OpValidationSuite.ignoreFailing();  //Can't assume sorted here
         INDArray in = Nd4j.create(new double[]{7, 3, 1, 2, 5, 0, 4, 6, 9, 8});
 
         INDArray expTopK = Nd4j.create(new double[]{7, 5, 6, 9, 8});
@@ -1692,7 +1692,7 @@ public class TransformOpValidation extends BaseOpValidation {
 
     @Test
     public void testZeta(){
-        OpValidationSuite.ignoreFailing();  //https://github.com/deeplearning4j/deeplearning4j/issues/6182
+        //OpValidationSuite.ignoreFailing();  //https://github.com/deeplearning4j/deeplearning4j/issues/6182
         INDArray x = Nd4j.rand(3,4).addi(1.0);
         INDArray q = Nd4j.rand(3,4);
 

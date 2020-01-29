@@ -1016,7 +1016,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testConstant(){
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
 
         //Case 0: no shape
         SameDiff sd = SameDiff.create();
@@ -1156,7 +1156,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testMatrixDeterminant(){
-        OpValidationSuite.ignoreFailing();  //Gradient check failing
+        //OpValidationSuite.ignoreFailing();  //Gradient check failing
 
         Nd4j.getRandom().setSeed(12345);
         INDArray in = Nd4j.rand(3,3);
@@ -1177,7 +1177,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testDeterminant22(){
-        OpValidationSuite.ignoreFailing();  //Gradient check failing
+        //OpValidationSuite.ignoreFailing();  //Gradient check failing
 
         Nd4j.getRandom().setSeed(12345);
         INDArray in = Nd4j.create(new double[][]{{1, 2.5}, {3.5, 4.5}});
@@ -1201,7 +1201,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testMatrixDeterminant3(){
-        OpValidationSuite.ignoreFailing();  //Gradient checks failing
+        //OpValidationSuite.ignoreFailing();  //Gradient checks failing
         Nd4j.getRandom().setSeed(12345);
         INDArray in = Nd4j.rand(3,3);
         //System.out.println(in.shapeInfoToString());   //Rank: 2,Offset: 0 Order: c Shape: [3,3],  stride: [3,1]
@@ -1232,7 +1232,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testMatrixDeterminant4(){
-        OpValidationSuite.ignoreFailing();  //Gradient checks failing
+        //OpValidationSuite.ignoreFailing();  //Gradient checks failing
         Nd4j.getRandom().setSeed(12345);
         INDArray in = Nd4j.rand(4,4);
         //System.out.println(in.shapeInfoToString());   //Rank: 2,Offset: 0 Order: c Shape: [4,4],  stride: [4,1]
@@ -1252,7 +1252,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testSegmentOps(){
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
         //https://github.com/deeplearning4j/deeplearning4j/issues/6952
         INDArray s = Nd4j.create(new double[]{0,0,0,1,2,2,3,3}, new long[]{8}).castTo(DataType.INT);
         INDArray d = Nd4j.create(new double[]{5,1,7,2,3,4,1,3}, new long[]{8});
@@ -1363,7 +1363,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
     @Test
     public void testSequenceMask() {
-        OpValidationSuite.ignoreFailing();  //2018-01-09: output datatype issue?
+        //OpValidationSuite.ignoreFailing();  //2018-01-09: output datatype issue?
         SameDiff sameDiff = SameDiff.create();
         INDArray arr = Nd4j.create(new float[] {1, 3, 2}).reshape(3);
         SDVariable lengths = sameDiff.var("lengths", arr);

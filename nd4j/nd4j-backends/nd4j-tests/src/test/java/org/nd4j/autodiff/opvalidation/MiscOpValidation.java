@@ -516,7 +516,7 @@ public class MiscOpValidation extends BaseOpValidation {
     @Test
     public void testTrace(){
         //TODO need to work out how to handle shape_op for scalars...
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
         Nd4j.getRandom().setSeed(12345);
         for( int[] inShape : new int[][]{{3,3}}){
 
@@ -540,7 +540,7 @@ public class MiscOpValidation extends BaseOpValidation {
 
     @Test
     public void testTensorGradTensorMmul() {
-        OpValidationSuite.ignoreFailing();
+        //OpValidationSuite.ignoreFailing();
 
         Nd4j.getRandom().setSeed(12345);
         SameDiff sameDiff = SameDiff.create();
@@ -1779,9 +1779,7 @@ public class MiscOpValidation extends BaseOpValidation {
         SDVariable input1 = sameDiff.var(in1);
         SDVariable input2 = sameDiff.var(in2);
 
-        INDArray expected = Nd4j.createFromArray(new double[]{
-                107.0000,  140.0000,  179.0000,  224.0000
-        }).reshape(1,4);
+        INDArray expected = Nd4j.ones(3,4);
 
         SDVariable output = new DivideNoNan(sameDiff, input1, input2).outputVariable();
 
@@ -1845,27 +1843,34 @@ public class MiscOpValidation extends BaseOpValidation {
 
         SameDiff sameDiff = SameDiff.create();
 
-        INDArray in1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in3 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in4 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in5 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 2*2*3*4).reshape(2,2,3,4);
+        INDArray scale = Nd4j.create(DataType.DOUBLE, 4);
+        scale.assign(0.5);
+        INDArray offset = Nd4j.create(DataType.DOUBLE, 4);
+        offset.assign(2.0);
 
-        SDVariable input1 = sameDiff.var(in1);
-        SDVariable input2 = sameDiff.var(in2);
-        SDVariable input3 = sameDiff.var(in3);
-        SDVariable input4 = sameDiff.var(in4);
-        SDVariable input5 = sameDiff.var(in5);
+        SDVariable input1 = sameDiff.var(x);
+        SDVariable input2 = sameDiff.var(scale);
+        SDVariable input3 = sameDiff.var(offset);
+        SDVariable input4 = sameDiff.constant(0);
+        SDVariable input5 = sameDiff.constant(1);
 
-        INDArray expected = Nd4j.createFromArray(new double[]{
-                107.0000,  140.0000,  179.0000,  224.0000
-        }).reshape(1,4);
+        INDArray expectedY = Nd4j.createFromArray(new double[]{1.20337462,  1.20337462,  1.20337462,
+                1.20337462, 1.34821558,  1.34821558,  1.34821558,  1.34821558, 1.49305654,  1.49305654,
+                1.49305654,  1.49305654, 1.63789749,  1.63789749,  1.63789749,  1.63789749, 1.78273857,
+                1.78273857,  1.78273857,  1.78273857, 1.92757952,  1.92757952,  1.92757952,  1.92757952,
+                2.0724206 ,  2.0724206 ,  2.0724206 ,  2.0724206 , 2.21726155,  2.21726155,  2.21726155,
+                2.21726155, 2.36210251,  2.36210251,  2.36210251,  2.36210251, 2.50694346,  2.50694346,
+                2.50694346,  2.50694346, 2.65178442,  2.65178442,  2.65178442,  2.65178442, 2.79662538,
+                2.79662538,  2.79662538,  2.79662538}).reshape(x.shape());
+        INDArray expectedBatchMean = Nd4j.createFromArray(new double[]{23.,  24.,  25.,  26.});
+        INDArray expectedBatchVar = Nd4j.createFromArray(new double[]{208.00001526,  208.00001526,  208.00001526,  208.00001526});
 
-        SDVariable output = new FusedBatchNorm(sameDiff, input1, input2, input3, input4, input5).outputVariable();
+        SDVariable[] outputs = new FusedBatchNorm(sameDiff, input1, input2, input3, input4, input5).outputVariables();
 
         TestCase tc = new TestCase(sameDiff)
                 .gradientCheck(true)
-                .expectedOutput(output.name(), expected);
+                .expected(sameDiff.var(expectedY), outputs[0].eval());
 
         String err = OpValidation.validate(tc);
         assertNull(err);
