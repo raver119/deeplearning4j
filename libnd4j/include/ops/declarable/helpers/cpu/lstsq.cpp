@@ -41,6 +41,7 @@ namespace helpers {
             //tAtShape[tAtShape.size() - 2] = output->sizeAt(-2);
             NDArray leftOutput('c', tAtShape, output->dataType(), context);
             MmulHelper::matmul(leftInput, leftInput, &leftOutput, true, false); // Computing A2 = A^T * A
+            leftOutput.printIndexedBuffer("tAt");
             // 2. Computing B' = A^T * b
             auto rightOutput = output->ulike();
 
