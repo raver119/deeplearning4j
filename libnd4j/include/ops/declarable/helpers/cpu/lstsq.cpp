@@ -46,6 +46,7 @@ namespace helpers {
             auto rightOutput = output->ulike();
 
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
+            rightOutput.printIndexedBuffer("Right part at begin");
             // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
 //            auto regularizer = leftOutput.ulike();
 //            regularizer.setIdentity();
@@ -56,9 +57,10 @@ namespace helpers {
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
             leftOutput.printIndexedBuffer("Left OUTPUT (L matrix)");
             // 5. Solve two triangular systems:
-            helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightOutput);
+            auto rightB = rightOutput.ulike();
+            helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
             leftOutput.transposei();leftOutput.printIndexedBuffer("Left OUTPUT transposed");
-            helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, false, false, output);
+            helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
             // All done
         }
         else { // QR decomposition approach
