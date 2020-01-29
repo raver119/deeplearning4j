@@ -3008,3 +3008,32 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_5) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
+
+    auto a = NDArrayFactory::create<float>('c', {4, 4}, {
+            3.f,  0.f,  0.f,  0.f,
+            2.f,  1.f,  0.f,  0.f,
+            1.f,  0.f,  1.f,  0.f,
+            1.f,  1.f,  1.f,  1.f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {4, 1}, {
+            4.f, 2.f, 4.f, 2.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {4, 1}, {
+            1.333333f,      -0.6666667f,         2.6666667f,        -1.3333333f });
+
+    nd4j::ops::lstsq op;
+
+    auto res = op.execute({&a, &b}, {}, {});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printIndexedBuffer("MatrixSolveLS");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}

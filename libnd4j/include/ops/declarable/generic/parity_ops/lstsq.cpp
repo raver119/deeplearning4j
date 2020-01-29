@@ -50,7 +50,7 @@ namespace nd4j {
         DECLARE_SYN(MatrixSolveLs, lstsq);
 
         DECLARE_SHAPE_FN(lstsq) {
-            auto in0 = inputShape->at(1);
+            auto in0 = inputShape->at(0);
             auto in1 = inputShape->at(1);
             auto shapeOf = ShapeUtils::shapeAsVector(in1);
             auto rank = shapeOf.size();

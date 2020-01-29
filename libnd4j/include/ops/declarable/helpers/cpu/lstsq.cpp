@@ -49,9 +49,10 @@ namespace helpers {
 //
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
+            leftOutput.printIndexedBuffer("Left OUTPUT (L matrix)");
             // 5. Solve two triangular systems:
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightOutput);
-            leftOutput.transposei();
+            leftOutput.transposei();leftOutput.printIndexedBuffer("Left OUTPUT transposed");
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, false, false, output);
             // All done
         }
