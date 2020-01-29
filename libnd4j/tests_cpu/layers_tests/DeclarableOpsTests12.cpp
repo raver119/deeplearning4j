@@ -3032,7 +3032,30 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
-    z->printIndexedBuffer("MatrixSolveLS");
+//    z->printIndexedBuffer("MatrixSolveLS");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, SolveLs_Test_2) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            1.f,  2.f,  3.f,            4.f,  5.f,  6.f,           11.f,  8.f, 21.f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 1}, { -0.24999914f,  0.4999994f, 0.08333314f });
+
+    nd4j::ops::lstsq op;
+
+    auto res = op.execute({&a, &b}, {}, {});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printIndexedBuffer("MatrixSolveLS2");
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
