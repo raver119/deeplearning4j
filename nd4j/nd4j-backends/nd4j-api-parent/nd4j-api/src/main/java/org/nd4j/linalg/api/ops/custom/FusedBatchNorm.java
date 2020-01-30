@@ -16,6 +16,7 @@
 package org.nd4j.linalg.api.ops.custom;
 
 import lombok.NonNull;
+import lombok.val;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -23,11 +24,14 @@ import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
+import org.nd4j.linalg.api.shape.LongShapeDescriptor;
+import org.nd4j.linalg.factory.Nd4j;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +56,13 @@ public class FusedBatchNorm extends DynamicCustomOp {
                           @NonNull SDVariable dataFormat, @NonNull SDVariable isTraining) {
         super("", sameDiff, new SDVariable[]{x, scale, offset, dataFormat, isTraining});
     }
+
+    public FusedBatchNorm(@NonNull SameDiff sameDiff, @NonNull SDVariable x, @NonNull SDVariable scale, @NonNull SDVariable offset,
+                          int dataFormat, int isTraining) {
+        super("", sameDiff, new SDVariable[]{x, scale, offset});
+        addIArgument(dataFormat, isTraining);
+    }
+
 
     @Override
     public String opName() {
@@ -78,6 +89,6 @@ public class FusedBatchNorm extends DynamicCustomOp {
     public List<DataType> calculateOutputDataTypes(List<DataType> inputDataTypes){
         int n = args().length;
         Preconditions.checkState(inputDataTypes != null && inputDataTypes.size() == n, "Expected %s input data types for %s, got %s", n, getClass(), inputDataTypes);
-        return Arrays.asList(outputDataType, DataType.FLOAT, DataType.FLOAT);   //Activations may be half, bfloat16, float32; mean/var is always float
+        return Arrays.asList(outputDataType == null ? DataType.FLOAT : outputDataType, DataType.FLOAT, DataType.FLOAT);   //Activations may be half, bfloat16, float32; mean/var is always float
     }
 }

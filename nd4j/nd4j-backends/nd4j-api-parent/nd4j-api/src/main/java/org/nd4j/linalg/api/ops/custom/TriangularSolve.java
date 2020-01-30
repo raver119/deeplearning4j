@@ -24,6 +24,12 @@ public class TriangularSolve extends DynamicCustomOp {
         super(sameDiff, new SDVariable[] {matrix, rhs, lower, adjoint});
     }
 
+    public TriangularSolve(SameDiff sameDiff, SDVariable matrix, SDVariable rhs,
+                           boolean lower, boolean adjoint) {
+        super(sameDiff, new SDVariable[] {matrix, rhs});
+        addBArgument(lower, adjoint);
+    }
+
     @Override
     public String opName() {
         return "triangular_solve";
