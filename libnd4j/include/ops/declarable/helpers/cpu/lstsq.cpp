@@ -34,6 +34,7 @@ namespace helpers {
 
     template <typename T>
     int leastSquaresSolveFunctor_(nd4j::LaunchContext* context, NDArray const* leftInput, NDArray const* rightInput, double const l2Regularizer, bool const fast, NDArray* output) {
+        NDArray::prepareSpecialUse({output}, {leftInput, rightInput});
         if (fast) { // Cholesky decomposition approach
             // Equation for solve A^T * Ax = A^T * b, so
             // 1. Computing A2:
@@ -41,12 +42,10 @@ namespace helpers {
             //tAtShape[tAtShape.size() - 2] = output->sizeAt(-2);
             NDArray leftOutput('c', tAtShape, output->dataType(), context);
             MmulHelper::matmul(leftInput, leftInput, &leftOutput, true, false); // Computing A2 = A^T * A
-            leftOutput.printIndexedBuffer("tAt");
             // 2. Computing B' = A^T * b
             auto rightOutput = output->ulike();
 
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
-            rightOutput.printIndexedBuffer("Right part at begin");
             // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
 //            auto regularizer = leftOutput.ulike();
 //            regularizer.setIdentity();
@@ -55,10 +54,9 @@ namespace helpers {
 //
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
-            leftOutput.printIndexedBuffer("Left OUTPUT (L matrix)");
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
-            auto leftOutputT = leftOutput.transpose();leftOutputT.printIndexedBuffer("Left OUTPUT transposed");
+            auto leftOutputT = leftOutput.transpose();
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
             helpers::triangularSolveFunctor(context, &leftOutputT, &rightB, false, false, output);
             // All done
@@ -79,6 +77,7 @@ namespace helpers {
             // 3. Solve triangular system
             helpers::triangularSolveFunctor(context, &R, &rightOutput, false, false, output);
         }
+        NDArray::registerSpecialUse({output}, {leftInput, rightInput});
         return Status::OK();
     }
 
