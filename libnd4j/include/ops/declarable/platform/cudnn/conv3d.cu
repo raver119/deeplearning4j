@@ -125,9 +125,9 @@ static void conv3dCUDNN(const LaunchContext* context,
         if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnAddTensor bias failed", err);
     }
 
-    // cudaErr = cudaStreamSynchronize(*context->getCudaStream());
-    // if (cudaErr != 0)
-    //     throw cuda_exception::build("conv3dCUDNN: cudaStreamSynchronize failed !", cudaErr);
+    cudaErr = cudaStreamSynchronize(*context->getCudaStream());
+    if (cudaErr != 0)
+        throw cuda_exception::build("conv3dCUDNN: cudaStreamSynchronize failed !", cudaErr);
 
     cudaErr = cudaFree(wsData);
     if (cudaErr != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudaFree for auxiliary workspace memory failed", cudaErr);

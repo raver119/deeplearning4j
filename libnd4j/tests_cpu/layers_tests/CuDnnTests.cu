@@ -66,6 +66,7 @@ TEST_F(CuDnnTests, helpers_includer) {
     nd4j::ops::platforms::PLATFORM_avgpool3dnew_bp_ENGINE_CUDA avgpool3dnew_bp;
     nd4j::ops::platforms::PLATFORM_maxpool3dnew_ENGINE_CUDA maxpool3dnew;
     nd4j::ops::platforms::PLATFORM_maxpool3dnew_bp_ENGINE_CUDA maxpool3dnew_bp;
+    nd4j::ops::platforms::PLATFORM_lstmLayer_ENGINE_CUDA lstmLayer;
 
 
 
@@ -85,6 +86,7 @@ TEST_F(CuDnnTests, helpers_includer) {
     printer({&avgpool3dnew_bp});
     printer({&maxpool3dnew});
     printer({&maxpool3dnew_bp});
+    printer({&lstmLayer});
 #endif
 }
 

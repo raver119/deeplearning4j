@@ -18,8 +18,8 @@
 // @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
-
 #include "cudnnUtils.h"
+#include<ops/declarable/helpers/transforms.h>
 
 namespace nd4j      {
 namespace ops       {
@@ -30,7 +30,6 @@ static void lstmLayerCUDNN(const LaunchContext* context,
                         const NDArray* x, const NDArray* w, const NDArray* b, const NDArray* seqLen, const NDArray* hI, const NDArray* cI,
                         NDArray* h, NDArray* hL, NDArray* cL,
                         const std::vector<float>& params) {
-
     // notations:
     // bS - batch size
     // sL - sequence length, number of time steps
@@ -96,43 +95,52 @@ static void lstmLayerCUDNN(const LaunchContext* context,
 
     const int numOfDirections = (params[1] /*directionMode*/ == 0 ) ? 1 : 2;
 
-    const Nd4jLong bS   = x->sizeAt(0);
-    const Nd4jLong nIn  = x->sizeAt(1);
-    const Nd4jLong sL   = x->sizeAt(2);
-    const Nd4jLong nOut = w->sizeAt(-1) / 4;
+    const int bS   = x->sizeAt(0);
+    const int nIn  = x->sizeAt(1);
+    const int sL   = x->sizeAt(2);
+    const int nOut = w->sizeAt(-1) / 4;
 
-    const std::vector<int> xShape = {bS, nIn, sL};
-    const std::vector<int> hShape = {bS, numOfDirections*nOut, sL};
+    int* seqLengthArray = nullptr;
+    if(seqLen != nullptr)
+        seqLengthArray = seqLen->bufferAsT<int>();
+    else {
+        seqLengthArray = new int[bS];
+        for (uint i = 0; i < bS; ++i)
+            seqLengthArray[i] = sL;
+    }
+
+    // const std::vector<int> xShape = {bS, nIn, sL};
+    // const std::vector<int> hShape = {bS, numOfDirections*nOut, sL};
     const std::vector<int> wShape = {1, numOfDirections*(nIn + nOut), 4*nOut};
     const std::vector<int> hIcIShape = {numOfDirections, bS, nOut};
 
     cudnnTensorFormat_t format = CUDNN_TENSOR_NCHW;
 
     // x descriptor
-    cudnnTensorDescriptor_t xDesc;
-    cudnnCreateTensorDescriptor(&xDesc);
-    auto err = cudnnSetTensorNdDescriptorEx(xDesc, format, cudnnDataType(x->dataType()), numDims, xShape.data());
-    if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetFilterNdDescriptor for x failed", err);
+    cudnnRNNDataDescriptor_t xDesc;
+    cudnnCreateRNNDataDescriptor(&xDesc);
+    err = cudnnSetRNNDataDescriptor(xDesc, cudnnDataType(x->dataType()), CUDNN_RNN_DATA_LAYOUT_SEQ_MAJOR_PACKED, sL, bS, nIn, seqLengthArray, nullptr);
+    if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetRNNDataDescriptor for x failed", err);
 
     // hI/cI/hL/cL, descriptor is same for all of them
     cudnnTensorDescriptor_t hcDesc;
     if(hI != nullptr || cI != nullptr || cL != nullptr || cL != nullptr) {
-        cudnnCreateTensorDescriptor(&hIcIDesc);
-        err = cudnnSetTensorNdDescriptorEx(hIcIDesc, format, cudnnDataType(hI != nullptr ? hI->dataType() : cI->dataType()), numDims, hIcIShape.data());
+        cudnnCreateTensorDescriptor(&hcDesc);
+        err = cudnnSetTensorNdDescriptorEx(hcDesc, format, cudnnDataType(hI != nullptr ? hI->dataType() : cI->dataType()), numDims, hIcIShape.data());
         if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetFilterNdDescriptor for hI/cI/hL/cL failed", err);
     }
 
     // weights descriptor
     cudnnFilterDescriptor_t wDesc;
     cudnnCreateFilterDescriptor(&wDesc);
-    err = cudnnSetFilterNdDescriptor(wDesc, cudnnDataType(weights->dataType()), format, numDims, wShape.data());
+    err = cudnnSetFilterNdDescriptor(wDesc, cudnnDataType(w->dataType()), format, numDims, wShape.data());
     if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetFilterNdDescriptor for weights failed", err);
 
     // h descriptor
-    cudnnTensorDescriptor_t hDesc;
-    cudnnCreateTensorDescriptor(&hDesc);
-    err = cudnnSetTensorNdDescriptorEx(hDesc, format, cudnnDataType(x->dataType()), numDims, hShape.data());
-    if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetFilterNdDescriptor for output h failed", err);
+    cudnnRNNDataDescriptor_t hDesc;
+    cudnnCreateRNNDataDescriptor(&hDesc);
+    err = cudnnSetRNNDataDescriptor(hDesc, cudnnDataType(h->dataType()), CUDNN_RNN_DATA_LAYOUT_SEQ_MAJOR_PACKED, sL, bS, nOut, seqLengthArray, nullptr);
+    if(err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetRNNDataDescriptor for h failed", err);
 
     // no dropout descriptor
     cudnnDropoutDescriptor_t dropoutDesc;
@@ -144,7 +152,7 @@ static void lstmLayerCUDNN(const LaunchContext* context,
     else if(x->dataType() == DataType::HALF)
         typeOfData = CUDNN_DATA_HALF;
 
-    cudnnConvolutionDescriptor_t lstmDesc;
+    cudnnRNNDescriptor_t lstmDesc;
     cudnnCreateRNNDescriptor(&lstmDesc);
     err = cudnnSetRNNDescriptor(*handle, lstmDesc, nOut, 1, dropoutDesc, CUDNN_LINEAR_INPUT,
                                 (numOfDirections == 1) ? CUDNN_UNIDIRECTIONAL : CUDNN_BIDIRECTIONAL,
@@ -153,20 +161,21 @@ static void lstmLayerCUDNN(const LaunchContext* context,
 
     // set clip value
     if(params[2] != 0) {    // params[2] == clipValue
-        err = cudnnRNNSetClip(*handle, lstmDesc, CUDNN_RNN_CLIP_MINMAX, -params[2], params[2], CUDNN_NOT_PROPAGATE_NAN);
+        err = cudnnRNNSetClip(*handle, lstmDesc, CUDNN_RNN_CLIP_MINMAX, CUDNN_NOT_PROPAGATE_NAN, -params[2], params[2]);
         if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnRNNSetClip failed", err);
     }
 
     // set bias mode
-    if(b != nullptr) {
-        err = cudnnStatus_t cudnnSetRNNBiasMode(lstmDesc, CUDNN_RNN_SINGLE_INP_BIAS);
-        if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetRNNBiasMode failed", err);
-    }
+    // if(b != nullptr) {
+    //     err = cudnnStatus_t cudnnSetRNNBiasMode(lstmDesc, CUDNN_RNN_SINGLE_INP_BIAS);
+    //     if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetRNNBiasMode failed", err);
+    // }
 
     // allocate amount of device memory necessary for lstm calculation process
     size_t workSpaceSizeInBytes;
-    err = cudnnGetRNNWorkspaceSize(*handle, lstmDesc, sL, xDesc, &workSpaceSizeInBytes);
-    if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnGetRNNWorkspaceSize failed", err);
+    workSpaceSizeInBytes = x->lengthOf() * x->sizeOfT();
+    // err = cudnnGetRNNWorkspaceSize(*handle, lstmDesc, sL, xDesc, &workSpaceSizeInBytes);
+    // if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnGetRNNWorkspaceSize failed", err);
     void* workSpace;
     auto cudaErr = cudaMalloc(&workSpace, workSpaceSizeInBytes);
     if (cudaErr != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudaMalloc for auxiliary workspace memory failed", cudaErr);
@@ -187,66 +196,14 @@ static void lstmLayerCUDNN(const LaunchContext* context,
                                      workSpace, workSpaceSizeInBytes);
     if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnRNNForwardInferenceEx failed", err);
 
+    cudaErr = cudaStreamSynchronize(*context->getCudaStream());
+    if (cudaErr != 0)
+        throw cuda_exception::build("lstmLayerCUDNN: cudaStreamSynchronize failed !", cudaErr);
 
     NDArray::registerSpecialUse({h, hL, cL}, {x, w, b, seqLen, hI, cI});
 
-
-
-
-
-
-
-
-
-
-
-
-    // description of convolution
-    cudnnConvolutionDescriptor_t conv;
-    cudnnCreateConvolutionDescriptor(&conv);
-    err = cudnnSetConvolutionNdDescriptor(conv, numDims-2, pads.data(), filtStrides.data(), dilations.data(), CUDNN_CROSS_CORRELATION, cudnnDataType(output->dataType()));
-    if (err != 0) throw nd4j::cuda_exception::build("lstmLayerCUDNN: cudnnSetConvolutionNdDescriptor failed", err);
-
-    // algorithm description
-    cudnnConvolutionFwdAlgo_t algo;
-    err = cudnnGetConvolutionForwardAlgorithm(*handle, x, w, conv, z, CUDNN_CONVOLUTION_FWD_PREFER_FASTEST, 0, &algo);
-    if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnGetConvolutionForwardAlgorithm failed", err);
-
-    // allocate auxiliary device memory, abbreviation ws means workspace
-    size_t wsSize;
-    err = cudnnGetConvolutionForwardWorkspaceSize(*handle, x, w, conv, z, algo, &wsSize);
-    if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnGetConvolutionForwardWorkspaceSize failed", err);
-    void* wsData;
-    auto cudaErr = cudaMalloc(&wsData, wsSize);
-    if (cudaErr != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudaMalloc for auxiliary workspace memory failed", cudaErr);
-
-
-
-    NDArray::prepareSpecialUse({output}, {input, weights, bias});
-
-    // run calculation
-    err = cudnnConvolutionForward(*handle, alpha, x, input->getSpecialBuffer(), w, weights->getSpecialBuffer(), conv, algo, wsData, wsSize, beta, z, output->specialBuffer());
-    if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnConvolutionForward failed", err);
-
-    // add bias if it is present
-    if (bias != nullptr) {
-
-        cudnnTensorDescriptor_t b;
-        cudnnCreateTensorDescriptor(&b);
-        err = cudnnSetTensorNdDescriptorEx(b, format, cudnnDataType(bias->dataType()), numDims, bShape.data());
-        if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnSetTensorNdDescriptor for bias failed", err);
-        err = cudnnAddTensor(*handle, alpha, b, bias->getSpecialBuffer(), alpha, z, output->specialBuffer());
-        if (err != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudnnAddTensor bias failed", err);
-    }
-
-    // cudaErr = cudaStreamSynchronize(*context->getCudaStream());
-    // if (cudaErr != 0)
-    //     throw cuda_exception::build("conv3dCUDNN: cudaStreamSynchronize failed !", cudaErr);
-
-    cudaErr = cudaFree(wsData);
-    if (cudaErr != 0) throw nd4j::cuda_exception::build("conv3dCUDNN: cudaFree for auxiliary workspace memory failed", cudaErr);
-
-    NDArray::registerSpecialUse({output}, {input, weights, bias});
+    if(seqLen = nullptr)
+        delete []seqLengthArray;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -448,14 +405,21 @@ PLATFORM_IMPL(lstmLayer, ENGINE_CUDA) {
     // cudnn requires only one weights array
     NDArray w(Wx->ordering(), {numOfDirections * (nIn + nOut), 4*nOut}, Wx->dataType(), Wx->getContext());
     if(numOfDirections == 1)
-        helpers::concat(block.launchContext(), {Wx, Wr}, w, {0});
+        helpers::concat(block.launchContext(), {Wx, Wr}, w, 0);
     else {
-        w({0,nIn,    0,0}).assign(*Wx({0,1, 0,0, 0,0}));
-        w({nIn,nOut, 0,0}).assign(*Wr({0,1, 0,0, 0,0}));
-        w({nIn+nOut,2*nIn+nOut, 0,0}).assign(*Wx({1,2, 0,0, 0,0}));
-        w({2*nIn+nOut,-1,       0,0}).assign(*Wr({1,2, 0,0, 0,0}));
+        NDArray WxForward  = (*Wx)({0,1, 0,0, 0,0});
+        NDArray WrForward  = (*Wr)({0,1, 0,0, 0,0});
+        NDArray WxBackward = (*Wx)({1,2, 0,0, 0,0});
+        NDArray WrBackward = (*Wr)({1,2, 0,0, 0,0});
+
+        helpers::concat(block.launchContext(), {&WxForward, &WrForward, &WxBackward, &WrBackward}, w, 0);  // nIn + nOut + nIn + nOut = 2 * (nIn + nOut)
+        // w({0,nIn,    0,0}).assign((*Wx)({0,1, 0,0, 0,0}));
+        // w({nIn,nOut, 0,0}).assign((*Wr)({0,1, 0,0, 0,0}));
+        // w({nIn+nOut,2*nIn+nOut, 0,0}).assign((*Wx)({1,2, 0,0, 0,0}));
+        // w({2*nIn+nOut,-1,       0,0}).assign((*Wr)({1,2, 0,0, 0,0}));
     }
 
+    lstmLayerCUDNN(block.launchContext(), x, &w, b, seqLen, hI, cI, h, hL, cL, params);
 
     return Status::OK();
 }
@@ -470,7 +434,7 @@ PLATFORM_CHECK(lstmLayer, ENGINE_CUDA) {
     const auto dataFormat    = INT_ARG(0);    // for unidirectional: 0 = [sL, bS, nIn], 1 = [bS, sL ,nIn], 2 = [bS, nIn, sL], for bidirectional: 3 = [sL, 2, bS, nOut] (ONNX)
     const auto directionMode = INT_ARG(1);    // direction: 0 = fwd, 1 = bwd, 2 = bidirectional sum, 3 = bidirectional concat, 4 = bidirectional extra output dim (in conjunction with format dataFormat = 3)
 
-    if(dataFormat != 2 || directionMode != 0 || directionMode != 3)
+    if(dataFormat != 2 || (directionMode != 0 && directionMode != 3))
         return false;
 
     const auto gateAct = INT_ARG(2);    // activation for input (i), forget (f) and output (o) gates, 2==sigmoid is supported only

@@ -46,8 +46,6 @@ namespace platforms {
     DECLARE_PLATFORM(batchnorm, ENGINE_CUDA);
     DECLARE_PLATFORM(batchnorm_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(lstmLayer, ENGINE_CUDA);
-    
     DECLARE_PLATFORM(avgpool2d, ENGINE_CUDA);
     DECLARE_PLATFORM(avgpool2d_bp, ENGINE_CUDA);
 
@@ -59,6 +57,8 @@ namespace platforms {
 
     DECLARE_PLATFORM(maxpool3dnew, ENGINE_CUDA);
     DECLARE_PLATFORM(maxpool3dnew_bp, ENGINE_CUDA);
+
+    DECLARE_PLATFORM(lstmLayer, ENGINE_CUDA);
 
 //////////////////////////////////////////////////////////////////////////
 FORCEINLINE cudnnDataType_t cudnnDataType(nd4j::DataType dataType) {
