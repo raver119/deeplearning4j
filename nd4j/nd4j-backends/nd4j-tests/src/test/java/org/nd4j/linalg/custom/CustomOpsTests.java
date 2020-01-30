@@ -34,6 +34,7 @@ import org.nd4j.linalg.api.ops.executioner.OpStatus;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
+import org.nd4j.linalg.api.ops.impl.image.ResizeArea;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.shape.Create;
@@ -969,6 +970,33 @@ public class CustomOpsTests extends BaseNd4jTest {
     }
 
     @Test
+    public void testResizeArea1() {
+
+        INDArray x = Nd4j.rand(DataType.FLOAT, 1, 2,3,4);
+        INDArray z = Nd4j.createUninitialized(DataType.FLOAT, 1, 10, 10, 4);
+        ResizeArea op = new ResizeArea(x, z, 10, 10, false);
+        Nd4j.exec(op);
+    }
+
+    @Test
+    public void testResizeArea2() {
+
+        INDArray image = Nd4j.linspace(DataType.FLOAT, 1.0f, 1.0f, 9 ).reshape(1,3,3,1);
+        INDArray output = Nd4j.createUninitialized(DataType.FLOAT, 1, 6, 6, 1);
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.f, 1.f, 2.f, 2.f, 3.f, 3.f,
+                1.f, 1.f, 2.f, 2.f, 3.f, 3.f,
+                4.f, 4.f, 5.f, 5.f, 6.f, 6.f,
+                4.f, 4.f, 5.f, 5.f, 6.f, 6.f,
+                7.f, 7.f, 8.f, 8.f, 9.f, 9.f,
+                7.f, 7.f, 8.f, 8.f, 9.f, 9.f
+        }).reshape(1,6,6,1);
+        ResizeArea op = new ResizeArea(image, output, 6, 6, false);
+        Nd4j.exec(op);
+        assertEquals(expected, output);
+    }
+
+    @Test
     public void testCompareAndBitpack() {
         INDArray in = Nd4j.createFromArray(new double[]{-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f,
                 -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f}).reshape( 2,3,4);
@@ -1624,5 +1652,28 @@ public class CustomOpsTests extends BaseNd4jTest {
         RgbToYiq op = new RgbToYiq(image);
         INDArray[] ret = Nd4j.exec(op);
         assertArrayEquals(image.shape(), ret[0].shape());
+    }
+
+    @Test
+    public void testTriangularSolve() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                3.f, 0.f, 0.f, 0.f,
+                2.f, 1.f, 0.f, 0.f,
+                1.f, 0.f, 1.f, 0.f,
+                1.f, 1.f, 1.f, 1.f
+        }).reshape(4, 4);
+
+        INDArray b = Nd4j.createFromArray(new float[]{
+                4.f, 2.f, 4.f, 2.f
+        }).reshape(4, 1);
+
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.333333f, -0.6666667f, 2.6666667f, -1.3333333f
+        }).reshape(4, 1);
+
+        val op = new TriangularSolve(a, b, true, false);
+        INDArray[] ret = Nd4j.exec(op);
+
+        assertEquals(expected, ret[0]);
     }
 }
