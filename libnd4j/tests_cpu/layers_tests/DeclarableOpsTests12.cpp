@@ -2969,7 +2969,7 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_4) {
 
     nd4j::ops::triangular_solve op;
 
-    auto res = op.evaluate({&a, &b}, {}, {}, {false});
+    auto res = op.evaluate({&a, &b}, {false});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
@@ -2999,7 +2999,7 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_5) {
 
     nd4j::ops::triangular_solve op;
 
-    auto res = op.evaluate({&a, &b}, {}, {}, {false, true});
+    auto res = op.evaluate({&a, &b}, {false, true});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
@@ -3028,7 +3028,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
 
     nd4j::ops::lstsq op;
 
-    auto res = op.execute({&a, &b}, {}, {});
+    auto res = op.evaluate({&a, &b});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
@@ -3051,7 +3051,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_2) {
 
     nd4j::ops::lstsq op;
 
-    auto res = op.execute({&a, &b}, {}, {});
+    auto res = op.evaluate({&a, &b});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
@@ -3074,7 +3074,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
 
     nd4j::ops::lstsq op;
 
-    auto res = op.execute({&a, &b}, {}, {});
+    auto res = op.evaluate({&a, &b});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
