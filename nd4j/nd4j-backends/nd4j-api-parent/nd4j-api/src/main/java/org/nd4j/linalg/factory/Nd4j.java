@@ -83,9 +83,9 @@ import org.nd4j.linalg.env.EnvironmentalAction;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.exception.ND4JUnknownDataTypeException;
 import org.nd4j.linalg.factory.Nd4jBackend.NoAvailableBackendException;
-import org.nd4j.linalg.memory.BasicMemoryManager;
-import org.nd4j.linalg.memory.MemoryManager;
-import org.nd4j.linalg.memory.deallocation.DeallocatorService;
+import org.nd4j.linalg.api.memory.BasicMemoryManager;
+import org.nd4j.linalg.api.memory.MemoryManager;
+import org.nd4j.linalg.api.memory.deallocation.DeallocatorService;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.linalg.string.NDArrayStrings;
 import org.nd4j.linalg.util.ArrayUtil;
@@ -3436,6 +3436,16 @@ public class Nd4j {
      */
     public static INDArray create(float[][][] data) {
         return create(ArrayUtil.flatten(data), data.length, data[0].length, data[0][0].length);
+    }
+
+    /**
+     * Create 2D double array based on java 2d double array. and ordering
+     *
+     * @param data the data to use
+     * @return the created ndarray.
+     */
+    public static INDArray create(int[][] data) {
+        return createFromArray(data);
     }
 
     /**

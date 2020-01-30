@@ -16,10 +16,8 @@
 
 package org.nd4j.linalg.custom;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.BaseNd4jTest;
@@ -38,6 +36,7 @@ import org.nd4j.linalg.api.ops.impl.image.ResizeArea;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.shape.Create;
+import org.nd4j.linalg.api.ops.impl.shape.OnesLike;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.AddOp;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.ModOp;
@@ -53,7 +52,6 @@ import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Float.NaN;
@@ -1675,5 +1673,14 @@ public class CustomOpsTests extends BaseNd4jTest {
         INDArray[] ret = Nd4j.exec(op);
 
         assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testOnesLike_1() {
+        val x = Nd4j.create(DataType.FLOAT, 3, 4, 5);
+        val e = Nd4j.ones(DataType.INT32, 3, 4, 5);
+
+        val z = Nd4j.exec(new OnesLike(x, DataType.INT32))[0];
+        assertEquals(e, z);
     }
 }

@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019-2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -28,6 +29,7 @@
 #include <RandomGenerator.h>
 #include <ops/declarable/OpDescriptor.h>
 #include <execution/Engine.h>
+#include <execution/ExecutionMode.h>
 
 #ifndef __STANDALONE_BUILD__
 #include <config.h>
@@ -45,6 +47,9 @@ namespace nd4j {
             std::vector<int> _iArgs;
             std::vector<bool> _bArgs;
             std::vector<int> _axis;
+            std::vector<nd4j::DataType> _dArgs;
+
+            // TODO: remove this field
 			nd4j::DataType _dataType = nd4j::DataType::FLOAT32;
 			bool _isInplace;
 
@@ -60,6 +65,8 @@ namespace nd4j {
 
             // target engine for execution
             samediff::Engine _engine = DEFAULT_ENGINE;
+
+            samediff::ExecutionMode _execMode = samediff::ExecutionMode::MODE_UNDEFINED;
         public:
             explicit ContextPrototype(nd4j::ops::OpDescriptor* opDescriptor = nullptr, int nodeId = 1, bool inPlace = false);
             ~ContextPrototype() = default;
@@ -89,6 +96,7 @@ namespace nd4j {
             std::vector<double>* getTArguments();
             std::vector<int>* getIArguments();
             std::vector<bool>* getBArguments();
+            std::vector<nd4j::DataType>* getDArguments();
             std::vector<int>* getAxis();
 
             samediff::Engine engine();
@@ -96,6 +104,7 @@ namespace nd4j {
             size_t numT();
             size_t numI();
             size_t numB();
+            size_t numD();
 
             std::pair<int, int>* input(int idx);
 
