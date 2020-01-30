@@ -276,7 +276,7 @@ public class PythonExecutioner {
         simpleExec(getWrappedCode(code));
     }
 
-    public static void exec(String code, PythonVariables outputVariables)throws Exception {
+    public static void exec(String code, PythonVariables outputVariables)throws PythonException {
         simpleExec(getWrappedCode(code));
         getVariables(outputVariables);
     }

@@ -30,21 +30,21 @@ public class TestPythonContextManager {
 
     @Test
     public void testInt() throws Exception{
-        PythonContextManager.setContext("context1");
-        PythonExecutioner.exec("a = 1");
-        PythonContextManager.setContext("context2");
-        PythonExecutioner.exec("a = 2");
-        PythonContextManager.setContext("context3");
-        PythonExecutioner.exec("a = 3");
+        Python.setContext("context1");
+        Python.exec("a = 1");
+        Python.setContext("context2");
+        Python.exec("a = 2");
+        Python.setContext("context3");
+        Python.exec("a = 3");
 
 
-        PythonContextManager.setContext("context1");
+        Python.setContext("context1");
         Assert.assertEquals(1, PythonExecutioner.getVariable("a").toInt());
 
-        PythonContextManager.setContext("context2");
+        Python.setContext("context2");
         Assert.assertEquals(2, PythonExecutioner.getVariable("a").toInt());
 
-        PythonContextManager.setContext("context3");
+        Python.setContext("context3");
         Assert.assertEquals(3, PythonExecutioner.getVariable("a").toInt());
 
         PythonContextManager.deleteNonMainContexts();
@@ -52,35 +52,35 @@ public class TestPythonContextManager {
 
     @Test
     public void testNDArray() throws Exception{
-        PythonContextManager.setContext("context1");
-        PythonExecutioner.exec("import numpy as np");
-        PythonExecutioner.exec("a = np.zeros((3,2)) + 1");
+        Python.setContext("context1");
+        Python.exec("import numpy as np");
+        Python.exec("a = np.zeros((3,2)) + 1");
 
-        PythonContextManager.setContext("context2");
-        PythonExecutioner.exec("import numpy as np");
-        PythonExecutioner.exec("a = np.zeros((3,2)) + 2");
+        Python.setContext("context2");
+        Python.exec("import numpy as np");
+        Python.exec("a = np.zeros((3,2)) + 2");
 
-        PythonContextManager.setContext("context3");
-        PythonExecutioner.exec("import numpy as np");
-        PythonExecutioner.exec("a = np.zeros((3,2)) + 3");
+        Python.setContext("context3");
+        Python.exec("import numpy as np");
+        Python.exec("a = np.zeros((3,2)) + 3");
 
-        PythonContextManager.setContext("context1");
-        PythonExecutioner.exec("a += 1");
+        Python.setContext("context1");
+        Python.exec("a += 1");
 
-        PythonContextManager.setContext("context2");
-        PythonExecutioner.exec("a += 2");
+        Python.setContext("context2");
+        Python.exec("a += 2");
 
-        PythonContextManager.setContext("context3");
-        PythonExecutioner.exec("a += 3");
+        Python.setContext("context3");
+        Python.exec("a += 3");
 
         INDArray arr = Nd4j.create(DataType.DOUBLE, 3, 2);
-        PythonContextManager.setContext("context1");
+        Python.setContext("context1");
         Assert.assertEquals(arr.add(2), PythonExecutioner.getVariable("a").toNumpy().getNd4jArray());
 
-        PythonContextManager.setContext("context2");
+        Python.setContext("context2");
         Assert.assertEquals(arr.add(4), PythonExecutioner.getVariable("a").toNumpy().getNd4jArray());
 
-        PythonContextManager.setContext("context3");
+        Python.setContext("context3");
         Assert.assertEquals(arr.add(6), PythonExecutioner.getVariable("a").toNumpy().getNd4jArray());
     }
 

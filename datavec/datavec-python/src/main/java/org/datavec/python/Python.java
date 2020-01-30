@@ -211,10 +211,10 @@ public class Python {
     public static void exec(String code)throws PythonException{
         PythonExecutioner.exec(code);
     }
-    public static void exec(String code, PythonVariables inputs) throws Exception{
+    public static void exec(String code, PythonVariables inputs) throws PythonException{
         PythonExecutioner.exec(code, inputs);
     }
-    public static void exec(String code, PythonVariables inputs, PythonVariables outputs) throws Exception{
+    public static void exec(String code, PythonVariables inputs, PythonVariables outputs) throws PythonException{
         PythonExecutioner.exec(code, inputs, outputs);
     }
 
