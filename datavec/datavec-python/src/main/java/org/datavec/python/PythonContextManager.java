@@ -39,7 +39,7 @@ public class PythonContextManager {
     private static Set<String> contexts = new HashSet<>();
     private static AtomicBoolean init = new AtomicBoolean(false);
     private static String currentContext;
-
+    private static final String MAIN_CONTEXT = "main";
     static {
         init();
     }
@@ -48,7 +48,7 @@ public class PythonContextManager {
         if (init.get()) return;
         new PythonExecutioner();
         init.set(true);
-        currentContext = "main";
+        currentContext = MAIN_CONTEXT;
         contexts.add(currentContext);
     }
 
@@ -138,7 +138,7 @@ public class PythonContextManager {
     }
 
     public static void deleteContext(String contextName) throws PythonException {
-        if (contextName.equals("main")) {
+        if (contextName.equals(MAIN_CONTEXT)) {
             throw new PythonException("Can not delete main context!");
         }
         if (contextName.equals(currentContext)) {
@@ -160,13 +160,15 @@ public class PythonContextManager {
 
     public static void deleteNonMainContexts() {
         try{
-            setContext("main"); // will never fail
+            setContext(MAIN_CONTEXT); // will never fail
         for (String c : contexts.toArray(new String[0])) {
-            if (!c.equals("main")) {
+            if (!c.equals(MAIN_CONTEXT)) {
                 deleteContext(c); // will never fail
             }
         }
-        }catch(Exception e){}
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     public String[] getContexts() {

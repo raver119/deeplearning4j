@@ -15,6 +15,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
+
 package org.datavec.python;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,58 @@ import static org.bytedeco.cpython.global.python.*;
 import static org.bytedeco.cpython.global.python.PyThreadState_Get;
 import static org.datavec.python.Python.*;
 
+/**
+ *  Allows execution of python scripts managed by
+ *  an internal interpreter.
+ *  An end user may specify a python script to run
+ *  via any of the execution methods available in this class.
+ *
+ *  At static initialization time (when the class is first initialized)
+ *  a number of components are setup:
+ *  1. The python path. A user may over ride this with the system property {@link #DEFAULT_PYTHON_PATH_PROPERTY}
+ *
+ *  2. Since this executioner uses javacpp to manage and run python interpreters underneath the covers,
+ *  a user may also over ride the system property {@link #JAVACPP_PYTHON_APPEND_TYPE} with one of the {@link JavaCppPathType}
+ *  values. This will allow the user to determine whether the javacpp default python path is used at all, and if so
+ *  whether it is appended, prepended, or not used. This behavior is useful when you need to use an external
+ *  python distribution such as anaconda.
+ *
+ *  3. A proper numpy import for use with javacpp: We call numpy import ourselves to ensure proper loading of
+ *  native libraries needed by numpy are allowed to load in the proper order. If we don't do this,
+ *  it causes a variety of issues with running numpy. (User must still include "import numpy as np" in their scripts).
+ *
+ *  4. Various python scripts pre defined on the classpath included right with the java code.
+ *  These are auxillary python scripts used for loading classes, pre defining certain kinds of behavior
+ *  in order for us to manipulate values within the python memory, as well as pulling them out of memory
+ *  for integration within the internal python executioner.
+ *
+ *  For more information on how this works, please take a look at the {@link #init()}
+ *  method.
+ *
+ *  Generally, a user defining a python script for use by the python executioner
+ *  will have a set of defined target input values and output values.
+ *  These values should not be present when actually running the script, but just referenced.
+ *  In order to test your python script for execution outside the engine,
+ *  we recommend commenting out a few default values as dummy input values.
+ *  This will allow an end user to test their script before trying to use the server.
+ *
+ *  In order to get output values out of a python script, all a user has to do
+ *  is define the output variables they want being used in the final output in the actual pipeline.
+ *  For example, if a user wants to return a dictionary, they just have to create a dictionary with that name
+ *  and based on the configured {@link PythonVariables} passed as outputs
+ *  to one of the execution methods, we can pull the values out automatically.
+ *
+ *  For input definitions, it is similar. You just define the values you want used in
+ *  {@link PythonVariables} and we will automatically generate code for defining those values
+ *  as desired for running. This allows the user to customize values dynamically
+ *  at runtime but reference them by name in a python script.
+ *
+ *
+ *  @author Fariz Rahman
+ *  @author Adam Gibson
+ */
+
+
 @Slf4j
 public class PythonExecutioner {
 
@@ -53,7 +106,7 @@ public class PythonExecutioner {
         if (init.get()) {
             return;
         }
-        setPythonPath();
+        initPythonPath();
         init.set(true);
         log.info("CPython: PyEval_InitThreads()");
         PyEval_InitThreads();
@@ -68,7 +121,7 @@ public class PythonExecutioner {
 
         int result = PyRun_SimpleStringFlags(code, null);
         if (result != 0) {
-            log.info("CPython: PyErr_Print");
+            log.error("CPython: PyErr_Print");
             PyErr_Print();
             throw new PythonException("exec failed"); // TODO: Surface actual python error here
         }
@@ -322,7 +375,7 @@ public class PythonExecutioner {
      * but if you need to set it from code, this can work as well.
      */
 
-    public static synchronized void setPythonPath() {
+    public static synchronized void initPythonPath() {
         if (!init.get()) {
             try {
                 String path = System.getProperty(DEFAULT_PYTHON_PATH_PROPERTY);
@@ -345,7 +398,7 @@ public class PythonExecutioner {
 
                             sb.append(path);
 
-                            log.info("Prepending javacpp python path " + sb.toString());
+                            log.info("Prepending javacpp python path: {}", sb.toString());
                             break;
                         case AFTER:
                             sb.append(path);
@@ -364,7 +417,7 @@ public class PythonExecutioner {
                     }
 
                     //prepend the javacpp packages
-                    log.info("Final python path " + sb.toString());
+                    log.info("Final python path: {}", sb.toString());
 
                     Py_SetPath(sb.toString());
                 }

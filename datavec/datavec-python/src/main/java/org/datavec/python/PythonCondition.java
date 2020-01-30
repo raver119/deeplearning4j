@@ -16,14 +16,14 @@
 
 package org.datavec.python;
 
-import org.datavec.api.transform.ColumnType;
 import org.datavec.api.transform.condition.Condition;
 import org.datavec.api.transform.schema.Schema;
 import org.datavec.api.writable.*;
-
 import java.util.List;
 
 import static org.datavec.python.PythonUtils.schemaToPythonVariables;
+import static org.nd4j.base.Preconditions.checkNotNull;
+import static org.nd4j.base.Preconditions.checkState;
 
 /**
  * Lets a condition be defined as a python method f that takes no arguments
@@ -41,8 +41,8 @@ public class PythonCondition implements Condition {
 
 
     public PythonCondition(String pythonCode) {
-        org.nd4j.base.Preconditions.checkNotNull("Python code must not be null!", pythonCode);
-        org.nd4j.base.Preconditions.checkState(pythonCode.length() >= 1, "Python code must not be empty!");
+        checkNotNull("Python code must not be null!", pythonCode);
+        checkState(!pythonCode.isEmpty(), "Python code must not be empty!");
         code = pythonCode;
     }
 

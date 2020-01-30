@@ -30,7 +30,7 @@ public class PythonGIL implements AutoCloseable {
     private static PyThreadState mainThreadState;
 
     static {
-        log.info("CPython: PyThreadState_Get()");
+        log.debug("CPython: PyThreadState_Get()");
         mainThreadState = PyThreadState_Get();
     }
 
@@ -48,21 +48,21 @@ public class PythonGIL implements AutoCloseable {
     }
 
     private static synchronized void acquire() {
-        log.info("acquireGIL()");
-        log.info("CPython: PyEval_SaveThread()");
+        log.debug("acquireGIL()");
+        log.debug("CPython: PyEval_SaveThread()");
         mainThreadState = PyEval_SaveThread();
-        log.info("CPython: PyThreadState_New()");
+        log.debug("CPython: PyThreadState_New()");
         PyThreadState ts = PyThreadState_New(mainThreadState.interp());
-        log.info("CPython: PyEval_RestoreThread()");
+        log.debug("CPython: PyEval_RestoreThread()");
         PyEval_RestoreThread(ts);
-        log.info("CPython: PyThreadState_Swap()");
+        log.debug("CPython: PyThreadState_Swap()");
         PyThreadState_Swap(ts);
     }
 
     private static synchronized void release() {
-        log.info("CPython: PyEval_SaveThread()");
+        log.debug("CPython: PyEval_SaveThread()");
         PyEval_SaveThread();
-        log.info("CPython: PyEval_RestoreThread()");
+        log.debug("CPython: PyEval_RestoreThread()");
         PyEval_RestoreThread(mainThreadState);
     }
 }

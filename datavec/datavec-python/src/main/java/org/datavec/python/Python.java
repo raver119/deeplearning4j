@@ -191,4 +191,36 @@ public class Python {
         return PyCallable_Check(pythonObject.getNativePythonObject()) == 1;
     }
 
+
+    public static void setContext(String context) throws PythonException{
+        PythonContextManager.setContext(context);
+    }
+
+    public static String getCurrentContext(){
+        return PythonContextManager.getCurrentContext();
+    }
+
+    public static void deleteContext(String context) throws PythonException{
+        PythonContextManager.deleteContext(context);
+    }
+
+    public static void deleteNonMainContexts(){
+        PythonContextManager.deleteNonMainContexts();
+    }
+
+    public static void exec(String code)throws PythonException{
+        PythonExecutioner.exec(code);
+    }
+    public static void exec(String code, PythonVariables inputs) throws Exception{
+        PythonExecutioner.exec(code, inputs);
+    }
+    public static void exec(String code, PythonVariables inputs, PythonVariables outputs) throws Exception{
+        PythonExecutioner.exec(code, inputs, outputs);
+    }
+
+    public static PythonGIL lock(){
+        return PythonGIL.lock();
+    }
+
+
 }

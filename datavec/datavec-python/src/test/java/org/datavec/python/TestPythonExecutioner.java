@@ -23,6 +23,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 @javax.annotation.concurrent.NotThreadSafe
@@ -230,15 +231,11 @@ public class TestPythonExecutioner {
 
         String code = "z = x + a";
 
-        boolean errored = false;
-        try {
+        try{
             PythonExecutioner.exec(code, pyInputs, pyOutputs);
+            fail("No exception thrown");
+        } catch (PythonException pe ){
         }
-        catch (PythonException pe){
-            errored = true;
-        }
-
-        Assert.assertEquals(true, errored);
     }
 
 }
