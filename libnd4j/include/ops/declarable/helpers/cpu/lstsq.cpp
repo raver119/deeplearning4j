@@ -58,17 +58,21 @@ namespace helpers {
             leftOutput.printIndexedBuffer("Left OUTPUT (L matrix)");
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
+            auto leftOutputT = leftOutput.transpose();leftOutputT.printIndexedBuffer("Left OUTPUT transposed");
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
-            leftOutput.transposei();leftOutput.printIndexedBuffer("Left OUTPUT transposed");
-            helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
+            helpers::triangularSolveFunctor(context, &leftOutputT, &rightB, false, false, output);
             // All done
         }
         else { // QR decomposition approach
             // Equation for solve Rx = Q^T * b, where A = Q * R, where Q - orthogonal matrix, and R - upper triangular
             // 1. QR decomposition
-            auto Q = leftInput->ulike();
-            auto R = rightInput->ulike();
-            helpers::qr(context, leftInput, &Q, &R, false);
+            auto qShape = leftInput->getShapeAsVector();
+            auto rShape = leftInput->getShapeAsVector();
+            qShape[leftInput->rankOf() - 1] = leftInput->sizeAt(-2);
+
+            NDArray Q(leftInput->ordering(), qShape, leftInput->dataType(), context);// = leftInput->ulike();
+            NDArray R(leftInput->ordering(), rShape, leftInput->dataType(), context); // = rightInput->ulike();
+            helpers::qr(context, leftInput, &Q, &R, true);
             // 2. b` = Q^t * b:
             auto rightOutput = rightInput->ulike();
             MmulHelper::matmul(&Q, rightInput, &rightOutput, true, false);

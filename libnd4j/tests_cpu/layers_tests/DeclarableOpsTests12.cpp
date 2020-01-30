@@ -3070,7 +3070,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
 
     auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
 
-    auto exp = NDArrayFactory::create<float>('c', {4, 1}, { -0.5f,   1.5f,   -1.f, -1.f });
+    auto exp = NDArrayFactory::create<float>('c', {4, 1}, { -0.5f,   1.5f,   -2.f, 0.f });
 
     nd4j::ops::lstsq op;
 
@@ -3078,7 +3078,30 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
-    z->printIndexedBuffer("MatrixSolveLS3");
+//    z->printIndexedBuffer("MatrixSolveLS3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, SolveLs_Test_4) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 4}, {
+            1.f,1.f,0.f,0.f,-1.f,1.f,0.f,0.f,1.f,1.f,-1.f,-1.f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
+
+    auto exp = NDArrayFactory::create<float>('c', {4, 1}, { -0.5f,   1.5f,   -2.f, 0.f });
+
+    nd4j::ops::lstsq op;
+
+    auto res = op.evaluate({&a, &b}, {false});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printIndexedBuffer("MatrixSolveLS4");
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
