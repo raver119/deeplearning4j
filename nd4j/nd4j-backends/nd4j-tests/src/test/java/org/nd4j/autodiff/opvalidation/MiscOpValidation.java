@@ -1977,6 +1977,7 @@ public class MiscOpValidation extends BaseOpValidation {
                 0, 1, 2
         });
 
+        sameDiff.loss.l2Loss(input1);
         SDVariable[] output = new Lu(sameDiff, input1).outputVariables();
 
         TestCase tc = new TestCase(sameDiff)
