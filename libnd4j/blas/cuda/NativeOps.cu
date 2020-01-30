@@ -2684,7 +2684,7 @@ const char* getAllCustomOps() {
 }
 
 
-nd4j::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, nd4j::ops::DeclarableOp* op, Nd4jPointer* inputBuffers, Nd4jPointer* inputShapes, int numInputShapes, double* tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs, int numBArgs) {
+nd4j::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, nd4j::ops::DeclarableOp* op, Nd4jPointer* inputBuffers, Nd4jPointer* inputShapes, int numInputShapes, double* tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs, int numBArgs, int *dArgs, int numDArgs) {
     nd4j::graph::VariableSpace varSpace;
     Context block(2, &varSpace);
     nd4j::ShapeList inShapes;
@@ -2697,6 +2697,9 @@ nd4j::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, nd4j::ops::D
 
 	for (int e = 0; e < numBArgs; e++)
 		block.getBArguments()->push_back(bArgs[e]);
+
+    for (int e = 0; e < numDArgs; e++)
+        block.getDArguments()->push_back((nd4j::DataType) dArgs[e]);
 
 	for (int e = 0; e < numInputShapes; e++) {
 		auto shape_ = reinterpret_cast<Nd4jLong *>(inputShapes[e]);
@@ -2722,12 +2725,12 @@ nd4j::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, nd4j::ops::D
     return shapeList;
 }
 
-nd4j::ShapeList* calculateOutputShapes2(Nd4jPointer* extraPointers, Nd4jLong hash, Nd4jPointer* inputBuffers, Nd4jPointer* inputShapes, int numInputShapes, double* tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs, int numBArgs) {
+nd4j::ShapeList* calculateOutputShapes2(Nd4jPointer* extraPointers, Nd4jLong hash, Nd4jPointer* inputBuffers, Nd4jPointer* inputShapes, int numInputShapes, double* tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs, int numBArgs, int *dArgs, int numDArgs) {
     try {
         auto op = nd4j::ops::OpRegistrator::getInstance()->getOperation(hash);
 
         return _calculateOutputShapes(extraPointers, op, inputBuffers, inputShapes, numInputShapes, tArgs, numTArgs,
-                                      iArgs, numIArgs, bArgs, numBArgs);
+                                      iArgs, numIArgs, bArgs, numBArgs, dArgs, numDArgs);
     } catch (std::exception &e) {
         nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
         nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
@@ -2831,7 +2834,7 @@ static FORCEINLINE Nd4jStatus realExec(nd4j::ops::DeclarableOp* op, Nd4jPointer*
 
 
 	// hypothetically at this point we have everything filled
-	auto dZ = op->execute(inputs, outputs, ttArgs, iiArgs, bbArgs, isInplace);
+	auto dZ = op->execute(inputs, outputs, ttArgs, iiArgs, bbArgs, std::vector<nd4j::DataType>(), isInplace);
 	//auto dZ = op->execute(inputs, ttArgs, iiArgs, isInplace);
 
 
@@ -3596,6 +3599,14 @@ void setGraphContextBArguments(nd4j::graph::Context* ptr, bool *arguments, int n
     ptr->setBArguments(arguments, numberOfArguments);
 }
 
+void setGraphContextDArguments(OpaqueContext* ptr, int *arguments, int numberOfArguments) {
+    std::vector<nd4j::DataType> dtypes(numberOfArguments);
+    for (int e = 0; e < numberOfArguments; e++)
+        dtypes[e] = (nd4j::DataType) arguments[e];
+
+    ptr->setDArguments(dtypes);
+}
+
 void deleteGraphContext(nd4j::graph::Context* ptr) {
     delete ptr;
 }
@@ -3780,9 +3791,22 @@ void ctxAllowHelpers(OpaqueContext* ptr, bool reallyAllow) {
     ptr->allowHelpers(reallyAllow);
 }
 
+void ctxSetExecutionMode(OpaqueContext* ptr, int execMode) {
+    if (execMode < 0 || execMode > 2)
+        execMode = 0;
+
+    ptr->setExecutionMode((samediff::ExecutionMode) execMode);
+}
+
 OpaqueDataBuffer* allocateDataBuffer(Nd4jLong elements, int dataType, bool allocateBoth) {
-    auto dtype = DataTypeUtils::fromInt(dataType);
-    return new nd4j::InteropDataBuffer(elements * DataTypeUtils::sizeOf(dtype) , dtype, allocateBoth);
+    try {
+        auto dtype = DataTypeUtils::fromInt(dataType);
+        return new nd4j::InteropDataBuffer(elements * DataTypeUtils::sizeOf(dtype), dtype, allocateBoth);
+    } catch (std::exception &e) {
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+        return nullptr;
+    }
 }
 
 Nd4jPointer dbPrimaryBuffer(OpaqueDataBuffer *dataBuffer) {
@@ -3814,7 +3838,12 @@ void dbAllocateSpecialBuffer(OpaqueDataBuffer *dataBuffer) {
 }
 
 void dbExpandBuffer(OpaqueDataBuffer *dataBuffer, Nd4jLong elements) {
-    dataBuffer->dataBuffer()->expand(elements * DataTypeUtils::sizeOf(dataBuffer->dataBuffer()->getDataType()));
+    try {
+        dataBuffer->dataBuffer()->expand(elements * DataTypeUtils::sizeOf(dataBuffer->dataBuffer()->getDataType()));
+    } catch (std::exception &e) {
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+    }
 }
 
 OpaqueDataBuffer* dbCreateView(OpaqueDataBuffer *dataBuffer, Nd4jLong length, Nd4jLong offset) {

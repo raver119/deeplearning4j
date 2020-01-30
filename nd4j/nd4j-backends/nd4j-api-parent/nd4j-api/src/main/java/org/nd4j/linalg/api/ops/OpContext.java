@@ -17,6 +17,7 @@
 package org.nd4j.linalg.api.ops;
 
 import org.bytedeco.javacpp.Pointer;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.primitives.Pair;
 
@@ -43,8 +44,14 @@ public interface OpContext extends AutoCloseable {
      * @param arguments
      */
     void setTArguments(double... arguments);
-
     List<Double> getTArguments();
+
+    /**
+     * This method sets data type arguments required for operation
+     * @param arguments
+     */
+    void setDArguments(DataType... arguments);
+    List<DataType> getDArguments();
 
     /**
      * This method sets boolean arguments required for operation
@@ -142,4 +149,17 @@ public interface OpContext extends AutoCloseable {
      * @param reallyOverride
      */
     void shapeFunctionOverride(boolean reallyOverride);
+
+    /**
+     * This method returns current execution mode for Context
+     * @return
+     */
+    ExecutionMode getExecutionMode();
+
+    /**
+     * This method allows to set certain execution mode
+     *
+     * @param mode
+     */
+    void setExecutionMode(ExecutionMode mode);
 }
