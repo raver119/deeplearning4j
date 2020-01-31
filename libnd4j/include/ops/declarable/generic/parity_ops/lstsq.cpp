@@ -42,9 +42,12 @@ namespace nd4j {
 //            REQUIRE_TRUE(a->sizeAt(-1) == a->sizeAt(-2), 0, "lstsq: The last two dimmensions should be equal, but %i and %i are given", a->sizeAt(-1), a->sizeAt(-2));
             REQUIRE_TRUE(a->sizeAt(-2) == b->sizeAt(-2), 0, "lstsq: The last dimmension of left part should be equal to prelast of right part, but %i and %i are given", a->sizeAt(-1), b->sizeAt(-2));
 
+            if (a->isEmpty() || b->isEmpty() || z->isEmpty())
+                return Status::OK();
+
             auto res = helpers::leastSquaresSolveFunctor(block.launchContext(), a, b, 0., fastFlag, z);
 
-            return Status::OK();
+            return res;
         }
 
         DECLARE_SYN(MatrixSolveLs, lstsq);
