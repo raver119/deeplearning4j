@@ -26,6 +26,7 @@
 #include <GradCheck.h>
 #include <ConstantTadHelper.h>
 #include <helpers/PointersManager.h>
+#include <helpers/MmulHelper.h>
 
 using namespace nd4j;
 
@@ -3033,21 +3034,22 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
     auto z = res->at(0);
 
 //    z->printIndexedBuffer("MatrixSolveLS");
+    MmulHelper::matmul(&a, z, &exp, false, false);
 
-    ASSERT_TRUE(exp.equalsTo(z));
+    ASSERT_TRUE(exp.equalsTo(b));
     delete res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, SolveLs_Test_2) {
 
-    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+    auto a = NDArrayFactory::create<double>('c', {3, 3}, {
             1.f,  2.f,  3.f,            4.f,  5.f,  6.f,           11.f,  8.f, 21.f
     });
 
-    auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
+    auto b = NDArrayFactory::create<double>('c', {3, 1}, {   1.f, 2.f, 3.f   });
 
-    auto exp = NDArrayFactory::create<float>('c', {3, 1}, { -0.24999914f,  0.4999994f, 0.08333314f });
+    auto exp = NDArrayFactory::create<double>('c', {3, 1}, { -0.24999914f,  0.4999994f, 0.08333314f });
 
     nd4j::ops::lstsq op;
 
@@ -3055,9 +3057,11 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_2) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
+    MmulHelper::matmul(&a, z, &exp, false, false);
+
 //    z->printIndexedBuffer("MatrixSolveLS2");
 
-    ASSERT_TRUE(exp.equalsTo(z));
+    ASSERT_TRUE(exp.equalsTo(b));
     delete res;
 }
 
@@ -3070,7 +3074,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
 
     auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
 
-    auto exp = NDArrayFactory::create<float>('c', {4, 1}, { -0.5f,   1.5f,   -2.f, 0.f });
+    auto exp = NDArrayFactory::create<float>('c', {3, 1}, { -0.5f,   1.5f,   -2.f });
 
     nd4j::ops::lstsq op;
 
@@ -3079,8 +3083,8 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
     auto z = res->at(0);
 
 //    z->printIndexedBuffer("MatrixSolveLS3");
-
-    ASSERT_TRUE(exp.equalsTo(z));
+    MmulHelper::matmul(&a, z, &exp, false, false);
+    ASSERT_TRUE(exp.equalsTo(b));
     delete res;
 }
 
@@ -3093,16 +3097,17 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_4) {
 
     auto b = NDArrayFactory::create<float>('c', {3, 1}, {   1.f, 2.f, 3.f   });
 
-    auto exp = NDArrayFactory::create<float>('c', {4, 1}, { -0.5f,   1.5f,   -2.f, 0.f });
+    auto exp = NDArrayFactory::create<float>('c', {3, 1}, { -0.5f,   1.5f,   -2.f });
 
     nd4j::ops::lstsq op;
 
     auto res = op.evaluate({&a, &b}, {false});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
+    MmulHelper::matmul(&a, z, &exp, false, false);
 
 //    z->printIndexedBuffer("MatrixSolveLS4");
 
-    ASSERT_TRUE(exp.equalsTo(z));
+    ASSERT_TRUE(exp.equalsTo(b));
     delete res;
 }
