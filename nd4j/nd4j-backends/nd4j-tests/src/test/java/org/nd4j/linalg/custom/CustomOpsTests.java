@@ -20,6 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.autodiff.validation.OpValidation;
+import org.nd4j.autodiff.validation.TestCase;
 import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -29,6 +33,7 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.custom.*;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.api.ops.executioner.OpStatus;
+import org.nd4j.linalg.api.ops.impl.broadcast.BiasAddGrad;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
@@ -1690,5 +1695,22 @@ public class CustomOpsTests extends BaseNd4jTest {
         val e = Nd4j.scalar(1.0f);
 
         assertEquals(e, x);
+    }
+
+    @Test
+    public void testBiasAddGrad1() {
+
+        SameDiff sameDiff = SameDiff.create();
+
+        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
+        INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
+        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
+
+        INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
+        INDArray output = Nd4j.createUninitialized(x.shape());
+
+        val op = new BiasAddGrad(x, bias, grad);
+        INDArray[] ret = Nd4j.exec(op);
+        assertEquals(2, ret.length);
     }
 }

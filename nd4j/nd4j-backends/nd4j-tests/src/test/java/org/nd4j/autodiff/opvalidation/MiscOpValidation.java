@@ -27,7 +27,6 @@ import org.nd4j.autodiff.samediff.VariableType;
 import org.nd4j.autodiff.validation.OpTestCase;
 import org.nd4j.autodiff.validation.OpValidation;
 import org.nd4j.autodiff.validation.TestCase;
-import org.nd4j.autodiff.validation.functions.ShapeEqualityFn;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -2142,31 +2141,11 @@ public class MiscOpValidation extends BaseOpValidation {
 
         INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
 
-        SDVariable[] outputs = new BiasAddGrad(sameDiff, sdx, sdgrad, sdbias, false).outputVariables();
-
-        TestCase tc = new TestCase(sameDiff)
-                .gradientCheck(true)
-                .expectedOutput(outputs[0].name(), expected);
+        OpTestCase tc = new OpTestCase(new BiasAddGrad(sameDiff, sdx, sdgrad, sdbias, false));
 
         String err = OpValidation.validate(tc);
         assertNull(err);
     }
 
-    @Test
-    public void testBiasAddGrad1() {
 
-        SameDiff sameDiff = SameDiff.create();
-
-        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
-        INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
-        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
-
-        INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
-        INDArray output = Nd4j.createUninitialized(x.shape());
-
-        val op = new BiasAddGrad(x, bias, grad, output);
-        INDArray[] ret = Nd4j.exec(op);
-        System.out.println(ret[0]);
-        //System.out.println(ret[1]);
-    }
 }
