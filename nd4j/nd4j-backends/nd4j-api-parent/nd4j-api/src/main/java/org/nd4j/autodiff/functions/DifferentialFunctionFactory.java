@@ -294,6 +294,11 @@ public class DifferentialFunctionFactory {
         return new ZerosLike(name, sameDiff(), input).outputVariable();
     }
 
+    public SDVariable zerosLike(String name, SDVariable input, DataType dataType) {
+        validateDifferentialFunctionsameDiff(input);
+        return new ZerosLike(name, sameDiff(), input, dataType).outputVariable();
+    }
+
     public SDVariable create(String name, SDVariable shape, boolean initialize, DataType dataType) {
         return create(name, shape, 'c', initialize, dataType);
     }

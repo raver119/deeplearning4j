@@ -36,9 +36,14 @@ public class BiasAddGrad extends DynamicCustomOp {
         addBArgument(nchw);
     }
 
-    public BiasAddGrad(@NonNull INDArray input, @NonNull INDArray bias, @NonNull INDArray gradient,
+    /*public BiasAddGrad(@NonNull INDArray input, @NonNull INDArray bias, @NonNull INDArray gradient,
                        INDArray outputI, INDArray outputB,
                        boolean isNCHW){
+        super(new INDArray[]{input, bias, gradient}, wrapOrNull(output));
+    }*/
+
+    public BiasAddGrad(@NonNull INDArray input, @NonNull INDArray bias, @NonNull INDArray gradient,
+                       INDArray output) {
         super(new INDArray[]{input, bias, gradient}, wrapOrNull(output));
     }
 

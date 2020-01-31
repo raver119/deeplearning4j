@@ -3093,6 +3093,10 @@ public abstract class SDBaseOps {
         return zerosLike(null, input);
     }
 
+    public SDVariable zerosLike(@NonNull SDVariable input, @NonNull DataType dataType) {
+        return zerosLike(null, input, dataType);
+    }
+
     /**
      * Return a variable of all 0s, with the same shape as the input variable. Note that this is dynamic:
      * if the input shape changes in later execution, the returned variable's shape will also be updated
@@ -3103,6 +3107,11 @@ public abstract class SDBaseOps {
      */
     public SDVariable zerosLike(String name, @NonNull SDVariable input) {
         SDVariable ret = f().zerosLike(name, input);
+        return updateVariableNameAndReference(ret, name);
+    }
+
+    public SDVariable zerosLike(String name, @NonNull SDVariable input, @NonNull DataType dataType) {
+        SDVariable ret = f().zerosLike(name, input, dataType);
         return updateVariableNameAndReference(ret, name);
     }
 
