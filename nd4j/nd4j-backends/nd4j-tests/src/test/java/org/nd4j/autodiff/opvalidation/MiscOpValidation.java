@@ -2114,28 +2114,41 @@ public class MiscOpValidation extends BaseOpValidation {
 
         SameDiff sameDiff = SameDiff.create();
 
-        INDArray in1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in3 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
+        INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
+        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
 
-        SDVariable input1 = sameDiff.var(in1);
-        SDVariable input2 = sameDiff.var(in2);
-        SDVariable input3 = sameDiff.var(in3);
+        SDVariable sdx = sameDiff.var(x);
+        SDVariable sdgrad = sameDiff.var(grad);
+        SDVariable sdbias = sameDiff.var(bias);
 
-        SDVariable lower = sameDiff.constant(Nd4j.scalar(false));
-        SDVariable adjoint = sameDiff.constant(Nd4j.scalar(false));
+        INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
 
-        INDArray expected = Nd4j.createFromArray(new double[]{
-                107.0000,  140.0000,  179.0000,  224.0000
-        }).reshape(1,4);
-
-        SDVariable output = new BiasAddGrad(sameDiff, input1, input2, input3, false).outputVariable();
+        SDVariable[] outputs = new BiasAddGrad(sameDiff, sdx, sdgrad, sdbias, false).outputVariables();
 
         TestCase tc = new TestCase(sameDiff)
                 .gradientCheck(true)
-                .expectedOutput(output.name(), expected);
+                .expectedOutput(outputs[0].name(), expected);
 
         String err = OpValidation.validate(tc);
         assertNull(err);
+    }
+
+    @Test
+    public void testBiasAddGrad1() {
+
+        SameDiff sameDiff = SameDiff.create();
+
+        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
+        INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
+        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
+
+        INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
+        INDArray output = Nd4j.createUninitialized(x.shape());
+
+        val op = new BiasAddGrad(x, bias, grad, output);
+        INDArray[] ret = Nd4j.exec(op);
+        System.out.println(ret[0]);
+        //System.out.println(ret[1]);
     }
 }

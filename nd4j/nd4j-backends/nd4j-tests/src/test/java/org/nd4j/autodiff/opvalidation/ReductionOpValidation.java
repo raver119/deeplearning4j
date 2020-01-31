@@ -306,7 +306,7 @@ public class ReductionOpValidation extends BaseOpValidation {
             log.info("*** Starting test: " + msg);
 
             sd.associateArrayWithVariable(inputArr, input);
-
+            sd.setLossVariables(sd.loss.l2Loss(input));
 
             tc.testName(msg);
             String error = OpValidation.validate(tc, true);
