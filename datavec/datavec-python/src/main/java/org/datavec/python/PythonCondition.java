@@ -133,8 +133,8 @@ public class PythonCondition implements Condition {
         for (int i = 0; i < inputSchema.numColumns(); i++) {
             String name = inputSchema.getName(i);
             Writable w = writables.get(i);
-            PythonVariables.Type pyType = pyInputs.getType(inputSchema.getName(i));
-            switch (pyType) {
+            PythonType pyType = pyInputs.getType(inputSchema.getName(i));
+            switch (pyType.getName()) {
                 case INT:
                     if (w instanceof LongWritable) {
                         ret.addInt(name, ((LongWritable) w).get());

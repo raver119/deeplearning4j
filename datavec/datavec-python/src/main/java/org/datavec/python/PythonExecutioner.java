@@ -152,9 +152,9 @@ public class PythonExecutioner {
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
 
-    public static void setVariable(String varName, PythonVariables.Type varType, Object value) throws PythonException {
+    public static void setVariable(String varName, PythonType varType, Object value) throws PythonException {
         PythonObject pythonObject;
-        switch (varType) {
+        switch (varType.getName()) {
             case STR:
                 pythonObject = new PythonObject((String) value);
                 break;
@@ -200,12 +200,16 @@ public class PythonExecutioner {
         return Python.globals().attr("get").call(varName);
     }
 
-    public static Object getVariable(String varName, PythonVariables.Type varType) throws PythonException{
+    public static <T> T getVariable(String varName, PythonType<T> varType) throws PythonException{
+        PythonObject pythonObject = getVariable(varName);
+        return varType.toJava(pythonObject);
+    }
+    public static Object _getVariable(String varName, PythonType varType) throws PythonException{
         PythonObject pythonObject = getVariable(varName);
         if (pythonObject.isNone()) {
             throw new PythonException("Variable not found: " + varName);
         }
-        switch (varType) {
+        switch (varType.getName()) {
             case INT:
                 if (!Python.isinstance(pythonObject, Python.intType())){
                     throw new PythonException("Expected " + varName + " to be int, but was " +  Python.type(pythonObject));

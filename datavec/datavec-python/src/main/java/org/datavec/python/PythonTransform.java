@@ -215,8 +215,8 @@ public class PythonTransform implements Transform {
         for (String name : inputs.getVariables()) {
             int colIdx = inputSchema.getIndexOfColumn(name);
             Writable w = writables.get(colIdx);
-            PythonVariables.Type pyType = inputs.getType(name);
-            switch (pyType) {
+            PythonType pyType = inputs.getType(name);
+            switch (pyType.getName()) {
                 case INT:
                     if (w instanceof LongWritable) {
                         ret.addInt(name, ((LongWritable) w).get());
@@ -255,8 +255,8 @@ public class PythonTransform implements Transform {
         Schema.Builder schemaBuilder = new Schema.Builder();
         for (int i = 0; i < varNames.length; i++) {
             String name = varNames[i];
-            PythonVariables.Type pyType = pyOuts.getType(name);
-            switch (pyType) {
+            PythonType pyType = pyOuts.getType(name);
+            switch (pyType.getName()) {
                 case INT:
                     schemaBuilder.addColumnLong(name);
                     break;
@@ -276,7 +276,7 @@ public class PythonTransform implements Transform {
                     schemaBuilder.addColumnBoolean(name);
                     break;
                 default:
-                    throw new IllegalStateException("Unable to support type " + pyType.name());
+                    throw new IllegalStateException("Unable to support type " + pyType.getName());
             }
         }
         this.outputSchema = schemaBuilder.build();
@@ -284,9 +284,9 @@ public class PythonTransform implements Transform {
 
         for (int i = 0; i < varNames.length; i++) {
             String name = varNames[i];
-            PythonVariables.Type pyType = pyOuts.getType(name);
+            PythonType pyType = pyOuts.getType(name);
 
-            switch (pyType) {
+            switch (pyType.getName()) {
                 case INT:
                     out.add(new LongWritable(pyOuts.getIntValue(name)));
                     break;
@@ -327,7 +327,7 @@ public class PythonTransform implements Transform {
                     out.add(new BooleanWritable(pyOuts.getBooleanValue(name)));
                     break;
                 default:
-                    throw new IllegalStateException("Unable to support type " + pyType.name());
+                    throw new IllegalStateException("Unable to support type " + pyType.getName());
             }
         }
         return out;

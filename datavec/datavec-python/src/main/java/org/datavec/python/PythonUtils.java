@@ -31,22 +31,23 @@ public class PythonUtils {
     public static Schema fromPythonVariables(PythonVariables input) {
         Schema.Builder schemaBuilder = new Schema.Builder();
         Preconditions.checkState(input.getVariables() != null && input.getVariables().length > 0, "Input must have variables. Found none.");
-        for (Map.Entry<String, PythonVariables.Type> entry : input.getVars().entrySet()) {
-            switch (entry.getValue()) {
+        for (String varName: input.getVariables()) {
+
+            switch (input.getType(varName).getName()) {
                 case INT:
-                    schemaBuilder.addColumnInteger(entry.getKey());
+                    schemaBuilder.addColumnInteger(varName);
                     break;
                 case STR:
-                    schemaBuilder.addColumnString(entry.getKey());
+                    schemaBuilder.addColumnString(varName);
                     break;
                 case FLOAT:
-                    schemaBuilder.addColumnFloat(entry.getKey());
+                    schemaBuilder.addColumnFloat(varName);
                     break;
                 case NDARRAY:
-                    schemaBuilder.addColumnNDArray(entry.getKey(), null);
+                    schemaBuilder.addColumnNDArray(varName, null);
                     break;
                 case BOOL:
-                    schemaBuilder.addColumn(new BooleanMetaData(entry.getKey()));
+                    schemaBuilder.addColumn(new BooleanMetaData(varName));
             }
         }
 
@@ -68,22 +69,22 @@ public class PythonUtils {
             ColumnType columnType = input.getType(i);
             switch (columnType) {
                 case NDArray:
-                    ret.add(currColumnName, PythonVariables.Type.NDARRAY);
+                    ret.add(currColumnName, PythonType.NDARRAY);
                     break;
                 case Boolean:
-                    ret.add(currColumnName, PythonVariables.Type.BOOL);
+                    ret.add(currColumnName, PythonType.BOOL);
                     break;
                 case Categorical:
                 case String:
-                    ret.add(currColumnName, PythonVariables.Type.STR);
+                    ret.add(currColumnName, PythonType.STR);
                     break;
                 case Double:
                 case Float:
-                    ret.add(currColumnName, PythonVariables.Type.FLOAT);
+                    ret.add(currColumnName, PythonType.FLOAT);
                     break;
                 case Integer:
                 case Long:
-                    ret.add(currColumnName, PythonVariables.Type.INT);
+                    ret.add(currColumnName, PythonType.INT);
                     break;
                 case Bytes:
                     break;
