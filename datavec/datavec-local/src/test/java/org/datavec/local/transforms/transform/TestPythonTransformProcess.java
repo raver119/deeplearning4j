@@ -310,7 +310,7 @@ public class TestPythonTransformProcess {
                 .build();
         List<List<Writable>> execute = LocalTransformExecutor.execute(inputs, tp);
         assertEquals(3,execute.get(0).get(0).toInt());
-        assertEquals("hello world",execute.get(0).get(2).toString());
+        assertEquals("hello world",execute.get(0).get(1).toString());
 
     }
 
