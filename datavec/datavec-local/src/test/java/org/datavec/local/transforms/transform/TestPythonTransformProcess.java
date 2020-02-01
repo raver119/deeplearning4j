@@ -315,7 +315,7 @@ public class TestPythonTransformProcess {
     }
 
     @Test
-    public void testNumpyTransform() throws Exception {
+    public void testNumpyTransform() {
         PythonTransform pythonTransform = PythonTransform.builder()
                 .code("a += 2; b = 'hello world'")
                 .returnAllInputs(true)
@@ -334,7 +334,9 @@ public class TestPythonTransformProcess {
         assertFalse(execute.isEmpty());
         assertNotNull(execute.get(0));
         assertNotNull(execute.get(0).get(0));
-        assertEquals("hello world",execute.get(0).get(0).toString());
+        assertNotNull(execute.get(0).get(1));
+        assertEquals(Nd4j.scalar(3).reshape(1, 1),((NDArrayWritable)execute.get(0).get(0)).get());
+        assertEquals("hello world",execute.get(0).get(1).toString());
     }
 
     @Test

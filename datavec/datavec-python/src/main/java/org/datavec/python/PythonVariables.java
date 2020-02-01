@@ -20,9 +20,10 @@ import lombok.Data;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.nd4j.linalg.api.ndarray.INDArray;
-
 import java.io.Serializable;
 import java.util.*;
+
+
 
 /**
  * Holds python variable names, types and values.
@@ -33,18 +34,7 @@ import java.util.*;
 
 @lombok.Data
 public class PythonVariables implements java.io.Serializable {
-
-    public enum Type {
-        BOOL,
-        STR,
-        INT,
-        FLOAT,
-        NDARRAY,
-        LIST,
-        FILE,
-        DICT
-
-    }
+    
 
     private java.util.Map<String, String> strVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, Long> intVariables = new java.util.LinkedHashMap<>();
@@ -52,10 +42,9 @@ public class PythonVariables implements java.io.Serializable {
     private java.util.Map<String, Boolean> boolVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, NumpyArray> ndVars = new java.util.LinkedHashMap<>();
     private java.util.Map<String, Object[]> listVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, String> fileVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, java.util.Map<?, ?>> dictVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Type> vars = new java.util.LinkedHashMap<>();
-    private java.util.Map<Type, java.util.Map> maps = new java.util.LinkedHashMap<>();
+    private java.util.Map<String, PythonType.TypeName> vars = new java.util.LinkedHashMap<>();
+    private java.util.Map<PythonType.TypeName, java.util.Map> maps = new java.util.LinkedHashMap<>();
 
 
     /**
@@ -68,7 +57,7 @@ public class PythonVariables implements java.io.Serializable {
     public PythonVariables copySchema() {
         PythonVariables ret = new PythonVariables();
         for (String varName : getVariables()) {
-            Type type = getType(varName);
+            PythonType type = getType(varName);
             ret.add(varName, type);
         }
         return ret;
@@ -78,14 +67,13 @@ public class PythonVariables implements java.io.Serializable {
      *
      */
     public PythonVariables() {
-        maps.put(PythonVariables.Type.BOOL, boolVariables);
-        maps.put(PythonVariables.Type.STR, strVariables);
-        maps.put(PythonVariables.Type.INT, intVariables);
-        maps.put(PythonVariables.Type.FLOAT, floatVariables);
-        maps.put(PythonVariables.Type.NDARRAY, ndVars);
-        maps.put(PythonVariables.Type.LIST, listVariables);
-        maps.put(PythonVariables.Type.FILE, fileVariables);
-        maps.put(PythonVariables.Type.DICT, dictVariables);
+        maps.put(PythonType.TypeName.BOOL, boolVariables);
+        maps.put(PythonType.TypeName.STR, strVariables);
+        maps.put(PythonType.TypeName.INT, intVariables);
+        maps.put(PythonType.TypeName.FLOAT, floatVariables);
+        maps.put(PythonType.TypeName.NDARRAY, ndVars);
+        maps.put(PythonType.TypeName.LIST, listVariables);
+        maps.put(PythonType.TypeName.DICT, dictVariables);
 
     }
 
@@ -102,8 +90,8 @@ public class PythonVariables implements java.io.Serializable {
      * @param name Name of the variable
      * @param type Type of the variable
      */
-    public void add(String name, Type type) {
-        switch (type) {
+    public void add(String name, PythonType type) {
+        switch (type.getName()) {
             case BOOL:
                 addBool(name);
                 break;
@@ -122,9 +110,6 @@ public class PythonVariables implements java.io.Serializable {
             case LIST:
                 addList(name);
                 break;
-            case FILE:
-                addFile(name);
-                break;
             case DICT:
                 addDict(name);
         }
@@ -135,7 +120,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param type  type of the variable
      * @param value value of the variable (must be instance of expected type)
      */
-    public void add(String name, Type type, Object value) {
+    public void add(String name, PythonType type, Object value) {
         add(name, type);
         setValue(name, value);
     }
@@ -149,7 +134,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addDict(String name) {
-        vars.put(name, PythonVariables.Type.DICT);
+        vars.put(name, PythonType.TypeName.DICT);
         dictVariables.put(name, null);
     }
 
@@ -161,7 +146,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addBool(String name) {
-        vars.put(name, PythonVariables.Type.BOOL);
+        vars.put(name, PythonType.TypeName.BOOL);
         boolVariables.put(name, null);
     }
 
@@ -173,7 +158,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addStr(String name) {
-        vars.put(name, PythonVariables.Type.STR);
+        vars.put(name, PythonType.TypeName.STR);
         strVariables.put(name, null);
     }
 
@@ -185,7 +170,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addInt(String name) {
-        vars.put(name, PythonVariables.Type.INT);
+        vars.put(name, PythonType.TypeName.INT);
         intVariables.put(name, null);
     }
 
@@ -197,7 +182,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addFloat(String name) {
-        vars.put(name, PythonVariables.Type.FLOAT);
+        vars.put(name, PythonType.TypeName.FLOAT);
         floatVariables.put(name, null);
     }
 
@@ -209,7 +194,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addNDArray(String name) {
-        vars.put(name, PythonVariables.Type.NDARRAY);
+        vars.put(name, PythonType.TypeName.NDARRAY);
         ndVars.put(name, null);
     }
 
@@ -221,20 +206,8 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the field to add
      */
     public void addList(String name) {
-        vars.put(name, PythonVariables.Type.LIST);
+        vars.put(name, PythonType.TypeName.LIST);
         listVariables.put(name, null);
-    }
-
-    /**
-     * Add a null variable to
-     * the set of variables
-     * to describe the type but no value
-     *
-     * @param name the field to add
-     */
-    public void addFile(String name) {
-        vars.put(name, PythonVariables.Type.FILE);
-        fileVariables.put(name, null);
     }
 
     /**
@@ -245,7 +218,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addBool(String name, boolean value) {
-        vars.put(name, PythonVariables.Type.BOOL);
+        vars.put(name, PythonType.TypeName.BOOL);
         boolVariables.put(name, value);
     }
 
@@ -257,7 +230,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addStr(String name, String value) {
-        vars.put(name, PythonVariables.Type.STR);
+        vars.put(name, PythonType.TypeName.STR);
         strVariables.put(name, value);
     }
 
@@ -269,7 +242,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addInt(String name, int value) {
-        vars.put(name, PythonVariables.Type.INT);
+        vars.put(name, PythonType.TypeName.INT);
         intVariables.put(name, (long) value);
     }
 
@@ -281,7 +254,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addInt(String name, long value) {
-        vars.put(name, PythonVariables.Type.INT);
+        vars.put(name, PythonType.TypeName.INT);
         intVariables.put(name, value);
     }
 
@@ -293,7 +266,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addFloat(String name, double value) {
-        vars.put(name, PythonVariables.Type.FLOAT);
+        vars.put(name, PythonType.TypeName.FLOAT);
         floatVariables.put(name, value);
     }
 
@@ -305,7 +278,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addFloat(String name, float value) {
-        vars.put(name, PythonVariables.Type.FLOAT);
+        vars.put(name, PythonType.TypeName.FLOAT);
         floatVariables.put(name, (double) value);
     }
 
@@ -318,7 +291,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addNDArray(String name, NumpyArray value) {
-        vars.put(name, PythonVariables.Type.NDARRAY);
+        vars.put(name, PythonType.TypeName.NDARRAY);
         ndVars.put(name, value);
     }
 
@@ -331,7 +304,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addNDArray(String name, org.nd4j.linalg.api.ndarray.INDArray value) {
-        vars.put(name, PythonVariables.Type.NDARRAY);
+        vars.put(name, PythonType.TypeName.NDARRAY);
         ndVars.put(name, new NumpyArray(value));
     }
 
@@ -344,24 +317,10 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addList(String name, Object[] value) {
-        vars.put(name, PythonVariables.Type.LIST);
+        vars.put(name, PythonType.TypeName.LIST);
         listVariables.put(name, value);
     }
-
-    /**
-     * Add a null variable to
-     * the set of variables
-     * to describe the type but no value
-     *
-     * @param name  the field to add
-     * @param value the value to add
-     */
-    public void addFile(String name, String value) {
-        vars.put(name, PythonVariables.Type.FILE);
-        fileVariables.put(name, value);
-    }
-
-
+    
     /**
      * Add a null variable to
      * the set of variables
@@ -371,7 +330,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param value the value to add
      */
     public void addDict(String name, java.util.Map value) {
-        vars.put(name, PythonVariables.Type.DICT);
+        vars.put(name, PythonType.TypeName.DICT);
         dictVariables.put(name, value);
     }
 
@@ -380,16 +339,16 @@ public class PythonVariables implements java.io.Serializable {
      * @param value new value for the variable
      */
     public void setValue(String name, Object value) {
-        Type type = vars.get(name);
-        if (type == PythonVariables.Type.BOOL) {
+        PythonType.TypeName type = vars.get(name);
+        if (type == PythonType.TypeName.BOOL) {
             boolVariables.put(name, (Boolean) value);
-        } else if (type == PythonVariables.Type.INT) {
+        } else if (type == PythonType.TypeName.INT) {
             Number number = (Number) value;
             intVariables.put(name, number.longValue());
-        } else if (type == PythonVariables.Type.FLOAT) {
+        } else if (type == PythonType.TypeName.FLOAT) {
             Number number = (Number) value;
             floatVariables.put(name, number.doubleValue());
-        } else if (type == PythonVariables.Type.NDARRAY) {
+        } else if (type == PythonType.TypeName.NDARRAY) {
             if (value instanceof NumpyArray) {
                 ndVars.put(name, (NumpyArray) value);
             } else if (value instanceof org.nd4j.linalg.api.ndarray.INDArray) {
@@ -397,7 +356,7 @@ public class PythonVariables implements java.io.Serializable {
             } else {
                 throw new RuntimeException("Unsupported type: " + value.getClass().toString());
             }
-        } else if (type == PythonVariables.Type.LIST) {
+        } else if (type == PythonType.TypeName.LIST) {
             if (value instanceof java.util.List) {
                 value = ((java.util.List) value).toArray();
                 listVariables.put(name, (Object[]) value);
@@ -412,10 +371,8 @@ public class PythonVariables implements java.io.Serializable {
             } else {
                 listVariables.put(name, (Object[]) value);
             }
-        } else if (type == PythonVariables.Type.DICT) {
+        } else if (type == PythonType.TypeName.DICT) {
             dictVariables.put(name, (java.util.Map<?, ?>) value);
-        } else if (type == PythonVariables.Type.FILE) {
-            fileVariables.put(name, (String) value);
         } else {
             strVariables.put(name, (String) value);
         }
@@ -423,14 +380,14 @@ public class PythonVariables implements java.io.Serializable {
 
     /**
      * Do a general object lookup.
-     * The look up will happen relative to the {@link Type}
+     * The look up will happen relative to the {@link PythonType}
      * of variable is described in the
      *
      * @param name the name of the variable to get
      * @return teh value for the variable with the given name
      */
     public Object getValue(String name) {
-        Type type = vars.get(name);
+        PythonType.TypeName type = vars.get(name);
         java.util.Map map = maps.get(type);
         return map.get(name);
     }
@@ -497,21 +454,18 @@ public class PythonVariables implements java.io.Serializable {
     }
 
     /**
-     * @param name the variable name
-     * @return the value of the given file name
-     */
-    public String getFileValue(String name) {
-        return fileVariables.get(name);
-    }
-
-    /**
      * Returns the type for the given variable name
      *
      * @param name the name of the variable to get the type for
      * @return the type for the given variable
      */
-    public Type getType(String name) {
-        return vars.get(name);
+    public PythonType getType(String name){
+        try{
+            return PythonType.valueOf(vars.get(name));  // will never fail
+        }catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -550,10 +504,10 @@ public class PythonVariables implements java.io.Serializable {
      * @param inputTypes the input types to convert
      * @return the schema from the given map
      */
-    public static PythonVariables schemaFromMap(java.util.Map<String, String> inputTypes) {
+    public static PythonVariables schemaFromMap(java.util.Map<String, String> inputTypes) throws Exception{
         PythonVariables ret = new PythonVariables();
         for (java.util.Map.Entry<String, String> entry : inputTypes.entrySet()) {
-            ret.add(entry.getKey(), PythonVariables.Type.valueOf(entry.getValue()));
+            ret.add(entry.getKey(), PythonType.valueOf(entry.getValue()));
         }
 
         return ret;
@@ -582,8 +536,6 @@ public class PythonVariables implements java.io.Serializable {
                 pyvars.addStr(varName);
             } else if (varType.equals("LIST")) {
                 pyvars.addList(varName);
-            } else if (varType.equals("FILE")) {
-                pyvars.addFile(varName);
             } else if (varType.equals("NDARRAY")) {
                 pyvars.addNDArray(varName);
             } else if (varType.equals("DICT")) {

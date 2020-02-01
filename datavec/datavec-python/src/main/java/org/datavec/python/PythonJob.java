@@ -138,6 +138,7 @@ public class PythonJob {
 
     public PythonVariables execAndReturnAllVariables(PythonVariables inputs) throws Exception {
         try (PythonGIL gil = PythonGIL.lock()) {
+            PythonContextManager.setContext(context);
             if (!setupRunMode) {
                 return PythonExecutioner.execAndReturnAllVariables(code, inputs);
             }

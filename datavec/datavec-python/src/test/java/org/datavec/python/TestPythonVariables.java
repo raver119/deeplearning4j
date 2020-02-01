@@ -39,38 +39,41 @@ public class TestPythonVariables {
     @Test
     public void testDataAssociations() {
         PythonVariables pythonVariables = new PythonVariables();
-        PythonVariables.Type[] types = {
-                PythonVariables.Type.INT,
-                PythonVariables.Type.FLOAT,
-                PythonVariables.Type.STR,
-                PythonVariables.Type.BOOL,
-                PythonVariables.Type.DICT,
-                PythonVariables.Type.LIST,
-                PythonVariables.Type.LIST,
-                PythonVariables.Type.FILE,
-                PythonVariables.Type.NDARRAY
+        PythonType[] types = {
+                PythonType.INT,
+                PythonType.FLOAT,
+                PythonType.STR,
+                PythonType.BOOL,
+                PythonType.DICT,
+                PythonType.LIST,
+                PythonType.LIST,
+                PythonType.NDARRAY
         };
 
         NumpyArray npArr = new NumpyArray(Nd4j.scalar(1.0));
         Object[] values = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, Arrays.asList(1),"type", npArr
+                new Object[]{1}, Arrays.asList(1), npArr
         };
 
         Object[] expectedValues = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, new Object[]{1},"type", npArr
+                new Object[]{1}, new Object[]{1}, npArr
         };
 
         for(int i = 0; i < types.length; i++) {
-            testInsertGet(pythonVariables,types[i].name() + i,values[i],types[i],expectedValues[i]);
+            System.out.println(i);
+            System.out.println(types[i].getName().name() + i);
+            System.out.println(values[i]);
+            System.out.println(types[i]);
+            testInsertGet(pythonVariables,types[i].getName().name() + i,values[i],types[i],expectedValues[i]);
         }
 
         assertEquals(types.length,pythonVariables.getVariables().length);
 
     }
 
-    private void testInsertGet(PythonVariables pythonVariables,String key,Object value,PythonVariables.Type type,Object expectedValue) {
+    private void testInsertGet(PythonVariables pythonVariables,String key,Object value,PythonType type,Object expectedValue) {
         pythonVariables.add(key, type);
         assertNull(pythonVariables.getValue(key));
         pythonVariables.setValue(key,value);
