@@ -204,52 +204,6 @@ public class PythonExecutioner {
         PythonObject pythonObject = getVariable(varName);
         return varType.toJava(pythonObject);
     }
-    public static Object _getVariable(String varName, PythonType varType) throws PythonException{
-        PythonObject pythonObject = getVariable(varName);
-        if (pythonObject.isNone()) {
-            throw new PythonException("Variable not found: " + varName);
-        }
-        switch (varType.getName()) {
-            case INT:
-                if (!Python.isinstance(pythonObject, Python.intType())){
-                    throw new PythonException("Expected " + varName + " to be int, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toLong();
-            case FLOAT:
-                if (!Python.isinstance(pythonObject, Python.floatType())){
-                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toDouble();
-            case NDARRAY:
-                PythonObject np = importModule("numpy");
-                if (!Python.isinstance(pythonObject, np.attr("ndarray"), np.attr("generic"))){
-                    throw new PythonException("Expected " + varName + " to be numpy.ndarray, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toNumpy();
-            case STR:
-                if (!Python.isinstance(pythonObject, Python.strType())){
-                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toString();
-            case BOOL:
-                if (!Python.isinstance(pythonObject, Python.boolType())){
-                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toBoolean();
-            case LIST:
-                if (!Python.isinstance(pythonObject, Python.listType())){
-                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toList();
-            case DICT:
-                if (!Python.isinstance(pythonObject, Python.dictType())){
-                    throw new PythonException("Expected " + varName + " to be float, but was " +  Python.type(pythonObject));
-                }
-                return pythonObject.toMap();
-            default:
-                throw new PythonException("Unsupported type: " + varType);
-        }
-    }
 
     public static void getVariables(PythonVariables pyVars) throws PythonException {
         for (String varName : pyVars.getVariables()) {

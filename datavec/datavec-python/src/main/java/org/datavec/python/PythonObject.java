@@ -85,7 +85,24 @@ public class PythonObject {
             case SHORT:
                 ctype = PyObject_GetAttrString(ctypes, "c_int16");
                 break;
-
+            case UINT16:
+                ctype = PyObject_GetAttrString(ctypes, "c_uint16");
+                break;
+            case UINT32:
+                ctype = PyObject_GetAttrString(ctypes, "c_uint32");
+                break;
+            case UINT64:
+                ctype = PyObject_GetAttrString(ctypes, "c_uint64");
+                break;
+            case BOOL:
+                ctype = PyObject_GetAttrString(ctypes, "c_bool");
+                break;
+            case BYTE:
+                ctype = PyObject_GetAttrString(ctypes, "c_byte");
+                break;
+            case UBYTE:
+                ctype = PyObject_GetAttrString(ctypes, "c_ubyte");
+                break;
             default:
                 throw new RuntimeException("Unsupported dtype.");
         }
