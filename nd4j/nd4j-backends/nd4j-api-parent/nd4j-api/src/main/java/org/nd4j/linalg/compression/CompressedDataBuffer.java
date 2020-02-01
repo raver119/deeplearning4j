@@ -28,7 +28,7 @@ import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ops.performance.PerformanceTracker;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.memory.MemcpyDirection;
+import org.nd4j.linalg.api.memory.MemcpyDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +87,11 @@ public class CompressedDataBuffer extends BaseDataBuffer {
     @Override
     protected void setIndexer(Indexer indexer) {
         // no-op
+    }
+
+    @Override
+    public Pointer addressPointer() {
+        return pointer;
     }
 
     /**
@@ -194,6 +199,15 @@ public class CompressedDataBuffer extends BaseDataBuffer {
      */
     @Override
     public DataBuffer create(int[] data) {
-        throw new UnsupportedOperationException("This operation isn't supported for CompressedDataBuffer");
+        throw new UnsupportedOperationException("This method isn't supported by CompressedDataBuffer");
+    }
+
+    public void pointerIndexerByCurrentType(DataType currentType) {
+        throw new UnsupportedOperationException("This method isn't supported by CompressedDataBuffer");
+    }
+
+    @Override
+    public DataBuffer reallocate(long length) {
+        throw new UnsupportedOperationException("This method isn't supported by CompressedDataBuffer");
     }
 }

@@ -63,6 +63,9 @@ public class BasicBroadcastTests extends BaseNd4jTest {
         val y = Nd4j.createFromArray(new float[]{1.f, 1.f, 1.f, 1.f}).reshape(2, 2);
         val e = Nd4j.create(DataType.FLOAT, 3, 2, 2).assign(1.f);
 
+        //Nd4j.exec(new PrintVariable(x, "X array"));
+        //Nd4j.exec(new PrintVariable(y, "Y array"));
+
         val z = x.add(y);
 
         assertEquals(e, z);

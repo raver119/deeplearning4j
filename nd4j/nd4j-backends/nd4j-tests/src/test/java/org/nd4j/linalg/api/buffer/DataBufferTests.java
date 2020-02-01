@@ -36,8 +36,6 @@ import org.nd4j.linalg.factory.Nd4jBackend;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -289,7 +287,7 @@ public class DataBufferTests extends BaseNd4jTest {
                     continue;
                 }
 
-                log.info("Testing source [{}]; target: [{}]", sourceType, dt);
+//                log.info("Testing source [{}]; target: [{}]", sourceType, dt);
 
                 for (boolean useWs : new boolean[]{false, true}) {
 

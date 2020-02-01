@@ -23,9 +23,6 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.util.ArrayUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -47,6 +44,10 @@ public class CudaHalfDataBuffer extends BaseCudaDataBuffer {
 
     public CudaHalfDataBuffer(Pointer pointer, Pointer specialPointer, Indexer indexer, long length){
         super(pointer, specialPointer, indexer, length);
+    }
+
+    public CudaHalfDataBuffer(ByteBuffer buffer, DataType dataType, long length, long offset) {
+        super(buffer, dataType, length, offset);
     }
 
     /**
@@ -129,18 +130,6 @@ public class CudaHalfDataBuffer extends BaseCudaDataBuffer {
 
     public CudaHalfDataBuffer(int[] data, boolean copy, long offset) {
         super(data, copy, offset);
-    }
-
-    public CudaHalfDataBuffer(byte[] data, long length) {
-        super(data, length, DataType.HALF);
-    }
-
-    public CudaHalfDataBuffer(ByteBuffer buffer, long length) {
-        super(buffer, (int) length, DataType.HALF);
-    }
-
-    public CudaHalfDataBuffer(ByteBuffer buffer, long length, long offset) {
-        super(buffer, length, offset, DataType.HALF);
     }
 
     @Override

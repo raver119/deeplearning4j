@@ -16,7 +16,6 @@
 
 package org.nd4j.linalg.api.indexing;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,10 +26,6 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -114,7 +109,7 @@ public class IndexingTests extends BaseNd4jTest {
     public void testNewAxis() {
         INDArray arr = Nd4j.rand(new int[] {4, 2, 3});
         INDArray view = arr.get(NDArrayIndex.newAxis(), NDArrayIndex.all(), NDArrayIndex.point(1));
-        System.out.println(view);
+//        System.out.println(view);
     }
 
     @Test
@@ -134,7 +129,7 @@ public class IndexingTests extends BaseNd4jTest {
         INDArray arr = Nd4j.linspace(1, 24, 24, DataType.DOUBLE).reshape(4, 6);
         INDArray firstAndSecondColumnsAssertion = Nd4j.create(new double[][] {{1, 5}, {2, 6}, {3, 7}, {4, 8}});
 
-        System.out.println(arr);
+//        System.out.println(arr);
         INDArray firstAndSecondColumns = arr.getColumns(0, 1);
         assertEquals(firstAndSecondColumnsAssertion, firstAndSecondColumns);
 

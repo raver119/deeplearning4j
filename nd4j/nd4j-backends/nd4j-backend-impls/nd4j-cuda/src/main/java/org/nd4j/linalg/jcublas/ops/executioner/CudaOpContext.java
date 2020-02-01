@@ -18,17 +18,17 @@ package org.nd4j.linalg.jcublas.ops.executioner;
 
 import lombok.NonNull;
 import lombok.val;
-import org.bytedeco.javacpp.BooleanPointer;
-import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.LongPointer;
-import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.*;
 import org.nd4j.jita.allocator.impl.AtomicAllocator;
 import org.nd4j.jita.allocator.pointers.cuda.cudaStream_t;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.BaseOpContext;
+import org.nd4j.linalg.api.ops.ExecutionMode;
 import org.nd4j.linalg.api.ops.OpContext;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.jcublas.buffer.BaseCudaDataBuffer;
 import org.nd4j.linalg.jcublas.context.CudaContext;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.nativeblas.NativeOps;
@@ -75,6 +75,18 @@ public class CudaOpContext extends BaseOpContext implements OpContext {
     }
 
     @Override
+    public void setDArguments(DataType... arguments) {
+        if (arguments.length > 0) {
+            super.setDArguments(arguments);
+            val args = new int[arguments.length];
+            for (int e = 0; e < arguments.length; e++)
+                args[e] = arguments[e].toInt();
+
+            nativeOps.setGraphContextDArguments(context, new IntPointer(args), arguments.length);
+        };
+    }
+
+    @Override
     public void setRngStates(long rootState, long nodeState) {
         nativeOps.setRandomGeneratorStates(nativeOps.getGraphContextRandomGenerator(context), rootState, nodeState);
     }
@@ -88,8 +100,7 @@ public class CudaOpContext extends BaseOpContext implements OpContext {
     @Override
     public void setInputArray(int index, @NonNull INDArray array) {
         val ctx = AtomicAllocator.getInstance().getFlowController().prepareAction(null, array);
-
-        nativeOps.setGraphContextInputArray(context, index, array.isEmpty() ? null : array.data().addressPointer(), array.shapeInfoDataBuffer().addressPointer(), array.isEmpty() ? null : AtomicAllocator.getInstance().getPointer(array, ctx), AtomicAllocator.getInstance().getPointer(array.shapeInfoDataBuffer()));
+        nativeOps.setGraphContextInputBuffer(context, index, array.isEmpty() ? null : ((BaseCudaDataBuffer) array.data()).getOpaqueDataBuffer(), array.shapeInfoDataBuffer().addressPointer(), AtomicAllocator.getInstance().getPointer(array.shapeInfoDataBuffer()));
 
         super.setInputArray(index, array);
     }
@@ -97,33 +108,13 @@ public class CudaOpContext extends BaseOpContext implements OpContext {
     @Override
     public void setOutputArray(int index, @NonNull INDArray array) {
         val ctx = AtomicAllocator.getInstance().getFlowController().prepareAction(array, null);
-
-        nativeOps.setGraphContextOutputArray(context, index, array.isEmpty() ? null : array.data().addressPointer(), array.shapeInfoDataBuffer().addressPointer(), array.isEmpty() ? null : AtomicAllocator.getInstance().getPointer(array, ctx), AtomicAllocator.getInstance().getPointer(array.shapeInfoDataBuffer()));
+        nativeOps.setGraphContextOutputBuffer(context, index, array.isEmpty() ? null : ((BaseCudaDataBuffer) array.data()).getOpaqueDataBuffer(), array.shapeInfoDataBuffer().addressPointer(), AtomicAllocator.getInstance().getPointer(array.shapeInfoDataBuffer()));
 
         super.setOutputArray(index, array);
     }
 
     @Override
     public Pointer contextPointer() {
-        for (val v:fastpath_in.values()) {
-            if (v.isEmpty() || v.isS())
-                continue;
-
-            AtomicAllocator.getInstance().getAllocationPoint(v).tickHostRead();
-            AtomicAllocator.getInstance().getAllocationPoint(v).tickDeviceRead();
-
-            //if (context.isInplace())
-                //AtomicAllocator.getInstance().getAllocationPoint(v).tickDeviceWrite();
-        }
-
-        for (val v:fastpath_out.values()) {
-            if (v.isEmpty() || v.isS())
-                continue;
-
-            AtomicAllocator.getInstance().getAllocationPoint(v).tickHostRead();
-            AtomicAllocator.getInstance().getAllocationPoint(v).tickDeviceRead();
-        }
-
         return context;
     }
 
@@ -140,5 +131,16 @@ public class CudaOpContext extends BaseOpContext implements OpContext {
     @Override
     public void allowHelpers(boolean reallyAllow) {
         nativeOps.ctxAllowHelpers(context, reallyAllow);
+    }
+
+    @Override
+    public void shapeFunctionOverride(boolean reallyOverride) {
+        nativeOps.ctxShapeFunctionOverride(context, reallyOverride);
+    }
+
+    @Override
+    public void setExecutionMode(@NonNull ExecutionMode mode) {
+        super.setExecutionMode(mode);
+        nativeOps.ctxSetExecutionMode(context, mode.ordinal());
     }
 }

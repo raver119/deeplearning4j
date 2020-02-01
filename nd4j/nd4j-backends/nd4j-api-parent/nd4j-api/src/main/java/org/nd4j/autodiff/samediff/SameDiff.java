@@ -60,7 +60,6 @@ import org.nd4j.linalg.api.ops.impl.transforms.Assert;
 import org.nd4j.linalg.api.ops.impl.transforms.gradient.GradientBackwardsMarker;
 import org.nd4j.linalg.api.shape.LongShapeDescriptor;
 import org.nd4j.linalg.api.shape.Shape;
-import org.nd4j.linalg.collection.IntArrayKeyMap;
 import org.nd4j.linalg.dataset.AsyncMultiDataSetIterator;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.adapter.MultiDataSetIteratorAdapter;
@@ -77,21 +76,16 @@ import org.nd4j.linalg.learning.regularization.Regularization;
 import org.nd4j.linalg.primitives.AtomicBoolean;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.linalg.util.ArrayUtil;
-import org.nd4j.linalg.util.DeviceLocalNDArray;
 import org.nd4j.linalg.util.ND4JFileUtils;
-import org.nd4j.shade.guava.base.Predicates;
 import org.nd4j.shade.guava.collect.HashBasedTable;
-import org.nd4j.shade.guava.collect.Maps;
 import org.nd4j.shade.guava.collect.Table;
 import org.nd4j.shade.guava.primitives.Ints;
 import org.nd4j.weightinit.WeightInitScheme;
-import org.nd4j.weightinit.impl.ConstantInitScheme;
 import org.nd4j.weightinit.impl.NDArraySupplierInitScheme;
 import org.nd4j.weightinit.impl.ZeroInitScheme;
 import org.tensorflow.framework.GraphDef;
 
 import java.io.*;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1804,7 +1798,7 @@ public class SameDiff extends SDBaseOps {
                     if (validationData != null && (validationFrequency <= 0 || i % validationFrequency == 0)) {
 
                         long validationStart = System.currentTimeMillis();
-                        outputHelper(validationData, new At(at.epoch(), 0, 0, 0, Operation.TRAINING_VALIDATION),
+                        outputHelper(validationData, new At(at.epoch(), 0, 0, 0, null, Operation.TRAINING_VALIDATION),
                                 listenersWitHistory);
 
                         long validationTime = System.currentTimeMillis() - validationStart;
@@ -4710,7 +4704,7 @@ public class SameDiff extends SDBaseOps {
                 0,
                 0,
                 -1,
-                0, 0, 0, 0, 0, 0, 0, 0, 0);
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         return flatNode;
     }

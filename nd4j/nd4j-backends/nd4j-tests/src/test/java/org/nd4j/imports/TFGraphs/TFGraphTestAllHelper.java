@@ -32,7 +32,6 @@ import org.nd4j.autodiff.execution.conf.ExecutorConfiguration;
 import org.nd4j.autodiff.execution.conf.OutputMode;
 import org.nd4j.autodiff.functions.DifferentialFunction;
 import org.nd4j.autodiff.listeners.Listener;
-import org.nd4j.autodiff.listeners.debugging.ExecDebuggingListener;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.internal.InferenceSession;
 import org.nd4j.autodiff.samediff.internal.SameDiffOp;
@@ -286,8 +285,7 @@ public class TFGraphTestAllHelper {
                             + " with minAbsError=" + minAbsErrorOverride + "; largest observed relError=" + maxRE, 0, countExceeds);
                 }
             }
-            log.info("\n\tTEST {} PASSED with {} arrays compared...", modelName, predictions.keySet().size());
-            log.info("\n========================================================\n");
+            log.info("TEST {} PASSED with {} arrays compared...", modelName, predictions.keySet().size());
         }
 
         //Serialize and deserialize, check equality:
@@ -393,7 +391,7 @@ public class TFGraphTestAllHelper {
     public static Pair<SameDiff, Map<String,INDArray>> getGraphAfterExec(String baseDir, String modelFilename, String modelName, Map<String, INDArray> inputs,
                                              ExecuteWith executeWith, BiFunction<File,String,SameDiff> graphLoaderFunction, List<Listener> listeners,
                                                                          Set<String> requiredOutputs, boolean printArraysDebugging) throws IOException {
-        log.info("\n\tRUNNING TEST " + modelName + "...");
+        log.info("RUNNING TEST {}...", modelName);
         SameDiff graph = graphLoaderFunction.apply(new ClassPathResource(baseDir + "/" + modelName + "/" + modelFilename).getFile(), modelName);
         if(listeners != null){
             graph.setListeners(listeners);

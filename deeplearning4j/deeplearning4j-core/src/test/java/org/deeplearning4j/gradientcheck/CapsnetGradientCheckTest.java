@@ -43,12 +43,6 @@ import java.util.Random;
 
 public class CapsnetGradientCheckTest extends BaseDL4JTest {
 
-    private static final boolean PRINT_RESULTS = true;
-    private static final boolean RETURN_ON_FIRST_FAILURE = false;
-    private static final double DEFAULT_EPS = 1e-6;
-    private static final double DEFAULT_MAX_REL_ERROR = 1e-3;
-    private static final double DEFAULT_MIN_ABS_ERROR = 1e-8;
-
     @Test
     public void testCapsNet() {
 
@@ -110,10 +104,8 @@ public class CapsnetGradientCheckTest extends BaseDL4JTest {
                                         " capsules with " + capsuleDim + " dimensions and " + routing + " routings";
                                 System.out.println(msg);
 
-                                boolean gradOK = GradientCheckUtil
-                                        .checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                                                DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input,
-                                                labels, null, null, true, 100);
+                                boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(input)
+                                        .labels(labels).subset(true).maxPerParam(100));
 
                                 assertTrue(msg, gradOK);
 

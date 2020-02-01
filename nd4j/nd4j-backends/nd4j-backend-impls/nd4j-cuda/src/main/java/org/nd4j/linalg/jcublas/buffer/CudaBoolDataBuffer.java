@@ -16,7 +16,6 @@
 
 package org.nd4j.linalg.jcublas.buffer;
 
-import lombok.NonNull;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.indexer.Indexer;
 import org.nd4j.linalg.api.buffer.DataBuffer;
@@ -24,9 +23,6 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.util.ArrayUtil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -48,6 +44,10 @@ public class CudaBoolDataBuffer extends BaseCudaDataBuffer {
 
     public CudaBoolDataBuffer(Pointer pointer, Pointer specialPointer, Indexer indexer, long length){
         super(pointer, specialPointer, indexer, length);
+    }
+
+    public CudaBoolDataBuffer(ByteBuffer buffer, DataType dataType, long length, long offset) {
+        super(buffer, dataType, length, offset);
     }
 
     /**
@@ -130,18 +130,6 @@ public class CudaBoolDataBuffer extends BaseCudaDataBuffer {
 
     public CudaBoolDataBuffer(int[] data, boolean copy, long offset) {
         super(data, copy, offset);
-    }
-
-    public CudaBoolDataBuffer(byte[] data, long length) {
-        super(data, length, DataType.HALF);
-    }
-
-    public CudaBoolDataBuffer(ByteBuffer buffer, long length) {
-        super(buffer, (int) length, DataType.HALF);
-    }
-
-    public CudaBoolDataBuffer(ByteBuffer buffer, long length, long offset) {
-        super(buffer, length, offset, DataType.HALF);
     }
 
     @Override

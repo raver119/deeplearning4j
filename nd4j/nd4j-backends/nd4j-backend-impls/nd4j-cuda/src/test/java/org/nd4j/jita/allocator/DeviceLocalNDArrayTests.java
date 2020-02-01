@@ -19,17 +19,16 @@ package org.nd4j.jita.allocator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
+import org.nd4j.BaseND4JTest;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.util.DeviceLocalNDArray;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
-public class DeviceLocalNDArrayTests {
+public class DeviceLocalNDArrayTests extends BaseND4JTest {
 
     @Test
     public void testDeviceLocalArray_1() throws Exception{

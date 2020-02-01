@@ -56,11 +56,6 @@ import static org.junit.Assert.assertTrue;
  * @author Alex Black
  */
 public class YoloGradientCheckTests extends BaseDL4JTest {
-    private static final boolean PRINT_RESULTS = true;
-    private static final boolean RETURN_ON_FIRST_FAILURE = false;
-    private static final double DEFAULT_EPS = 1e-6;
-    private static final double DEFAULT_MAX_REL_ERROR = 1e-3;
-    private static final double DEFAULT_MIN_ABS_ERROR = 1e-8;
 
     static {
         Nd4j.setDataType(DataType.DOUBLE);
@@ -120,8 +115,8 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
             String msg = "testYoloOutputLayer() - minibatch = " + mb + ", w=" + w + ", h=" + h + ", l1=" + l1[i] + ", l2=" + l2[i];
             System.out.println(msg);
 
-            boolean gradOK = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                    DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels, null, null, true, 100);
+            boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(input)
+                    .labels(labels).subset(true).maxPerParam(100));
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(net);
@@ -228,8 +223,8 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
         INDArray f = ds.getFeatures();
         INDArray l = ds.getLabels();
 
-        boolean ok = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, f, l, null, null, true, 64);
+        boolean ok = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(f)
+                .labels(l).inputMask(null).subset(true).maxPerParam(64));
 
         assertTrue(ok);
         TestUtils.testModelSerialization(net);

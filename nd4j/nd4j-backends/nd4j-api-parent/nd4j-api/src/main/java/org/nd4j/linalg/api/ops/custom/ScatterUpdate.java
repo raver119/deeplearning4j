@@ -18,6 +18,7 @@ package org.nd4j.linalg.api.ops.custom;
 
 import lombok.NonNull;
 import lombok.val;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.CustomOp;
 import org.nd4j.linalg.api.ops.CustomOpDescriptor;
@@ -107,12 +108,12 @@ public class ScatterUpdate implements CustomOp {
     }
 
     @Override
-    public INDArray[] outputArguments() {
+    public List<INDArray> outputArguments() {
         return op.outputArguments();
     }
 
     @Override
-    public INDArray[] inputArguments() {
+    public List<INDArray> inputArguments() {
         return op.inputArguments();
     }
 
@@ -244,6 +245,21 @@ public class ScatterUpdate implements CustomOp {
     @Override
     public void assertValidForExecution() {
 
+    }
+
+    @Override
+    public DataType[] dArgs() {
+        return new DataType[0];
+    }
+
+    @Override
+    public void addDArgument(DataType... arg) {
+
+    }
+
+    @Override
+    public int numDArguments() {
+        return 0;
     }
 
     @Override

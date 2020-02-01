@@ -23,9 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.nd4j.OpValidationSuite;
-import org.nd4j.imports.TFGraphs.TFGraphTestAllHelper;
-import org.nd4j.imports.TFGraphs.TFGraphTestAllLibnd4j;
-import org.nd4j.imports.TFGraphs.TFGraphTestAllSameDiff;
 import org.nd4j.imports.TFGraphs.TFGraphTestZooModels;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.BaseNd4jTest;
@@ -36,7 +33,6 @@ import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -76,7 +72,7 @@ public class ExecutionTests extends BaseNd4jTest {
         Nd4j.create(1);
 
         val tg = TFGraphMapper.importGraphTxt(new ClassPathResource("tf_graphs/reduce_dim.pb.txt").getInputStream(), null, null);
-        System.out.println(tg.summary());
+//        System.out.println(tg.summary());
 
         Map<String,INDArray> result_0 = tg.outputAll(null);
         val exp_0 = Nd4j.create(DataType.FLOAT, 3).assign(3.0);

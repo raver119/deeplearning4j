@@ -16,6 +16,7 @@
 
 package org.nd4j.linalg.api.ndarray;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.After;
 import org.junit.Test;
@@ -31,11 +32,13 @@ import org.nd4j.linalg.ops.transforms.Transforms;
 
 import java.io.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by susaneraly on 7/2/16.
  */
+@Slf4j
 @RunWith(Parameterized.class)
 public class TestSerializationDoubleToFloat extends BaseNd4jTest {
 
@@ -53,7 +56,7 @@ public class TestSerializationDoubleToFloat extends BaseNd4jTest {
     
     @Test
     public void testSerializationFullArrayNd4jWriteRead() throws Exception {
-        int length = 100;
+        int length = 4;
 
         //WRITE OUT A DOUBLE ARRAY
         //Hack before setting datatype - fix already in r119_various branch
@@ -61,7 +64,7 @@ public class TestSerializationDoubleToFloat extends BaseNd4jTest {
         val initialType = Nd4j.dataType();
 
         Nd4j.setDataType(DataType.DOUBLE);
-        INDArray arr = Nd4j.linspace(1, length, length).reshape('c', 10, 10);
+        INDArray arr = Nd4j.linspace(1, length, length).reshape('c', 2, 2);
         arr.subi(50.0123456); //assures positive and negative numbers with decimal points
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -74,8 +77,10 @@ public class TestSerializationDoubleToFloat extends BaseNd4jTest {
         //Nd4j.create(1);
         DataTypeUtil.setDTypeForContext(DataType.FLOAT);
         System.out.println("The data opType is " + Nd4j.dataType());
-        INDArray arr1 = Nd4j.linspace(1, length, length).reshape('c', 10, 10);
+        INDArray arr1 = Nd4j.linspace(1, length, length).reshape('c', 2, 2);
         arr1.subi(50.0123456);
+
+        log.info("A  ---------------");
 
         INDArray arr2;
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {

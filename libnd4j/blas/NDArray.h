@@ -42,6 +42,9 @@
 #include <helpers/ConstantShapeHelper.h>
 #include <array/DataBuffer.h>
 #include <execution/AffinityManager.h>
+#include <memory>
+#include <array/InteropDataBuffer.h>
+#include <memory/MemoryCounter.h>
 
 
 namespace nd4j {
@@ -192,6 +195,56 @@ namespace nd4j {
 
         NDArray(std::shared_ptr<DataBuffer> buffer, const char order, const std::vector<Nd4jLong> &shape, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
 
+        /**
+         * This contructors create scalar array containing string utf8
+         *
+         */
+        NDArray(const char* str, nd4j::DataType dtype = nd4j::DataType::UTF8, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext())
+            : NDArray(std::string(str), dtype, context) {
+        }
+        NDArray(const std::string& string, nd4j::DataType dtype = nd4j::DataType::UTF8, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
+        /**
+         * This contructors create scalar array containing string utf16
+         *
+         */
+        NDArray(const char16_t* u16string, nd4j::DataType dtype = nd4j::DataType::UTF16, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext())
+            : NDArray(std::u16string(u16string), dtype, context) {
+        }
+
+        NDArray(const std::u16string& u16string, nd4j::DataType dtype = nd4j::DataType::UTF16, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
+        /**
+        * This contructors create scalar array containing string utf32
+        *
+        */
+        NDArray(const char32_t* u32string, nd4j::DataType dtype = nd4j::DataType::UTF32, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext())
+            : NDArray(std::u32string(u32string), dtype, context) {
+        }
+
+        NDArray(const std::u32string& u32string, nd4j::DataType dtype = nd4j::DataType::UTF32, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
+        /**
+        * This contructors create array from vector of utf8 strings
+        *
+        */
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char*>& strings, nd4j::DataType dtype = nd4j::DataType::UTF8, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::string>& string, nd4j::DataType dtype = nd4j::DataType::UTF8, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
+        /**
+         * This contructors create array from vector of utf16 strings
+         *
+        */
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& strings, nd4j::DataType dtype = nd4j::DataType::UTF16, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, nd4j::DataType dtype = nd4j::DataType::UTF16, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
+        /**
+         * This contructors create array from vector of utf32 strings
+         *
+        */
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char32_t*>& strings, nd4j::DataType dtype = nd4j::DataType::UTF32, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+        NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, nd4j::DataType dtype = nd4j::DataType::UTF32, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext());
+
 #endif
 
         /**
@@ -247,7 +300,6 @@ namespace nd4j {
         */
         NDArray(void *buffer, const char order, const std::vector<Nd4jLong> &shape,  nd4j::DataType dtype, nd4j::LaunchContext* context = nd4j::LaunchContext::defaultContext(), const bool isBuffAlloc = false);
 
-
         /**
         * This method returns new array with the same shape & data type
         * @return
@@ -301,14 +353,11 @@ namespace nd4j {
          * @param writeList
          * @param readList
          */
-         // TODO: it would be nice to have NDArray::registerSpecialUse signature that accepts something else beyond initializer_list
-        static void registerSpecialUse(const std::initializer_list<const NDArray*>& writeList, const std::initializer_list<const NDArray*>& readList);
-        static void prepareSpecialUse(const std::initializer_list<const NDArray*>& writeList, const std::initializer_list<const NDArray*>& readList, bool synchronizeWritables = false);
+        static void registerSpecialUse(const std::vector<const NDArray*>& writeList, const std::vector<const NDArray*>& readList);
+        static void prepareSpecialUse(const std::vector<const NDArray*>& writeList, const std::vector<const NDArray*>& readList, bool synchronizeWritables = false);
 
-        // TODO: it would be nice to have NDArray::registerSpecialUse signature that accepts something else beyond initializer_list
-        static void registerPrimaryUse(const std::initializer_list<const NDArray*>& writeList, const std::initializer_list<const NDArray*>& readList);
-        static void preparePrimaryUse(const std::initializer_list<const NDArray*>& writeList, const std::initializer_list<const NDArray*>& readList, bool synchronizeWritables = false);
-
+        static void registerPrimaryUse(const std::vector<const NDArray*>& writeList, const std::vector<const NDArray*>& readList);
+        static void preparePrimaryUse(const std::vector<const NDArray*>& writeList, const std::vector<const NDArray*>& readList, bool synchronizeWritables = false);
 
         /**
          * This method returns buffer pointer offset by given number of elements, wrt own data type
@@ -941,6 +990,7 @@ namespace nd4j {
         template <typename T>
         std::vector<T> getBufferAsVector();
         std::vector<Nd4jLong> getShapeAsVector() const;
+        std::vector<int> getShapeAsVectorInt() const;
         std::vector<Nd4jLong> getShapeInfoAsVector();
         std::vector<int64_t> getShapeInfoAsFlatVector();
         std::vector<int64_t> getShapeAsFlatVector();
@@ -1146,6 +1196,9 @@ namespace nd4j {
 
         template <typename N>
         NDArray asT() const;
+
+        template <typename S>
+        NDArray asS() const;
 
         NDArray asT(DataType dtype) const;
 
@@ -1440,7 +1493,7 @@ namespace nd4j {
          * @return
          */
         bool isS() const;
-
+        
         template <typename T>
         std::vector<T> asVectorT();
 

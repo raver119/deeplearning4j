@@ -27,10 +27,6 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.learning.config.Adam;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.*;
@@ -90,7 +86,8 @@ public class SameDiffSpecifiedLossVarsTests extends BaseNd4jTest {
             SDVariable loss1 = add.std("l1", true);
             SDVariable loss2 = mmul.mean("l2");
 
-            System.out.println(sd.summary());
+//            System.out.println(sd.summary());
+            sd.summary();
 
             if(i == 0){
                 sd.setLossVariables("l1", "l2");

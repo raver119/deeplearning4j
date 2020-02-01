@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,7 +30,7 @@ import org.nd4j.linalg.api.ops.performance.PerformanceTracker;
 import org.nd4j.linalg.api.ops.performance.primitives.AveragingTransactionsHolder;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
-import org.nd4j.linalg.memory.MemcpyDirection;
+import org.nd4j.linalg.api.memory.MemcpyDirection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -105,6 +106,7 @@ public class PerformanceTrackerTests extends BaseNd4jTest {
     }
 
     @Test
+    @Ignore
     public void testTrackerCpu_1() {
         if (!Nd4j.getExecutioner().getClass().getCanonicalName().toLowerCase().contains("native"))
             return;

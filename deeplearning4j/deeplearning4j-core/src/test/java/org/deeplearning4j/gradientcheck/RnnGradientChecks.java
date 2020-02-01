@@ -47,10 +47,6 @@ import static org.junit.Assert.assertTrue;
 public class RnnGradientChecks extends BaseDL4JTest {
 
     private static final boolean PRINT_RESULTS = true;
-    private static final boolean RETURN_ON_FIRST_FAILURE = false;
-    private static final double DEFAULT_EPS = 1e-6;
-    private static final double DEFAULT_MAX_REL_ERROR = 1e-3;
-    private static final double DEFAULT_MIN_ABS_ERROR = 1e-8;
 
     static {
         Nd4j.setDataType(DataType.DOUBLE);
@@ -127,8 +123,8 @@ public class RnnGradientChecks extends BaseDL4JTest {
                             net.init();
 
 
-                            boolean gradOK = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                                    DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, in, labels, inMask, null);
+                            boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
+                                    .labels(labels).inputMask(inMask));
                             assertTrue(gradOK);
 
 
@@ -207,8 +203,8 @@ public class RnnGradientChecks extends BaseDL4JTest {
                                     net.init();
 
 
-                                    boolean gradOK = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                                            DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, in, labels, inMask, null);
+                                    boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
+                                            .labels(labels).inputMask(inMask));
                                     assertTrue(gradOK);
                                     TestUtils.testModelSerialization(net);
                                 }
@@ -282,8 +278,8 @@ public class RnnGradientChecks extends BaseDL4JTest {
                         MultiLayerNetwork net = new MultiLayerNetwork(conf);
                         net.init();
 
-                        boolean gradOK = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                                DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, in, labels, inMask, null, true, 16);
+                        boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
+                                .labels(labels).inputMask(inMask).subset(true).maxPerParam(16));
                         assertTrue(name, gradOK);
                         TestUtils.testModelSerialization(net);
                     }
@@ -346,8 +342,8 @@ public class RnnGradientChecks extends BaseDL4JTest {
                 MultiLayerNetwork net = new MultiLayerNetwork(conf);
                 net.init();
 
-                boolean gradOK = GradientCheckUtil.checkGradients(net, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
-                        DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, in, labels, inMask, null, true, 16);
+                boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
+                        .labels(labels).inputMask(inMask).subset(true).maxPerParam(16));
                 assertTrue(name, gradOK);
                 TestUtils.testModelSerialization(net);
             }

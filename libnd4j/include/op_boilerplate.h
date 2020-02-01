@@ -1516,7 +1516,9 @@
 
 #define INPUT_LIST(INDEX)     reinterpret_cast<nd4j::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList())
 
+#define D_ARG(INDEX)     block.getDArguments()->at(INDEX)
 #define INT_ARG(INDEX)     block.getIArguments()->at(INDEX)
+#define I_ARG(INDEX)     INT_ARG(INDEX)
 #define T_ARG(INDEX)     block.getTArguments()->at(INDEX)
 #define B_ARG(INDEX)     block.getBArguments()->at(INDEX)
 
@@ -1623,5 +1625,10 @@
 #define PARAMETRIC_XZ() [&] (Parameters &p, ResultSet &x, ResultSet &z)
 
 #define PARAMETRIC_D() [&] (Parameters &p) -> Context*
+
+
+#ifdef __CUDABLAS__
+#define checkCudaErrors(ERR) if (ERR != 0) {throw std::runtime_error("CUDA stream synchronization failed");}
+#endif
 
 #endif

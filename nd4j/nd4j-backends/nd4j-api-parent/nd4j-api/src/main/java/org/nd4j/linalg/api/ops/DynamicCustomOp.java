@@ -16,6 +16,7 @@
 
 package org.nd4j.linalg.api.ops;
 
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.shade.guava.collect.Lists;
 import org.nd4j.shade.guava.primitives.Doubles;
 import org.nd4j.shade.guava.primitives.Longs;
@@ -63,6 +64,9 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
     protected List<Boolean> bArguments = new ArrayList<>();
 
     @Builder.Default
+    protected List<DataType> dArguments = new ArrayList<>();
+
+    @Builder.Default
     protected List<Integer> axis = new ArrayList<>();
 
     @Getter
@@ -77,6 +81,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
         iArguments = new ArrayList<>();
         tArguments = new ArrayList<>();
         bArguments = new ArrayList<>();
+        dArguments = new ArrayList<>();
     }
 
     public DynamicCustomOp(SameDiff sameDiff, SDVariable arg) {
@@ -93,6 +98,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
         iArguments = new ArrayList<>();
         tArguments = new ArrayList<>();
         bArguments = new ArrayList<>();
+        dArguments = new ArrayList<>();
     }
 
     public DynamicCustomOp(String opName, INDArray input, INDArray output, List<Double> tArguments, int[] iArguments) {
@@ -132,6 +138,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
                 this.iArguments.add((Long) a.longValue());
         }
         bArguments = new ArrayList<>();
+        dArguments = new ArrayList<>();
     }
 
     /**
@@ -173,6 +180,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
         iArguments = new ArrayList<>();
         tArguments = new ArrayList<>();
         bArguments = new ArrayList<>();
+        dArguments = new ArrayList<>();
         this.inplaceCall = inPlace;
     }
 
@@ -185,6 +193,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
         iArguments = new ArrayList<>();
         tArguments = new ArrayList<>();
         bArguments = new ArrayList<>();
+        dArguments = new ArrayList<>();
     }
 
 
@@ -261,19 +270,18 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
     }
 
     @Override
-    public INDArray[] outputArguments() {
-        if (!outputArguments.isEmpty()) {
-            return outputArguments.toArray(new INDArray[0]);
-        }
-        return new INDArray[0];
+    public int numDArguments() {
+        return dArguments.size();
     }
 
     @Override
-    public INDArray[] inputArguments() {
-        if (!inputArguments.isEmpty())
-            return inputArguments.toArray(new INDArray[0]);
-        return new INDArray[0];
+    public List<INDArray> outputArguments() {
+        return outputArguments;
+    }
 
+    @Override
+    public List<INDArray> inputArguments() {
+        return inputArguments;
     }
 
     @Override
@@ -284,6 +292,11 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
     @Override
     public double[] tArgs() {
         return Doubles.toArray(tArguments);
+    }
+
+    @Override
+    public DataType[] dArgs() {
+        return dArguments.toArray(new DataType[dArguments.size()]);
     }
 
     @Override
@@ -329,6 +342,15 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
             addTArgument(Doubles.asList(arg).toArray(new Double[arg.length]));
     }
 
+    @Override
+    public void addDArgument(DataType... arg) {
+        if (dArguments == null)
+            dArguments = new ArrayList<>();
+
+        if (arg != null)
+            dArguments.addAll(Arrays.asList(arg));
+    }
+
     private void addTArgument(Double... arg) {
         tArguments.addAll(Arrays.asList(arg));
     }
@@ -367,10 +389,10 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
             for (int i = 0; i < args.length; i++) {
 
                 // it's possible to get into situation where number of args > number of arrays AT THIS MOMENT
-                if (i >= arrsSoFar.length)
+                if (i >= arrsSoFar.size())
                     continue;
 
-                if (!Arrays.equals(args[i].getShape(), arrsSoFar[i].shape()))
+                if (!Arrays.equals(args[i].getShape(), arrsSoFar.get(i).shape()))
                     throw new ND4JIllegalStateException("Illegal array passed in as argument [" + i + "]. Expected shape " + Arrays.toString(args[i].getShape()) + " and received array with shape " + Arrays.toString(arg[i].shape()));
             }
         }
@@ -656,6 +678,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
         private List<INDArray> outputArguments = new ArrayList<>();
         private List<Double> tArguments = new ArrayList<>();
         private List<Long> iArguments = new ArrayList<>();
+        private List<DataType> dArguments = new ArrayList<>();
         private List<Boolean> bArguments = new ArrayList<>();
 
         protected DynamicCustomOpsBuilder(String opName, long hash, int numInputs, int numOutputs, boolean inplaceAllowed, int numTArguments, int numIArguments) {
@@ -876,6 +899,7 @@ public class DynamicCustomOp extends DifferentialFunction implements CustomOp {
             result.iArguments = iArguments;
             result.tArguments = tArguments;
             result.bArguments = bArguments;
+            result.dArguments = dArguments;
             result.inplaceCall = inplaceCall;
             result.hash = opHash;
             result.outputShapes = outputShapes;

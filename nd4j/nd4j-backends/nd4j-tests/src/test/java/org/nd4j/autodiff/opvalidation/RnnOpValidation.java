@@ -16,15 +16,12 @@
 
 package org.nd4j.autodiff.opvalidation;
 
-import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.GRUCellConfiguration;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMConfiguration;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.outputs.LSTMCellOutputs;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.weights.GRUWeights;
@@ -194,9 +191,9 @@ public class RnnOpValidation extends BaseOpValidation {
         INDArray out5 = Nd4j.create(new float[]{-0.17905743f, 0.19177397f}, new int[]{1,2});    //Cell state
         INDArray out6 = Nd4j.create(new float[]{-0.04025514f, 0.10104967f}, new int[]{1,2});    //Output
 
-        for(int i=0; i<toExec.size(); i++ ){
-            System.out.println(i + "\t" + m.get(toExec.get(i)));
-        }
+//        for(int i=0; i<toExec.size(); i++ ){
+//            System.out.println(i + "\t" + m.get(toExec.get(i)));
+//        }
 
         assertEquals(out0, m.get(toExec.get(0)));       //Input modulation gate
         assertEquals(out1, m.get(toExec.get(1)));       //Cell state (pre tanh)

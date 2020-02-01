@@ -21,6 +21,7 @@
 #include <Context.h>
 #include <helpers/ShapeUtils.h>
 #include <graph/Context.h>
+#include <array/InteropDataBuffer.h>
 
 
 namespace nd4j {
@@ -104,6 +105,10 @@ namespace nd4j {
 
             if (_context != nullptr)
                 delete _context;
+        }
+
+        void Context::setTargetEngine(samediff::Engine engine) {
+            _engine = engine;
         }
 
         bool Context::hasWorkspaceProvided() {
@@ -426,6 +431,44 @@ namespace nd4j {
                 array->setContext(_context);
         }
 
+        void Context::setInputArray(int index, void *vdatabuffer, void *shapeInfo, void *specialShapeInfo) {
+            auto dataBuffer = reinterpret_cast<InteropDataBuffer*>(vdatabuffer);
+
+            if (_fastpath_in.size() < index + 1)
+                _fastpath_in.resize(index+1);
+
+            NDArray *array;
+            if (dataBuffer != nullptr)
+                array = new NDArray(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), nd4j::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+            else
+                array = new NDArray(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+
+            _fastpath_in[index] = array;
+            _handles.emplace_back(array);
+
+            if (_context != nullptr)
+                array->setContext(_context);
+        }
+
+        void Context::setOutputArray(int index, void *vdatabuffer, void *shapeInfo, void *specialShapeInfo) {
+            auto dataBuffer = reinterpret_cast<InteropDataBuffer*>(vdatabuffer);
+
+            if (_fastpath_out.size() < index + 1)
+                _fastpath_out.resize(index+1);
+
+            NDArray *array;
+            if (dataBuffer != nullptr)
+                array = new NDArray(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), nd4j::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+            else
+                array = new NDArray(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+
+            _fastpath_out[index] = array;
+            _handles.emplace_back(array);
+
+            if (_context != nullptr)
+                array->setContext(_context);
+        }
+
         void Context::setTArguments(double *arguments, int numberOfArguments) {
             _tArgs.clear();
             _tArgs.reserve(numberOfArguments);
@@ -483,6 +526,42 @@ namespace nd4j {
         void Context::setBArguments(const std::vector<bool> &bArgs) {
             for (auto b:bArgs)
                 _bArgs.push_back(b);
+        }
+
+        void Context::setShapeFunctionOverride(bool reallyOverride) {
+            _shapeFunctionOverride = reallyOverride;
+        }
+
+        bool Context::shapeFunctionOverride() {
+            return _shapeFunctionOverride;
+        }
+
+        samediff::ExecutionMode Context::executionMode() {
+            return _execMode;
+        }
+
+        void Context::setExecutionMode(samediff::ExecutionMode executionMode) {
+            _execMode = executionMode;
+        }
+
+        bool Context::isTraining() {
+            return _execMode == samediff::ExecutionMode::MODE_TRAINING;
+        }
+
+        bool Context::isInference() {
+            return _execMode == samediff::ExecutionMode::MODE_INFERENCE;
+        }
+
+        void Context::setDArguments(nd4j::DataType *arguments, int numberOfArguments) {
+            _dArgs.clear();
+            for (int e = 0; e < numberOfArguments; e++)
+                _dArgs.emplace_back(arguments[e]);
+        }
+
+        void Context::setDArguments(const std::vector<nd4j::DataType> &dArgs) {
+            _dArgs.clear();
+            for (auto d:dArgs)
+                _dArgs.emplace_back(d);
         }
     }
 }

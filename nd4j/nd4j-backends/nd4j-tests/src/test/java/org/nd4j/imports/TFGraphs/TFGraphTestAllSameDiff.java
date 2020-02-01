@@ -25,14 +25,11 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.nd4j.OpValidationSuite;
-import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.primitives.Pair;
-import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,7 +115,15 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             "matrix_band_part/.*",
 
             // 12.20.2019 - https://github.com/eclipse/deeplearning4j/issues/8559
-            "fused_batch_norm/.*"
+            "fused_batch_norm/.*",
+
+            // AB 2020/01/04 - https://github.com/eclipse/deeplearning4j/issues/8592
+            "emptyArrayTests/reshape/rank2_shape2-0_2-0--1",
+
+            //AB 2020/01/07 - Known issues
+            "bitcast/from_float64_to_int64",
+            "bitcast/from_rank2_float64_to_int64",
+            "bitcast/from_float64_to_uint64"
     };
 
     /* As per TFGraphTestList.printArraysDebugging - this field defines a set of regexes for test cases that should have

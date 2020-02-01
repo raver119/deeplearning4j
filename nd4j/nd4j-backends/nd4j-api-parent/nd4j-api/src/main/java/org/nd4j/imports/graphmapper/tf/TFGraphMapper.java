@@ -38,7 +38,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge;
 import org.nd4j.shade.guava.primitives.Floats;
 import org.nd4j.shade.guava.primitives.Ints;
-import org.nd4j.shade.protobuf.InvalidProtocolBufferException;
 import org.nd4j.shade.protobuf.Message;
 import org.nd4j.shade.protobuf.TextFormat;
 import org.tensorflow.framework.*;
@@ -293,6 +292,12 @@ public class TFGraphMapper {
                         for (int i = 0; i < nIn; i++) {
                             String origInName = nd.getInput(i);
                             String inName = stripControl(origInName);
+
+                            if(inName.endsWith(":0")){
+                                //Strip ":0" suffix. Some ops can depend on placeholders, like "image_tensor:0" but in SameDiff this is a variable called "image_tensor"
+                                inName = inName.substring(0, inName.length()-2);
+                            }
+
                             boolean isControlDep = isControlDep(origInName);
                             if (isControlDep) {
                                 if (controlDeps == null)
@@ -442,6 +447,11 @@ public class TFGraphMapper {
                     for (int i = 0; i < nInNext; i++) {
                         String s = nextOpDef.getInput(i);
                         String inName = stripControl(nextOpDef.getInput(i));
+
+                        if(inName.endsWith(":0")){
+                            //Strip ":0" suffix. Some ops can depend on placeholders, like "image_tensor:0" but in SameDiff this is a variable called "image_tensor"
+                            inName = inName.substring(0, inName.length()-2);
+                        }
 
 //                        log.info("Input: {}, {}", s, inName);
 
