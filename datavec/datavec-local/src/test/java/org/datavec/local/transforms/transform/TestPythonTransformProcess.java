@@ -310,7 +310,7 @@ public class TestPythonTransformProcess {
                 .build();
         List<List<Writable>> execute = LocalTransformExecutor.execute(inputs, tp);
         assertEquals(3,execute.get(0).get(0).toInt());
-        assertEquals("hello world",execute.get(0).get(1).toString());
+        assertEquals("hello world",execute.get(0).get(2).toString());
 
     }
 
@@ -334,7 +334,9 @@ public class TestPythonTransformProcess {
         assertFalse(execute.isEmpty());
         assertNotNull(execute.get(0));
         assertNotNull(execute.get(0).get(0));
-        assertEquals("hello world",execute.get(0).get(0).toString());
+        assertNotNull(execute.get(0).get(1));
+        assertEquals(Nd4j.scalar(3).reshape(1, 1),((NDArrayWritable)execute.get(0).get(0)).get());
+        assertEquals("hello world",execute.get(0).get(1).toString());
     }
 
     @Test
