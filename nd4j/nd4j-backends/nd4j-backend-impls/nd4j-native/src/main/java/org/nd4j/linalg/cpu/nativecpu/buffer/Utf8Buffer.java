@@ -172,15 +172,15 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
         val dataPointer = (BytePointer) (this.pointer);
 
         val start = headerPointer.get(index);
-        val end = headerPointer.get(index+1);
+        val end = headerPointer.get(index + 1);
 
         if (end - start > Integer.MAX_VALUE)
-            throw new IllegalStateException("Array is too long for Java");
+            throw new IllegalStateException("Array is too long for GraphRunnerJava");
 
         val dataLength = (int) (end - start);
         val bytes = new byte[dataLength];
 
-        val headerLength = (numWords + 1) * 8;
+        val headerLength = (length() + 1) * 8;
 
         for (int e = 0; e < dataLength; e++) {
             val idx = headerLength + start + e;
