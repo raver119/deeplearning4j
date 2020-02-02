@@ -18,13 +18,12 @@ package org.nd4j.arrow;
 
 import org.apache.arrow.flatbuf.Tensor;
 import org.junit.Test;
-import org.nd4j.BaseND4JTest;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import static org.junit.Assert.assertEquals;
 
-public class ArrowSerdeTest extends BaseND4JTest {
+public class ArrowSerdeTest {
 
     @Test
     public void testBackAndForth() {

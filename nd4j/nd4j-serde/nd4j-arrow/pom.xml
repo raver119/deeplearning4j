@@ -85,6 +85,11 @@
                     <artifactId>nd4j-native</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.nd4j</groupId>
+                    <artifactId>nd4j-common-tests</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -130,6 +135,11 @@
                 <dependency>
                     <groupId>org.nd4j</groupId>
                     <artifactId>nd4j-cuda-10.2</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.nd4j</groupId>
+                    <artifactId>nd4j-common-tests</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

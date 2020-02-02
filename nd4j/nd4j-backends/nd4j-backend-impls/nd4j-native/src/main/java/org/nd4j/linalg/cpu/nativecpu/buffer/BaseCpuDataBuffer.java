@@ -49,6 +49,35 @@ public abstract class BaseCpuDataBuffer extends BaseDataBuffer implements Deallo
 
     }
 
+    @Override
+    public boolean[] asBoolean() {
+        return new boolean[0];
+    }
+
+    @Override
+    public boolean getBool(long i) {
+        return false;
+    }
+
+    @Override
+    public String getUtf8(long i) {
+        return null;
+    }
+
+    @Override
+    public String[] asUtf8() {
+        return new String[0];
+    }
+
+    @Override
+    public void put(long i, String element) {
+
+    }
+
+    @Override
+    public long byteLength() {
+        return 0;
+    }
 
     @Override
     public String getUniqueId() {
@@ -418,7 +447,7 @@ public abstract class BaseCpuDataBuffer extends BaseDataBuffer implements Deallo
         long stringByteLength = 0;
         for(int i = 0; i < length(); i++) {
             offsetBuffer.put(i,headerPointer.get(i));
-            stringByteLength += getString(i).length();
+            stringByteLength += getUtf8(i).length();
         }
 
         offsetBuffer.put(length(),stringByteLength);

@@ -85,6 +85,36 @@ public class CompressedDataBuffer extends BaseDataBuffer {
     }
 
     @Override
+    public boolean[] asBoolean() {
+        return new boolean[0];
+    }
+
+    @Override
+    public boolean getBool(long i) {
+        return false;
+    }
+
+    @Override
+    public String getUtf8(long i) {
+        return null;
+    }
+
+    @Override
+    public String[] asUtf8() {
+        return new String[0];
+    }
+
+    @Override
+    public void put(long i, String element) {
+
+    }
+
+    @Override
+    public long byteLength() {
+        return 0;
+    }
+
+    @Override
     protected void setIndexer(Indexer indexer) {
         // no-op
     }

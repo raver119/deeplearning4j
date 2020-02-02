@@ -17,7 +17,6 @@
 package org.nd4j.linalg.cpu.nativecpu.buffer;
 
 
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import org.bytedeco.javacpp.BytePointer;
@@ -42,9 +41,6 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
 
     protected Collection<Pointer> references = new ArrayList<>();
 
-    @Getter
-    protected long numWords = 0;
-
     /**
      * Meant for creating another view of a buffer
      *
@@ -65,7 +61,7 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
          * Special case: we're creating empty buffer for length strings, each of 0 chars
          */
         super((length + 1) * 8, true);
-        numWords = length;
+        this.length = length;
     }
 
     public Utf8Buffer(long length, boolean initialize, MemoryWorkspace workspace) {
@@ -74,7 +70,7 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
          */
 
         super((length + 1) * 8, true, workspace);
-        numWords = length;
+        this.length = length;
     }
 
     public Utf8Buffer(ByteBuffer buffer, DataType dataType, long length, long offset) {
@@ -90,7 +86,7 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
 
         val bp = (BytePointer) pointer;
         bp.put(data);
-        this.numWords = numWords;
+        this.length = numWords;
     }
 
     public Utf8Buffer(double[] data, boolean copy) {
@@ -131,7 +127,7 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
 
     public Utf8Buffer(DataBuffer underlyingBuffer, long length, long offset) {
         super(underlyingBuffer, length, offset);
-        this.numWords = length;
+        this.length = length;
     }
 
     public Utf8Buffer(@NonNull Collection<String> strings) {
@@ -142,7 +138,7 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = new BytePointer(this.pointer);
 
-        numWords = strings.size();
+        length = strings.size();
 
         long cnt = 0;
         long currentLength = 0;
@@ -163,9 +159,14 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
         headerPointer.put(cnt, currentLength);
     }
 
+    @Override
+    public String getUtf8(long i) {
+        return getString(i);
+    }
+
     public String getString(long index) {
-        if (index > numWords)
-            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + numWords + "]");
+        if (index > length())
+            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + length() + "]");
 
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = (BytePointer) (this.pointer);
