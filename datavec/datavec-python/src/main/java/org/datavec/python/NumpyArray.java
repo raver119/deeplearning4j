@@ -29,6 +29,8 @@ import org.nd4j.nativeblas.NativeOps;
 import org.nd4j.nativeblas.NativeOpsHolder;
 import org.nd4j.linalg.api.buffer.DataType;
 
+import static org.nd4j.linalg.api.buffer.DataType.FLOAT;
+
 
 /**
  * Wrapper around INDArray for initializing from numpy array
@@ -53,32 +55,6 @@ public class NumpyArray {
     }
 
     @Builder
-    public NumpyArray(long address, long[] shape, long strides[], boolean copy, DataType dtype) {
-        this.address = address;
-        this.shape = shape;
-        this.strides = strides;
-        this.dtype = dtype;
-        setND4JArray();
-        if (copy) {
-            nd4jArray = nd4jArray.dup();
-            Nd4j.getAffinityManager().ensureLocation(nd4jArray, AffinityManager.Location.HOST);
-            this.address = nd4jArray.data().address();
-
-        }
-    }
-
-    public NumpyArray copy() {
-        return new NumpyArray(nd4jArray.dup());
-    }
-
-    public NumpyArray(long address, long[] shape, long strides[]) {
-        this(address, shape, strides, false, DataType.FLOAT);
-    }
-
-    public NumpyArray(long address, long[] shape, long strides[], DataType dtype) {
-        this(address, shape, strides, dtype, false);
-    }
-
     public NumpyArray(long address, long[] shape, long strides[], DataType dtype, boolean copy) {
         this.address = address;
         this.shape = shape;
@@ -91,6 +67,21 @@ public class NumpyArray {
             this.address = nd4jArray.data().address();
         }
     }
+
+
+
+    public NumpyArray copy() {
+        return new NumpyArray(nd4jArray.dup());
+    }
+
+    public NumpyArray(long address, long[] shape, long strides[]) {
+        this(address, shape, strides, FLOAT, false);
+    }
+
+    public NumpyArray(long address, long[] shape, long strides[], DataType dtype) {
+        this(address, shape, strides, dtype, false);
+    }
+
 
     private void setND4JArray() {
         long size = 1;

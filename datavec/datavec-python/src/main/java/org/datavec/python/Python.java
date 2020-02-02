@@ -132,6 +132,30 @@ public class Python {
         return attr("set").call();
     }
 
+    public static PythonObject bytearray(PythonObject pythonObject) {
+        return attr("bytearray").call(pythonObject);
+    }
+
+    public static PythonObject bytearray() {
+        return attr("bytearray").call();
+    }
+
+    public static PythonObject bytearrayType() {
+        return attr("bytearray");
+    }
+
+    public static PythonObject bytes(PythonObject pythonObject) {
+        return attr("bytes").call(pythonObject);
+    }
+
+    public static PythonObject bytes() {
+        return attr("bytes").call();
+    }
+
+    public static PythonObject bytesType() {
+        return attr("bytes");
+    }
+
     public static PythonObject tuple(PythonObject pythonObject) {
         return attr("tuple").call(pythonObject);
     }
@@ -140,10 +164,23 @@ public class Python {
         return attr("tuple").call();
     }
 
+
+    public static PythonObject Exception(PythonObject pythonObject) {
+        return attr("Exception").call(pythonObject);
+    }
+
+    public static PythonObject Exception() {
+        return attr("Exception").call();
+    }
+
+    public static PythonObject ExceptionType() {
+        return attr("Exception");
+    }
+
+
     public static PythonObject tupleType() {
         return attr("tuple");
     }
-
     public static PythonObject globals() {
         return new PythonObject(PyModule_GetDict(PyImport_ImportModule("__main__")));
     }
@@ -207,6 +244,8 @@ public class Python {
     public static void deleteNonMainContexts(){
         PythonContextManager.deleteNonMainContexts();
     }
+
+    public static void setMainContext(){PythonContextManager.setMainContext();}
 
     public static void exec(String code)throws PythonException{
         PythonExecutioner.exec(code);

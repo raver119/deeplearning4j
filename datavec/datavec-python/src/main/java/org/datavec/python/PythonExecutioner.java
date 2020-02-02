@@ -21,6 +21,7 @@ package org.datavec.python;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.bytedeco.cpython.PyThreadState;
+import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.numpy.global.numpy;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.io.ClassPathResource;
@@ -28,6 +29,7 @@ import org.nd4j.linalg.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Map;
@@ -97,6 +99,7 @@ public class PythonExecutioner {
     public final static String DEFAULT_PYTHON_PATH_PROPERTY = "org.datavec.python.path";
     public final static String JAVACPP_PYTHON_APPEND_TYPE = "org.datavec.python.javacpp.path.append";
     public final static String DEFAULT_APPEND_TYPE = "before";
+    private final static String PYTHON_EXCEPTION_KEY = "__python_exception__";
 
     static {
         init();
@@ -121,9 +124,7 @@ public class PythonExecutioner {
 
         int result = PyRun_SimpleStringFlags(code, null);
         if (result != 0) {
-            log.error("CPython: PyErr_Print");
-            PyErr_Print();
-            throw new PythonException("exec failed"); // TODO: Surface actual python error here
+            throw new PythonException("Execution failed, unable to retrieve python exception.");
         }
     }
 
@@ -182,6 +183,22 @@ public class PythonExecutioner {
             case DICT:
                 pythonObject = new PythonObject((Map) value);
                 break;
+            case BYTES:
+                if (value instanceof BytePointer){
+                    pythonObject = new PythonObject((BytePointer) value);
+                }
+                else if (value instanceof ByteBuffer){
+                    pythonObject = new PythonObject(new BytePointer((ByteBuffer) value));
+                }
+                else{
+                    throw new PythonException("Invalid value for type BYTES");
+                }
+                // bytes is a special case
+                // setting a ctypes array directly to interpreter is not safe
+                // so we create a numpy array from the byte pointer and do some code gen
+                setVariable(varName, pythonObject);
+                simpleExec(String.format("import ctypes;%s=(ctypes.c_char*len(%s)).from_buffer(%s);del ctypes", varName, varName, varName));
+                return;
             default:
                 throw new PythonException("Unsupported type: " + varType);
 
@@ -229,24 +246,35 @@ public class PythonExecutioner {
 
     }
 
+    private static void throwIfExecutionFailed() throws PythonException{
+        PythonObject ex = getVariable(PYTHON_EXCEPTION_KEY);
+        if (ex != null && !ex.toString().isEmpty()){
+            setVariable(PYTHON_EXCEPTION_KEY, new PythonObject(""));
+            throw new PythonException(ex);
+        }
+    }
 
     public static void exec(String code) throws PythonException {
         simpleExec(getWrappedCode(code));
+        throwIfExecutionFailed();
     }
 
     public static void exec(String code, PythonVariables outputVariables)throws PythonException {
         simpleExec(getWrappedCode(code));
+        throwIfExecutionFailed();
         getVariables(outputVariables);
     }
 
     public static void exec(String code, PythonVariables inputVariables, PythonVariables outputVariables) throws PythonException {
         setVariables(inputVariables);
         simpleExec(getWrappedCode(code));
+        throwIfExecutionFailed();
         getVariables(outputVariables);
     }
 
     public static PythonVariables execAndReturnAllVariables(String code) throws PythonException {
         simpleExec(getWrappedCode(code));
+        throwIfExecutionFailed();
         PythonVariables out = new PythonVariables();
         PythonObject globals = Python.globals();
         PythonObject keysList = Python.list(globals.attr("keys"));

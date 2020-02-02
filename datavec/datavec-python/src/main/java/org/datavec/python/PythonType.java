@@ -1,6 +1,7 @@
 package org.datavec.python;
 
 import lombok.Data;
+import org.bytedeco.javacpp.BytePointer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.List;
@@ -23,7 +24,8 @@ public abstract class PythonType<T> {
         BOOL,
         LIST,
         DICT,
-        NDARRAY
+        NDARRAY,
+        BYTES
     }
 
     public static PythonType valueOf(String typeName) throws PythonException{
@@ -140,6 +142,18 @@ public abstract class PythonType<T> {
         @Override
         public TypeName getName(){
             return TypeName.NDARRAY;
+        }
+    };
+
+    public static final PythonType<BytePointer> BYTES = new PythonType<BytePointer>() {
+        @Override
+        public BytePointer toJava(PythonObject pythonObject) throws PythonException {
+           return pythonObject.toBytePointer();
+        }
+
+        @Override
+        public TypeName getName() {
+            return TypeName.BYTES;
         }
     };
 }

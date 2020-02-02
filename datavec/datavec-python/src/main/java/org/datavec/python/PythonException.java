@@ -24,8 +24,16 @@ public class PythonException extends Exception {
     public PythonException(String message){
         super(message);
     }
+    private static String getExceptionString(PythonObject exception){
+        if (Python.isinstance(exception, Python.ExceptionType())){
+            String exceptionClass = Python.type(exception).attr("__name__").toString();
+            String message = exception.toString();
+            return exceptionClass + ": " + message;
+        }
+        return exception.toString();
+    }
     public PythonException(PythonObject exception){
-        this(exception.toString());
+        this(getExceptionString(exception));
     }
     public PythonException(String message, Throwable cause){
         super(message, cause);

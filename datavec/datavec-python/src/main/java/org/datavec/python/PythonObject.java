@@ -19,10 +19,13 @@ package org.datavec.python;
 
 
 import org.bytedeco.cpython.PyObject;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.Pointer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.util.*;
 
@@ -63,6 +66,35 @@ public class PythonObject {
 
     public PythonObject(INDArray npArray) {
         this(new NumpyArray(npArray));
+    }
+
+    public PythonObject(BytePointer bp){
+        long address = bp.address();
+        long size = bp.capacity();
+        // we use numpy for safety
+        NumpyArray npArr = NumpyArray.builder()
+                .address(address)
+                .shape(new long[]{size})
+                .strides(new long[]{1})
+                .dtype(DataType.BYTE)
+                .copy(false)
+                .build();
+        PyObject pyNpArr = new PythonObject(npArr).nativePythonObject;
+        nativePythonObject = pyNpArr;
+
+//        PyObject ctypes = PyImport_ImportModule("ctypes");
+//        PyObject cChar = PyObject_GetAttrString(ctypes, "c_char"); //  we use c_char instead of c_byte for easy conversion to bytes
+//        PyObject pySize = PyLong_FromLong(size);
+//        PyObject arrType = PyNumber_Multiply(cChar, pySize);
+//        PyObject fromBuffer = PyObject_GetAttrString(arrType, "from_buffer");
+//        PyObject cArr = PyObject_CallObject(fromBuffer, pyNpArr);
+//        nativePythonObject = cArr;
+//        Py_DecRef(ctypes);
+//        Py_DecRef(cChar);
+//        Py_DecRef(pySize);
+//        Py_DecRef(arrType);
+//        Py_DecRef(fromBuffer);
+//        nativePythonObject = cArr;
     }
 
     public PythonObject(NumpyArray npArray) {
@@ -500,6 +532,103 @@ public class PythonObject {
         return map;
     }
 
+    public BytePointer toBytePointer() throws PythonException{
+        if (Python.isinstance(this, Python.bytesType())){
+            // immutable bytes, have to copy data :(
+            PyObject builtins = PyImport_ImportModule("builtins");
+            PyObject ctypes = PyImport_ImportModule("ctypes");
+            PyObject byteArray = PyObject_GetAttrString(builtins, "bytesarray");
+            PyObject buffer = PyObject_CallObject(byteArray, nativePythonObject);
+            PyObject cByte = PyObject_GetAttrString(ctypes, "c_byte");
+            long size = PyObject_Size(nativePythonObject);
+            PyObject pySize = PyLong_FromLong(size);
+            PyObject arrType = PyNumber_Multiply(cByte, pySize);
+            PyObject fromBuffer = PyObject_GetAttrString(arrType, "from_buffer");
+            PyObject cArr = PyObject_CallObject(fromBuffer, buffer);
+            PyObject cVoidP = PyObject_GetAttrString(ctypes, "c_void_p");
+            PyObject cast = PyObject_GetAttrString(ctypes, "cast");
+            PyObject argsTuple = PyTuple_New(2);
+            PyTuple_SetItem(argsTuple, 0, cArr);
+            PyTuple_SetItem(argsTuple, 1, cVoidP);
+            PyObject voidPtr = PyObject_Call(cast, argsTuple, null);
+            PyObject pyAddress = PyObject_GetAttrString(voidPtr, "value");
+            long address = PyLong_AsLong(pyAddress);
+            Py_DecRef(builtins);
+            Py_DecRef(ctypes);
+            Py_DecRef(byteArray);
+            Py_DecRef(buffer);
+            Py_DecRef(cByte);
+            Py_DecRef(pySize);
+            Py_DecRef(arrType);
+            Py_DecRef(fromBuffer);
+            Py_DecRef(cArr);
+            Py_DecRef(argsTuple);
+            Py_DecRef(voidPtr);
+            Py_DecRef(pyAddress);
+            Pointer ptr = NativeOpsHolder.getInstance().getDeviceNativeOps().pointerForAddress(address);
+            ptr = ptr.limit(size);
+            ptr = ptr.capacity(size);
+            return new BytePointer(ptr);
+        }
+        else if (Python.isinstance(this, Python.bytearrayType())){
+            PyObject ctypes = PyImport_ImportModule("ctypes");
+            PyObject cByte = PyObject_GetAttrString(ctypes, "c_byte");
+            long size = PyObject_Size(nativePythonObject);
+            PyObject pySize = PyLong_FromLong(size);
+            PyObject arrType = PyNumber_Multiply(cByte, pySize);
+            PyObject fromBuffer = PyObject_GetAttrString(arrType, "from_buffer");
+            PyObject cArr = PyObject_CallObject(fromBuffer, nativePythonObject);
+            PyObject cVoidP = PyObject_GetAttrString(ctypes, "c_void_p");
+            PyObject cast = PyObject_GetAttrString(ctypes, "cast");
+            PyObject argsTuple = PyTuple_New(2);
+            PyTuple_SetItem(argsTuple, 0, cArr);
+            PyTuple_SetItem(argsTuple, 1, cVoidP);
+            PyObject voidPtr = PyObject_Call(cast, argsTuple, null);
+            PyObject pyAddress = PyObject_GetAttrString(voidPtr, "value");
+            long address = PyLong_AsLong(pyAddress);
+            Py_DecRef(ctypes);
+            Py_DecRef(cByte);
+            Py_DecRef(pySize);
+            Py_DecRef(arrType);
+            Py_DecRef(fromBuffer);
+            Py_DecRef(cArr);
+            Py_DecRef(argsTuple);
+            Py_DecRef(voidPtr);
+            Py_DecRef(pyAddress);
+            Pointer ptr = NativeOpsHolder.getInstance().getDeviceNativeOps().pointerForAddress(address);
+            ptr = ptr.limit(size);
+            ptr = ptr.capacity(size);
+            return new BytePointer(ptr);
+        }
+        else{
+            PyObject ctypes = PyImport_ImportModule("ctypes");
+            PyObject cArrType = PyObject_GetAttrString(ctypes, "Array");
+            if (PyObject_IsInstance(nativePythonObject, cArrType) != 0){
+                PyObject cVoidP = PyObject_GetAttrString(ctypes, "c_void_p");
+                PyObject cast = PyObject_GetAttrString(ctypes, "cast");
+                PyObject argsTuple = PyTuple_New(2);
+                PyTuple_SetItem(argsTuple, 0, nativePythonObject);
+                PyTuple_SetItem(argsTuple, 1, cVoidP);
+                PyObject voidPtr = PyObject_Call(cast, argsTuple, null);
+                PyObject pyAddress = PyObject_GetAttrString(voidPtr, "value");
+                long address = PyLong_AsLong(pyAddress);
+                long size = PyObject_Size(nativePythonObject);
+                Py_DecRef(ctypes);
+                Py_DecRef(cArrType);
+                Py_DecRef(argsTuple);
+                Py_DecRef(voidPtr);
+                Py_DecRef(pyAddress);
+                Pointer ptr = NativeOpsHolder.getInstance().getDeviceNativeOps().pointerForAddress(address);
+                ptr = ptr.limit(size);
+                ptr = ptr.capacity(size);
+                return new BytePointer(ptr);
+            }
+            else{
+                throw new PythonException("Expected bytes, bytearray or ctypesArray. Received " + Python.type(this).toString());
+            }
+
+        }
+    }
     public boolean isNone() {
         return nativePythonObject == null;
     }

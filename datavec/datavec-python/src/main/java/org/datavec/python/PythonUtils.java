@@ -167,7 +167,7 @@ public class PythonUtils {
             stride[i] = (Long) strideList.get(i);
         }
         long address = (Long) map.get("address");
-        NumpyArray numpyArray = new NumpyArray(address, shape, stride, true, dtype);
+        NumpyArray numpyArray = new NumpyArray(address, shape, stride, dtype, true);
         return numpyArray;
     }
 
@@ -288,7 +288,7 @@ public class PythonUtils {
             stride[i] = ((Number) strideList.get(i)).longValue();
         }
         long address = ((Number) map.get("address")).longValue();
-        NumpyArray numpyArray = new NumpyArray(address, shape, stride, true, dtype);
+        NumpyArray numpyArray = new NumpyArray(address, shape, stride, dtype, true);
         return numpyArray;
     }
 

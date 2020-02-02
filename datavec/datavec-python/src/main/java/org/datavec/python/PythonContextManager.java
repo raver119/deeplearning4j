@@ -133,6 +133,16 @@ public class PythonContextManager {
 
     }
 
+    public static void setMainContext() {
+        try{
+            setContext(MAIN_CONTEXT);
+        }
+        catch (PythonException pe){
+            throw new RuntimeException(pe);
+        }
+
+    }
+
     public static String getCurrentContext() {
         return currentContext;
     }

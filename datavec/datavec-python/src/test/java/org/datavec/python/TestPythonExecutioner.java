@@ -16,11 +16,16 @@
 
 package org.datavec.python;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.PointIndex;
+import org.nd4j.nativeblas.Nd4jCpu;
+
+import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -217,11 +222,32 @@ public class TestPythonExecutioner {
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
 
-
     }
 
     @Test
-    public void testBadCode() {
+    public void testByteBuffer() throws Exception{
+        //ByteBuffer buff = ByteBuffer.allocateDirect(3);
+        INDArray buff = Nd4j.zeros(new int[]{3}, DataType.BYTE);
+        buff.putScalar(0, 97); // a
+        buff.putScalar(1, 98); // b
+        buff.putScalar(2, 99); // c
+
+
+        PythonVariables pyInputs = new PythonVariables();
+        pyInputs.addBytes("buff", new BytePointer(buff.data().pointer()));
+
+        PythonVariables pyOutputs= new PythonVariables();
+        pyOutputs.addStr("out");
+
+        String code = "out = buff.raw.decode()";
+        Python.exec(code, pyInputs, pyOutputs);
+        Assert.assertEquals("abc", pyOutputs.getStrValue("out"));
+
+      }
+
+    @Test
+    public void testBadCode() throws Exception{
+        Python.setContext("badcode");
         PythonVariables pyInputs = new PythonVariables();
         PythonVariables pyOutputs = new PythonVariables();
 
@@ -235,7 +261,10 @@ public class TestPythonExecutioner {
             Python.exec(code, pyInputs, pyOutputs);
             fail("No exception thrown");
         } catch (PythonException pe ){
+            Assert.assertEquals("NameError: name 'a' is not defined", pe.getMessage());
         }
+
+        Python.setMainContext();
     }
 
 }

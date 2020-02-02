@@ -17,10 +17,15 @@
 package org.datavec.python;
 
 import lombok.Data;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.Pointer;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.nativeblas.NativeOpsHolder;
+
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 
@@ -42,6 +47,7 @@ public class PythonVariables implements java.io.Serializable {
     private java.util.Map<String, Boolean> boolVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, NumpyArray> ndVars = new java.util.LinkedHashMap<>();
     private java.util.Map<String, Object[]> listVariables = new java.util.LinkedHashMap<>();
+    private java.util.Map<String, BytePointer> bytesVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, java.util.Map<?, ?>> dictVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, PythonType.TypeName> vars = new java.util.LinkedHashMap<>();
     private java.util.Map<PythonType.TypeName, java.util.Map> maps = new java.util.LinkedHashMap<>();
@@ -74,6 +80,7 @@ public class PythonVariables implements java.io.Serializable {
         maps.put(PythonType.TypeName.NDARRAY, ndVars);
         maps.put(PythonType.TypeName.LIST, listVariables);
         maps.put(PythonType.TypeName.DICT, dictVariables);
+        maps.put(PythonType.TypeName.BYTES, bytesVariables);
 
     }
 
@@ -334,6 +341,22 @@ public class PythonVariables implements java.io.Serializable {
         dictVariables.put(name, value);
     }
 
+
+    public void addBytes(String name){
+        vars.put(name, PythonType.TypeName.BYTES);
+        bytesVariables.put(name, null);
+    }
+
+    public void addBytes(String name, BytePointer value){
+        vars.put(name, PythonType.TypeName.BYTES);
+        bytesVariables.put(name, value);
+    }
+
+//    public void addBytes(String name, ByteBuffer value){
+//        Pointer ptr = NativeOpsHolder.getInstance().getDeviceNativeOps().pointerForAddress((value.address());
+//        BytePointer bp = new BytePointer(ptr);
+//        addBytes(name, bp);
+//    }
     /**
      * @param name  name of the variable
      * @param value new value for the variable
@@ -373,7 +396,19 @@ public class PythonVariables implements java.io.Serializable {
             }
         } else if (type == PythonType.TypeName.DICT) {
             dictVariables.put(name, (java.util.Map<?, ?>) value);
-        } else {
+        }
+        else if (type == PythonType.TypeName.BYTES){
+            if (value instanceof  BytePointer){
+                bytesVariables.put(name, (BytePointer)value);
+            }
+            else if (value instanceof ByteBuffer){
+                bytesVariables.put(name, new BytePointer((ByteBuffer)value));
+            }
+            else{
+                throw new RuntimeException("Unsupported type: " + value.getClass().toString());
+            }
+        }
+        else {
             strVariables.put(name, (String) value);
         }
     }
@@ -453,6 +488,11 @@ public class PythonVariables implements java.io.Serializable {
         return listVariables.get(name);
     }
 
+    /**
+     * @param name the variable name
+     * @return the bytes value as a BytePointer
+     */
+    public BytePointer getBytesValue(String name){return bytesVariables.get(name);}
     /**
      * Returns the type for the given variable name
      *
