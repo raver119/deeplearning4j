@@ -193,12 +193,7 @@ public class PythonExecutioner {
                 else{
                     throw new PythonException("Invalid value for type BYTES");
                 }
-                // bytes is a special case
-                // setting a ctypes array directly to interpreter is not safe
-                // so we create a numpy array from the byte pointer and do some code gen
-                setVariable(varName, pythonObject);
-                simpleExec(String.format("import ctypes;%s=(ctypes.c_char*len(%s)).from_buffer(%s);del ctypes", varName, varName, varName));
-                return;
+                break;
             default:
                 throw new PythonException("Unsupported type: " + varType);
 

@@ -40,6 +40,16 @@ public class TestPythonExecutioner {
         Python.exec("import sys; print(sys.version)");
     }
 
+
+    @Test
+    public void testPointerFromByteBuffer(){
+        ByteBuffer buff = ByteBuffer.allocateDirect(3);
+        buff.put((byte)'a');
+        buff.put((byte)'b');
+        buff.put((byte)'c');
+        buff.rewind();
+        BytePointer bp = new BytePointer(buff);
+    }
     @Test
     public void testStr() throws Exception {
 
@@ -225,7 +235,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
-    public void testByteBuffer() throws Exception{
+    public void testByteBufferInput() throws Exception{
         //ByteBuffer buff = ByteBuffer.allocateDirect(3);
         INDArray buff = Nd4j.zeros(new int[]{3}, DataType.BYTE);
         buff.putScalar(0, 97); // a
@@ -239,12 +249,49 @@ public class TestPythonExecutioner {
         PythonVariables pyOutputs= new PythonVariables();
         pyOutputs.addStr("out");
 
-        String code = "out = buff.raw.decode()";
+        String code = "out = buff.decode()";
         Python.exec(code, pyInputs, pyOutputs);
         Assert.assertEquals("abc", pyOutputs.getStrValue("out"));
 
       }
 
+      @Test
+      public void testByteBufferOutputNoCopy() throws Exception{
+          INDArray buff = Nd4j.zeros(new int[]{3}, DataType.BYTE);
+          buff.putScalar(0, 97); // a
+          buff.putScalar(1, 98); // b
+          buff.putScalar(2, 99); // c
+
+
+          PythonVariables pyInputs = new PythonVariables();
+          pyInputs.addBytes("buff", new BytePointer(buff.data().pointer()));
+
+          PythonVariables pyOutputs = new PythonVariables();
+          pyOutputs.addBytes("buff"); // same name as input, because inplace update
+
+          String code = "buff[0]=99\nbuff[1]=98\nbuff[2]=97";
+          Python.exec(code, pyInputs, pyOutputs);
+          Assert.assertEquals("cba", pyOutputs.getBytesValue("buff").getString());
+      }
+
+    @Test
+    public void testByteBufferOutputWithCopy() throws Exception{
+        INDArray buff = Nd4j.zeros(new int[]{3}, DataType.BYTE);
+        buff.putScalar(0, 97); // a
+        buff.putScalar(1, 98); // b
+        buff.putScalar(2, 99); // c
+
+
+        PythonVariables pyInputs = new PythonVariables();
+        pyInputs.addBytes("buff", new BytePointer(buff.data().pointer()));
+
+        PythonVariables pyOutputs = new PythonVariables();
+        pyOutputs.addBytes("out");
+
+        String code = "buff[0]=99\nbuff[1]=98\nbuff[2]=97\nout=bytes(buff)";
+        Python.exec(code, pyInputs, pyOutputs);
+        Assert.assertEquals("cba", pyOutputs.getBytesValue("out").getString());
+    }
     @Test
     public void testBadCode() throws Exception{
         Python.setContext("badcode");
