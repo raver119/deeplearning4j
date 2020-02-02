@@ -247,7 +247,7 @@ public class ByteDecoArrowSerde {
         }
         else {
             StringArray stringArray = (StringArray) array;
-            ArrowBuffer arrowBuffer = stringArray.value_data().capacity(array.capacity()).limit(array.limit());
+            ArrowBuffer arrowBuffer = stringArray.value_data();
             DataBuffer nd4jBuffer = fromArrowBuffer(arrowBuffer,array.data().type());
             return Nd4j.create(nd4jBuffer,1,nd4jBuffer.length());
         }
