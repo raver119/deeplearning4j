@@ -15,7 +15,6 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.learning.config.Adam;
-import org.nd4j.linalg.primitives.Pair;
 
 import java.io.File;
 import java.util.Arrays;
@@ -63,8 +62,12 @@ public class CheckpointListenerTest extends BaseNd4jTest {
         return sd;
     }
 
-    public static DataSetIterator getIter(){
-        return new IrisDataSetIterator(15, 150);
+    public static DataSetIterator getIter() {
+        return getIter(15, 150);
+    }
+
+    public static DataSetIterator getIter(int batch, int totalExamples){
+        return new IrisDataSetIterator(batch, totalExamples);
     }
 
 
@@ -148,15 +151,15 @@ public class CheckpointListenerTest extends BaseNd4jTest {
 
         CheckpointListener l = new CheckpointListener.Builder(dir)
                 .keepLast(2)
-                .saveEvery(3, TimeUnit.SECONDS)
+                .saveEvery(1, TimeUnit.SECONDS)
                 .build();
         sd.setListeners(l);
 
-        DataSetIterator iter = getIter();
+        DataSetIterator iter = getIter(15, 150);
 
         for(int i=0; i<5; i++ ){   //10 iterations total
             sd.fit(iter, 1);
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         }
 
         //Expect models saved at iterations: 10, 20, 30, 40

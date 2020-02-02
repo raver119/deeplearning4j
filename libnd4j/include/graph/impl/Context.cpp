@@ -107,6 +107,10 @@ namespace nd4j {
                 delete _context;
         }
 
+        void Context::setTargetEngine(samediff::Engine engine) {
+            _engine = engine;
+        }
+
         bool Context::hasWorkspaceProvided() {
             return this->_workspace != nullptr;
         }
@@ -530,6 +534,34 @@ namespace nd4j {
 
         bool Context::shapeFunctionOverride() {
             return _shapeFunctionOverride;
+        }
+
+        samediff::ExecutionMode Context::executionMode() {
+            return _execMode;
+        }
+
+        void Context::setExecutionMode(samediff::ExecutionMode executionMode) {
+            _execMode = executionMode;
+        }
+
+        bool Context::isTraining() {
+            return _execMode == samediff::ExecutionMode::MODE_TRAINING;
+        }
+
+        bool Context::isInference() {
+            return _execMode == samediff::ExecutionMode::MODE_INFERENCE;
+        }
+
+        void Context::setDArguments(nd4j::DataType *arguments, int numberOfArguments) {
+            _dArgs.clear();
+            for (int e = 0; e < numberOfArguments; e++)
+                _dArgs.emplace_back(arguments[e]);
+        }
+
+        void Context::setDArguments(const std::vector<nd4j::DataType> &dArgs) {
+            _dArgs.clear();
+            for (auto d:dArgs)
+                _dArgs.emplace_back(d);
         }
     }
 }

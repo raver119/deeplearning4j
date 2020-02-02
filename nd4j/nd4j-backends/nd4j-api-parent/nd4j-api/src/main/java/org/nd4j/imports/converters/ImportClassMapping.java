@@ -89,6 +89,7 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.impl.image.ResizeBilinear.class,
             org.nd4j.linalg.api.ops.impl.image.ResizeBicubic.class,
             org.nd4j.linalg.api.ops.impl.image.ResizeNearestNeighbor.class,
+            org.nd4j.linalg.api.ops.impl.image.ResizeArea.class,
             org.nd4j.linalg.api.ops.impl.indexaccum.FirstIndex.class,
             org.nd4j.linalg.api.ops.impl.indexaccum.IAMax.class,
             org.nd4j.linalg.api.ops.impl.indexaccum.IAMin.class,
@@ -230,6 +231,7 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.impl.scalar.LogX.class,
             org.nd4j.linalg.api.ops.impl.scalar.Pow.class,
             org.nd4j.linalg.api.ops.impl.scalar.PowDerivative.class,
+            org.nd4j.linalg.api.ops.impl.reduce.bp.PowBp.class,
             org.nd4j.linalg.api.ops.impl.scalar.RectifiedLinear.class,
             org.nd4j.linalg.api.ops.impl.scalar.RectifiedLinearDerivative.class,
             org.nd4j.linalg.api.ops.impl.transforms.custom.ThresholdRelu.class,
@@ -613,13 +615,15 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.custom.BetaInc.class,
             org.nd4j.linalg.api.ops.custom.MatrixBandPart.class,
             org.nd4j.linalg.api.ops.custom.Polygamma.class,
+            org.nd4j.linalg.api.ops.custom.Lgamma.class,
             org.nd4j.linalg.api.ops.custom.RandomCrop.class,
             org.nd4j.linalg.api.ops.custom.Roll.class,
             org.nd4j.linalg.api.ops.custom.ToggleBits.class,
             org.nd4j.linalg.api.ops.custom.Igamma.class,
             org.nd4j.linalg.api.ops.custom.Igammac.class,
             org.nd4j.linalg.api.ops.custom.Digamma.class,
-            org.nd4j.linalg.api.ops.custom.Lu.class
+            org.nd4j.linalg.api.ops.custom.Lu.class,
+            org.nd4j.linalg.api.ops.custom.TriangularSolve.class
     );
 
     static {

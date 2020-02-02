@@ -59,6 +59,10 @@ namespace nd4j {
             }
         }
 
+        samediff::Engine ContextPrototype::engine() {
+            return _engine;
+        }
+
         bool ContextPrototype::hasVariablesFilled() {
             return this->_inputs.size() > 0;
         }
@@ -168,6 +172,14 @@ namespace nd4j {
                 clone->_iArgs.emplace_back(v);
 
             return clone;
+        }
+
+        std::vector<nd4j::DataType> *ContextPrototype::getDArguments() {
+            return &_dArgs;
+        }
+
+        size_t ContextPrototype::numD() {
+            return _dArgs.size();
         }
     }
 }

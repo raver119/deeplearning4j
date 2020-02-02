@@ -24,14 +24,11 @@ import lombok.val;
 import lombok.var;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.indexer.LongIndexer;
-import org.nd4j.autodiff.samediff.serde.FlatBuffersMapper;
 import org.nd4j.base.Preconditions;
 import org.nd4j.jita.allocator.impl.AtomicAllocator;
 import org.nd4j.jita.allocator.pointers.CudaPointer;
 import org.nd4j.jita.allocator.tad.DeviceTADManager;
-import org.nd4j.jita.allocator.utils.AllocationUtils;
 import org.nd4j.jita.conf.CudaEnvironment;
-import org.nd4j.linalg.api.buffer.BaseDataBuffer;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.environment.Nd4jEnvironment;
@@ -47,7 +44,6 @@ import org.nd4j.linalg.api.ops.impl.scatter.ScatterUpdate;
 import org.nd4j.linalg.api.ops.impl.summarystats.Variance;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.CopyOp;
 import org.nd4j.linalg.api.ops.performance.PerformanceTracker;
-import org.nd4j.linalg.api.ops.util.PrintVariable;
 import org.nd4j.linalg.api.rng.Random;
 import org.nd4j.linalg.api.shape.LongShapeDescriptor;
 import org.nd4j.linalg.api.shape.Shape;
@@ -1614,8 +1610,9 @@ public class CudaExecutioner extends DefaultOpExecutioner {
 
     @Override
     public void commit() {
-        AtomicAllocator.getInstance().getDeviceContext().syncOldStream();
-        AtomicAllocator.getInstance().getDeviceContext().syncSpecialStream();
+        val ctx = AtomicAllocator.getInstance().getDeviceContext();
+        ctx.syncOldStream();
+        ctx.syncSpecialStream();
     }
 
     @Override
@@ -1931,6 +1928,8 @@ public class CudaExecutioner extends DefaultOpExecutioner {
 
         val bArgs = op.bArgs().length > 0 ? new BooleanPointer(op.bArgs().length) : null;
 
+        val dArgs = op.numDArguments() > 0 ? new IntPointer(op.numDArguments()) : null;
+
         cnt = 0;
         for (val b: op.bArgs())
             bArgs.put(cnt++, b);
@@ -1939,7 +1938,12 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         for (val t: op.tArgs())
             tArgs.put(cnt++, t);
 
-        OpaqueShapeList ptrptr = nativeOps.calculateOutputShapes2(null, hash, inputBuffers, inputShapes, op.inputArguments().size(), tArgs, op.tArgs().length, iArgs, op.iArgs().length, bArgs, op.numBArguments());
+        cnt = 0;
+        val dArgs1 = op.dArgs();
+        for (val d: dArgs1)
+            dArgs.put(cnt++, d.toInt());
+
+        OpaqueShapeList ptrptr = nativeOps.calculateOutputShapes2(null, hash, inputBuffers, inputShapes, op.inputArguments().size(), tArgs, op.tArgs().length, iArgs, op.iArgs().length, bArgs, op.numBArguments(), dArgs, op.numDArguments());
 
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
@@ -2006,6 +2010,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
             context.setBArguments(op.bArgs());
             context.setIArguments(op.iArgs());
             context.setTArguments(op.tArgs());
+            context.setDArguments(op.dArgs());
 
             val result = exec(op, context);
             val states = context.getRngStates();

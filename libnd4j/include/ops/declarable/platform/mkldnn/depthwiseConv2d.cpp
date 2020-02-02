@@ -362,7 +362,7 @@ static void depthwiseConv2dNackPropMKLDNN(const NDArray* input, const NDArray* w
 
 
 //////////////////////////////////////////////////////////////////////
-PLATFORM_IMPL(depthwise_conv2d) {
+PLATFORM_IMPL(depthwise_conv2d, ENGINE_CPU) {
 
     auto input   = INPUT_VARIABLE(0);                                    // [bS, iH, iW, iC] (NHWC) or [bS, iC, iH, iW] (NCHW)
     auto weights = INPUT_VARIABLE(1);                                    // [kH, kW, iC, mC] always
@@ -400,7 +400,7 @@ PLATFORM_IMPL(depthwise_conv2d) {
 }
 
 //////////////////////////////////////////////////////////////////////
-PLATFORM_CHECK(depthwise_conv2d) {
+PLATFORM_CHECK(depthwise_conv2d, ENGINE_CPU) {
     // we don't want to use mkldnn if cpu doesn't support avx/avx2
     if (::optimalLevel() < 2)
         return false;
@@ -421,13 +421,13 @@ PLATFORM_CHECK(depthwise_conv2d) {
     return block.isUseMKLDNN() && mC == 1 &&
           (
             (xType==DataType::FLOAT32 && wType==DataType::FLOAT32 && bType==DataType::FLOAT32 && zType==DataType::FLOAT32) ||
-            (xType==DataType::HALF && wType==DataType::HALF && bType==DataType::HALF && zType==DataType::HALF) ||
+            (xType==DataType::BFLOAT16 && wType==DataType::BFLOAT16 && bType==DataType::BFLOAT16 && zType==DataType::BFLOAT16) ||
             ((xType==DataType::UINT8 || xType==DataType::INT8) && wType==DataType::INT8 && (zType==DataType::UINT8 || zType==DataType::INT8 || zType==DataType::INT32 || zType==DataType::FLOAT32) && bType == zType)
           );
 }
 
 //////////////////////////////////////////////////////////////////////////
-PLATFORM_IMPL(depthwise_conv2d_bp) {
+PLATFORM_IMPL(depthwise_conv2d_bp, ENGINE_CPU) {
 
     auto input   = INPUT_VARIABLE(0);                                                // [bS, iH, iW, iC] (NDHWC) or [bS, iC, iH, iW] (NCDHW)
     auto weights = INPUT_VARIABLE(1);                                                // [kH, kW, iC, mC] always
@@ -476,7 +476,7 @@ PLATFORM_IMPL(depthwise_conv2d_bp) {
 }
 
 //////////////////////////////////////////////////////////////////////
-PLATFORM_CHECK(depthwise_conv2d_bp) {
+PLATFORM_CHECK(depthwise_conv2d_bp, ENGINE_CPU) {
 
     auto input   = INPUT_VARIABLE(0);                                                // [bS, iH, iW, iC] (NDHWC) or [bS, iC, iH, iW] (NCDHW)
     auto weights = INPUT_VARIABLE(1);                                                // [kH, kW, iC, mC] always

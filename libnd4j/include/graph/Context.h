@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019-2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -27,6 +28,7 @@
 #include <graph/VariableSpace.h>
 #include <graph/ContextPrototype.h>
 #include <memory/Workspace.h>
+#include <execution/Engine.h>
 
 // CUDA-specific includes
 #ifdef __CUDACC__
@@ -102,11 +104,12 @@ namespace nd4j {
             // this method returns workspace for object allocations
             nd4j::memory::Workspace* oWorkspace();
 
-
             void setVariableSpace(VariableSpace* variableSpace);
 
             nd4j::random::RandomBuffer* getRNG();
             void setRNG(nd4j::random::RandomBuffer* rng);
+
+            void setTargetEngine(samediff::Engine engine);
 
             VariableSpace *getVariableSpace();
 
@@ -194,10 +197,12 @@ namespace nd4j {
             void setTArguments(double *arguments, int numberOfArguments);
             void setIArguments(Nd4jLong *arguments, int numberOfArguments);
             void setBArguments(bool *arguments, int numberOfArguments);
+            void setDArguments(nd4j::DataType *arguments, int numberOfArguments);
 
             void setTArguments(const std::vector<double> &tArgs);
             void setIArguments(const std::vector<Nd4jLong> &tArgs);
             void setBArguments(const std::vector<bool> &tArgs);
+            void setDArguments(const std::vector<nd4j::DataType> &dArgs);
 
             void setCudaContext(Nd4jPointer cudaStream, Nd4jPointer reductionPointer, Nd4jPointer allocationPointer);
 
@@ -206,6 +211,12 @@ namespace nd4j {
 
             void setShapeFunctionOverride(bool reallyOverride);
             bool shapeFunctionOverride();
+
+            samediff::ExecutionMode executionMode();
+            void setExecutionMode(samediff::ExecutionMode executionMode);
+
+            bool isTraining();
+            bool isInference();
         };
     }
 }

@@ -17,12 +17,12 @@
 package org.nd4j.linalg.cpu.nativecpu.ops;
 
 import lombok.NonNull;
-import org.bytedeco.javacpp.BooleanPointer;
-import org.bytedeco.javacpp.DoublePointer;
-import org.bytedeco.javacpp.LongPointer;
-import org.bytedeco.javacpp.Pointer;
+import lombok.val;
+import org.bytedeco.javacpp.*;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.BaseOpContext;
+import org.nd4j.linalg.api.ops.ExecutionMode;
 import org.nd4j.linalg.api.ops.OpContext;
 import org.nd4j.linalg.cpu.nativecpu.buffer.BaseCpuDataBuffer;
 import org.nd4j.linalg.primitives.Pair;
@@ -73,6 +73,18 @@ public class CpuOpContext extends BaseOpContext implements OpContext {
     }
 
     @Override
+    public void setDArguments(DataType... arguments) {
+        if (arguments.length > 0) {
+            super.setDArguments(arguments);
+            val args = new int[arguments.length];
+            for (int e = 0; e < arguments.length; e++)
+                args[e] = arguments[e].toInt();
+
+            nativeOps.setGraphContextDArguments(context, new IntPointer(args), arguments.length);
+        };
+    }
+
+    @Override
     public void setRngStates(long rootState, long nodeState) {
         nativeOps.setRandomGeneratorStates(nativeOps.getGraphContextRandomGenerator(context), rootState, nodeState);
     }
@@ -117,5 +129,11 @@ public class CpuOpContext extends BaseOpContext implements OpContext {
     @Override
     public void shapeFunctionOverride(boolean reallyOverride) {
         nativeOps.ctxShapeFunctionOverride(context, reallyOverride);
+    }
+
+    @Override
+    public void setExecutionMode(@NonNull ExecutionMode mode) {
+        super.setExecutionMode(mode);
+        nativeOps.ctxSetExecutionMode(context, mode.ordinal());
     }
 }
