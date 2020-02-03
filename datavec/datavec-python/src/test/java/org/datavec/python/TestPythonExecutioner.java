@@ -18,6 +18,7 @@ package org.datavec.python;
 
 import org.bytedeco.javacpp.BytePointer;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -40,16 +41,6 @@ public class TestPythonExecutioner {
         Python.exec("import sys; print(sys.version)");
     }
 
-
-    @Test
-    public void testPointerFromByteBuffer(){
-        ByteBuffer buff = ByteBuffer.allocateDirect(3);
-        buff.put((byte)'a');
-        buff.put((byte)'b');
-        buff.put((byte)'c');
-        buff.rewind();
-        BytePointer bp = new BytePointer(buff);
-    }
     @Test
     public void testStr() throws Exception {
 
@@ -159,6 +150,7 @@ public class TestPythonExecutioner {
     }
 
     @Test
+    @Ignore
     public void testTensorflowCustomAnaconda() throws PythonException {
         Python.exec("import tensorflow as tf");
     }
