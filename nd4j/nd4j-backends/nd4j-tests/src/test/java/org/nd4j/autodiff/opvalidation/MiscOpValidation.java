@@ -2131,17 +2131,16 @@ public class MiscOpValidation extends BaseOpValidation {
 
         SameDiff sameDiff = SameDiff.create();
 
-        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
+        INDArray x = Nd4j.linspace(DataType.FLOAT,1, 24, 24).reshape(2,2,2,3);
         INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
-        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
 
-        SDVariable sdx = sameDiff.var(x);
-        SDVariable sdgrad = sameDiff.var(grad);
-        SDVariable sdbias = sameDiff.var(bias);
+        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
 
         INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
 
-        OpTestCase tc = new OpTestCase(new BiasAddGrad(sameDiff, sdx, sdgrad, sdbias, false));
+        OpTestCase tc = new OpTestCase(new BiasAddGrad(x, bias, grad,false)).
+                expectedOutput(0, grad).
+                expectedOutput(1, expected);
 
         String err = OpValidation.validate(tc);
         assertNull(err);
