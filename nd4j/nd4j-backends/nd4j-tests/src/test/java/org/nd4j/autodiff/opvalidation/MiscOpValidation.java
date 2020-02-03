@@ -1952,21 +1952,16 @@ public class MiscOpValidation extends BaseOpValidation {
 
         SameDiff sameDiff = SameDiff.create();
 
-        INDArray in1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in3 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in4 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-
-        SDVariable input1 = sameDiff.var(in1);
-        SDVariable input2 = sameDiff.var(in2);
-        SDVariable input3 = sameDiff.var(in3);
-        SDVariable input4 = sameDiff.var(in4);
+        INDArray in = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+        SDVariable sdInput = sameDiff.var(in);
 
         INDArray expected = Nd4j.createFromArray(new double[]{
-                107.0000,  140.0000,  179.0000,  224.0000
-        }).reshape(1,4);
+                0,         0,    0.6931,    1.791,
+                3.1781,    4.7875,    6.5793,    8.5252,
+                10.6046,   12.8018,   15.1044,   17.5023
+        }).reshape(3,4);
 
-        SDVariable output = new Lgamma(sameDiff, input1).outputVariable();
+        SDVariable output = new Lgamma(sameDiff, sdInput).outputVariable();
 
         TestCase tc = new TestCase(sameDiff)
                 .gradientCheck(true)
@@ -2012,25 +2007,25 @@ public class MiscOpValidation extends BaseOpValidation {
 
         SameDiff sameDiff = SameDiff.create();
 
-        INDArray in1 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in2 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in3 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
-        INDArray in4 = Nd4j.linspace(1, 12, 12).reshape(3, 4);
+        INDArray input = Nd4j.createFromArray(new float[]{0.7788f,0.8012f,0.7244f,0.2309f,
+                0.7271f,0.1804f,0.5056f,0.8925f,
+                0.5461f,0.9234f,0.0856f,0.7938f}).reshape(3,4);
 
-        SDVariable input1 = sameDiff.var(in1);
-        SDVariable input2 = sameDiff.var(in2);
-        SDVariable input3 = sameDiff.var(in3);
-        SDVariable input4 = sameDiff.var(in4);
+        SDVariable sdInput = sameDiff.var(input);
+        SDVariable sdInput1 = sameDiff.constant(1);
+        SDVariable sdInput2 = sameDiff.constant(-1);
 
         INDArray expected = Nd4j.createFromArray(new double[]{
-                107.0000,  140.0000,  179.0000,  224.0000
-        }).reshape(1,4);
+                    0.7788,    0.8012,    0.7244,    0.2309,
+                    0.7271,    0.1804,    0.5056,    0.8925,
+                    0,    0.9234,    0.0856,    0.7938
+        }).reshape(3,4);
 
-        SDVariable output = new MatrixBandPart(sameDiff, input1, input2, input3).outputVariable();
+        SDVariable[] output = new MatrixBandPart(sameDiff, sdInput, sdInput1, sdInput2).outputVariables();
 
         TestCase tc = new TestCase(sameDiff)
                 .gradientCheck(true)
-                .expectedOutput(output.name(), expected);
+                .expectedOutput(output[0].name(), expected);
 
         String err = OpValidation.validate(tc);
         assertNull(err);
@@ -2109,12 +2104,10 @@ public class MiscOpValidation extends BaseOpValidation {
         SDVariable input1 = sameDiff.var(in1);
         SDVariable input2 = sameDiff.var(in2);
 
-        SDVariable lower = sameDiff.constant(Nd4j.scalar(false));
-        SDVariable adjoint = sameDiff.constant(Nd4j.scalar(false));
-
         INDArray expected = Nd4j.createFromArray(new double[]{
                 2.0000,    4.0000,    6.0000,    8.0000,   10.0000,   12.0000,   14.0000,   16.0000,   18.0000,   20.0000,   22.0000,   24.0000
         }).reshape(1,12);
+        sameDiff.loss.l2Loss(input1);
 
         SDVariable output = new BiasAdd(sameDiff, input1, input2, false).outputVariable();
 
