@@ -32,7 +32,7 @@ namespace nd4j {
 		namespace helpers {
 
 			//define C macros style for vector intrinsics
-#define OPT_TEMPLATE_INTRINSICS 1
+//#define OPT_TEMPLATE_INTRINSICS 1
 #define OPT_USE_INNER_COORDS_1 1
 //#define DEBUG 1
 #if defined(DEBUG)
@@ -174,7 +174,7 @@ namespace nd4j {
 //_add function that can be autovectorized
 			template <typename T>
 			FORCEINLINE  void _add(const T* __restrict xx, const T* __restrict yy, T* __restrict zz, const Nd4jLong& N) {
-				//our compiler is smart to handle it
+				PRAGMA_OMP_SIMD
 				for (uint c = 0; c < N; c++)
 					zz[c] = xx[c] + yy[c];
 
@@ -182,7 +182,7 @@ namespace nd4j {
 
 			template <typename T>
 			FORCEINLINE  void _add_inplace(T* __restrict xx, const T* __restrict yy, const Nd4jLong& N) {
-				//our compiler is smart to handle it
+				PRAGMA_OMP_SIMD
 				for (uint c = 0; c < N; c++)
 					xx[c] = xx[c] + yy[c];
 
@@ -190,7 +190,7 @@ namespace nd4j {
 
 			template <typename T>
 			FORCEINLINE  void _add_broadcast_inplace(T* __restrict xx, const T  yy, const Nd4jLong& N) {
-				//our compiler is smart to handle it
+				PRAGMA_OMP_SIMD
 				for (uint c = 0; c < N; c++)
 					xx[c] = xx[c] + yy;
 
@@ -199,13 +199,13 @@ namespace nd4j {
 
 			template <typename T>
 			FORCEINLINE  void _add_broadcast(const T* __restrict xx, const T  yy, T* __restrict zz, const Nd4jLong& N) {
-				//our compiler is smart to handle it
+				PRAGMA_OMP_SIMD
 				for (uint c = 0; c < N; c++)
 					zz[c] = xx[c] + yy;
 
 			}
 
-
+#if defined(OPT_TEMPLATE_INTRINSICS)
 			template <typename T>
 			FORCEINLINE  void _add_inplace_ordinary(T* __restrict xx, const T* __restrict yy, const Nd4jLong& N) {
 
@@ -230,7 +230,6 @@ namespace nd4j {
 
 			}
 
-
 			template <typename T>
 			FORCEINLINE  void _add_broadcast_ordinary(T* __restrict xx, const T  yy, T* __restrict zz, const Nd4jLong& N) {
 				//ordinary one will be used in case we dont know vectorizable size
@@ -238,6 +237,7 @@ namespace nd4j {
 					zz[c] = xx[c] + yy;
 
 			}
+#endif
 
 
 
@@ -608,27 +608,34 @@ namespace nd4j {
 				size_t offset_p = offset_from_coords(x_strides, coords_p, constRank);
 
 				if (!inplace) {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
+#endif
 						for (size_t i = 0; i < loop_count; i++) {
 							_add(&(x[offset_p]), b, &(z[offset_p]), inc);
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 
 						for (size_t i = 0; i < loop_count; i++) {
-							_add(&(x[offset_p]), b, &(z[offset_p]), inc);
+							_add_ordinary(&(x[offset_p]), b, &(z[offset_p]), inc);
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
 					}
+#endif
 
 				}
 				else {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
+#endif
 						for (size_t i = 0; i < loop_count; i++) {
 							_add_inplace(&(x[offset_p]), b, inc);
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 
@@ -637,6 +644,7 @@ namespace nd4j {
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
 					}
+#endif
 				}
 			}
 
@@ -664,11 +672,14 @@ namespace nd4j {
 					if (same_order && z_strides[constRank - 1] == 1 && x_strides[constRank - 1] == 1) {
 						print_verbose_output("channel_atTheEnd_generic_C %d\n", 2);
 						/* bases are equal with different strides , but the last one is 1. So we can still vectorize it  */
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						if (inc >= vec<T>::count()) {
+#endif
 							for (size_t i = 0; i < loop_count; i++) {
 								_add(&(x[offset.first]), b, &(z[offset.second]), inc);
 								offset = inc_by_coords_zip<constRank - 1>(bases, x_strides, z_strides, coords_p, offset);
 							}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						}
 						else {
 							for (size_t i = 0; i < loop_count; i++) {
@@ -676,6 +687,7 @@ namespace nd4j {
 								offset = inc_by_coords_zip<constRank - 1>(bases, x_strides, z_strides, coords_p, offset);
 							}
 						}
+#endif
 					}
 					else {
 						print_verbose_output("channel_atTheEnd_generic_C %d\n", 3);
@@ -744,15 +756,17 @@ namespace nd4j {
 				size_t offset_p = offset_from_coords(x_strides, coords_p, constRank);
 
 				if (!inplace) {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
 						print_verbose_output("channel_generic_stride_skip_F %d %d %d skip %d\n", 1, loop_count, inc, skip);
-
+#endif
 						for (size_t i = 0; i < loop_count; i++) {
 							T yy = static_cast<T>(b[coords_p[b_index] * yStrideC]);
 							//print_verbose_output(" %d %f\n", coords_p[b_index] * yStrideC , yy);
 							_add_broadcast(&(x[offset_p]), yy, &(z[offset_p]), inc);
 							offset_p = inc_by_coords<constRank, skip, false>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 						print_verbose_output("channel_generic_stride_skip_F %d\n", 2);
@@ -762,16 +776,19 @@ namespace nd4j {
 							offset_p = inc_by_coords<constRank, skip, false>(bases, x_strides, coords_p, offset_p);
 						}
 					}
-
+#endif
 				}
 				else {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
+#endif
 						print_verbose_output("channel_generic_stride_skip_F %d\n", 3);
 						for (size_t i = 0; i < loop_count; i++) {
 							T yy = static_cast<T>(b[coords_p[b_index] * yStrideC]);
 							_add_broadcast_inplace(&(x[offset_p]), yy, inc);
 							offset_p = inc_by_coords<constRank, skip, false>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 
@@ -782,6 +799,7 @@ namespace nd4j {
 							offset_p = inc_by_coords<constRank, skip, false>(bases, x_strides, coords_p, offset_p);
 						}
 					}
+#endif
 				}
 			}
 
@@ -807,13 +825,15 @@ namespace nd4j {
 
 					if (same_order && z_strides[0] == 1 && x_strides[0] == 1) {
 						print_verbose_output("channel_generic_F %d channel index %d\n", 2, b_index);
-
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						if (inc >= vec<T>::count()) {
+#endif
 							for (size_t i = 0; i < loop_count; i++) {
 								T yy = static_cast<T>(b[coords_p[b_index] * yStrideC]);
 								_add_broadcast(&(x[offset.first]), yy, &(z[offset.second]), inc);
 								offset = inc_by_coords_zip<constRank, 1, false>(bases, x_strides, z_strides, coords_p, offset);
 							}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						}
 						else {
 							for (size_t i = 0; i < loop_count; i++) {
@@ -822,6 +842,7 @@ namespace nd4j {
 								offset = inc_by_coords_zip<constRank, 1, false>(bases, x_strides, z_strides, coords_p, offset);
 							}
 						}
+#endif
 					}
 					else {
 						print_verbose_output("channel_generic_F %d channel index %d\n", 3, b_index);
@@ -898,7 +919,9 @@ namespace nd4j {
 				size_t offset_p = offset_from_coords(x_strides, coords_p, constRank);
 
 				if (!inplace) {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
+#endif
 						print_verbose_output("channel_NC_stride1_C %d %d %d\n", 1,loop_count,inc);
 
 						for (size_t i = 0; i < loop_count; i++) {
@@ -907,6 +930,7 @@ namespace nd4j {
 							_add_broadcast(&(x[offset_p]), yy, &(z[offset_p]), inc);
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 					    print_verbose_output("channel_NC_stride1_C %d\n", 2);
@@ -916,16 +940,20 @@ namespace nd4j {
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
 					}
+#endif
 
 				}
 				else {
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					if (inc >= vec<T>::count()) {
+#endif
 						print_verbose_output("channel_NC_stride1_C %d\n", 3);
 						for (size_t i = 0; i < loop_count; i++) {
 							T yy = static_cast<T>(b[coords_p[1] * yStrideC]);
 							_add_broadcast_inplace(&(x[offset_p]), yy, inc);
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 					}
 					else {
 
@@ -936,6 +964,7 @@ namespace nd4j {
 							offset_p = inc_by_coords<constRank - 1>(bases, x_strides, coords_p, offset_p);
 						}
 					}
+#endif
 				}
 			}
 
@@ -962,12 +991,15 @@ namespace nd4j {
 					if (same_order && z_strides[constRank - 1] == 1 && x_strides[constRank - 1] == 1) {
 						print_verbose_output("channel_NC_generic_C %d\n", 2);
 						/* bases are equal with different strides , but the last one is 1. So we can still vectorize it  */
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						if (inc >= vec<T>::count()) {
+#endif
 							for (size_t i = 0; i < loop_count; i++) {
 								T yy = static_cast<T>(b[coords_p[1] * yStrideC]);
 								_add_broadcast(&(x[offset.first]), yy, &(z[offset.second]), inc);
 								offset = inc_by_coords_zip<constRank - 1>(bases, x_strides, z_strides, coords_p, offset);
 							}
+#if defined(OPT_TEMPLATE_INTRINSICS)
 						}
 						else {
 							for (size_t i = 0; i < loop_count; i++) {
@@ -976,6 +1008,7 @@ namespace nd4j {
 								offset = inc_by_coords_zip<constRank - 1>(bases, x_strides, z_strides, coords_p, offset);
 							}
 						}
+#endif
 					}
 					else {
 						print_verbose_output("channel_NC_generic_C %d\n", 3);
