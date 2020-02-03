@@ -22,11 +22,14 @@
 
 package org.datavec.python;
 
+import org.bytedeco.javacpp.BytePointer;
 import org.junit.Test;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
@@ -37,7 +40,7 @@ import static org.junit.Assert.assertTrue;
 public class TestPythonVariables {
 
     @Test
-    public void testDataAssociations() {
+    public void testDataAssociations() throws PythonException{
         PythonVariables pythonVariables = new PythonVariables();
         PythonType[] types = {
                 PythonType.INT,
@@ -47,25 +50,23 @@ public class TestPythonVariables {
                 PythonType.DICT,
                 PythonType.LIST,
                 PythonType.LIST,
-                PythonType.NDARRAY
+                PythonType.NDARRAY,
+                PythonType.BYTES
         };
 
-        NumpyArray npArr = new NumpyArray(Nd4j.scalar(1.0));
+        INDArray arr = Nd4j.scalar(1.0);
+        BytePointer bp = new BytePointer(arr.data().pointer());
         Object[] values = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, Arrays.asList(1), npArr
+                new Object[]{1}, Arrays.asList(1), arr, bp
         };
 
         Object[] expectedValues = {
                 1L,1.0,"1",true, Collections.singletonMap("1",1),
-                new Object[]{1}, new Object[]{1}, npArr
+                Arrays.asList(1), Arrays.asList(1), arr, bp
         };
 
         for(int i = 0; i < types.length; i++) {
-            System.out.println(i);
-            System.out.println(types[i].getName().name() + i);
-            System.out.println(values[i]);
-            System.out.println(types[i]);
             testInsertGet(pythonVariables,types[i].getName().name() + i,values[i],types[i],expectedValues[i]);
         }
 
@@ -73,15 +74,15 @@ public class TestPythonVariables {
 
     }
 
-    private void testInsertGet(PythonVariables pythonVariables,String key,Object value,PythonType type,Object expectedValue) {
+    private void testInsertGet(PythonVariables pythonVariables,String key,Object value,PythonType type,Object expectedValue) throws PythonException{
         pythonVariables.add(key, type);
         assertNull(pythonVariables.getValue(key));
         pythonVariables.setValue(key,value);
         assertNotNull(pythonVariables.getValue(key));
         Object actualValue = pythonVariables.getValue(key);
         if (expectedValue instanceof Object[]){
-            assertTrue(actualValue instanceof Object[]);
-            Object[] actualArr = (Object[])actualValue;
+            assertTrue(actualValue instanceof List);
+            Object[] actualArr = ((List)actualValue).toArray();
             Object[] expectedArr = (Object[])expectedValue;
             assertArrayEquals(expectedArr, actualArr);
         }

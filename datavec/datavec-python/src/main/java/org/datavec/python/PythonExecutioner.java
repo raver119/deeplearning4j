@@ -153,46 +153,32 @@ public class PythonExecutioner {
         Python.globals().set(new PythonObject(varName), pythonObject);
     }
 
-    public static void setVariable(String varName, PythonType varType, Object value) throws PythonException {
+    public  static <T> void setVariable(String varName, PythonType varType, Object value) throws PythonException {
         PythonObject pythonObject;
         switch (varType.getName()) {
             case STR:
-                pythonObject = new PythonObject((String) value);
+                pythonObject = new PythonObject(PythonType.STR.convert(value));
                 break;
             case INT:
-                pythonObject = new PythonObject(((Number) value).longValue());
+                pythonObject = new PythonObject(PythonType.INT.convert(value));
                 break;
             case FLOAT:
-                pythonObject = new PythonObject(((Number) value).floatValue());
+                pythonObject = new PythonObject(PythonType.FLOAT.convert(value));
                 break;
             case BOOL:
-                pythonObject = new PythonObject((boolean) value);
+                pythonObject = new PythonObject(PythonType.BOOL.convert(value));
                 break;
             case NDARRAY:
-                if (value instanceof NumpyArray) {
-                    pythonObject = new PythonObject((NumpyArray) value);
-                } else if (value instanceof INDArray) {
-                    pythonObject = new PythonObject((INDArray) value);
-                } else {
-                    throw new PythonException("Invalid value for type NDARRAY");
-                }
+                pythonObject = new PythonObject(PythonType.NDARRAY.convert(value));
                 break;
             case LIST:
-                pythonObject = new PythonObject(Arrays.asList((Object[]) value));
+                pythonObject = new PythonObject(PythonType.LIST.convert(value));
                 break;
             case DICT:
-                pythonObject = new PythonObject((Map) value);
+                pythonObject = new PythonObject(PythonType.DICT.convert(value));
                 break;
             case BYTES:
-                if (value instanceof BytePointer){
-                    pythonObject = new PythonObject((BytePointer) value);
-                }
-                else if (value instanceof ByteBuffer){
-                    pythonObject = new PythonObject(new BytePointer((ByteBuffer) value));
-                }
-                else{
-                    throw new PythonException("Invalid value for type BYTES");
-                }
+                pythonObject = new PythonObject(PythonType.BYTES.convert(value));
                 break;
             default:
                 throw new PythonException("Unsupported type: " + varType);

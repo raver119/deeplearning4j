@@ -68,7 +68,7 @@ public class TestPythonJob {
 
         job.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c"));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class TestPythonJob {
 
         outputs = job.execAndReturnAllVariables(inputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c"));
     }
 
     @Test
@@ -157,11 +157,11 @@ public class TestPythonJob {
 
         job1.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(9), outputs.getNDArrayValue("c"));
 
         job2.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).sub(1), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).sub(1), outputs.getNDArrayValue("c"));
     }
     @Test
     public void testPythonJobSetupRun()throws Exception{
@@ -210,7 +210,7 @@ public class TestPythonJob {
 
         job.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c"));
     }
     @Test
     public void testPythonJobSetupRunAndReturnAllVariables()throws Exception{
@@ -249,7 +249,7 @@ public class TestPythonJob {
 
         outputs = job.execAndReturnAllVariables(inputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c"));
     }
 
     @Test
@@ -316,11 +316,11 @@ public class TestPythonJob {
 
         job1.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(14), outputs.getNDArrayValue("c"));
 
         job2.exec(inputs, outputs);
 
-        assertEquals(Nd4j.zeros(3, 2).add(4), outputs.getNDArrayValue("c").getNd4jArray());
+        assertEquals(Nd4j.zeros(3, 2).add(4), outputs.getNDArrayValue("c"));
     }
 
 }

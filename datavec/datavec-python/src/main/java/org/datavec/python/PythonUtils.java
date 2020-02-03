@@ -87,6 +87,7 @@ public class PythonUtils {
                     ret.add(currColumnName, PythonType.INT);
                     break;
                 case Bytes:
+                    ret.add(currColumnName, PythonType.BYTES);
                     break;
                 case Time:
                     throw new UnsupportedOperationException("Unable to process dates with python yet.");

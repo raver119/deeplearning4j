@@ -98,7 +98,7 @@ public class TestPythonExecutioner {
 
         Python.exec(code, pyInputs, pyOutputs);
 
-        Object[] z = pyOutputs.getListValue("z");
+        Object[] z = pyOutputs.getListValue("z").toArray();
 
         Assert.assertEquals(z.length, x.length + y.length);
 
@@ -138,7 +138,7 @@ public class TestPythonExecutioner {
         String code = "z = x + y";
 
         Python.exec(code, pyInputs, pyOutputs);
-        INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
+        INDArray z = pyOutputs.getNDArrayValue("z");
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
 
@@ -163,7 +163,7 @@ public class TestPythonExecutioner {
         String code = "z = x + y";
 
         Python.exec(code, pyInputs, pyOutputs);
-        INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
+        INDArray z = pyOutputs.getNDArrayValue("z");
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
     }
@@ -180,7 +180,7 @@ public class TestPythonExecutioner {
         String code = "z = x + y";
 
         Python.exec(code, pyInputs, pyOutputs);
-        INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
+        INDArray z = pyOutputs.getNDArrayValue("z");
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
     }
@@ -198,7 +198,7 @@ public class TestPythonExecutioner {
         String code = "z = x + y";
 
         Python.exec(code, pyInputs, pyOutputs);
-        INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
+        INDArray z = pyOutputs.getNDArrayValue("z");
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
 
@@ -216,7 +216,7 @@ public class TestPythonExecutioner {
         String code = "z = x + y";
 
         Python.exec(code, pyInputs, pyOutputs);
-        INDArray z = pyOutputs.getNDArrayValue("z").getNd4jArray();
+        INDArray z = pyOutputs.getNDArrayValue("z");
 
         Assert.assertEquals(6.0, z.sum().getDouble(0), 1e-5);
 

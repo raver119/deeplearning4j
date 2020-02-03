@@ -45,8 +45,8 @@ public class PythonVariables implements java.io.Serializable {
     private java.util.Map<String, Long> intVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, Double> floatVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, Boolean> boolVariables = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, NumpyArray> ndVars = new java.util.LinkedHashMap<>();
-    private java.util.Map<String, Object[]> listVariables = new java.util.LinkedHashMap<>();
+    private java.util.Map<String, INDArray> ndVars = new java.util.LinkedHashMap<>();
+    private java.util.Map<String, List> listVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, BytePointer> bytesVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, java.util.Map<?, ?>> dictVariables = new java.util.LinkedHashMap<>();
     private java.util.Map<String, PythonType.TypeName> vars = new java.util.LinkedHashMap<>();
@@ -119,6 +119,10 @@ public class PythonVariables implements java.io.Serializable {
                 break;
             case DICT:
                 addDict(name);
+                break;
+            case BYTES:
+                addBytes(name);
+                break;
         }
     }
 
@@ -127,7 +131,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param type  type of the variable
      * @param value value of the variable (must be instance of expected type)
      */
-    public void add(String name, PythonType type, Object value) {
+    public void add(String name, PythonType type, Object value) throws PythonException {
         add(name, type);
         setValue(name, value);
     }
@@ -299,7 +303,7 @@ public class PythonVariables implements java.io.Serializable {
      */
     public void addNDArray(String name, NumpyArray value) {
         vars.put(name, PythonType.TypeName.NDARRAY);
-        ndVars.put(name, value);
+        ndVars.put(name, value.getNd4jArray());
     }
 
     /**
@@ -312,7 +316,7 @@ public class PythonVariables implements java.io.Serializable {
      */
     public void addNDArray(String name, org.nd4j.linalg.api.ndarray.INDArray value) {
         vars.put(name, PythonType.TypeName.NDARRAY);
-        ndVars.put(name, new NumpyArray(value));
+        ndVars.put(name, value);
     }
 
     /**
@@ -325,7 +329,7 @@ public class PythonVariables implements java.io.Serializable {
      */
     public void addList(String name, Object[] value) {
         vars.put(name, PythonType.TypeName.LIST);
-        listVariables.put(name, value);
+        listVariables.put(name, Arrays.asList(value));
     }
     
     /**
@@ -361,56 +365,9 @@ public class PythonVariables implements java.io.Serializable {
      * @param name  name of the variable
      * @param value new value for the variable
      */
-    public void setValue(String name, Object value) {
+    public void setValue(String name, Object value) throws PythonException {
         PythonType.TypeName type = vars.get(name);
-        if (type == PythonType.TypeName.BOOL) {
-            boolVariables.put(name, (Boolean) value);
-        } else if (type == PythonType.TypeName.INT) {
-            Number number = (Number) value;
-            intVariables.put(name, number.longValue());
-        } else if (type == PythonType.TypeName.FLOAT) {
-            Number number = (Number) value;
-            floatVariables.put(name, number.doubleValue());
-        } else if (type == PythonType.TypeName.NDARRAY) {
-            if (value instanceof NumpyArray) {
-                ndVars.put(name, (NumpyArray) value);
-            } else if (value instanceof org.nd4j.linalg.api.ndarray.INDArray) {
-                ndVars.put(name, new NumpyArray((org.nd4j.linalg.api.ndarray.INDArray) value));
-            } else {
-                throw new RuntimeException("Unsupported type: " + value.getClass().toString());
-            }
-        } else if (type == PythonType.TypeName.LIST) {
-            if (value instanceof java.util.List) {
-                value = ((java.util.List) value).toArray();
-                listVariables.put(name, (Object[]) value);
-            } else if (value instanceof org.json.JSONArray) {
-                org.json.JSONArray jsonArray = (org.json.JSONArray) value;
-                Object[] copyArr = new Object[jsonArray.length()];
-                for (int i = 0; i < copyArr.length; i++) {
-                    copyArr[i] = jsonArray.get(i);
-                }
-                listVariables.put(name, copyArr);
-
-            } else {
-                listVariables.put(name, (Object[]) value);
-            }
-        } else if (type == PythonType.TypeName.DICT) {
-            dictVariables.put(name, (java.util.Map<?, ?>) value);
-        }
-        else if (type == PythonType.TypeName.BYTES){
-            if (value instanceof  BytePointer){
-                bytesVariables.put(name, (BytePointer)value);
-            }
-            else if (value instanceof ByteBuffer){
-                bytesVariables.put(name, new BytePointer((ByteBuffer)value));
-            }
-            else{
-                throw new RuntimeException("Unsupported type: " + value.getClass().toString());
-            }
-        }
-        else {
-            strVariables.put(name, (String) value);
-        }
+        maps.get(type).put(name, PythonType.valueOf(type).convert(value));
     }
 
     /**
@@ -476,7 +433,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the variable name
      * @return the numpy array value
      */
-    public NumpyArray getNDArrayValue(String name) {
+    public INDArray getNDArrayValue(String name) {
         return ndVars.get(name);
     }
 
@@ -484,7 +441,7 @@ public class PythonVariables implements java.io.Serializable {
      * @param name the variable name
      * @return the list value as an object array
      */
-    public Object[] getListValue(String name) {
+    public List getListValue(String name) {
         return listVariables.get(name);
     }
 
@@ -566,21 +523,7 @@ public class PythonVariables implements java.io.Serializable {
             org.json.JSONObject input = (org.json.JSONObject) jsonArray.get(i);
             String varName = (String) input.get("name");
             String varType = (String) input.get("type");
-            if (varType.equals("BOOL")) {
-                pyvars.addBool(varName);
-            } else if (varType.equals("INT")) {
-                pyvars.addInt(varName);
-            } else if (varType.equals("FlOAT")) {
-                pyvars.addFloat(varName);
-            } else if (varType.equals("STR")) {
-                pyvars.addStr(varName);
-            } else if (varType.equals("LIST")) {
-                pyvars.addList(varName);
-            } else if (varType.equals("NDARRAY")) {
-                pyvars.addNDArray(varName);
-            } else if (varType.equals("DICT")) {
-                pyvars.addDict(varName);
-            }
+            pyvars.maps.get(PythonType.TypeName.valueOf(varType)).put(varName, null);
         }
 
         return pyvars;

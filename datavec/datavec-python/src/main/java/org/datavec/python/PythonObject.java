@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Konduit K.K.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -111,7 +111,7 @@ public class PythonObject {
                 ctype = PyObject_GetAttrString(ctypes, "c_ubyte");
                 break;
             default:
-                throw new RuntimeException("Unsupported dtype.");
+                throw new RuntimeException("Unsupported dtype: " + npArray.getDtype());
         }
 
         PyObject ctypesPointer = PyObject_GetAttrString(ctypes, "POINTER");
@@ -200,6 +200,8 @@ public class PythonObject {
             return new PythonObject((Integer) item);
         } else if (item instanceof Boolean) {
             return new PythonObject((Boolean) item);
+        } else if (item instanceof Pointer){
+            return new PythonObject(new BytePointer((Pointer)item));
         } else {
             throw new RuntimeException("Unsupported item in list: " + item);
         }
@@ -240,7 +242,7 @@ public class PythonObject {
             } else if (k instanceof Boolean) {
                 pyKey = new PythonObject((Boolean) k);
             } else {
-                throw new RuntimeException("Unsupported key in map");
+                throw new RuntimeException("Unsupported key in map: " + k.getClass());
             }
             Object v = data.get(k);
             PythonObject pyVal;
@@ -269,7 +271,7 @@ public class PythonObject {
             } else if (v instanceof Boolean) {
                 pyVal = new PythonObject((Boolean) v);
             } else {
-                throw new RuntimeException("Unsupported value in map");
+                throw new RuntimeException("Unsupported value in map: " + k.getClass());
             }
 
             PyDict_SetItem(pyDict, pyKey.nativePythonObject, pyVal.nativePythonObject);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Konduit K.K.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -18,21 +18,25 @@ package org.datavec.python;
 
 import lombok.Data;
 import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.Pointer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static org.datavec.python.Python.importModule;
 
 
+/**
+ *
+ * @param <T> Corresponding Java type for the Python type
+ */
 public abstract class PythonType<T> {
 
     public abstract T toJava(PythonObject pythonObject) throws PythonException;
-    public abstract TypeName getName();
-    public String toString(){
-        return getName().name();
-    }
+    private final TypeName typeName;
+
     enum TypeName{
         STR,
         INT,
@@ -43,7 +47,13 @@ public abstract class PythonType<T> {
         NDARRAY,
         BYTES
     }
-
+    private PythonType(TypeName typeName){
+        this.typeName = typeName;
+    }
+    public TypeName getName(){return typeName;}
+    public String toString(){
+        return getName().name();
+    }
     public static PythonType valueOf(String typeName) throws PythonException{
         try{
             typeName.valueOf(typeName);
@@ -64,22 +74,34 @@ public abstract class PythonType<T> {
             throw new RuntimeException(pe);
         }
 
+
+    }
+
+    /**
+     * Since multiple java types can map to the same python type,
+     * this method "normalizes" all supported incoming objects to T
+     * @param object object to be converted to type T
+     * @return
+     */
+    public T convert(Object object) throws PythonException{
+        return (T)object;
     }
     
-    public static final PythonType<String> STR = new PythonType<String>() {
+    public static final PythonType<String> STR = new PythonType<String>(TypeName.STR) {
         @Override
         public String toJava(PythonObject pythonObject)  throws PythonException{
             if (!Python.isinstance(pythonObject, Python.strType())){
-                throw new PythonException("Expected variable to be float, but was " +  Python.type(pythonObject));
+                throw new PythonException("Expected variable to be str, but was " +  Python.type(pythonObject));
             }
             return pythonObject.toString();
         }
+
         @Override
-        public TypeName getName(){
-            return TypeName.STR;
+        public String convert(Object object){
+            return object.toString();
         }
     };
-    public static final PythonType<Long> INT = new PythonType<Long>() {
+    public static final PythonType<Long> INT = new PythonType<Long>(TypeName.INT) {
         @Override
         public Long toJava(PythonObject pythonObject) throws PythonException{
             if (!Python.isinstance(pythonObject, Python.intType())){
@@ -87,12 +109,18 @@ public abstract class PythonType<T> {
             }
             return pythonObject.toLong();
         }
+
         @Override
-        public TypeName getName(){
-            return TypeName.INT;
+        public Long convert(Object object) throws PythonException{
+            if (object instanceof Number){
+                return ((Number)object).longValue();
+            }
+            else{
+                throw new PythonException("Unable to cast " + object + " to Long.");
+            }
         }
     };
-    public static final PythonType<Double> FLOAT = new PythonType<Double>() {
+    public static final PythonType<Double> FLOAT = new PythonType<Double>(TypeName.FLOAT) {
         @Override
         public Double toJava(PythonObject pythonObject) throws PythonException {
             if (!Python.isinstance(pythonObject, Python.floatType())){
@@ -101,11 +129,16 @@ public abstract class PythonType<T> {
             return pythonObject.toDouble();
         }
         @Override
-        public TypeName getName(){
-            return TypeName.FLOAT;
+        public Double convert(Object object) throws PythonException{
+            if (object instanceof Number){
+                return ((Number)object).doubleValue();
+            }
+            else{
+                throw new PythonException("Unable to cast " + object + " to Double.");
+            }
         }
     };
-    public static final PythonType<Boolean> BOOL = new PythonType<Boolean>() {
+    public static final PythonType<Boolean> BOOL = new PythonType<Boolean>(TypeName.BOOL) {
         @Override
         public Boolean toJava(PythonObject pythonObject) throws PythonException{
             if (!Python.isinstance(pythonObject, Python.boolType())){
@@ -114,12 +147,20 @@ public abstract class PythonType<T> {
             return pythonObject.toBoolean();
         }
         @Override
-        public TypeName getName(){
-            return TypeName.BOOL;
+        public Boolean convert(Object object) throws PythonException{
+            if (object instanceof Number){
+                return ((Number)object).intValue() != 0;
+            }
+            else if (object instanceof Boolean){
+                return (Boolean)object;
+            }
+            else{
+                throw new PythonException("Unable to cast " + object + " to Boolean.");
+            }
         }
     };
 
-    public static final PythonType<List> LIST = new PythonType<List>() {
+    public static final PythonType<List> LIST = new PythonType<List>(TypeName.LIST) {
         @Override
         public List toJava(PythonObject pythonObject) throws PythonException{
             if (!Python.isinstance(pythonObject, Python.listType())){
@@ -128,12 +169,24 @@ public abstract class PythonType<T> {
             return pythonObject.toList();
         }
         @Override
-        public TypeName getName(){
-            return TypeName.LIST;
+        public List convert(Object object) throws PythonException{
+            if (object instanceof java.util.List) {
+                return (List)object;
+            } else if (object instanceof org.json.JSONArray) {
+                org.json.JSONArray jsonArray = (org.json.JSONArray) object;
+                return jsonArray.toList();
+
+            }
+            else if (object instanceof Object[]){
+                return Arrays.asList((Object[]) object);
+            }
+            else {
+                throw new PythonException("Unable to cast " + object + " to List.");
+            }
         }
     };
 
-    public static final PythonType<Map> DICT = new PythonType<Map>() {
+    public static final PythonType<Map> DICT = new PythonType<Map>(TypeName.DICT) {
         @Override
         public Map toJava(PythonObject pythonObject) throws PythonException{
             if (!Python.isinstance(pythonObject, Python.dictType())){
@@ -141,12 +194,18 @@ public abstract class PythonType<T> {
             }
             return pythonObject.toMap();
         }
+
         @Override
-        public TypeName getName(){
-            return TypeName.DICT;
+        public Map convert(Object object) throws PythonException{
+            if (object instanceof  Map){
+                return (Map)object;
+            }
+            else{
+                throw new PythonException("Unable to cast " + object + " to Map.");
+            }
         }
     };
-    public static final PythonType<INDArray> NDARRAY = new PythonType<INDArray>() {
+    public static final PythonType<INDArray> NDARRAY = new PythonType<INDArray>(TypeName.NDARRAY) {
         @Override
         public INDArray toJava(PythonObject pythonObject) throws PythonException{
             PythonObject np = importModule("numpy");
@@ -155,21 +214,36 @@ public abstract class PythonType<T> {
             }
             return pythonObject.toNumpy().getNd4jArray();
         }
+
         @Override
-        public TypeName getName(){
-            return TypeName.NDARRAY;
+        public INDArray convert(Object object) throws PythonException {
+            if (object instanceof INDArray) {
+                return (INDArray) object;
+            } else if (object instanceof NumpyArray) {
+                return ((NumpyArray) object).getNd4jArray();
+            } else {
+                throw new PythonException("Unable to cast " + object + " to INDArray.");
+            }
         }
     };
 
-    public static final PythonType<BytePointer> BYTES = new PythonType<BytePointer>() {
+    public static final PythonType<BytePointer> BYTES = new PythonType<BytePointer>(TypeName.BYTES) {
         @Override
         public BytePointer toJava(PythonObject pythonObject) throws PythonException {
            return pythonObject.toBytePointer();
         }
-
         @Override
-        public TypeName getName() {
-            return TypeName.BYTES;
+        public BytePointer convert(Object object) throws PythonException{
+            if (object instanceof BytePointer){
+                return (BytePointer)object;
+            }
+            else if (object instanceof Pointer){
+                return new BytePointer((Pointer)object);
+            }
+            else {
+                throw new PythonException("Unable to cast " + object + " to BytePointer.");
+            }
         }
+
     };
 }

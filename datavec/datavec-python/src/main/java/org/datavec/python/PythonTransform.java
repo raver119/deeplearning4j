@@ -27,6 +27,7 @@ import org.datavec.api.writable.*;
 import org.json.JSONPropertyIgnore;
 import org.nd4j.base.Preconditions;
 import org.nd4j.jackson.objectmapper.holder.ObjectMapperHolder;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
 import org.nd4j.shade.jackson.annotation.JsonIgnoreProperties;
@@ -269,8 +270,8 @@ public class PythonTransform implements Transform {
                     schemaBuilder.addColumnString(name);
                     break;
                 case NDARRAY:
-                    NumpyArray arr = pyOuts.getNDArrayValue(name);
-                    schemaBuilder.addColumnNDArray(name, arr.getShape());
+                    INDArray arr = pyOuts.getNDArrayValue(name);
+                    schemaBuilder.addColumnNDArray(name, arr.shape());
                     break;
                 case BOOL:
                     schemaBuilder.addColumnBoolean(name);
@@ -297,8 +298,8 @@ public class PythonTransform implements Transform {
                     out.add(new Text(pyOuts.getStrValue(name)));
                     break;
                 case NDARRAY:
-                    NumpyArray arr = pyOuts.getNDArrayValue(name);
-                    out.add(new NDArrayWritable(arr.getNd4jArray()));
+                    INDArray arr = pyOuts.getNDArrayValue(name);
+                    out.add(new NDArrayWritable(arr));
                     break;
                 case DICT:
                     Map<?, ?> dictValue = pyOuts.getDictValue(name);
@@ -316,7 +317,7 @@ public class PythonTransform implements Transform {
                     }
                     break;
                 case LIST:
-                    Object[] listValue = pyOuts.getListValue(name);
+                    Object[] listValue = pyOuts.getListValue(name).toArray();
                     try {
                         out.add(new Text(ObjectMapperHolder.getJsonMapper().writeValueAsString(listValue)));
                     } catch (JsonProcessingException e) {
