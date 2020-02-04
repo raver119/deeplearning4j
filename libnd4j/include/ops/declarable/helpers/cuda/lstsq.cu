@@ -48,7 +48,7 @@ namespace helpers {
             auto regularizer = leftOutput.ulike();
             regularizer.setIdentity();
             regularizer *= l2Regularizer;
-            leftOutput -= regularizer;
+            leftOutput += regularizer;
 
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition

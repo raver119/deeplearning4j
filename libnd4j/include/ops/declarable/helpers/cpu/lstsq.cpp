@@ -33,8 +33,22 @@ namespace ops {
 namespace helpers {
 
     template <typename T>
+    static void fillRegularizer(NDArray& ioMatrix, double const value) {
+        auto lastDims = ioMatrix.allTensorsAlongDimension({-2, -1});
+        auto rows = ioMatrix.sizeAt(-2);
+        //auto cols = ioMatrix.sizeAt(-1);
+
+        for (auto x = 0; x < lastDims.size(); x++) {
+            for (auto r = 0; r < rows; r++) {
+                 lastDims[x]->t<T>(r,r) = (T)value;
+            }
+        }
+
+    }
+
+    template <typename T>
     int leastSquaresSolveFunctor_(nd4j::LaunchContext* context, NDArray const* leftInput, NDArray const* rightInput, double const l2Regularizer, bool const fast, NDArray* output) {
-        NDArray::prepareSpecialUse({output}, {leftInput, rightInput});
+        NDArray::preparePrimaryUse({output}, {leftInput, rightInput});
         if (fast) { // Cholesky decomposition approach
             // Equation for solve A^T * Ax = A^T * b, so
             // 1. Computing A2:
@@ -48,17 +62,19 @@ namespace helpers {
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
             // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
             auto regularizer = leftOutput.ulike();
-            regularizer.setIdentity();
-            regularizer *= l2Regularizer;
-            leftOutput -= regularizer;
-
+            fillRegularizer<T>(regularizer, l2Regularizer);
+//            regularizer *= l2Regularizer;
+            leftOutput += regularizer;
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
-            helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
+            auto leftOutputT = leftOutput.ulike();
+            auto err = helpers::cholesky(context, &leftOutput, &leftOutputT); // non inplace decomposition
+            if (err) return err;
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
-            auto leftOutputT = leftOutput.transpose();
-            helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
-            helpers::triangularSolveFunctor(context, &leftOutputT, &rightB, false, false, output);
+            helpers::triangularSolveFunctor(context, &leftOutputT, &rightOutput, true, false, &rightB);
+            rightB.printIndexedBuffer("Stage1 output");
+            leftOutput = leftOutputT.transpose();
+            helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
             // All done
         }
         else { // QR decomposition approach
@@ -77,7 +93,7 @@ namespace helpers {
             // 3. Solve triangular system
             helpers::triangularSolveFunctor(context, &R, &rightOutput, false, false, output);
         }
-        NDArray::registerSpecialUse({output}, {leftInput, rightInput});
+        NDArray::registerPrimaryUse({output}, {leftInput, rightInput});
         return Status::OK();
     }
 
