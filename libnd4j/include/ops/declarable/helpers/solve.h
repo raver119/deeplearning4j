@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,17 +14,21 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.rl4j.learning;
+//
+//  @author GS <sgazeos@gmail.com>
+//
+#ifndef __SOLVE__H_HELPERS__
+#define __SOLVE__H_HELPERS__
+#include <op_boilerplate.h>
+#include <NDArray.h>
 
-/**
- * @author rubenfiszel (ruben.fiszel@epfl.ch) on 8/5/16.
- *
- * Express the ability to count the number of step of the current training.
- * Factorisation of a feature between threads in async and learning process
- * for the web monitoring
- */
-public interface StepCountable {
+namespace nd4j {
+namespace ops {
+namespace helpers {
 
-    int getStepCounter();
-
+    int solveFunctor(nd4j::LaunchContext* context, NDArray* leftInput, NDArray* rightInput, bool adjoint, NDArray* output);
+    void adjointMatrix(nd4j::LaunchContext* context, NDArray const* input, NDArray* output);
 }
+}
+}
+#endif
