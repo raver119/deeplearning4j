@@ -140,7 +140,7 @@ public abstract class PythonType<T> {
         @Override
         public Boolean toJava(PythonObject pythonObject) throws PythonException {
             if (!Python.isinstance(pythonObject, Python.boolType())) {
-                throw new PythonException("Expected variable to be boolean, but was " + Python.type(pythonObject));
+                throw new PythonException("Expected variable to be bool, but was " + Python.type(pythonObject));
             }
             return pythonObject.toBoolean();
         }
@@ -184,7 +184,7 @@ public abstract class PythonType<T> {
         @Override
         public Map toJava(PythonObject pythonObject) throws PythonException {
             if (!Python.isinstance(pythonObject, Python.dictType())) {
-                throw new PythonException("Expected variable to be dictionary, but was " + Python.type(pythonObject));
+                throw new PythonException("Expected variable to be dict, but was " + Python.type(pythonObject));
             }
             return pythonObject.toMap();
         }
