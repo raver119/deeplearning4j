@@ -1719,7 +1719,7 @@ TEST_F(DeclarableOpsTests11, SolveLS_Test_1) {
 
     nd4j::ops::lstsq op;
 
-    auto res = op.evaluate({&a, &b}, {0.5}, {false});
+    auto res = op.evaluate({&a, &b}, {0.5}, {true});
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
