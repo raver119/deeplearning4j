@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
 import static org.nd4j.linalg.indexing.NDArrayIndex.all;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -39,8 +38,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.nd4j.OpValidationSuite;
+import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.api.OutAndGrad;
-import org.nd4j.autodiff.samediff.impl.DefaultSameDiffConditional;
 import org.nd4j.autodiff.validation.OpValidation;
 import org.nd4j.autodiff.validation.TestCase;
 import org.nd4j.evaluation.IEvaluation;
@@ -78,9 +77,7 @@ import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.nativeblas.NativeOpsHolder;
-import org.nd4j.weightinit.impl.OneInitScheme;
 import org.nd4j.weightinit.impl.UniformInitScheme;
-import org.nd4j.weightinit.impl.ZeroInitScheme;
 
 /**
  * Created by agibsonccc on 4/11/17.
@@ -3530,6 +3527,29 @@ public class SameDiffTests extends BaseNd4jTest {
             SDVariable random = sameDiff.random().uniform("data", 0.0, 10.0, sdShape, dt);
             INDArray out = random.eval();
             String s = out.toString();
+        }
+    }
+
+    @Test
+    public void testMissingPlaceholderError(){
+
+        SameDiff sd = SameDiff.create();
+
+        int nOut = 4;
+        int minibatch = 10;
+        SDVariable predictions = sd.var("in", DataType.DOUBLE, minibatch, nOut);
+        SDVariable labels = sd.placeHolder("labels", DataType.DOUBLE, -1, nOut);
+
+        LossReduce reduction = LossReduce.MEAN_BY_NONZERO_WEIGHT_COUNT;
+
+        SDVariable   loss = sd.loss().absoluteDifference("loss", labels, predictions, null, reduction);
+
+        try {
+            loss.eval();
+            fail("Exception should have been thrown");
+        } catch (IllegalStateException e){
+            String msg = e.getMessage();
+            assertTrue(msg, msg.contains("\"labels\"") && msg.contains("No array was provided"));
         }
     }
 }

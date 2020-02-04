@@ -28,6 +28,7 @@ import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscret
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.network.NeuralNet;
 import org.deeplearning4j.rl4j.network.ac.IActorCritic;
+import org.deeplearning4j.rl4j.observation.Observation;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.space.Encodable;
 import org.deeplearning4j.rl4j.support.*;
@@ -197,7 +198,7 @@ public class PolicyTest {
         assertEquals(465.0, totalReward, 0.0001);
 
         // HistoryProcessor
-        assertEquals(27, hp.addCalls.size());
+        assertEquals(16, hp.addCalls.size());
         assertEquals(31, hp.recordCalls.size());
         for(int i=0; i <= 30; ++i) {
             assertEquals((double)i, hp.recordCalls.get(i).getDouble(0), 0.0001);
@@ -227,6 +228,11 @@ public class PolicyTest {
         @Override
         public NeuralNet getNeuralNet() {
             return neuralNet;
+        }
+
+        @Override
+        public Integer nextAction(Observation obs) {
+            return nextAction(obs.getData());
         }
 
         @Override

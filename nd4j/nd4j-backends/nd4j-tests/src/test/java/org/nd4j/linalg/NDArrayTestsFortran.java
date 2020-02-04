@@ -19,8 +19,6 @@ package org.nd4j.linalg;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,16 +61,6 @@ public class NDArrayTestsFortran extends BaseNd4jTest {
 
     public NDArrayTestsFortran(Nd4jBackend backend) {
         super(backend);
-    }
-
-    @Before
-    public void before() throws Exception {
-        super.before();
-    }
-
-    @After
-    public void after() throws Exception {
-        super.after();
     }
 
 

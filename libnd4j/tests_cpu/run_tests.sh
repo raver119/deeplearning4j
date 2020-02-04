@@ -39,6 +39,7 @@ do
 done
 
 CHIP="${CHIP:-cpu}"
+export GTEST_OUTPUT="xml:surefire-reports/TEST-${CHIP}-results.xml"
 
 # On Mac, make sure it can find libraries for GCC
 export DYLD_LIBRARY_PATH=/usr/local/lib/gcc/8/:/usr/local/lib/gcc/7/:/usr/local/lib/gcc/6/:/usr/local/lib/gcc/5/
@@ -51,4 +52,7 @@ if [ -n "$BUILD_PATH" ]; then
     export PATH="$PATH:$BUILD_PATH"
 fi
 
-../blasbuild/${CHIP}/tests_cpu/layers_tests/runtests --gtest_output="xml:../target/surefire-reports/TEST-${CHIP}-results.xml"
+../blasbuild/${CHIP}/tests_cpu/layers_tests/runtests
+
+# Workaround to fix posix path conversion problem on Windows (http://mingw.org/wiki/Posix_path_conversion)
+[ -f "${GTEST_OUTPUT#*:}" ] && cp -a surefire-reports/ ../target && rm -rf surefire-reports/

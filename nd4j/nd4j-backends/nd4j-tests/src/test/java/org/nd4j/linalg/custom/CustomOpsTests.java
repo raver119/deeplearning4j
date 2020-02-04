@@ -16,10 +16,8 @@
 
 package org.nd4j.linalg.custom;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.BaseNd4jTest;
@@ -34,9 +32,11 @@ import org.nd4j.linalg.api.ops.executioner.OpStatus;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
+import org.nd4j.linalg.api.ops.impl.image.ResizeArea;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.shape.Create;
+import org.nd4j.linalg.api.ops.impl.shape.OnesLike;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.AddOp;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.ModOp;
@@ -52,7 +52,6 @@ import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Float.NaN;
@@ -969,6 +968,33 @@ public class CustomOpsTests extends BaseNd4jTest {
     }
 
     @Test
+    public void testResizeArea1() {
+
+        INDArray x = Nd4j.rand(DataType.FLOAT, 1, 2,3,4);
+        INDArray z = Nd4j.createUninitialized(DataType.FLOAT, 1, 10, 10, 4);
+        ResizeArea op = new ResizeArea(x, z, 10, 10, false);
+        Nd4j.exec(op);
+    }
+
+    @Test
+    public void testResizeArea2() {
+
+        INDArray image = Nd4j.linspace(DataType.FLOAT, 1.0f, 1.0f, 9 ).reshape(1,3,3,1);
+        INDArray output = Nd4j.createUninitialized(DataType.FLOAT, 1, 6, 6, 1);
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.f, 1.f, 2.f, 2.f, 3.f, 3.f,
+                1.f, 1.f, 2.f, 2.f, 3.f, 3.f,
+                4.f, 4.f, 5.f, 5.f, 6.f, 6.f,
+                4.f, 4.f, 5.f, 5.f, 6.f, 6.f,
+                7.f, 7.f, 8.f, 8.f, 9.f, 9.f,
+                7.f, 7.f, 8.f, 8.f, 9.f, 9.f
+        }).reshape(1,6,6,1);
+        ResizeArea op = new ResizeArea(image, output, 6, 6, false);
+        Nd4j.exec(op);
+        assertEquals(expected, output);
+    }
+
+    @Test
     public void testCompareAndBitpack() {
         INDArray in = Nd4j.createFromArray(new double[]{-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f,
                 -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f}).reshape( 2,3,4);
@@ -1624,5 +1650,91 @@ public class CustomOpsTests extends BaseNd4jTest {
         RgbToYiq op = new RgbToYiq(image);
         INDArray[] ret = Nd4j.exec(op);
         assertArrayEquals(image.shape(), ret[0].shape());
+    }
+
+    @Test
+    public void testTriangularSolve() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                3.f, 0.f, 0.f, 0.f,
+                2.f, 1.f, 0.f, 0.f,
+                1.f, 0.f, 1.f, 0.f,
+                1.f, 1.f, 1.f, 1.f
+        }).reshape(4, 4);
+
+        INDArray b = Nd4j.createFromArray(new float[]{
+                4.f, 2.f, 4.f, 2.f
+        }).reshape(4, 1);
+
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.333333f, -0.6666667f, 2.6666667f, -1.3333333f
+        }).reshape(4, 1);
+
+        val op = new TriangularSolve(a, b, true, false);
+        INDArray[] ret = Nd4j.exec(op);
+
+        assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testOnesLike_1() {
+        val x = Nd4j.create(DataType.FLOAT, 3, 4, 5);
+        val e = Nd4j.ones(DataType.INT32, 3, 4, 5);
+
+        val z = Nd4j.exec(new OnesLike(x, DataType.INT32))[0];
+        assertEquals(e, z);
+    }
+
+    @Test
+    public void testLinSpaceEdge_1() {
+        val x = Nd4j.linspace(1,10,1, DataType.FLOAT);
+        val e = Nd4j.scalar(1.0f);
+
+        assertEquals(e, x);
+    }
+
+    @Test
+    public void testLinearSolve() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                2.f, -1.f, -2.f, -4.f, 6.f, 3.f, -4.f, -2.f, 8.f
+        }).reshape(3, 3);
+
+        INDArray b = Nd4j.createFromArray(new float[]{
+                2.f, 4.f, 3.f
+        }).reshape(3, 1);
+
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                7.625f, 3.25f, 5.f
+        }).reshape(3, 1);
+
+        val op = new LinearSolve(a, b);
+        INDArray[] ret = Nd4j.exec(op);
+
+        assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testLinearSolveAdjust() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                0.7788f,    0.8012f,    0.7244f,
+                0.2309f,    0.7271f,    0.1804f,
+                0.5056f,    0.8925f,    0.5461f
+        }).reshape(3, 3);
+
+        INDArray b = Nd4j.createFromArray(new float[]{
+                0.7717f,    0.9281f,    0.9846f,
+                0.4838f,    0.6433f,    0.6041f,
+                0.6501f,    0.7612f,    0.7605f
+        }).reshape(3, 3);
+
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.5504692f,  1.8953944f,  2.2765768f,
+                0.03399149f,  0.2883001f ,  0.5377323f,
+                -0.8774802f, -1.2155888f, -1.8049058f
+        }).reshape(3, 3);
+
+        val op = new LinearSolve(a, b, true);
+        INDArray[] ret = Nd4j.exec(op);
+
+        assertEquals(expected, ret[0]);
     }
 }

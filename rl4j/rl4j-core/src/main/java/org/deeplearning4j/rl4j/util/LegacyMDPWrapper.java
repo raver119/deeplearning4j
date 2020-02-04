@@ -1,9 +1,11 @@
 package org.deeplearning4j.rl4j.util;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.deeplearning4j.gym.StepReply;
+import org.deeplearning4j.rl4j.learning.EpochStepCounter;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
-import org.deeplearning4j.rl4j.learning.ILearning;
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.observation.Observation;
 import org.deeplearning4j.rl4j.space.ActionSpace;
@@ -12,21 +14,26 @@ import org.deeplearning4j.rl4j.space.ObservationSpace;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-public class LegacyMDPWrapper<O extends Encodable, A, AS extends ActionSpace<A>> implements MDP<Observation, A, AS> {
+public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Observation, A, AS> {
 
     @Getter
     private final MDP<O, A, AS> wrappedMDP;
     @Getter
     private final WrapperObservationSpace observationSpace;
-    private final ILearning learning;
-    private int skipFrame;
 
-    private int step = 0;
+    @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PUBLIC)
+    private IHistoryProcessor historyProcessor;
 
-    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, ILearning learning) {
+    private final EpochStepCounter epochStepCounter;
+
+    private int skipFrame = 1;
+    private int requiredFrame = 0;
+
+    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, IHistoryProcessor historyProcessor, EpochStepCounter epochStepCounter) {
         this.wrappedMDP = wrappedMDP;
         this.observationSpace = new WrapperObservationSpace(wrappedMDP.getObservationSpace().getShape());
-        this.learning = learning;
+        this.historyProcessor = historyProcessor;
+        this.epochStepCounter = epochStepCounter;
     }
 
     @Override
@@ -38,58 +45,61 @@ public class LegacyMDPWrapper<O extends Encodable, A, AS extends ActionSpace<A>>
     public Observation reset() {
         INDArray rawObservation = getInput(wrappedMDP.reset());
 
-        IHistoryProcessor historyProcessor = learning.getHistoryProcessor();
+        IHistoryProcessor historyProcessor = getHistoryProcessor();
         if(historyProcessor != null) {
-            historyProcessor.record(rawObservation.dup());
-            rawObservation.muli(1.0 / historyProcessor.getScale());
+            historyProcessor.record(rawObservation);
         }
 
-        Observation observation = new Observation(new INDArray[] { rawObservation });
+        Observation observation = new Observation(new INDArray[] { rawObservation }, false);
 
         if(historyProcessor != null) {
             skipFrame = historyProcessor.getConf().getSkipFrame();
+            requiredFrame = skipFrame * (historyProcessor.getConf().getHistoryLength() - 1);
+
             historyProcessor.add(rawObservation);
         }
-        step = 0;
+
+        observation.setSkipped(skipFrame != 0);
 
         return observation;
     }
 
     @Override
-    public void close() {
-        wrappedMDP.close();
-    }
-
-    @Override
     public StepReply<Observation> step(A a) {
-        IHistoryProcessor historyProcessor = learning.getHistoryProcessor();
+        IHistoryProcessor historyProcessor = getHistoryProcessor();
 
         StepReply<O> rawStepReply = wrappedMDP.step(a);
         INDArray rawObservation = getInput(rawStepReply.getObservation());
 
-        ++step;
+        int stepOfObservation = epochStepCounter.getCurrentEpochStep() + 1;
 
-        int requiredFrame = 0;
         if(historyProcessor != null) {
-            historyProcessor.record(rawObservation.dup());
-            rawObservation.muli(1.0 / historyProcessor.getScale());
+            historyProcessor.record(rawObservation);
 
-            requiredFrame = skipFrame * (historyProcessor.getConf().getHistoryLength() - 1);
-            if ((learning.getStepCounter() % skipFrame == 0 && step >= requiredFrame)
-            || (step % skipFrame == 0 && step < requiredFrame )){
+            if (stepOfObservation % skipFrame == 0) {
                 historyProcessor.add(rawObservation);
             }
         }
 
         Observation observation;
-        if(historyProcessor != null && step >= requiredFrame) {
-            observation = new Observation(historyProcessor.getHistory());
+        if(historyProcessor != null && stepOfObservation >= requiredFrame) {
+            observation = new Observation(historyProcessor.getHistory(), true);
+            observation.getData().muli(1.0 / historyProcessor.getScale());
         }
         else {
-            observation = new Observation(new INDArray[] { rawObservation });
+            observation = new Observation(new INDArray[] { rawObservation }, false);
+        }
+
+        if(stepOfObservation % skipFrame != 0 || stepOfObservation < requiredFrame) {
+            observation.setSkipped(true);
         }
 
         return new StepReply<Observation>(observation, rawStepReply.getReward(), rawStepReply.isDone(), rawStepReply.getInfo());
+    }
+
+    @Override
+    public void close() {
+        wrappedMDP.close();
     }
 
     @Override
@@ -99,11 +109,11 @@ public class LegacyMDPWrapper<O extends Encodable, A, AS extends ActionSpace<A>>
 
     @Override
     public MDP<Observation, A, AS> newInstance() {
-        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), learning);
+        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), historyProcessor, epochStepCounter);
     }
 
     private INDArray getInput(O obs) {
-        INDArray arr = Nd4j.create(obs.toArray());
+        INDArray arr = Nd4j.create(((Encodable)obs).toArray());
         int[] shape = observationSpace.getShape();
         if (shape.length == 1)
             return arr.reshape(new long[] {1, arr.length()});

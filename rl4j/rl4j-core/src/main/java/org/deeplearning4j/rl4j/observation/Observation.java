@@ -16,6 +16,8 @@
 
 package org.deeplearning4j.rl4j.observation;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
@@ -28,13 +30,33 @@ public class Observation {
 
     private final DataSet data;
 
+    @Getter @Setter
+    private boolean skipped;
+
     public Observation(INDArray[] data) {
-        this(new org.nd4j.linalg.dataset.DataSet(Nd4j.concat(0, data), null));
+        this(data, false);
+    }
+
+    public Observation(INDArray[] data, boolean shouldReshape) {
+        INDArray features = Nd4j.concat(0, data);
+        if(shouldReshape) {
+            features = reshape(features);
+        }
+        this.data = new org.nd4j.linalg.dataset.DataSet(features, null);
     }
 
     // FIXME: Remove -- only used in unit tests
     public Observation(INDArray data) {
         this.data = new org.nd4j.linalg.dataset.DataSet(data, null);
+    }
+
+    private INDArray reshape(INDArray source) {
+        long[] shape = source.shape();
+        long[] nshape = new long[shape.length + 1];
+        nshape[0] = 1;
+        System.arraycopy(shape, 0, nshape, 1, shape.length);
+
+        return source.reshape(nshape);
     }
 
     private Observation(DataSet data) {
