@@ -3011,7 +3011,6 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_5) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-<<<<<<< HEAD
 TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
 
     auto a = NDArrayFactory::create<float>('c', {4, 4}, {
@@ -3112,7 +3111,8 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_4) {
     ASSERT_TRUE(exp.equalsTo(b));
     delete res;
 }
-=======
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, TriangularSolve_Test_6) {
 
     auto a = NDArrayFactory::create<float>('c', {4, 4}, {
@@ -3141,4 +3141,3 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_6) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
->>>>>>> 7ea07de76bf9a62c5d2c6d253ef3719f735bccd0
