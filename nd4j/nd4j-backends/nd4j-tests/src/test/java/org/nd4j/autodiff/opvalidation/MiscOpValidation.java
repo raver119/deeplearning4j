@@ -1873,14 +1873,19 @@ public class MiscOpValidation extends BaseOpValidation {
         SDVariable input2 = sameDiff.var(scale);
         SDVariable input3 = sameDiff.var(offset);
 
-        INDArray expectedY = Nd4j.createFromArray(new double[]{1.20337462,  1.20337462,  1.20337462,
-                1.20337462, 1.34821558,  1.34821558,  1.34821558,  1.34821558, 1.49305654,  1.49305654,
-                1.49305654,  1.49305654, 1.63789749,  1.63789749,  1.63789749,  1.63789749, 1.78273857,
-                1.78273857,  1.78273857,  1.78273857, 1.92757952,  1.92757952,  1.92757952,  1.92757952,
-                2.0724206 ,  2.0724206 ,  2.0724206 ,  2.0724206 , 2.21726155,  2.21726155,  2.21726155,
-                2.21726155, 2.36210251,  2.36210251,  2.36210251,  2.36210251, 2.50694346,  2.50694346,
-                2.50694346,  2.50694346, 2.65178442,  2.65178442,  2.65178442,  2.65178442, 2.79662538,
-                2.79662538,  2.79662538,  2.79662538}).reshape(x.shape());
+        INDArray expectedY = Nd4j.createFromArray(new double[]{
+                985.5258,  985.5258,  985.5258,  985.5258,
+                659.7321,  659.7321,  659.7321,  659.7321,
+                399.0972,  399.0972,  399.0972,  399.0972,
+                203.6210,  203.6210,  203.6210,  203.6210,
+                73.3036,   73.3036,   73.3036,   73.3036,
+                8.1448,    8.1448,    8.1448,    8.1448,
+                8.1448,    8.1448,    8.1448,    8.1448,
+                73.3036,   73.3036,   73.3036,   73.3036,
+                203.6210,  203.6210,  203.6210,  203.6210,
+                399.0972,  399.0972,  399.0972,  399.0972,
+                659.7321,  659.7321,  659.7321,  659.7321,
+                985.5258,  985.5258,  985.5258,  985.5258}).reshape(x.shape());
         INDArray expectedBatchMean = Nd4j.createFromArray(new double[]{23.,  24.,  25.,  26.});
         INDArray expectedBatchVar = Nd4j.createFromArray(new double[]{208.00001526,  208.00001526,  208.00001526,  208.00001526});
 
@@ -2015,17 +2020,18 @@ public class MiscOpValidation extends BaseOpValidation {
         SDVariable sdInput1 = sameDiff.constant(1);
         SDVariable sdInput2 = sameDiff.constant(-1);
 
-        INDArray expected = Nd4j.createFromArray(new double[]{
-                    0.7788,    0.8012,    0.7244,    0.2309,
-                    0.7271,    0.1804,    0.5056,    0.8925,
-                    0,    0.9234,    0.0856,    0.7938
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                    0.7788f,    0.8012f,    0.7244f,    0.2309f,
+                    0.7271f,    0.1804f,    0.5056f,    0.8925f,
+                    0.f,    0.9234f,    0.0856f,    0.7938f
         }).reshape(3,4);
 
-        SDVariable[] output = new MatrixBandPart(sameDiff, sdInput, sdInput1, sdInput2).outputVariables();
+        sameDiff.loss.l2Loss(sdInput);
+        SDVariable output = new MatrixBandPart(sameDiff, sdInput, 1, -1).outputVariable();
 
         TestCase tc = new TestCase(sameDiff)
                 .gradientCheck(true)
-                .expectedOutput(output[0].name(), expected);
+                .expectedOutput(output.name(), expected);
 
         String err = OpValidation.validate(tc);
         assertNull(err);
