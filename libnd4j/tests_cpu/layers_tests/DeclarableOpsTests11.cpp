@@ -1701,6 +1701,35 @@ TEST_F(DeclarableOpsTests11, Solve_Test_5) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, SolveLS_Test_1) {
+
+    auto a = NDArrayFactory::create<float>('c', {2,2, 2}, {
+            1.f,    2.f,    3.f, 4.f,
+            5.f,    6.f,    7.f, 8.f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {2, 2, 1}, {
+            3.f,    7.f,    11.f, 15.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {2, 2, 1}, {
+            0.8311695f,           1.0909086f,           0.9205573f,            1.0630057f
+    });
+
+    nd4j::ops::lstsq op;
+
+    auto res = op.evaluate({&a, &b}, {0.5}, {false});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printIndexedBuffer("LS Solve 2x2");
+    exp.printIndexedBuffer("LS Expec 2x2");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test1) {
 

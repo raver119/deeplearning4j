@@ -45,11 +45,11 @@ namespace helpers {
 
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
             // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
-//            auto regularizer = leftOutput.ulike();
-//            regularizer.setIdentity();
-//            regularizer *= l2Regularizer;
-//            leftOutput -= regularizer;
-//
+            auto regularizer = leftOutput.ulike();
+            regularizer.setIdentity();
+            regularizer *= l2Regularizer;
+            leftOutput -= regularizer;
+
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
             // 5. Solve two triangular systems:
