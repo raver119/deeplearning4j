@@ -1272,7 +1272,7 @@ public class ShapeOpValidation extends BaseOpValidation {
 
             SameDiff sd = SameDiff.create();
             SDVariable data = sd.var("data", d);
-            SDVariable segments = sd.var("segments", s);
+            SDVariable segments = sd.constant("segments", s);
 
             SDVariable sm;
             INDArray exp;
@@ -1326,6 +1326,7 @@ public class ShapeOpValidation extends BaseOpValidation {
             }
 
             SDVariable loss = sm.std(true);
+            sd.addLossVariable(loss);
 
             TestCase tc = new TestCase(sd)
                     .testName(op)
@@ -1370,17 +1371,14 @@ public class ShapeOpValidation extends BaseOpValidation {
 
         // Test with static max len
         int maxlen = 2;
-        INDArray expected = Nd4j.createFromArray(new boolean[]{
-                     true,     false,     false,
-                     true,      true,      true,
-                     true,      true,     false
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                     1.f,     0.f,     0.f,
+                     1.f,     1.f,     1.f,
+                     1.f,     1.f,     0.f
         }).reshape(3,3);
 
-        INDArray[] ret = Nd4j.exec(new SequenceMask(arr, maxlen, DataType.INT32));
-        System.out.println(ret[0]);
-        SDVariable result1 = sameDiff.sequenceMask(lengths, maxlen, DataType.INT32);
-        System.out.println(result1.eval());
-        //System.out.println(Arrays.toString(result1.eval().shape()));
+        INDArray[] ret = Nd4j.exec(new SequenceMask(arr, maxlen, DataType.FLOAT));
+        SDVariable result1 = sameDiff.sequenceMask(lengths, maxlen, DataType.FLOAT);
         assertArrayEquals(expected.shape(), result1.eval().shape());
         assertEquals(expected, result1.eval());
 
