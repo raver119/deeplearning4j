@@ -66,14 +66,17 @@ namespace helpers {
 //            regularizer *= l2Regularizer;
             leftOutput += regularizer;
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
-            auto leftOutputT = leftOutput.ulike();
-            auto err = helpers::cholesky(context, &leftOutput, &leftOutputT); // non inplace decomposition
+//            auto leftOutputT = leftOutput.ulike();
+            auto err = helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
             if (err) return err;
+            // alternate moment: inverse lower triangular matrix to solve equation A'x = b' => L^Tx = L^-1 * b'
+            // solve one upper triangular system (to avoid float problems)
+            
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
-            helpers::triangularSolveFunctor(context, &leftOutputT, &rightOutput, true, false, &rightB);
+            helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
             rightB.printIndexedBuffer("Stage1 output");
-            leftOutput = leftOutputT.transpose();
+            leftOutput.transposei();
             helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
             // All done
         }
