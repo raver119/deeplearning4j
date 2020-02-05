@@ -41,8 +41,13 @@ public class Roll extends DynamicCustomOp {
         addIArgument(shift);
     }
 
-    public Roll(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable shift) {
-        super("", sameDiff, new SDVariable[]{input,shift});
+    public Roll(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable axes, @NonNull SDVariable shift) {
+        super("", sameDiff, new SDVariable[]{input,axes,shift});
+    }
+
+    public Roll(@NonNull SameDiff sameDiff, @NonNull SDVariable input, int shift) {
+        super("", sameDiff, new SDVariable[]{input});
+        addIArgument(shift);
     }
 
     @Override

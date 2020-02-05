@@ -2145,5 +2145,23 @@ public class MiscOpValidation extends BaseOpValidation {
         assertNull(err);
     }
 
+    @Test
+    public void testRoll() {
 
+        INDArray x = Nd4j.createFromArray(new double[]{    11.11, 11.12, 11.21, 11.22, 11.31, 11.32, 11.41, 11.42,     12.11, 12.12, 12.21, 12.22, 12.31, 12.32, 12.41, 12.42,
+                21.11, 21.12, 21.21, 21.22, 21.31, 21.32, 21.41, 21.42,     22.11, 22.12, 22.21, 22.22, 22.31, 22.32, 22.41, 22.42}).
+                reshape(2,2,4,2);
+
+        INDArray expected = Nd4j.createFromArray(new double[]{    22.21, 22.22, 22.31, 22.32, 22.41, 22.42, 11.11, 11.12, 11.21, 11.22, 11.31, 11.32, 11.41, 11.42,
+                12.11, 12.12, 12.21, 12.22, 12.31, 12.32, 12.41, 12.42, 21.11, 21.12, 21.21, 21.22, 21.31, 21.32,
+                21.41, 21.42, 22.11, 22.12
+        }).reshape(x.shape());
+
+        int shift = 6;
+
+        val tc = new OpTestCase(new Roll(x,shift)).expectedOutput(0,expected);
+        String err = OpValidation.validate(tc);
+
+        assertNull(err);
+    }
 }

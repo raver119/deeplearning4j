@@ -2643,7 +2643,7 @@ public class DifferentialFunctionFactory {
         return new Polygamma(sameDiff, n,x).outputVariable();
     }
 
-    public SDVariable roll(SDVariable input, SDVariable shift) {
+    public SDVariable roll(SDVariable input, int shift) {
         return new Roll(sameDiff, input, shift).outputVariable();
     }
 

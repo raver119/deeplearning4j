@@ -628,7 +628,7 @@ public class ReductionOpValidation extends BaseOpValidation {
 
         List<String> failed = new ArrayList<>();
         for (int[] reduceDims : new int[][]{{Integer.MAX_VALUE}, {0, 1, 2}, {0}, {1}, {2}, {0, 1}, {0, 2}, {1, 2}}) {
-            for (int i = 6; i < 7; i++) {
+            for (int i = 0; i < 7; i++) {
 
                 SameDiff sd = SameDiff.create();
                 sd.setLogExecution(false);
