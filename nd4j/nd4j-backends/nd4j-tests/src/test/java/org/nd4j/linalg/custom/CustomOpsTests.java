@@ -20,10 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nd4j.autodiff.samediff.SDVariable;
-import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.autodiff.validation.OpValidation;
-import org.nd4j.autodiff.validation.TestCase;
 import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -33,7 +29,6 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.custom.*;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.api.ops.executioner.OpStatus;
-import org.nd4j.linalg.api.ops.impl.broadcast.BiasAddGrad;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
@@ -1698,19 +1693,48 @@ public class CustomOpsTests extends BaseNd4jTest {
     }
 
     @Test
-    public void testBiasAddGrad1() {
+    public void testLinearSolve() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                2.f, -1.f, -2.f, -4.f, 6.f, 3.f, -4.f, -2.f, 8.f
+        }).reshape(3, 3);
 
-        SameDiff sameDiff = SameDiff.create();
+        INDArray b = Nd4j.createFromArray(new float[]{
+                2.f, 4.f, 3.f
+        }).reshape(3, 1);
 
-        INDArray x = Nd4j.linspace(1, 24, 24).reshape(2,2,2,3);
-        INDArray grad = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 24).reshape(2,2,2,3);
-        INDArray bias = Nd4j.createFromArray(new float[]{-1.f, -2.f, -3.f});
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                7.625f, 3.25f, 5.f
+        }).reshape(3, 1);
 
-        INDArray expected = Nd4j.createFromArray(new float[]{9.2f, 10.f , 10.8f});
-        INDArray output = Nd4j.createUninitialized(x.shape());
-
-        val op = new BiasAddGrad(x, bias, grad);
+        val op = new LinearSolve(a, b);
         INDArray[] ret = Nd4j.exec(op);
-        assertEquals(2, ret.length);
+
+        assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testLinearSolveAdjust() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                0.7788f,    0.8012f,    0.7244f,
+                0.2309f,    0.7271f,    0.1804f,
+                0.5056f,    0.8925f,    0.5461f
+        }).reshape(3, 3);
+
+        INDArray b = Nd4j.createFromArray(new float[]{
+                0.7717f,    0.9281f,    0.9846f,
+                0.4838f,    0.6433f,    0.6041f,
+                0.6501f,    0.7612f,    0.7605f
+        }).reshape(3, 3);
+
+        INDArray expected = Nd4j.createFromArray(new float[]{
+                1.5504692f,  1.8953944f,  2.2765768f,
+                0.03399149f,  0.2883001f ,  0.5377323f,
+                -0.8774802f, -1.2155888f, -1.8049058f
+        }).reshape(3, 3);
+
+        val op = new LinearSolve(a, b, true);
+        INDArray[] ret = Nd4j.exec(op);
+
+        assertEquals(expected, ret[0]);
     }
 }

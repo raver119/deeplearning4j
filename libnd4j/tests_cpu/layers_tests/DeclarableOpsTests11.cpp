@@ -121,7 +121,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test3) {
 
     NDArray dLdpExp('c', {2,3,4}, {-12.49997,-13.04346, -13.63635, -14.28571,-14.99999,-15.78947, -16.66666, -17.64705,-18.75   ,-20.     , -21.42857, -23.07692,
                                    -24.99999,-27.27272, -29.99999, -33.33332,-37.49999,-42.85713, -49.99998, -59.99998,-74.99995,-99.99992,-149.99986,-299.99911});
-    NDArray dLdwExp('c', {}, {-227.77286});
+    NDArray dLdwExp('c', {},  std::vector<double>{-227.77286});
     NDArray dLdlExp('c', {2,3,4}, {1.58903, 1.22117, 0.99621, 0.82911, 0.69315, 0.57634, 0.47223, 0.37689, 0.28768, 0.20273, 0.12058, 0.04002,
                                    -0.04002,-0.12058,-0.20273,-0.28768,-0.37689,-0.47223,-0.57634,-0.69315,-0.82911,-0.99621,-1.22117,-1.58903});
 
@@ -246,7 +246,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test7) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights(nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {}, {0.});
+    NDArray dLdwExp('c', {},  std::vector<double>{0.});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -350,7 +350,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test10) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights('c', {1,1}, nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {1,1}, {-9.49054});
+    NDArray dLdwExp('c', {1,1}, std::vector<double>{-9.49054});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -1541,6 +1541,166 @@ TEST_F(DeclarableOpsTests11, summaryStatsData_test1) {
     delete []arr;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_1) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            2.f, -1.f, -2.f, -4.f, 6.f, 3.f, -4.f, -2.f, 8.f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 1}, {
+            2.f, 4.f, 3.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 1}, {
+            7.625f, 3.25f, 5.f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printIndexedBuffer("Solve of 3x3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_2) {
+
+    auto a = NDArrayFactory::create<float>('c', {4, 4}, {
+            1.f,  1.f,  1.f,  1.f,
+            0.f,  1.f,  1.f,  0.f,
+            0.f,  0.f,  2.f,  1.f,
+            0.f,  0.f,  0.f,  3.f,
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {4, 1}, {
+            2.f, 4.f, 2.f, 4.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {4, 1}, {
+            -3.3333333f,      3.6666666f,         0.333333f,        1.3333333f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printIndexedBuffer("Solve 4x4");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_3) {
+
+    auto a = NDArrayFactory::create<float>('c', {2, 4, 4}, {
+            1.f,  1.f,  1.f,  1.f,
+            0.f,  1.f,  1.f,  0.f,
+            0.f,  0.f,  2.f,  1.f,
+            0.f,  0.f,  0.f,  3.f,
+
+            3.f,  0.f,  0.f,  0.f,
+            2.f,  1.f,  0.f,  0.f,
+            1.f,  0.f,  1.f,  0.f,
+            1.f,  1.f,  1.f,  1.f
+
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {2, 4, 1}, {
+            2.f, 4.f, 2.f, 4.f,
+            4.f, 2.f, 4.f, 2.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {2, 4, 1}, {
+            -3.3333333f,      3.6666666f,         0.333333f,        1.3333333f,
+            1.333333f,      -0.6666667f,         2.6666667f,        -1.3333333f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printIndexedBuffer("Solve 4x4");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4) {
+
+    auto a = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+            0.7788f,    0.8012f,   0.7244f,    0.2309f,
+            0.7271f,    0.1804f,   0.5056f,    0.8925f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+            0.7717f,    0.9281f, 0.9846f,    0.4838f,
+            0.6433f,    0.6041f, 0.6501f,    0.7612f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+//            1.524494767f,    0.432706356f,-0.518630624f,    0.737760842f,
+//            0.819143713f,    0.720401764f, 0.264349997f,    0.444699198f
+             1.5245394f,   0.4326952f,  -0.51873577f,  0.7377896f,
+            0.81915987f,  0.72049433f,    0.2643504f,  0.44472617f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printBuffer("4 Solve 4x4");
+//    exp.printBuffer("4 Expec 4x4");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_5) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f,
+            0.5056f,    0.8925f,    0.5461f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7717f,    0.9281f,    0.9846f,
+            0.4838f,    0.6433f,    0.6041f,
+            0.6501f,    0.7612f,    0.7605f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 3}, {
+             1.5504692f,  1.8953944f,  2.2765768f,
+            0.03399149f,  0.2883001f,  0.5377323f,
+            -0.8774802f, -1.2155888f, -1.8049058f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b}, {true});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printBuffer("4 Solve 4x4");
+    exp.printBuffer("4 Expec 4x4");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test1) {
 
@@ -1611,7 +1771,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test3) {
 
     NDArray dLdpExp('c', {2,3,4}, {-0.96, -1.92, -2.88, -3.84, -4.8 , -5.76, -6.72, -7.68, -8.64, -9.6 ,-10.56,-11.52,
                                    -12.48,-13.44,-14.4 ,-15.36,-16.32,-17.28,-18.24,-19.2 ,-20.16,-21.12,-22.08,-23.04});
-    NDArray dLdwExp('c', {}, {4515.84});
+    NDArray dLdwExp('c', {}, std::vector<double>{4515.84});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -1730,7 +1890,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test7) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights(nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {}, {0.});
+    NDArray dLdwExp('c', {}, std::vector<double>{0.});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -1830,7 +1990,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test10) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights('c', {1,1}, nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {1,1}, {188.16});
+    NDArray dLdwExp('c', {1,1}, std::vector<double>{188.16});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -2056,7 +2216,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test3) {
 
     NDArray dLdpExp('c', {2,3,4}, {-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,
                                    -0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5,-0.5});
-    NDArray dLdwExp('c', {}, {288.});
+    NDArray dLdwExp('c', {}, std::vector<double>{288.});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -2175,7 +2335,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test7) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights(nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {}, {0.});
+    NDArray dLdwExp('c', {}, std::vector<double>{0.});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -2275,7 +2435,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test10) {
     NDArray predictions('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights('c', {1,1}, nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {1,1}, {12.});
+    NDArray dLdwExp('c', {1,1}, std::vector<double>{12.});
 
     predictions.linspace(0.04, 0.04);
     labels.linspace(1);
@@ -2541,7 +2701,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test3) {
 
     NDArray dLdpExp('c', {2,3,4}, {-0.18499,-0.53   ,-0.875  ,-1.22   ,-1.56501,-1.91002,-2.25504,-2.60008,-2.94514,-3.29023,-3.63534,-3.98048,
                                    -4.32566,-4.67087,-5.01613,-5.36143,-5.70677,-6.05217,-6.39762,-6.74313,-7.0887 ,-7.43432,-7.78001,-8.12577});
-    NDArray dLdwExp('c', {}, {-91.52109});
+    NDArray dLdwExp('c', {}, std::vector<double>{-91.52109});
     NDArray dLdlExp('c', {2,3,4}, {0.028,  0.014, -0., -0.014,-0.028, -0.042, -0.056, -0.07 ,-0.084, -0.098, -0.112, -0.126,
                                    -0.14 , -0.154, -0.168, -0.182,-0.196, -0.21 , -0.224, -0.238,-0.252, -0.266, -0.28 , -0.294});
 
@@ -2664,7 +2824,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test7) {
     NDArray logits('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights(nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {}, {0.});
+    NDArray dLdwExp('c', {}, std::vector<double>{0.});
 
     logits.linspace(-0.08, 0.04);
     labels.linspace(1);
@@ -2766,7 +2926,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test10) {
     NDArray logits('c', {2,3,4}, nd4j::DataType::DOUBLE);
     NDArray weights('c', {1,1}, nd4j::DataType::DOUBLE);
 
-    NDArray dLdwExp('c', {1,1}, {-3.81338});
+    NDArray dLdwExp('c', {1,1}, std::vector<double>{-3.81338});
 
     logits.linspace(-0.08, 0.04);
     labels.linspace(1);
@@ -2992,7 +3152,7 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test2) {
     NDArray weights('c', {1}, nd4j::DataType::DOUBLE);
 
     NDArray dLdpExp('c', {4}, {0.125,  0.125, -0.375,  0.125});
-    NDArray dLdwExp('c', {1}, {1.38629});
+    NDArray dLdwExp('c', {1}, std::vector<double>{1.38629});
 
     logits = 2.;
     weights.assign(0.5);
@@ -3020,10 +3180,10 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test3) {
 
     NDArray labels('c', {4}, {0,0,1,0}, nd4j::DataType::INT32);
     NDArray logits('c', {4}, nd4j::DataType::DOUBLE);
-    NDArray weights('c', {}, {0}, nd4j::DataType::DOUBLE);
+    NDArray weights('c', {}, std::vector<double>{0}, nd4j::DataType::DOUBLE);
 
     NDArray dLdpExp('c', {4}, {0.125,  0.125, -0.375,  0.125});
-    NDArray dLdwExp('c', {}, {1.38629});
+    NDArray dLdwExp('c', {}, std::vector<double>{1.38629});
 
     logits = 2.;
     weights.assign(0.5);
@@ -3051,10 +3211,10 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test4) {
 
     NDArray labels('c', {4}, {0,0,1,0}, nd4j::DataType::INT32);
     NDArray logits('c', {4}, nd4j::DataType::DOUBLE);
-    NDArray weights('c', {}, {0}, nd4j::DataType::DOUBLE);
+    NDArray weights('c', {}, std::vector<double>{0}, nd4j::DataType::DOUBLE);
 
     NDArray dLdpExp('c', {4}, {0.23521,  0.2448 , -0.7452 ,  0.26519});
-    NDArray dLdwExp('c', {}, {0.});
+    NDArray dLdwExp('c', {}, std::vector<double>{0.});
 
     logits.linspace(-0.08, 0.04);
     weights = 0.5;
@@ -3085,7 +3245,7 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test5) {
     NDArray weights('c', {1}, nd4j::DataType::DOUBLE);
 
     NDArray dLdpExp('c', {4}, {0.1176,  0.1224, -0.3726,  0.1326});
-    NDArray dLdwExp('c', {1}, {1.36729});
+    NDArray dLdwExp('c', {1}, std::vector<double>{1.36729});
 
     logits.linspace(-0.08, 0.04);
     weights = 0.5;
@@ -3321,7 +3481,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test4) {
 /////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test5) {
 
-    NDArray labels('c', {2,1}, {1,0});
+    NDArray labels('c', {2,1}, std::vector<double>{1,0});
     NDArray logits('c', {2,1}, {-0.04, 0.04});
 
     NDArray dLdpExp('c', {2,1}, {-0.51999, 0.51999});
@@ -3343,10 +3503,10 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test5) {
 /////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test6) {
 
-    NDArray labels('c', {1,2}, {1,1});
+    NDArray labels('c', {1,2}, {1,1.});
     NDArray logits('c', {1,2}, {-0.04, 0.04});
 
-    NDArray dLdpExp('c', {1,2}, {0, 0});
+    NDArray dLdpExp('c', {1,2}, {0, 0.});
 
     nd4j::ops::softmax_cross_entropy_loss_with_logits_grad op;
 
@@ -3387,10 +3547,10 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test7) {
 /////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test8) {
 
-    NDArray labels('c', {1}, {1});
-    NDArray logits('c', {1}, {0.04});
+    NDArray labels('c', {1}, std::vector<double>{1});
+    NDArray logits('c', {1}, std::vector<double>{0.04});
 
-    NDArray dLdpExp('c', {1}, {0});
+    NDArray dLdpExp('c', {1}, std::vector<double>{0});
 
     nd4j::ops::softmax_cross_entropy_loss_with_logits_grad op;
 
@@ -3483,7 +3643,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test2) {
 /////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test3) {
 
-    NDArray labels('c', {}, {1}, nd4j::DataType::INT64);
+    NDArray labels('c', {}, std::vector<double>{1}, nd4j::DataType::INT64);
     NDArray logits('c', {2}, {-0.2, 0.3});
 
     NDArray dLdpExp('c', {2}, {0.37754, -0.37754});
@@ -3529,7 +3689,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test4) {
 /////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test5) {
 
-    NDArray labels('c', {1,1}, {0}, nd4j::DataType::INT64);
+    NDArray labels('c', {1,1}, std::vector<double>({0}), nd4j::DataType::INT64);
     NDArray logits('c', {1,1,2}, {-0.3,0.2});
 
     NDArray dLdpExp('c', {1,1,2}, {-0.62246,  0.62246});

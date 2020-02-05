@@ -1369,12 +1369,18 @@ public class ShapeOpValidation extends BaseOpValidation {
         SDVariable lengths = sameDiff.constant(arr);
 
         // Test with static max len
-        int maxlen = 5;
-        INDArray expected = Nd4j.create(new float[] {1, 0, 0, 0, 0,
-                        1, 1, 1, 0, 0,
-                        1, 1, 0, 0, 0},
-                new long[]{3, 5});
-        SDVariable result1 = sameDiff.sequenceMask(lengths, maxlen, DataType.FLOAT);
+        int maxlen = 2;
+        INDArray expected = Nd4j.createFromArray(new boolean[]{
+                     true,     false,     false,
+                     true,      true,      true,
+                     true,      true,     false
+        }).reshape(3,3);
+
+        INDArray[] ret = Nd4j.exec(new SequenceMask(arr, maxlen, DataType.INT32));
+        System.out.println(ret[0]);
+        SDVariable result1 = sameDiff.sequenceMask(lengths, maxlen, DataType.INT32);
+        System.out.println(result1.eval());
+        //System.out.println(Arrays.toString(result1.eval().shape()));
         assertArrayEquals(expected.shape(), result1.eval().shape());
         assertEquals(expected, result1.eval());
 
