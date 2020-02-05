@@ -1697,6 +1697,142 @@ TEST_F(DeclarableOpsTests11, Solve_Test_4_1) {
     delete res;
 }
 ////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4_2) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f,
+            0.5056f,    0.8925f,    0.5461f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7717f,    0.9281f,    0.9846f,
+            0.4838f,    0.6433f,    0.6041f,
+            0.6501f,    0.7612f,    0.7605f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.99088347f,  1.1917052f,    1.2642528f,
+            0.35071516f,  0.50630623f,  0.42935497f,
+           -0.30013534f, -0.53690606f, -0.47959247f
+    });
+
+    nd4j::ops::triangular_solve op;
+
+    auto res = op.evaluate({&a, &b}, {true, false});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printBuffer("4_2 Triangular_Solve 3x3");
+//    exp.printBuffer("4_2 Triangular_Expec 3x3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4_3) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f,
+            0.5056f,    0.8925f,    0.5461f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7717f,    0.9281f,    0.9846f,
+            0.4838f,    0.6433f,    0.6041f,
+            0.6501f,    0.7612f,    0.7605f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.45400196f,  0.53174824f,  0.62064564f,
+           -0.79585856f, -0.82621557f, -0.87855506f,
+             1.1904413f,   1.3938838f,   1.3926021f
+    });
+
+    nd4j::ops::triangular_solve op;
+
+    auto res = op.evaluate({&a, &b}, {true, true});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printBuffer("4_3 Triangular_Solve 3x3");
+//    exp.printBuffer("4_3 Triangular_Expec 3x3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4_4) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f,
+            0.5056f,    0.8925f,    0.5461f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7717f,    0.9281f,    0.9846f,
+            0.4838f,    0.6433f,    0.6041f,
+            0.6501f,    0.7612f,    0.7605f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 3}, {
+             0.8959121f,   1.6109066f,  1.7501404f,
+            0.49000582f,  0.66842675f,  0.5577021f,
+            -0.4398522f,  -1.1899745f, -1.1392052f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b}, {false});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printBuffer("4_4 Solve 3x3");
+    exp.printBuffer("4_4 Expec 3x3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4_5) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f,
+            0.5056f,    0.8925f,    0.5461f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {3, 3}, {
+            0.7717f,    0.9281f,    0.9846f,
+            0.4838f,    0.6433f,    0.6041f,
+            0.6501f,    0.7612f,    0.7605f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {3, 3}, {
+             1.5504692f,  1.8953944f,  2.2765768f,
+            0.03399149f,  0.2883001f,  0.5377323f,
+            -0.8774802f, -1.2155888f, -1.8049058f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b}, {true, true});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printBuffer("4_5 Solve 3x3");
+    exp.printBuffer("4_5 Expec 3x3");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, Solve_Test_5) {
 
     auto a = NDArrayFactory::create<float>('c', {3, 3}, {
