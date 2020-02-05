@@ -61,13 +61,16 @@ namespace nd4j {
             Nd4jLong maxInd = input->argMax();
             Nd4jLong max = input->e<Nd4jLong>(maxInd);
 
-            if (block.getIArguments()->size() > 0) {
+            if (block.numD() > 0)
+                dtype = D_ARG(0);
+
+            if (block.numI() > 0) {
                 if (block.width() < 2) {
                 maxInd = INT_ARG(0);
                 if (maxInd < max)
                     maxInd = static_cast<Nd4jLong>(max);
                 if (block.getIArguments()->size() > 1)
-                    dtype = (DataType)INT_ARG(1);
+                    dtype = (DataType)INT_ARG(1); // to work with legacy code
                 }
                 else {
                     dtype = (DataType)INT_ARG(0);
