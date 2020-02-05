@@ -1667,7 +1667,35 @@ TEST_F(DeclarableOpsTests11, Solve_Test_4) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests11, Solve_Test_4_1) {
 
+    auto a = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+            0.7788f,    0.8012f,   0.7244f,    0.2309f,
+            0.7271f,    0.1804f,   0.5056f,    0.8925f
+    });
+
+    auto b = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+            0.7717f, 0.9281f,  0.9846f, 0.4838f,    0.6433f, 0.6041f, 0.6501f, 0.7612f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {2, 2, 2}, {
+              1.3357621f,   0.3399364f, -0.37077796f,  0.91573375f,
+              0.4400987f,   0.2766527f,   0.6394467f,  0.79696566f
+    });
+
+    nd4j::ops::solve op;
+
+    auto res = op.evaluate({&a, &b}, {true});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+//    z->printBuffer("4 Solve 4x4");
+//    exp.printBuffer("4 Expec 4x4");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, Solve_Test_5) {
 
