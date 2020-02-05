@@ -49,6 +49,7 @@
 #include <algorithm>
 #include <numeric> 
 #include <random>
+#include <LoopCoordsHelper.h>
 using namespace nd4j;
 using namespace nd4j::graph;
 
@@ -66,39 +67,40 @@ public:
 #if defined(BENCH_RELEASE)
 
 int bnch_cases[][4] = {
-	{40, 2, 4, 2056},
-	{2056, 2, 4, 19 },
-	{16, 8, 16, 2056},
-	{2056, 8, 16, 15 },
-    {32, 7, 7, 96},
-    {32, 32, 32, 16},
-    {32, 600, 600, 3},
-    {32, 112, 112, 32},
-    {32, 7, 7, 1024},
+	 {40, 2, 4, 2056},
+	 {2056, 2, 4, 19 },
+	 {16, 8, 16, 2056},
+	 {2056, 8, 16, 15 },
+	 {32, 7, 7, 96},
+     {32, 32, 32, 16},
+	 {32, 600, 600, 3},
+     {32, 112, 112, 32},
+	 {32, 7, 7, 1024},
 	 {2,3,1,32}
 };
 
-constexpr int coords_k =   6;
+//constexpr int coords_k = 1;// 6;
 #else
 int bnch_cases[][4] = {
 	{7,3,5,9},
 	 {2,3,1,32},
-     {32,32,2,2}
+	 {32,32,2,2}
 };
 
 constexpr int coords_k = 0;
 
 #endif
-
+#define BENCH_BASES 1
 #define BENCH_TEST_F_ORDER 1
 #define BENCH_TEST_F_ORDER_NC 1
 #define BENCH_TEST_C_ORDER 1
 #define BENCH_TEST_C_ORDER_NC 1
+#define BENCH_TEST_MIXED_ORDERS 1
+#define bench_coords 1
 
-//#define BENCH_RELEASE 1
 #if defined(BENCH_RELEASE)
-int outter_loops =    10;
-int inner_loops =   10;// 100;
+int outter_loops = 10;
+int inner_loops = 10;// 100;
 #else
 int outter_loops = 1;//  10;
 int inner_loops = 1;// 10;// 100;
@@ -121,9 +123,9 @@ void clobber() {
 	__asm__ __volatile__("" : : : "memory");
 }
 #endif
-//#define bench_coords 1
-template<typename Op,typename... Args>
-void time_it(Op op,Nd4jLong totalFlops, Args&&... args) {
+
+template<typename Op, typename... Args>
+void time_it(Op op, Nd4jLong totalFlops, Args&&... args) {
 	std::vector<double> values;
 
 	size_t n_1 = outter_loops > 1 ? outter_loops - 1 : 1;
@@ -147,7 +149,7 @@ void time_it(Op op,Nd4jLong totalFlops, Args&&... args) {
 		nd4j_printf("Median: %f us\tAvg: %f (sd: %f)\tFlops: %f Mflops\n",
 			values[values.size() / 2], avg, sqrt(sum_sq / n_1),
 			(double)(totalFlops) / avg);
-	} 
+	}
 	else {
 		nd4j_printf("Median: %f us\tAvg: %f (sd: %f)\n",
 			values[values.size() / 2], avg, sqrt(sum_sq / n_1));
@@ -157,18 +159,17 @@ void time_it(Op op,Nd4jLong totalFlops, Args&&... args) {
 template<typename T>
 void fill_random(nd4j::NDArray& arr) {
 	Nd4jLong coords[MAX_RANK] = {};
-	Nd4jLong add_coords[MAX_RANK] = {}; //zero
+
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	//for floats
-	std::uniform_real_distribution<T> dis((T)0.0,(T) 2.0);
-	T* x = arr.bufferAsT<T>(); 
-	Nd4jLong* shapeInfo = arr.getShapeInfo();  
+	std::uniform_real_distribution<T> dis((T)0.0, (T)2.0);
+	T* x = arr.bufferAsT<T>();
+	Nd4jLong* shapeInfo = arr.getShapeInfo();
 	Nd4jLong* strides = arr.stridesOf();
 	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]); 
+	Nd4jLong* bases = &(shapeInfo[1]);
 
-	add_coords[rank - 1] = 1; 
 	size_t t = 1;
 	for (size_t i = 0; i < rank; i++) {
 		t *= bases[i];
@@ -176,13 +177,13 @@ void fill_random(nd4j::NDArray& arr) {
 	size_t offset = 0;
 	for (size_t i = 0; i < t; i++) {
 		x[offset] = dis(gen);
-		offset = nd4j::ops::helpers::move_by_coords(bases, strides, coords, add_coords, rank);
+		offset = offset = nd4j::inc_coords(bases, strides, coords, offset, rank);
 	}
 }
 
- 
- 
-void check_correctness_with_experimental( Context& ctx, const NDArray& x, const NDArray& y, NDArray& z,bool isNCHW) {
+
+
+void check_correctness_with_experimental(Context& ctx, const NDArray& x, const NDArray& y, NDArray& z, bool isNCHW) {
 
 	auto expected = z.ulike();
 	nd4j::ops::helpers::addBias_Experimental(ctx, x, y, expected, isNCHW, true);
@@ -198,8 +199,10 @@ void check_correctness_with_base(Context& ctx, const NDArray& x, const NDArray& 
 
 }
 #if defined(BENCH_TEST_C_ORDER)
+
+#if defined(BENCH_BASES)
 TEST_F(PlaygroundTests, test_bias_base) {
-	 
+
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
 
@@ -218,8 +221,8 @@ TEST_F(PlaygroundTests, test_bias_base) {
 
 	};
 }
+#endif
 
- 
 TEST_F(PlaygroundTests, test_bias_experimental_continuous) {
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
@@ -236,15 +239,37 @@ TEST_F(PlaygroundTests, test_bias_experimental_continuous) {
 		//nd4j::ops::biasadd op;  
 		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
 		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
-		 
-	    
+
+
 		check_correctness_with_base(ctx, x, y, z, false);
+	};
+
+}
+
+TEST_F(PlaygroundTests, test_bias_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, true);
+
 	};
 
 }
 
 #endif
 #if defined(BENCH_TEST_C_ORDER_NC)
+#if defined(BENCH_BASES)
 TEST_F(PlaygroundTests, test_bias_NC_base) {
 
 
@@ -265,7 +290,7 @@ TEST_F(PlaygroundTests, test_bias_NC_base) {
 
 	};
 }
-
+#endif
 
 TEST_F(PlaygroundTests, test_bias_NC_experimental_continuous) {
 
@@ -290,10 +315,33 @@ TEST_F(PlaygroundTests, test_bias_NC_experimental_continuous) {
 
 }
 
+TEST_F(PlaygroundTests, test_bias_NC_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+
+	};
+
+}
 
 #endif
 
 #if defined(BENCH_TEST_F_ORDER)
+#if defined(BENCH_BASES)
 TEST_F(PlaygroundTests, test_bias_Fortran_base) {
 
 
@@ -314,7 +362,7 @@ TEST_F(PlaygroundTests, test_bias_Fortran_base) {
 
 	};
 }
-
+#endif
 TEST_F(PlaygroundTests, test_bias_Fortran_experimental_continuous) {
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
@@ -338,9 +386,33 @@ TEST_F(PlaygroundTests, test_bias_Fortran_experimental_continuous) {
 
 }
 
+TEST_F(PlaygroundTests, test_bias_Fortran_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, true);
+
+		check_correctness_with_base(ctx, x, y, z, false);
+
+	};
+
+}
+
 #endif
 
 #if defined(BENCH_TEST_F_ORDER_NC)
+#if defined(BENCH_BASES)
 TEST_F(PlaygroundTests, test_bias_Fortran_NC_base) {
 
 
@@ -361,7 +433,7 @@ TEST_F(PlaygroundTests, test_bias_Fortran_NC_base) {
 
 	};
 }
-
+#endif
 TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_continuous) {
 
 	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
@@ -385,308 +457,287 @@ TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_continuous) {
 
 }
 
+TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_coords_strided) {
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
+		auto z = x.ulike();
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
+		//check
+		check_correctness_with_base(ctx, x, y, z, true);
+
+	};
+
+}
+
 #endif
 
+
+#if defined(BENCH_TEST_MIXED_ORDERS)
+TEST_F(PlaygroundTests, test_bias_base_different_order_inF_out_C) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
+		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
+
+		//check for correctness with base to see if they are equal
+		check_correctness_with_base(ctx, x, y, z, false);
+	};
+}
+
+
+TEST_F(PlaygroundTests, test_bias_base_different_order_inC_outF) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
+		auto z = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
+
+		//check for correctness with base to see if they are equal
+		//check_correctness_with_base(ctx, x, y, z, false);
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_different_order_NC_inF_out_C) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check for correctness with base to see if they are equal
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+}
+
+TEST_F(PlaygroundTests, test_bias_different_order_NC_inC_outF) {
+
+
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+
+		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
+		auto z = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
+
+		Context ctx(1);
+
+		fill_random<float>(x);
+		fill_random<float>(y);
+		//nd4j::ops::biasadd op;  
+		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
+		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
+
+		//check for correctness with base to see if they are equal
+		check_correctness_with_base(ctx, x, y, z, true);
+	};
+}
+
+#endif
 
 #if defined(bench_coords) 
 
 TEST_F(PlaygroundTests, test_coord1) {
-	outter_loops = 4;
-	inner_loops = 4;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK]; 
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords);
-	 
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i += inc) {
-			shape::index2coords(i, shapeInfo, coords);
-			//add to prevent code elimination
-			use(coords); 
-		}
-	};
-	time_it(ops, 0 );
- }
+	outter_loops = 2;
+	inner_loops = 2;
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		size_t inc = bnch_cases[k][3];
+		fill_random<float>(x);
+		Nd4jLong coords[MAX_RANK];
+		Nd4jLong add_coords[MAX_RANK];
+		Nd4jLong* shapeInfo = x.getShapeInfo();
+		shape::index2coords(0, shapeInfo, coords);
+		shape::index2coords(inc, shapeInfo, add_coords);
 
+		auto ops = [&]() {
 
-TEST_F(PlaygroundTests, test_coord2) {
-	outter_loops = 4;
-	inner_loops = 4;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords); 
-	escape(&rank);
-	escape(coords);
-	escape(bases); 
-	escape(add_coords);
-	escape(strides);
-	auto ops = [&]() { 
 			for (size_t i = 0; i < t; i += inc) {
-				nd4j::ops::helpers::move_by_coords(bases, strides, coords, add_coords, rank);
-				use(coords); 
-				use(i);
-		      }
-	};
-	time_it(ops, 0);
+				shape::index2coords(i, shapeInfo, coords);
+				//add to prevent code elimination
+				use(coords);
+			}
+
+		};
+		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
+		time_it(ops, 0);
+	}
 }
 
-
-TEST_F(PlaygroundTests, test_coord3) {
-	outter_loops = 4;
-	inner_loops = 4;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords); 
-	escape(&rank);
-	escape(coords);
-	escape(bases); 
-	escape(add_coords);
-	escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i += inc) {
-				nd4j::ops::helpers::move_by_coords<4>(bases, strides,  coords, add_coords);
-				use(coords); 
-				use(i);
-			} 
-	};
-	time_it(ops, 0);
-}
-
-TEST_F(PlaygroundTests, test_coord4_offset) {
-	outter_loops = 4;
-	inner_loops = 4;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords); 
-	size_t offset = 0;
-	escape(&rank);
-	escape(coords);
-	escape(bases);
-	escape(&offset);
-	escape(add_coords);
-	escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i += inc) {
-				offset = nd4j::ops::helpers::move_by_coords(bases, strides, coords, add_coords,rank-1);
-				use(coords); 
-				use(offset);
-				use(i);
-			} 
-	};
-	time_it(ops, 0);
-}
-
-TEST_F(PlaygroundTests, test_coord5_offset) {
-	outter_loops = 4;
-	inner_loops = 4;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords);
-	size_t offset = 0;
-	escape(&rank);
-	escape(coords);
-	escape(bases);
-	escape(&offset);
-	escape(add_coords);
-	escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i += inc) {
-			offset = nd4j::ops::helpers::move_by_coords<3>(bases, strides, coords, add_coords);
-			use(coords); 
-			use(offset);
-			use(i);
-		}
-	};
-	time_it(ops, 0);
-}
 
 
 TEST_F(PlaygroundTests, test_coord6_loop_offset) {
 	outter_loops = 4;
-	inner_loops = 40;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong add_coords[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);
-	shape::index2coords(inc, shapeInfo, add_coords); 
-	size_t offset = 0;
-	escape(&rank);
-	escape(coords); 
-	auto ops = [&]() {
-		size_t zStrideB = strides[0];
-		size_t zStrideH = strides[1];
-		size_t zStrideW = strides[2];
-		escape(&zStrideB);
-		escape(&zStrideH);
-		escape(&zStrideW);
-		for (uint b = 0; b < bnch_cases[k][0]; b+=inc)
-			for (uint h = 0; h < bnch_cases[k][1]; h++)
-				for (uint w = 0; w < bnch_cases[k][2]; w++) {
-						offset = b * zStrideB + h * zStrideH + w * zStrideW  ;
+	inner_loops = 4;
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		size_t inc = bnch_cases[k][3];
+		fill_random<float>(x);
+		Nd4jLong coords[MAX_RANK];
+
+		Nd4jLong* shapeInfo = x.getShapeInfo();
+		Nd4jLong* strides = x.stridesOf();
+		Nd4jLong rank = shapeInfo[0];
+		Nd4jLong* bases = &(shapeInfo[1]);
+		shape::index2coords(0, shapeInfo, coords);
+
+		size_t offset = 0;
+		escape(&rank);
+		escape(coords);
+		auto ops = [&]() {
+			size_t zStrideB = strides[0];
+			size_t zStrideH = strides[1];
+			size_t zStrideW = strides[2];
+			escape(&zStrideB);
+			escape(&zStrideH);
+			escape(&zStrideW);
+			escape(&(bnch_cases[k][0]));
+			escape(&(bnch_cases[k][1]));
+			escape(&(bnch_cases[k][2]));
+
+			for (uint b = 0; b < bnch_cases[k][0]; b += inc)
+				for (uint h = 0; h < bnch_cases[k][1]; h++)
+					for (uint w = 0; w < bnch_cases[k][2]; w++) {
+						offset = b * zStrideB + h * zStrideH + w * zStrideW;
 						use(offset);
 						use(h);
 						use(w);
 						use(b);
 					}
-	};
-	time_it(ops, 0);
+
+		};
+		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
+		time_it(ops, 0);
+
+	}
 }
 
- 
-TEST_F(PlaygroundTests, test_coord7_offset) {
-	outter_loops = 4;
-	inner_loops = 40;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK]; 
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);  
-	size_t offset = 0; 
-	escape(&rank);
-	escape(coords);
-	escape(bases);
-	escape(&offset); 
-	escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i+=inc) {
-			 
-			offset = nd4j::ops::helpers::inc_by_coords<3>(bases, strides, coords, offset); 
-			use(coords); 
-			use(offset);
-			use(i);
-		}
-	};
-	time_it(ops, 0);
-}
+
 
 
 TEST_F(PlaygroundTests, test_coord8_offset) {
 	outter_loops = 4;
-	inner_loops = 40;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK]; 
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords);  
-	size_t offset = 0; 
-	escape(&rank);
-	escape(coords);
-	escape(bases);
-	escape(&offset);
-	escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i+=inc) {
+	inner_loops = 4;
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		size_t inc = bnch_cases[k][3];
+		fill_random<float>(x);
+		Nd4jLong coords[MAX_RANK];
+		Nd4jLong* shapeInfo = x.getShapeInfo();
+		Nd4jLong* strides = x.stridesOf();
+		Nd4jLong rank = shapeInfo[0];
+		Nd4jLong* bases = &(shapeInfo[1]);
+		shape::index2coords(0, shapeInfo, coords);
+		size_t offset = 0;
+		escape(&rank);
+		escape(coords);
+		escape(bases);
+		escape(&offset);
+		escape(strides);
+		auto ops = [&]() {
 
-			offset = nd4j::ops::helpers::inc_by_coords(bases, strides, coords, offset,rank-1);
-			use(coords); 
-			use(offset);  
-			use(i);
-		}
-	};
-	time_it(ops, 0);
+			for (size_t i = 0; i < t; i++) {
+
+				offset = nd4j::inc_coords(bases, strides, coords, offset, rank - 1);
+				use(coords);
+				use(offset);
+				use(i);
+			}
+
+		};
+		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
+		time_it(ops, 0);
+	}
 }
+
 
 
 TEST_F(PlaygroundTests, test_coord9_offset) {
 	outter_loops = 4;
-	inner_loops = 40;
-	constexpr int k = coords_k;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = bnch_cases[k][3];
-	fill_random<float>(x);
-	Nd4jLong coords[MAX_RANK];
-	Nd4jLong adjusts[MAX_RANK];
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	shape::index2coords(0, shapeInfo, coords); 
-	nd4j::ops::helpers::get_adjusts_for_inc(strides, bases, adjusts, rank - 1);
-	  size_t offset = 0; 
-	  escape(&rank);
-	  escape(coords);
-	  escape(bases);
-	  escape(&offset);
-	  escape(adjusts);
-	  escape(strides);
-	auto ops = [&]() {
-		for (size_t i = 0; i < t; i += inc) {
+	inner_loops = 4;
+	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
+		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2];// *bnch_cases[k][3];
+		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
+		size_t inc = bnch_cases[k][3];
+		fill_random<float>(x);
+		Nd4jLong coords[MAX_RANK];
+		Nd4jLong* shapeInfo = x.getShapeInfo();
+		Nd4jLong* strides = x.stridesOf();
+		Nd4jLong rank = shapeInfo[0];
+		Nd4jLong* bases = &(shapeInfo[1]);
+		shape::index2coords(0, shapeInfo, coords);
+		nd4j::CoordsState<2> cbs;
+		size_t offset = nd4j::init_coords<3>(cbs, 0, bases, strides);
+		escape(&rank);
+		escape(coords);
+		escape(bases);
+		escape(&offset);
+		escape(strides);
+		auto ops = [&]() {
 
-			offset = nd4j::ops::helpers::inc_by_coords2(bases, strides, adjusts, coords, offset, rank - 1);
-			use(coords);
-			use(offset);  
-			use(i);
-		}
-	};
-	time_it(ops, 0);
+			for (size_t i = 0; i < t; i++) {
+
+				offset = nd4j::inc_coords<3>(cbs, offset);
+				use(coords);
+				use(offset);
+				use(i);
+			}
+
+		};
+		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
+		time_it(ops, 0);
+	}
 }
+
+
+
 
 TEST_F(PlaygroundTests, test_coord_correctness) {
 	constexpr int k = 0;
@@ -696,39 +747,42 @@ TEST_F(PlaygroundTests, test_coord_correctness) {
 
 
 	Nd4jLong coords[MAX_RANK];
-	Nd4jLong coords2[MAX_RANK];
-	Nd4jLong coords3[MAX_RANK];
-	Nd4jLong coords4[MAX_RANK] = {};
+
+
 	Nd4jLong coords5[MAX_RANK] = {};
-	Nd4jLong add_coords[MAX_RANK]; 
+
 	Nd4jLong* shapeInfo = x.getShapeInfo();
-	shape::index2coords(0, shapeInfo, coords2);
-	shape::index2coords(0, shapeInfo, coords3);
-	shape::index2coords(inc, shapeInfo, add_coords);
+
 	Nd4jLong* strides = x.stridesOf();
 	Nd4jLong rank = shapeInfo[0];
 	Nd4jLong* bases = &(shapeInfo[1]);
-	size_t offset = 0;
+	nd4j::CoordsState<3> cbs;
+	size_t offset_n = nd4j::init_coords<4>(cbs, 0, bases, strides);
+
 	size_t offset_uni = 0;
 	for (size_t i = 0; i < t; i += inc) {
 
 		shape::index2coords(i, shapeInfo, coords);
 
 		for (int j = 0; j < rank; j++) {
-			ASSERT_TRUE(coords2[j] == coords3[j]);
-			ASSERT_TRUE(coords[j] == coords2[j]);
+			ASSERT_TRUE(coords[j] == coords5[j]);
 		}
+		//coordsState_eq<3>(cbs, (const Nd4jLong*)coords);
 		//increment should be last
-		nd4j::ops::helpers::move_by_coords(bases,strides, coords2, add_coords, rank);
-		nd4j::ops::helpers::move_by_coords<4>(bases,strides, coords3, add_coords);
-		ASSERT_EQ(offset, i);
-		offset = nd4j::ops::helpers::inc_by_coords<4>(bases, strides, coords4, offset);
+
 		ASSERT_EQ(offset_uni, i);
-		offset_uni = nd4j::ops::helpers::inc_by_coords(bases, strides, coords5, offset_uni, rank);
+		offset_uni = nd4j::inc_coords(bases, strides, coords5, offset_uni, rank);
+
+		//printf("%ld  %lld %lld %lld %lld\n", offset_n, cbs.CoordsState<0>::coord, cbs.CoordsState<1>::coord , cbs.CoordsState<2>::coord, cbs.CoordsState<3>::coord);
+		ASSERT_EQ(offset_n, i);
+		offset_n = nd4j::inc_coords<4>(cbs, offset_n);
 	}
 
 
 
 }
+
+
+
 
 #endif
