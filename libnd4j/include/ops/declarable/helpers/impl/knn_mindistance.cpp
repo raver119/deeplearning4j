@@ -34,7 +34,7 @@ namespace nd4j {
                 T po = 2.f;
                 T o = 1.f;
 
-#pragma omp simd reduction(sumT:res)
+                PRAGMA_OMP_PARALLEL_REDUCTION(sumT:res)
                 for (auto e = 0; e < length; e++) {
                     T p = input[e];
                     T l = low[e];
