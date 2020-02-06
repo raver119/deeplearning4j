@@ -25,7 +25,7 @@ set(MSVC_RT_LIB "MultiThreadedDLL")
 
 set(X86_BUILD false)
 
-if (NOT IOS_BUILD AND NOT ANDROID_BUILD AND NOT ${ARCH} MATCHES "power*" AND NOT ${ARCH} MATCHES "arm*")
+if (NOT IOS_BUILD AND NOT ANDROID_BUILD AND NOT ${ARCH} MATCHES "power*" AND NOT ${ARCH} MATCHES "arm*" AND NOT AURORA_BUILD)
     set(X86_BUILD true)
 endif()
 
@@ -33,6 +33,7 @@ endif()
 # -fsanitize=leak
 if (AURORA_BUILD)
     message("Aurora build in process")
+    set(X86_BUILD false)
 elseif (ANDROID_BUILD)
     set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -O3 -fPIC -Wno-braced-scalar-init -Wno-delete-non-virtual-dtor -Wno-unused-command-line-argument -Wno-dangling-else -D_RELEASE=true")
     set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -fPIC -Wno-braced-scalar-init -Wno-delete-non-virtual-dtor -Wno-unused-command-line-argument -Wno-dangling-else")
