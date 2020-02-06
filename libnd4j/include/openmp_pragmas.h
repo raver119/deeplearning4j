@@ -21,7 +21,7 @@
 #ifndef DEV_TESTS_OPENMP_PRAGMAS_H
 #define DEV_TESTS_OPENMP_PRAGMAS_H
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) || defined(AURORA_BUILD)
 
 #define OMP_STRINGIFY(args) #args
 #define OMP_IF(args)
