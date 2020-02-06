@@ -550,12 +550,15 @@ public class MiscOpValidation extends BaseOpValidation {
         SDVariable x = sameDiff.var("x", arr);
         SDVariable y = sameDiff.var("y", arr2);
         SDVariable result = sameDiff.tensorMmul(x, y, new int[][]{{0}, {1}});
-        assertArrayEquals(ArrayUtil.getTensorMmulShape(new long[]{2, 2, 2}, new long[]{2, 2, 2}, new int[][]{{0}, {1}}), result.getShape());
-        assertEquals(32, sameDiff.numElements());
+        assertArrayEquals(ArrayUtil.getTensorMmulShape(new long[]{2, 2, 2}, new long[]{2, 2, 2}, new int[][]{{0}, {1}}),
+                result.eval().shape());
+        assertEquals(16, sameDiff.numElements());
 
         SDVariable loss = sameDiff.standardDeviation(result, true);
+        sameDiff.addLossVariable(loss);
 
         String err = OpValidation.validate(new TestCase(sameDiff));
+        assertNull(err);
     }
 
     @Test

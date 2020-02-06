@@ -111,7 +111,7 @@ public class TensorMmul extends DynamicCustomOp {
         int[][] deletedAxes = new int[][]{
                 removeIndex(aAxes, sumAxes[0]),
                 removeIndex(bAxes, sumAxes[1])};
-        int[] gAxes = range(0, i_v1.get(0).getShape().length);
+        int[] gAxes = range(0, i_v1.get(0).eval().shape().length);
         int[][] firstAxes = new int[][]{
                 Arrays.copyOfRange(gAxes, deletedAxes[0].length, gAxes.length),
                 deletedAxes[1]
@@ -145,7 +145,7 @@ public class TensorMmul extends DynamicCustomOp {
 
         int validationLength = Math.min(axes[0].length, axes[1].length);
         for (int i = 0; i < validationLength; i++) {
-            if (a.getShape()[axes[0][i]] != b.getShape()[axes[1][i]])
+            if (a.eval().shape()[axes[0][i]] != b.eval().shape()[axes[1][i]])
                 throw new IllegalArgumentException("Size of the given axes at each dimension must be the same size.");
             if (axes[0][i] < 0)
                 axes[0][i] += a.getShape().length;
@@ -155,7 +155,7 @@ public class TensorMmul extends DynamicCustomOp {
         }
 
         List<Integer> listA = new ArrayList<>();
-        for (int i = 0; i < a.getShape().length; i++) {
+        for (int i = 0; i < a.eval().shape().length; i++) {
             if (!Ints.contains(axes[0], i))
                 listA.add(i);
         }
@@ -172,9 +172,9 @@ public class TensorMmul extends DynamicCustomOp {
         int[] newAxesB = Ints.concat(axes[1], Ints.toArray(listB));
 
         int n2 = 1;
-        int aLength = Math.min(a.getShape().length, axes[0].length);
+        int aLength = Math.min(a.eval().shape().length, axes[0].length);
         for (int i = 0; i < aLength; i++) {
-            n2 *= a.getShape()[axes[0][i]];
+            n2 *= a.eval().shape()[axes[0][i]];
         }
 
         //if listA and listB are empty these do not initialize.
@@ -186,7 +186,7 @@ public class TensorMmul extends DynamicCustomOp {
         } else {
             oldShapeA = Longs.toArray(listA);
             for (int i = 0; i < oldShapeA.length; i++)
-                oldShapeA[i] = a.getShape()[(int) oldShapeA[i]];
+                oldShapeA[i] = a.eval().shape()[(int) oldShapeA[i]];
         }
 
         int n3 = 1;
