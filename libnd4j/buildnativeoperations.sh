@@ -176,7 +176,7 @@ case "$OS" in
       NAME="nd4jaurora"
       BLAS_ARG="-DCPU_BLAS=true -DBLAS=TRUE"
       BUILD_PATH=""
-      export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/aurora.cmake"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/aurora.cmake -DAURORA_BUILD"
     ;;
 
     linux-armhf)
