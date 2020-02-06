@@ -3093,6 +3093,7 @@ public native OpaqueRandomGenerator getGraphContextRandomGenerator(OpaqueContext
 public native void ctxAllowHelpers(OpaqueContext ptr, @Cast("bool") boolean reallyAllow);
 public native void ctxShapeFunctionOverride(OpaqueContext ptr, @Cast("bool") boolean reallyOverride);
 public native void ctxSetExecutionMode(OpaqueContext ptr, int execMode);
+public native void ctxPurge(OpaqueContext ptr);
 public native void markGraphContextInplace(OpaqueContext ptr, @Cast("bool") boolean reallyInplace);
 public native void setGraphContextCudaContext(OpaqueContext ptr, Pointer stream, Pointer reductionPointer, Pointer allocationPointer);
 public native void setGraphContextInputArray(OpaqueContext ptr, int index, Pointer buffer, Pointer shapeInfo, Pointer specialBuffer, Pointer specialShapeInfo);
@@ -3806,7 +3807,6 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
         private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype);
-
 
         /**
         * This method returns new array with the same shape & data type
@@ -6456,6 +6456,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntPointer dArgs);
             public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntBuffer dArgs);
             public native void setDArguments(@Cast("nd4j::DataType*") @StdVector int[] dArgs);
+
+            /**
+             * This method purges fastpath in/out contents and releases all the handles.
+             *
+             * PLEASE NOTE: I/T/B/D args will stay intact
+             */
+            public native void clearFastPath();
 
             public native void setCudaContext(@Cast("Nd4jPointer") Pointer cudaStream, @Cast("Nd4jPointer") Pointer reductionPointer, @Cast("Nd4jPointer") Pointer allocationPointer);
 
