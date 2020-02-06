@@ -108,6 +108,14 @@
 #define meta_def inline
 #define linkage
 
+#elif __NEC__
+
+#define op_def inline
+#define op_def_special inline
+#define meta_def inline
+#define linkage
+
+
 #elif __GNUC__
 
 #define linkage
