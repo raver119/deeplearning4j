@@ -392,10 +392,10 @@ if [ -z "$EXPERIMENTAL" ]; then
  EXPERIMENTAL="no"
 fi
 
-if [ "$CHIP" == "cpu" ]; then
-    BLAS_ARG="-DCPU_BLAS=true -DBLAS=TRUE"
-else
+if [ "$CHIP" == "cuda" ]; then
     BLAS_ARG="-DCUDA_BLAS=true -DBLAS=TRUE"
+else
+    BLAS_ARG="-DCPU_BLAS=true -DBLAS=TRUE"
 fi
 
 if [ -z "$NAME" ]; then
