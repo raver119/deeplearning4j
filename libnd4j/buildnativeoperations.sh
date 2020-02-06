@@ -171,6 +171,14 @@ if [[ -z ${ANDROID_NDK:-} ]]; then
 fi
 
 case "$OS" in
+    aurora)
+      CHIP="aurora"
+      NAME="nd4jaurora"
+      BLAS_ARG="-DCPU_BLAS=true -DBLAS=TRUE"
+      BUILD_PATH=""
+      export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/aurora.cmake"
+    ;;
+
     linux-armhf)
       export RPI_BIN=$RPI_HOME/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf
       export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/rpi.cmake"
@@ -556,3 +564,15 @@ exec 3>&-
 else
 eval $MAKE_COMMAND $MAKE_ARGUMENTS  && cd ../../..
 fi
+
+case "$OS" in
+    aurora)
+    if [ "$BUILD" == "release" ]; then
+        BLAS_LIBS="/opt/nec/ve/nlc/2.0.0/lib/libcblas.a /opt/nec/ve/nlc/2.0.0/lib/libblas_openmp.a -fopenmp"
+    else
+        BLAS_LIBS="/opt/nec/ve/nlc/2.0.0/lib/libcblas.a /opt/nec/ve/nlc/2.0.0/lib/libblas_sequential.a"
+    fi
+    /opt/nec/ve/bin/mk_veorun_static -o blasbuild/aurora/blas/nd4jaurora blasbuild/aurora/blas/libnd4jaurorastatic.a $BLAS_LIBS
+    ;;
+esac
+
