@@ -1860,8 +1860,8 @@ TEST_F(DeclarableOpsTests11, Solve_Test_4_6) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
-    z->printBuffer("4_6 Solve 3x3");
-    exp.printBuffer("4_6 Expec 3x3");
+//    z->printBuffer("4_6 Solve 3x3");
+//    exp.printBuffer("4_6 Expec 3x3");
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
@@ -1897,8 +1897,8 @@ TEST_F(DeclarableOpsTests11, Solve_Test_4_7) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
-    z->printBuffer("4_7 Solve 3x3");
-    exp.printBuffer("4_7 Expec 3x3");
+//    z->printBuffer("4_7 Solve 3x3");
+//    exp.printBuffer("4_7 Expec 3x3");
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
@@ -1931,8 +1931,8 @@ TEST_F(DeclarableOpsTests11, Solve_Test_5) {
     ASSERT_EQ(res->status(), ND4J_STATUS_OK);
     auto z = res->at(0);
 
-    z->printBuffer("4 Solve 4x4");
-    exp.printBuffer("4 Expec 4x4");
+//    z->printBuffer("4 Solve 4x4");
+//    exp.printBuffer("4 Expec 4x4");
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;

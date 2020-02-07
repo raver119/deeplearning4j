@@ -75,8 +75,7 @@ namespace helpers {
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
-            rightB.printIndexedBuffer("Stage1 output");
-            leftOutput.transposei();
+            helpers::adjointMatrix(context, &leftOutput, true, &leftOutput); //.transposei();
             helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
             // All done
         }
