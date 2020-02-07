@@ -75,7 +75,7 @@ if(NOT CUDA_BLAS)
     add_definitions(-DDNNL_ENABLE_CONCURRENT_EXEC=true)
 
     # there's a chance, we have no BLAS provided externally
-    if ("${OPENBLAS_PATH}" STREQUAL "")
+    if ("${OPENBLAS_PATH}" STREQUAL "" AND NOT AURORA_BUILD)
         #we don't want static OpenBLAS on Apple
         set(BLA_STATIC ON)
         if (NOT APPLE)
