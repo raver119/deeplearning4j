@@ -21,6 +21,7 @@
 #include <NDArray.h>
 #include <MmulHelper.h>
 #include <ShapeUtils.h>
+#include <ConstantTadHelper.h>
 
 #include "../triangular_solve.h"
 #include "../lup.h"
@@ -30,6 +31,30 @@
 namespace nd4j {
 namespace ops {
 namespace helpers {
+
+    template <typename T>
+    static __global__ void fillRegularizerKernel(T* ioMatrixData, Nd4jLong* ioMatrixShape, Nd4jLong* ioMatrixTads, Nd4jLong* ioMatrixOffsets, Nd4jLong batchSize, Nd4jLong rows, T const value) {
+
+        for (auto x = blockIdx.x; x < batchSize; x += gridDim.x) {
+            auto z = ioMatrixData + ioMatrixOffsets[x];
+            for (auto r = threadIdx.x; r < rows; r += blockDim.x) {
+                Nd4jLong pos[] = {r,r};
+                auto zIndex = shape::getOffset(ioMatrixTads, pos);
+                z[zIndex] = value;
+            }
+        }
+
+    }
+
+    template <typename T>
+    static void fillRegularizer(nd4j::LaunchContext* context, NDArray& ioMatrix, double const value) {
+        auto lastDimsTads = ConstantTadHelper::getInstance()->tadForDimensions(ioMatrix.shapeInfo(), {-2, -1});
+        auto stream = context->getCudaStream();
+        auto rows = ioMatrix.sizeAt(-2);
+        //auto cols = ioMatrix.sizeAt(-1);
+        fillRegularizerKernel<T><<<256, 256, 128, *stream>>>(ioMatrix.dataBuffer()->specialAsT<T>(), ioMatrix.specialShapeInfo(), lastDimsTads.specialShapeInfo(), lastDimsTads.specialOffsets(), lastDimsTads.numberOfTads(), rows, (T)value);
+
+    }
 
     template <typename T>
     int leastSquaresSolveFunctor_(nd4j::LaunchContext* context, NDArray const* leftInput, NDArray const* rightInput, double const l2Regularizer, bool const fast, NDArray* output) {
@@ -44,19 +69,21 @@ namespace helpers {
             auto rightOutput = output->ulike();
 
             MmulHelper::matmul(leftInput, rightInput, &rightOutput, true, false); // Computing B' = A^T * b
-            // 3. due l2Regularizer = 0, skip regularization ( indeed A' = A2 - l2Regularizer * I)
-            auto regularizer = leftOutput.ulike();
-            regularizer.setIdentity();
-            regularizer *= l2Regularizer;
-            leftOutput += regularizer;
+            // 3. Regularization ( indeed A' = A2 - l2Regularizer * I)
+            if (l2Regularizer != 0.0) {
+                auto regularizer = leftOutput.ulike();
+                fillRegularizer<T>(context, regularizer, l2Regularizer);
+                leftOutput += regularizer;
+            }
 
             // 4. Cholesky decomposition -- output matrix is square and lower triangular
             helpers::cholesky(context, &leftOutput, &leftOutput, true); // inplace decomposition
             // 5. Solve two triangular systems:
             auto rightB = rightOutput.ulike();
-            auto leftOutputT = leftOutput.transpose();
+
             helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, true, false, &rightB);
-            helpers::triangularSolveFunctor(context, &leftOutputT, &rightB, false, false, output);
+            helpers::adjointMatrix(context, &leftOutput, true, &leftOutput);
+            helpers::triangularSolveFunctor(context, &leftOutput, &rightB, false, false, output);
             // All done
         }
         else { // QR decomposition approach
