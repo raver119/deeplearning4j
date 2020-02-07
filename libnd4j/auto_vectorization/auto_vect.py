@@ -17,17 +17,28 @@ from multiprocessing import  Pool, Manager ,cpu_count
 import traceback
 import html
 
-mtch = re.compile(r"[^/]*([^:]+)\:(\d+)\:(\d+)\:(.*)")
-replace_msg = re.compile(r"(\d+)?\.?(\d+)?_?\d+\.?(\d+)?")
-progress_msg = re.compile(r"\s{0,4}\[\s{0,2}\d+\%\]")
-file_dir_strip = str(Path(os.getcwd()))
-pp_index = file_dir_strip.rfind("libnd4j")
-if pp_index>=0:
-    file_dir_strip =file_dir_strip[:pp_index+len("libnd4j")]
+STD_MSG = { 'gcc' : ('loop vectorized', 'note: not vectorized:', r"[^/]*([^:]+)\:(\d+)\:(\d+)\:(.*)" ),
+           'ncxx' : ("vectorized loop", "unvectorized loop",     r'[^/]+([^,]+)\,\s*line\s*(\d+)(\:)(.*)')
+}
+
+MSG_CMP = 'gcc'
+std_success_msg = STD_MSG[MSG_CMP][0]
+std_fail_msg    = STD_MSG[MSG_CMP][1]
+std_match       = STD_MSG[MSG_CMP][2]
+mtch            = re.compile(std_match)
+
+number_replace  = re.compile(r"(\d+)?\.?(\d+)?_?\d+\.?(\d+)?")
+build_progress  = re.compile(r"\s{0,4}\[\s{0,2}\d+\%\]")
+
+internal_match = 'deeplearning4j'+os.path.sep+'libnd4j'+os.path.sep
+internal_match_replace = "./"
+
+
 BASE_URL = "https://github.com/eclipse/deeplearning4j/tree/master/libnd4j/"
 if BASE_URL.endswith("/")==False:
     BASE_URL = BASE_URL + "/"
-#print(file_dir_strip)
+
+
 class info:
     def __repr__(self):
         return str(self.__dict__) 
@@ -66,13 +77,13 @@ def get_obj_json_gz(filename):
 
 def get_msg(msg):
     msg = msg.lower().strip() 
-    if "note: not vectorized:" in msg:
-        msg = replace_msg.sub("_numb",msg.replace("note: not vectorized:",""))
+    if std_fail_msg in msg:
+        msg = number_replace.sub("_numb",msg.replace(std_fail_msg,"fail:"))
         return( 0, 1, msg.strip()) 
-    elif "loop vectorized" in msg: 
+    elif std_success_msg in msg: 
         return (1, 0, None)
     # elif msg.startswith("missed")==False:
-    #     msg = replace_msg.sub("_numb",msg)
+    #     msg = number_replace.sub("_numb",msg)
     #     return( 0, 0, msg.strip())         
     return None
 
@@ -170,8 +181,9 @@ def process_gzip_json_new(json_gz_fname,list_Queue):
         if len(x['message'])>0 and 'location' in x:
             line = int(x['location']['line'])
             file_name = x['location']['file'].strip()
-            if  file_dir_strip in file_name:
-                file_name = file_name.replace(file_dir_strip,'./')
+            ppos = file_name.find(internal_match)
+            if  ppos>=0:
+                file_name = internal_match_replace + file_name[ppos+len(internal_match):]
                 external_source = False
             msg = x['message'][0]
             success = x['kind'] == 'success'
@@ -254,8 +266,9 @@ def obtain_info_from(input_):
         external_source = True
         if x:
             file_name =x.group(1).strip()
-            if  file_dir_strip in file_name:
-                file_name = file_name.replace(file_dir_strip,'')
+            ppos = file_name.find(internal_match)
+            if  ppos>=0:
+                file_name = internal_match_replace + file_name[ppos+len(internal_match):]
                 external_source = False
             line_number = int(x.group(2))
             msg = x.group(4).lower()
@@ -270,7 +283,7 @@ def obtain_info_from(input_):
                 #print("{0} {1}".format(file_name,external_source))
                 info_[file_name] = File_Info().add(line_number,msg_x)
                 info_[file_name].external = external_source
-        elif progress_msg.match(line):
+        elif build_progress.match(line):
             #actually we redirect only, stderr so this should not happen
             print("__"+line.strip())
         elif "error" in line or "Error" in line:

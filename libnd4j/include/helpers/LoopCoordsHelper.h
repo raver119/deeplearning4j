@@ -76,19 +76,19 @@ namespace nd4j {
 		ZipCoordsState() {}
 	};
 
-#define COORDS(x,index)          ((x).nd4j::CoordsState<(index)>::coord)
-#define STRIDE(x,index)          ((x).nd4j::CoordsState<(index)>::stride)
-#define LAST_NUM(x,index)        ((x).nd4j::CoordsState<(index)>::last_num)
-#define OF_ADJUST(x,index)       ((x).nd4j::CoordsState<(index)>::adjust)
-#define ZIP_LAST_NUM(x,index)    ((x).nd4j::ZipCoordsState<(index)>::last_num)
-#define ZIP_COORDS(x,index)      ((x).nd4j::ZipCoordsState<(index)>::coord)
-#define ZIP_STRIDE1(x,index)     ((x).nd4j::ZipCoordsState<(index)>::stride1)
-#define ZIP_STRIDE2(x,index)     ((x).nd4j::ZipCoordsState<(index)>::stride2)
-#define ZIP_OF_ADJUST1(x,index)  ((x).nd4j::ZipCoordsState<(index)>::adjust1)
-#define ZIP_OF_ADJUST2(x,index)  ((x).nd4j::ZipCoordsState<(index)>::adjust2)
+#define COORDS(x,index)          ((x).::nd4j::CoordsState<(index)>::coord)
+#define STRIDE(x,index)          ((x).::nd4j::CoordsState<(index)>::stride)
+#define LAST_NUM(x,index)        ((x).::nd4j::CoordsState<(index)>::last_num)
+#define OF_ADJUST(x,index)       ((x).::nd4j::CoordsState<(index)>::adjust)
+#define ZIP_LAST_NUM(x,index)    ((x).::nd4j::ZipCoordsState<(index)>::last_num)
+#define ZIP_COORDS(x,index)      ((x).::nd4j::ZipCoordsState<(index)>::coord)
+#define ZIP_STRIDE1(x,index)     ((x).::nd4j::ZipCoordsState<(index)>::stride1)
+#define ZIP_STRIDE2(x,index)     ((x).::nd4j::ZipCoordsState<(index)>::stride2)
+#define ZIP_OF_ADJUST1(x,index)  ((x).::nd4j::ZipCoordsState<(index)>::adjust1)
+#define ZIP_OF_ADJUST2(x,index)  ((x).::nd4j::ZipCoordsState<(index)>::adjust2)
 
 
-	INLINEDEF void   index2coords_C(Nd4jLong index, const Nd4jLong rank, const Nd4jLong* bases, Nd4jLong* coords) {
+	FORCEINLINE void   index2coords_C(Nd4jLong index, const Nd4jLong rank, const Nd4jLong* bases, Nd4jLong* coords) {
 		for (size_t i = rank - 1; i > 0; --i) {
 			coords[i] = index % bases[i];
 			index /= bases[i];
@@ -96,7 +96,7 @@ namespace nd4j {
 		coords[0] = index;      // last iteration 
 	}
 
-	INLINEDEF void   index2coords_F(Nd4jLong index, const Nd4jLong rank, const Nd4jLong* bases, Nd4jLong* coords) {
+	FORCEINLINE void   index2coords_F(Nd4jLong index, const Nd4jLong rank, const Nd4jLong* bases, Nd4jLong* coords) {
 
 		for (size_t i = 0; i < rank - 1; i++) {
 			coords[i] = index % bases[i];
