@@ -34,6 +34,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.impl.shape.*;
 import org.nd4j.linalg.api.ops.impl.transforms.custom.Fill;
+import org.nd4j.linalg.api.ops.impl.transforms.segment.UnsortedSegmentSqrtN;
 import org.nd4j.linalg.api.shape.LongShapeDescriptor;
 import org.nd4j.linalg.api.shape.options.ArrayOptionsHelper;
 import org.nd4j.linalg.checkutil.CheckUtil;
@@ -1251,8 +1252,15 @@ public class ShapeOpValidation extends BaseOpValidation {
     }
 
     @Test
+    public void testSqrtN() {
+        INDArray segments = Nd4j.create(new double[]{0,0,0,1,2,2,3,3}, new long[]{8}).castTo(DataType.INT);
+        INDArray data = Nd4j.create(new double[]{5,1,7,2,3,4,1,3}, new long[]{8});
+        INDArray[] ret = Nd4j.exec(new UnsortedSegmentSqrtN(data,segments,1));
+    }
+
+    @Test
     public void testSegmentOps(){
-        //OpValidationSuite.ignoreFailing();
+        OpValidationSuite.ignoreFailing();
         //https://github.com/deeplearning4j/deeplearning4j/issues/6952
         INDArray s = Nd4j.create(new double[]{0,0,0,1,2,2,3,3}, new long[]{8}).castTo(DataType.INT);
         INDArray d = Nd4j.create(new double[]{5,1,7,2,3,4,1,3}, new long[]{8});
