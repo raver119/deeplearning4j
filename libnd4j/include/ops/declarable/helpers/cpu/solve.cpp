@@ -38,6 +38,7 @@ namespace helpers {
         auto outputPart = output->allTensorsAlongDimension({-2, -1});
         auto rows = input->sizeAt(-2);
         output->assign(input);
+
         auto batchLoop = PRAGMA_THREADS_FOR {
             for (auto batch = start; batch < stop; batch += increment) {
                 for (auto r = 0; r < rows; r++) {

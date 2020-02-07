@@ -108,8 +108,8 @@ namespace helpers {
     static void adjointTriangularMatrix_(nd4j::LaunchContext* context, NDArray const* input, bool const lower, NDArray* output) {
         auto inputPart = input->allTensorsAlongDimension({-2, -1});
         auto outputPart = output->allTensorsAlongDimension({-2, -1});
-        auto rows = input->sizeAt(-2);
         auto cols = input->sizeAt(-1);
+        auto rows = input->sizeAt(-2);
 
         auto batchLoop = PRAGMA_THREADS_FOR {
             for (auto batch = start; batch < stop; batch += increment) {
