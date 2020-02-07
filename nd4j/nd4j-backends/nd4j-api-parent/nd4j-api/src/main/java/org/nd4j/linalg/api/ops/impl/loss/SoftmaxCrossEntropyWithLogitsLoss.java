@@ -44,6 +44,12 @@ public class SoftmaxCrossEntropyWithLogitsLoss extends DynamicCustomOp {
         addIArgument(classesDim);
     }
 
+    public SoftmaxCrossEntropyWithLogitsLoss(SameDiff sameDiff, SDVariable logits, SDVariable labels, int classesDim) {
+        super(null, sameDiff, new SDVariable[]{logits, labels}, false);
+        this.classesDim = classesDim;
+        addIArgument(classesDim);
+    }
+
     @Override
     public String opName() {
         return "softmax_cross_entropy_loss_with_logits";

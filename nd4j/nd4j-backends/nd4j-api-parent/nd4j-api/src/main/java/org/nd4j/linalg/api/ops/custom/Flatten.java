@@ -37,7 +37,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class Flatten extends DynamicCustomOp {
-    private char order;
+    private int order;
 
     public Flatten(char order, INDArray... inputs) {
         this.order = order;
@@ -55,6 +55,7 @@ public class Flatten extends DynamicCustomOp {
 
     public Flatten(SameDiff sameDiff, char order, SDVariable... inputs) {
         super(sameDiff, inputs);
+        this.order = order;
         addIArgument(order);
     }
 
@@ -67,6 +68,6 @@ public class Flatten extends DynamicCustomOp {
     public List<DataType> calculateOutputDataTypes(List<DataType> inputDataTypes){
         int n = args().length;
         Preconditions.checkState(inputDataTypes != null && inputDataTypes.size() == n, "Expected %s input data types for %s, got %s", n, getClass(), inputDataTypes);
-        return Arrays.asList(inputDataTypes.get(0));   //Activations may be half, bfloat16, float32; mean/var is always float
+        return Arrays.asList(inputDataTypes.get(0));
     }
 }
