@@ -12,6 +12,7 @@ import org.nd4j.linalg.factory.Nd4jBackend;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class TestOptimization extends BaseNd4jTest {
 
@@ -24,19 +25,28 @@ public class TestOptimization extends BaseNd4jTest {
         return 'c';
     }
 
+    @Override
+    public long getTimeoutMilliseconds() {
+        return 1_000_000_000L;
+    }
 
     @Test
     public void testConstantOpFolding(){
 
         SameDiff sd = SameDiff.create();
         SDVariable c = sd.constant("c", Nd4j.scalar(1.0));
-        SDVariable v = c.add("add", 1);
+        SDVariable c2 = c.add("add", 1);
+        SDVariable v = sd.var("variable", Nd4j.scalar(1.0));
+        SDVariable out = v.sub("out", c2);
 
         SameDiff optimized = GraphOptimizer.optimize(sd);
-        assertEquals(2, optimized.getVariables().size());
+        assertEquals(3, optimized.getVariables().size());       //"add", "variable", "out" -> "c" should be removed
         assertEquals(VariableType.CONSTANT, optimized.getVariable("add").getVariableType());
-        assertEquals(0, optimized.getOps().size());
+        assertEquals(1, optimized.getOps().size());
+        assertEquals("subtract", optimized.getOps().values().iterator().next().getName());
 
-        assertEquals(sd.outputSingle(Collections.emptyMap(), "add"), optimized.outputSingle(Collections.emptyMap(), "add"));
+        assertFalse(optimized.hasVariable("c"));
+
+        assertEquals(sd.outputSingle(Collections.emptyMap(), "out"), optimized.outputSingle(Collections.emptyMap(), "out"));
     }
 }

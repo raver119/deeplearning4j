@@ -21,6 +21,6 @@ public interface Optimizer {
      * @param variablesArrays
      * @return True if the optimization was applied
      */
-    boolean checkAndApply(SameDiff sd, Properties optimizationConfig, SameDiffOp op, ArrayHolder constantArrays, ArrayHolder variablesArrays);
+    boolean checkAndApply(SameDiff sd, OptimizationHelper helper, SameDiffOp op, ArrayHolder constantArrays, ArrayHolder variablesArrays);
 
 }

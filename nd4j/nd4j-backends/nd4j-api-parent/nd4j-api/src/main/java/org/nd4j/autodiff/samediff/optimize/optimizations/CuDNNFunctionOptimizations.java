@@ -1,16 +1,30 @@
+/* ******************************************************************************
+ * Copyright (c) 2020 Konduit K.K.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
 package org.nd4j.autodiff.samediff.optimize.optimizations;
 
 import org.nd4j.autodiff.samediff.ArrayHolder;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.autodiff.samediff.VariableType;
 import org.nd4j.autodiff.samediff.internal.SameDiffOp;
+import org.nd4j.autodiff.samediff.optimize.OptimizationHelper;
 import org.nd4j.autodiff.samediff.optimize.Optimizer;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.Conv2D;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.List;
-import java.util.Properties;
 
 public class CuDNNFunctionOptimizations extends BaseOptimizerSet {
 
@@ -29,11 +43,11 @@ public class CuDNNFunctionOptimizations extends BaseOptimizerSet {
      * "Layout choice has an effect on performance, as convolutions implemented for Tensor Cores require NHWC layout and are fastest when input tensors are laid out in NHWC."
      * "To maximize performance, we recommend using NHWC tensor layout."
      *
-     * Asn for weights format: cuDNN docs are vague - but TF uses NCHW+OIHW or NHWC+OHWI
+     * As for weights format: cuDNN docs are vague - but TF uses NCHW+OIHW or NHWC+OHWI
      */
     public static class CudnnConv2dNCHWtoNHWCConversion implements Optimizer {
         @Override
-        public boolean checkAndApply(SameDiff sd, Properties optimizationConfig, SameDiffOp op, ArrayHolder constantArrays, ArrayHolder variablesArrays) {
+        public boolean checkAndApply(SameDiff sd, OptimizationHelper helper, SameDiffOp op, ArrayHolder constantArrays, ArrayHolder variablesArrays) {
             if(!(op.getOp() instanceof Conv2D))
                 return false;
 

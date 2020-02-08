@@ -1,3 +1,18 @@
+/* ******************************************************************************
+ * Copyright (c) 2020 Konduit K.K.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
 package org.nd4j.autodiff.samediff.optimize;
 
 import lombok.extern.slf4j.Slf4j;
@@ -5,9 +20,11 @@ import org.nd4j.autodiff.samediff.ArrayHolder;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.internal.SameDiffOp;
-import org.nd4j.autodiff.samediff.optimize.optimizations.ConstantFunctionOptimizations;
+import org.nd4j.autodiff.samediff.optimize.optimizations.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,7 +36,12 @@ public class GraphOptimizer {
 
     public static List<OptimizerSet> defaultOptimizations(){
         return Arrays.<OptimizerSet>asList(
-                new ConstantFunctionOptimizations()
+                new UnusedFunctionOptimizations(),
+                new ConstantFunctionOptimizations(),
+                new IdentityFunctionOptimizations(),
+                new ShapeFunctionOptimizations(),
+                new UnusedFunctionOptimizations(),
+                new CuDNNFunctionOptimizations()
         );
     }
 
@@ -33,16 +55,22 @@ public class GraphOptimizer {
         ArrayHolder cArr = sd.getConstantArrays();
         ArrayHolder vArr = sd.getVariablesArrays();
 
-        OptimizationConfig config = new OptimizationConfig();   //TODO
+        OptimizationHelper h = new OptimizationHelper(graph, new OptimizationConfig());    //TODO defaults for config
 
         for( int i=0; i<3; i++ ) {  //Run multiple times - one run isn't enough, as some more optimizations may need to be applied to the output of earlier optimizations
             for (OptimizerSet s : optimizations) {
                 List<Optimizer> l = s.getOptimizers();
                 for(Optimizer o : l ){
-                    for(SameDiffOp op : sd.getOps().values()) {
-                        boolean applied = o.checkAndApply(sd, config, op, cArr, vArr);
+                    Collection<SameDiffOp> startingOps = new ArrayList<>(sd.getOps().values()); //Create list to avoid concurrent modification exception
+                    for(SameDiffOp op : startingOps) {
+                        //Because ops might disappear from previous optimization steps, we need to check if the previous op
+                        // still exists when iterating...
+                        if(!sd.getOps().containsKey(op.getName()))
+                            continue;
+
+                        boolean applied = o.checkAndApply(sd, h, op, cArr, vArr);
                         if(applied) {
-                            log.info("Operation was applied: ");
+                            log.info("Operation was applied: {}", o);
                         }
                     }
                 }
