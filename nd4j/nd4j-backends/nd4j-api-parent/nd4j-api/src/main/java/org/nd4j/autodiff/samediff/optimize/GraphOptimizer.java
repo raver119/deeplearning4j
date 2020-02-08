@@ -20,6 +20,7 @@ import org.nd4j.autodiff.samediff.ArrayHolder;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.internal.SameDiffOp;
+import org.nd4j.autodiff.samediff.optimize.debug.OptimizationDebugger;
 import org.nd4j.autodiff.samediff.optimize.optimizations.*;
 
 import java.util.ArrayList;
@@ -49,7 +50,11 @@ public class GraphOptimizer {
         return optimize(graph, defaultOptimizations());
     }
 
-    public static SameDiff optimize(SameDiff graph, List<OptimizerSet> optimizations){
+    public static SameDiff optimize(SameDiff graph, List<OptimizerSet> optimizations) {
+        return optimize(graph, optimizations, null);
+    }
+
+    public static SameDiff optimize(SameDiff graph, List<OptimizerSet> optimizations, OptimizationDebugger debugger){
         SameDiff sd = graph.dup();
 
         ArrayHolder cArr = sd.getConstantArrays();
@@ -68,10 +73,16 @@ public class GraphOptimizer {
                         if(!sd.getOps().containsKey(op.getName()))
                             continue;
 
+                        if(debugger != null)
+                            debugger.beforeOptimizationCheck(sd, op, o);
+
                         boolean applied = o.checkAndApply(sd, h, op, cArr, vArr);
                         if(applied) {
                             log.info("Operation was applied: {}", o);
                         }
+
+                        if(debugger != null)
+                            debugger.afterOptimizationsCheck(sd, op, o, applied);
                     }
                 }
             }
