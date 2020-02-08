@@ -89,12 +89,9 @@ public class ConstantFunctionOptimizations extends BaseOptimizerSet {
                 sd.getVariables().get(n).setOutputOfOp(null);
             }
 
-            //Remove the op: TODO Make util method?
-            sd.getOps().remove(df.getOwnName());
-            for(String s : op.getInputsToOp()){
-                Variable v = sd.getVariables().get(s);
-                v.getInputsForOp().remove(op.getName());
-            }
+            //Remove the op
+            OptimizationUtils.removeOp(sd, df.getOwnName());
+
             return true;
         }
     }
