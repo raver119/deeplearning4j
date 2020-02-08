@@ -74,8 +74,11 @@ if(NOT CUDA_BLAS)
     # we need this definition to avoid global memory use within mkldnn
     add_definitions(-DDNNL_ENABLE_CONCURRENT_EXEC=true)
 
-    # there's a chance, we have no BLAS provided externally
-    if ("${OPENBLAS_PATH}" STREQUAL "" AND NOT AURORA_BUILD)
+    if (AURORA_BUILD)
+        set(HAVE_OPENBLAS 1)
+        include_directories("/opt/nec/ve/nlc/2.0.0/include")
+    elseif ("${OPENBLAS_PATH}" STREQUAL "")
+        # there's a chance, we have no BLAS provided externally, so we'll look for it
         #we don't want static OpenBLAS on Apple
         set(BLA_STATIC ON)
         if (NOT APPLE)
