@@ -77,7 +77,7 @@ if(NOT CUDA_BLAS)
     if (AURORA_BUILD)
         set(HAVE_OPENBLAS 1)
         include_directories("/opt/nec/ve/nlc/2.0.0/include")
-        set(BLAS_LIBRARIES "/opt/nec/ve/nlc/2.0.0/lib/libcblas.a /opt/nec/ve/nlc/2.0.0/lib/libblas_openmp.a -fopenmp")
+        set(BLAS_LIBRARIES "")
     elseif ("${OPENBLAS_PATH}" STREQUAL "")
         # there's a chance, we have no BLAS provided externally, so we'll look for it
         #we don't want static OpenBLAS on Apple
