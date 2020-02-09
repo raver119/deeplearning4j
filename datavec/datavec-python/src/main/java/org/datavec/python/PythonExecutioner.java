@@ -385,25 +385,5 @@ public class PythonExecutioner {
             throw new IllegalStateException("Unable to reset python path. Already initialized.");
         }
     }
-
-//
-//    public static void installArrow(){
-//        try{
-//            exec("import pyarrow");
-//        }catch (PythonException pe){
-//            try{
-//                String python = Loader.load(org.bytedeco.cpython.python.class);
-//                ProcessBuilder pb = new ProcessBuilder(python, "-m", "pip", "install", "pyarrow");
-//                pb.inheritIO().start().waitFor();
-//            }catch (Exception e){
-//                log.warn("Unable to install pyarrow" + e);
-//            }
-//            try{
-//                exec("import pyarrow");
-//            }
-//            catch(Exception e){
-//                log.warn("Installation failed for pyarrow" + e);
-//            }
-//        }
-//    }
+    
 }
