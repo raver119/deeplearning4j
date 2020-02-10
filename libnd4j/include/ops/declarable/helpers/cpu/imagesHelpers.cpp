@@ -113,6 +113,13 @@ FORCEINLINE static void rgbToFromYuv_(const NDArray& input, NDArray& output, con
 template <typename T>
 FORCEINLINE static void rgbYuv_(const NDArray& input, NDArray& output, const int dimC) {
     auto op = nd4j::ops::helpers::rgbYuv<T>;
+
+    T arr[3][3] = {
+        { (T)0.299,  (T)0.587,  (T)0.114 },
+        { (T)-0.14714119, (T)-0.2888691, (T)0.43601035 },
+        { (T)0.61497538, (T)-0.51496512, (T)-0.10001026 }
+    };
+
     return rgbToFromYuv_<T>(input, output, dimC, op);
 }
 
@@ -123,6 +130,13 @@ void transformRgbYuv(nd4j::LaunchContext* context, const NDArray& input, NDArray
 template <typename T>
 FORCEINLINE static void yuvRgb_(const NDArray& input, NDArray& output, const int dimC) {
     auto op = nd4j::ops::helpers::yuvRgb<T>;
+
+    T arr[3][3] = {
+        { (T)1,  (T)0,  (T)1.13988303 },
+        { (T)1, (T)-0.394642334, (T)-0.58062185 },
+        { (T)1, (T)2.03206185, (T)0 }
+    };
+
     return rgbToFromYuv_<T>(input, output, dimC, op);
 }
 
