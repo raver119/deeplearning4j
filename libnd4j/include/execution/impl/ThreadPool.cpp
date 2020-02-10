@@ -84,11 +84,12 @@ namespace samediff {
         _threads.resize(_available.load());
         _interfaces.resize(_available.load());
 
+
         // creating threads here
         for (int e = 0; e < _available.load(); e++) {
             _queues[e] = new BlockingQueue<CallableWithArguments*>(2);
             _interfaces[e] = new CallableInterface();
-            _threads[e] = new std::thread(executionLoopWithInterface_, e, _interfaces[e]);
+   //         _threads[e] = new std::thread(executionLoopWithInterface_, e, _interfaces[e]);
             _tickets.push(new Ticket());
             // _threads[e] = new std::thread(executionLoop_, e, _queues[e]);
 
@@ -164,6 +165,7 @@ namespace samediff {
                 // ticket must contain information about number of threads for the current session
                 t->acquiredThreads(numThreads);
 
+                /*
                 // filling ticket with executable interfaces
                 for (int e = 0, i = 0; e < _queues.size() && i < numThreads; e++) {
                     if (_interfaces[e]->available()) {
@@ -171,6 +173,7 @@ namespace samediff {
                         _interfaces[e]->markUnavailable();
                     }
                 }
+                */
             }
         }
 
