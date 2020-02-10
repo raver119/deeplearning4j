@@ -866,27 +866,30 @@ namespace nd4j {
         }
 
         Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace) {
+            nd4j_printf("flat Graph is %p\n", flatGraph);
             this->_onion = new std::map<int, std::vector<Node *> *>();
             this->_mapped = new std::map<int, Node *> ();
             this->_nodes = new std::vector<int>();
+            nd4j_printf("Variable space processing... %p ...", variableSpace);
             this->_variableSpace = variableSpace == nullptr ? new VariableSpace() : variableSpace;
+            nd4j_printf("Done. Variable space is %p\n", this->_variableSpace);
             bool trusted = flatGraph != nullptr;
 
             // add 0 layer
             this->expandOnion(0);
-
+            nd4j_printf("Layer 0 was added\n", "");
             // if there was no exec configuration in flatgraph - create default one
             if (flatGraph != nullptr && flatGraph->configuration() != nullptr) {
                 _configuration = new ExecutorConfiguration(flatGraph->configuration());
             } else
                 _configuration = new ExecutorConfiguration();
-
+            nd4j_printf("Executor Configuration was created\n", "");
             // if memory reqs were set - initialize workspace
             if (_configuration->_footprintForward > 0) {
                 nd4j::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
                 workspace->expandBy(_configuration->_footprintForward);
             }
-
+            
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
