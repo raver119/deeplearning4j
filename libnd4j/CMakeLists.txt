@@ -75,9 +75,21 @@ if(NOT CUDA_BLAS)
     add_definitions(-DDNNL_ENABLE_CONCURRENT_EXEC=true)
 
     if (AURORA_BUILD)
-        set(HAVE_OPENBLAS 1)
         include_directories("/opt/nec/ve/nlc/2.0.0/include")
-        set(BLAS_LIBRARIES "")
+
+        # FIXME: we don't want sequential version in master
+        SET(BLAS_LIBNAME "libblas_sequential")
+
+        find_library(BLAS_LIBRARY ${BLAS_LIBNAME}
+                HINTS ${CUDNN_ROOT_DIR} ${CUDA_TOOLKIT_ROOT_DIR}
+                PATH_SUFFIXES /opt/nec/ve/nlc/2.0.0/lib)
+
+        if (BLAS_LIBRARY)
+            set(HAVE_OPENBLAS 1)
+            set(BLAS_LIBRARIES ${BLAS_LIBRARY})
+        else()
+            message(FATAL_ERROR "Unable to find BLAS")
+        endif()
     elseif ("${OPENBLAS_PATH}" STREQUAL "")
         # there's a chance, we have no BLAS provided externally, so we'll look for it
         #we don't want static OpenBLAS on Apple
