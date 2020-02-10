@@ -889,20 +889,26 @@ namespace nd4j {
                 nd4j::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
                 workspace->expandBy(_configuration->_footprintForward);
             }
+            nd4j_printf("Workspace was expanded\n", "");
 
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
+                nd4j_printf("Variables are parsing:\n", "");
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
+                    nd4j_printf("Loop %u: \n", e);
                     auto flatVar = flatGraph->variables()->Get(e);
-
+                    nd4j_printf("Flat variable for %u is %p\n", e, flatVar);
                     auto var = new Variable(flatVar);
+                    nd4j_printf("%u: Variable %p were created from %p\n", e, var, flatVar);
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
+                    nd4j_printf("%u: Putting variable %p ...", e, var);
                     _variableSpace->putVariable(pair, var);
+                    nd4j_printf("%u: Done for %p ...", e, var);
 
                     // if that's VariableSpace mode - we're pushing it to _output
                     if (_configuration->_outputMode == OutputMode_VARIABLE_SPACE)
                         pushToOutputOnce(var->id());
-
+                    nd4j_printf("Loop %u done\n", "");
                 }
             }
             nd4j_printf("Variables were parsed.\n", "");
