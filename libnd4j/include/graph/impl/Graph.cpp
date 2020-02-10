@@ -897,13 +897,13 @@ namespace nd4j {
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
                     nd4j_printf("Loop %u: \n", e);
                     auto flatVar = flatGraph->variables()->Get(e);
-                    nd4j_printf("Flat variable for %u is %p\n", e, flatVar);
+                    nd4j_printf("\tFlat variable for %u is %p\n", e, flatVar);
                     auto var = new Variable(flatVar);
-                    nd4j_printf("%u: Variable %p were created from %p\n", e, var, flatVar);
+                    nd4j_printf("\t%u: Variable %p were created from %p\n", e, var, flatVar);
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
-                    nd4j_printf("%u: Putting variable %p ...", e, var);
+                    nd4j_printf("\t%u: Putting variable %p ...", e, var);
                     _variableSpace->putVariable(pair, var);
-                    nd4j_printf("%u: Done for %p ...", e, var);
+                    nd4j_printf("\t%u: Done for %p ...", e, var);
 
                     // if that's VariableSpace mode - we're pushing it to _output
                     if (_configuration->_outputMode == OutputMode_VARIABLE_SPACE)

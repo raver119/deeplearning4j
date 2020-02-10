@@ -193,7 +193,7 @@ namespace nd4j {
             auto vid = flatVariable->id();
             this->_id = vid->first();
             this->_index = vid->second();
-
+            nd4j_printf("Flat variable %p for %p\n", flatVariable, this);
             if (flatVariable->name() != nullptr && flatVariable->name()->size() != 0)
                 this->_name = flatVariable->name()->str();
 
@@ -201,8 +201,9 @@ namespace nd4j {
             _readOnly = false;
 
             int8_t *buffer = nullptr;
-
-            switch (flatVariable->variabletype()) {
+            auto varType = flatVariable->variabletype();
+            nd4j_printf("Variable %p from %p with type %i\n", this, flatVariable, (int)varType);
+            switch (varType) {
                 case VarType_VARIABLE: {
 
                         // ?????
