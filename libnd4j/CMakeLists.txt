@@ -81,8 +81,8 @@ if(NOT CUDA_BLAS)
         SET(BLAS_LIBNAME "libblas_sequential")
 
         find_library(BLAS_LIBRARY ${BLAS_LIBNAME}
-                HINTS ${CUDNN_ROOT_DIR} ${CUDA_TOOLKIT_ROOT_DIR}
-                PATH_SUFFIXES /opt/nec/ve/nlc/2.0.0/lib)
+                HINTS /opt/nec/ve/nlc/2.0.0
+                PATH_SUFFIXES lib)
 
         if (BLAS_LIBRARY)
             set(HAVE_OPENBLAS 1)
