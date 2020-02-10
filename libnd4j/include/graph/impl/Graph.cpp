@@ -889,7 +889,7 @@ namespace nd4j {
                 nd4j::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
                 workspace->expandBy(_configuration->_footprintForward);
             }
-            
+
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
@@ -905,7 +905,7 @@ namespace nd4j {
 
                 }
             }
-
+            nd4j_printf("Variables were parsed.\n", "");
             // at this point we expect all variables are already registered
             // we're saving outputs only if explicit mode is set
             if (_configuration->_outputMode == OutputMode_EXPLICIT || _configuration->_outputMode == OutputMode_EXPLICIT_AND_IMPLICIT) {
@@ -923,7 +923,7 @@ namespace nd4j {
                     }
                 }
             }
-
+            nd4j_printf("Output variables were processed\n", "");
             // rolling through nodes
             if (flatGraph != nullptr && flatGraph->nodes() != nullptr && flatGraph->nodes()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->nodes()->size(); e++) {
@@ -951,7 +951,7 @@ namespace nd4j {
 
                 _built = true;
             }
-
+            nd4j_printf("Nodes were rolled\n", "");
             /**
              *  we allow in-place execution optimizations ONLY if 2 requirements met:
              *  1) this is FeedForward pass ONLY
@@ -959,6 +959,7 @@ namespace nd4j {
              */
             if (_configuration->_direction == Direction_FORWARD_ONLY && _configuration->_outputMode == OutputMode_OPTIMIZED)
                 this->tagInplaceNodes();
+            nd4j_printf("InplaceNodes were tagged.\n", "");
         }
 
 
