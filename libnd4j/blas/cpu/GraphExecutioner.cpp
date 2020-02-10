@@ -900,9 +900,12 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         }
 
         Graph *GraphExecutioner::importFromFlatPointer(Nd4jPointer ptr) {
+            nd4j_printf("Get Flat Graph from pointer %p ...", ptr);
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
+            nd4j_printf(" Done\n", "");
+            nd4j_printf("Restore graph from flat pointer %p ...", fg);
             auto restoredGraph = new Graph(fg);
-
+            nd4j_printf("Done\n", "");
             return restoredGraph;
         }
     }
