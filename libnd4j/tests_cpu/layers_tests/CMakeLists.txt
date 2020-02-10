@@ -39,9 +39,9 @@ if (CUDA_BLAS)
     endif()
 endif()
 
-# -fsanitize=address
-# -fsanitize=leak
-if (APPLE)
+if (AURORA_BUILD)
+    # nothing
+elseif (APPLE)
     set(CMAKE_CXX_FLAGS  " -fPIC  -fmax-errors=2 -D__APPLE_OS__=true")
 elseif(WIN32)
     if (CPU_BLAS)
