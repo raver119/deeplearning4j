@@ -40,7 +40,7 @@ namespace nd4j {
             auto rank = static_cast<int>(flatArray->shape()->Get(0));
             auto newShape = new Nd4jLong[shape::shapeInfoLength(rank)];
             memcpy(newShape, flatArray->shape()->data(), shape::shapeInfoByteLength(rank));
-
+            nd4j_printf("Memcpy with input array %p\n", newShape);
             auto length = shape::length(newShape);
             auto dtype = DataTypeUtils::fromFlatDataType(flatArray->dtype());
 
