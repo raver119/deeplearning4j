@@ -164,8 +164,8 @@ TEST_F(NativeOpsTests, ExecBroadcast_1) {
     auto x = NDArrayFactory::create<float>('c', {5, 5});
     auto y = NDArrayFactory::create<float>('c', {5, 1});
     auto exp = NDArrayFactory::create<float>('c', {5, 5});
-    x.linspace(1.0);
-    y.linspace(2,2);
+    //x.linspace(1.0);
+    //y.linspace(2,2);
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
