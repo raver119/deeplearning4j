@@ -62,7 +62,7 @@ namespace nd4j {
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
                 auto offsets = new Nd4jLong[length+1];
                 for (Nd4jLong e = 0; e <= length; e++) {
-                    auto o = longPtr[e];
+                    auto o = longPtr[e];nd4j_printf("Printf %lld\n", o);
                     // FIXME: BE vs LE on partials
                     //auto v = canKeep ?  o : BitwiseUtils::swap_bytes<Nd4jLong>(o);
                     offsets[e] = o;
