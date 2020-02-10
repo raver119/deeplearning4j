@@ -1289,6 +1289,26 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     public void destroy() {}
 
     @Override
+    protected double getDoubleUnsynced(long index) {
+        return super.getDouble(index);
+    }
+
+    @Override
+    protected float getFloatUnsynced(long index) {
+        return super.getFloat(index);
+    }
+
+    @Override
+    protected long getLongUnsynced(long index) {
+        return super.getLong(index);
+    }
+
+    @Override
+    protected int getIntUnsynced(long index) {
+        return super.getInt(index);
+    }
+
+    @Override
     public void write(DataOutputStream out) throws IOException {
         lazyAllocateHostPointer();
         allocator.synchronizeHostData(this);
@@ -1509,6 +1529,13 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         lazyAllocateHostPointer();
         allocator.synchronizeHostData(this);
         return super.asInt();
+    }
+
+    @Override
+    public long[] asLong() {
+        lazyAllocateHostPointer();
+        allocator.synchronizeHostData(this);
+        return super.asLong();
     }
 
     @Override
