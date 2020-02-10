@@ -79,8 +79,13 @@ if(NOT CUDA_BLAS)
 
         # FIXME: we don't want sequential version in master
         SET(BLAS_LIBNAME "blas_sequential")
+        SET(CBLAS_LIBNAME "cblas")
 
         find_library(BLAS_LIBRARY ${BLAS_LIBNAME}
+                HINTS /opt/nec/ve/nlc/2.0.0
+                PATH_SUFFIXES lib)
+
+        find_library(CBLAS_LIBRARY ${CBLAS_LIBNAME}
                 HINTS /opt/nec/ve/nlc/2.0.0
                 PATH_SUFFIXES lib)
 
@@ -91,7 +96,11 @@ if(NOT CUDA_BLAS)
             string(REGEX REPLACE "\\.so$" ".a" _TMP_B "${BLAS_LIBRARY}")
             set(BLAS_LIBRARY "${_TMP_B}")
 
-            set(BLAS_LIBRARIES ${BLAS_LIBRARY})
+            SET(_TMP_B "")
+            string(REGEX REPLACE "\\.so$" ".a" _TMP_B "${CBLAS_LIBRARY}")
+            set(CBLAS_LIBRARY "${_TMP_B}")
+
+            set(BLAS_LIBRARIES ${CBLAS_LIBRARY} ${BLAS_LIBRARY})
             add_definitions(-D__EXTERNAL_BLAS__=true)
         else()
             message(FATAL_ERROR "Unable to find BLAS")
