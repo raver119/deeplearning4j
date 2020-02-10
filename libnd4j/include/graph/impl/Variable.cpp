@@ -218,12 +218,19 @@ namespace nd4j {
                 case VarType_CONSTANT: {
                         if (flatVariable->ndarray() == nullptr)
                             throw std::runtime_error("CONSTANT variable must have NDArray bundled");
-
+                        nd4j_printf("Constant Processing: \n", "");
                         auto ar = flatVariable->ndarray();
+                        nd4j_printf("Constant Processing: NDArray is %p\n", ar);
+                        auto dtype = ar->dtype();
+                        nd4j_printf("Constant Processing: type is %i\n", dtype);
                         if (ar->dtype() == DType_UTF8) {
+                            nd4j_printf("UTF8 from flat Array: ", "");
                             _ndarray = nd4j::graph::FlatUtils::fromFlatArray(ar);
+                            nd4j_printf("Done\n", "");
                         } else {
+                            nd4j_printf("non-UTF8 from flat Array: ", "");
                             _ndarray = nd4j::graph::FlatUtils::fromFlatArray(ar);
+                            nd4j_printf("Done\n", "");
                         }
 
                         _variableType = VariableType::NDARRAY;
