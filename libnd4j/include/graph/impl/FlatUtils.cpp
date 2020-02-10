@@ -40,7 +40,6 @@ namespace nd4j {
             auto rank = static_cast<int>(flatArray->shape()->Get(0));
             auto newShape = new Nd4jLong[shape::shapeInfoLength(rank)];
             memcpy(newShape, flatArray->shape()->data(), shape::shapeInfoByteLength(rank));
-            nd4j_printf("Memcpy with input array %p\n", newShape);
             auto length = shape::length(newShape);
             auto dtype = DataTypeUtils::fromFlatDataType(flatArray->dtype());
 
@@ -49,6 +48,7 @@ namespace nd4j {
                 delete[] newShape;
                 return NDArrayFactory::empty_(dtype, nullptr);
             }
+            nd4j_printf("Processing UTF8 %p\n", newShape);
             // TODO fix UTF16 and UTF32
             if (dtype == UTF8) {
                 bool isBe = BitwiseUtils::isBE();
@@ -58,18 +58,20 @@ namespace nd4j {
                 std::vector<Nd4jLong> shapeVector(rank);
                 for (int e = 0; e < rank; e++)
                     shapeVector[e] = newShape[e+1];
-
+                nd4j_printf("Shape was copied\n", "");
                 auto rawPtr = (void *)flatArray->buffer()->data();
                 auto longPtr = reinterpret_cast<Nd4jLong *>(rawPtr);
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
                 auto offsets = new Nd4jLong[length+1];
+                nd4j_printf("Offsets are about to copy\n", "");
                 for (Nd4jLong e = 0; e <= length; e++) {
                     auto o = longPtr[e];
                     // FIXME: BE vs LE on partials
                     //auto v = canKeep ?  o : BitwiseUtils::swap_bytes<Nd4jLong>(o);
                     offsets[e] = o;
                 }
-
+                nd4j_printf("Offsets were copied\n", "");
+                nd4j_printf("Chains are about to copy\n", "");
                 for (Nd4jLong e = 0; e < length; e++) {
                     auto start = offsets[e];
                     auto end = offsets[e+1];
@@ -84,10 +86,12 @@ namespace nd4j {
                     substrings[e] = val;
                     free(c);
                 }
+                nd4j_printf("Chains were copied\n", "");
 
                 delete[] offsets;
                 delete[] newShape;
                 // string order always 'c'
+                nd4j_printf("Return string as is\n", "");
                 return NDArrayFactory::string_(shapeVector, substrings);
             }
 
