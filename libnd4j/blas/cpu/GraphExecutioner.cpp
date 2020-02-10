@@ -888,24 +888,15 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         *   PLEASE NOTE: This method is mostly suited for tests and debugging/profiling
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
-            nd4j_printf("Read Flat Buffers", "");
             auto data = readFlatBuffers(filename);
-            nd4j_printf("Done\n", "");
-            nd4j_printf("Import graph from Flat Pointer ... ", "");
             auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
-            nd4j_printf("Done \n", "");
             delete[] data;
-            nd4j_printf("Deleted waste data\n", "");
             return restoredGraph;
         }
 
         Graph *GraphExecutioner::importFromFlatPointer(Nd4jPointer ptr) {
-            nd4j_printf("Get Flat Graph from pointer %p ...", ptr);
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
-            nd4j_printf(" Done\n", "");
-            nd4j_printf("Restore graph from flat pointer %p ...", fg);
             auto restoredGraph = new Graph(fg);
-            nd4j_printf("Done\n", "");
             return restoredGraph;
         }
     }

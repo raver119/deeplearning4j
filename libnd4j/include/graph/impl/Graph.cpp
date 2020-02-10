@@ -866,52 +866,38 @@ namespace nd4j {
         }
 
         Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace) {
-            nd4j_printf("flat Graph is %p\n", flatGraph);
             this->_onion = new std::map<int, std::vector<Node *> *>();
             this->_mapped = new std::map<int, Node *> ();
             this->_nodes = new std::vector<int>();
-            nd4j_printf("Variable space processing... %p ...", variableSpace);
             this->_variableSpace = variableSpace == nullptr ? new VariableSpace() : variableSpace;
-            nd4j_printf("Done. Variable space is %p\n", this->_variableSpace);
             bool trusted = flatGraph != nullptr;
 
             // add 0 layer
             this->expandOnion(0);
-            nd4j_printf("Layer 0 was added\n", "");
             // if there was no exec configuration in flatgraph - create default one
             if (flatGraph != nullptr && flatGraph->configuration() != nullptr) {
                 _configuration = new ExecutorConfiguration(flatGraph->configuration());
             } else
                 _configuration = new ExecutorConfiguration();
-            nd4j_printf("Executor Configuration was created\n", "");
             // if memory reqs were set - initialize workspace
             if (_configuration->_footprintForward > 0) {
                 nd4j::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
                 workspace->expandBy(_configuration->_footprintForward);
             }
-            nd4j_printf("Workspace was expanded\n", "");
 
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
-                nd4j_printf("Variables are parsing:\n", "");
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
-                    nd4j_printf("Loop %u: \n", e);
                     auto flatVar = flatGraph->variables()->Get(e);
-                    nd4j_printf("\tFlat variable for %u is %p\n", e, flatVar);
                     auto var = new Variable(flatVar);
-                    nd4j_printf("\t%u: Variable %p were created from %p\n", e, var, flatVar);
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
-                    nd4j_printf("\t%u: Putting variable %p ...", e, var);
                     _variableSpace->putVariable(pair, var);
-                    nd4j_printf("\t%u: Done for %p ...", e, var);
 
                     // if that's VariableSpace mode - we're pushing it to _output
                     if (_configuration->_outputMode == OutputMode_VARIABLE_SPACE)
                         pushToOutputOnce(var->id());
-                    nd4j_printf("Loop %u done\n", "");
                 }
             }
-            nd4j_printf("Variables were parsed.\n", "");
             // at this point we expect all variables are already registered
             // we're saving outputs only if explicit mode is set
             if (_configuration->_outputMode == OutputMode_EXPLICIT || _configuration->_outputMode == OutputMode_EXPLICIT_AND_IMPLICIT) {
@@ -929,7 +915,6 @@ namespace nd4j {
                     }
                 }
             }
-            nd4j_printf("Output variables were processed\n", "");
             // rolling through nodes
             if (flatGraph != nullptr && flatGraph->nodes() != nullptr && flatGraph->nodes()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->nodes()->size(); e++) {
@@ -957,7 +942,6 @@ namespace nd4j {
 
                 _built = true;
             }
-            nd4j_printf("Nodes were rolled\n", "");
             /**
              *  we allow in-place execution optimizations ONLY if 2 requirements met:
              *  1) this is FeedForward pass ONLY
@@ -965,7 +949,6 @@ namespace nd4j {
              */
             if (_configuration->_direction == Direction_FORWARD_ONLY && _configuration->_outputMode == OutputMode_OPTIMIZED)
                 this->tagInplaceNodes();
-            nd4j_printf("InplaceNodes were tagged.\n", "");
         }
 
 

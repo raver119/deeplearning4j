@@ -193,7 +193,6 @@ namespace nd4j {
             auto vid = flatVariable->id();
             this->_id = vid->first();
             this->_index = vid->second();
-            nd4j_printf("Flat variable %p for %p\n", flatVariable, this);
             if (flatVariable->name() != nullptr && flatVariable->name()->size() != 0)
                 this->_name = flatVariable->name()->str();
 
@@ -202,7 +201,6 @@ namespace nd4j {
 
             int8_t *buffer = nullptr;
             auto varType = flatVariable->variabletype();
-            nd4j_printf("Variable %p from %p with type %i\n", this, flatVariable, (int)varType);
             switch (varType) {
                 case VarType_VARIABLE: {
 
@@ -218,19 +216,12 @@ namespace nd4j {
                 case VarType_CONSTANT: {
                         if (flatVariable->ndarray() == nullptr)
                             throw std::runtime_error("CONSTANT variable must have NDArray bundled");
-                        nd4j_printf("Constant Processing: \n", "");
+
                         auto ar = flatVariable->ndarray();
-                        nd4j_printf("Constant Processing: NDArray is %p\n", ar);
-                        auto dtype = ar->dtype();
-                        nd4j_printf("Constant Processing: type is %i\n", dtype);
                         if (ar->dtype() == DType_UTF8) {
-                            nd4j_printf("UTF8 from flat Array: ", "");
                             _ndarray = nd4j::graph::FlatUtils::fromFlatArray(ar);
-                            nd4j_printf("Done\n", "");
                         } else {
-                            nd4j_printf("non-UTF8 from flat Array: ", "");
                             _ndarray = nd4j::graph::FlatUtils::fromFlatArray(ar);
-                            nd4j_printf("Done\n", "");
                         }
 
                         _variableType = VariableType::NDARRAY;
