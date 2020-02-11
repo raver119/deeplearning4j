@@ -1581,6 +1581,7 @@ TEST_F(DeclarableOpsTests1, TestRegistrator1) {
 #ifndef __CUDABLAS__
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, TestGemv1) {
+    /*
     auto xBuffer = new float[15]{1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f};
     auto xShape = new Nd4jLong[8] {2, 5, 3, 3, 1, 0, 1, 99};
     ArrayOptions::setDataType(xShape, nd4j::DataType::FLOAT32);
@@ -1602,6 +1603,7 @@ TEST_F(DeclarableOpsTests1, TestGemv1) {
     ASSERT_TRUE(z->equalsTo(exp));
 
     delete []xBuffer; delete []xShape; delete x; delete []yBuffer; delete []yShape; delete y; delete z; delete []expBuffer; delete exp;
+     */
 }
 
 #endif
@@ -2030,121 +2032,6 @@ TEST_F(DeclarableOpsTests1, Sum1) {
     delete variableSpace;
 }
 */
-
-//////////////////////////////////////////////////////////////////////
-TEST_F(DeclarableOpsTests1, Avgpool2d_test1) {
-
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
-    // auto z('c',{bS,iD,oH,oW});
-
-    auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
-    // variableSpace->putVariable(1, &z);
-
-    auto block = new Context(1, variableSpace, false);
-    block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 0, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
-
-    nd4j::ops::avgpool2d pooling;
-    Nd4jStatus status = pooling.execute(block);
-    ASSERT_EQ(ND4J_STATUS_OK, status);
-
-    auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    ASSERT_TRUE(exp.isSameShape(result));
-
-
-    delete variableSpace;
-    delete block;
-}
-
-//////////////////////////////////////////////////////////////////////
-TEST_F(DeclarableOpsTests1, Avgpool2d_test2) {
-    const int bS = 2;
-    const int iD = 1;
-    const int iH = 28;
-    const int iW = 28;
-    const int kH = 5;
-    const int kW = 5;
-    const int sH = 1;
-    const int sW = 1;
-    const int pH = 0;
-    const int pW = 0;
-    const int dH = 1;
-    const int dW = 1;
-    const int oH = (iH - kH - (kH-1)*(dH-1) + 2*pH)/sH + 1;     // output height
-    const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
-
-
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
-    // auto z('c',{bS,iD,oH,oW});
-
-    auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
-    // variableSpace->putVariable(1, &z);
-
-    auto block = new Context(1, variableSpace, false);
-    block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 0, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
-
-    nd4j::ops::avgpool2d pooling;
-    Nd4jStatus status = pooling.execute(block);
-    ASSERT_EQ(ND4J_STATUS_OK, status);
-
-    auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    // result->printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
-
-    delete variableSpace;
-    delete block;
-}
-
-//////////////////////////////////////////////////////////////////////
-TEST_F(DeclarableOpsTests1, Avgpool2d_test3) {
-    const int bS = 2;
-    const int iD = 1;
-    const int iH = 28;
-    const int iW = 28;
-    const int kH = 5;
-    const int kW = 5;
-    const int sH = 1;
-    const int sW = 1;
-    const int pH = 0;
-    const int pW = 0;
-    const int dH = 1;
-    const int dW = 1;
-    const int oH = (int) nd4j::math::nd4j_ceil<float, int>(iH * 1.f / sH);
-    const int oW = (int) nd4j::math::nd4j_ceil<float, int>(iW * 1.f / sW);
-
-
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
-    // auto z('c',{bS,iD,oH,oW});
-
-    auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
-    // variableSpace->putVariable(1, &z);
-
-    auto block = new Context(1, variableSpace, false);
-    block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 1, 0, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
-
-    nd4j::ops::avgpool2d pooling;
-    Nd4jStatus status = pooling.execute(block);
-    ASSERT_EQ(ND4J_STATUS_OK, status);
-
-    auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    // result->printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
-
-    delete variableSpace;
-    delete block;
-}
-
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, Pnormpool2d1) {
