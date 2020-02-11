@@ -65,6 +65,7 @@ namespace nd4j {
 
                 nd4j_printf("Buffer length: %i; length: %lld\n", (int) flatArray->buffer()->size(), length);
 
+                #pragma _NEC novector
                 for (Nd4jLong e = 0; e <= length; e++) {
                     auto o = longPtr[e];
                     //nd4j_printf("Printf %lld\n", o);
@@ -72,6 +73,9 @@ namespace nd4j {
                     //auto v = canKeep ?  o : BitwiseUtils::swap_bytes<Nd4jLong>(o);
                     offsets[e] = o;
                 }
+
+
+                #pragma _NEC novector
                 for (Nd4jLong e = 0; e < length; e++) {
                     auto start = offsets[e];
                     auto end = offsets[e+1];
