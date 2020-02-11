@@ -57,7 +57,13 @@ namespace nd4j {
                 std::vector<Nd4jLong> shapeVector(rank);
                 for (int e = 0; e < rank; e++)
                     shapeVector[e] = newShape[e+1];
+
+                nd4j_printf("Step %i\n", 10);
+
                 auto rawPtr = (void *)flatArray->buffer()->data();
+
+                nd4j_printf("Step %i\n", 20);
+
                 auto longPtr = reinterpret_cast<Nd4jLong *>(rawPtr);
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
                 auto offsets = new Nd4jLong[length+1];
