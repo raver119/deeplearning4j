@@ -63,8 +63,6 @@ namespace nd4j {
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
                 auto offsets = new Nd4jLong[length+1];
 
-                nd4j_printf("Buffer length: %i; length: %lld\n", (int) flatArray->buffer()->size(), length);
-
                 #pragma _NEC novector
                 for (Nd4jLong e = 0; e <= length; e++) {
                     auto o = longPtr[e];
@@ -81,14 +79,10 @@ namespace nd4j {
                     auto end = offsets[e+1];
                     auto len = end - start;
 
-                    nd4j_printf("Start: %lld; End: %lld;\n", start, end);
-
                     if (len == 0) {
                         substrings[e] = std::string();
                         continue;
                     }
-
-                    nd4j_printf("------\n","");
 
                     auto c = (char *) malloc(len+1);
                     CHECK_ALLOC(c, "Failed temp allocation", len + 1);
