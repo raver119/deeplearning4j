@@ -56,13 +56,41 @@ public:
     int poolSize = 10;
 
     PlaygroundTests() {
-        printf("\n");
-        fflush(stdout);
     }
 };
 
 TEST_F(PlaygroundTests, test_avx) {
     nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
+}
+
+TEST_F(PlaygroundTests, test_broadcast_1) {
+    auto x = NDArrayFactory::create<float>('c', {4, 128, 1});
+    auto y = NDArrayFactory::create<float>('c', {768});
+    auto z = NDArrayFactory::create<float>('c', {4, 128, 768});
+    //auto e = NDArrayFactory::create<float>('c', {4, 128, 768});
+
+    x.assign(0.f);
+    y.assign(1.f);
+    z.assign(119.f);
+
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 2; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        x.applyTrueBroadcast(BroadcastOpsTuple::Multiply(), y, z);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+
+        if (e % 100 == 0)
+            nd4j_printf("Time: %lld us;\n", outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Average time: %lld us;\n", values[values.size() / 2]);
 }
 
 /*

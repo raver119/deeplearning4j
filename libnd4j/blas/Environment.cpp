@@ -57,7 +57,7 @@ namespace nd4j {
 
 #ifdef __NEC__
     // FIXME: it should be 8, once it stops crashing
-    _maxThreads = 4;
+    _maxThreads = 8;
 #endif
 
 #ifndef ANDROID
