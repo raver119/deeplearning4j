@@ -112,6 +112,14 @@ public class Python {
         return attr("list");
     }
 
+    public static PythonObject list(PythonObject[] pythonObjects){
+        PyObject list = PyList_New(pythonObjects.length);
+        for(int i = 0;i < pythonObjects.length; i++){
+            PyList_SetItem(list, i, pythonObjects[i].getNativePythonObject());
+        }
+        return new PythonObject(list);
+    }
+
     public static PythonObject dict(PythonObject pythonObject) {
         return attr("dict").call(pythonObject);
     }
@@ -170,6 +178,14 @@ public class Python {
 
     public static PythonObject tuple() {
         return attr("tuple").call();
+    }
+
+    public static PythonObject tuple(PythonObject[] pythonObjects){
+        PyObject tuple = PyTuple_New(pythonObjects.length);
+        for(int i = 0;i < pythonObjects.length; i++){
+            PyTuple_SetItem(tuple, i, pythonObjects[i].getNativePythonObject());
+        }
+        return new PythonObject(tuple);
     }
 
 
