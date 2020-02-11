@@ -74,10 +74,14 @@ namespace nd4j {
                     auto end = offsets[e+1];
                     auto len = end - start;
 
+                    nd4j_printf("Start: %lld; End: %lld;\n", start, end);
+
                     if (len == 0) {
                         substrings[e] = std::string();
                         continue;
                     }
+
+                    nd4j_printf("------\n","");
 
                     auto c = (char *) malloc(len+1);
                     CHECK_ALLOC(c, "Failed temp allocation", len + 1);
