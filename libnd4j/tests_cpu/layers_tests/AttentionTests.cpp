@@ -32,8 +32,6 @@ using namespace nd4j;
 class AttentionTests : public testing::Test {
 public:
     AttentionTests() {
-        printf("\n");
-        fflush(stdout);
     }
 };
 

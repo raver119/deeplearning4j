@@ -78,7 +78,7 @@ if(NOT CUDA_BLAS)
         include_directories("/opt/nec/ve/nlc/2.0.0/include")
 
         # FIXME: we don't want sequential version in master
-        SET(BLAS_LIBNAME "blas_sequential")
+        SET(BLAS_LIBNAME "blas_openmp")
         SET(CBLAS_LIBNAME "cblas")
 
         find_library(BLAS_LIBRARY ${BLAS_LIBNAME}

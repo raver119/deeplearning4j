@@ -34,8 +34,6 @@ class DeclarableOpsTests19 : public testing::Test {
 public:
 
     DeclarableOpsTests19() {
-        printf("\n");
-        fflush(stdout);
     }
 };
 

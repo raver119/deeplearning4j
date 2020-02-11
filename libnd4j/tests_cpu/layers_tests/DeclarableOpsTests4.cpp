@@ -32,9 +32,6 @@ class DeclarableOpsTests4 : public testing::Test {
 public:
 
     DeclarableOpsTests4() {
-        printf("\n");
-        fflush(stdout);
-
         nd4j::ops::adjust_hue op0;
         nd4j::ops::adjust_saturation op1;
     }
@@ -45,9 +42,6 @@ class TypedDeclarableOpsTests4 : public testing::Test {
 public:
 
     TypedDeclarableOpsTests4() {
-        printf("\n");
-        fflush(stdout);
-
         nd4j::ops::adjust_hue op0;
         nd4j::ops::adjust_saturation op1;
     }

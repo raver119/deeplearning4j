@@ -57,20 +57,32 @@ namespace nd4j {
                 std::vector<Nd4jLong> shapeVector(rank);
                 for (int e = 0; e < rank; e++)
                     shapeVector[e] = newShape[e+1];
+
                 auto rawPtr = (void *)flatArray->buffer()->data();
                 auto longPtr = reinterpret_cast<Nd4jLong *>(rawPtr);
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
                 auto offsets = new Nd4jLong[length+1];
+
+                #pragma _NEC novector
                 for (Nd4jLong e = 0; e <= length; e++) {
-                    auto o = longPtr[e];nd4j_printf("Printf %lld\n", o);
+                    auto o = longPtr[e];
+                    //nd4j_printf("Printf %lld\n", o);
                     // FIXME: BE vs LE on partials
                     //auto v = canKeep ?  o : BitwiseUtils::swap_bytes<Nd4jLong>(o);
                     offsets[e] = o;
                 }
+
+
+                #pragma _NEC novector
                 for (Nd4jLong e = 0; e < length; e++) {
                     auto start = offsets[e];
                     auto end = offsets[e+1];
                     auto len = end - start;
+
+                    if (len == 0) {
+                        substrings[e] = std::string();
+                        continue;
+                    }
 
                     auto c = (char *) malloc(len+1);
                     CHECK_ALLOC(c, "Failed temp allocation", len + 1);
