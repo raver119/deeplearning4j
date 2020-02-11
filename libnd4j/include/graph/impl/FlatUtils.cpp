@@ -58,6 +58,7 @@ namespace nd4j {
                 for (int e = 0; e < rank; e++)
                     shapeVector[e] = newShape[e+1];
 
+                nd4j_printf("Buffer length: %i\n", (int) flatArray->buffer()->size());
                 auto rawPtr = (void *)flatArray->buffer()->data();
                 auto longPtr = reinterpret_cast<Nd4jLong *>(rawPtr);
                 auto charPtr = reinterpret_cast<char *>(longPtr + length + 1);
