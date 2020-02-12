@@ -339,6 +339,30 @@ namespace samediff {
 		return 1;
 	}
 
+#ifdef __NEC__
+
+    std::mutex Threads::gThreadmutex;
+	uint64_t Threads::_nFreeThreads = nd4j::Environment::getInstance()->maxThreads(); 
+
+     bool   Threads::tryAcquire(int numThreads){ 
+		 std::lock_guard<std::mutex> lock( gThreadmutex );
+		 auto nThreads = _nFreeThreads - numThreads; 
+		 if(nThreads >= 1){
+			 _nFreeThreads = nThreads;
+             
+			 return true;
+		 }
+		 return false;
+	 }
+
+	 bool  Threads::freeThreads(int numThreads){
+		 std::lock_guard<std::mutex> lock( gThreadmutex );
+         _nFreeThreads += numThreads;
+		 // check if correct number of threads
+		 return _nFreeThreads > nd4j::Environment::getInstance()->maxThreads();
+	 }
+#endif
+
 	int Threads::parallel_tad(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, uint32_t numThreads) {
 		if (start > stop)
 			throw std::runtime_error("Threads::parallel_for got start > stop");
@@ -358,22 +382,30 @@ namespace samediff {
 		}
 
 #ifdef __NEC__
-		auto span = delta / numThreads;
+		
+		if (tryAcquire(numThreads)) {
+			auto span = delta / numThreads;
+			#pragma omp parallel for num_threads(numThreads)
+		    for (int e = 0; e < numThreads; e++) {
+			     auto start_ = span * e + start;
+			     auto stop_ = start_ + span;
 
-#pragma omp parallel for num_threads(numThreads)
-		for (int e = 0; e < numThreads; e++) {
-			auto start_ = span * e + start;
-			auto stop_ = start_ + span;
+			     if (e == numThreads - 1)
+				     stop_ = stop;
 
-			if (e == numThreads - 1)
-				stop_ = stop;
-
-			function(e, start_, stop_, increment);
+			    function(e, start_, stop_, increment);
+		    }
+			freeThreads(numThreads);
+			return numThreads;
 		}
 
-		return numThreads;
+     	// if there were no threads available - we'll execute function right within current thread
+		function(0, start, stop, increment);
+		// we tell that parallelism request declined
+		return 1;
 #else
 
+        nd4j::Environment::getInstance()->maxThreads();
 		auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 			// if we got our threads - we'll run our jobs here
@@ -471,15 +503,24 @@ namespace samediff {
 		else {
 #ifdef __NEC__
 
-#pragma omp parallel for num_threads(numThreads)
+		if (tryAcquire(numThreads)) {
+			#pragma omp parallel for num_threads(numThreads)
 			for (int e = 0; e < numThreads; e++) {
 				auto threadId = numThreads - e - 1;
 				auto span = Span2::build(splitLoop, threadId, numThreads, startX, stopX, incX, startY, stopY, incY);
 
 				function(e, span.startX(), span.stopX(), span.incX(), span.startY(), span.stopY(), span.incY());
 			}
-
+			freeThreads(numThreads);
 			return numThreads;
+		}
+
+     	// if there were no threads available - we'll execute function right within current thread
+		function(0, startX, stopX, incX, startY, stopY, incY);
+
+		// we tell that parallelism request declined
+		return 1;
+
 #else
 
 			auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads);
@@ -535,17 +576,27 @@ namespace samediff {
 		}
 
 #ifdef __NEC__
-		auto splitLoop = ThreadsHelper::pickLoop3d(numThreads, itersX, itersY, itersZ);
 
-#pragma omp parallel for num_threads(numThreads)
-		for (int e = 0; e < numThreads; e++) {
-			auto thread_id = numThreads - e - 1;
-			auto span = Span3::build(splitLoop, thread_id, numThreads, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
+		if (tryAcquire(numThreads)) {
+			auto splitLoop = ThreadsHelper::pickLoop3d(numThreads, itersX, itersY, itersZ);
 
-			function(e, span.startX(), span.stopX(), span.incX(), span.startY(), span.stopY(), span.incY(), span.startZ(), span.stopZ(), span.incZ());
+            #pragma omp parallel for num_threads(numThreads)
+		    for (int e = 0; e < numThreads; e++) {
+				auto thread_id = numThreads - e - 1;
+				auto span = Span3::build(splitLoop, thread_id, numThreads, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
+
+				function(e, span.startX(), span.stopX(), span.incX(), span.startY(), span.stopY(), span.incY(), span.startZ(), span.stopZ(), span.incZ());
+			}
+
+			freeThreads(numThreads);
+			return numThreads;
 		}
 
-		return numThreads;
+     	// if there were no threads available - we'll execute function right within current thread
+	    function(0, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
+
+		// we tell that parallelism request declined
+		return 1;
 #else
 
 		auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads);
@@ -584,10 +635,21 @@ namespace samediff {
 
 #ifdef __NEC__
 
-#pragma omp parallel for num_threads(numThreads)
-		for (int e = 0; e < numThreads; e++) {
-			function(e, numThreads);
+		if (tryAcquire(numThreads)) {
+			#pragma omp parallel for num_threads(numThreads)
+		    for (int e = 0; e < numThreads; e++) {
+			    function(e, numThreads);
+		    }
+
+			freeThreads(numThreads);
+			return numThreads;
 		}
+
+     	// if there's no threads available - we'll execute function sequentially one by one
+		for (uint64_t e = 0; e < numThreads; e++)
+			function(e, numThreads);
+
+		return numThreads;
 #else
 		auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads - 1);
 		if (ticket != nullptr) {
@@ -634,15 +696,20 @@ namespace samediff {
 		auto span = delta / numThreads;
 
 #ifdef __NEC__
+		if (tryAcquire(numThreads)) {
+			#pragma omp parallel for num_threads(numThreads)
+            for (int e = 0; e < numThreads; e++) {
+			    auto start_ = span * e + start;
+			    auto stop_ = span * (e + 1) + start;
 
-        #pragma omp parallel for num_threads(numThreads)
-        for (int e = 0; e < numThreads; e++) {
-			auto start_ = span * e + start;
-			auto stop_ = span * (e + 1) + start;
-
-			intermediatery[e] = function(e, start_, e == numThreads - 1 ? stop : stop_, increment);
+			    intermediatery[e] = function(e, start_, e == numThreads - 1 ? stop : stop_, increment);
+		    }
+			freeThreads(numThreads);
 		}
-
+        else{
+			     	// if there were no thre ads available - we'll execute function right within current thread
+            return	function(0, start, stop, increment);
+		}
 #else
         auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads - 1);
         if (ticket == nullptr)
@@ -692,12 +759,19 @@ namespace samediff {
 
 #ifdef __NEC__
 
-        #pragma omp parallel for num_threads(numThreads)
-        for (int e = 0; e < numThreads; e++) {
-			auto start_ = span * e + start;
-			auto stop_ = span * (e + 1) + start;
+        if (tryAcquire(numThreads)) {
+			#pragma omp parallel for num_threads(numThreads)
+        	for (int e = 0; e < numThreads; e++) {
+				auto start_ = span * e + start;
+				auto stop_ = span * (e + 1) + start;
 
-			intermediatery[e] = function(e, start_, e == numThreads - 1 ? stop : stop_, increment);
+				intermediatery[e] = function(e, start_, e == numThreads - 1 ? stop : stop_, increment);
+			}
+			freeThreads(numThreads);
+		}
+        else{
+			     	// if there were no thre ads available - we'll execute function right within current thread
+            return	function(0, start, stop, increment);
 		}
 
 #else
@@ -745,7 +819,7 @@ namespace samediff {
 			return 1;
 		}
 		int numThreads = 0;
-
+        // todo check this for NEC
 		int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
 
 		if (adjusted_numThreads > delta)
@@ -802,11 +876,19 @@ namespace samediff {
 		thread_spans.emplace_back(begin, stop);
 
 #ifdef __NEC__
-#pragma omp parallel for num_threads(numThreads)
-		for (size_t j = 0; j < thread_spans.size(); j++) {
-			function(j, thread_spans[j].first, thread_spans[j].second, increment);
+        if (tryAcquire(numThreads)) {
+			#pragma omp parallel for num_threads(numThreads)
+		    for (size_t j = 0; j < thread_spans.size(); j++) {
+			    function(j, thread_spans[j].first, thread_spans[j].second, increment);
+	    	}
+			freeThreads(numThreads);
+			return numThreads;
 		}
-		return numThreads;
+
+     	// if there were no threads available - we'll execute function right within current thread
+		function(0, start, stop, increment);
+		// we tell that parallelism request declined
+		return 1;
 
 #else
 		auto ticket = samediff::ThreadPool::getInstance()->tryAcquire(numThreads);
