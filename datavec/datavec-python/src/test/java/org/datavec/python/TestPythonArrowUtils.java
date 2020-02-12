@@ -19,10 +19,13 @@ package org.datavec.python;
 import org.bytedeco.arrow.Field;
 import org.bytedeco.arrow.FieldVector;
 import org.bytedeco.arrow.Schema;
+import org.datavec.arrow.table.column.impl.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+
+import java.util.Arrays;
 
 import static org.bytedeco.arrow.global.arrow.*;
 
@@ -61,6 +64,7 @@ public class TestPythonArrowUtils {
                 new Field("j", float16()),
                 new Field("k", float32()),
                 new Field("l", float64()),
+                new Field("m", binary()),
         };
         for (Field field: fields){
             PythonObject pyArrowField = PythonArrowUtils.getPyArrowField(field);
@@ -85,6 +89,7 @@ public class TestPythonArrowUtils {
                 new Field("j", float16()),
                 new Field("k", float32()),
                 new Field("l", float64()),
+                new Field("m", binary()),
         };
         Schema schema = new Schema(new FieldVector(fields));
         PythonObject pySchema = PythonArrowUtils.getPyArrowSchema(schema);
@@ -95,6 +100,12 @@ public class TestPythonArrowUtils {
             Assert.assertEquals(fields[i].name(), fields2[i].name());
             Assert.assertEquals(fields[i].type(), fields2[i].type());
         }
+    }
+
+    @Test
+    public void testTableConversion() throws PythonException{
+        new DoubleColumn("double", new Double[]{1.0});
+
     }
 
 }

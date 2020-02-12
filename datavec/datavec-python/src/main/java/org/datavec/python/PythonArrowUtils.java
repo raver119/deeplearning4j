@@ -17,10 +17,8 @@
 
 package org.datavec.python;
 
-import org.bytedeco.arrow.DataType;
-import org.bytedeco.arrow.Field;
-import org.bytedeco.arrow.FieldVector;
-import org.bytedeco.arrow.Schema;
+import org.bytedeco.arrow.*;
+import org.datavec.arrow.table.DataVecTable;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import static org.bytedeco.arrow.global.arrow.*;
@@ -29,7 +27,7 @@ public class PythonArrowUtils {
 
     static {
         try{
-            importPyArraow().del();  // ensures that we are loading pyarrow's binary, not javacpp's
+            new Field("x", int32());
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -188,6 +186,23 @@ public class PythonArrowUtils {
         schemaType.del();
         pyarrow.del();
         return new Schema(new FieldVector(fields));
+    }
+
+    public static PythonObject getPyArrowTable(DataVecTable table) throws PythonException{
+        PythonObject d = Python.dict();
+        for(int i = 0; i < table.numColumns(); i++){
+            PythonObject colName = new PythonObject(table.columnNameAt(i));
+            PythonObject colArr = new PythonObject(table.column(i).toNdArray());
+            d.set(colName, colArr);
+            //colName.del();
+            //colArr.del();
+        }
+        PythonObject pyarrow = importPyArraow();
+        PythonObject tableF = pyarrow.attr("table");
+        PythonObject pyTable = tableF.call(d);
+        pyarrow.del();
+        tableF.del();
+        return pyTable;
     }
 
 }
