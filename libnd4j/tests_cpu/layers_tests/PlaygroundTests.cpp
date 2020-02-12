@@ -70,9 +70,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::vector<NDArray*> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {4, 128, 1});
+        aX[e] = NDArrayFactory::create_<float>('c', {64, 128, 1});
         aY[e] = NDArrayFactory::create_<float>('c', {768});
-        aZ[e] = NDArrayFactory::create_<float>('c', {4, 128, 768});
+        aZ[e] = NDArrayFactory::create_<float>('c', {64, 128, 768});
 
         aX[e]->assign(119 * (e+1));
         aY[e]->assign(119 * (e+3));
