@@ -83,9 +83,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::vector<Nd4jLong> values;
 
     for (int e = 0; e < 1000; e++) {
-        auto x = aX[e % pool];
-        auto y = aY[e % pool];
-        auto z = aZ[e % pool];
+        auto x = aX[e < pool ? e : e % pool];
+        auto y = aY[e < pool ? e : e % pool];
+        auto z = aZ[e < pool ? e : e % pool];
 
         auto timeStart = std::chrono::system_clock::now();
 
