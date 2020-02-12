@@ -64,33 +64,47 @@ TEST_F(PlaygroundTests, test_avx) {
 }
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
-    auto x = NDArrayFactory::create<float>('c', {4, 128, 1});
-    auto y = NDArrayFactory::create<float>('c', {768});
-    auto z = NDArrayFactory::create<float>('c', {4, 128, 768});
-    //auto e = NDArrayFactory::create<float>('c', {4, 128, 768});
+    int pool = 500;
+    std::vector<NDArray*> aX(pool);
+    std::vector<NDArray*> aY(pool);
+    std::vector<NDArray*> aZ(pool);
 
-    x.assign(0.f);
-    y.assign(1.f);
-    z.assign(119.f);
+    for (int e = 0; e < pool; e++) {
+        aX[e] = NDArrayFactory::create_<float>('c', {4, 128, 1});
+        aY[e] = NDArrayFactory::create_<float>('c', {768});
+        aZ[e] = NDArrayFactory::create_<float>('c', {4, 128, 768});
+
+        aX[e]->assign(119 * (e+1));
+        aY[e]->assign(119 * (e+3));
+    }
+
+
 
     std::vector<Nd4jLong> values;
 
-    for (int e = 0; e < 2; e++) {
+    for (int e = 0; e < 1000; e++) {
+        auto x = aX[e % pool];
+        auto y = aY[e % pool];
+        auto z = aZ[e % pool];
+
         auto timeStart = std::chrono::system_clock::now();
 
-        x.applyTrueBroadcast(BroadcastOpsTuple::Multiply(), y, z);
+        x->applyTrueBroadcast(BroadcastOpsTuple::Multiply(), *y, *z);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
         values.emplace_back(outerTime);
-
-        if (e % 100 == 0)
-            nd4j_printf("Time: %lld us;\n", outerTime);
     }
 
     std::sort(values.begin(), values.end());
 
-    nd4j_printf("Average time: %lld us;\n", values[values.size() / 2]);
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+
+    for (int e = 0; e < pool; e++) {
+        delete aX[e];
+        delete aY[e];
+        delete aZ[e];
+    }
 }
 
 /*
