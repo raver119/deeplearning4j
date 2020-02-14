@@ -63,6 +63,24 @@ TEST_F(PlaygroundTests, test_avx) {
     nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
 }
 
+TEST_F(PlaygroundTests, test_matmul_1) {
+    auto x = NDArrayFactory::create<float>('c', {512, 768});
+    auto y = NDArrayFactory::create<float>('c', {768, 768});
+    auto z = NDArrayFactory::create<float>('c', {512, 768});
+
+    x.linspace(1.0f, 0.3f);
+    y.linspace(1.0f, 0.2f);
+
+    nd4j::ops::matmul op;
+    auto timeStart = std::chrono::system_clock::now();
+
+    auto status = op.execute({&x, &y}, {&z});
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+
+    nd4j_printf("Time: %lld\n", outerTime);
+}
 
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
