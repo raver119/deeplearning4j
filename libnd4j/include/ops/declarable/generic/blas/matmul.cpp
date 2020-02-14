@@ -56,6 +56,12 @@ namespace nd4j {
             const int xLastButOneDim = transX ? -1 : -2;
             const int yLastButOneDim = transY ? -1 : -2;
 
+            nd4j_printf("Node id: %i\n", block.nodeId());
+            x->printShapeInfo("X");
+            y->printShapeInfo("Y");
+            z->printShapeInfo("Z");
+            nd4j_printf("transX: %i; transY: %i\n", transX, transY);
+
             // ******* input validation ******* //
             REQUIRE_TRUE(xRank > 0 && yRank > 0, 0,
                          "MATMUL OP: input arrays must have rank bigger than 0 (should not be scalars), but got instead: x rank = %i, y rank = %i !",

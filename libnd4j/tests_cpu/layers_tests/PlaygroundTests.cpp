@@ -74,7 +74,7 @@ TEST_F(PlaygroundTests, test_matmul_1) {
     nd4j::ops::matmul op;
     auto timeStart = std::chrono::system_clock::now();
 
-    auto status = op.execute({&x, &y}, {&z});
+    auto status = op.execute({&x, &y}, {&z}, {0, 0});
 
     auto timeEnd = std::chrono::system_clock::now();
     auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
