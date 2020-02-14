@@ -235,11 +235,14 @@ void softMaxForVector(nd4j::LaunchContext * context, const NDArray& input, NDArr
                 T max = -DataTypeUtils::max<T>();
                 T sum(0.f);
 
+#ifndef __NEC__
                 #pragma omp simd reduction(maxT:max)
+#endif
                 for (uint j = 0; j < tadLen; ++j)
                     max = nd4j::math::nd4j_max<T>(max, inBuff[j]);
-
+#ifndef __NEC__
                 #pragma omp simd reduction(sumT:sum)
+#endif
                 for (uint j = 0; j < tadLen; ++j) {
                     T temp = nd4j::math::nd4j_exp<T, T>(inBuff[j] - max);
                     outBuff[j] = temp;
