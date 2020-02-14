@@ -61,13 +61,13 @@ namespace nd4j {
             }
 
             auto source = inRank == 4?image->reshape(image->ordering(), {image->sizeAt(0), image->sizeAt(1), image->sizeAt(2), image->sizeAt(3)}):image->reshape(image->ordering(), {1, image->sizeAt(0), image->sizeAt(1), image->sizeAt(2)});
-            auto target = inRank == 4?output->reshape(output->ordering(), {output->sizeAt(0), output->sizeAt(1), output->sizeAt(2), output->sizeAt(3)}):output->reshape(output->ordering(), {1, output->sizeAt(0), output->sizeAt(1), output->sizeAt(2)});
+            auto target = inRank == 4?output->reshape(output->ordering(), {output->sizeAt(0), output->sizeAt(1), output->sizeAt(2), output->sizeAt(3)}, false) : output->reshape(output->ordering(), {1, output->sizeAt(0), output->sizeAt(1), output->sizeAt(2)}, false);
 
             return helpers::resizeAreaFunctor(block.launchContext(), &source, width, height, alignCorners, &target);
         }
 
         DECLARE_SHAPE_FN(resize_area) {
-            auto shapeList = SHAPELIST(); 
+            auto shapeList = SHAPELIST();
             auto in = inputShape->at(0);
 
             Nd4jLong* outputShape;
@@ -80,8 +80,8 @@ namespace nd4j {
                              "resize_area: Resize params is a pair of values, not %i.", newImageSize->lengthOf());
                 REQUIRE_TRUE(block.numI() <= 1, 0,
                              "resize_area: Resize params already given by the second param. Int params are expensive.");
-                width = newImageSize->e<int>(0);
-                height = newImageSize->e<int>(1);
+                width = newImageSize->e<int>(1);
+                height = newImageSize->e<int>(0);
             }
             else {
                 REQUIRE_TRUE(block.numI() == 2, 0, "resize_area: Resize params ommited as pair ints nor int tensor.");
@@ -90,18 +90,18 @@ namespace nd4j {
             }
 
             REQUIRE_TRUE(inRank == 4 || inRank == 3, 0, "resize_area: Source tensor should have rank 4, but %i given.", inRank);
-            
+
             ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(inRank), Nd4jLong);
             outputShape[0] = inRank;
             if (inRank == 4) {
                 outputShape[1] = in[1];
-                outputShape[2] = width;
-                outputShape[3] = height;
+                outputShape[2] = height;
+                outputShape[3] = width;
                 outputShape[4] = in[4];
             }
             else {
-                outputShape[1] = width;
-                outputShape[2] = height;
+                outputShape[1] = height;
+                outputShape[2] = width;
                 outputShape[3] = in[3];
             }
             ShapeUtils::updateStridesAndType(outputShape, DataType::FLOAT32, shape::order(in));
