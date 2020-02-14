@@ -186,23 +186,24 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
 */
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
-    int pool = 500;
+    int pool = 1000;
     std::vector<NDArray*> aX(pool);
     std::vector<NDArray*> aY(pool);
     std::vector<NDArray*> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {64, 128, 1});
-        aY[e] = NDArrayFactory::create_<float>('c', {768});
-        aZ[e] = NDArrayFactory::create_<float>('c', {64, 128, 768});
+        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create_<float>('c', {3072});
+        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
 
         aX[e]->assign(119 * (e+1));
         aY[e]->assign(119 * (e+3));
     }
 
-
-
     std::vector<Nd4jLong> values;
+    Context ctx(1);
+
+    nd4j::ops::biasadd op;
 
     for (int e = 0; e < 1000; e++) {
         auto x = aX[e < pool ? e : e % pool];
@@ -211,7 +212,8 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
 
         auto timeStart = std::chrono::system_clock::now();
 
-        x->applyTrueBroadcast(BroadcastOpsTuple::Multiply(), *y, *z);
+        //op.execute({x, y}, {z});
+        nd4j::ops::helpers::addBias(ctx, *x, *y, *z, false);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
