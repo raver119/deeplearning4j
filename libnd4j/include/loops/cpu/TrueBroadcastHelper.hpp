@@ -14,9 +14,9 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-//
-// @author Yurii Shyrma (iuriish@yahoo.com)
-//
+ //
+ // @author Yurii Shyrma (iuriish@yahoo.com)
+ //
 
 #include <loops/TrueBroadcastHelper.h>
 #include <ops/ops.h>
@@ -24,207 +24,268 @@
 
 using namespace simdOps;
 
-namespace nd4j    {
-namespace helpers {
+namespace nd4j {
+    namespace helpers {
 
-////////////////////////////////////////////////////////////////////////
-template <typename X, typename  Y, typename Z>
-template<typename OpType>
-void TrueBroadcastHelper<X, Y, Z>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+        ////////////////////////////////////////////////////////////////////////
+        template <typename X, typename  Y, typename Z>
+        template<typename OpType>
+        void TrueBroadcastHelper<X, Y, Z>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
 
-    const X* x = reinterpret_cast<X*>(xArr.getBuffer());
-    const Y* y = reinterpret_cast<Y*>(yArr.getBuffer());
-    	  Z* z = reinterpret_cast<Z*>(zArr.getBuffer());
 
-    const auto xShapeInfo = xArr.getShapeInfo();
-    const auto yShapeInfo = yArr.getShapeInfo();
-    const auto zShapeInfo = zArr.getShapeInfo();
+            const X* x = reinterpret_cast<X*>(xArr.getBuffer());
+            const Y* y = reinterpret_cast<Y*>(yArr.getBuffer());
+            Z* z = reinterpret_cast<Z*>(zArr.getBuffer());
 
-    const int xRank = xArr.rankOf();
-    const int yRank = yArr.rankOf();
-    const int zRank = zArr.rankOf();
+            const auto xShapeInfo = xArr.getShapeInfo();
+            const auto yShapeInfo = yArr.getShapeInfo();
+            const auto zShapeInfo = zArr.getShapeInfo();
 
-    const Nd4jLong zLen  = zArr.lengthOf();
+            const int xRank = xArr.rankOf();
+            const int yRank = yArr.rankOf();
+            const int zRank = zArr.rankOf();
 
-    auto func = PRAGMA_THREADS_FOR {
-        std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
+            bool bSpecialCase = (1 == xArr.ews() && 'c' == xArr.ordering() &&
+                1 == yArr.ews() && 'c' == yArr.ordering() &&
+                1 == zArr.ews() && 'c' == zArr.ordering());
 
-        for (auto i = start; i < stop; ++i) {
-
-            shape::index2coords(i, zShapeInfo, zCoords.data());
-
-            for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
-
-                if (ix >= 0) {
-                    if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
-                        xCoords[ix--] = zCoords[iz];
-                    } else {
-                        xCoords[ix--] = 0;
-                    }
-                }
-
-                if (iy >= 0) {
-                    if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
-                        yCoords[iy--] = zCoords[iz];
-                    } else {
-                        yCoords[iy--] = 0;
-                    }
-                }
+            if (bSpecialCase && yArr.isColumnVector() && 1 == xArr.sizeAt(-1) ) {
+                auto yLen = (uint32_t)yArr.lengthOf();
+                auto func = PRAGMA_THREADS_FOR{
+                   for (uint32_t i = start; i < stop; i++) {
+                       auto rZ = z + (i * yLen);
+                       auto v = x[i];
+                       for (uint32_t j = 0; j < yLen; j++) {
+                            rZ[j] = OpType::op(v, y[j]);
+                       }
+                   }
+                };
+                samediff::Threads::parallel_tad(func, 0, xArr.lengthOf());
+                return;
             }
 
-            const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
-            const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
-            const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
 
-            z[zOffset] = OpType::op(x[xOffset], y[yOffset]);
-        }
-    };
+            auto yShapeInt = yArr.getShapeAsVectorInt();
+            auto xShapeInt = xArr.getShapeAsVectorInt();
+            auto nCountY = std::count_if(yShapeInt.cbegin(), yShapeInt.cend(), [](int i) { return i == 1; });
+            auto nCountX = std::count_if(xShapeInt.cbegin(), xShapeInt.cend(), [](int i) { return i == 1; });
 
-    samediff::Threads::parallel_for(func, 0, zLen);
-}
+            bool bSpecialCase2 = (xRank == zRank && yRank == zRank && 1 == xArr.sizeAt(-1) && 1 == yArr.sizeAt(-2) && 1 == nCountY && 1 == nCountX);
 
-template <typename X, typename  Y, typename Z>
-void TrueBroadcastHelper<X, Y, Z>::exec(const nd4j::broadcast::Ops opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
-	DISPATCH_BY_OPNUM_TTT(exec, PARAMS(xArr, yArr, zArr), BROADCAST_OPS);
-}
+            if (bSpecialCase && bSpecialCase2) {
 
-////////////////////////////////////////////////////////////////////////
-template <typename X, typename  Z>
-template<typename OpType>
-void TrueBroadcastBoolHelper<X, Z>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+                int zDim1 = zArr.sizeAt(-2);
+                int zDim2 = zArr.sizeAt(-1);
 
-    const X* x = reinterpret_cast<X*>(xArr.getBuffer());
-    const X* y = reinterpret_cast<X*>(yArr.getBuffer());
-    	  Z* z = reinterpret_cast<Z*>(zArr.getBuffer());
+                int nLen = zArr.lengthOf() / yArr.sizeAt(-1);
 
-    const auto xShapeInfo = xArr.getShapeInfo();
-    const auto yShapeInfo = yArr.getShapeInfo();
-    const auto zShapeInfo = zArr.getShapeInfo();
+                auto func = PRAGMA_THREADS_FOR{
+                     for (uint32_t total = start; total < stop; total += increment) {
 
-    const int xRank = xArr.rankOf();
-    const int yRank = yArr.rankOf();
-    const int zRank = zArr.rankOf();
+                        uint32_t i = total / zDim1;
+                        uint32_t j = total % zDim1;
 
-    const Nd4jLong zLen  = zArr.lengthOf();
+                        uint32_t index = (i * zDim1) + j;
+                        auto rZ = z + (index * zDim2);
+                        auto rY = y + (i * zDim2);
+                        auto rX = x[index];
 
-    auto func = PRAGMA_THREADS_FOR {
-        std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
-
-        for (auto i = start; i < stop; ++i) {
-
-            shape::index2coords(i, zShapeInfo, zCoords.data());
-
-            for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
-
-                if (ix >= 0) {
-                    if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
-                        xCoords[ix--] = zCoords[iz];
-                    } else {
-                        xCoords[ix--] = 0;
+                        for (uint32_t n = 0; n < zDim2; n++) {
+                             rZ[n] = OpType::op(rX, rY[n]);
+                        }
                     }
-                }
-
-                if (iy >= 0) {
-                    if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
-                        yCoords[iy--] = zCoords[iz];
-                    } else {
-                        yCoords[iy--] = 0;
-                    }
-                }
+                };
+                samediff::Threads::parallel_tad(func, 0, nLen, 1);
+                return;
             }
 
-            const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
-            const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
-            const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
 
-            z[zOffset] = OpType::op(x[xOffset], y[yOffset], nullptr);
-        }
-    };
+            const Nd4jLong zLen = zArr.lengthOf();
+            auto func = PRAGMA_THREADS_FOR{
+                std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
 
-    samediff::Threads::parallel_for(func, 0, zLen);
-}
+                for (auto i = start; i < stop; ++i) {
 
-template <typename X, typename  Y>
-void TrueBroadcastBoolHelper<X, Y>::exec(const nd4j::broadcast::BoolOps opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
-	DISPATCH_BY_OPNUM_TT(exec, PARAMS(xArr, yArr, zArr), BROADCAST_BOOL_OPS);
-}
+                    shape::index2coords(i, zShapeInfo, zCoords.data());
 
-////////////////////////////////////////////////////////////////////////
-template <typename X>
-template<typename OpType>
-void TrueBroadcastIntHelper<X>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+                    for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
 
-    const X* x = reinterpret_cast<X*>(xArr.getBuffer());
-    const X* y = reinterpret_cast<X*>(yArr.getBuffer());
-    	  X* z = reinterpret_cast<X*>(zArr.getBuffer());
+                        if (ix >= 0) {
+                            if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
+                                xCoords[ix--] = zCoords[iz];
+                            }
+                             else {
+                              xCoords[ix--] = 0;
+                             }
+                        }
+                    
+                        if (iy >= 0) {
+                              if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
+                                  yCoords[iy--] = zCoords[iz];
+                              }
+                              else {
+                                  yCoords[iy--] = 0;
+                              }
+                          }
+                        }
 
-    const auto xShapeInfo = xArr.getShapeInfo();
-    const auto yShapeInfo = yArr.getShapeInfo();
-    const auto zShapeInfo = zArr.getShapeInfo();
-
-    const int xRank = xArr.rankOf();
-    const int yRank = yArr.rankOf();
-    const int zRank = zArr.rankOf();
-
-    const Nd4jLong zLen  = zArr.lengthOf();
-
-    auto func = PRAGMA_THREADS_FOR {
-        std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
-
-        for (auto i = start; i < stop; ++i) {
-
-            shape::index2coords(i, zShapeInfo, zCoords.data());
-
-            for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
-
-                if (ix >= 0) {
-                    if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
-                        xCoords[ix--] = zCoords[iz];
-                    } else {
-                        xCoords[ix--] = 0;
-                    }
+                        const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
+                        const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
+                        const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
+                        
+                        z[zOffset] = OpType::op(x[xOffset], y[yOffset]);
                 }
+            };
 
-                if (iy >= 0) {
-                    if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
-                        yCoords[iy--] = zCoords[iz];
-                    } else {
-                        yCoords[iy--] = 0;
-                    }
-                }
-            }
-
-            const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
-            const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
-            const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
-
-            z[zOffset] = OpType::op(x[xOffset], y[yOffset]);
+            samediff::Threads::parallel_for(func, 0, zLen);
         }
-    };
 
-    samediff::Threads::parallel_for(func, 0, zLen);
-}
+        template <typename X, typename  Y, typename Z>
+        void TrueBroadcastHelper<X, Y, Z>::exec(const nd4j::broadcast::Ops opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+            DISPATCH_BY_OPNUM_TTT(exec, PARAMS(xArr, yArr, zArr), BROADCAST_OPS);
+        }
 
-template <typename X>
-void TrueBroadcastIntHelper<X>::exec(const nd4j::broadcast::IntOps opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
-	DISPATCH_BY_OPNUM_T(exec, PARAMS(xArr, yArr, zArr), BROADCAST_INT_OPS);
-}
+        ////////////////////////////////////////////////////////////////////////
+        template <typename X, typename  Z>
+        template<typename OpType>
+        void TrueBroadcastBoolHelper<X, Z>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
 
-/*
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_0);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_1);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_2);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_3);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_4);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_5);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_6);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_7);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_8);
-BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_9);
+            const X* x = reinterpret_cast<X*>(xArr.getBuffer());
+            const X* y = reinterpret_cast<X*>(yArr.getBuffer());
+            Z* z = reinterpret_cast<Z*>(zArr.getBuffer());
 
-BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastBoolHelper, , LIBND4J_TYPES, BOOL_TYPES);
+            const auto xShapeInfo = xArr.getShapeInfo();
+            const auto yShapeInfo = yArr.getShapeInfo();
+            const auto zShapeInfo = zArr.getShapeInfo();
 
-BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastIntHelper, , INTEGER_TYPES);
-*/
-}
+            const int xRank = xArr.rankOf();
+            const int yRank = yArr.rankOf();
+            const int zRank = zArr.rankOf();
+
+            const Nd4jLong zLen = zArr.lengthOf();
+
+            auto func = PRAGMA_THREADS_FOR{
+                std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
+
+                for (auto i = start; i < stop; ++i) {
+
+                    shape::index2coords(i, zShapeInfo, zCoords.data());
+
+                    for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
+
+                        if (ix >= 0) {
+                            if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
+                                xCoords[ix--] = zCoords[iz];
+                            }
+                            else {
+                                xCoords[ix--] = 0;
+                            }
+                        }
+                
+                        if (iy >= 0) {
+                            if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
+                                yCoords[iy--] = zCoords[iz];
+                            }
+                            else {
+                                 yCoords[iy--] = 0;
+                            }
+                        }
+                }
+                
+                const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
+                const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
+                const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
+                
+                z[zOffset] = OpType::op(x[xOffset], y[yOffset], nullptr);
+                }
+            };
+
+            samediff::Threads::parallel_for(func, 0, zLen);
+        }
+
+        template <typename X, typename  Y>
+        void TrueBroadcastBoolHelper<X, Y>::exec(const nd4j::broadcast::BoolOps opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+            DISPATCH_BY_OPNUM_TT(exec, PARAMS(xArr, yArr, zArr), BROADCAST_BOOL_OPS);
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        template <typename X>
+        template<typename OpType>
+        void TrueBroadcastIntHelper<X>::exec(const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+
+            const X* x = reinterpret_cast<X*>(xArr.getBuffer());
+            const X* y = reinterpret_cast<X*>(yArr.getBuffer());
+            X* z = reinterpret_cast<X*>(zArr.getBuffer());
+
+            const auto xShapeInfo = xArr.getShapeInfo();
+            const auto yShapeInfo = yArr.getShapeInfo();
+            const auto zShapeInfo = zArr.getShapeInfo();
+
+            const int xRank = xArr.rankOf();
+            const int yRank = yArr.rankOf();
+            const int zRank = zArr.rankOf();
+
+            const Nd4jLong zLen = zArr.lengthOf();
+
+            auto func = PRAGMA_THREADS_FOR{
+                std::vector<Nd4jLong> xCoords(xArr.rankOf()), yCoords(yArr.rankOf()), zCoords(zArr.rankOf());
+
+                for (auto i = start; i < stop; ++i) {
+
+                    shape::index2coords(i, zShapeInfo, zCoords.data());
+
+                    for (int ix = xRank - 1, iy = yRank - 1, iz = zRank - 1; iz >= 0; --iz) {
+
+                        if (ix >= 0) {
+                            if (xShapeInfo[ix + 1] == zShapeInfo[iz + 1]) {
+                                xCoords[ix--] = zCoords[iz];
+                            }
+                            else {
+                                xCoords[ix--] = 0;
+                            }
+                        }
+                
+                        if (iy >= 0) {
+                            if (yShapeInfo[iy + 1] == zShapeInfo[iz + 1]) {
+                               yCoords[iy--] = zCoords[iz];
+                            }
+                            else {
+                               yCoords[iy--] = 0;
+                            }
+                        }
+                    }
+                
+                    const auto xOffset = shape::getOffset(xShapeInfo, xCoords.data());
+                    const auto yOffset = shape::getOffset(yShapeInfo, yCoords.data());
+                    const auto zOffset = shape::getOffset(zShapeInfo, zCoords.data());
+                    
+                    z[zOffset] = OpType::op(x[xOffset], y[yOffset]);
+                }
+            };
+
+            samediff::Threads::parallel_for(func, 0, zLen);
+        }
+
+        template <typename X>
+        void TrueBroadcastIntHelper<X>::exec(const nd4j::broadcast::IntOps opNum, const NDArray& xArr, const NDArray& yArr, NDArray& zArr) {
+            DISPATCH_BY_OPNUM_T(exec, PARAMS(xArr, yArr, zArr), BROADCAST_INT_OPS);
+        }
+
+        /*
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_0);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_1);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_2);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_3);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_4);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_5);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_6);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_7);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_8);
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_9);
+
+        BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastBoolHelper, , LIBND4J_TYPES, BOOL_TYPES);
+
+        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastIntHelper, , INTEGER_TYPES);
+        */
+    }
 }
