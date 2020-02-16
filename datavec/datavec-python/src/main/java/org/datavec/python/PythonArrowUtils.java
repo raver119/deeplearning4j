@@ -17,23 +17,56 @@
 
 package org.datavec.python;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.arrow.*;
+import org.bytedeco.javacpp.BytePointer;
+import org.bytedeco.javacpp.Loader;
 import org.datavec.arrow.table.DataVecTable;
+import org.nd4j.arrow.ByteDecoArrowSerde;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+
+import java.util.UUID;
 
 import static org.bytedeco.arrow.global.arrow.*;
 
+@Slf4j
 public class PythonArrowUtils {
 
     static {
-        try{
-            new Field("x", int32());
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+        init();
     }
+    private static String PYARROW = "pyarrow";
+    private static String PANDAS = "pandas";
+    private static String REQUIRED_PYARROW_VERSION = "0.15.1"; // TODO get version from pom.xml?
+    private static boolean init = false;
+
+    public static void init(){
+        // TODO: Find out why this works
+        INDArray dummyArr = Nd4j.rand(5);
+        new DoubleArray(new ArrowBuffer(new BytePointer(dummyArr.data().pointer()), dummyArr.data().length()));
+    }
+
     public static PythonObject importPyArraow() throws PythonException{
-        return Python.importModule("pyarrow");
+        try{
+            if (!PythonProcess.isPackageInstalled(PYARROW)){
+                log.info("PyArrow is not installed. Attempting to pip install pyarrow " + REQUIRED_PYARROW_VERSION);
+                PythonProcess.pipInstall(PYARROW, REQUIRED_PYARROW_VERSION);
+                PythonProcess.pipInstall(PANDAS);
+            }
+            else{
+                String pkgVersion = PythonProcess.getPackageVersion(PYARROW);
+                if (!pkgVersion.equals(REQUIRED_PYARROW_VERSION)) {
+                    log.info("Required pyarrow version " + REQUIRED_PYARROW_VERSION + " but current version is " + pkgVersion + ". Attempting reinstall...");
+                    PythonProcess.pipInstall(PYARROW, REQUIRED_PYARROW_VERSION);
+                    PythonProcess.pipInstall(PANDAS);
+                }
+            }
+        } catch(Exception e){
+            throw new PythonException("Error verifying/installing pyarrow package.", e);
+        }
+
+        return Python.importModule(PYARROW);
     }
 
     public static PythonObject getPyArrowArrayFromINDArray(INDArray arr) throws PythonException{
@@ -48,7 +81,7 @@ public class PythonArrowUtils {
     }
 
     public static INDArray getINDArrayFromPyArrowArray(PythonObject arr) throws PythonException{
-        PythonObject pyArrow = Python.importModule("pyarrow");
+        PythonObject pyArrow = Python.importModule(PYARROW);
         PythonObject arrayType = pyArrow.attr("Array");
         if (!Python.isinstance(arr, arrayType)){
             pyArrow.del();
@@ -64,17 +97,6 @@ public class PythonArrowUtils {
         npArr.del();
         return ret;
     }
-//    private static void installPyArrow() throws Exception{
-//        try{
-//            importPyArraow().del();
-//        }catch (PythonException pe){
-//            String python = Loader.load(org.bytedeco.cpython.python.class);
-//            ProcessBuilder pb = new ProcessBuilder(python, "-m", "pip", "install", "pyarrow==0.15.1");
-//            pb.inheritIO().start().waitFor();
-//            importPyArraow().del();
-//        }
-//    }
-
 
     public static PythonObject getPyArrowField(Field field) throws PythonException{
         String name = field.name();
@@ -188,14 +210,80 @@ public class PythonArrowUtils {
         return new Schema(new FieldVector(fields));
     }
 
+
+    public static PythonObject getPyArrowTable(Table table) throws PythonException{
+        PythonObject d = Python.dict();
+        Schema schema =table.schema();
+        Field[] fields = schema.fields().get();
+        for (int i = 0; i < fields.length; i++){
+            String colName = fields[i].name();
+            PythonObject pyColName = new PythonObject(colName);
+            ChunkedArray chunkedArray = table.column(i);
+            INDArray arr = Nd4j.create(ByteDecoArrowSerde.fromArrowBuffer(chunkedArray.chunk(0).null_bitmap(), fields[i].type()));
+            PythonObject pyArr = new PythonObject(arr);
+            d.set(pyColName, pyArr);
+        }
+        PythonObject pyarrow = importPyArraow();
+        PythonObject tableF = pyarrow.attr("table");
+        PythonObject pyTable = tableF.call(d);
+        pyarrow.del();
+        tableF.del();
+        return pyTable;
+    }
+
+    public static Table getTableFromPythonObject(PythonObject pyTable) throws PythonException{
+        PythonObject pyarrow = importPyArraow();
+        PythonObject tableType = pyarrow.attr("Table");
+        if (!Python.isinstance(pyTable, tableType)){
+            if (Python.isinstance(pyTable, Python.dictType())){
+                PythonObject orig = pyTable;
+                PythonObject tableF = pyarrow.attr("table");
+                pyTable = tableF.call(pyTable);
+                orig.del();
+                tableF.del();
+            }
+            else {
+                throw new PythonException("Expected pyarrow.lib.Table or dict, received " + Python.type(pyTable));
+            }
+        }
+        PythonObject pySchema = pyTable.attr("schema");
+        PythonObject pyShemaSize = Python.len(pySchema);
+        Field[] fields  = new Field[pyShemaSize.toInt()];
+        Array[] arrays = new FlatArray[fields.length];
+        String origContext = Python.getCurrentContext();
+        String tempContext = 'a' + UUID.randomUUID().toString().replace('-','_' );
+        Python.setContext(tempContext);
+        for (int i = 0; i < fields.length; i++){
+            Python.setVariable("col", pyTable.get(i));
+            Python.exec("arr=col.to_pandas().to_numpy()");
+            INDArray indArray = Python.getVariable("arr").toNumpy().getNd4jArray();
+            fields[i] = getFieldFromPythonObject(pySchema.get(i));
+            arrays[i] = new DoubleArray(new ArrowBuffer(new BytePointer(indArray.data().pointer()), indArray.data().length()));
+        }
+
+        Python.setContext(origContext);
+        Python.deleteContext(tempContext);
+        FieldVector fieldVector = new FieldVector(fields);
+        Schema schema = new Schema(fieldVector);
+        ArrayVector arrayVector = new ArrayVector(arrays);
+        Table ret = Table.Make(schema, arrayVector);
+        pySchema.del();
+        pyShemaSize.del();
+        tableType.del();
+        pyarrow.del();
+        return ret;
+
+    }
+
     public static PythonObject getPyArrowTable(DataVecTable table) throws PythonException{
+
         PythonObject d = Python.dict();
         for(int i = 0; i < table.numColumns(); i++){
             PythonObject colName = new PythonObject(table.columnNameAt(i));
             PythonObject colArr = new PythonObject(table.column(i).toNdArray());
             d.set(colName, colArr);
-            //colName.del();
-            //colArr.del();
+            colName.del();
+            colArr.del();
         }
         PythonObject pyarrow = importPyArraow();
         PythonObject tableF = pyarrow.attr("table");

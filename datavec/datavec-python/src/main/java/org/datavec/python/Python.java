@@ -125,7 +125,7 @@ public class Python {
     }
 
     public static PythonObject dict() {
-        return attr("dict").call();
+        return new PythonObject(PyDict_New());
     }
 
     public static PythonObject dictType() {
@@ -282,5 +282,11 @@ public class Python {
         return PythonGIL.lock();
     }
 
+    public static void setVariable(String name, PythonObject value) throws PythonException{
+        PythonExecutioner.setVariable(name, value);
+    }
+    public static PythonObject getVariable(String name){
+        return PythonExecutioner.getVariable(name);
+    }
 
 }

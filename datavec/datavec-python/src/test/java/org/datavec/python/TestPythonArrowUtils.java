@@ -19,18 +19,22 @@ package org.datavec.python;
 import org.bytedeco.arrow.Field;
 import org.bytedeco.arrow.FieldVector;
 import org.bytedeco.arrow.Schema;
+import org.bytedeco.arrow.Table;
 import org.datavec.api.transform.ColumnType;
 import org.datavec.arrow.table.DataVecTable;
 import org.datavec.arrow.table.column.DataVecColumn;
 import org.datavec.arrow.table.column.impl.*;
 import org.datavec.arrow.table.row.Row;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.bytedeco.arrow.global.arrow.*;
 import static org.junit.Assert.assertEquals;
@@ -116,58 +120,58 @@ public class TestPythonArrowUtils {
     }
 
     @Test
-    public void testTable() {
-        int count = 0;
-        ColumnType[] columnTypes = new ColumnType[] {
-                ColumnType.Integer,
-                ColumnType.Double,
-                ColumnType.Float,
-                ColumnType.Boolean,
-                ColumnType.String
-        };
+    public void testTables()throws Exception{
+        PythonArrowUtils.init();
+        Map<String, INDArray> map = new HashMap<>();
+        map.put("a", Nd4j.zeros(5));
+        map.put("b", Nd4j.ones(5));
+        map.put("c", Nd4j.rand(5));
 
-        DataVecColumn[] dataVecColumns = new DataVecColumn[columnTypes.length];
-        DataVecColumn[] dataVecColumnsList = new DataVecColumn[columnTypes.length];
+        PythonObject d = new PythonObject(map);
 
-        for(ColumnType columnType : columnTypes) {
-            switch(columnType) {
-                case Double:
-                    dataVecColumns[count] = new DoubleColumn(columnType.name().toLowerCase(),new Double[]{1.0});
-                    dataVecColumnsList[count] = new DoubleColumn(columnType.name().toLowerCase(), Arrays.asList(1.0));
-                    break;
-                case Float:
-                    dataVecColumns[count] = new FloatColumn(columnType.name().toLowerCase(),new Float[]{1.0f});
-                    dataVecColumnsList[count] = new FloatColumn(columnType.name().toLowerCase(),Arrays.asList(1.0f));
-                    break;
-                case Boolean:
-                    dataVecColumns[count] = new BooleanColumn(columnType.name().toLowerCase(),new Boolean[]{true});
-                    dataVecColumnsList[count] = new BooleanColumn(columnType.name().toLowerCase(),Arrays.asList(true));
-                    break;
-                case String:
-                    dataVecColumns[count] = new StringColumn(columnType.name().toLowerCase(),new String[]{"1.0"});
-                    dataVecColumnsList[count] = new StringColumn(columnType.name().toLowerCase(),Arrays.asList("1.0"));
-                    break;
-                case Long:
-                    dataVecColumns[count] = new LongColumn(columnType.name().toLowerCase(),new Long[]{1L});
-                    dataVecColumnsList[count] = new LongColumn(columnType.name().toLowerCase(),Arrays.asList(1L));
-                    break;
-                case Integer:
-                    dataVecColumns[count] = new IntColumn(columnType.name().toUpperCase(),new Integer[]{1});
-                    dataVecColumnsList[count] = new IntColumn(columnType.name().toUpperCase(),Arrays.asList(1));
-                    break;
-
-            }
-
-            assertEquals(1,dataVecColumns[count].rows());
-            assertEquals("Column type of " + columnType + " has wrong number of rows",1,dataVecColumns[count].rows());
-            count++;
-        }
-
-        DataVecTable dataVecTable1 = DataVecTable.create(dataVecColumns);
-        assertEquals(columnTypes.length,dataVecTable1.numColumns());
-        DataVecTable dataVecTableList = DataVecTable.create(dataVecColumnsList);
-
-
+        Table table = PythonArrowUtils.getTableFromPythonObject(d);
     }
+
+  @Test
+    public void testTable() throws Exception{
+        PythonArrowUtils.init();
+      ColumnType[] columnTypes = new ColumnType[] {
+              ColumnType.Integer,
+              ColumnType.Double,
+              ColumnType.Float,
+              ColumnType.Boolean,
+              ColumnType.String
+      };
+
+      DataVecColumn[] dataVecColumns = new DataVecColumn[columnTypes.length];
+      for (int i = 0; i < columnTypes.length; i++){
+          ColumnType columnType = columnTypes[i];
+          switch(columnType) {
+              case Double:
+                  dataVecColumns[i] = new DoubleColumn(columnType.name().toLowerCase(),new Double[]{1.0});
+                  break;
+              case Float:
+                  dataVecColumns[i] = new FloatColumn(columnType.name().toLowerCase(),new Float[]{1.0f});
+                  break;
+              case Boolean:
+                  dataVecColumns[i] = new BooleanColumn(columnType.name().toLowerCase(),new Boolean[]{true});
+                  break;
+              case String:
+                  dataVecColumns[i] = new StringColumn(columnType.name().toLowerCase(),new String[]{"1.0"});
+                  break;
+              case Long:
+                  dataVecColumns[i] = new LongColumn(columnType.name().toLowerCase(),new Long[]{1L});
+                  break;
+              case Integer:
+                  dataVecColumns[i] = new IntColumn(columnType.name().toUpperCase(),new Integer[]{1});
+                  break;
+
+          }
+      }
+       DataVecTable dataVecTable = DataVecTable.create(dataVecColumns);
+      PythonObject pyArrowTable = PythonArrowUtils.getPyArrowTable(dataVecTable);
+
+
+  }
 
 }
