@@ -159,7 +159,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
 }
 
 
-/*
+
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
     int pool = 1000;
@@ -189,7 +189,8 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
         auto timeStart = std::chrono::system_clock::now();
 
         //op.execute({x, y}, {z});
-        nd4j::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        //nd4j::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        x->applyTransform(transform::Tanh, *z);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
