@@ -53,10 +53,13 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
             }
         }
         else {
+            auto timeStart = std::chrono::system_clock::now();
 
             std::vector<int> dimsOut(indices->rankOf());
             std::iota(dimsOut.begin(), dimsOut.end(), axis);   // fill with axis, axis+1, ... axis+indices->rankOf()-1
             const Nd4jLong numOfSubArrs = indices->lengthOf();
+
+            auto timePrep = std::chrono::system_clock::now();
 
             auto func = PRAGMA_THREADS_FOR {
                 for (auto i = start; i < stop; i += increment) {
@@ -66,7 +69,17 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                 }
             };
 
+            auto timeFunc = std::chrono::system_clock::now();
+
             samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
+
+            auto timeEnd = std::chrono::system_clock::now();
+
+            auto execTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeFunc).count();
+            auto funcTime = std::chrono::duration_cast<std::chrono::microseconds>(timeFunc - timePrep).count();
+            auto prepTime = std::chrono::duration_cast<std::chrono::microseconds>(timePrep - timeStart).count();
+
+            nd4j_printf("Time> exec: %lld; func: %lld; prep: %lld;\n", execTime, funcTime, prepTime);
         }
     } 
     else {
