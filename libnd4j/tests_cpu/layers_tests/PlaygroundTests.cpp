@@ -167,18 +167,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     delete graph;
 }
-/*
 
-TEST_F(PlaygroundTests, test_broadcast_1) {
-    int pool = 1000;
-    std::vector<NDArray*> aX(pool);
-    std::vector<NDArray*> aY(pool);
-    std::vector<NDArray*> aZ(pool);
-
-    for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create_<float>('c', {3072});
-        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
 TEST_F(PlaygroundTests, test_bert_2) {
     // this test will run ONLY if this model exists
     if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
@@ -229,10 +218,18 @@ TEST_F(PlaygroundTests, test_bert_2) {
     delete graph;
 }
 
+/*
+
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
-    auto x = NDArrayFactory::create<float>('c', {4, 128, 768});
-    auto y = NDArrayFactory::create<float>('c', {4, 128, 1});
-    auto z = x.ulike();
+    int pool = 1000;
+    std::vector<NDArray*> aX(pool);
+    std::vector<NDArray*> aY(pool);
+    std::vector<NDArray*> aZ(pool);
+
+    for (int e = 0; e < pool; e++) {
+        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create_<float>('c', {3072});
+        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
 
         aX[e]->assign(119 * (e+1));
         aY[e]->assign(119 * (e+3));
