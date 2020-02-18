@@ -44,7 +44,7 @@ public:
     }
 };
 
-TEST_F(ImportTests, SingleInput1) {
+TEST_F(ImportTests, LstmMnist) {
         const char* modelFilename = "resources/lstm_mnist.fb";
     auto timeStart = std::chrono::system_clock::now();
     nd4j_printf("Importing file:", 0);
@@ -74,6 +74,19 @@ TEST_F(ImportTests, SingleInput1) {
             }
         }
     }
+    nd4j_printf("Execution:\n------------\n",0);
+    int height = 28;
+    int width = 28;
+    int batchsize = 1;
+
+    NDArray* inputArray = NDArrayFactory::create_<double>('c', {1, height, width});
+    Variable* input = new Variable(inputArray, "input");
+    graph->getVariableSpace()->replaceVariable(input);
+    Nd4jStatus status = GraphExecutioner::execute(graph);
+    std::string outputLayerName = "output";
+    NDArray* result = graph->getVariableSpace()->getVariable(&outputLayerName)->getNDArray();
+    std::vector<double> rvec = result->getBufferAsVector<double>();
+    printf("(%d): %f ", 0, rvec[0]);
 
     ASSERT_TRUE(true);
 }
