@@ -55,13 +55,14 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
         else {
             auto timeStart = std::chrono::system_clock::now();
 
-            std::vector<int> dimsOut(indices->rankOf());
-            std::iota(dimsOut.begin(), dimsOut.end(), axis);   // fill with axis, axis+1, ... axis+indices->rankOf()-1
             const Nd4jLong numOfSubArrs = indices->lengthOf();
 
             auto timePrep = std::chrono::system_clock::now();
 
             auto func = PRAGMA_THREADS_FOR {
+                std::vector<int> dimsOut(indices->rankOf());
+                std::iota(dimsOut.begin(), dimsOut.end(), axis);   // fill with axis, axis+1, ... axis+indices->rankOf()-1
+
                 for (auto i = 0; i < 1; i += increment) {
                     auto tStart = std::chrono::system_clock::now();
 
