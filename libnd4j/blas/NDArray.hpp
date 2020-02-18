@@ -4850,6 +4850,7 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
     Nd4jLong offset = 0;
     int n(isStrided ? 3 : 2), first, last, stride;
 
+#pragma _NEC novector
     for (int d = rank - 1; d >= 0; --d) {
 
         if (idx[n * d] != idx[n * d + 1]) {
