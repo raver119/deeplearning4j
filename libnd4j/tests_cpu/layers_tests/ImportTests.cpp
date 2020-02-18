@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 //
-// @author raver119@gmail.com
+// @author yves.quemener@gmail.com
 //
 
 #include "testlayers.h"
