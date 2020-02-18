@@ -4890,6 +4890,8 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
     // check if there is possibility to set ews = 1
     shape::checkStridesSetEwsAndOrder(shapeInfoNoUnities);
 
+    auto timeStrides2 = std::chrono::system_clock::now();
+
     NDArray result(_buffer, ShapeDescriptor(shapeInfoNoUnities), getContext(), offset + getBufferOffset());
     result._isView = true;
 
@@ -4904,10 +4906,11 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
     auto tShapeOne = std::chrono::duration_cast<std::chrono::microseconds>(timeShapeOne - timeStart).count();
     auto tStrides = std::chrono::duration_cast<std::chrono::microseconds>(timeStrides - timeShapeOne).count();
     auto tCopy = std::chrono::duration_cast<std::chrono::microseconds>(timeCopy - timeStrides).count();
-    auto tResult = std::chrono::duration_cast<std::chrono::microseconds>(timeResult - timeCopy).count();
+    auto tStrides2 = std::chrono::duration_cast<std::chrono::microseconds>(timeStrides2 - timeCopy).count();
+    auto tResult = std::chrono::duration_cast<std::chrono::microseconds>(timeResult - timeStrides2).count();
     auto tRelease = std::chrono::duration_cast<std::chrono::microseconds>(timeRelease - timeResult).count();
 
-    nd4j_printf("Subarray time> timeShapeOne: %lld; timeStrides: %lld; timeCopy: %lld; timeResult: %lld; timeRelease: %lld\n", tShapeOne, tStrides, tCopy, tResult, tRelease);
+    nd4j_printf("Subarray time> timeShapeOne: %lld; timeStrides: %lld; timeCopy: %lld; timeStrides2: %lld; timeResult: %lld; timeRelease: %lld\n", tShapeOne, tStrides, tCopy, tStrides2, tResult, tRelease);
 
     return result;
 }
