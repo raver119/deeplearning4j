@@ -119,7 +119,7 @@ else()
 
     if ("${_RELEASE}" OR CMAKE_BUILD_TYPE STREQUAL "Release")
         message("Release build for tests")
-        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -fPIC -std=c++11 -D_RELEASE=true")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 -fPIC -std=c++11 -ffast-math -DFFAST_MATH=true -D_RELEASE=true")
         if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ppc64*")
             set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -mcpu=native")
         else()
