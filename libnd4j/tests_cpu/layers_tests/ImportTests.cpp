@@ -86,7 +86,8 @@ TEST_F(ImportTests, LstmMnist) {
     std::string outputLayerName = "output";
     NDArray* result = graph->getVariableSpace()->getVariable(&outputLayerName)->getNDArray();
     std::vector<double> rvec = result->getBufferAsVector<double>();
-    printf("(%d): %f ", 0, rvec[0]);
-
-    ASSERT_TRUE(true);
+    for(int i=0; i<10; i++)
+        printf("(%d): %f\n", i, rvec[i]);
+    ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
+    //0.046829
 }
