@@ -64,21 +64,10 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                 std::iota(dimsOut.begin(), dimsOut.end(), axis);   // fill with axis, axis+1, ... axis+indices->rankOf()-1
 
                 for (auto i = 0; i < 1; i += increment) {
-                    auto tStart = std::chrono::system_clock::now();
-
                     NDArray subArrOut = (*output)(i, dimsOut);
                     NDArray subArrIn = (*input)(indices->e<Nd4jLong>(i), {axis});
 
-                    auto tSub = std::chrono::system_clock::now();
-
                     subArrOut.assign(subArrIn);
-
-                    auto tAssign = std::chrono::system_clock::now();
-
-                    auto execTime = std::chrono::duration_cast<std::chrono::microseconds>(tAssign - tSub).count();
-                    auto subTime = std::chrono::duration_cast<std::chrono::microseconds>(tSub - tStart).count();
-
-                    nd4j_printf("Time> exec: %lld; sub: %lld;\n", execTime, subTime);
                 }
             };
 
