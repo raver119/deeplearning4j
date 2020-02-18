@@ -63,6 +63,29 @@ TEST_F(PlaygroundTests, test_avx) {
     nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
 }
 
+TEST_F(PlaygroundTests, test_gather_1) {
+    // this test will run ONLY if this model exists
+    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+        return;
+
+    auto x = NDArrayFactory::create<float>('c', {30522, 768});
+    auto y = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
+    auto z = NDArrayFactory::create<float>('c', {4, 128, 768});
+
+    x.linspace(1.0f, 0.3f);
+
+
+    nd4j::ops::gather op;
+    auto timeStart = std::chrono::system_clock::now();
+
+    auto status = op.execute({&x, &y}, {&z});
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+
+    nd4j_printf("Gather time: %lld\n", outerTime);
+}
+
 TEST_F(PlaygroundTests, test_matmul_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
     auto y = NDArrayFactory::create<float>('c', {768, 768});
