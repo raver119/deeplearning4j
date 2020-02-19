@@ -383,7 +383,7 @@ namespace nd4j {
                     auto bB = bias.bufferAsT<Y>();
                     auto outB = output.bufferAsT<X>();
 
-#pragma omp parallel for simd
+                    PRAGMA_OMP_PARALLEL_FOR
 			        for (int e = 0; e < rows; e++) {
 			            auto row = inB + (e * biasLen);
                         auto out = outB + (e * biasLen);
