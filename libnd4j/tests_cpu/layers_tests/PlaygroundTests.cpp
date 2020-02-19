@@ -155,7 +155,7 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
     z.printLinearBuffer();
 }
 
-TEST_F(PlaygroundTests, test_reduce_mean_1) {
+TEST_F(PlaygroundTests, test_reduce_mean_2) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
     auto y = NDArrayFactory::create<int>(0);
     auto z = NDArrayFactory::create<float>('c', {768});
