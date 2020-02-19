@@ -4837,8 +4837,6 @@ NDArray NDArray::tensorAlongDimension(Nd4jLong index, const std::initializer_lis
 ////////////////////////////////////////////////////////////////////////
 // operator returns sub-array with buffer pointing at this->_buffer + certain offset
 NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUnitiesInShape, const bool isStrided)  const {
-    auto timeStart = std::chrono::system_clock::now();
-
     if(isEmpty())
         throw std::invalid_argument("NDArray::operator(sub-arrays): array is empty !");
 
@@ -4850,8 +4848,6 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
 
     Nd4jLong offset = 0;
     int n(isStrided ? 3 : 2), first, last, stride;
-
-    auto timeShapeOne = std::chrono::system_clock::now();
 
     for (int d = rank - 1; d >= 0; --d) {
 
@@ -4871,8 +4867,6 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
 
     Nd4jLong *shapeInfoNoUnities = newShapeInfo;
 
-    auto timeStrides = std::chrono::system_clock::now();
-
     if(!keepUnitiesInShape) {
 
         std::vector<int> dimsWithUnities;
@@ -4885,32 +4879,15 @@ NDArray NDArray::operator()(const std::vector<Nd4jLong>& idx, const bool keepUni
             shapeInfoNoUnities = ShapeBuilders::copyShapeInfoWithoutUnites(newShapeInfo, dimsWithUnities.size(), dimsWithUnities.data(), getContext()->getWorkspace());
     }
 
-    auto timeCopy = std::chrono::system_clock::now();
-
     // check if there is possibility to set ews = 1
     shape::checkStridesSetEwsAndOrder(shapeInfoNoUnities);
-
-    auto timeStrides2 = std::chrono::system_clock::now();
 
     NDArray result(_buffer, ShapeDescriptor(shapeInfoNoUnities), getContext(), offset + getBufferOffset());
     result._isView = true;
 
-    auto timeResult = std::chrono::system_clock::now();
-
     RELEASE(newShapeInfo, getContext()->getWorkspace());
     if(newShapeInfo != shapeInfoNoUnities)
         RELEASE(shapeInfoNoUnities, getContext()->getWorkspace());
-
-    auto timeRelease = std::chrono::system_clock::now();
-
-    auto tShapeOne = std::chrono::duration_cast<std::chrono::microseconds>(timeShapeOne - timeStart).count();
-    auto tStrides = std::chrono::duration_cast<std::chrono::microseconds>(timeStrides - timeShapeOne).count();
-    auto tCopy = std::chrono::duration_cast<std::chrono::microseconds>(timeCopy - timeStrides).count();
-    auto tStrides2 = std::chrono::duration_cast<std::chrono::microseconds>(timeStrides2 - timeCopy).count();
-    auto tResult = std::chrono::duration_cast<std::chrono::microseconds>(timeResult - timeStrides2).count();
-    auto tRelease = std::chrono::duration_cast<std::chrono::microseconds>(timeRelease - timeResult).count();
-
-    nd4j_printf("Subarray time> timeShapeOne: %lld; timeStrides: %lld; timeCopy: %lld; timeStrides2: %lld; timeResult: %lld; timeRelease: %lld\n", tShapeOne, tStrides, tCopy, tStrides2, tResult, tRelease);
 
     return result;
 }
