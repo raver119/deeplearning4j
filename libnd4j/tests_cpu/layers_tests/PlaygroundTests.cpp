@@ -105,6 +105,32 @@ TEST_F(PlaygroundTests, test_matmul_1) {
     nd4j_printf("Time: %lld\n", outerTime);
 }
 
+TEST_F(PlaygroundTests, test_matmul_2) {
+    auto x1 = NDArrayFactory::create<float>('c', {4, 12, 128, 128});
+    auto y1 = NDArrayFactory::create<float>('c', {4, 12, 128, 64});
+    auto z1 = NDArrayFactory::create<float>('c', {4, 12, 128, 64});
+
+    auto x2 = NDArrayFactory::create<float>('c', {512, 768});
+    auto y2 = NDArrayFactory::create<float>('c', {768, 768});
+    auto z2 = NDArrayFactory::create<float>('c', {512, 768});
+
+    nd4j::ops::matmul op;
+    auto timeStart1 = std::chrono::system_clock::now();
+
+    op.execute({&x1, &y1}, {&z1}, {0, 0});
+
+    auto timeStart2 = std::chrono::system_clock::now();
+
+    op.execute({&x2, &y2}, {&z2}, {0, 0});
+
+    auto timeEnd = std::chrono::system_clock::now();
+
+    auto t1 = std::chrono::duration_cast<std::chrono::microseconds>(timeStart2 - timeStart1).count();
+    auto t2 = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart2).count();
+
+    nd4j_printf("Time 1: %lld; Time 2: %lld;\n", t1, t2);
+}
+
 
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
