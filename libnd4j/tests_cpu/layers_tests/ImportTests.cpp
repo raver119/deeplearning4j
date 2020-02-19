@@ -22,6 +22,7 @@
 #include <flatbuffers/flatbuffers.h>
 #include <graph/generated/node_generated.h>
 #include <graph/generated/graph_generated.h>
+#include <graph/profiling/GraphProfilingHelper.h>
 #include <graph/Node.h>
 #include <graph/Graph.h>
 #include <graph/GraphUtils.h>
@@ -39,8 +40,9 @@ public:
     int fShape[] = {2, 2, 2, 1, 2, 0, 1, 102};
      */
     ImportTests() {
-        //Environment::getInstance()->setDebug(true);
-        //Environment::getInstance()->setVerbose(true);
+//        Environment::getInstance()->setDebug(true);
+//        Environment::getInstance()->setVerbose(true);
+        Environment::getInstance()->setProfiling(true);
     }
 };
 
@@ -82,6 +84,11 @@ TEST_F(ImportTests, LstmMnist) {
     NDArray* inputArray = NDArrayFactory::create_<double>('c', {1, height, width});
     Variable* input = new Variable(inputArray, "input");
     graph->getVariableSpace()->replaceVariable(input);
+
+    auto profile = GraphProfilingHelper::profile(graph, 10);
+    profile->printOut();
+    delete profile;
+
     Nd4jStatus status = GraphExecutioner::execute(graph);
     std::string outputLayerName = "output";
     NDArray* result = graph->getVariableSpace()->getVariable(&outputLayerName)->getNDArray();
