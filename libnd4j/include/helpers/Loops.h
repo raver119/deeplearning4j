@@ -267,7 +267,6 @@ void Loops::loopXYZ(const X* x, const Nd4jLong* xShapeInfo,
                                                   Z* z, Nd4jLong* zShapeInfo,
                                                   Nd4jLong* tadShapeInfo, Nd4jLong* tadOffsets,
                                                   E* extraParams, int64_t start, int64_t stop) {
-
         const LoopKind::Kind kindOfLoop = LoopKind::deduceKindOfLoopTadXZ(xShapeInfo, zShapeInfo, tadShapeInfo);
 
         const Nd4jLong zLen   = shape::length(zShapeInfo);
