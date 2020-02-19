@@ -155,6 +155,37 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
     z.printLinearBuffer();
 }
 
+TEST_F(PlaygroundTests, test_reduce_mean_1) {
+    auto x = NDArrayFactory::create<float>('c', {512, 768});
+    auto y = NDArrayFactory::create<int>(0);
+    auto z = NDArrayFactory::create<float>('c', {768});
+
+    auto rows = x.sizeAt(0);
+    auto cols = x.sizeAt(1);
+
+    auto inBuff = x.bufferAsT<float>();
+    auto outBuff = x.bufferAsT<float>();
+
+    auto timeStart = std::chrono::system_clock::now();
+
+#pragma omp parallel for
+    for (int t = 0; t < rows; t++) {
+        auto in = inBuff + (t * cols);
+
+        float sum = 0.f;
+        for (int e = 0; e < cols; e++) {
+            sum += in[e];
+        }
+
+        outBuff[t] = sum / cols;
+    }
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+    nd4j_printf("Time: %lld us;\n", outerTime);
+
+}
+
 
 
 
