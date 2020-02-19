@@ -168,7 +168,6 @@ TEST_F(PlaygroundTests, test_reduce_mean_2) {
 
     auto timeStart = std::chrono::system_clock::now();
 
-#pragma omp parallel for
     for (int t = 0; t < rows; t++) {
         auto in = inBuff + (t * cols);
 
