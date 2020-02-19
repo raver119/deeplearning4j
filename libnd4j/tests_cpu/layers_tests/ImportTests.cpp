@@ -1,18 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Apache License, Version 2.0 which is available at
- * https://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * SPDX-License-Identifier: Apache-2.0
- ******************************************************************************/
 
 //
 // @author raver119@gmail.com
@@ -22,7 +7,6 @@
 #include <flatbuffers/flatbuffers.h>
 #include <graph/generated/node_generated.h>
 #include <graph/generated/graph_generated.h>
-#include <graph/profiling/GraphProfilingHelper.h>
 #include <graph/Node.h>
 #include <graph/Graph.h>
 #include <graph/GraphUtils.h>
@@ -35,10 +19,6 @@ using namespace nd4j::graph;
 
 class ImportTests : public testing::Test {
 public:
-    /*
-    int cShape[] = {2, 2, 2, 2, 1, 0, 1, 99};
-    int fShape[] = {2, 2, 2, 1, 2, 0, 1, 102};
-     */
     ImportTests() {
 //        Environment::getInstance()->setDebug(true);
 //        Environment::getInstance()->setVerbose(true);
