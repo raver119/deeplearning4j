@@ -63,6 +63,25 @@ TEST_F(PlaygroundTests, test_avx) {
     nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
 }
 
+TEST_F(PlaygroundTests, test_concat_1) {
+    auto t = NDArrayFactory::create<double>('c', {1, 28});
+    auto u = NDArrayFactory::create<double>('c', {1, 128});
+    auto v = NDArrayFactory::create<int>(1);
+    auto z = NDArrayFactory::create<double>('c', {1, 156});
+
+    nd4j::ops::concat op;
+    auto timeStart = std::chrono::system_clock::now();
+
+    auto status = op.execute({&t, &u, &v}, {&z}, {true});
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+
+    nd4j_printf("Concat time: %lld\n", outerTime);
+
+    ASSERT_EQ(Status::OK(), status);
+}
+
 TEST_F(PlaygroundTests, test_gather_1) {
     // this test will run ONLY if this model exists
     if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
@@ -184,9 +203,6 @@ TEST_F(PlaygroundTests, test_reduce_mean_2) {
     nd4j_printf("Time: %lld us;\n", outerTime);
 
 }
-
-
-
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 3072});
