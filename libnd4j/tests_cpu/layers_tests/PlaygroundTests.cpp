@@ -132,6 +132,27 @@ TEST_F(PlaygroundTests, test_matmul_2) {
 }
 
 
+TEST_F(PlaygroundTests, test_reduce_mean_1) {
+    auto x = NDArrayFactory::create<float>('c', {512, 768});
+    auto y = NDArrayFactory::create<int>(0);
+    auto z = NDArrayFactory::create<float>('c', {768});
+
+    nd4j::ops::reduce_mean op;
+
+    auto timeStart = std::chrono::system_clock::now();
+
+    auto status = op.execute({&x, &y}, {&z});
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+
+    ASSERT_EQ(Status::OK(), status);
+
+    nd4j_printf("Time: %lld us;\n", outerTime);
+}
+
+
+
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 3072});
