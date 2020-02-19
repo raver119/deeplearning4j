@@ -223,6 +223,21 @@ TEST_F(ThreadsTests, MutexedTest_1) {
     //ASSERT_EQ(8192, sum);
 }
 
+TEST_F(ThreadsTests, MutexedTest_2) {
+    Nd4jLong res[100];
+    //std::mutex set_mutex;
+
+    auto func = PRAGMA_THREADS_FOR {
+        for (auto e = start; e < stop; e++) {
+      //      std::lock_guard<std::mutex> lock(set_mutex);
+            res[e] = 10000LL * e;
+        };
+    };
+
+    samediff::Threads::parallel_for(func, 0, 100, 1);
+    //ASSERT_EQ(8192, sum);
+}
+
 /*
 TEST_F(ThreadsTests, basic_test_1) {
     if (!Environment::getInstance()->isCPU())
