@@ -66,16 +66,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                 }
             };
 
-            auto timeFunc = std::chrono::system_clock::now();
-
-            //samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
-            func(0, 0, numOfSubArrs, 1);
-
-            auto timeEnd = std::chrono::system_clock::now();
-
-            auto execTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeFunc).count();
-
-            nd4j_printf("Time> exec: %lld;\n", execTime);
+            samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
         }
     } 
     else {
