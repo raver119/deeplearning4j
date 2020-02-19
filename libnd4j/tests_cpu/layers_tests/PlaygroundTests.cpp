@@ -137,6 +137,8 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
     auto y = NDArrayFactory::create<int>(0);
     auto z = NDArrayFactory::create<float>('c', {768});
 
+    x.assign(1.f);
+
     nd4j::ops::reduce_mean op;
 
     auto timeStart = std::chrono::system_clock::now();
@@ -149,6 +151,8 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
     ASSERT_EQ(Status::OK(), status);
 
     nd4j_printf("Time: %lld us;\n", outerTime);
+
+    z.printLinearBuffer();
 }
 
 
