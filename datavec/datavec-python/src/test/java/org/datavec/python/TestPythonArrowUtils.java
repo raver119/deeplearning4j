@@ -175,7 +175,6 @@ public class TestPythonArrowUtils {
 
     @Test
     public void testTable() {
-        PythonArrowUtils.init();
         int count = 0;
         ColumnType[] columnTypes = new ColumnType[] {
                 ColumnType.Integer,
