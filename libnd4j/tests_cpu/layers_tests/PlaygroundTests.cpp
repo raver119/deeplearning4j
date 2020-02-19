@@ -191,7 +191,7 @@ TEST_F(PlaygroundTests, test_reduce_mean_2) {
         auto in = inBuff + (t * cols);
 
         float sum = 0.f;
-#pragma omp simd reduction(+:sum)
+        #pragma _NEC ivdep
         for (int e = 0; e < cols; e++) {
             sum += simdOps::Mean<float, float>::op(in[e], nullptr);
         }
