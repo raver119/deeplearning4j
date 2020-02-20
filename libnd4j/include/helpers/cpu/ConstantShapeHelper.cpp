@@ -24,19 +24,28 @@
 #include <logger.h>
 #include <ShapeBuilders.h>
 #include <ShapeUtils.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
     ConstantShapeHelper::ConstantShapeHelper() {
+        auto timers = nd4j::GlobalTimers::getInstance();
+        timers->stopWatch(__LINE__, 2);
         _cache.resize(32);
+        timers->stopWatch(__LINE__, 2);
         for (int e = 0; e < 32; e++) {
             std::map<ShapeDescriptor, ConstantDataBuffer> cache;
             _cache[e] = cache;
         }
+        timers->stopWatch(__LINE__, 2);
     }
 
     ConstantShapeHelper* ConstantShapeHelper::getInstance() {
-        if (!_INSTANCE)
+        auto timers = nd4j::GlobalTimers::getInstance();
+        timers->stopWatch(__LINE__, 2);
+        if (!_INSTANCE){
             _INSTANCE = new ConstantShapeHelper();
+            timers->stopWatch(__LINE__, 2);
+        }
 
         return _INSTANCE;
     }
@@ -54,21 +63,42 @@ namespace nd4j {
 
     ConstantDataBuffer ConstantShapeHelper::bufferForShapeInfo(const ShapeDescriptor &descriptor) {
         int deviceId = 0;
-
+        auto timers = nd4j::GlobalTimers::getInstance();
+        timers->stopWatch(__LINE__, 2);
         _mutex.lock();
+        timers->stopWatch(__LINE__, 2);
 
         if (_cache[deviceId].count(descriptor) == 0) {
+            timers->stopWatch(__LINE__, 2);
             auto hPtr = descriptor.toShapeInfo();
+            timers->stopWatch(__LINE__, 2);
+
             ConstantDataBuffer buffer(hPtr, nullptr, shape::shapeInfoLength(hPtr)*sizeof(Nd4jLong), DataType::INT64);
+            timers->stopWatch(__LINE__, 2);
+
             ShapeDescriptor descriptor1(descriptor);
+            timers->stopWatch(__LINE__, 2);
+
             _cache[deviceId][descriptor1] = buffer;
+            timers->stopWatch(__LINE__, 2);
+
             auto r = _cache[deviceId][descriptor1];
+            timers->stopWatch(__LINE__, 2);
+
             _mutex.unlock();
+            timers->stopWatch(__LINE__, 2);
+
 
             return r;
         } else {
+            timers->stopWatch(__LINE__, 2);
+
             auto r = _cache[deviceId].at(descriptor);
+            timers->stopWatch(__LINE__, 2);
+
             _mutex.unlock();
+            timers->stopWatch(__LINE__, 2);
+
 
             return r;
         }

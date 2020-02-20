@@ -27,6 +27,7 @@
 #include <BroadcastPairwiseConverter.h>
 #include <helpers/PointersManager.h>
 #include <TrueBroadcastHelper.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
 
@@ -220,15 +221,19 @@ NDArray::NDArray(Nd4jLong* shapeInfo, const bool copyStrides, nd4j::LaunchContex
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const ShapeDescriptor& descriptor, nd4j::LaunchContext* context, const Nd4jLong offset) {
-
+    auto timers = nd4j::GlobalTimers::getInstance();
+    timers->reset();
+    timers->stopWatch(__LINE__, 1);
     _context = context;
+    timers->stopWatch(__LINE__, 1);
     _offset  = offset;
-
+    timers->stopWatch(__LINE__, 1);
     setShapeInfo(descriptor);
-
+    timers->stopWatch(__LINE__, 1);
     _buffer = buffer;
-
+    timers->stopWatch(__LINE__, 1);
     _isView = offset > 0 || _length * DataTypeUtils::sizeOf(_dataType) < buffer->getLenInBytes();
+    timers->stopWatch(__LINE__, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -281,21 +286,25 @@ NDArray::NDArray(void *buffer, void* bufferD, Nd4jLong *shapeInfo, nd4j::LaunchC
 
 //////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const char order, const std::vector<Nd4jLong> &shape, nd4j::LaunchContext* context) {
+    auto timers = nd4j::GlobalTimers::getInstance();
+    timers->reset();
+    timers->stopWatch(__LINE__, 1);
 
     if (shape.empty())
         throw std::runtime_error("NDArray constructor: input shape is empty !");
-
+    timers->stopWatch(__LINE__, 1);
     if ((int) shape.size() > MAX_RANK)
         throw std::invalid_argument("NDArray constructor: rank of NDArray can't exceed 32");
-
+    timers->stopWatch(__LINE__, 1);
     _context = context;
     _offset  = 0;
-
+    timers->stopWatch(__LINE__, 1);
     setShapeInfo(ShapeDescriptor(buffer->getDataType(), order, shape));
-
+    timers->stopWatch(__LINE__, 1);
     _buffer = buffer;
-
+    timers->stopWatch(__LINE__, 1);
     _isView =  _length * DataTypeUtils::sizeOf(_dataType) < buffer->getLenInBytes();
+    timers->stopWatch(__LINE__, 1);
 }
 /////////////////////////////////////////////////////////////////////////
 // u16 string constructors
@@ -4973,20 +4982,25 @@ void NDArray::setShapeInfo(const Nd4jLong *shapeInfo, const nd4j::DataType dtype
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(const ShapeDescriptor& descriptor) {
-
+    auto timers = nd4j::GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 1);
     auto shapeBuffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(const_cast<ShapeDescriptor &>(descriptor));
-
+timers->stopWatch(__LINE__, 1);
     _shapeInfo  = reinterpret_cast<Nd4jLong *>(shapeBuffer.primary());
     #ifdef __CUDABLAS__
         _shapeInfoD = reinterpret_cast<Nd4jLong *>(shapeBuffer.special());
     #endif
-
+timers->stopWatch(__LINE__, 1);
     if(ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
         _length = 0;
-    else
-        _length = shape::length(_shapeInfo);
+    else{
+        timers->stopWatch(__LINE__, 1);
 
+        _length = shape::length(_shapeInfo);
+    }
+timers->stopWatch(__LINE__, 1);
     _dataType = ArrayOptions::dataType(_shapeInfo);
+    timers->stopWatch(__LINE__, 1);
 }
 
 //////////////////////////////////////////////////////////////////////////
