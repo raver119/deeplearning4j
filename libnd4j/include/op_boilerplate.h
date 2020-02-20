@@ -1535,19 +1535,33 @@
 
 #define COPY_SHAPE_EX(SRC, TGT, WORKSPACE)    TGT = ShapeBuilders::copyShapeInfo(SRC, true, WORKSPACE)
 
-// define macros for compiler enforcement to make function inline  
-#ifdef __clang__
+// define macros for compiler enforcement to make function inline
+#ifdef __NEC__
+
+#define FORCEINLINE inline
+
+#elif __clang__
+
 #define INLINE_LOOPS
 #define FORCEINLINE inline
+
 #elif _MSC_VER
+
 #define FORCEINLINE __forceinline
+
 #elif __GNUC__
+
 #define INLINE_LOOPS
-#define FORCEINLINE __attribute__((always_inline)) inline 
+#define FORCEINLINE __attribute__((always_inline)) inline
+
 #elif __CUDACC__
-#define FORCEINLINE __forceinline__ inline 
+
+#define FORCEINLINE __forceinline__ inline
+
 #else
-#define FORCEINLINE inline 
+
+#define FORCEINLINE inline
+
 #endif
 
 
