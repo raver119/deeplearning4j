@@ -29,6 +29,7 @@
 #include <ops/declarable/CustomOperations.h>
 #include <types/types.h>
 #include <helpers/Loops.h>
+#include<performance/benchmarking/global_timers.h>
 
 namespace nd4j {
 
@@ -39,10 +40,12 @@ namespace nd4j {
 template <typename T>
 void SpecialMethods<T>::concatCpuGeneric(const std::vector<NDArray*>& inArrs, NDArray& output, const int axis) {
         const uint numOfArrs = inArrs.size();
-
+int time_i = 100;
+auto timers = nd4j::GlobalTimers::getInstance()->timers;
+timers[++time_i] = std::chrono::high_resolution_clock::now();
         int outDim;
         const bool isOutputVector = output.isCommonVector(outDim);
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
         if(isOutputVector || (axis == 0 && output.ordering() == 'c')) {
 
             bool allVectorsOrScalars = true;
@@ -58,29 +61,33 @@ void SpecialMethods<T>::concatCpuGeneric(const std::vector<NDArray*>& inArrs, ND
                 if(i == 0)  zOffset[0] = 0;
                 else        zOffset[i] = zOffset[i - 1] + outEws * inArrs[i - 1]->lengthOf();
             }
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
             if(allVectorsOrScalars) {
 
                 T* outBuff = output.bufferAsT<T>();
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
+time_i=119;
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                 auto func = PRAGMA_THREADS_FOR {
                     for (auto r = start; r < stop; r += increment) {
                         const Nd4jLong arrLen = inArrs[r]->lengthOf();
                         const uint xEws = (arrLen == 1) ? 1 : inArrs[r]->stridesOf()[nonUnityDim[r]];
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                         T *z = outBuff + zOffset[r];
                         T *x = inArrs[r]->bufferAsT<T>();
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                         if (outEws == 1 && xEws == 1)
                             for (Nd4jLong e = 0; e < arrLen; e++)
                                 z[e] = x[e];
                         else
                             for (Nd4jLong e = 0; e < arrLen; e++)
                                 z[e * outEws] = x[e * xEws];
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                     }
                 };
-
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                 samediff::Threads::parallel_tad(func, 0, numOfArrs);
+timers[++time_i] = std::chrono::high_resolution_clock::now();
                 return;
             }
         }

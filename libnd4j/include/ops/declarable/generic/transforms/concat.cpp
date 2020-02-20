@@ -19,34 +19,47 @@
 //  @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
+#include<performance/benchmarking/global_timers.h>
 #include<ops/declarable/CustomOperations.h>
 #include<ops/declarable/helpers/transforms.h>
 #include<array>
 
 namespace nd4j {
-namespace ops  {
 
+namespace ops  {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
-
+    int time_i = 0;
+    auto timers = nd4j::GlobalTimers::getInstance()->timers;
+    timers[1] = std::chrono::high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now();
+    timers[2] = std::chrono::high_resolution_clock::now();
+    auto t2 = std::chrono::high_resolution_clock::now();
     REQUIRE_TRUE(block.width() > 0, 0, "CONCAT op: No input arrays were provided");
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     // first of all take into account possible presence of empty arrays
     // also if scalar is present -> copy its value to vector with length=1
     std::vector<NDArray*> nonEmptyArrs;
     std::vector<int> arrsToDelete;
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
     int index = 0;
     bool allOfSameType = true;
     auto theFirstRank = block.width() > 0 ? INPUT_VARIABLE(0)->rankOf() : 0;
     auto theFirstDatatype = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : block.dataType();
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     for(int i = 0; i < numOfInArrs; ++i) {
+
         auto input = INPUT_VARIABLE(i);
+
         auto currentRank = input->rankOf();
 
 // TODO: follow two lines are in accordance to current tf.concat spec. Commented for compatibility with legacy
@@ -68,6 +81,7 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
             ++index;
         }
     }
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     const int numOfNonEmptyArrs = nonEmptyArrs.size();
 
@@ -76,19 +90,23 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
         REQUIRE_TRUE(OUTPUT_VARIABLE(0)->isEmpty(), 0, "CONCAT op: If all input variables are empty, output must be empty");
         return Status::OK();
     }
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     const int rank = nonEmptyArrs[0]->rankOf();                     //  look up to first non-empty array
     int axis = isAxisInLastArr ? INPUT_VARIABLE(block.width() - 1)->e<int>(0) : INT_ARG(0);
     if(axis < 0){
         axis += rank;
     }
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     // ******** input validation ******** //
     REQUIRE_TRUE(allOfSameType, 0, "CONCAT op: all of input arrays must have same type !");
     REQUIRE_TRUE(0 <= axis && (axis < rank || (axis == 0 && rank == 0)), 0, "CONCAT op: input axis must be in range [0, %i], but got %i instead!", rank-1, axis);
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     for(int i = 1; i < numOfNonEmptyArrs; ++i)
         REQUIRE_TRUE(nonEmptyArrs[i]->rankOf() == rank, 0, "CONCAT op: all input arrays must have the same rank !");
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     for(int i = 1; i < numOfNonEmptyArrs; ++i) {
         for(int dim = 0; dim < rank; ++dim)
@@ -96,17 +114,21 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
                 REQUIRE_TRUE(nonEmptyArrs[i]->sizeAt(dim) == nonEmptyArrs[0]->sizeAt(dim), 0, "CONCAT op: all input arrays must have the same dimensions (except those on input axis) !");
     }
     // ******** end of input validation ******** //
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     auto output = OUTPUT_VARIABLE(0);
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     if(numOfNonEmptyArrs == 1)
         output->assign(nonEmptyArrs[0]);
     else
         helpers::concat(block.launchContext(), nonEmptyArrs, *output, axis);
 
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
     // delete dynamically allocated vectors with length=1
     for(int index : arrsToDelete)
         delete nonEmptyArrs[index];
+    timers[++time_i] = std::chrono::high_resolution_clock::now();
 
     return Status::OK();
 }

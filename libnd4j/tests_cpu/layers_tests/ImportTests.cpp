@@ -7,12 +7,15 @@
 #include <flatbuffers/flatbuffers.h>
 #include <graph/generated/node_generated.h>
 #include <graph/generated/graph_generated.h>
+#include <graph/profiling/GraphProfilingHelper.h>
 #include <graph/Node.h>
 #include <graph/Graph.h>
 #include <graph/GraphUtils.h>
 #include <NDArray.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <ops/declarable/generic/parity_ops.cpp>
+#include <performance/benchmarking/global_timers.h>
+#include <iomanip>
 
 using namespace nd4j;
 using namespace nd4j::graph;
@@ -77,4 +80,43 @@ TEST_F(ImportTests, LstmMnist) {
         printf("(%d): %f\n", i, rvec[i]);
     ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
     //0.046829
+}
+
+TEST_F(ImportTests, ConcatPerfTest) {
+    auto timers = nd4j::GlobalTimers::getInstance()->timers;
+    nd4j_printf("Timers: %p\n", (void*)(timers));
+    auto x0 = NDArrayFactory::create<double>('c', {1,28});
+    auto x1 = NDArrayFactory::create<double>('c', {1,128});
+
+    x0.linspace(1);
+    x1.linspace(1);
+
+    nd4j::ops::concat op;
+
+    auto result = op.evaluate({&x0, &x1}, {}, {1});
+    ASSERT_EQ(ND4J_STATUS_OK, result->status());
+    auto output = result->at(0);
+    delete result;
+
+
+
+    auto timeStart = std::chrono::system_clock::now();
+    timers[198] = std::chrono::high_resolution_clock::now();
+    int suma = 1;
+    int sumb = 1;
+    for(int i=0;i<100000;i++){
+        int c = suma;
+        suma = sumb +suma;
+        sumb = c;
+    }
+    printf("suma = %d\n", suma);
+    nd4j_printf("Timers: %p\n", (void*)(timers));
+    timers[199] = std::chrono::high_resolution_clock::now();
+    for(int i=1;i<200;i++){
+        auto dt1 = std::chrono::duration_cast<std::chrono::nanoseconds> ((timers[i] - timers[i-1])).count();
+        auto dt2 = std::chrono::duration_cast<std::chrono::microseconds> ((timers[i] - timers[i-1])).count();
+        auto dt3 = std::chrono::duration_cast<std::chrono::milliseconds> ((timers[i] - timers[i-1])).count();
+        nd4j_printf("%d: %ld ns %ld us %ld ms\n", i, dt1, dt2, dt3);
+    }
+
 }
