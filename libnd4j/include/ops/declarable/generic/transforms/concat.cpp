@@ -31,6 +31,7 @@ namespace ops  {
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
     int time_i = 0;
+    nd4j::GlobalTimers::getInstance()->reset();
     auto timers = nd4j::GlobalTimers::getInstance()->timers;
     timers[1] = std::chrono::high_resolution_clock::now();
     auto t1 = std::chrono::high_resolution_clock::now();

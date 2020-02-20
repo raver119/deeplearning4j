@@ -112,11 +112,14 @@ TEST_F(ImportTests, ConcatPerfTest) {
     printf("suma = %d\n", suma);
     nd4j_printf("Timers: %p\n", (void*)(timers));
     timers[199] = std::chrono::high_resolution_clock::now();
+    auto lines = nd4j::GlobalTimers::getInstance()->line_numbers;
     for(int i=1;i<200;i++){
+        if(lines[i-1]==0) continue;
+        if(lines[i]==0) continue;
         auto dt1 = std::chrono::duration_cast<std::chrono::nanoseconds> ((timers[i] - timers[i-1])).count();
         auto dt2 = std::chrono::duration_cast<std::chrono::microseconds> ((timers[i] - timers[i-1])).count();
         auto dt3 = std::chrono::duration_cast<std::chrono::milliseconds> ((timers[i] - timers[i-1])).count();
-        nd4j_printf("%d: %ld ns %ld us %ld ms\n", i, dt1, dt2, dt3);
+        nd4j_printf("i=%d, line=%d: %ld ns %ld us %ld ms\n", i,  nd4j::GlobalTimers::getInstance()->line_numbers[i], dt1, dt2, dt3);
     }
 
 }

@@ -21,6 +21,7 @@
 #include "../ShapeDescriptor.h"
 #include <shape.h>
 #include <ShapeBuilders.h>
+#include <performance/benchmarking/global_timers.h>
 
 using namespace nd4j;
 
@@ -55,6 +56,10 @@ bool ShapeDescriptor::operator<(const ShapeDescriptor& other) const {
 }
 
 Nd4jLong* ShapeDescriptor::toShapeInfo() const {
+    auto timers = nd4j::GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 3);
+
+
     if (_empty) {
         if (_rank == 0)
             return ShapeBuilders::emptyShapeInfo(_dataType);
@@ -62,32 +67,47 @@ Nd4jLong* ShapeDescriptor::toShapeInfo() const {
             return ShapeBuilders::emptyShapeInfo(_dataType, _order, _shape);
         }
     }
+    timers->stopWatch(__LINE__, 3);
 
 
     switch (_rank) {
         case 0: {
+        timers->stopWatch(__LINE__, 3);
+
             auto shapeInfo = ShapeBuilders::createScalarShapeInfo(_dataType);
             shapeInfo[2] = _ews;
+            timers->stopWatch(__LINE__, 3);
             return shapeInfo;
         }
         case 1: {
+        timers->stopWatch(__LINE__, 3);
+
             auto shapeInfo = ShapeBuilders::createVectorShapeInfo(_dataType, _shape[0]);
             shapeInfo[2 + _rank * 2] = _ews;
             shapeInfo[2] = _strides[0];
             shapeInfo[2 + _rank * 2 + 1] = _order;
+            timers->stopWatch(__LINE__, 3);
+
             return shapeInfo;
         }
         default: {
+        timers->stopWatch(__LINE__, 3);
+
             auto shapeInfo = ShapeBuilders::createShapeInfo(_dataType, _order, _shape);
+            timers->stopWatch(__LINE__, 3);
 
             for (int e = 0; e < _rank; e++)
                 shapeInfo[e + 1 + _rank] = _strides[e];
+            timers->stopWatch(__LINE__, 3);
 
             shapeInfo[2 + _rank * 2] = _ews;
+            timers->stopWatch(__LINE__, 3);
 
             return shapeInfo;
         }
     }
+    timers->stopWatch(__LINE__, 3);
+
 }
 
 ShapeDescriptor::ShapeDescriptor(const DataType type, const char order, const Nd4jLong *shape, const int rank) :  _dataType(type), _order(order), _rank(rank), _ews(1){
