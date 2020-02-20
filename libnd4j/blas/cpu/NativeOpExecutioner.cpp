@@ -522,7 +522,9 @@ void NativeOpExecutioner::execReduceFloat(nd4j::LaunchContext  *lc,
 
     const nd4j::LoopKind::Kind kindOfLoop = nd4j::LoopKind::deduceKindOfLoopTadXZ(hXShapeInfo, hZShapeInfo, tadShapeInfo);
 
-    samediff::Threads::parallel_tad(func, 0, shape::length(hZShapeInfo), 1, kindOfLoop == nd4j::LoopKind::Kind::SMALLARR2DX ? 1 : nd4j::Environment::getInstance()->maxMasterThreads());
+    func(0, 0, shape::length(hZShapeInfo), 1);
+
+    //samediff::Threads::parallel_tad(func, 0, shape::length(hZShapeInfo), 1, kindOfLoop == nd4j::LoopKind::Kind::SMALLARR2DX ? 1 : nd4j::Environment::getInstance()->maxMasterThreads());
 }
 
 ////////////////////////////////////////////////////////////////////////
