@@ -58,7 +58,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
             if(input->rankOf() == 1 && output->rankOf() == 1) {
 
                 auto func = PRAGMA_THREADS_FOR {
-                    for (auto i = start; i < stop; i += increment)
+                    for (auto i = start; i < stop; i++)
                         output->p(i, input->e(indices->e<Nd4jLong>(i)));
                 };
 
@@ -87,7 +87,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                     auto func = PRAGMA_THREADS_FOR {
 
-                        for (auto i = 0; i < 1; i += increment) {
+                        for (auto i = 0; i < 1; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -99,7 +99,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                 }
                 else {
                     auto func = PRAGMA_THREADS_FOR {
-                        for (auto i = start; i < stop; i += increment) {
+                        for (auto i = start; i < stop; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -139,7 +139,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                 auto func = PRAGMA_THREADS_FOR {
 
-                    for (auto i = start; i < stop; i += increment) {
+                    for (auto i = start; i < stop; i++) {
 
                         void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[intArgs[i + 1]]);
                         void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -154,7 +154,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                 auto func = PRAGMA_THREADS_FOR {
 
-                    for (auto i = start; i < stop; i += increment) {
+                    for (auto i = start; i < stop; i++) {
 
                         void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[intArgs[i + 1]]);
                         void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
