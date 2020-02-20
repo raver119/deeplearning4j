@@ -1538,6 +1538,7 @@
 // define macros for compiler enforcement to make function inline
 #ifdef __NEC__
 
+#define INLINE_LOOPS
 #define FORCEINLINE inline
 
 #elif __clang__
