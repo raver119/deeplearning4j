@@ -24,6 +24,7 @@
 #include <helpers/logger.h>
 #include <templatemath.h>
 #include <shape.h>
+#include <omp.h>
 
 
 namespace samediff {
