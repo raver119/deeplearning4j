@@ -384,9 +384,16 @@ namespace samediff {
 #ifdef __NEC__
 		
 		if (tryAcquire(numThreads)) {
-			#pragma omp parallel for
-		    for (int e = start; e < stop; e++) {
-			    function(e, e, e + 1, increment);
+			auto span = delta / numThreads;
+			#pragma omp parallel for num_threads(numThreads)
+		    for (int e = 0; e < numThreads; e++) {
+			     auto start_ = span * e + start;
+			     auto stop_ = start_ + span;
+
+			     if (e == numThreads - 1)
+				     stop_ = stop;
+
+			    function(e, start_, stop_, increment);
 		    }
 			freeThreads(numThreads);
 			return numThreads;
