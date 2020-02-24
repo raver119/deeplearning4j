@@ -22,6 +22,7 @@
 #if NOT_EXCLUDED(OP_split)
 
 #include <ops/declarable/headers/parity_ops.h>
+#include<ops/declarable/helpers/transforms.h>
 #include <array>
 #include <performance/benchmarking/global_timers.h>
 
@@ -74,34 +75,15 @@ timers->stopWatch(__LINE__, 5);
         if(axis < 0) axis += input->rankOf();
 timers->stopWatch(__LINE__, 5);
         REQUIRE_TRUE(input->sizeAt(axis) % num_splits == 0, 0, "Split: num_splits has wrong value, remainder of division should be 0, but it's %i", input->sizeAt(axis) % num_splits);
-timers->stopWatch(__LINE__, 5);
-        int pos = 0;
-        int split = input->sizeAt(axis) / num_splits;
-timers->stopWatch(__LINE__, 5);
-        std::vector<Nd4jLong> indices(2 * input->rankOf());
-        timers->stopWatch(__LINE__, 5);
+
+        std::vector<NDArray*> outArrs(num_splits);
         for (int e = 0; e < num_splits; e++) {
-            timers->stopWatch(__LINE__, 5);
-            auto out = OUTPUT_VARIABLE(e);
-            
-            for (int d = 0; d < input->rankOf(); d++) {
-                if (d == axis) {
-                    indices[2*d]     = pos;
-                    indices[2*d + 1] = pos + split; 
-                }
-                else 
-                    indices[2*d] = indices[2*d + 1] = 0;
-            }
-timers->stopWatch(__LINE__, 5);
-            auto sub = (*input)(indices, true);
-            timers->stopWatch(__LINE__, 5);
-            
-            out->assign(sub);
-timers->stopWatch(__LINE__, 5);
-            pos += split;
-timers->stopWatch(__LINE__, 5);
+            outArrs[e] = OUTPUT_VARIABLE(e);
         }
-timers->stopWatch(__LINE__, 5);
+	timers->stopWatch(__LINE__, 5);
+
+        helpers::split(block.launchContext(), *input, outArrs, axis);
+	timers->stopWatch(__LINE__, 5);
         return Status::OK();
     }
 
