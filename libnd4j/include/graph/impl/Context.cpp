@@ -22,6 +22,7 @@
 #include <helpers/ShapeUtils.h>
 #include <graph/Context.h>
 #include <array/InteropDataBuffer.h>
+#include <performance/benchmarking/global_timers.h>
 
 
 namespace nd4j {
@@ -275,24 +276,39 @@ namespace nd4j {
         }
 
         void Context::pushNDArrayToVariableSpace(std::pair<int, int> &pair, NDArray *array, bool removable) {
+            auto timers = nd4j::GlobalTimers::getInstance();
+            timers->stopWatch(__LINE__, 3);
             if (_variableSpace != nullptr) {
                 if (!_variableSpace->hasVariable(pair)) {
+                    timers->stopWatch(__LINE__, 3);
                     auto var = new Variable(array, nullptr, pair.first, pair.second);
+                    timers->stopWatch(__LINE__, 3);
                     _variableSpace->putVariable(pair, var);
+                    timers->stopWatch(__LINE__, 3);
                     var->markRemovable(removable);
+                    timers->stopWatch(__LINE__, 3);
                 } else {
+                    timers->stopWatch(__LINE__, 3);
                     auto var = _variableSpace->getVariable(pair);
+                    timers->stopWatch(__LINE__, 3);
                     if (var->hasNDArray()) {
                         if (var->getNDArray() != array) {
                             if (var->isRemovable() && var->hasNDArray())
+                                timers->stopWatch(__LINE__, 3);
                                 delete var->getNDArray();
+                            timers->stopWatch(__LINE__, 3);
 
                             var->setNDArray(array);
+                            timers->stopWatch(__LINE__, 3);
                             var->markRemovable(removable);
+                            timers->stopWatch(__LINE__, 3);
                         }
                     } else {
+                        timers->stopWatch(__LINE__, 3);
                         var->setNDArray(array);
+                        timers->stopWatch(__LINE__, 3);
                         var->markRemovable(removable);
+                        timers->stopWatch(__LINE__, 3);
                     }
                 }
             }

@@ -30,18 +30,9 @@ namespace ops  {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
-    auto timers = nd4j::GlobalTimers::getInstance();
-    timers->reset();
-    timers->stopWatch(__LINE__, 4);
     REQUIRE_TRUE(block.width() > 0, 0, "CONCAT op: No input arrays were provided");
-    timers->stopWatch(__LINE__, 4);
-
     const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
-    timers->stopWatch(__LINE__, 4);
-
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
-    timers->stopWatch(__LINE__, 4);
-
     // first of all take into account possible presence of empty arrays
     // also if scalar is present -> copy its value to vector with length=1
     std::vector<NDArray*> nonEmptyArrs;
@@ -75,8 +66,6 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
             ++index;
         }
     }
-    timers->stopWatch(__LINE__, 4);
-
     const int numOfNonEmptyArrs = nonEmptyArrs.size();
 
     if(numOfNonEmptyArrs == 0){
@@ -84,46 +73,31 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
         REQUIRE_TRUE(OUTPUT_VARIABLE(0)->isEmpty(), 0, "CONCAT op: If all input variables are empty, output must be empty");
         return Status::OK();
     }
-    timers->stopWatch(__LINE__, 4);
-
     const int rank = nonEmptyArrs[0]->rankOf();                     //  look up to first non-empty array
     int axis = isAxisInLastArr ? INPUT_VARIABLE(block.width() - 1)->e<int>(0) : INT_ARG(0);
     if(axis < 0){
         axis += rank;
     }
-    timers->stopWatch(__LINE__, 4);
-
     // ******** input validation ******** //
     REQUIRE_TRUE(allOfSameType, 0, "CONCAT op: all of input arrays must have same type !");
     REQUIRE_TRUE(0 <= axis && (axis < rank || (axis == 0 && rank == 0)), 0, "CONCAT op: input axis must be in range [0, %i], but got %i instead!", rank-1, axis);
-    timers->stopWatch(__LINE__, 4);
-
     for(int i = 1; i < numOfNonEmptyArrs; ++i)
         REQUIRE_TRUE(nonEmptyArrs[i]->rankOf() == rank, 0, "CONCAT op: all input arrays must have the same rank !");
-    timers->stopWatch(__LINE__, 4);
-
     for(int i = 1; i < numOfNonEmptyArrs; ++i) {
         for(int dim = 0; dim < rank; ++dim)
             if(dim != axis)
                 REQUIRE_TRUE(nonEmptyArrs[i]->sizeAt(dim) == nonEmptyArrs[0]->sizeAt(dim), 0, "CONCAT op: all input arrays must have the same dimensions (except those on input axis) !");
     }
     // ******** end of input validation ******** //
-    timers->stopWatch(__LINE__, 4);
-
     auto output = OUTPUT_VARIABLE(0);
-    timers->stopWatch(__LINE__, 4);
-
     if(numOfNonEmptyArrs == 1)
         output->assign(nonEmptyArrs[0]);
     else
         helpers::concat(block.launchContext(), nonEmptyArrs, *output, axis);
 
-    timers->stopWatch(__LINE__, 4);
     // delete dynamically allocated vectors with length=1
     for(int index : arrsToDelete)
         delete nonEmptyArrs[index];
-    timers->stopWatch(__LINE__, 4);
-
     return Status::OK();
 }
 

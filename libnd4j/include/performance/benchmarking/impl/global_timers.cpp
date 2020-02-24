@@ -9,6 +9,13 @@ GlobalTimers::GlobalTimers()
     timers = new std::chrono::high_resolution_clock::time_point[num_timers];
     line_numbers = new int[num_timers];
     labels = new int[num_timers];
+    auto now=std::chrono::high_resolution_clock::now();
+    for(int i=0;i<num_timers;i++)
+    {
+        timers[i] = now;
+        labels[i] = 0;
+        line_numbers[i] =0;
+    }
     next_timer_ind=0;
     current_label_ind=0;
     next_label_ind=1;
@@ -45,8 +52,6 @@ void GlobalTimers::reset(int reset_to){
     }
     next_timer_ind = reset_to;
     current_label_ind=0;
-//    ind_to_labels.clear();
-//    labels_to_ind.clear();
     labels_to_ind["N/A"]=0;
     ind_to_labels[0]=std::string("N/A");
 }
