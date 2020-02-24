@@ -387,7 +387,7 @@ namespace samediff {
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for
 		    for (int e = start; e < stop; e++) {
-			    function(omp_get_thread_id(), e, e + 1, increment);
+			    function(omp_get_thread_num(), e, e + 1, increment);
 		    }
 			freeThreads(numThreads);
 			return numThreads;
