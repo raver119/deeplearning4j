@@ -175,8 +175,8 @@ TEST_F(PlaygroundTests, test_matmul_2) {
 
 TEST_F(PlaygroundTests, test_reduce_mean_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
-    auto y = NDArrayFactory::create<int>(0);
-    auto z = NDArrayFactory::create<float>('c', {768});
+    auto y = NDArrayFactory::create<int>(1);
+    auto z = NDArrayFactory::create<float>('c', {512});
 
     x.assign(1.f);
 
@@ -198,8 +198,8 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
 
 TEST_F(PlaygroundTests, test_reduce_mean_2) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
-    auto y = NDArrayFactory::create<int>(0);
-    auto z = NDArrayFactory::create<float>('c', {768});
+    auto y = NDArrayFactory::create<int>(1);
+    auto z = NDArrayFactory::create<float>('c', {512});
 
     auto rows = x.sizeAt(0);
     auto cols = x.sizeAt(1);
