@@ -55,7 +55,7 @@ namespace nd4j {
 
 
     ConstantDataBuffer ConstantShapeHelper::bufferForShapeInfo(const ShapeDescriptor &descriptor) {
-        auto timers = nd4j::GlobalTimers::getInstance();
+//        auto timers = nd4j::GlobalTimers::getInstance();
         // timers->stopWatch(__LINE__, 6);
         int deviceId = 0;
         // timers->stopWatch(__LINE__, 6);

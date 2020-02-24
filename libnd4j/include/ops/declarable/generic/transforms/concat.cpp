@@ -19,7 +19,6 @@
 //  @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
-#include<performance/benchmarking/global_timers.h>
 #include<ops/declarable/CustomOperations.h>
 #include<ops/declarable/helpers/transforms.h>
 #include<array>
@@ -37,12 +36,10 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
     // also if scalar is present -> copy its value to vector with length=1
     std::vector<NDArray*> nonEmptyArrs;
     std::vector<int> arrsToDelete;
-    timers[++time_i] = std::chrono::high_resolution_clock::now();
     int index = 0;
     bool allOfSameType = true;
     auto rankOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->rankOf() : 0;
     auto typeOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : block.dataType();
-    timers[++time_i] = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < numOfInArrs; ++i) {
         auto input = INPUT_VARIABLE(i);
         auto currentRank = input->rankOf();
