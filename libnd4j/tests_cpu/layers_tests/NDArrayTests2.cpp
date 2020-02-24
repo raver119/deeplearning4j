@@ -1306,8 +1306,6 @@ TEST_F(NDArrayTest2, test_numpy_import_1) {
 
     ASSERT_EQ(exp, array);
 }
-<<<<<<< HEAD
-=======
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1424,4 +1422,4 @@ TEST_F(NDArrayTest2, subarray_perfs) {
     }*/
 
 }
->>>>>>> 357cd0597b7c217c42692a0bda4edcf903af96d1
+
