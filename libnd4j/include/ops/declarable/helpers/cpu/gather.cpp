@@ -87,7 +87,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                     auto func = PRAGMA_THREADS_FOR {
 
-                        for (auto i = 0; i < 1; i++) {
+                        for (auto i = start; i < stop; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -104,7 +104,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
 
-                    NativeOpExecutioner::execTransformAny(input->getContext(), transform::Assign,
+                            NativeOpExecutioner::execTransformAny(input->getContext(), transform::Assign,
                                                                  inBuff,  inTadShapeInfo,  nullptr/*input specialBuffer*/, nullptr/*input specialShapeInfo*/,
                                                                  outBuff, outTadShapeInfo, nullptr/*output specialBuffer*/, nullptr/*output specialShapeInfo*/,
                                                                  nullptr, nullptr, nullptr, false/*allowParallelism*/);

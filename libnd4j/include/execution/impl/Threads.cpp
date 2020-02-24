@@ -24,6 +24,7 @@
 #include <helpers/logger.h>
 #include <templatemath.h>
 #include <shape.h>
+#include <omp.h>
 
 
 namespace samediff {
@@ -386,7 +387,7 @@ namespace samediff {
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for
 		    for (int e = start; e < stop; e++) {
-			    function(e, e, e + 1, increment);
+			    function(omp_get_thread_num(), e, e + 1, increment);
 		    }
 			freeThreads(numThreads);
 			return numThreads;
