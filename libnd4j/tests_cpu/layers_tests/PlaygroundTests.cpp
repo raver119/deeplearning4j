@@ -63,6 +63,28 @@ TEST_F(PlaygroundTests, test_avx) {
     nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
 }
 
+TEST_F(PlaygroundTests, test_split_1) {
+    auto axis = NDArrayFactory::create<int>(1);
+    auto array = NDArrayFactory::create<double>('c', {1, 512});
+
+    auto outA = NDArrayFactory::create<double>('c', {1, 128});
+    auto outB = outA.ulike();
+    auto outC = outA.ulike();
+    auto outD = outA.ulike();
+
+    nd4j::ops::split op;
+
+    auto timeStart = std::chrono::system_clock::now();
+
+    auto result = op.execute({&axis, &array},{&outA, &outB, &outC, &outD}, {4});
+
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+    nd4j_printf("Split time: %lld us;\n", outerTime);
+
+    ASSERT_EQ(Status::OK(), result);
+}
+
 TEST_F(PlaygroundTests, test_concat_1) {
     auto t = NDArrayFactory::create<double>('c', {1, 28});
     auto u = NDArrayFactory::create<double>('c', {1, 128});
