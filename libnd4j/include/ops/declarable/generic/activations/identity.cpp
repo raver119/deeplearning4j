@@ -27,17 +27,12 @@
 namespace nd4j {
     namespace ops {
         OP_IMPL(identity, 1, 1, true) {
-            GlobalTimers* timers = GlobalTimers::getInstance();
-            timers->stopWatch(__LINE__, 8);
-            auto first = INPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 8);
-            auto z = OUTPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 8);
+            if (!block.isInplace()) {
+                auto first = INPUT_VARIABLE(0);
+                auto z = OUTPUT_VARIABLE(0);
 
-            if (!block.isInplace()){
-                timers->stopWatch(__LINE__, 8);
-                first->applyTransform(nd4j::transform::Identity, *z);
-                timers->stopWatch(__LINE__, 8);
+                // we hope for memcpy here
+                z->assign(first);
             }
 
             return Status::OK();
