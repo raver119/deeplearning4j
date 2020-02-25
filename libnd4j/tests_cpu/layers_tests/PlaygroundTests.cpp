@@ -47,6 +47,8 @@
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/addBias.h>
 
+#include <performance/benchmarking/global_timers.h>
+
 using namespace nd4j;
 using namespace nd4j::graph;
 
@@ -56,6 +58,7 @@ public:
     int poolSize = 10;
 
     PlaygroundTests() {
+        Environment::getInstance()->setProfiling(true);
     }
 };
 
@@ -106,11 +109,11 @@ TEST_F(PlaygroundTests, test_concat_1) {
 
 TEST_F(PlaygroundTests, test_gather_1) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (nd4j::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
         return;
 
     auto x = NDArrayFactory::create<float>('c', {30522, 768});
-    auto y = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
+    auto y = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
     auto z = NDArrayFactory::create<float>('c', {4, 128, 768});
 
     x.linspace(1.0f, 0.3f);
@@ -253,15 +256,15 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (nd4j::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/Bert_minimal_model/bert_minimal_model.fb");
 
-    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
-    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
-    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
-    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model_output.numpy");
+    auto t = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
+    auto u = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
+    auto v = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
+    auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
     //graph->printOut();
 
@@ -307,15 +310,18 @@ TEST_F(PlaygroundTests, test_bert_1) {
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
     */
 
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->displayTimers();
+
     delete graph;
 }
 
 TEST_F(PlaygroundTests, test_bert_2) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
+    if (nd4j::graph::getFileSize("resources/Bert_minimal_model/bert_like_ops.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/Bert_minimal_model/bert_like_ops.fb");
 
     //graph->printOut();
 

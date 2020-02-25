@@ -28,6 +28,7 @@
 #include <exceptions/datatype_exception.h>
 #include <helpers/StringUtils.h>
 #include <cstdarg>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
     namespace ops {
@@ -564,16 +565,24 @@ namespace nd4j {
             bool hasHelper = false;
 
             // platform helpers use might be forbidden for various reasons, so we'll check it out first
+            GlobalTimers* timers = GlobalTimers::getInstance();
+            timers->stopWatch(__LINE__, 9);
             if (block->helpersAllowed() && nd4j::Environment::getInstance()->helpersAllowed()) {
+                timers->stopWatch(__LINE__, 9);
                 // if we have platform-specific helper for this op - invoke it
                 if (OpRegistrator::getInstance()->hasHelper(this->getOpHash(), block->engine())) {
+                    timers->stopWatch(__LINE__, 9);
                     auto helper = OpRegistrator::getInstance()->getPlatformHelper(this->getOpHash(), block->engine());
+                    timers->stopWatch(__LINE__, 9);
                     if (helper->isUsable(*block)) {
+                        timers->stopWatch(__LINE__, 9);
                         status = helper->invokeHelper(*block);
+                        timers->stopWatch(__LINE__, 9);
                         hasHelper = true;
                     }
                 }
             }
+            timers->stopWatch(__LINE__, 9);
 
             // if we don't have platform-specific helper - invoke generic implementation
             if (!hasHelper)
