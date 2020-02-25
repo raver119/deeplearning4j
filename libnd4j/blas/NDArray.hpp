@@ -4779,31 +4779,21 @@ NDArray NDArray::diagonal(const char type) const {
 
 ////////////////////////////////////////////////////////////////////////
 ResultSet NDArray::allTensorsAlongDimension(const std::vector<int> &dimensions) const {
-    auto timers = nd4j::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 2);
 
     ResultSet result;
 
     if(dimensions.size() == 0)
         return result;
-timers->stopWatch(__LINE__, 2);
     if(dimensions.back() >= rankOf())
         throw std::runtime_error("NDArray::allTensorsAlongDimension static function: all input dimensions must be smaller than rank of input array !");
-timers->stopWatch(__LINE__, 2);
 
     auto pack = ConstantTadHelper::getInstance()->tadForDimensions(_shapeInfo, const_cast<int*>(dimensions.data()), dimensions.size());
-timers->stopWatch(__LINE__, 2);
     auto numTads = pack.numberOfTads();
-timers->stopWatch(__LINE__, 2);
     for (int idx = 0; idx < numTads; idx++ ) {
-        timers->stopWatch(__LINE__, 2);
         auto array = new NDArray(_buffer, ShapeDescriptor(pack.primaryShapeInfo()), getContext(), pack.primaryOffsets()[idx] + getBufferOffset());
-        timers->stopWatch(__LINE__, 2);
         array->_isView = true;
         result.push_back(array);
-        timers->stopWatch(__LINE__, 2);
     }
-timers->stopWatch(__LINE__, 2);
     return result;
 }
 
