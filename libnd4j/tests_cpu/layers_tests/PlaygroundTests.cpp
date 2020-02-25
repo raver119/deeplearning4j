@@ -274,9 +274,17 @@ TEST_F(PlaygroundTests, test_bert_1) {
     graph->getVariableSpace()->putVariable(86,0, u);
     graph->getVariableSpace()->putVariable(87,0, v);
 
+    nd4j::Environment::getInstance()->setProfiling(true);
+    auto profile = GraphProfilingHelper::profile(graph, 1);
+
+    profile->printOut();
+    delete profile;
+    nd4j::Environment::getInstance()->setProfiling(false);
+
 
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
+
     ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
 
