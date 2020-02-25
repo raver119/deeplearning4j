@@ -27,14 +27,20 @@
 namespace nd4j {
     namespace ops {
         OP_IMPL(identity, 1, 1, true) {
+            GlobalTimers* timers = GlobalTimers::getInstance();
+            timers->stopWatch(__LINE__, 8);
             if (!block.isInplace()) {
+                timers->stopWatch(__LINE__, 8);
                 auto first = INPUT_VARIABLE(0);
+                timers->stopWatch(__LINE__, 8);
                 auto z = OUTPUT_VARIABLE(0);
+                timers->stopWatch(__LINE__, 8);
 
                 // we hope for memcpy here
                 z->assign(first);
+                timers->stopWatch(__LINE__, 8);
             }
-
+timers->stopWatch(__LINE__, 8);
             return Status::OK();
         }
         DECLARE_SYN(linear, identity);
