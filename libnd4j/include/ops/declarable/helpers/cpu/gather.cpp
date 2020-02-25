@@ -85,17 +85,17 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                 if (shape::order(inTadShapeInfo) == shape::order(outTadShapeInfo) && shape::order(inTadShapeInfo) == 'c' && input->dataType() == output->dataType() && shape::elementWiseStride(inTadShapeInfo) == 1 && shape::elementWiseStride(outTadShapeInfo) == 1) {
 
-                    auto func = PRAGMA_THREADS_FOR {
+                    //auto func = PRAGMA_THREADS_FOR {
 
-                        for (auto i = start; i < stop; i++) {
+                        for (auto i = 0; i < numOfSubArrs; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
 
                             memcpy(outBuff, inBuff, shape::length(inTadShapeInfo) * input->sizeOfT());
                         }
-                    };
-                    samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
+                    //};
+                    //samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
                 }
                 else {
                     auto func = PRAGMA_THREADS_FOR {

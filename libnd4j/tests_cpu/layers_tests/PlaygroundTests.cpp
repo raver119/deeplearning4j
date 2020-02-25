@@ -178,8 +178,8 @@ TEST_F(PlaygroundTests, test_matmul_2) {
 
 TEST_F(PlaygroundTests, test_reduce_mean_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
-    auto y = NDArrayFactory::create<int>(0);
-    auto z = NDArrayFactory::create<float>('c', {768});
+    auto y = NDArrayFactory::create<int>(1);
+    auto z = NDArrayFactory::create<float>('c', {512});
 
     x.assign(1.f);
 
@@ -201,8 +201,8 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
 
 TEST_F(PlaygroundTests, test_reduce_mean_2) {
     auto x = NDArrayFactory::create<float>('c', {512, 768});
-    auto y = NDArrayFactory::create<int>(0);
-    auto z = NDArrayFactory::create<float>('c', {768});
+    auto y = NDArrayFactory::create<int>(1);
+    auto z = NDArrayFactory::create<float>('c', {512});
 
     auto rows = x.sizeAt(0);
     auto cols = x.sizeAt(1);
@@ -274,7 +274,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     graph->getVariableSpace()->putVariable(86,0, u);
     graph->getVariableSpace()->putVariable(87,0, v);
 
-/*
+
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
@@ -282,8 +282,8 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
     ASSERT_EQ(z, *array);
-*/
 
+/*
     nd4j::Environment::getInstance()->setProfiling(true);
     auto profile = GraphProfilingHelper::profile(graph, 1);
 
@@ -291,7 +291,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     nd4j::Environment::getInstance()->setProfiling(false);
     delete profile;
-
+*/
     /*
     std::vector<Nd4jLong> values;
 
