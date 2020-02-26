@@ -802,12 +802,12 @@ namespace samediff {
 			throw std::runtime_error("Threads::parallel_for got start > stop");
 
 #ifdef __NEC__
-        if (tryAcquire(numThreads)) {
+        if (tryAcquire(req_numThreads)) {
 			#pragma omp parallel for
 		    for (auto j = start; j < stop; j += increment) {
 			    function(omp_get_thread_num(), j, j+1, 1);
 	    	}
-			freeThreads(numThreads);
+			freeThreads(req_numThreads);
 			return numThreads;
 		} else {
             // if there were no threads available - we'll execute function right within current thread
