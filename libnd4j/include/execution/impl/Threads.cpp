@@ -573,7 +573,7 @@ namespace samediff {
 
 		if (tryAcquire(numThreads)) {
             #pragma omp parallel for
-		    for (auto x = startX; x < stopX; e += incX) {
+		    for (auto x = startX; x < stopX; x += incX) {
 		        for (auto y = startY; y < stopY; y += incY) {
 		            for (auto z = startZ; z < stopZ; z += incZ) {
 				        function(omp_get_thread_num(), x, x+1, 1, y, y+1, 1, z, z+1, 1);
