@@ -175,7 +175,7 @@ namespace functions {
                     }
                 } else if(kindOfLoop == nd4j::LoopKind::BROADCAST_SCALAR_X){
                     // this loop effectively turns broadcast into series of scalar ops
-                    auto loopLength = yShapeInfo[shape::rank(yShapeInfo)];
+                    unsigned int loopLength = yShapeInfo[shape::rank(yShapeInfo)];
 
                     for (auto i = start; i < stop; i++) {
                         auto oY = y + (i * loopLength);
@@ -189,7 +189,7 @@ namespace functions {
                     }
                 } else if(kindOfLoop == nd4j::LoopKind::BROADCAST_SCALAR_Y){
                     // this loop effectively turns broadcast into series of scalar ops
-                    auto loopLength = xShapeInfo[shape::rank(xShapeInfo)];
+                    unsigned int loopLength = xShapeInfo[shape::rank(xShapeInfo)];
 
                     for (auto i = start; i < stop; i++) {
                         auto oX = x + (i * loopLength);
