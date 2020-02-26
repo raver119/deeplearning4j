@@ -27,49 +27,36 @@
 namespace nd4j {
     namespace ops {
         CUSTOM_OP_IMPL(expand_dims, 1, 1, false, 0, -2) {
-            GlobalTimers* timers = GlobalTimers::getInstance();
-            timers->stopWatch(__LINE__, 11);
-
             auto input = INPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 11);
             auto output = OUTPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 11);
 
             if (input->isScalar()) {
-                timers->stopWatch(__LINE__, 11);
                 output->assign(input);
-                timers->stopWatch(__LINE__, 11);
                 return Status::OK();
             }
-timers->stopWatch(__LINE__, 11);
+
             Nd4jLong axis = block.numI() > 0 ? INT_ARG(0) : INPUT_VARIABLE(1)->e<int>(0);
-timers->stopWatch(__LINE__, 11);
+
             if (axis < 0)
                 axis += input->rankOf() + 1;
-timers->stopWatch(__LINE__, 11);
+
             REQUIRE_TRUE(axis >= 0 && axis <= input->rankOf()+1, 0, "ExpandDims: axis should be in range of 0...%i in this case, but got %i instead", input->rankOf() + 1, axis);
-timers->stopWatch(__LINE__, 11);
-            std::vector<Nd4jLong> shape;
-            timers->stopWatch(__LINE__, 11);
+
+            std::vector<Nd4jLong> shape(input->rankOf());
+
             for(int e = 0; e < input->rankOf(); e++)
-                shape.emplace_back(input->sizeAt(e));
-timers->stopWatch(__LINE__, 11);
+                shape[input->sizeAt(e)];
+
             shape.insert(shape.begin() + axis, 1);
-timers->stopWatch(__LINE__, 11);
+
             if (input->ews() == 1 && output->ews() == 1 && input->ordering() == output->ordering()) {
-                timers->stopWatch(__LINE__, 11);
                 output->dataBuffer()->copyBufferFrom(*input->dataBuffer().get(), output->lengthOf() * DataTypeUtils::sizeOfElement(output->dataType()), 0, input->bufferOffset());
-                timers->stopWatch(__LINE__, 11);
             } else {
-                timers->stopWatch(__LINE__, 11);
                 auto tmp = input->reshape(input->ordering(), shape);
-                timers->stopWatch(__LINE__, 11);
                 output->assign(tmp);
-                timers->stopWatch(__LINE__, 11);
             }
             return Status::OK();
         }
-
 
         DECLARE_TYPES(expand_dims) {
             getOpDescriptor()

@@ -29,8 +29,6 @@
 #include <ops/declarable/CustomOperations.h>
 #include <types/types.h>
 #include <helpers/Loops.h>
-#include <ops/declarable/CustomOperations.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
 /**
@@ -218,121 +216,6 @@ void SpecialMethods<T>::concatCpuGeneric(int dimension, int numArrays, Nd4jPoint
     for(int i = 0; i < numArrays; ++i)
         delete inputs[i];
 }
-
-
-template <typename T>
-void SpecialMethods<T>::splitCpuGeneric(const NDArray& input, const std::vector<NDArray*>& outArrs, const int axis) {
-    auto timers = nd4j::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 7);
-    int numSplits = outArrs.size();
-    timers->stopWatch(__LINE__, 7);
-
-    const auto sizeofT = input.sizeOfT();
-    timers->stopWatch(__LINE__, 7);
-
-    T* xBuff = input.bufferAsT<T>();
-    timers->stopWatch(__LINE__, 7);
-
-    bool luckCase1 = ((axis == 0 && input.ordering() == 'c') || (axis == input.rankOf() - 1 && input.ordering() == 'f')) && input.ews() == 1;
-    timers->stopWatch(__LINE__, 7);
-
-    if (luckCase1) {
-        timers->stopWatch(__LINE__, 7);
-        for (uint i = 0; i < numSplits; ++i) {
-            luckCase1 &= outArrs[i]->ordering() == input.ordering() && outArrs[i]->ews() == 1;
-            if (!luckCase1)
-                break;
-        }
-        timers->stopWatch(__LINE__, 7);
-    }
-
-    if (luckCase1) {
-timers->stopWatch(__LINE__, 7);
-        T* x = const_cast<T*>(xBuff);
-        timers->stopWatch(__LINE__, 7);
-        for (uint i = 0; i < numSplits; ++i) {
-            const auto memAmountToCopy = outArrs[i]->lengthOf();
-            timers->stopWatch(__LINE__, 7);
-            memcpy(outArrs[i]->bufferAsT<T>(), x, memAmountToCopy * sizeofT);
-            timers->stopWatch(__LINE__, 7);
-            x += memAmountToCopy;
-            timers->stopWatch(__LINE__, 7);
-        }
-        return;
-timers->stopWatch(__LINE__, 7);
-    }
-timers->stopWatch(__LINE__, 7);
-    const bool isXcontin = input.strideAt(axis) == 1 && input.ordering() == 'c';
-    bool areOutsContin = true;
-    bool allSameOrder = true;
-timers->stopWatch(__LINE__, 7);
-    if (isXcontin) {
-        timers->stopWatch(__LINE__, 7);
-        for (uint i = 0; i < numSplits; ++i) {
-            areOutsContin &= outArrs[i]->strideAt(axis) == 1;
-            allSameOrder &= outArrs[i]->ordering() == input.ordering();
-            if (!areOutsContin || !allSameOrder)
-                break;
-        }
-        timers->stopWatch(__LINE__, 7);
-    }
-timers->stopWatch(__LINE__, 7);
-    const bool luckCase2 = isXcontin && areOutsContin && allSameOrder;
-timers->stopWatch(__LINE__, 7);
-    if (luckCase2) {
-timers->stopWatch(__LINE__, 7);
-        const uint xDim = input.sizeAt(axis);
-timers->stopWatch(__LINE__, 7);
-        for (uint i = 0; i < input.lengthOf() / xDim; ++i) {
-
-            T* x = xBuff + xDim * i;
-timers->stopWatch(__LINE__, 7);
-            for (uint j = 0; j < numSplits; ++j) {
-                const auto zDim = outArrs[j]->sizeAt(axis);
-                T* z = outArrs[j]->bufferAsT<T>() + zDim * i;
-                memcpy(z, x, zDim * sizeofT);
-                z += zDim;
-                x += zDim;
-            }
-            timers->stopWatch(__LINE__, 7);
-        }
-timers->stopWatch(__LINE__, 7);
-        return;
-    }
-timers->stopWatch(__LINE__, 7);
-    uint zDim = outArrs[0]->sizeAt(axis);
-    // general case
-timers->stopWatch(__LINE__, 7);
-    auto func = PRAGMA_THREADS_FOR{
-timers->stopWatch(__LINE__, 7);
-        Nd4jLong coords[MAX_RANK];
-        for (auto i = start; i < stop; i += increment) {
-timers->stopWatch(__LINE__, 7);
-            shape::index2coords(i, input.getShapeInfo(), coords);
-            timers->stopWatch(__LINE__, 7);
-            const auto xOffset = shape::getOffset(input.getShapeInfo(), coords);
-timers->stopWatch(__LINE__, 7);
-            uint outArrIdx = 0;
-timers->stopWatch(__LINE__, 7);
-            while (coords[axis] >= zDim) {
-                coords[axis] -= zDim;
-                ++outArrIdx;
-            }
-            timers->stopWatch(__LINE__, 7);
-
-            T* z = outArrs[outArrIdx]->bufferAsT<T>();
-            timers->stopWatch(__LINE__, 7);
-            const auto zOffset = shape::getOffset(outArrs[outArrIdx]->getShapeInfo(), coords);
-            timers->stopWatch(__LINE__, 7);
-            z[zOffset] = xBuff[xOffset];
-            timers->stopWatch(__LINE__, 7);
-        }
-    };
-timers->stopWatch(__LINE__, 7);
-    samediff::Threads::parallel_for(func, 0, input.lengthOf());
-    timers->stopWatch(__LINE__, 7);
-}
-
 
 /**
  * This kernel accumulates X arrays, and stores result into Z
