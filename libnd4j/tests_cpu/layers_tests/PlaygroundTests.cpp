@@ -47,8 +47,6 @@
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/addBias.h>
 
-#include <performance/benchmarking/global_timers.h>
-
 using namespace nd4j;
 using namespace nd4j::graph;
 
@@ -58,7 +56,6 @@ public:
     int poolSize = 10;
 
     PlaygroundTests() {
-        Environment::getInstance()->setProfiling(true);
     }
 };
 
@@ -274,24 +271,16 @@ TEST_F(PlaygroundTests, test_bert_1) {
     graph->getVariableSpace()->putVariable(86,0, u);
     graph->getVariableSpace()->putVariable(87,0, v);
 
-    nd4j::Environment::getInstance()->setProfiling(true);
-    auto profile = GraphProfilingHelper::profile(graph, 1);
-
-    profile->printOut();
-    delete profile;
-    nd4j::Environment::getInstance()->setProfiling(false);
-
-
+/*
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
-
     ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
 
     auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
     ASSERT_EQ(z, *array);
+*/
 
-/*
     nd4j::Environment::getInstance()->setProfiling(true);
     auto profile = GraphProfilingHelper::profile(graph, 1);
 
@@ -299,7 +288,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     nd4j::Environment::getInstance()->setProfiling(false);
     delete profile;
-*/
+
     /*
     std::vector<Nd4jLong> values;
 
@@ -318,18 +307,15 @@ TEST_F(PlaygroundTests, test_bert_1) {
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
     */
 
-    GlobalTimers* timers = GlobalTimers::getInstance();
-    timers->displayTimers();
-
     delete graph;
 }
 
 TEST_F(PlaygroundTests, test_bert_2) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("resources/Bert_minimal_model/bert_like_ops.fb") < 0)
+    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("resources/Bert_minimal_model/bert_like_ops.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
 
     //graph->printOut();
 
