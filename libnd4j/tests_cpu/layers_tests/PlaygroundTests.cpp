@@ -43,6 +43,7 @@
 #include <array>
 #include <performance/benchmarking/FullBenchmarkSuit.h>
 #include <performance/benchmarking/LightBenchmarkSuit.h>
+#include <performance/benchmarking/global_timers.h>
 
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/addBias.h>
@@ -288,6 +289,9 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     nd4j::Environment::getInstance()->setProfiling(false);
     delete profile;
+
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->displayTimers();
 
     /*
     std::vector<Nd4jLong> values;

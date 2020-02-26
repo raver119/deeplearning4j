@@ -30,6 +30,7 @@
 #include <execution/ThreadPool.h>
 #include <LoopsCoordsHelper.h>
 #include <ops/declarable/helpers/addBias.h>
+#include <performance/benchmarking/global_timers.h>
 
 #if defined(__GNUC__) 
 #define align32 __attribute__((aligned(32)))
@@ -374,14 +375,22 @@ namespace nd4j {
 
 			template <typename X, typename Y>
 			static void addBias_(const NDArray& input, const NDArray& bias, NDArray& output, const bool isNCHW) {
-
+                GlobalTimers* timers = GlobalTimers::getInstance();
+                timers->stopWatch(__LINE__, 13);
 			    if (input.rankOf() == 2 && bias.rankOf() == 1 && input.sizeAt(1) == bias.sizeAt(0) && input.ordering() == 'c') {
+                    timers->stopWatch(__LINE__, 13);
 			        int rows = input.sizeAt(0);
+                    timers->stopWatch(__LINE__, 13);
 			        int biasLen = bias.lengthOf();
+                    timers->stopWatch(__LINE__, 13);
 
+                    timers->stopWatch(__LINE__, 13);
                     auto inB = input.bufferAsT<X>();
+                    timers->stopWatch(__LINE__, 13);
                     auto bB = bias.bufferAsT<Y>();
+                    timers->stopWatch(__LINE__, 13);
                     auto outB = output.bufferAsT<X>();
+                    timers->stopWatch(__LINE__, 13);
 
                     PRAGMA_OMP_PARALLEL_FOR
 			        for (int e = 0; e < rows; e++) {
@@ -393,6 +402,7 @@ namespace nd4j {
 			            }
 			        }
 
+                    timers->stopWatch(__LINE__, 13);
                     return;
 			    }
 
