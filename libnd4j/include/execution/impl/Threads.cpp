@@ -808,7 +808,7 @@ namespace samediff {
 			    function(omp_get_thread_num(), j, j+1, 1);
 	    	}
 			freeThreads(req_numThreads);
-			return numThreads;
+			return req_numThreads;
 		} else {
             // if there were no threads available - we'll execute function right within current thread
 		    function(0, start, stop, increment);
