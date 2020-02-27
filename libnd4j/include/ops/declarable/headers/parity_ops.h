@@ -1108,8 +1108,22 @@ namespace nd4j {
          *    0 - data type of output permutaion vector (int32 or int64), optional, default INT32
          */
 
-        #if NOT_EXCLUDED(OP_matrix_inverse)
+        #if NOT_EXCLUDED(OP_lu)
         DECLARE_CUSTOM_OP(lu, 1, 2, false, 0, 0);
+        #endif
+
+        /**
+         * matrix sqrt (tf.linalg.sqrtm) op. 
+         *
+         * input params:
+         *    0 - float tensor with dimension (x * y * z * ::: * M * M) (A)
+         *
+         * return value:
+         *    0 - float tensor with dimension (x * y * z * ::: * M * M) (L * L = A)
+         */
+
+        #if NOT_EXCLUDED(OP_matrix_sqrt)
+        DECLARE_OP(sqrtm, 1, 1, true);
         #endif
 
         /**
