@@ -22,7 +22,7 @@
 #if NOT_EXCLUDED(OP_matrix_sqrt)
 
 #include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/lup.h>
+#include <ops/declarable/helpers/sqrtm.h>
 namespace nd4j {
     namespace ops {
         OP_IMPL(sqrtm, 1, 1, true) {
@@ -32,7 +32,7 @@ namespace nd4j {
             REQUIRE_TRUE(input->rankOf() >=2, 0, "sqrtm: The rank of input array should not less than 2, but %i is given", input->rankOf());
             REQUIRE_TRUE(input->sizeAt(-1) == input->sizeAt(-2), 0, "sqrtm: The last two dimmensions should be equal, but %i and %i are given", input->sizeAt(-1), input->sizeAt(-2));
 
-            return Status::OK();//helpers::inverse(block.launchContext(), input, output);
+            return helpers::sqrtMatrixFunctor(block.launchContext(), input, output);
         }
 
         DECLARE_TYPES(sqrtm) {
