@@ -316,6 +316,8 @@ std::vector<Nd4jLong> ShapeUtils::evalRepeatShape(int axis, const std::vector<in
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo of permuted array
 Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions, const int rank, const NDArray& arr, nd4j::memory::Workspace* workspace, const bool setContigStrides) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 14);
 
     if (!arr.nonNull())
         throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments: array is nullptr!");
@@ -323,25 +325,33 @@ Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions, const int rank, c
     if (rank != arr.rankOf())
         throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments: rank is not suitable!");
 
+    timers->stopWatch(__LINE__, 14);
     auto shapeInfoLength = shape::shapeInfoLength(rank);
+    timers->stopWatch(__LINE__, 14);
 
     // allocate memory for new array - shapeInfo
     Nd4jLong *shapeInfoNew = nullptr;
     ALLOCATE(shapeInfoNew, workspace, shapeInfoLength, Nd4jLong);
+    timers->stopWatch(__LINE__, 14);
 
     // copy arr _shapeInfo into new array
     memcpy(shapeInfoNew, arr.getShapeInfo(), shape::shapeInfoByteLength(rank));
 
+    timers->stopWatch(__LINE__, 14);
     // perform buffer permutation
     shape::doPermuteShapeInfo(shapeInfoNew, dimensions, arr.lengthOf());
 
+    timers->stopWatch(__LINE__, 14);
     if(setContigStrides)
         shape::updateStrides(shapeInfoNew, arr.ordering());
 
+    timers->stopWatch(__LINE__, 14);
     ShapeDescriptor descriptor(shapeInfoNew);
 
+    timers->stopWatch(__LINE__, 14);
     RELEASE(shapeInfoNew, workspace);
 
+    timers->stopWatch(__LINE__, 14);
     return ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor).primaryAsT<Nd4jLong>();
 }
 

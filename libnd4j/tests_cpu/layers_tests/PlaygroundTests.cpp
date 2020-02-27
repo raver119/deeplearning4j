@@ -235,7 +235,7 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 
     nd4j::ops::biasadd op;
 
-    for (int e = 0; e < 100; e++) {
+//    for (int e = 0; e < 100; e++) {
         auto timeStart = std::chrono::system_clock::now();
 
         op.execute({&x, &y}, {&x});
@@ -243,11 +243,12 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
         values.emplace_back(outerTime);
-    }
+//    }
 
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+    GlobalTimers::getInstance()->displayTimers();
 }
 
 
@@ -291,7 +292,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     delete profile;
 
     GlobalTimers* timers = GlobalTimers::getInstance();
-    timers->displayTimers();
+    //timers->displayTimers();
 
     /*
     std::vector<Nd4jLong> values;
@@ -412,6 +413,94 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     }
 }
 */
+
+TEST_F(PlaygroundTests, test_matmul_perf_1) {
+    auto x  = NDArrayFactory::create<double>('c', {512, 768});
+    auto y  = NDArrayFactory::create<double>('c', {768, 768});
+    auto exp = NDArrayFactory::create<double>('f', {512, 768});
+
+    x.linspace(1.);
+    y.linspace(0.5, 0.5);
+
+    nd4j::ops::matmul op;
+    auto results = op.evaluate({&x, &y}, {}, {});
+    auto z = results->at(0);
+
+    ASSERT_EQ(Status::OK(), results->status());
+    ASSERT_TRUE(exp.isSameShape(z));
+
+    GlobalTimers::getInstance()->displayTimers();
+    delete results;
+}
+
+TEST_F(PlaygroundTests, test_matmul_perf_2) {
+    auto x  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
+    auto y  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
+    auto exp = NDArrayFactory::create<double>('f', {4, 12, 128, 128});
+
+    x.linspace(1.);
+    y.linspace(0.5, 0.5);
+
+    nd4j::ops::matmul op;
+    auto results = op.evaluate({&x, &y}, {0, 1});
+    auto z = results->at(0);
+
+    ASSERT_EQ(Status::OK(), results->status());
+    ASSERT_TRUE(exp.isSameShape(z));
+
+    GlobalTimers::getInstance()->displayTimers();
+    delete results;
+}
+
+TEST_F(PlaygroundTests, test_strided_slice_perf) {
+    auto matrix = NDArrayFactory::create<double>('c', {5, 2});
+    auto b = NDArrayFactory::create<double>('c', {1}, {0.});
+    auto e = NDArrayFactory::create<double>('c', {1}, {1});
+    auto s = NDArrayFactory::create<double>('c', {1}, {1});
+
+    auto exp = NDArrayFactory::create<double>('c', {2}, {1.0f, 2.0f});
+
+    matrix.linspace(1);
+
+    nd4j::ops::strided_slice op;
+    auto result = op.evaluate({&matrix, &b, &e, &s}, {}, {0, 0, 0, 0, 1});
+    ASSERT_EQ(Status::OK(), result->status());
+
+    auto z = result->at(0);
+
+    ASSERT_TRUE(exp.equalsTo(z));
+
+    GlobalTimers::getInstance()->displayTimers();
+    delete result;
+}
+
+
+
+
+TEST_F(PlaygroundTests, test_permut_perf) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 17);
+
+    NDArray array  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
+    timers->stopWatch(__LINE__, 17);
+    NDArray* x = &array;
+    timers->stopWatch(__LINE__, 17);
+    const int rank = x->rankOf();
+    timers->stopWatch(__LINE__, 17);
+    std::vector<int> permut(rank);
+    timers->stopWatch(__LINE__, 17);
+    for (int i = 0; i < rank-2; ++i)
+        permut[i] = i;
+    timers->stopWatch(__LINE__, 17);
+    permut[rank-2] = rank - 1;
+    permut[rank-1] = rank - 2;
+
+    x->linspace(1.);
+    timers->stopWatch(__LINE__, 17);
+    NDArray* yT = new NDArray(x->permute(permut));
+timers->stopWatch(__LINE__, 17);
+    GlobalTimers::getInstance()->displayTimers();
+}
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
     int pool = 1000;

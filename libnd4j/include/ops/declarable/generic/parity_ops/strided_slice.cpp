@@ -20,6 +20,7 @@ limitations under the License.
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ShapeUtils.h>
 #include <helpers/BitwiseUtils.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
     namespace ops {
@@ -300,18 +301,23 @@ namespace nd4j {
 
 
         CUSTOM_OP_IMPL(strided_slice, 1, 1, false, 0, 5) {
+            GlobalTimers* timers = GlobalTimers::getInstance();
+            timers->stopWatch(__LINE__, 12);
+
             auto x = INPUT_VARIABLE(0);
+            timers->stopWatch(__LINE__, 12);
             auto z = OUTPUT_VARIABLE(0);
+            timers->stopWatch(__LINE__, 12);
             if (z->isEmpty()) {
                 return ND4J_STATUS_OK;
             }
-
+timers->stopWatch(__LINE__, 12);
             int begin_mask = INT_ARG(0);
             int ellipsis_mask = INT_ARG(1);
             int end_mask = INT_ARG(2);
             int new_axis_mask = INT_ARG(3);
             int shrink_axis_mask = INT_ARG(4);
-
+timers->stopWatch(__LINE__, 12);
             int dim_values = 0; //block.getIArguments()->size() - 5;
             int delta = 0; //dim_values % 3;
             int elements = 0; //dim_values / 3;
@@ -319,83 +325,108 @@ namespace nd4j {
             std::vector<int> begin;
             std::vector<int> end;
             std::vector<int> strides;
-
+timers->stopWatch(__LINE__, 12);
             bool isLive = false;
 
             std::vector<int> args;
-
+timers->stopWatch(__LINE__, 12);
             // statically evaluated 
             if (block.getIArguments()->size() > 5) {
+                timers->stopWatch(__LINE__, 12);
                 dim_values = block.getIArguments()->size() - 5;
+                timers->stopWatch(__LINE__, 12);
                 delta = dim_values % 3;
                 elements = dim_values / 3;
-
+timers->stopWatch(__LINE__, 12);
                 for (int e = 5; e < block.getIArguments()->size(); e++)
                     args.emplace_back(INT_ARG(e));
-
+timers->stopWatch(__LINE__, 12);
                 REQUIRE_TRUE(delta == 0, 0, "StridedSlice: Number of Integer arguments should be equal to input rank x 3 = %i, but got %i instead", (x->rankOf() * 3), dim_values);
-
+timers->stopWatch(__LINE__, 12);
                 ShapeUtils::copyVectorPart(begin, args, elements, 0);
+                timers->stopWatch(__LINE__, 12);
                 ShapeUtils::copyVectorPart(end, args, elements, elements);
+                timers->stopWatch(__LINE__, 12);
                 ShapeUtils::copyVectorPart(strides, args, elements, elements * 2);
+                timers->stopWatch(__LINE__, 12);
 
             } else if (block.width() > 1) {
                 isLive = true;
-
+                timers->stopWatch(__LINE__, 12);
                 auto v_begin = INPUT_VARIABLE(1);
+                timers->stopWatch(__LINE__, 12);
                 auto v_end = INPUT_VARIABLE(2);
 
+                timers->stopWatch(__LINE__, 12);
                 elements = v_begin->lengthOf();
+                timers->stopWatch(__LINE__, 12);
 
                 REQUIRE_TRUE(v_begin->lengthOf() == v_end->lengthOf(), 0, "StridedSlice: Length of begin/end should match, but got %i vs %i instead", (int) v_begin->lengthOf(), (int) v_end->lengthOf());
+                timers->stopWatch(__LINE__, 12);
                 REQUIRE_TRUE((v_begin->rankOf() == 1 ) && (v_begin->rankOf() == v_end->rankOf()), 0, "StridedSlice: Rank of begin and ends should be 1, but %i given instead", (int)v_end->rankOf());
+                timers->stopWatch(__LINE__, 12);
 
                 for (int e = 0; e < v_begin->lengthOf(); e++)
                     begin.emplace_back(v_begin->e<int>(e));
+                timers->stopWatch(__LINE__, 12);
 
                 for (int e = 0; e < v_end->lengthOf(); e++)
                     end.emplace_back(v_end->e<int>(e));
 
+                timers->stopWatch(__LINE__, 12);
                 if (block.width() > 3) {
                     auto v_stride = INPUT_VARIABLE(3);
 
+                    timers->stopWatch(__LINE__, 12);
                     REQUIRE_TRUE(v_stride->lengthOf() == v_begin->lengthOf(), 0, "StridedSlice: Length of begin/end/stride should match, but got %i vs %i vs %i instead", (int) v_begin->lengthOf(), (int) v_end->lengthOf(), (int) v_stride->lengthOf());
+                    timers->stopWatch(__LINE__, 12);
                     REQUIRE_TRUE((v_begin->rankOf() == v_stride->rankOf()), 0, "StridedSlice: Rank of begin and ends should be %i, but %i given instead", (int) v_begin->rankOf(), v_stride->rankOf());
+                    timers->stopWatch(__LINE__, 12);
 
                     for (int e = 0; e < v_stride->lengthOf(); e++)
                         strides.emplace_back(v_stride->e<int>(e));
+                    timers->stopWatch(__LINE__, 12);
                 } else {
                     for (int e = 0; e < v_begin->lengthOf(); e++)
                         strides.emplace_back(1);
+                    timers->stopWatch(__LINE__, 12);
                 }
             } else {
+                timers->stopWatch(__LINE__, 12);
                 REQUIRE_TRUE(false, 0, "StridedSlice: Can't find begin/end/stride information neither in IArguments or in input arrays");
-            }            
+                timers->stopWatch(__LINE__, 12);
+            }
 
+            timers->stopWatch(__LINE__, 12);
             // validation of begin and start
             std::vector<int> ignoreBegin = BitwiseUtils::valueBits(begin_mask);
             std::vector<int> ignoreEnd   = BitwiseUtils::valueBits(end_mask);
             std::vector<int> addAxes     = BitwiseUtils::valueBits(new_axis_mask);
             std::vector<int> moveAxes    = BitwiseUtils::valueBits(shrink_axis_mask);
+            timers->stopWatch(__LINE__, 12);
             if (shrink_axis_mask == 0)
             for (int dim = 0, b = 0, e = 0; dim < x->rankOf(); ++dim) {
 
                 if(moveAxes[dim])
                     continue;
 
+                timers->stopWatch(__LINE__, 12);
                 if(b < begin.size() && !ignoreBegin[b] && !addAxes[dim]) {
                     int first = strides[b] > 0 ? begin[b] : math::nd4j_abs<int>(begin[b]) - 1;
                     REQUIRE_TRUE(first <= x->sizeAt(dim), 0, "StridedSlice: begin index should be <= corresponding dimension of input array, but got end_index = %i for dimension %i!", begin[b], dim);
                 }
+                timers->stopWatch(__LINE__, 12);
                 if(e < end.size() && !ignoreEnd[e] && !addAxes[dim]) {
                    int last  = strides[e] > 0 ? end[e] : math::nd4j_abs<int>(end[e])   - 1;
                    REQUIRE_TRUE(last <= x->sizeAt(dim), 0, "StridedSlice: end index should be <= corresponding dimension of input array, but got end_index = %i for dimension %i!", end[e], dim);
+                   timers->stopWatch(__LINE__, 12);
                 }
                 ++b;
                 ++e;
             }
 
-            
+            timers->stopWatch(__LINE__, 12);
+
             std::vector<Nd4jLong> indices;
             auto input_shape = x->getShapeAsVector();            
             std::vector<Nd4jLong> final_shape;
@@ -403,20 +434,28 @@ namespace nd4j {
             bool is_simple_slice;
             bool is_dim0;
 
+            timers->stopWatch(__LINE__, 12);
             // FIXME: remove this method once we get 1D vectors supported
             //vectorize(input_shape);
             REQUIRE_TRUE(_preprocess_strided_slice(&indices, &final_shape, input_shape, begin, end, strides, begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask, &is_identity, &is_simple_slice, &is_dim0), 0, "StridedSlice: shape calculation failed");
+            timers->stopWatch(__LINE__, 12);
 //            if(z->lengthOf() == 1 && !z->isEmpty() && (input_shape.size() == 2 && input_shape[0] == 1)) { //(indices.size() == 6) && (indices[2] - indices[0] == 1)) {
 //                z->assign(x->e<float>(indices[0]));
 //            }
 //            else {
+            timers->stopWatch(__LINE__, 12);
             if (indices.size()) {
                 auto sub = (*x)(indices, true, true);
+                timers->stopWatch(__LINE__, 12);
                 z->assign(sub);
+                timers->stopWatch(__LINE__, 12);
             }
             else if (!z->isEmpty()){
+                timers->stopWatch(__LINE__, 12);
                 z->assign(x->e(0));
+                timers->stopWatch(__LINE__, 12);
             }
+            timers->stopWatch(__LINE__, 12);
             return Status::OK();
         }
         DECLARE_SYN(stridedslice, strided_slice);

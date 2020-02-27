@@ -99,7 +99,7 @@ TEST_F(ImportTests, LstmMnist) {
         nd4j_debug("(%d): %f\n", i, rvec[i]);
     ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
     GlobalTimers* timers = GlobalTimers::getInstance();
-    timers->displayTimers();
+    //timers->displayTimers();
     //0.046829
 }
 
@@ -119,7 +119,7 @@ TEST_F(ImportTests, ConcatPerfTest) {
     auto output = result->at(0);
     delete result;
 
-    timers->displayTimers();
+    //timers->displayTimers();
 
     /*auto timeStart = std::chrono::system_clock::now();
     timers[198] = std::chrono::high_resolution_clock::now();

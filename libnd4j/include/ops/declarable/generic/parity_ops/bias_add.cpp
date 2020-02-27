@@ -24,22 +24,34 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include<ops/declarable/helpers/addBias.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
 namespace ops {
 
 ////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(biasadd, 2, 1, true, 0, 0) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 11);
     auto input = INPUT_VARIABLE(0);
+    timers->stopWatch(__LINE__, 11);
     auto bias = INPUT_VARIABLE(1);
+    timers->stopWatch(__LINE__, 11);
     auto output = OUTPUT_VARIABLE(0);
+    timers->stopWatch(__LINE__, 11);
     const bool isNCHW = !block.getBArguments()->empty() ? B_ARG(0) : false;
+    timers->stopWatch(__LINE__, 11);
     const int channelDim = isNCHW ? 1 : input->rankOf() - 1;      // second or last
+    timers->stopWatch(__LINE__, 11);
     REQUIRE_TRUE(bias->rankOf() == 1, 0, "BIASADD CUSTOM_OP: bias array should have rank = 1, but got %i instead !", bias->rankOf());
+    timers->stopWatch(__LINE__, 11);
     REQUIRE_TRUE(bias->sizeAt(0) == input->sizeAt(channelDim), 0, "BIASADD CUSTOM_OP: shapes of bias %s and input %s arrays are not suitable for broadcast operation along channel dimension %i !", ShapeUtils::shapeAsString(bias).c_str(), ShapeUtils::shapeAsString(input).c_str(), channelDim);
+    timers->stopWatch(__LINE__, 11);
     REQUIRE_TRUE(output->isSameShape(input), 0, "BIASADD CUSTOM_OP: wrong shape of output array, expected is %s but got %s instead !", ShapeUtils::shapeAsString(input).c_str(), ShapeUtils::shapeAsString(output).c_str());
+    timers->stopWatch(__LINE__, 11);
     helpers::addBias(block, *input, *bias, *output, isNCHW);
     // input->applyBroadcast(nd4j::broadcast::Add, {channelDim}, bias, output);
+    timers->stopWatch(__LINE__, 11);
     return Status::OK();
 }
 DECLARE_SYN(bias_add, biasadd);

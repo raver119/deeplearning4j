@@ -43,22 +43,33 @@ ND4J_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
 ////////////////////////////////////////////////////////////////////////
 // copy constructor
 NDArray::NDArray(const NDArray& other) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     _context = other._context;
     _offset  = 0;
+    timers->stopWatch(__LINE__, 13);
 
     setShapeInfo(ShapeDescriptor(other.dataType(), other.ordering(), other.shapeOf(), other.rankOf()));
+    timers->stopWatch(__LINE__, 13);
 
     if(!isEmpty()) {
+        timers->stopWatch(__LINE__, 13);
         _buffer = std::make_shared<DataBuffer>(other.lengthOf() * other.sizeOfT(), other.dataType(), other.getContext()->getWorkspace());
+        timers->stopWatch(__LINE__, 13);
         this->assign(&other);
+        timers->stopWatch(__LINE__, 13);
     }
     else
+        timers->stopWatch(__LINE__, 13);
         _buffer = std::make_shared<DataBuffer>();
+        timers->stopWatch(__LINE__, 13);
 }
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, nd4j::DataType dtype, nd4j::LaunchContext * context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if ((int) shape.size() > MAX_RANK)
         throw std::invalid_argument("Rank of NDArray can't exceed 32");
@@ -78,6 +89,8 @@ NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, nd4j::Dat
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, const std::vector<double>& data, nd4j::DataType dtype, nd4j::LaunchContext * context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if ((int) shape.size() > MAX_RANK)
         throw std::invalid_argument("Rank of NDArray can't exceed 32");
@@ -111,41 +124,59 @@ NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, const std
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const NDArray *other, const bool copyStrides, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     _context = context;
+    timers->stopWatch(__LINE__, 13);
     _offset  = 0;
+    timers->stopWatch(__LINE__, 13);
     _isAttached = getContext()->getWorkspace() != nullptr;
+    timers->stopWatch(__LINE__, 13);
 
     if (copyStrides)
         setShapeInfo(ShapeDescriptor(other->_shapeInfo));
     else
         setShapeInfo(ShapeDescriptor(other->dataType(), other->ordering(), other->shapeOf(), other->rankOf()));
 
+    timers->stopWatch(__LINE__, 13);
     if (!isEmpty())
         _buffer = std::make_shared<DataBuffer>(lengthOf() * sizeOfT(), dataType(), getContext()->getWorkspace());
+    timers->stopWatch(__LINE__, 13);
 }
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(void* buffer, const char order, const std::vector<Nd4jLong> &shape,  nd4j::DataType dtype, nd4j::LaunchContext * context, const bool isBuffAlloc) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (shape.empty())
         throw std::runtime_error("NDArray constructor: input shape is empty !");
 
+    timers->stopWatch(__LINE__, 13);
     if ((int) shape.size() > MAX_RANK)
         throw std::invalid_argument("Rank of NDArray can't exceed 32");
 
+    timers->stopWatch(__LINE__, 13);
     _context = context;
+    timers->stopWatch(__LINE__, 13);
     _offset  = 0;
+    timers->stopWatch(__LINE__, 13);
     _isAttached = getContext()->getWorkspace() != nullptr;
+    timers->stopWatch(__LINE__, 13);
 
     setShapeInfo(ShapeDescriptor(dtype, order, shape));
+    timers->stopWatch(__LINE__, 13);
 
     _buffer = std::make_shared<DataBuffer>(buffer, lengthOf() * sizeOfT(), dataType(), isBuffAlloc, getContext()->getWorkspace());
+    timers->stopWatch(__LINE__, 13);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // creates new NDArray using shape information from "shapeInfo" array, set all elements in new array to be zeros
 NDArray::NDArray(Nd4jLong* shapeInfo, const nd4j::DataType dtype, const bool copyStrides, nd4j::LaunchContext * context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (shapeInfo == nullptr)
         throw std::runtime_error("NDArray constructor: can't be initalized without shapeinfo");
@@ -170,6 +201,8 @@ NDArray::NDArray(Nd4jLong* shapeInfo, const nd4j::DataType dtype, const bool cop
 ////////////////////////////////////////////////////////////////////////
 // scalar constructor
 NDArray::NDArray(nd4j::DataType dtype, nd4j::LaunchContext* context, const bool isScalar) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     _context = context;
     _offset  = 0;
@@ -187,24 +220,41 @@ NDArray::NDArray(nd4j::DataType dtype, nd4j::LaunchContext* context, const bool 
 //////////////////////////////////////////////////////////////////////////
 // move constructor
 NDArray::NDArray(NDArray&& other) noexcept {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     _isView       = other._isView;
+    timers->stopWatch(__LINE__, 13);
+
     _buffer       = other._buffer;
+    timers->stopWatch(__LINE__, 13);
     _shapeInfo    = other._shapeInfo;
+    timers->stopWatch(__LINE__, 13);
     _shapeInfoD   = other._shapeInfoD;
+    timers->stopWatch(__LINE__, 13);
     _context      = other._context;
+    timers->stopWatch(__LINE__, 13);
     _dataType     = other._dataType;
+    timers->stopWatch(__LINE__, 13);
     _length       = other._length;
+    timers->stopWatch(__LINE__, 13);
     _offset       = other._offset;
+    timers->stopWatch(__LINE__, 13);
 
     other._buffer = std::make_shared<DataBuffer>();
+    timers->stopWatch(__LINE__, 13);
     other._shapeInfo = other._shapeInfoD = nullptr;
+    timers->stopWatch(__LINE__, 13);
     other._length = 0;
+    timers->stopWatch(__LINE__, 13);
+
 }
 
 ////////////////////////////////////////////////////////////////////////
 //constructor, create empty array at given workspace
 NDArray::NDArray(nd4j::LaunchContext * context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     _buffer    = std::make_shared<DataBuffer>();
     _shapeInfo = nullptr;
     _shapeInfoD = nullptr;
@@ -217,10 +267,15 @@ NDArray::NDArray(nd4j::LaunchContext * context) {
 // creates new NDArray using shape information from "shapeInfo" array, set all elements in new array to be zeros, set dtype as array type
 NDArray::NDArray(Nd4jLong* shapeInfo, const bool copyStrides, nd4j::LaunchContext * context):
         NDArray(shapeInfo, ArrayOptions::dataType(shapeInfo), copyStrides, context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
+
 }
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const ShapeDescriptor& descriptor, nd4j::LaunchContext* context, const Nd4jLong offset) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     _context = context;
     _offset  = offset;
     setShapeInfo(descriptor);
@@ -231,6 +286,8 @@ NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const ShapeDescriptor& desc
 ////////////////////////////////////////////////////////////////////////
 // do not allocate memory, memory for array is passed from outside
 NDArray::NDArray(void *buffer, Nd4jLong *shapeInfo, nd4j::LaunchContext * context, const bool isBuffAlloc) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (buffer == nullptr && ArrayOptions::arrayType(shapeInfo) != ArrayType::EMPTY)
         throw std::runtime_error("NDArray constructor: can't be initalized with nullptr buffer !");
@@ -260,6 +317,8 @@ NDArray::NDArray(void *buffer, Nd4jLong *shapeInfo, nd4j::LaunchContext * contex
 // do not allocate memory, memory for array is passed from outside
 // we suppose the content of both (device and host) buffers is identical
 NDArray::NDArray(void *buffer, void* bufferD, Nd4jLong *shapeInfo, nd4j::LaunchContext * context, const bool isBuffAlloc, const bool isBuffDAlloc) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (shapeInfo == nullptr)
         throw std::runtime_error("NDArray constructor cuda: can't be initalized without shapeinfo");
@@ -278,6 +337,8 @@ NDArray::NDArray(void *buffer, void* bufferD, Nd4jLong *shapeInfo, nd4j::LaunchC
 
 //////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const char order, const std::vector<Nd4jLong> &shape, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     if (shape.empty())
         throw std::runtime_error("NDArray constructor: input shape is empty !");
     if ((int) shape.size() > MAX_RANK)
@@ -292,6 +353,8 @@ NDArray::NDArray(std::shared_ptr<DataBuffer> buffer, const char order, const std
 // u16 string constructors
 NDArray::NDArray(const std::u16string& u16string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
 
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     if (!DataTypeUtils::isS(dtype)) {
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
     }
@@ -343,6 +406,8 @@ NDArray::NDArray(const std::u16string& u16string, nd4j::DataType dtype, nd4j::La
 /////////////////////////////////////////////////////////////////////////
 // u32 string constructors
 NDArray::NDArray(const std::u32string& u32string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype)) {
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
@@ -395,6 +460,8 @@ NDArray::NDArray(const std::u32string& u32string, nd4j::DataType dtype, nd4j::La
 // u8 string constructors
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::string& str, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype)) {
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
@@ -448,6 +515,8 @@ NDArray::NDArray(const std::string& str, nd4j::DataType dtype, nd4j::LaunchConte
 // constructors for vector of  strings
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char*>& string, const nd4j::DataType dataType, nd4j::LaunchContext* context) {
 
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     if (!DataTypeUtils::isS(dataType))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
 
@@ -514,6 +583,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::string>& string, const nd4j::DataType dataType, nd4j::LaunchContext* context) {
 
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     if (!DataTypeUtils::isS(dataType))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
 
@@ -581,6 +652,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::stri
 }
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
@@ -646,6 +719,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u16s
 }
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
@@ -712,6 +787,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
 }
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType, only string dataTypes have to be used");
@@ -778,6 +855,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<std::u32s
 }
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const char32_t *>& string, nd4j::DataType dtype, nd4j::LaunchContext* context) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
 
     if (!DataTypeUtils::isS(dtype))
         throw std::invalid_argument("NDArray::NDArray: invalid DataType used");
@@ -846,26 +925,37 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
 ////////////////////////////////////////////////////////////////////////
 // assignment operator
     NDArray& NDArray::operator=(const NDArray& other) {
+GlobalTimers* timers = GlobalTimers::getInstance();
+        timers->stopWatch(__LINE__, 13);
 
     if (this == &other || (_shapeInfo == other._shapeInfo && _shapeInfo == nullptr))
         return *this;
-
+timers->stopWatch(__LINE__, 13);
     if (_shapeInfo != nullptr && shape::equalsTypesAndShapesSoft(_shapeInfo, other._shapeInfo)) {
-        if(!other.isEmpty())
+        if(!other.isEmpty()){
+            timers->stopWatch(__LINE__, 13);
             this->assign(&other);
+            timers->stopWatch(__LINE__, 13);
+        }
     }
     else {
+        timers->stopWatch(__LINE__, 13);
         _context = other._context;
         _offset  = 0;
+        timers->stopWatch(__LINE__, 13);
         setShapeInfo(ShapeDescriptor(other.dataType(), other.ordering(), other.shapeOf(), other.rankOf()));
-
+timers->stopWatch(__LINE__, 13);
         if(!other.isEmpty()) {
+            timers->stopWatch(__LINE__, 13);
             _buffer = std::make_shared<DataBuffer>(other.lengthOf() * other.sizeOfT(), other.dataType(), other.getContext()->getWorkspace());
+            timers->stopWatch(__LINE__, 13);
             this->assign(&other);
+            timers->stopWatch(__LINE__, 13);
         }
         else
             _buffer = std::make_shared<DataBuffer>();
     }
+    timers->stopWatch(__LINE__, 13);
     return *this;
 }
 
@@ -1086,9 +1176,11 @@ void NDArray::streamline(char o) {
 ////////////////////////////////////////////////////////////////////////
 // move assignment operator
 NDArray& NDArray::operator=(NDArray&& other) noexcept {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 13);
     if (this == &other)
         return *this;
-
+timers->stopWatch(__LINE__, 13);
     _isView       = other._isView;
     _buffer       = other._buffer;
     _shapeInfo    = other._shapeInfo;
@@ -1097,11 +1189,13 @@ NDArray& NDArray::operator=(NDArray&& other) noexcept {
     _dataType     = other._dataType;
     _length       = other._length;
     _offset       = other._offset;
-
+timers->stopWatch(__LINE__, 13);
     other._buffer = std::make_shared<DataBuffer>();
+timers->stopWatch(__LINE__, 13);
     other._shapeInfo = other._shapeInfoD = nullptr;
+timers->stopWatch(__LINE__, 13);
     other._length = 0;
-
+timers->stopWatch(__LINE__, 13);
     return *this;
 }
 
@@ -1139,62 +1233,95 @@ void NDArray::copyBuffersContinuouslyFrom(const NDArray& other, size_t sizeToCop
 ////////////////////////////////////////////////////////////////////
 // This method assigns values of given NDArray to this one
 void NDArray::assign(const NDArray& other, bool allowParallelism) {
+GlobalTimers *timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 13);
 
     if (this == &other)
         return;
+timers->stopWatch(__LINE__, 13);
 
     if (other.isEmpty()) {
+timers->stopWatch(__LINE__, 13);
         if (!isEmpty()) {
+timers->stopWatch(__LINE__, 13);
              ArrayOptions::setPropertyBit(shapeInfo(), ARRAY_EMPTY);
+timers->stopWatch(__LINE__, 13);
              syncShape();
+timers->stopWatch(__LINE__, 13);
              _buffer = std::make_shared<DataBuffer>();
+timers->stopWatch(__LINE__, 13);
              _offset = 0;
         }
         return;
     }
 
+             timers->stopWatch(__LINE__, 13);
     if(isEmpty()) {
         *this = other;
         return;
     }
 
+             timers->stopWatch(__LINE__, 13);
     if (other.lengthOf() == 1) {
 
         if(lengthOf() == 1) {
+            timers->stopWatch(__LINE__, 13);
             NDArray::preparePrimaryUse({this}, {&other});
+            timers->stopWatch(__LINE__, 13);
             BUILD_DOUBLE_SELECTOR(dataType(), other.dataType(), templatedDoubleAssign, (buffer(), 0, other.getBuffer(), 0), LIBND4J_TYPES, LIBND4J_TYPES);
+            timers->stopWatch(__LINE__, 13);
             NDArray::registerPrimaryUse({this}, {&other});
+            timers->stopWatch(__LINE__, 13);
             this->syncToDevice();
+            timers->stopWatch(__LINE__, 13);
         }
         else {
+            timers->stopWatch(__LINE__, 13);
             if (dataType() != other.dataType()) {
                 auto tmp = other.cast(dataType());
+                timers->stopWatch(__LINE__, 13);
                 NDArray::prepareSpecialUse({this}, {&tmp});
+                timers->stopWatch(__LINE__, 13);
                 NativeOpExecutioner::execScalar(getContext(), scalar::CopyPws, buffer(), shapeInfo(), specialBuffer(), specialShapeInfo(), buffer(), shapeInfo(), specialBuffer(), specialShapeInfo(), tmp.getBuffer(), tmp.getShapeInfo(), tmp.getSpecialBuffer(), tmp.getSpecialShapeInfo(), nullptr, allowParallelism);
+                timers->stopWatch(__LINE__, 13);
                 NDArray::registerSpecialUse({this}, {});
+                timers->stopWatch(__LINE__, 13);
             }
             else {
+                timers->stopWatch(__LINE__, 13);
                 NDArray::prepareSpecialUse({this}, {&other});
+                timers->stopWatch(__LINE__, 13);
                 NativeOpExecutioner::execScalar(getContext(), scalar::CopyPws, buffer(), shapeInfo(), specialBuffer(), specialShapeInfo(), buffer(), shapeInfo(), specialBuffer(), specialShapeInfo(), other.getBuffer(), other.getShapeInfo(), other.getSpecialBuffer(), other.getSpecialShapeInfo(), nullptr, allowParallelism);
+                timers->stopWatch(__LINE__, 13);
                 NDArray::registerSpecialUse({this}, {&other});
+                timers->stopWatch(__LINE__, 13);
             }
         }
     }
     else {
+        timers->stopWatch(__LINE__, 13);
         if (other.lengthOf() != lengthOf()) {
+            timers->stopWatch(__LINE__, 13);
             auto shapeThis = ShapeUtils::shapeAsString(this);
+            timers->stopWatch(__LINE__, 13);
             auto shapeThat = ShapeUtils::shapeAsString(&other);
             nd4j_printf("Can't assign array: this shape %s; other shape: %s\n", shapeThis.c_str(), shapeThat.c_str());
+            timers->stopWatch(__LINE__, 13);
             throw std::runtime_error("NDArray::assign: lengths of arrays are mismatched");
         }
 
+        timers->stopWatch(__LINE__, 13);
         // memcpy is allowed only for same order c && same ews (being equal to 1)
         if (ordering() == other.ordering() && ordering() == 'c' && dataType() == other.dataType() && ews() == 1 && other.ews() == 1)
             copyBuffersContinuouslyFrom(other, other.lengthOf() * other.sizeOfT());
         else {
+        timers->stopWatch(__LINE__, 13);
             NDArray::prepareSpecialUse({this}, {&other});
+            timers->stopWatch(__LINE__, 13);
             NativeOpExecutioner::execTransformAny(getContext(), transform::Assign, other.getBuffer(), other.getShapeInfo(), other.getSpecialBuffer(), other.getSpecialShapeInfo(), buffer(), shapeInfo(), specialBuffer(), specialShapeInfo(), nullptr, nullptr, nullptr, allowParallelism);
+            timers->stopWatch(__LINE__, 13);
             NDArray::registerSpecialUse({this}, {&other});
+            timers->stopWatch(__LINE__, 13);
         }
     }
 }
@@ -1972,23 +2099,29 @@ bool NDArray::permutei(const std::vector<int>& dimensions) {
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const std::initializer_list<Nd4jLong>& dimensions) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     std::vector<Nd4jLong> vec(dimensions);
+    timers->stopWatch(__LINE__, 13);
     std::vector<int> ivec(dimensions.size());
+    timers->stopWatch(__LINE__, 13);
 
     for (int e = 0; e < vec.size(); e++)
         ivec[e] = static_cast<int>(vec[e]);
+    timers->stopWatch(__LINE__, 13);
 
     return permutei(ivec);
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const std::vector<Nd4jLong>& dimensions) {
-
+GlobalTimers *timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 13);
     std::vector<int> ivec(dimensions.size());
-
+timers->stopWatch(__LINE__, 13);
     for (int e = 0; e < dimensions.size(); e++)
         ivec[e] = dimensions[e];
-
+timers->stopWatch(__LINE__, 13);
     return permutei(ivec.data(), rankOf());
 }
 
@@ -3184,13 +3317,20 @@ void NDArray::applyBroadcast(nd4j::broadcast::Ops op, const std::initializer_lis
 
 ////////////////////////////////////////////////////////////////////////
 void* NDArray::operator new(size_t i) {
+GlobalTimers* timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 13);
     if (nd4j::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached()) {
         nd4j::memory::Workspace* ws = nd4j::memory::MemoryRegistrator::getInstance()->getWorkspace();
+        timers->stopWatch(__LINE__, 13);
+
         return ws->allocateBytes((Nd4jLong) i);
     }
     else {
+        timers->stopWatch(__LINE__, 13);
         auto p = malloc(i);
+        timers->stopWatch(__LINE__, 13);
         CHECK_ALLOC(p, "Failed to allocate new NDArray", i);
+        timers->stopWatch(__LINE__, 13);
         return p;
     }
 }
@@ -4645,18 +4785,24 @@ BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedAssign, (void 
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const int* dimensions, const int rank) {
-
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     auto shapeInfo = ShapeUtils::evalPermShapeInfo(dimensions, rank, *this, getContext()->getWorkspace());
+    timers->stopWatch(__LINE__, 13);
     setShapeInfo(shapeInfo);
+    timers->stopWatch(__LINE__, 13);
 
     return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const Nd4jLong* dimensions, const int rank) {
-
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     auto shapeInfo = ShapeUtils::evalPermShapeInfo(dimensions, rank, *this, getContext()->getWorkspace());
+    timers->stopWatch(__LINE__, 13);
     setShapeInfo(shapeInfo);
+    timers->stopWatch(__LINE__, 13);
 
     return true;
 }
@@ -4960,18 +5106,23 @@ void NDArray::setShapeInfo(const Nd4jLong *shapeInfo, const nd4j::DataType dtype
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(const ShapeDescriptor& descriptor) {
+    GlobalTimers *timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 13);
     auto shapeBuffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(const_cast<ShapeDescriptor &>(descriptor));
+    timers->stopWatch(__LINE__, 13);
     _shapeInfo  = reinterpret_cast<Nd4jLong *>(shapeBuffer.primary());
     #ifdef __CUDABLAS__
         _shapeInfoD = reinterpret_cast<Nd4jLong *>(shapeBuffer.special());
     #endif
-    if(ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
+        timers->stopWatch(__LINE__, 13);if(ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
         _length = 0;
     else{
 
         _length = shape::length(_shapeInfo);
     }
+    timers->stopWatch(__LINE__, 13);
     _dataType = ArrayOptions::dataType(_shapeInfo);
+    timers->stopWatch(__LINE__, 13);
 }
 
 //////////////////////////////////////////////////////////////////////////

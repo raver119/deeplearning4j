@@ -284,8 +284,15 @@ timers->stopWatch(__LINE__, 3);
             if(transX)
                 xT = new NDArray(x->permute(permut));
 timers->stopWatch(__LINE__, 3);
-            if(transY)
-                yT = new NDArray(y->permute(permut));
+            if(transY){
+                timers->stopWatch(__LINE__, 3);
+                NDArray new_array;
+                timers->stopWatch(__LINE__, 3);
+                new_array= y->permute(permut);
+                timers->stopWatch(__LINE__, 3);
+                yT = new NDArray(new_array);
+                timers->stopWatch(__LINE__, 3);
+            }
 timers->stopWatch(__LINE__, 3);
         }
 

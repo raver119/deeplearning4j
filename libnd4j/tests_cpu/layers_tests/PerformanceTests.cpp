@@ -222,7 +222,7 @@ TEST_F(PerformanceTests, concat_perfs) {
     auto output = result->at(0);
     delete result;
 
-    timers->displayTimers();
+    //timers->displayTimers();
 }
 
 
@@ -248,7 +248,7 @@ TEST_F(PerformanceTests, split_perfs) {
 
     delete results;
 
-    timers->displayTimers();
+    //timers->displayTimers();
 }
 
 
@@ -276,7 +276,7 @@ TEST_F(PerformanceTests, stack_1d_perfs) {
     ASSERT_TRUE(expected.equalsTo(output));
 
     delete results;
-    timers->displayTimers();
+    //timers->displayTimers();
 }
 
 
@@ -301,5 +301,5 @@ TEST_F(PerformanceTests, stack_2d_perfs) {
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete result;
-    timers->displayTimers();
+    //timers->displayTimers();
 }
