@@ -24,6 +24,7 @@
 #include <numeric>
 #include <ConstantTadHelper.h>
 #include <execution/Threads.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j    {
 namespace ops     {
@@ -227,6 +228,9 @@ void softMaxForVector(nd4j::LaunchContext * context, const NDArray& input, NDArr
 
     template <typename T>
     FORCEINLINE void softmax_loop(T *input, T *output, Nd4jLong *offsets, Nd4jLong numOfSubArrs, uint32_t tadLen) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 5);
+
         auto func = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
                 auto inBuff = input + offsets[i];
@@ -254,44 +258,64 @@ void softMaxForVector(nd4j::LaunchContext * context, const NDArray& input, NDArr
                     outBuff[j] /= sum;
             }
         };
-
+timers->stopWatch(__LINE__, 5);
         samediff::Threads::parallel_tad(func,0, numOfSubArrs);
+        timers->stopWatch(__LINE__, 5);
     }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 static void softmax_(nd4j::LaunchContext * context, const NDArray& input, NDArray& output, const int dimension) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 5);
 
     const int rank = input.rankOf();
+    timers->stopWatch(__LINE__, 5);
 
     if(input.isVector()) {
+        timers->stopWatch(__LINE__, 5);
 
         if(rank == 1 || input.sizeAt(dimension) != 1)
             softMaxForVector_<T>(input.getBuffer(), input.getShapeInfo(), output.buffer(), output.getShapeInfo());
         else
             output = 1.;
+        timers->stopWatch(__LINE__, 5);
     }
     else if(input.isSameShapeStrict(output)) {
 
+        timers->stopWatch(__LINE__, 5);
         TadPack tadPack  = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimension);
+        timers->stopWatch(__LINE__, 5);
         Nd4jLong* tadShapeInfo  = tadPack.primaryShapeInfo();
+        timers->stopWatch(__LINE__, 5);
         Nd4jLong* tadOffsets    = tadPack.primaryOffsets();
+        timers->stopWatch(__LINE__, 5);
         const uint numOfSubArrs = tadPack.numberOfTads();
+        timers->stopWatch(__LINE__, 5);
         const uint tadLen       = shape::length(tadShapeInfo);
+        timers->stopWatch(__LINE__, 5);
 
         if(shape::elementWiseStride(tadShapeInfo) == 1){
+            timers->stopWatch(__LINE__, 5);
             T *inBuff = input.bufferAsT<T>();
+            timers->stopWatch(__LINE__, 5);
             T *outBuff = output.bufferAsT<T>();
+            timers->stopWatch(__LINE__, 5);
 
             softmax_loop(inBuff, outBuff, tadOffsets, numOfSubArrs, tadLen);
+            timers->stopWatch(__LINE__, 5);
         }
         else {
 
             uint inShapeInfoCast[MAX_RANK];
+            timers->stopWatch(__LINE__, 5);
             bool canCast = nd4j::DataTypeUtils::castShapeInfo(tadShapeInfo, inShapeInfoCast);
 
+            timers->stopWatch(__LINE__, 5);
             auto offsets = new Nd4jLong[tadLen];
+            timers->stopWatch(__LINE__, 5);
             shape::calcOffsets(tadShapeInfo, offsets);
+            timers->stopWatch(__LINE__, 5);
 
             auto func = PRAGMA_THREADS_FOR {
                 for (auto i = start; i < stop; i++) {
@@ -314,18 +338,27 @@ static void softmax_(nd4j::LaunchContext * context, const NDArray& input, NDArra
                         outBuff[offsets[j]] /= sum;
                 }
             };
+        timers->stopWatch(__LINE__, 5);
 
             samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
+            timers->stopWatch(__LINE__, 5);
 
             delete []offsets;
+            timers->stopWatch(__LINE__, 5);
         }
     }
     else {
+timers->stopWatch(__LINE__, 5);
         NDArray max = input.reduceAlongDimension(nd4j::reduce::Max, {dimension}, true);
+        timers->stopWatch(__LINE__, 5);
         input.applyTrueBroadcast(nd4j::BroadcastOpsTuple::Subtract(), max, output, false);
+        timers->stopWatch(__LINE__, 5);
         output.applyTransform(nd4j::transform::Exp, output);
+        timers->stopWatch(__LINE__, 5);
         NDArray sum = output.reduceAlongDimension(nd4j::reduce::Sum, {dimension}, true);
+        timers->stopWatch(__LINE__, 5);
         output /= sum;
+        timers->stopWatch(__LINE__, 5);
     }
 }
 

@@ -23,68 +23,105 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ShapeUtils.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
     namespace ops {
         CUSTOM_OP_IMPL(slice, 1, 1, false, 0, -2) {
+            GlobalTimers* timers = GlobalTimers::getInstance();
+            timers->stopWatch(__LINE__, 1);
             auto input = INPUT_VARIABLE(0);
+            timers->stopWatch(__LINE__, 1);
             auto output = OUTPUT_VARIABLE(0);
+            timers->stopWatch(__LINE__, 1);
 
             int x_rank = input->rankOf();
+            timers->stopWatch(__LINE__, 1);
 
             std::vector<int> begin;
+            timers->stopWatch(__LINE__, 1);
             std::vector<int> sz;
+            timers->stopWatch(__LINE__, 1);
 
             if (block.width() == 3) {
+                timers->stopWatch(__LINE__, 1);
                 auto b = INPUT_VARIABLE(1);
+                timers->stopWatch(__LINE__, 1);
                 auto e = INPUT_VARIABLE(2);
+                timers->stopWatch(__LINE__, 1);
 
                 begin = b->template asVectorT<int>();
+                timers->stopWatch(__LINE__, 1);
                 sz = e->template asVectorT<int>();
+                timers->stopWatch(__LINE__, 1);
             } else {
+                timers->stopWatch(__LINE__, 1);
                 REQUIRE_TRUE(block.numI() >= x_rank * 2, 0, "Number of IArgs should be equal to [%i] but got [%i] instead", x_rank * 2, block.numI());
 
+                timers->stopWatch(__LINE__, 1);
                 ShapeUtils::copyVectorPart(begin, *(block.getIArguments()), x_rank, 0);
+                timers->stopWatch(__LINE__, 1);
                 ShapeUtils::copyVectorPart(sz, *(block.getIArguments()), x_rank, x_rank);
+                timers->stopWatch(__LINE__, 1);
             }
+            timers->stopWatch(__LINE__, 1);
 
             REQUIRE_TRUE(begin.size() == x_rank, 0, "begin array should have length of [%i] but got [%i] instead", x_rank, begin.size());
+            timers->stopWatch(__LINE__, 1);
             REQUIRE_TRUE(sz.size() == x_rank, 0, "size array should have length of [%i] but got [%i] instead", x_rank, sz.size());
 
+            timers->stopWatch(__LINE__, 1);
             std::vector<Nd4jLong> indices(2 * x_rank);
+            timers->stopWatch(__LINE__, 1);
             auto empty = false;
+            timers->stopWatch(__LINE__, 1);
             for (int e = 0; e < x_rank; e++) {
+                timers->stopWatch(__LINE__, 1);
                 int size = sz[e];
+                timers->stopWatch(__LINE__, 1);
                 int start = begin[e];
+                timers->stopWatch(__LINE__, 1);
 
                 REQUIRE_TRUE(start >= 0, 0, "Slice: start index should not be negative");
+                timers->stopWatch(__LINE__, 1);
 
                 REQUIRE_TRUE(start <= input->sizeAt(e), 0, "Index %i is invalid for dimension %i with size %i.", start, e, input->shapeInfo()[e + 1]);
+                timers->stopWatch(__LINE__, 1);
                 if (size == -1){
                     size = input->sizeAt(e) - start;
                 }
+                timers->stopWatch(__LINE__, 1);
                 REQUIRE_TRUE(size >= 0, 0, "Slice: interval for dimension %i is less then 1");
+                timers->stopWatch(__LINE__, 1);
                 REQUIRE_TRUE(start + size <= input->sizeAt(e), 0, "Slice: interval [%i, %i] is out of bounds for dimension %i with size %i", start, start + size, e, input->sizeAt(e));
+                timers->stopWatch(__LINE__, 1);
 
                 if(start == input->sizeAt(e) || size == 0 ){
                     empty = true;
                     //Don't break to perform input validation on other dims
                 }
                 
+                timers->stopWatch(__LINE__, 1);
                 indices[2*e]   = start;
                 indices[2*e+1] = start + size;
+                timers->stopWatch(__LINE__, 1);
             }
 
+            timers->stopWatch(__LINE__, 1);
             if(empty){
                 REQUIRE_TRUE(output->isEmpty(), 0, "Slice: empty array indices requested, but output array is not empty");
                 return Status::OK();
             }
+            timers->stopWatch(__LINE__, 1);
 
             auto sub = (*input)(indices, true);
+            timers->stopWatch(__LINE__, 1);
             output->assign(sub);
+            timers->stopWatch(__LINE__, 1);
 
             STORE_RESULT(output);
 
+            timers->stopWatch(__LINE__, 1);
             return Status::OK();
         }
 

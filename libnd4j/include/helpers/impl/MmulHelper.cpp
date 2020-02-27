@@ -25,6 +25,7 @@
 #include <helpers/ShapeUtils.h>
 #include <helpers/BlasHelper.h>
 #include <NDArrayFactory.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace nd4j {
 
@@ -199,35 +200,44 @@ NDArray* nd4j::MmulHelper::tensorDot(const nd4j::NDArray* a, const nd4j::NDArray
 
 //////////////////////////////////////////////////////////////////////////
 nd4j::NDArray* MmulHelper::mmul(const nd4j::NDArray* A, const nd4j::NDArray* B, nd4j::NDArray* C , const double alpha, const double beta, const char outOrder) {
-
+    GlobalTimers* timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 3);
     int lenDim;
     const int aRank = A->rankOf();
     const int bRank = B->rankOf();
+    timers->stopWatch(__LINE__, 3);
     const bool isAVector = shape::isCommonVector(A->getShapeInfo(), lenDim);
     const bool isBVector = shape::isCommonVector(B->getShapeInfo(), lenDim);
-
+timers->stopWatch(__LINE__, 3);
     // dot product of 2 vectors
     if(isAVector && isBVector && (aRank != 2 || aRank == 2 && (A->isSameShape(B) || bRank == 1 && A->sizeAt(1) == 1)))  // (1x1x1 * 1x1) or (1x4 * 1*4) or (4x1 * 4x1) or (4x1 * 4)
         return dot(A, B, C, alpha, beta);
-
+timers->stopWatch(__LINE__, 3);
     // matrix x matrix
     if(aRank == 2 && bRank == 2)
         return mmulMxM(A, B, C, alpha, beta, outOrder);
-
+timers->stopWatch(__LINE__, 3);
     // matrix x vector
     if(aRank == 2 && isBVector)
         return mmulMxV(A, B, C, alpha, beta, outOrder);
-
+timers->stopWatch(__LINE__, 3);
     // vector x matrix, A{M} x B{M,N} = C{N} -> reduce to matrix x matrix A2{1,M} x B{M,N} = C2{1,N}, since there is no corresponding blas operation sgevm
     if(isAVector && bRank == 2) {
+        timers->stopWatch(__LINE__, 3);
         NDArray* A2 = new NDArray(A->reshape(A->ordering(), {1, A->lengthOf()}));               // A{M} -> A2{1,M}
+        timers->stopWatch(__LINE__, 3);
         NDArray* C2 = C ? new NDArray(C->reshape(C->ordering(), {1, C->lengthOf()}, false)) : nullptr; // C{N} -> C2{1,N}
+        timers->stopWatch(__LINE__, 3);
         auto result = mmulMxM(A2, B, C2, alpha, beta, outOrder);                                // result{1,N}
+        timers->stopWatch(__LINE__, 3);
         delete A2;
+        timers->stopWatch(__LINE__, 3);
         delete C2;
-
+timers->stopWatch(__LINE__, 3);
         if(!C) {
+            timers->stopWatch(__LINE__, 3);
             result->reshapei({result->lengthOf()});                                             // result{1,N} -> result{N}
+            timers->stopWatch(__LINE__, 3);
             return result;
         }
         return C;
@@ -240,43 +250,56 @@ nd4j::NDArray* MmulHelper::mmul(const nd4j::NDArray* A, const nd4j::NDArray* B, 
 
 //////////////////////////////////////////////////////////////////////////
     void MmulHelper::matmul(const nd4j::NDArray* x, const nd4j::NDArray* y, nd4j::NDArray* z, const bool transX, const bool transY) {
-        int xRank = x->rankOf();
-        int yRank = y->rankOf();
+        GlobalTimers* timers = GlobalTimers::getInstance();
+        timers->stopWatch(__LINE__, 3);
 
+        int xRank = x->rankOf();
+        timers->stopWatch(__LINE__, 3);
+        int yRank = y->rankOf();
+timers->stopWatch(__LINE__, 3);
         auto outShape = ShapeUtils::evalShapeForMatmul(x->getShapeInfo(), y->getShapeInfo(), transX, transY);
+timers->stopWatch(__LINE__, 3);
         if(!z->isSameShape(outShape)) {
             nd4j_printf("NDArrayFactory::matmul static method: input shape of output array is wrong, actual is %s and expected is %s ! \n", ShapeUtils::shapeAsString(z).c_str(), ShapeUtils::shapeAsString(outShape).c_str());
             throw std::invalid_argument("");
         }
-
+timers->stopWatch(__LINE__, 3);
         if (z->isEmpty())
             return;
-
+timers->stopWatch(__LINE__, 3);
         NDArray* xT(const_cast<NDArray*>(x)), *yT(const_cast<NDArray*>(y)), *zT(z);
-
+timers->stopWatch(__LINE__, 3);
         if((transX && xRank > 1) || (transY && yRank > 1)) {
+timers->stopWatch(__LINE__, 3);
             const int rank = xRank >= yRank ? xRank : yRank;
+timers->stopWatch(__LINE__, 3);
             std::vector<int> permut(rank);
+timers->stopWatch(__LINE__, 3);
             for (int i = 0; i < rank-2; ++i)
                 permut[i] = i;
+timers->stopWatch(__LINE__, 3);
             permut[rank-2] = rank - 1;
             permut[rank-1] = rank - 2;
-
+timers->stopWatch(__LINE__, 3);
             if(transX)
                 xT = new NDArray(x->permute(permut));
-
+timers->stopWatch(__LINE__, 3);
             if(transY)
                 yT = new NDArray(y->permute(permut));
+timers->stopWatch(__LINE__, 3);
         }
 
         if(xRank <= 2 && yRank <= 2) {  // dot (1Dx1D), vector-matrix (1Dx2D), matrix-vector (2Dx1D), matrix-matrix (2Dx2D) product cases
-
+timers->stopWatch(__LINE__, 3);
             if(xRank == 1 && yRank == 2) {   // reduce vector-matrix to matrix-matrix case
+                timers->stopWatch(__LINE__, 3);
                 xT = new NDArray(x->reshape(x->ordering(), {1, x->lengthOf()})); // please note x is not transposed in this case (since xRank=1)
+timers->stopWatch(__LINE__, 3);
                 zT = new NDArray(z->reshape(z->ordering(), {1, z->lengthOf()}));
             }
-
+timers->stopWatch(__LINE__, 3);
             mmul(xT, yT, zT, 1., 0.);
+timers->stopWatch(__LINE__, 3);
         }
         else {  // rest cases -  batched mmul
 

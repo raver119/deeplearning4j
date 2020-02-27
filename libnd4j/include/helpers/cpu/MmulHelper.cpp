@@ -24,6 +24,7 @@
 #include <helpers/ShapeUtils.h>
 #include <exceptions/datatype_exception.h>
 #include <execution/Threads.h>
+#include <performance/benchmarking/global_timers.h>
 
 
 namespace nd4j {
@@ -34,27 +35,35 @@ template <typename T1, typename T2, typename T3>
 static  void usualGemm(const NDArray* vA, const NDArray* vB, NDArray* vC,
                                  const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
                                  const double alpha, const double beta) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 4);
 
     const T1* A = vA->bufferAsT<T1>();
     const T2* B = vB->bufferAsT<T2>();
           T3* C = vC->bufferAsT<T3>();
+          timers->stopWatch(__LINE__, 4);
 
     const T3 alphaZ = alpha;
     const T3 betaZ  = beta;
+    timers->stopWatch(__LINE__, 4);
 
     const bool betaPersent = beta;
 
     const Nd4jLong* aShapeInfo = vA->getShapeInfo();
     const Nd4jLong* bShapeInfo = vB->getShapeInfo();
     const Nd4jLong* cShapeInfo = vC->getShapeInfo();
+    timers->stopWatch(__LINE__, 4);
 
     const int aRank = vA->rankOf();
     const int bRank = vB->rankOf();
     const int cRank = vC->rankOf();
+    timers->stopWatch(__LINE__, 4);
 
     const Nd4jLong cLen = vC->lengthOf();
+    timers->stopWatch(__LINE__, 4);
 
     const int K = vA->sizeAt(aKaxis);
+    timers->stopWatch(__LINE__, 4);
 
     auto func = PRAGMA_THREADS_FOR {
 
@@ -92,8 +101,11 @@ static  void usualGemm(const NDArray* vA, const NDArray* vB, NDArray* vC,
                 C[cOffset] = alphaZ * val;
         }
     };
+timers->stopWatch(__LINE__, 4);
 
     samediff::Threads::parallel_tad(func, 0, cLen);
+    timers->stopWatch(__LINE__, 4);
+
 }
 
 
@@ -175,21 +187,23 @@ static void usualDot(const Nd4jLong length, const double alpha, const void* vX, 
 //////////////////////////////////////////////////////////////////////////////
 // MXK x KxN = MxN
 NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, const double alpha, const double beta, const char outOrder) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+    timers->stopWatch(__LINE__, 4);
     if (A->dataType() != B->dataType())
         throw datatype_exception::build("mmulMxM expects all data types to be the same", A->dataType(), B->dataType());
-
+timers->stopWatch(__LINE__, 4);
     if (C != nullptr && A->dataType() != C->dataType())
         throw datatype_exception::build("mmulMxM expects all data types to be the same", A->dataType(), C->dataType());
-
+timers->stopWatch(__LINE__, 4);
     if(A->rankOf() != 2)
         throw std::runtime_error("MmulHelper::mmulMxM: rank of A array is not equal 2 !");
     if(B->rankOf() != 2)
         throw std::runtime_error("MmulHelper::mmulMxM: rank of B array is not equal 2 !");
-
+timers->stopWatch(__LINE__, 4);
     const auto M = A->sizeAt(0);
     const auto K = A->sizeAt(1);
     const auto N = B->sizeAt(1);
-
+timers->stopWatch(__LINE__, 4);
     if(C != nullptr && C->rankOf() != 2)
         throw std::runtime_error("MmulHelper::mmulMxM: rank of C array is not equal 2 !");
     if(B->sizeAt(0) != K)
@@ -198,32 +212,40 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, con
         throw std::runtime_error("MmulHelper::mmulMxM: C array has wrong number of rows !");
     if(C != nullptr && C->sizeAt(1) != N)
         throw std::runtime_error("MmulHelper::mmulMxM: C array has wrong number of columns !");
-
+timers->stopWatch(__LINE__, 4);
     if(C == nullptr)
         C = new NDArray(outOrder, {M,N}, DataTypeUtils::pickPairwiseResultType(A->dataType(), B->dataType()), A->getContext());
-
+timers->stopWatch(__LINE__, 4);
     if (C->isEmpty())
         return C;
-
+timers->stopWatch(__LINE__, 4);
     const auto aType = A->dataType();
     const auto bType = B->dataType();
     const auto cType = C->dataType();
-
+timers->stopWatch(__LINE__, 4);
     const bool AB(aType == bType), AC(aType == cType), ABC(AB && AC);
+timers->stopWatch(__LINE__, 4);
     const bool hasGemm = BlasHelper::getInstance()->hasGEMM(aType);
-
+timers->stopWatch(__LINE__, 4);
     const bool typeDouble = hasGemm && ABC &&  aType == DataType::DOUBLE;
     const bool typeFloat  = hasGemm && ABC &&  aType == DataType::FLOAT32;
 
     if(!typeFloat && !typeDouble) {
+        timers->stopWatch(__LINE__, 4);
+
         BUILD_SINGLE_SELECTOR_THRICE(aType, usualGemm, (A, B, C, 0, 1, 0, 1, 0, 1, alpha, beta), NUMERIC_TYPES);
         // BUILD_TRIPLE_SELECTOR(aType, bType, cType, usualGemm, (A, B, C, 0, 1, 0, 1, 0, 1, alpha, beta), LIBND4J_TYPES, FLOAT_TYPES, FLOAT_TYPES);
+        timers->stopWatch(__LINE__, 4);
+
     }
     else {
+        timers->stopWatch(__LINE__, 4);
 
         std::vector<NDArray*> toDelete;
+        timers->stopWatch(__LINE__, 4);
 
         NDArray *pA(const_cast<NDArray*>(A)), *pB(const_cast<NDArray*>(B)), *pC(const_cast<NDArray*>(C));
+        timers->stopWatch(__LINE__, 4);
 
         bool aMcont = M == 1 || A->strideAt(0) == 1;
         bool aKcont = K == 1 || A->strideAt(1) == 1;
@@ -231,23 +253,34 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, con
         bool bNcont = N == 1 || B->strideAt(1) == 1;
         bool cMcont = M == 1 || C->strideAt(0) == 1;
         bool cNcont = N == 1 || C->strideAt(1) == 1;
+        timers->stopWatch(__LINE__, 4);
 
         if(!aMcont && !aKcont) {
             pA = new NDArray(A->dup('f'));
+            timers->stopWatch(__LINE__, 4);
             toDelete.push_back(pA);
+            timers->stopWatch(__LINE__, 4);
             aMcont = true;
         }
+        timers->stopWatch(__LINE__, 4);
         if(!bKcont && !bNcont) {
             pB = new NDArray(B->dup('f'));
+            timers->stopWatch(__LINE__, 4);
             toDelete.push_back(pB);
+            timers->stopWatch(__LINE__, 4);
             bKcont = true;
         }
+        timers->stopWatch(__LINE__, 4);
         if(!cMcont && !cNcont) {
+            timers->stopWatch(__LINE__, 4);
             pC = new NDArray(C->dup('f'));
+            timers->stopWatch(__LINE__, 4);
             toDelete.push_back(pC);
+            timers->stopWatch(__LINE__, 4);
             cMcont = true;
         }
 
+        timers->stopWatch(__LINE__, 4);
         const CBLAS_ORDER blasOrder = cMcont ? CblasColMajor : CblasRowMajor;
 
         const bool transA = (!aMcont && cMcont) || (aMcont && !cMcont);
@@ -256,25 +289,32 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, con
         const CBLAS_TRANSPOSE transAblas = transA ? CblasTrans : CblasNoTrans;
         const CBLAS_TRANSPOSE transBblas = transB ? CblasTrans : CblasNoTrans;
 
+        timers->stopWatch(__LINE__, 4);
         const int lda = (aMcont && aKcont) ? M : !aMcont ? pA->strideAt(0) : pA->strideAt(1);
         const int ldb = (bKcont && bNcont) ? K : !bKcont ? pB->strideAt(0) : pB->strideAt(1);
         const int ldc = (cMcont && cNcont) ? M : !cMcont ? pC->strideAt(0) : pC->strideAt(1);
 
+        timers->stopWatch(__LINE__, 4);
         if(typeFloat) {
             BlasHelper::getInstance()->sgemm()(blasOrder, transAblas, transBblas, M, N, K, (float) alpha, pA->bufferAsT<float>(), lda, pB->bufferAsT<float>(), ldb, (float) beta, pC->bufferAsT<float>(), ldc);
+            timers->stopWatch(__LINE__, 4);
         }
         else if(typeDouble) {
             BlasHelper::getInstance()->dgemm()(blasOrder, transAblas, transBblas, M, N, K, (double) alpha, pA->bufferAsT<double>(), lda, pB->bufferAsT<double>(), ldb, (double) beta, pC->bufferAsT<double>(), ldc);
+            timers->stopWatch(__LINE__, 4);
         }
 
         if(pC != C) {
             C->assign(pC);
             delete pC;
         }
+        timers->stopWatch(__LINE__, 4);
         if(pA != A)
             delete pA;
+        timers->stopWatch(__LINE__, 4);
         if(pB != B)
             delete pB;
+        timers->stopWatch(__LINE__, 4);
     }
 
     return C;
@@ -409,28 +449,36 @@ static void batchedGemm(const NDArray* vA, const NDArray* vB,  NDArray* vC,
                         const int* aBatchDims, const int* bBatchDims, const int* cBatchDims,
                         const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
                         const double alpha, const double beta) {
+    GlobalTimers* timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 4);
 
     const T1* A = vA->bufferAsT<T1>();
+timers->stopWatch(__LINE__, 4);
     const T2* B = vB->bufferAsT<T2>();
+    timers->stopWatch(__LINE__, 4);
           T3* C = vC->bufferAsT<T3>();
+timers->stopWatch(__LINE__, 4);
 
     const T3 alphaZ = alpha;
     const T3 betaZ  = beta;
 
     const bool betaPersent = beta;
-
+timers->stopWatch(__LINE__, 4);
     const Nd4jLong* aShapeInfo = vA->getShapeInfo();
+    timers->stopWatch(__LINE__, 4);
     const Nd4jLong* bShapeInfo = vB->getShapeInfo();
+    timers->stopWatch(__LINE__, 4);
     const Nd4jLong* cShapeInfo = vC->getShapeInfo();
+    timers->stopWatch(__LINE__, 4);
 
     const int aRank = vA->rankOf();
     const int bRank = vB->rankOf();
     const int cRank = vC->rankOf();
-
+timers->stopWatch(__LINE__, 4);
     const Nd4jLong cLen = vC->lengthOf();
-
+timers->stopWatch(__LINE__, 4);
     const int K = vA->sizeAt(aKaxis);
-
+timers->stopWatch(__LINE__, 4);
     auto func = PRAGMA_THREADS_FOR {
 
         std::vector<Nd4jLong> aCoords(aRank), bCoords(bRank), cCoords(cRank);
@@ -476,8 +524,9 @@ static void batchedGemm(const NDArray* vA, const NDArray* vB,  NDArray* vC,
                 C[cOffset] = alphaZ * val;
         }
     };
-
+timers->stopWatch(__LINE__, 4);
     samediff::Threads::parallel_tad(func, 0, cLen);
+    timers->stopWatch(__LINE__, 4);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -486,10 +535,11 @@ static void batchedGemm(const NDArray* vA, const NDArray* vB,  NDArray* vC,
 //    [M,K] x [bS,K,N] = [bS,M,N]
 // bS could stand for several axes
 NDArray* MmulHelper::mmulNxN(const NDArray* A, const NDArray* B, NDArray* C, const double alpha, const double beta, const char outOrder) {
-
+    GlobalTimers* timers = GlobalTimers::getInstance();
+timers->stopWatch(__LINE__, 4);
     const int aRank = A->rankOf();
     const int bRank = B->rankOf();
-
+timers->stopWatch(__LINE__, 4);
     // input ranks validation
     if(aRank > bRank && bRank != 2)
         throw std::runtime_error("MmulHelper::mmulNxN: rank of B array should be equal 2 !");
@@ -500,14 +550,18 @@ NDArray* MmulHelper::mmulNxN(const NDArray* A, const NDArray* B, NDArray* C, con
             if(A->sizeAt(i) != B->sizeAt(i))
                 throw std::runtime_error("MmulHelper::mmulNxN: shapes of A and B arrays are not suitable for matrix multiplication !");
     }
-
+timers->stopWatch(__LINE__, 4);
     if(A->sizeAt(-1) != B->sizeAt(-2))
         throw std::runtime_error("MmulHelper::mmulNxN: shapes of A and B arrays are not suitable for matrix multiplication !");
 
     // validation of C array
+timers->stopWatch(__LINE__, 4);
     std::vector<Nd4jLong> cExpectedShape = aRank > bRank ? A->getShapeAsVector() : B->getShapeAsVector();
+    timers->stopWatch(__LINE__, 4);
     cExpectedShape[cExpectedShape.size() - 2] = A->sizeAt(-2);
+    timers->stopWatch(__LINE__, 4);
     cExpectedShape[cExpectedShape.size() - 1] = B->sizeAt(-1);
+    timers->stopWatch(__LINE__, 4);
 
     if(C != nullptr ) {
         if(!C->isSameShape(cExpectedShape))
@@ -519,23 +573,23 @@ NDArray* MmulHelper::mmulNxN(const NDArray* A, const NDArray* B, NDArray* C, con
 
     if (C->isEmpty())
         return C;
-
+timers->stopWatch(__LINE__, 4);
     const int cRank = C->rankOf();
-
+timers->stopWatch(__LINE__, 4);
     const int aMaxis(aRank-2), aKaxis(aRank-1), bKaxis(bRank-2), bNaxis(bRank-1), cMaxis(cRank-2), cNaxis(cRank-1);
-
+timers->stopWatch(__LINE__, 4);
     std::vector<int> aBatchDims, bBatchDims, cBatchDims;
-
+timers->stopWatch(__LINE__, 4);
     if(aRank > 2)
         aBatchDims = ShapeUtils::evalDimsToExclude(aRank, {aMaxis, aKaxis});
     if(bRank > 2)
         bBatchDims = ShapeUtils::evalDimsToExclude(bRank, {bKaxis, bNaxis});
     if(cRank > 2)
         cBatchDims = ShapeUtils::evalDimsToExclude(cRank, {cMaxis, cNaxis});
-
+timers->stopWatch(__LINE__, 4);
     // BUILD_TRIPLE_SELECTOR(A->dataType(), B->dataType(), C->dataType(), batchedGemm, (A, B, C, aBatchDims.data(), bBatchDims.data(), cBatchDims.data(), aMaxis, aKaxis, bKaxis, bNaxis, cMaxis, cNaxis, alpha, beta), LIBND4J_TYPES, FLOAT_TYPES, FLOAT_TYPES);
     BUILD_SINGLE_SELECTOR_THRICE(A->dataType(), batchedGemm, (A, B, C, aBatchDims.data(), bBatchDims.data(), cBatchDims.data(), aMaxis, aKaxis, bKaxis, bNaxis, cMaxis, cNaxis, alpha, beta), NUMERIC_TYPES);
-
+timers->stopWatch(__LINE__, 4);
     return C;
 }
 
