@@ -18,14 +18,68 @@
 //  @author GS <sgazeos@gmail.com>
 //
 
-#include "../sqrtm.h"
+#include <ops/declarable/helpers/sqrtm.h>
+#include <ops/declarable/helpers/qr.h>
 
 namespace nd4j {
 namespace ops {
 namespace helpers {
 
-    int sqrtMatrixFunctor(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+    template <typename T>
+    void upperTriangularSqrt(nd4j::LaunchContext* context, NDArray const* inputTriangular, NDArray* outputTriangular) {
+        auto n = inputTriangular->sizeAt(-1);
+        auto inputTriangularPart = inputTriangular->allTensorsAlongDimension({-2, -1});
+        auto outputTriangularPart = outputTriangular->allTensorsAlongDimension({-2, -1});
+
+        for (auto batch = 0; batch < inputTriangularPart.size(); ++batch) {
+            // compute diagonals
+            auto input = inputTriangularPart[batch];
+            auto output = outputTriangularPart[batch];
+            for (auto r = 0; r < n; r++) {
+                output->t<T>(r, r) = nd4j::math::nd4j_sqrt<T,T>(input->t<T>(r, r));
+            }
+
+            // compute upper diagonal
+            for (auto r = 0; r < n - 1; r++) {
+                output->t<T>(r, r + 1) = input->t<T>(r, r + 1) / (output->t<T>(r, r) + output->t<T>(r + 1, r + 1));
+            }
+
+//            for (auto r = 0; r < n - 2; r++) {
+//                output->t<T>(r, r + 2) = (input->t<T>(r, r + 2) - output->t<T>(r, r + 1) * output->t<T>(r + 1, r + 2)) /
+//                                                   (output->t<T>(r, r) + output->t<T>(r + 2, r + 2));
+//            }
+
+            // loop for diagonals
+            for (auto d = 2; d < n; d++) {
+                for (auto r = 0; r < n - d; r++) {
+                    auto sum = 0;
+                    for (auto k = r + 1; k < r + d; k++) {
+                        sum += output->t<T>(r, k) * output->t<T>(k, d + r);
+                    }
+                    nd4j_printf("(%lld, %lld)\n", r, r + d);
+                    output->t<T>(r, r + d) = (input->t<T>(r, r + d) - sum) / (output->t<T>(r, r) + output->t<T>(r + d, r + d));
+                }
+            }
+        }
+    }
+
+    template <typename T>
+    int sqrtMatrixFunctor_(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+        auto pInput = const_cast<NDArray*>(input);
+        auto outputQ = pInput->ulike();
+        auto outputR = outputQ.ulike();
+
+        //helpers::qr(context, pInput, &outputQ, &outputR, false);
+
+//        auto outputT = outputR.ulike();
+
+        upperTriangularSqrt<T>(context, pInput, output);
+
         return Status::OK();
+    }
+
+    int sqrtMatrixFunctor(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+        BUILD_SINGLE_SELECTOR(input->dataType(), return sqrtMatrixFunctor_, (context, input, output), FLOAT_TYPES);
     }
 }
 }

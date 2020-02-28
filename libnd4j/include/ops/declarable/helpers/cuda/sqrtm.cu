@@ -17,7 +17,7 @@
 //
 //  @author GS <sgazeos@gmail.com>
 //
-#include "../sqrtm.h"
+#include <ops/declarable/helpers/sqrtm.h>
 
 namespace nd4j {
 namespace ops {

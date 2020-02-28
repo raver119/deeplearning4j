@@ -3005,3 +3005,32 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_6) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_1) {
+
+    auto a = NDArrayFactory::create<float>('c', {4, 4}, {
+            5.f,  1.f, -3.f,  3.f,
+            0.f,  1.f,  1.f, -1.f,
+            0.f,  0.f,  2.f, -9.f,
+            0.f,  0.f,  0.f,  4.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {4, 4}, {
+            2.236068f,  0.309017f, -0.85691994f,  0.17272182f,
+                  0.f,        1.f,  0.41421354f,  0.03062765f,
+                  0.f,        0.f,   1.4142135f,  -2.6360388f,
+                  0.f,        0.f,          0.f,          2.f
+    });
+
+    nd4j::ops::sqrtm op;
+
+    auto res = op.evaluate({&a});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printIndexedBuffer("Triangular Sqrt");
+
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
