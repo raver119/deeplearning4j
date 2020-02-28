@@ -44,19 +44,13 @@ namespace helpers {
                 output->t<T>(r, r + 1) = input->t<T>(r, r + 1) / (output->t<T>(r, r) + output->t<T>(r + 1, r + 1));
             }
 
-//            for (auto r = 0; r < n - 2; r++) {
-//                output->t<T>(r, r + 2) = (input->t<T>(r, r + 2) - output->t<T>(r, r + 1) * output->t<T>(r + 1, r + 2)) /
-//                                                   (output->t<T>(r, r) + output->t<T>(r + 2, r + 2));
-//            }
-
             // loop for diagonals
             for (auto d = 2; d < n; d++) {
                 for (auto r = 0; r < n - d; r++) {
-                    auto sum = 0;
+                    auto sum = T(0.f);
                     for (auto k = r + 1; k < r + d; k++) {
                         sum += output->t<T>(r, k) * output->t<T>(k, d + r);
                     }
-                    nd4j_printf("(%lld, %lld)\n", r, r + d);
                     output->t<T>(r, r + d) = (input->t<T>(r, r + d) - sum) / (output->t<T>(r, r) + output->t<T>(r + d, r + d));
                 }
             }
