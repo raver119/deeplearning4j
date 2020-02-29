@@ -7,10 +7,12 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.samediff.AbstractSameDiffLayer;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
+import org.deeplearning4j.nn.conf.preprocessor.RnnToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
 import java.util.Collection;
@@ -90,7 +92,23 @@ public class TFOpLayer extends Layer{
 
     @Override
     public InputType getOutputType(int idx, InputType inputType){
-        return inputType;
+        InputType.Type type = inputType.getType();
+        long[] shape = inputType.getShape();
+        if (type == InputType.Type.RNN){
+           long t = shape[0];
+           shape[0] = shape[1];
+           shape[1] = t;
+        }
+        org.deeplearning4j.nn.layers.TFOpLayer tempLayer = new org.deeplearning4j.nn.layers.TFOpLayer(nodeDef, constants, null, null);
+        long[] outputShape = tempLayer.getOutputShape(shape);
+        if (outputShape.length == 3){
+            long t = outputShape[1];
+            outputShape[1] = outputShape[0];
+            outputShape[0] = t;
+        }
+        System.out.println(outputShape);
+        return InputType.inferInputType(Nd4j.create(outputShape));
+
     }
 
     @Override
@@ -122,6 +140,7 @@ public class TFOpLayer extends Layer{
     public LayerMemoryReport getMemoryReport(InputType inputType) {
         return new LayerMemoryReport(); //TODO
     }
+
 
 
 

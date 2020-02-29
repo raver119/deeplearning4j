@@ -1,6 +1,7 @@
 package org.deeplearning4j.nn.layers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -8,6 +9,7 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
+import org.nd4j.tensorflow.conversion.TensorDataType;
 import org.nd4j.tensorflow.conversion.graphrunner.GraphRunner;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
@@ -28,22 +30,22 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
     private INDArray[] inputs;
     private GraphRunner graphRunner;
     private List<String> inputNames;
-    private List<String> inputDtypes;
+    private List<TensorDataType> inputDtypes;
 
 
     public TFOpLayer(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
         super(conf, dtype);
         this.nodeDef = nodeDef;
         setGraphRunner(nodeDef);
-        INDArray[] consts = new INDArray[constants.size() + 1];
-        for (int i = 0; i < consts.length - 1; i++){
-            List<Number> list = (List<Number>)constants.get(String.valueOf(i + 1));
+        INDArray[] inputs = new INDArray[constants.size() + 1];
+        for (int i = 1; i < inputs.length; i++){
+            List<Number> list = (List<Number>)constants.get(String.valueOf(i));
             if (list == null){
                 throw new RuntimeException("Invalid constants map.");
             }
-            consts[i] = Nd4j.create(list);
+            inputs[i] = Nd4j.create(list);
         }
-        this.inputs = consts;
+        this.inputs = inputs;
     }
 
     @Override
@@ -68,14 +70,17 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
                 inputNames.add(nodeDef.getInput(i));
             }
             inputDtypes = new ArrayList<>();
+            List<String> inputDataTypeNames = new ArrayList<>();
             Map<String, AttrValue> attrMap = nodeDef.getAttrMap();
             for (Map.Entry<String, AttrValue> e: attrMap.entrySet()){
-                inputDtypes.add(e.getValue().getType().toString());
+                String dtName = e.getValue().getType().toString();
+                inputDataTypeNames.add(dtName);
+                inputDtypes.add(TensorDataType.fromProtoValue(dtName));
             }
             String graph = "node{\n" + nodeDef.toString() + "\n}\nversions {\n producer: 22\n}";
             for (int i = 0; i < inputNames.size(); i++){
                 String inpName = inputNames.get(i);
-                String dtype = inputDtypes.get(i);
+                String dtype = inputDataTypeNames.get(i);
                 graph = "node{\nname: \"" + inpName + "\"\nop: \"Placeholder\"\nattr{\nkey: \"dtype\"\n value {\n type: " + dtype + "}\n}\n}\n" + graph;
             }
             log.info(graph);
@@ -84,26 +89,45 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             GraphDef graphDef = graphDefBuilder.build();
             org.nd4j.shade.protobuf.ByteString serialized = graphDef.toByteString();
             byte[] binaryString = serialized.toByteArray();
-            graphRunner = GraphRunner.builder().inputNames(inputNames).outputNames(outputNames).graphBytes(binaryString).build();
+            Map<String, TensorDataType> dtypeMap = new HashMap<>();
+            for (int i = 0; i < inputNames.size(); i++){
+                dtypeMap.put(inputNames.get(i), inputDtypes.get(i));
+            }
+            graphRunner = GraphRunner.builder().inputNames(inputNames).outputNames(outputNames).graphBytes(binaryString).inputDataTypes(dtypeMap).build();
         }
         catch (Exception e){
             throw new RuntimeException("Error parsing protobuf", e);
         }
 
     }
-    @Override
-    public INDArray activate(boolean training, LayerWorkspaceMgr workspaceMgr){
 
-        // TODO resolve protobuff from nodeDef and Constants
+    private INDArray runGraph(INDArray input){
         inputs[0] = input;
         Map<String, INDArray> inputMap = new HashMap<>();
         for (int i = 0; i < inputs.length; i++){
             inputMap.put(inputNames.get(i), inputs[i]);
         }
+        System.out.println(inputMap);
         INDArray out = graphRunner.run(inputMap).values().toArray(new INDArray[0])[0];
         log.debug(out.toString());
         return out;
+    }
 
+    public long[] getOutputShape(long[] inputShape){
+        System.out.println(ArrayUtils.toString(inputShape));
+        long[] shape = ArrayUtils.clone(inputShape);
+        for(int i = 0; i < shape.length; i++){
+            if (shape[i] < 0){
+                shape[i] = 1;
+            }
+        }
+        INDArray dummyArr = Nd4j.zeros(shape);
+        return runGraph(dummyArr).shape();
+    }
+
+    @Override
+    public INDArray activate(boolean training, LayerWorkspaceMgr workspaceMgr){
+        return runGraph(input);
     }
 
 
