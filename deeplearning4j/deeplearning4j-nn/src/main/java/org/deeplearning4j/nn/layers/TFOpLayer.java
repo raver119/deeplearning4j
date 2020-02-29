@@ -102,19 +102,21 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
     }
 
     private INDArray runGraph(INDArray input){
+        if (input.rank() == 3){
+            // TODO make this a preprocessor
+            input = input.permute(1, 0, 2);
+        }
         inputs[0] = input;
         Map<String, INDArray> inputMap = new HashMap<>();
         for (int i = 0; i < inputs.length; i++){
             inputMap.put(inputNames.get(i), inputs[i]);
         }
-        System.out.println(inputMap);
         INDArray out = graphRunner.run(inputMap).values().toArray(new INDArray[0])[0];
         log.debug(out.toString());
         return out;
     }
 
     public long[] getOutputShape(long[] inputShape){
-        System.out.println(ArrayUtils.toString(inputShape));
         long[] shape = ArrayUtils.clone(inputShape);
         for(int i = 0; i < shape.length; i++){
             if (shape[i] < 0){
