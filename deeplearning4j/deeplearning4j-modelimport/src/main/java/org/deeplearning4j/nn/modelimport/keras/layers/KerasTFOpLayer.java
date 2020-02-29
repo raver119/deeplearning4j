@@ -43,7 +43,7 @@ public class KerasTFOpLayer extends KerasLayer {
         for(Map.Entry<String, Object> e: layerConfig.entrySet()){
             System.out.println(e.getKey() + " : " + e.getValue());
         }
-        this.layer = new TFOpLayer((Map)layerConfig.get("node_def"));
+        this.layer = new TFOpLayer((Map)((Map)layerConfig.get("config")).get("node_def"), (Map)((Map)layerConfig.get("config")).get("constants"));
     }
 
     /**
