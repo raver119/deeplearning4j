@@ -20,6 +20,7 @@
 
 #include <ops/declarable/helpers/sqrtm.h>
 #include <ops/declarable/helpers/qr.h>
+#include <helpers/MmulHelper.h>
 
 namespace sd {
 namespace ops {
@@ -58,16 +59,24 @@ namespace helpers {
     }
 
     template <typename T>
+    void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
+        qMatrix->setIdentity();
+        tMatrix->assign(input);
+    }
+
+    template <typename T>
     int sqrtMatrixFunctor_(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
-        auto outputR = outputQ.ulike();
+        auto outputT = outputQ.ulike();
 
-        //helpers::qr(context, pInput, &outputQ, &outputR, false);
+        schurDecomposition<T>(context, pInput, &outputQ, &outputT);
 
 //        auto outputT = outputR.ulike();
 
-        upperTriangularSqrt<T>(context, pInput, output);
+        upperTriangularSqrt<T>(context, &outputT, output);
+        MmulHelper::matmul(&outputQ, output, &outputT, false, false);
+        MmulHelper::matmul(&outputT, &outputQ, output, false, true);
 
         return Status::OK();
     }
