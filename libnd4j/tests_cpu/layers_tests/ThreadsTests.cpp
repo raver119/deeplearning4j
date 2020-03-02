@@ -249,6 +249,31 @@ TEST_F(ThreadsTests, MutexedTest_2) {
     //ASSERT_EQ(8192, sum);
 }
 
+TEST_F(ThreadsTests, increment_aligned_test_1) {
+
+    int inc = 324;
+    int total = 197 * 256 * inc + 17;
+    int last_thread_xtra = total % inc;
+
+    FUNC_1D func = [&](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+        ASSERT_EQ(increment, inc);
+        ASSERT_EQ(start % increment, 0);
+        //in real, the second condition (last_thread_xtra)  happens only for the last thread
+        ASSERT_EQ((stop % increment == 0) || (stop % increment == last_thread_xtra), true);
+        if (stop % increment == last_thread_xtra) {
+            nd4j_printf("%3ld) start %10ld stop %10ld  increment %10ld tail %10ld \n", thread_id, start, stop, increment, stop % increment);
+        }
+        else {
+            nd4j_printf("%3ld) start %10ld stop %10ld  increment %10ld \n", thread_id, start, stop, increment);
+        }
+
+    };
+
+    samediff::Threads::parallel_aligned_increment(func, 0, total, inc);
+
+
+}
+
 /*
 TEST_F(ThreadsTests, basic_test_1) {
     if (!Environment::getInstance()->isCPU())

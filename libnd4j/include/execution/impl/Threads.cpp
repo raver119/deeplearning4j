@@ -391,7 +391,8 @@ namespace samediff {
 		    }
 			freeThreads(numThreads);
 			return numThreads;
-		} else {
+		}
+		else {
 		    // if there were no threads available - we'll execute function right within current thread
 		    function(0, start, stop, increment);
 
@@ -507,7 +508,8 @@ namespace samediff {
 			}
 			freeThreads(numThreads);
 			return numThreads;
-		} else {
+			}
+			else {
      	    // if there were no threads available - we'll execute function right within current thread
 		    function(0, startX, stopX, incX, startY, stopY, incY);
 
@@ -583,7 +585,8 @@ namespace samediff {
 
 			freeThreads(numThreads);
 			return numThreads;
-		} else {
+		}
+		else {
 		    // if there were no threads available - we'll execute function right within current thread
 	        function(0, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
 
@@ -636,7 +639,8 @@ namespace samediff {
 
 			freeThreads(numThreads);
 			return numThreads;
-		} else {
+		}
+		else {
 		    // if there's no threads available - we'll execute function sequentially one by one
 		    for (uint64_t e = 0; e < numThreads; e++)
 			    function(e, numThreads);
@@ -800,24 +804,6 @@ namespace samediff {
 	int  Threads::parallel_aligned_increment(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, size_t type_size, uint32_t req_numThreads) {
 		if (start > stop)
 			throw std::runtime_error("Threads::parallel_for got start > stop");
-
-#ifdef __NEC__
-        if (tryAcquire(req_numThreads)) {
-			#pragma omp parallel for
-		    for (auto j = start; j < stop; j += increment) {
-			    function(omp_get_thread_num(), j, j+1, 1);
-	    	}
-			freeThreads(req_numThreads);
-			return req_numThreads;
-		} else {
-            // if there were no threads available - we'll execute function right within current thread
-		    function(0, start, stop, increment);
-
-		    // we tell that parallelism request declined
-		    return 1;
-		}
-#else
-
 		auto num_elements = (stop - start);
 		//this way we preserve increment starts offset
 		//so we will parition considering delta but not total elements
@@ -830,8 +816,25 @@ namespace samediff {
 			return 1;
 		}
 		int numThreads = 0;
-        // todo check this for NEC
+
+		struct th_span {
+			Nd4jLong start;
+			Nd4jLong end;
+		};
+#ifdef __NEC__
+		constexpr int max_thread_count = 8;
+#else
+		constexpr int max_thread_count = 1024;
+#endif
+		th_span thread_spans[max_thread_count];
+
+		req_numThreads = req_numThreads > max_thread_count ? max_thread_count : req_numThreads;
+
+#ifdef __NEC__
+		int adjusted_numThreads = max_thread_count;
+#else
 		int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
+#endif
 
 		if (adjusted_numThreads > delta)
 			adjusted_numThreads = delta;
@@ -841,13 +844,13 @@ namespace samediff {
 			return 1;
 		}
 
-		std::vector<std::pair<Nd4jLong, Nd4jLong>> thread_spans;
+
 
 		//take span as ceil  
 		auto spand = std::ceil((double)delta / (double)adjusted_numThreads);
 		numThreads = static_cast<int>(std::ceil((double)delta / spand));
 		auto span = static_cast<Nd4jLong>(spand);
-		thread_spans.reserve(adjusted_numThreads);
+
 
 		//tail_add is additional value of the last part
 		//it could be negative or positive
@@ -873,24 +876,42 @@ namespace samediff {
 		for (int i = 0; i < last; i++) {
 			end = begin + span1 * increment;
 			// putting the task into the queue for a given thread
-			thread_spans.emplace_back(begin, end);
+			thread_spans[i].start = begin;
+			thread_spans[i].end = end;
 			begin = end;
 		}
 		for (int i = last; i < numThreads - 1; i++) {
 			end = begin + span2 * increment;
 			// putting the task into the queue for a given thread
-			thread_spans.emplace_back(begin, end);
+			thread_spans[i].start = begin;
+			thread_spans[i].end = end;
 			begin = end;
 		}
 		//for last one enqueue last offset as stop
 		//we need it in case our ((stop-start) % increment ) > 0
-		thread_spans.emplace_back(begin, stop);
+		thread_spans[numThreads - 1].start = begin;
+		thread_spans[numThreads - 1].end = stop;
 
+#ifdef __NEC__
+		if (tryAcquire(numThreads)) {
+#pragma omp parallel for
+			for (size_t j = 0; j < numThreads; j++) {
+				function(j, thread_spans[j].start, thread_spans[j].end, increment);
+			}
+			freeThreads(numThreads);
+			return numThreads;
+		}
+		else {
+			function(0, start, stop, increment);
+			// we tell that parallelism request declined
+			return 1;
+		}
+#else
 		auto ticket = samediff::ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 
-			for (size_t j = 0; j < thread_spans.size(); j++) {
-				ticket->enqueue(j, numThreads, function, thread_spans[j].first, thread_spans[j].second, increment);
+			for (size_t j = 0; j < numThreads; j++) {
+				ticket->enqueue(j, numThreads, function, thread_spans[j].start, thread_spans[j].end, increment);
 			}
 			// block and wait till all threads finished the job
 			ticket->waitAndRelease();
@@ -906,3 +927,4 @@ namespace samediff {
 #endif
 	}
 }
+
