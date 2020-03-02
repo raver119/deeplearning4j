@@ -19,11 +19,11 @@
 //
 #include <ops/declarable/helpers/sqrtm.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
-    int sqrtMatrixFunctor(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+    int sqrtMatrixFunctor(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
         return Status::OK();
     }
 }

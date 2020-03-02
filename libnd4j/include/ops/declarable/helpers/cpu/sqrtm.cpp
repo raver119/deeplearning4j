@@ -21,12 +21,12 @@
 #include <ops/declarable/helpers/sqrtm.h>
 #include <ops/declarable/helpers/qr.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
     template <typename T>
-    void upperTriangularSqrt(nd4j::LaunchContext* context, NDArray const* inputTriangular, NDArray* outputTriangular) {
+    void upperTriangularSqrt(sd::LaunchContext* context, NDArray const* inputTriangular, NDArray* outputTriangular) {
         auto n = inputTriangular->sizeAt(-1);
         auto inputTriangularPart = inputTriangular->allTensorsAlongDimension({-2, -1});
         auto outputTriangularPart = outputTriangular->allTensorsAlongDimension({-2, -1});
@@ -36,7 +36,7 @@ namespace helpers {
             auto input = inputTriangularPart[batch];
             auto output = outputTriangularPart[batch];
             for (auto r = 0; r < n; r++) {
-                output->t<T>(r, r) = nd4j::math::nd4j_sqrt<T,T>(input->t<T>(r, r));
+                output->t<T>(r, r) = sd::math::nd4j_sqrt<T,T>(input->t<T>(r, r));
             }
 
             // compute upper diagonal
@@ -58,7 +58,7 @@ namespace helpers {
     }
 
     template <typename T>
-    int sqrtMatrixFunctor_(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+    int sqrtMatrixFunctor_(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
         auto outputR = outputQ.ulike();
@@ -72,7 +72,7 @@ namespace helpers {
         return Status::OK();
     }
 
-    int sqrtMatrixFunctor(nd4j::LaunchContext* context, NDArray const* input, NDArray* output) {
+    int sqrtMatrixFunctor(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
         BUILD_SINGLE_SELECTOR(input->dataType(), return sqrtMatrixFunctor_, (context, input, output), FLOAT_TYPES);
     }
 }

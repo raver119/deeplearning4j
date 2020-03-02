@@ -19,14 +19,13 @@
 //
 #ifndef __SQRTM__H_HELPERS__
 #define __SQRTM__H_HELPERS__
-#include <op_boilerplate.h>
-#include <NDArray.h>
+#include <array/NDArray.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
-    int sqrtMatrixFunctor(nd4j::LaunchContext* context, NDArray const* input, NDArray* output);
+    int sqrtMatrixFunctor(sd::LaunchContext* context, NDArray const* input, NDArray* output);
 }
 }
 }
