@@ -343,7 +343,7 @@ namespace samediff {
 #ifdef __NEC__
 
     std::mutex Threads::gThreadmutex;
-	uint64_t Threads::_nFreeThreads = nd4j::Environment::getInstance()->maxThreads();
+	uint64_t Threads::_nFreeThreads = sd::Environment::getInstance()->maxThreads();
 
      bool   Threads::tryAcquire(int numThreads){
 		 std::lock_guard<std::mutex> lock( gThreadmutex );
@@ -360,7 +360,7 @@ namespace samediff {
 		 std::lock_guard<std::mutex> lock( gThreadmutex );
          _nFreeThreads += numThreads;
 		 // check if correct number of threads
-		 return _nFreeThreads > nd4j::Environment::getInstance()->maxThreads();
+		 return _nFreeThreads > sd::Environment::getInstance()->maxThreads();
 	 }
 #endif
 
@@ -401,7 +401,7 @@ namespace samediff {
 		}
 #else
 
-        nd4j::Environment::getInstance()->maxThreads();
+        sd::Environment::getInstance()->maxThreads();
 		auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 			// if we got our threads - we'll run our jobs here
