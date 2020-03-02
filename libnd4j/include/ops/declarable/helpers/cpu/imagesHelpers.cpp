@@ -24,7 +24,7 @@
 #include <helpers/ConstantTadHelper.h>
 #include <execution/Threads.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
@@ -66,7 +66,7 @@ static void rgbToGrs_(const NDArray& input, NDArray& output, const int dimC) {
      return;
 }
 
-void transformRgbGrs(nd4j::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
+void transformRgbGrs(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input.dataType(), rgbToGrs_, (input, output, dimC), NUMERIC_TYPES);
 }
 
@@ -101,8 +101,8 @@ FORCEINLINE static void tripleTransformer(const NDArray* input, NDArray* output,
         samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
     }
     else {
-        auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
-        auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
+        auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
+        auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
 
         const Nd4jLong numOfTads = packX.numberOfTads();
         const Nd4jLong xDimCstride = input->stridesOf()[dimC];
@@ -324,19 +324,19 @@ void transformYuvRgb(nd4j::LaunchContext* context, const NDArray& input, NDArray
     BUILD_SINGLE_SELECTOR(input.dataType(), yuvRgb_, (input, output, dimC), FLOAT_TYPES);
 }
 
-void transformHsvRgb(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
+void transformHsvRgb(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input->dataType(), hsvRgb, (input, output, dimC), FLOAT_TYPES);
 }
 
-void transformRgbHsv(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
+void transformRgbHsv(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input->dataType(), rgbHsv, (input, output, dimC), FLOAT_TYPES);
 }
 
-void transformYiqRgb(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
+void transformYiqRgb(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input->dataType(), yiqRgb, (input, output, dimC), FLOAT_TYPES);
 }
 
-void transformRgbYiq(nd4j::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
+void transformRgbYiq(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input->dataType(), rgbYiq, (input, output, dimC), FLOAT_TYPES);
 }
 

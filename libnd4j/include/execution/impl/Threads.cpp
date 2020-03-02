@@ -22,8 +22,8 @@
 #include <vector>
 #include <thread>
 #include <helpers/logger.h>
-#include <templatemath.h>
-#include <shape.h>
+#include <math/templatemath.h>
+#include <helpers/shape.h>
 #include <omp.h>
 
 
@@ -31,10 +31,10 @@ namespace samediff {
 
 	int ThreadsHelper::numberOfThreads(int maxThreads, uint64_t numberOfElements) {
 		// let's see how many threads we actually need first
-		auto optimalThreads = nd4j::math::nd4j_max<uint64_t>(1, numberOfElements / 1024);
+		auto optimalThreads = sd::math::nd4j_max<uint64_t>(1, numberOfElements / 1024);
 
 		// now return the smallest value
-		return nd4j::math::nd4j_min<int>(optimalThreads, maxThreads);
+		return sd::math::nd4j_min<int>(optimalThreads, maxThreads);
 	}
 
 	Span3::Span3(int64_t startX, int64_t stopX, int64_t incX, int64_t startY, int64_t stopY, int64_t incY, int64_t startZ, int64_t stopZ, int64_t incZ) {
@@ -265,7 +265,7 @@ namespace samediff {
 	int ThreadsHelper::numberOfThreads2d(int maxThreads, uint64_t iters_x, uint64_t iters_y) {
 		// in some cases there's nothing to think about, part 1
 		if (iters_x < maxThreads && iters_y < maxThreads)
-			return nd4j::math::nd4j_max<int>(iters_x, iters_y);
+			return sd::math::nd4j_max<int>(iters_x, iters_y);
 
 		auto remX = iters_x % maxThreads;
 		auto remY = iters_y % maxThreads;
@@ -343,14 +343,14 @@ namespace samediff {
 #ifdef __NEC__
 
     std::mutex Threads::gThreadmutex;
-	uint64_t Threads::_nFreeThreads = nd4j::Environment::getInstance()->maxThreads(); 
+	uint64_t Threads::_nFreeThreads = nd4j::Environment::getInstance()->maxThreads();
 
-     bool   Threads::tryAcquire(int numThreads){ 
+     bool   Threads::tryAcquire(int numThreads){
 		 std::lock_guard<std::mutex> lock( gThreadmutex );
-		 auto nThreads = _nFreeThreads - numThreads; 
+		 auto nThreads = _nFreeThreads - numThreads;
 		 if(nThreads >= 1){
 			 _nFreeThreads = nThreads;
-             
+
 			 return true;
 		 }
 		 return false;
@@ -383,7 +383,7 @@ namespace samediff {
 		}
 
 #ifdef __NEC__
-		
+
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for
 		    for (int e = start; e < stop; e++) {
@@ -846,7 +846,7 @@ namespace samediff {
 
 
 
-		//take span as ceil  
+		//take span as ceil
 		auto spand = std::ceil((double)delta / (double)adjusted_numThreads);
 		numThreads = static_cast<int>(std::ceil((double)delta / spand));
 		auto span = static_cast<Nd4jLong>(spand);
@@ -863,7 +863,7 @@ namespace samediff {
 		decltype(span) span1, span2;
 		int last = 0;
 		if (tail_add >= 0) {
-			//for span == 1  , tail_add is  0 
+			//for span == 1  , tail_add is  0
 			last = tail_add;
 			span1 = span + 1;
 			span2 = span;
