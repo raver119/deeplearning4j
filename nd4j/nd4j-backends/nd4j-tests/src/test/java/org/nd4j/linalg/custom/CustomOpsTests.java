@@ -38,6 +38,7 @@ import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.shape.Create;
 import org.nd4j.linalg.api.ops.impl.shape.OnesLike;
 import org.nd4j.linalg.api.ops.impl.shape.SequenceMask;
+import org.nd4j.linalg.api.ops.impl.transforms.Cholesky;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.AddOp;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.ModOp;
@@ -1774,5 +1775,14 @@ public class CustomOpsTests extends BaseNd4jTest {
 
         INDArray[] ret = Nd4j.exec(new SequenceMask(arr, maxlen, DataType.INT32));
         assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testCholesky() {
+        INDArray x = Nd4j.createFromArray(new double[] {4,12,-16, 12 ,37,-43, -16, -43, 98}).reshape(3,3);
+        INDArray exp = Nd4j.createFromArray(new double[] {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3.}).reshape(3,3);
+
+        INDArray[] res = Nd4j.exec(new Cholesky(x));
+        assertEquals(res[0], exp);
     }
 }
