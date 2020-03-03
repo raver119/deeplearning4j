@@ -168,15 +168,15 @@ FORCEINLINE static void hsvRgb(const NDArray* input, NDArray* output, const int 
 
         auto func = PRAGMA_THREADS_FOR{
             for (auto i = start; i < stop; i += increment) {
-                nd4j::ops::helpers::hsvToRgb<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
+                sd::ops::helpers::hsvToRgb<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
             }
         };
 
         samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
     }
     else {
-        auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
-        auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
+        auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
+        auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
 
         const Nd4jLong numOfTads = packX.numberOfTads();
         const Nd4jLong xDimCstride = input->stridesOf()[dimC];
@@ -186,7 +186,7 @@ FORCEINLINE static void hsvRgb(const NDArray* input, NDArray* output, const int 
             for (auto i = start; i < stop; i += increment) {
                 const T* xTad = x + packX.platformOffsets()[i];
                 T* zTad = z + packZ.platformOffsets()[i];
-                nd4j::ops::helpers::hsvToRgb<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
+                sd::ops::helpers::hsvToRgb<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
 
             }
         };
@@ -207,15 +207,15 @@ FORCEINLINE static void rgbHsv(const NDArray* input, NDArray* output, const int 
 
         auto func = PRAGMA_THREADS_FOR{
             for (auto i = start; i < stop; i += increment) {
-                nd4j::ops::helpers::rgbToHsv<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
+                sd::ops::helpers::rgbToHsv<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
             }
         };
 
         samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
     }
     else {
-        auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
-        auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
+        auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), dimC);
+        auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output->getShapeInfo(), dimC);
 
         const Nd4jLong numOfTads = packX.numberOfTads();
         const Nd4jLong xDimCstride = input->stridesOf()[dimC];
@@ -225,7 +225,7 @@ FORCEINLINE static void rgbHsv(const NDArray* input, NDArray* output, const int 
             for (auto i = start; i < stop; i += increment) {
                 const T* xTad = x + packX.platformOffsets()[i];
                 T* zTad = z + packZ.platformOffsets()[i];
-                nd4j::ops::helpers::rgbToHsv<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
+                sd::ops::helpers::rgbToHsv<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
 
             }
         };
@@ -247,7 +247,7 @@ FORCEINLINE static void rgbYuv_(const NDArray& input, NDArray& output, const int
 
         auto func = PRAGMA_THREADS_FOR{
             for (auto i = start; i < stop; i += increment) {
-                nd4j::ops::helpers::rgbYuv<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
+                sd::ops::helpers::rgbYuv<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
             }
         };
 
@@ -255,8 +255,8 @@ FORCEINLINE static void rgbYuv_(const NDArray& input, NDArray& output, const int
         return;
     }
 
-    auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimC);
-    auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output.getShapeInfo(), dimC);
+    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimC);
+    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output.getShapeInfo(), dimC);
 
     const Nd4jLong numOfTads = packX.numberOfTads();
     const Nd4jLong xDimCstride = input.stridesOf()[dimC];
@@ -266,7 +266,7 @@ FORCEINLINE static void rgbYuv_(const NDArray& input, NDArray& output, const int
         for (auto i = start; i < stop; i += increment) {
             const T* xTad = x + packX.platformOffsets()[i];
             T* zTad = z + packZ.platformOffsets()[i];
-            nd4j::ops::helpers::rgbYuv<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
+            sd::ops::helpers::rgbYuv<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
         }
     };
 
@@ -288,7 +288,7 @@ FORCEINLINE static void yuvRgb_(const NDArray& input, NDArray& output, const int
 
         auto func = PRAGMA_THREADS_FOR{
             for (auto i = start; i < stop; i += increment) {
-                nd4j::ops::helpers::yuvRgb<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
+                sd::ops::helpers::yuvRgb<T>(x[i], x[i + 1], x[i + 2], z[i], z[i + 1], z[i + 2]);
             }
         };
 
@@ -296,8 +296,8 @@ FORCEINLINE static void yuvRgb_(const NDArray& input, NDArray& output, const int
         return;
     }
 
-    auto packX = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimC);
-    auto packZ = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(output.getShapeInfo(), dimC);
+    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimC);
+    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output.getShapeInfo(), dimC);
 
     const Nd4jLong numOfTads = packX.numberOfTads();
     const Nd4jLong xDimCstride = input.stridesOf()[dimC];
@@ -307,7 +307,7 @@ FORCEINLINE static void yuvRgb_(const NDArray& input, NDArray& output, const int
         for (auto i = start; i < stop; i += increment) {
             const T* xTad = x + packX.platformOffsets()[i];
             T* zTad = z + packZ.platformOffsets()[i];
-            nd4j::ops::helpers::yuvRgb<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
+            sd::ops::helpers::yuvRgb<T>(xTad[0], xTad[xDimCstride], xTad[2 * xDimCstride], zTad[0], zTad[zDimCstride], zTad[2 * zDimCstride]);
         }
     };
 
@@ -316,11 +316,11 @@ FORCEINLINE static void yuvRgb_(const NDArray& input, NDArray& output, const int
 }
 
 
-void transformRgbYuv(nd4j::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
+void transformRgbYuv(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input.dataType(), rgbYuv_, (input, output, dimC), FLOAT_TYPES);
 }
 
-void transformYuvRgb(nd4j::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
+void transformYuvRgb(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC) {
     BUILD_SINGLE_SELECTOR(input.dataType(), yuvRgb_, (input, output, dimC), FLOAT_TYPES);
 }
 
