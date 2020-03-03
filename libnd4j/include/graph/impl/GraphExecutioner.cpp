@@ -891,6 +891,9 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
             auto data = readFlatBuffers(filename);
+
+            nd4j_printf("Successfully loaded [%s]\n", "FlatGraph");
+
             auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
             delete[] data;
             return restoredGraph;
