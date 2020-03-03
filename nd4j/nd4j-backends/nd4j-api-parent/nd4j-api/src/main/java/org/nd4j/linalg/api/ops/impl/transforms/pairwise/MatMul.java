@@ -27,6 +27,10 @@ import java.util.List;
 @NoArgsConstructor
 public class MatMul  extends BaseDynamicTransformOp {
 
+    public MatMul( SameDiff sameDiff, SDVariable first, SDVariable second)  {
+        super(sameDiff, new SDVariable[]{first, second}, false);
+    }
+
     public MatMul( SameDiff sameDiff, SDVariable[] args, boolean inPlace) {
         super(sameDiff, args, inPlace);
     }
