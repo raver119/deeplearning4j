@@ -114,10 +114,29 @@ namespace sd {
             }
             timers->stopWatch(__LINE__, 1);
 
-            auto sub = (*input)(indices, true);
-            timers->stopWatch(__LINE__, 1);
-            output->assign(sub);
-            timers->stopWatch(__LINE__, 1);
+            Nd4jLong* subArrShapeInfo = nullptr;
+            ALLOCATE(subArrShapeInfo, block.getWorkspace(), shape::shapeInfoLength(input->rankOf()), Nd4jLong);
+
+            Nd4jLong offset;
+
+            shape::calcSubArrShapeInfoAndOffset(indices.data(), input->getShapeInfo(), subArrShapeInfo, offset, true);
+
+            auto subArrShapeInfoPack = ConstantShapeHelper::getInstance()->bufferForShapeInfo(subArrShapeInfo);
+
+            NDArray::prepareSpecialUse({output}, {input});
+
+            NativeOpExecutioner::execTransformAny(block.launchContext(), sd::transform::Assign,
+                                                input->bufferWithOffset(offset), reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.primary()),
+                                                input->specialBufferWithOffset(offset), reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.special()),
+                                                output->buffer(), output->shapeInfo(), output->specialBuffer(), output->specialShapeInfo(),
+                                                nullptr, nullptr, nullptr, true);
+
+            NDArray::registerSpecialUse({output}, {input});
+
+            RELEASE(subArrShapeInfo,  block.getWorkspace());
+
+            // auto sub = (*input)(indices, true);
+            // output->assign(sub);
 
             STORE_RESULT(output);
 
@@ -153,7 +172,7 @@ namespace sd {
 
             REQUIRE_TRUE(begin.size() == x_rank, 0, "Begin array should have length of [%i] but got [%i] instead", x_rank, begin.size());
             REQUIRE_TRUE(sz.size() == x_rank, 0, "Size array should have length of [%i] but got [%i] instead", x_rank, sz.size());
-            
+
             std::vector<Nd4jLong> shape;
             auto empty = false;
             for (int e = 0; e < x_rank; e++) {
@@ -223,12 +242,12 @@ namespace sd {
                     size = input->sizeAt(e) - start;
                 }
                 REQUIRE_TRUE(size > 0, 0, "Slice: interval for dimension %i is less then 1", e);
-                
+
                 indices[2*e]     = start;
                 indices[2*e + 1] = start + size;
             }
             auto sub = (*output)(indices, true);
-            sub.assign(epsNext);            
+            sub.assign(epsNext);
 
             return Status::OK();
         }

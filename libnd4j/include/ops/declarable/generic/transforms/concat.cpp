@@ -34,7 +34,7 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
     // first of all take into account possible presence of empty arrays
     // also if scalar is present -> copy its value to vector with length=1
-    std::vector<NDArray*> nonEmptyArrs;
+    std::vector<const NDArray*> nonEmptyArrs;
     std::vector<int> arrsToDelete;
     int index = 0;
     bool allOfSameType = true;

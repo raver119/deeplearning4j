@@ -107,7 +107,7 @@ TEST_F(PlaygroundTests, test_concat_1) {
 
 TEST_F(PlaygroundTests, test_gather_1) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (sd::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
         return;
 
     auto x = NDArrayFactory::create<float>('c', {30522, 768});

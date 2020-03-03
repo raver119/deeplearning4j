@@ -26,14 +26,15 @@
 #include <graph/Node.h>
 #include <graph/Graph.h>
 #include <graph/GraphUtils.h>
-#include <NDArray.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <ops/declarable/generic/parity_ops.cpp>
 #include <performance/benchmarking/global_timers.h>
 #include <iomanip>
+#include <array/NDArray.h>
 
 using namespace nd4j;
-using namespace nd4j::graph;
+
+using namespace sd;
 
 class ImportTests : public testing::Test {
 public:
@@ -42,9 +43,9 @@ public:
     int fShape[] = {2, 2, 2, 1, 2, 0, 1, 102};
      */
     ImportTests() {
-//        Environment::getInstance()->setDebug(true);
-//        Environment::getInstance()->setVerbose(true);
-        Environment::getInstance()->setProfiling(true);
+//        sd::Environment::getInstance()->setDebug(true);
+//        sd::Environment::getInstance()->setVerbose(true);
+        sd::Environment::getInstance()->setProfiling(true);
     }
 };
 
@@ -104,7 +105,7 @@ TEST_F(ImportTests, LstmMnist) {
 }
 
 TEST_F(ImportTests, ConcatPerfTest) {
-    auto timers = nd4j::nd4j::GlobalTimers::getInstance();
+    auto timers = nd4j::GlobalTimers::getInstance();
     nd4j_printf("Timers: %p\n", (void*)(timers));
     auto x0 = NDArrayFactory::create<double>('c', {1,28});
     auto x1 = NDArrayFactory::create<double>('c', {1,128});
@@ -133,14 +134,14 @@ TEST_F(ImportTests, ConcatPerfTest) {
     printf("suma = %d\n", suma);
     nd4j_printf("Timers: %p\n", (void*)(timers));
     timers[199] = std::chrono::high_resolution_clock::now();
-    auto lines = nd4j::nd4j::GlobalTimers::getInstance()->line_numbers;
+    auto lines = nd4j::GlobalTimers::getInstance()->line_numbers;
     for(int i=1;i<200;i++){
         if(lines[i-1]==0) continue;
         if(lines[i]==0) continue;
         auto dt1 = std::chrono::duration_cast<std::chrono::nanoseconds> ((timers[i] - timers[i-1])).count();
         auto dt2 = std::chrono::duration_cast<std::chrono::microseconds> ((timers[i] - timers[i-1])).count();
         auto dt3 = std::chrono::duration_cast<std::chrono::milliseconds> ((timers[i] - timers[i-1])).count();
-        nd4j_printf("i=%d, line=%d: %ld ns %ld us %ld ms\n", i,  nd4j::nd4j::GlobalTimers::getInstance()->line_numbers[i], dt1, dt2, dt3);
+        nd4j_printf("i=%d, line=%d: %ld ns %ld us %ld ms\n", i,  nd4j::GlobalTimers::getInstance()->line_numbers[i], dt1, dt2, dt3);
     }*/
 
 }

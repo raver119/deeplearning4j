@@ -31,7 +31,7 @@ set(MSVC_RT_LIB "MultiThreadedDLL")
 
 set(SD_X86_BUILD false)
 
-if (NOT SD_IOS_BUILD AND NOT SD_ANDROID_BUILD AND NOT ${SD_ARCH} MATCHES "power*" AND NOT ${SD_ARCH} MATCHES "arm*" AND NOT AURORA_BUILD)
+if (NOT SD_IOS_BUILD AND NOT SD_ANDROID_BUILD AND NOT ${SD_ARCH} MATCHES "power*" AND NOT ${SD_ARCH} MATCHES "arm*" AND NOT SD_AURORA_BUILD)
     set(SD_X86_BUILD true)
 endif()
 
@@ -39,9 +39,9 @@ endif()
 # -fsanitize=leak
 if (SD_AURORA_BUILD)
     message("Aurora build in process")
-    set(X86_BUILD false)
-    set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions -finline-max-times=64 -finline-max-depth=64 -fdiag-inline=2 -fdiag-parallel=2 -fdiag-vector=2 -DAURORA_BUILD=true")
-    set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -DAURORA_BUILD=true")
+    set(SD_X86_BUILD false)
+    set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -finline-functions -finline-max-times=64 -finline-max-depth=64 -fno-inline-copy-arguments -fdiag-inline=2 -fdiag-parallel=2 -fdiag-vector=2 -DSD_AURORA_BUILD=true")
+    set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -DSD_AURORA_BUILD=true")
 elseif (SD_ANDROID_BUILD)
     set(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -O3 -fPIC -Wno-braced-scalar-init -Wno-delete-non-virtual-dtor -Wno-unused-command-line-argument -Wno-dangling-else -D_RELEASE=true")
     set(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -fPIC -Wno-braced-scalar-init -Wno-delete-non-virtual-dtor -Wno-unused-command-line-argument -Wno-dangling-else")
@@ -80,7 +80,7 @@ if(NOT SD_CUDA)
     # we need this definition to avoid global memory use within mkldnn
     add_definitions(-DDNNL_ENABLE_CONCURRENT_EXEC=true)
 
-    if (AURORA_BUILD)
+    if (SD_URORA_BUILD)
         include_directories("/opt/nec/ve/nlc/2.0.0/include")
 
         # FIXME: we don't want sequential version in master
