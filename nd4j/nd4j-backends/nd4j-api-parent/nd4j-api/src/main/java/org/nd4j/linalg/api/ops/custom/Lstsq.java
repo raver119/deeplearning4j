@@ -17,6 +17,8 @@ package org.nd4j.linalg.api.ops.custom;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
@@ -31,6 +33,12 @@ public class Lstsq extends DynamicCustomOp {
 
     public Lstsq(@NonNull INDArray matrix, @NonNull INDArray rhs) {
         this(matrix, rhs, 0.0, true);
+    }
+
+    public Lstsq(@NonNull SameDiff sameDiff, @NonNull SDVariable matrix, @NonNull SDVariable rhs, double l2_regularizer, boolean fast) {
+        super(sameDiff, new SDVariable[]{matrix,rhs});
+        addTArgument(l2_regularizer);
+        addBArgument(fast);
     }
 
     @Override

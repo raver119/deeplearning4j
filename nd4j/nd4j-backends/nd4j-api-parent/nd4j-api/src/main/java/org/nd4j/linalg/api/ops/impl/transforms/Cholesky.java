@@ -18,6 +18,7 @@ package org.nd4j.linalg.api.ops.impl.transforms;
 
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.autodiff.samediff.ops.SDValidation;
 import org.nd4j.base.Preconditions;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -39,6 +40,10 @@ public class Cholesky extends DynamicCustomOp {
 
     public Cholesky(INDArray input) {
         addInputArgument(input);
+    }
+
+    public Cholesky(SameDiff sameDiff, SDVariable sdInput) {
+        super(sameDiff, new SDVariable[]{sdInput});
     }
 
     @Override
