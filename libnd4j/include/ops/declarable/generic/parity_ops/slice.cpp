@@ -18,14 +18,14 @@
 // Created by raver119 on 02.11.2017.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 //#if NOT_EXCLUDED(OP_slice)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ShapeUtils.h>
 #include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(slice, 1, 1, false, 0, -2) {
             GlobalTimers* timers = GlobalTimers::getInstance();
@@ -127,7 +127,7 @@ namespace nd4j {
 
         DECLARE_TYPES(slice) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setSameMode(true);
         }
 
@@ -182,7 +182,7 @@ namespace nd4j {
 
         DECLARE_TYPES(slice_bp) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setAllowedOutputTypes({ALL_FLOATS});
         }
 

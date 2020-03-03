@@ -18,13 +18,13 @@
 // Created by raver119 on 02.11.2017.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_expand_dims)
 
 #include <ops/declarable/CustomOperations.h>
 #include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(expand_dims, 1, 1, false, 0, -2) {
             auto input = INPUT_VARIABLE(0);
@@ -60,7 +60,7 @@ namespace nd4j {
 
         DECLARE_TYPES(expand_dims) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setSameMode(true);
         }
 

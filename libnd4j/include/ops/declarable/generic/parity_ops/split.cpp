@@ -18,20 +18,19 @@
 //  @author raver119@gmail.com
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_split)
 
 #include <ops/declarable/headers/parity_ops.h>
 #include<ops/declarable/helpers/transforms.h>
 #include <array>
-#include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
     CUSTOM_OP_IMPL(split, 1, -1, false, 0, 1) {
-
         NDArray *input = nullptr;
         int num_splits = INT_ARG(0);
+
         // axis is 0 by default
         int axis = 0;
 
@@ -40,6 +39,7 @@ namespace ops {
         } else {
             auto a = INPUT_VARIABLE(0);
             auto b = INPUT_VARIABLE(1);
+
             if (a->isScalar()) {
                 // axis goes first
                 axis = a->e<int>(0);
@@ -49,6 +49,7 @@ namespace ops {
                 input = a;
             }
         }
+		
 		//Edge case: splitting empty array (mainly for TF import compatibility) -> return N empty arrays
 		if(input->isEmpty()){
 			for( int i=0; i< num_splits; i++ ){
@@ -57,9 +58,12 @@ namespace ops {
 			//No op
 			return Status::OK();
 		}
+
         if (block.numI() == 2)
             axis = INT_ARG(1);
+
         if(axis < 0) axis += input->rankOf();
+
         REQUIRE_TRUE(input->sizeAt(axis) % num_splits == 0, 0, "Split: num_splits has wrong value, remainder of division should be 0, but it's %i", input->sizeAt(axis) % num_splits);
 
         std::vector<NDArray*> outArrs(num_splits);
@@ -68,6 +72,7 @@ namespace ops {
         }
 
         helpers::split(block.launchContext(), *input, outArrs, axis);
+
         return Status::OK();
     }
 
@@ -80,7 +85,8 @@ namespace ops {
     DECLARE_SHAPE_FN(split) {
         int num_splits = INT_ARG(0);
         Nd4jLong *input = nullptr;
-        nd4j::DataType dataType;
+        sd::DataType dataType;
+
         // axis is 0 by default
         int axis = 0;
 
@@ -91,6 +97,7 @@ namespace ops {
         } else {
             auto shape0 = inputShape->at(0);
             auto shape1 = inputShape->at(1);
+
             if (shape::isScalar(shape0)) {
                 input = shape1;
                 auto _a = INPUT_VARIABLE(0);
@@ -105,7 +112,9 @@ namespace ops {
 				inputVar = 0;
             }
         }
+		
 		auto shapes = SHAPELIST();
+		
 		//Edge case: splitting empty array (mainly for TF import compatibility) -> return N empty arrays
 		if(INPUT_VARIABLE(inputVar)->isEmpty()){
 			for (int e = 0; e < num_splits; e++) {
@@ -114,20 +123,26 @@ namespace ops {
 			}
 			return shapes;
 		}
+
         if (block.numI() == 2)
             axis = INT_ARG(1);
+
         if (axis < 0)
             axis += shape::rank(input);
+
         std::vector<Nd4jLong> shape(shape::rank(input));
+
         for (int e = 0; e < shape::rank(input); e++)
             if (e == axis)
                 shape[e] = shape::sizeAt(input, e) / num_splits;
             else 
                 shape[e] = shape::sizeAt(input, e);
+        
         for (int e = 0; e < num_splits; e++) {
             auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(dataType, shape::order(input), shape);
             shapes->push_back(newShape);
         }
+
         return shapes;
     }
 }

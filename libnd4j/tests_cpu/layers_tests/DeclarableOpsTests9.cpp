@@ -21,13 +21,13 @@
 
 #include "testlayers.h"
 #include <ops/declarable/CustomOperations.h>
-#include <NDArray.h>
+#include <array/NDArray.h>
 #include <ops/ops.h>
-#include <GradCheck.h>
+#include <helpers/GradCheck.h>
 #include <loops/random.h>
 
 
-using namespace nd4j;
+using namespace sd;
 
 
 class DeclarableOpsTests9 : public testing::Test {
@@ -47,7 +47,7 @@ TEST_F(DeclarableOpsTests9, reduceStDevBP_test3) {
 
     x.linspace(1);
 
-    nd4j::ops::reduce_stdev_bp op;
+    sd::ops::reduce_stdev_bp op;
 
     auto result = op.evaluate({&x, &gradO2}, {0,0}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -76,7 +76,7 @@ TEST_F(DeclarableOpsTests9, reduceStDevBP_test03) {
     auto axis = NDArrayFactory::create<int>('c', {1}, {1});
     x.linspace(1);
 
-    nd4j::ops::reduce_stdev_bp op;
+    sd::ops::reduce_stdev_bp op;
 
     auto result = op.evaluate({&x, &gradO2, &axis}, {}, {}, {false, false});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -108,7 +108,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistributionInv_test1) {
     double extraParams[] = {lambda};
 
     Nd4jLong *buffer = new Nd4jLong[N];
-    auto rng = (nd4j::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
+    auto rng = (sd::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
     if (rng == nullptr)
         throw std::runtime_error("DeclarableOpsTests9.exponentialDistributionInv_test1: RNG initialization failed !");
 
@@ -139,7 +139,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistributionInv_test2) {
 
 
     Nd4jLong *buffer = new Nd4jLong[N];
-    auto rng = (nd4j::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
+    auto rng = (sd::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
     if (rng == nullptr)
         throw std::runtime_error("DeclarableOpsTests9.exponentialDistributionInv_test2: RNG initialization failed !");
 
@@ -168,7 +168,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistribution_test1) {
     double extraParams[] = {lambda};
 
     Nd4jLong *buffer = new Nd4jLong[N];
-    auto rng = (nd4j::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
+    auto rng = (sd::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
     if (rng == nullptr)
         throw std::runtime_error("DeclarableOpsTests9.exponentialDistribution_test1: RNG initialization failed !");
 
@@ -201,7 +201,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistribution_test2) {
     Nd4jLong *buffer = new Nd4jLong[N];
    // Nd4jPointer extra[2];
 #ifndef __CUDABLAS__
-    nd4j::random::RandomBuffer* rng = (nd4j::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
+    sd::random::RandomBuffer* rng = (sd::random::RandomBuffer *) initRandom(nullptr, 123, N, (Nd4jPointer) buffer);
     if (rng == nullptr)
         throw std::runtime_error("DeclarableOpsTests9.exponentialDistribution_test2: RNG initialization failed !");
 
@@ -244,7 +244,7 @@ TEST_F(DeclarableOpsTests9, concat_test1) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -268,7 +268,7 @@ TEST_F(DeclarableOpsTests9, concat_test2) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -292,7 +292,7 @@ TEST_F(DeclarableOpsTests9, concat_test3) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -314,7 +314,7 @@ TEST_F(DeclarableOpsTests9, concat_test4) {
     auto x2 = NDArrayFactory::create<double>('c', {1,1,1}, {3.f});
     auto exp = NDArrayFactory::create<double>('c', {1,3,1}, {1.f, 2.f, 3.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -334,7 +334,7 @@ TEST_F(DeclarableOpsTests9, concat_test5) {
     auto x2 = NDArrayFactory::create<double>(3.f);
     auto exp = NDArrayFactory::create<double>('c', {3}, {1.f, 2.f, 3.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -354,7 +354,7 @@ TEST_F(DeclarableOpsTests9, concat_test6) {
     auto x2 = NDArrayFactory::create<double>(3.f);
     auto exp = NDArrayFactory::create<double>('c', {4}, {1.f, 2.f, 20.f, 3.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -374,7 +374,7 @@ TEST_F(DeclarableOpsTests9, concat_test7) {
     auto x2 = NDArrayFactory::create<double>(3.f);
     auto exp = NDArrayFactory::create<double>('c', {3}, {1.f, 2.f, 3.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -392,7 +392,7 @@ TEST_F(DeclarableOpsTests9, concat_test8) {
     auto x0 = NDArrayFactory::create<double>(1.f);
     auto exp = NDArrayFactory::create<double>('c', {1}, {1.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -410,7 +410,7 @@ TEST_F(DeclarableOpsTests9, concat_test9) {
     auto x0 = NDArrayFactory::create<double>('c', {1}, {1.f});
     auto exp = NDArrayFactory::create<double>('c', {1}, {1.f});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -435,7 +435,7 @@ TEST_F(DeclarableOpsTests9, concat_test10) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -460,7 +460,7 @@ TEST_F(DeclarableOpsTests9, concat_test11) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -485,7 +485,7 @@ TEST_F(DeclarableOpsTests9, concat_test12) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -510,7 +510,7 @@ TEST_F(DeclarableOpsTests9, concat_test13) {
     x1.linspace(1);
     x2.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -525,13 +525,13 @@ TEST_F(DeclarableOpsTests9, concat_test13) {
 
 TEST_F(DeclarableOpsTests9, concat_test14) {
 
-    NDArray x0('c', {1, 40, 60}, nd4j::DataType::DOUBLE);
-    NDArray x1('c', {1, 40, 60}, nd4j::DataType::DOUBLE);
+    NDArray x0('c', {1, 40, 60}, sd::DataType::DOUBLE);
+    NDArray x1('c', {1, 40, 60}, sd::DataType::DOUBLE);
 
     x0 = 1.;
     x1 = 2.;
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto result = op.evaluate({&x0, &x1}, {}, {0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -554,7 +554,7 @@ TEST_F(DeclarableOpsTests9, concat_test15) {
     auto y = NDArrayFactory::create<double> (3.0f);
     auto exp = NDArrayFactory::create<double>('c', {3}, {1, 0, 3});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto result = op.evaluate({&x, &y}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
 
@@ -573,7 +573,7 @@ TEST_F(DeclarableOpsTests9, concat_test16) {
     auto y = NDArrayFactory::create<double>('c', {0,2,3});
     auto exp = NDArrayFactory::create<double>('c', {0,2,3});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto result = op.evaluate({&x, &y}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
 
@@ -587,13 +587,13 @@ TEST_F(DeclarableOpsTests9, concat_test16) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test17) {
 
-    NDArray x0('c', {1, 55, 40}, nd4j::DataType::DOUBLE);
-    NDArray x1('c', {1, 55, 40}, nd4j::DataType::DOUBLE);
+    NDArray x0('c', {1, 55, 40}, sd::DataType::DOUBLE);
+    NDArray x1('c', {1, 55, 40}, sd::DataType::DOUBLE);
 
     x0 = 1.;
     x1 = 2.;
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto result = op.evaluate({&x0, &x1}, {}, {0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -629,7 +629,7 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
     context.setOutputArray(0, &z, false);
     context.setIArguments(&axis, 1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     op.execute(&context);
 
     for (int e = 0; e < 2000; e++) {
@@ -657,7 +657,7 @@ TEST_F(DeclarableOpsTests9, concat_test19) {
     context.setOutputArray(0, &z, false);
     context.setIArguments(&axis, 1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     op.execute(&context);
 
     for (int e = 0; e < 10; e++)
@@ -676,7 +676,7 @@ TEST_F(DeclarableOpsTests9, concat_test20) {
     x2.assign(3.0);
     x3.assign(4.0);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto result = op.evaluate({&x0, &x1, &x2, &x3}, {}, {0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -697,14 +697,14 @@ TEST_F(DeclarableOpsTests9, concat_test20) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test21) {
 
-    NDArray x0('c', {1,4,5}, nd4j::DataType::FLOAT32);
-    NDArray x1('c', {2,4,5}, nd4j::DataType::FLOAT32);
-    NDArray  z('f', {3,4,5}, nd4j::DataType::FLOAT32);
+    NDArray x0('c', {1,4,5}, sd::DataType::FLOAT32);
+    NDArray x1('c', {2,4,5}, sd::DataType::FLOAT32);
+    NDArray  z('f', {3,4,5}, sd::DataType::FLOAT32);
 
     x0 = 0.;
     x1 = 1.;
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto status = op.execute({&x0, &x1}, {&z}, {}, {0}, {});
     ASSERT_EQ(ND4J_STATUS_OK, status);
 }
@@ -714,10 +714,10 @@ TEST_F(DeclarableOpsTests9, concat_test22) {
 
     NDArray x0('c', {1,6}, {1,2,3,4,5,6});
     NDArray x1('c', {1,6}, {7,8,9,10,11,12});
-    NDArray output('f', {2,6}, nd4j::DataType::DOUBLE);
+    NDArray output('f', {2,6}, sd::DataType::DOUBLE);
     NDArray exp('c', {2,6}, {1,2,3,4,5,6,7,8,9,10,11,12});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto status = op.execute({&x0, &x1}, {&output}, {}, {0}, {});
     ASSERT_EQ(ND4J_STATUS_OK, status);
@@ -730,10 +730,10 @@ TEST_F(DeclarableOpsTests9, concat_test23) {
 
     NDArray x0('c', {1,4}, {1,2,3,4});
     NDArray x1('c', {1,4}, {5,6,7,8});
-    NDArray output('c', {2,4}, nd4j::DataType::DOUBLE);
+    NDArray output('c', {2,4}, sd::DataType::DOUBLE);
     NDArray exp('c', {2,4}, {1,2,3,4,5,6,7,8});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto status = op.execute({&x0, &x1}, {&output}, {}, {0}, {});
     ASSERT_EQ(ND4J_STATUS_OK, status);
@@ -748,7 +748,7 @@ TEST_F(DeclarableOpsTests9, concat_test24) {
     auto e = NDArrayFactory::create<double>('c', {2, 2}, {1, 0, 1, 0});
     auto z = NDArrayFactory::create<double>('c', {2, 2});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto status = op.execute({&x, &y}, {&z}, {}, {1}, {});
     ASSERT_EQ(Status::OK(), status);
 
@@ -763,7 +763,7 @@ TEST_F(DeclarableOpsTests9, concat_test25) {
     auto axis = NDArrayFactory::create<double>('c', {1}, {0.});
     auto exp = NDArrayFactory::create<double>('c', {2,4}, {1,2,3,4,5,6,7,8});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1, &axis}, {}, {}, {true});
 
@@ -785,7 +785,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test1) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {2, 3});
     auto gradI = results->at(0);
 
@@ -805,7 +805,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test2) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {1, 3});
     auto gradI = results->at(0);
     ASSERT_EQ(Status::OK(), results->status());
@@ -824,7 +824,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test3) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {1, 1});
     auto gradI = results->at(0);
 
@@ -844,7 +844,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test4) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {2});
     auto gradI = results->at(0);
 
@@ -864,7 +864,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test5) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {1});
     auto gradI = results->at(0);
 
@@ -884,7 +884,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test6) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {1, 3, 2});
     auto gradI = results->at(0);
 
@@ -905,7 +905,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test7) {
 
     gradO.linspace(0.01, 0.01);
 
-    nd4j::ops::tile_bp op;
+    sd::ops::tile_bp op;
     auto results = op.evaluate({&input, &reps, &gradO}, {}, {});
     auto gradI = results->at(0);
 
@@ -923,7 +923,7 @@ TEST_F(DeclarableOpsTests9, tile_test1) {
     auto reps   = NDArrayFactory::create<int>('c', {1, 2}, {2, 1});
     auto expOut = NDArrayFactory::create<double>('c', {2, 6,}, {1.,2.,3.,4.,5.,6., 1.,2.,3.,4.,5.,6.});
 
-    nd4j::ops::tile op;
+    sd::ops::tile op;
     auto results = op.evaluate({&input, &reps}, {}, {});
     auto out = results->at(0);
 
@@ -940,7 +940,7 @@ TEST_F(DeclarableOpsTests9, TestDropout_BP_1) {
     NDArray x('c', {2, 2, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f});
     NDArray errs('c', {2, 2, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f});
     NDArray shape('c', {2}, {2, 2});
-    nd4j::ops::dropout_bp op;
+    sd::ops::dropout_bp op;
 
     auto ress = op.evaluate({&x, &errs, &shape}, {0.2f}, {113});
 
@@ -954,10 +954,10 @@ TEST_F(DeclarableOpsTests9, TestDropout_BP_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, TestDropout_1) {
 
-    NDArray x('c', {10, 10}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {10, 10}, sd::DataType::FLOAT32);
 //    NDArray<float> errs('c', {2, 2, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f});
     //NDArray<float> shape({2.f, 2.f});
-    nd4j::ops::dropout op;
+    sd::ops::dropout op;
     x.linspace(1);
     auto ress = op.evaluate({&x}, {0.2f}, {113});
 
@@ -984,8 +984,8 @@ TEST_F(DeclarableOpsTests9, TestDropout_1) {
 }
 
 TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
-    NDArray x0('c', {10, 10}, nd4j::DataType::FLOAT32);
-    NDArray x1('c', {10, 10}, nd4j::DataType::FLOAT32);
+    NDArray x0('c', {10, 10}, sd::DataType::FLOAT32);
+    NDArray x1('c', {10, 10}, sd::DataType::FLOAT32);
 
     x0.linspace(1);
     x1.linspace(1);
@@ -993,7 +993,7 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
     float prob[] = {0.5f};
     Nd4jLong* _bufferA = new Nd4jLong[100000];
     long _seed = 119L;
-    auto _rngA = (nd4j::random::RandomBuffer *) initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferA);
+    auto _rngA = (sd::random::RandomBuffer *) initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferA);
 
     x0. applyTransform(random::DropOutInverted, &x0, prob);
 //    x1.template applyRandom<randomOps::DropOutInverted<float>>(_rngB, nullptr, &x1, prob);
@@ -1012,7 +1012,7 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
     destroyRandom(_rngA);
     delete [] _bufferA;
 */
-    nd4j::ops::dropout op;
+    sd::ops::dropout op;
 
     auto ress = op.evaluate({&x1}, {0.5f}, {119});
 
@@ -1021,11 +1021,11 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
     auto count = ress->at(0)->reduceNumber(reduce::CountNonZero);
 //    nd4j_printf("\n01Dropout count %i\n\n", count);
 
-    nd4j::ops::dropout_bp op2;
+    sd::ops::dropout_bp op2;
     //NDArray<float> exp('c', {10,10}, {4.f, 0.f, 12.f, 0.f, 20.f, 24.f, 0.f, 32.f, 0.f, 0.f, 0.f, 0.f, 52.f, 56.f, 60.f, 0.f, 0.f, 0.f, 0.f, 0.f, 84.f, 88.f, 0.f, 0.f, 0.f, 0.f, 108.f, 0.f, 0.f, 120.f, 0.f, 0.f, 132.f, 0.f, 0.f, 0.f, 0.f, 0.f, 156.f, 0.f, 164.f, 168.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 200.f, 204.f, 0.f, 0.f, 0.f, 220.f, 0.f, 0.f, 232.f, 236.f, 240.f, 0.f, 248.f, 0.f, 0.f, 260.f, 0.f, 0.f, 0.f, 276.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 316.f, 0.f, 324.f, 0.f, 0.f, 336.f, 0.f, 0.f, 0.f, 0.f, 356.f, 0.f, 0.f, 368.f, 0.f, 0.f, 0.f, 384.f, 388.f, 0.f, 0.f, 400.f});
     //02Dropout result is  [4.000000, 0.000000, 12.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 36.000000, 0.000000, 0.000000, 0.000000, 0.000000, 56.000000, 60.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 88.000000, 0.000000, 96.000000, 0.000000, 0.000000, 108.000000, 0.000000, 0.000000, 120.000000, 0.000000, 128.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 156.000000, 0.000000, 164.000000, 0.000000, 0.000000, 0.000000, 0.000000, 184.000000, 0.000000, 0.000000, 0.000000, 200.000000, 0.000000, 0.000000, 0.000000, 216.000000, 0.000000, 0.000000, 0.000000, 232.000000, 0.000000, 240.000000, 0.000000, 248.000000, 0.000000, 0.000000, 260.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 308.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 348.000000, 0.000000, 356.000000, 0.000000, 0.000000, 0.000000, 0.000000, 376.000000, 0.000000, 384.000000, 0.000000, 0.000000, 0.000000, 400.000000]
 
-    auto ressX = op2.evaluate({&x1, &x1}, {0.5f}, {119}); // , false, nd4j::DataType::FLOAT32); // skipped due given by default
+    auto ressX = op2.evaluate({&x1, &x1}, {0.5f}, {119}); // , false, sd::DataType::FLOAT32); // skipped due given by default
     //x0.printIndexedBuffer("X0");
     //x1.printIndexedBuffer("X1");
     ASSERT_EQ(ND4J_STATUS_OK, ressX->status());
@@ -1058,18 +1058,18 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
 }
 
 TEST_F(DeclarableOpsTests9, Test_Dropout_BP_2) {
-    NDArray x('c', {10, 10}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {10, 10}, sd::DataType::FLOAT32);
 
     x.linspace(1);
 
-    nd4j::ops::dropout op;
+    sd::ops::dropout op;
 
     auto ress = op.evaluate({&x}, {0.5f}, {119});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress->status());
 //    ress->at(0)->printIndexedBuffer("01Dropout result is ");
 
-    nd4j::ops::dropout_bp op2;
+    sd::ops::dropout_bp op2;
 
     auto ressX = op2.evaluate({&x, &x}, {0.5f}, {119});
 
@@ -1099,13 +1099,13 @@ TEST_F(DeclarableOpsTests9, Test_Dropout_BP_2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Test_AlphaDropout_BP_1) {
-    NDArray x('c', {10, 10}, nd4j::DataType::FLOAT32);
-    NDArray eps('c', {10, 10}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {10, 10}, sd::DataType::FLOAT32);
+    NDArray eps('c', {10, 10}, sd::DataType::FLOAT32);
 
     x.linspace(1);
     eps.linspace(1);
 
-    nd4j::ops::alpha_dropout_bp op;
+    sd::ops::alpha_dropout_bp op;
 
     auto ress = op.evaluate({&x, &eps}, {0.5f, 0.5f, 1.5f, 1.6f}, {119});
 
@@ -1130,7 +1130,7 @@ TEST_F(DeclarableOpsTests9, test_range_int_1) {
     auto x1 = NDArrayFactory::create<int>(2);
     auto x2 = NDArrayFactory::create<int>(1);
 
-    nd4j::ops::range op;
+    sd::ops::range op;
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -1144,7 +1144,7 @@ TEST_F(DeclarableOpsTests9, test_range_empty_1) {
     auto x1 = NDArrayFactory::create<int>(0);
     auto x2 = NDArrayFactory::create<int>(1);
 
-    nd4j::ops::range op;
+    sd::ops::range op;
     auto result = op.evaluate({&x0, &x1, &x2}, {}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -1183,7 +1183,7 @@ TEST_F(DeclarableOpsTests9, test_unstack_1) {
     auto x = NDArrayFactory::create<double>('c', {5, 5});
     x.linspace(1.0);
 
-    nd4j::ops::unstack op;
+    sd::ops::unstack op;
     auto result = op.evaluate({&x}, {}, {0});
     ASSERT_EQ(Status::OK(), result->status());
     ASSERT_EQ(5, result->size());
@@ -1201,7 +1201,7 @@ TEST_F(DeclarableOpsTests9, test_unstack_SGO_1) {
     auto z4 = NDArrayFactory::create<double>(4);
     auto z5 = NDArrayFactory::create<double>(5);
     std::vector<NDArray*> z({&z1, &z2, &z3, &z4, &z5});
-    nd4j::ops::unstack op;
+    sd::ops::unstack op;
     auto result = op.evaluate({&x}, {}, {0});
     ASSERT_EQ(Status::OK(), result->status());
     ASSERT_EQ(5, result->size());
@@ -1238,7 +1238,7 @@ TEST_F(DeclarableOpsTests9, clipbynorm_test12) {
             expect({0,0, j,j+1}).assign ( yCol * (clip / norm2Col) );
     }
 
-    nd4j::ops::clipbynorm op;
+    sd::ops::clipbynorm op;
     auto result = op.evaluate({&y}, {clip}, {axis});
     auto outFF = result->at(0);
 
@@ -1262,8 +1262,8 @@ TEST_F(DeclarableOpsTests9, clipbynorm_bp_test1) {
     const OpArgsHolder argsHolderFF({&x}, {clip}, {});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {clip}, {});
 
-    nd4j::ops::clipbynorm opFF;
-    nd4j::ops::clipbynorm_bp opBP;
+    sd::ops::clipbynorm opFF;
+    sd::ops::clipbynorm_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1284,8 +1284,8 @@ TEST_F(DeclarableOpsTests9, clipbynorm_bp_test2) {
     const OpArgsHolder argsHolderFF({&x}, {clip}, {axis});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {clip}, {axis});
 
-    nd4j::ops::clipbynorm opFF;
-    nd4j::ops::clipbynorm_bp opBP;
+    sd::ops::clipbynorm opFF;
+    sd::ops::clipbynorm_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1307,8 +1307,8 @@ TEST_F(DeclarableOpsTests9, clipbynorm_bp_test3) {
     const OpArgsHolder argsHolderFF({&x}, {clip}, {axis});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {clip}, {axis});
 
-    nd4j::ops::clipbynorm opFF;
-    nd4j::ops::clipbynorm_bp opBP;
+    sd::ops::clipbynorm opFF;
+    sd::ops::clipbynorm_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1332,7 +1332,7 @@ TEST_F(DeclarableOpsTests9, cumprod_1) {
     //************************************//
     exclusive = 0; reverse = 0;
 
-    nd4j::ops::cumprod op;
+    sd::ops::cumprod op;
     auto result = op.evaluate({&inputC, &axis}, {}, {exclusive, reverse});
     ASSERT_EQ(Status::OK(), result->status());
     auto z = result->at(0);
@@ -1371,13 +1371,13 @@ TEST_F(DeclarableOpsTests9, cumprod_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_2) {
 
-    NDArray x('c', {2, 1500}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {2, 1500}, sd::DataType::FLOAT32);
     NDArray x0 = x(0, {0});
     NDArray x1 = x(1, {0});
     x0.linspace(1, 0.1);
     x1.linspace(1, 0.1);
 
-    NDArray exp('c', {2, 1500}, nd4j::DataType::FLOAT32);
+    NDArray exp('c', {2, 1500}, sd::DataType::FLOAT32);
     NDArray exp0 = exp(0, {0});
     NDArray exp1 = exp(1, {0});
 
@@ -1390,7 +1390,7 @@ TEST_F(DeclarableOpsTests9, cumprod_2) {
         exp1.p(i, prev * x1.e<float>(i));
     }
 
-    nd4j::ops::cumprod op;
+    sd::ops::cumprod op;
     auto result = op.evaluate({&x}, {}, {0, 0, 1});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -1412,8 +1412,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_1) {
     const OpArgsHolder argsHolderFF({&x},         {}, {0, 0});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {}, {0, 0});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1431,8 +1431,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_2) {
     const OpArgsHolder argsHolderFF({&x},         {}, {1, 1});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {}, {1, 1});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1450,8 +1450,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_3) {
     const OpArgsHolder argsHolderFF({&x},         {}, {1, 0});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {}, {1, 0});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1469,8 +1469,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_4) {
     const OpArgsHolder argsHolderFF({&x},         {}, {0, 1});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {}, {0, 1});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1489,8 +1489,8 @@ TEST_F(DeclarableOpsTests9, cumsum_bp_check_2) {
     const OpArgsHolder argsHolderFF({&x},         {}, {1, 1});
     const OpArgsHolder argsHolderBP({&x, &gradO}, {}, {1, 1});
 
-    nd4j::ops::cumsum opFF;
-    nd4j::ops::cumsum_bp opBP;
+    sd::ops::cumsum opFF;
+    sd::ops::cumsum_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1518,8 +1518,8 @@ TEST_F(DeclarableOpsTests9, cumprod_test1) {
     const OpArgsHolder argsHolderFF({&inputC, &axis}, {}, {exclusive, reverse});
     const OpArgsHolder argsHolderBP({&inputC, &axis, &gradO}, {}, {exclusive, reverse});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1542,8 +1542,8 @@ TEST_F(DeclarableOpsTests9, cumprod_test2) {
     const OpArgsHolder argsHolderFF({&inputC, &axis}, {}, {exclusive, reverse});
     const OpArgsHolder argsHolderBP({&inputC, &axis, &gradO}, {}, {exclusive, reverse});
 
-    nd4j::ops::cumprod opFF;
-    nd4j::ops::cumprod_bp opBP;
+    sd::ops::cumprod opFF;
+    sd::ops::cumprod_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1, 1, 1}, {1, 1},GradCheck::MEAN);
 
@@ -1557,7 +1557,7 @@ TEST_F(DeclarableOpsTests9, prelu_test1) {
     auto alpha = NDArrayFactory::create<double>('c', {3, 4}, {-0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f, 5.5f, 4.f, 2.7f, 1.6f, 0.7f, 0.f, -0.5f,-0.8f, -0.9f, -0.8f, -0.5f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
 
     auto result = op.evaluate({&x, &alpha});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -1576,7 +1576,7 @@ TEST_F(DeclarableOpsTests9, prelu_test2) {
     auto alpha = NDArrayFactory::create<double>('c', {3}, {-0.6f, 2.f, 4.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1594,7 +1594,7 @@ TEST_F(DeclarableOpsTests9, prelu_test3) {
     auto alpha = NDArrayFactory::create<double>('c', {3,1}, {-0.6f, 2.f, 4.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1612,7 +1612,7 @@ TEST_F(DeclarableOpsTests9, prelu_test4) {
     auto alpha = NDArrayFactory::create<double>('c', {1, 3}, {-0.6f, 2.f, 4.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1630,7 +1630,7 @@ TEST_F(DeclarableOpsTests9, prelu_test5) {
     auto alpha = NDArrayFactory::create<double>('c', {4}, {-0.6f, 2.f, 4.f, -1.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f, -22.f, -40.f,   9.f, 4.8f, -14.f, -24.f,   5.f, 2.4f,  -6.f,  -8.f,   1.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1648,7 +1648,7 @@ TEST_F(DeclarableOpsTests9, prelu_test6) {
     auto alpha = NDArrayFactory::create<double>('c', {1,1,1}, {-2.});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1667,7 +1667,7 @@ TEST_F(DeclarableOpsTests9, prelu_test7) {
     auto alpha = NDArrayFactory::create<double>(-2.f);
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1685,7 +1685,7 @@ TEST_F(DeclarableOpsTests9, prelu_test8) {
     auto alpha = NDArrayFactory::create<double>(-2.f);
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0,1,0,1,0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1703,7 +1703,7 @@ TEST_F(DeclarableOpsTests9, prelu_test9) {
     auto alpha = NDArrayFactory::create<double>(-2.f);
     auto exp = NDArrayFactory::create<double>('c', {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1721,7 +1721,7 @@ TEST_F(DeclarableOpsTests9, prelu_test10) {
     auto alpha = NDArrayFactory::create<double>(-2.f);
     auto exp = NDArrayFactory::create<double>('c', {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1746,7 +1746,7 @@ TEST_F(DeclarableOpsTests9, prelu_test11) {
                                            43.f,  44.f, 45.f,  46.f,  47.f,  48.f,  49.f, 50.f,  51.f,  52.f,  53.f,  54.f, 55.f,  56.f,  57.f,  58.f,  59.f, 60.f,  61.f,
                                            62.f,  63.f,  64.f, 65.f,  66.f,  67.f,  68.f,  69.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,3});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1770,7 +1770,7 @@ TEST_F(DeclarableOpsTests9, prelu_test12) {
                                            31.f, 32.f, 33.f, 34.f, 35.f, 36.f, 37.f, 38.f, 39.f, 40.f, 41.f, 42.f, 43.f, 44.f, 45.f, 46.f, 47.f, 48.f, 49.f, 50.f, 51.f, 52.f,
                                            53.f, 54.f, 55.f, 56.f, 57.f, 58.f, 59.f, 60.f, 61.f, 62.f, 63.f, 64.f, 65.f, 66.f, 67.f, 68.f, 69.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {-1, 2});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1794,7 +1794,7 @@ TEST_F(DeclarableOpsTests9, prelu_test13) {
                                            31.f, 32.f, 33.f, 34.f, 35.f, 36.f, 37.f, 38.f, 39.f, 40.f, 41.f, 42.f, 43.f, 44.f, 45.f, 46.f, 47.f, 48.f, 49.f, 50.f, 51.f, 52.f,
                                            53.f, 54.f, 55.f, 56.f, 57.f, 58.f, 59.f, 60.f, 61.f, 62.f, 63.f, 64.f, 65.f, 66.f, 67.f, 68.f, 69.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {-1, 2});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1819,7 +1819,7 @@ TEST_F(DeclarableOpsTests9, prelu_test14) {
                                            37.f,  38.f,  39.f, 40.f,  41.f,  42.f,  43.f,  44.f, 45.f,  46.f,  47.f,  48.f,  49.f, 50.f,  51.f,  52.f,  53.f,  54.f,
                                            55.f,  56.f,  57.f,  58.f,  59.f, 60.f,  61.f,  62.f,  63.f,  64.f, 65.f,  66.f,  67.f,  68.f,  69.f});
 
-    nd4j::ops::prelu op;
+    sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {-2});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto output = result->at(0);
@@ -1837,7 +1837,7 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_test1) {
     auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 3.f,4.f, 5.f, 6.f, 7.f,8.f, 9.f,10.f,11.f});
 
-    nd4j::ops::thresholdedrelu op;
+    sd::ops::thresholdedrelu op;
 
     auto result = op.evaluate({&x}, {theta});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -1857,7 +1857,7 @@ TEST_F(DeclarableOpsTests9, compare_and_bitpack_test1) {
     auto exp = NDArrayFactory::create<uint8_t>('c', {2, 3, 4}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                                                                 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1});
 
-    nd4j::ops::compare_and_bitpack op;
+    sd::ops::compare_and_bitpack op;
 
     auto result = op.evaluate({&x, &threshold}, {}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -1875,7 +1875,7 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_test2) {
     auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f,-4.f, -10.f, -8.f, 0.f, -9.f, -8.f, 5.f, 6.f, 6.f, 9.f, 6.f, -8.f, 5.f, 10.f, -2.f, 3.f, -7.f, 4.f, -8.f, -4.f, -9.f, -9.f, 3.f});
     auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 5.f, 6.f, 6.f, 9.f, 6.f, 0.f, 5.f, 10.f, 0.f, 3.f, 0.f, 4.f, 0.f, 0.f, 0.f, 0.f, 3.f});
 
-    nd4j::ops::thresholdedrelu op;
+    sd::ops::thresholdedrelu op;
 
     auto result = op.evaluate({&x}, {theta});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -1897,8 +1897,8 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test1) {
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {});
 
-    nd4j::ops::prelu opFF;
-    nd4j::ops::prelu_bp opBP;
+    sd::ops::prelu opFF;
+    sd::ops::prelu_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1915,8 +1915,8 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test2) {
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {1});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {1});
 
-    nd4j::ops::prelu opFF;
-    nd4j::ops::prelu_bp opBP;
+    sd::ops::prelu opFF;
+    sd::ops::prelu_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1935,8 +1935,8 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test3) {
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {-1, 2});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {-1, 2});
 
-    nd4j::ops::prelu opFF;
-    nd4j::ops::prelu_bp opBP;
+    sd::ops::prelu opFF;
+    sd::ops::prelu_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1955,8 +1955,8 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test4) {
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {-2});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {-2});
 
-    nd4j::ops::prelu opFF;
-    nd4j::ops::prelu_bp opBP;
+    sd::ops::prelu opFF;
+    sd::ops::prelu_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1974,8 +1974,8 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_bp_test1) {
     const OpArgsHolder argsHolderFF({&x}, {theta}, {});
     const OpArgsHolder argsHolderBP({&x, &dLdO}, {theta}, {});
 
-    nd4j::ops::thresholdedrelu opFF;
-    nd4j::ops::thresholdedrelu_bp opBP;
+    sd::ops::thresholdedrelu opFF;
+    sd::ops::thresholdedrelu_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -1991,7 +1991,7 @@ TEST_F(DeclarableOpsTests9, multiply_test1) {
     x.linspace(1.f);
     y.linspace(0.1f, 0.1f);
 
-    nd4j::ops::multiply op;
+    sd::ops::multiply op;
     auto result = op.evaluate({&x, &y}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto z = result->at(0);
@@ -2011,7 +2011,7 @@ TEST_F(DeclarableOpsTests9, multiply_test2) {
     x.linspace(1.f);
     // y.linspace(0.1f, 0.1f);
 
-    nd4j::ops::multiply op;
+    sd::ops::multiply op;
     auto result = op.evaluate({&y, &x}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto z = result->at(0);
@@ -2031,7 +2031,7 @@ TEST_F(DeclarableOpsTests9, multiply_test3) {
     x.linspace(1.f);
     y.linspace(0.1f, 0.1f);
 
-    nd4j::ops::multiply op;
+    sd::ops::multiply op;
     auto result = op.evaluate({&x, &y}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto z = result->at(0);
@@ -2050,7 +2050,7 @@ TEST_F(DeclarableOpsTests9, multiply_test4) {
     auto exp = NDArrayFactory::create<double>('c', {1, 1}, {0.1f});
     x.linspace(1.f);
 
-    nd4j::ops::multiply op;
+    sd::ops::multiply op;
     auto result = op.evaluate({&x, &y}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto z = result->at(0);
@@ -2068,7 +2068,7 @@ TEST_F(DeclarableOpsTests9, multiply_test5) {
     auto y = NDArrayFactory::create<double>(0.1f);
     auto exp = NDArrayFactory::create<double>(0.1f);
 
-    nd4j::ops::multiply op;
+    sd::ops::multiply op;
     auto result = op.evaluate({&x, &y}, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
     auto z = result->at(0);
@@ -2089,8 +2089,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test1) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
     auto resFF = opFF.evaluate({&x, &y}, {}, {});
     auto resBP = opBP.evaluate({&x, &y, &dLdz}, {}, {});
 //    resFF->at(0)->printIndexedBuffer("Multiply 1x1");
@@ -2112,8 +2112,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test2) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2130,8 +2130,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test3) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2148,8 +2148,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test4) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2166,8 +2166,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test5) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2184,8 +2184,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test6) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2202,8 +2202,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test7) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2222,8 +2222,8 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test8) {
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-    nd4j::ops::multiply opFF;
-    nd4j::ops::multiply_bp opBP;
+    sd::ops::multiply opFF;
+    sd::ops::multiply_bp opBP;
 
     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 
@@ -2243,11 +2243,11 @@ TEST_F(DeclarableOpsTests9, Floormod_BP_Test_2) {
 //    const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
 //    const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
 
-//    nd4j::ops::floormod opFF;
+//    sd::ops::floormod opFF;
 //    auto resFF = opFF.execute({&x, &y}, {}, {});
 //    resFF->at(0)->printIndexedBuffer("FF floormod");
 //    delete resFF;
-    nd4j::ops::floormod_bp opBP;
+    sd::ops::floormod_bp opBP;
     auto resBP = opBP.evaluate({&x, &y, &dLdz}, {}, {});
     ASSERT_TRUE(resBP->status() == ND4J_STATUS_OK);
 
@@ -2279,10 +2279,10 @@ TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
     dLdzY.assign(2);
     dLdzZ.assign(3);
 
-    nd4j::ops::dynamic_partition op1;
+    sd::ops::dynamic_partition op1;
     auto res1 = op1.evaluate({&x, &y}, {}, {3});
 
-    nd4j::ops::dynamic_partition_bp op2;
+    sd::ops::dynamic_partition_bp op2;
     auto res2 = op2.evaluate({&x, &y, &dLdzX, &dLdzY, &dLdzZ}, {}, {3});
     ASSERT_TRUE(res2->status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res2->size() == 2);
@@ -2309,8 +2309,8 @@ TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
 //    const OpArgsHolder argsHolderFF({&x, &y}, {}, {3});
 //    const OpArgsHolder argsHolderBP({&x, &y, &dLdzX, &dLdzY, &dLdzZ}, {}, {3});
 //
-//    nd4j::ops::dynamic_partition opFF;
-//    nd4j::ops::dynamic_partition_bp opBP;
+//    sd::ops::dynamic_partition opFF;
+//    sd::ops::dynamic_partition_bp opBP;
 //
 //    const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 //
@@ -2325,7 +2325,7 @@ TEST_F(DeclarableOpsTests9, Floormod_BP_Test_4) {
     auto exp = NDArrayFactory::create<double>('c', {1, 3}, {-1.,  0., -1.});
     auto eps = NDArrayFactory::create<double>('c', {2, 1, 3});
     eps.assign(1.f);
-    nd4j::ops::floormod_bp op;
+    sd::ops::floormod_bp op;
 
     auto result = op.evaluate({&x, &y, &eps}, {}, {});
 
@@ -2351,16 +2351,16 @@ TEST_F(DeclarableOpsTests9, gru_cell_bp_test1) {
     const int iS = 3;
     const int nU = 4;
 
-    NDArray x('c', {bS, iS}, nd4j::DataType::DOUBLE);
-    NDArray hi('c', {bS, nU}, nd4j::DataType::DOUBLE);
-    NDArray W('c', {iS+nU, 2*nU}, nd4j::DataType::DOUBLE);
-    NDArray Wc('c', {iS+nU, nU}, nd4j::DataType::DOUBLE);
-    NDArray b('c', {2*nU}, nd4j::DataType::DOUBLE);
-    NDArray bc('c', {nU}, nd4j::DataType::DOUBLE);
-    NDArray dLdr('c', {bS, nU}, nd4j::DataType::DOUBLE);
-    NDArray dLdu('c', {bS, nU}, nd4j::DataType::DOUBLE);
-    NDArray dLdc('c', {bS, nU}, nd4j::DataType::DOUBLE);
-    NDArray dLdh('c', {bS, nU}, nd4j::DataType::DOUBLE);
+    NDArray x('c', {bS, iS}, sd::DataType::DOUBLE);
+    NDArray hi('c', {bS, nU}, sd::DataType::DOUBLE);
+    NDArray W('c', {iS+nU, 2*nU}, sd::DataType::DOUBLE);
+    NDArray Wc('c', {iS+nU, nU}, sd::DataType::DOUBLE);
+    NDArray b('c', {2*nU}, sd::DataType::DOUBLE);
+    NDArray bc('c', {nU}, sd::DataType::DOUBLE);
+    NDArray dLdr('c', {bS, nU}, sd::DataType::DOUBLE);
+    NDArray dLdu('c', {bS, nU}, sd::DataType::DOUBLE);
+    NDArray dLdc('c', {bS, nU}, sd::DataType::DOUBLE);
+    NDArray dLdh('c', {bS, nU}, sd::DataType::DOUBLE);
 
     x.linspace(-5, 0.5);
     hi   = 1.;
@@ -2371,7 +2371,7 @@ TEST_F(DeclarableOpsTests9, gru_cell_bp_test1) {
 
 
     const OpArgsHolder argsHolderFF({&x, &hi, &W, &Wc, &b, &bc}, {}, {});
-    nd4j::ops::gruCell op;
+    sd::ops::gruCell op;
     auto results = op.evaluate(argsHolderFF);
 
     ASSERT_EQ(ND4J_STATUS_OK, results->status());
@@ -2395,10 +2395,10 @@ TEST_F(DeclarableOpsTests9, gru_cell_bp_test1) {
 
     const OpArgsHolder argsHolderBP({&x, &hi, &W, &Wc, &b, &bc, &dLdr, &dLdu, &dLdc, &dLdh}, {}, {});
 
-    nd4j::ops::gruCell opFF;
-    nd4j::ops::gruCell_bp opBP;
+    sd::ops::gruCell opFF;
+    sd::ops::gruCell_bp opBP;
 
-    const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1, 1, 1 , 1, 1}, {0., 1.}, nd4j::GradCheck::LossFunc::SUM, true);
+    const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {1, 1, 1, 1 , 1, 1}, {0., 1.}, sd::GradCheck::LossFunc::SUM, true);
 
     ASSERT_TRUE(isGradCorrect);
 }
@@ -2410,7 +2410,7 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_1) {
     NDArray x = NDArrayFactory::create<double>('c', {3, 3}, {4,12,-16, 12 ,37,-43, -16, -43, 98});
     NDArray exp = NDArrayFactory::create<double>('c', {3,3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3.});
 
-    nd4j::ops::cholesky op;
+    sd::ops::cholesky op;
 
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(result->status(), ND4J_STATUS_OK);
@@ -2426,7 +2426,7 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_2) {
     NDArray x = NDArrayFactory::create<double>('c', {2, 3, 3}, {4, 12,-16, 12 ,37,-43, -16, -43, 98, 1, 1, 1, 1, 2, 2, 1, 2., 6});
     NDArray exp = NDArrayFactory::create<double>('c', {2, 3, 3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3., 1., 0., 0., 1., 1., 0,1., 1., 2.});
 
-    nd4j::ops::cholesky op;
+    sd::ops::cholesky op;
 
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(result->status(), ND4J_STATUS_OK);
@@ -2442,7 +2442,7 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_3) {
     NDArray x = NDArrayFactory::create<float>('c', {2, 3, 3}, {4.f, 12.f, -16.f, 12.f, 37.f, -43.f, -16.f, -43.f, 98.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 1.f, 2.f, 6.f});
     NDArray exp = NDArrayFactory::create<float>('c', {2, 3, 3}, {2.f,  0.f,  0.f, 6.f, 1.f,  0.f, -8.f,  5.f,  3.f, 1.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 2.f});
 
-    nd4j::ops::cholesky op;
+    sd::ops::cholesky op;
 
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(result->status(), ND4J_STATUS_OK);
@@ -2476,8 +2476,8 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_3) {
 //     const OpArgsHolder<double> argsHolderFF({&x, &h0, &Wx, &Wh, &b}, {}, {});
 //     const OpArgsHolder<double> argsHolderBP({&x, &h0, &Wx, &Wh, &b, &dLdh}, {}, {});
 
-//     nd4j::ops::gru<double> opFF;
-//     nd4j::ops::gru_bp<double> opBP;
+//     sd::ops::gru<double> opFF;
+//     sd::ops::gru_bp<double> opBP;
 
 //     const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP);
 

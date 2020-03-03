@@ -20,13 +20,13 @@
 
 #include "testlayers.h"
 #include <ops/declarable/CustomOperations.h>
-#include <NDArray.h>
+#include <array/NDArray.h>
 #include <ops/ops.h>
-#include <GradCheck.h>
+#include <helpers/GradCheck.h>
 #include <helpers/RandomLauncher.h>
 
 
-using namespace nd4j;
+using namespace sd;
 
 
 class AttentionTests : public testing::Test {
@@ -40,7 +40,7 @@ TEST_F(AttentionTests, basic_dot_product_attention) {
     auto values = NDArrayFactory::create<float>('c', {10, 4, 3});
     auto queries = NDArrayFactory::create<float>('c', {10, 4, 1});
 
-    nd4j::ops::dot_product_attention op;
+    sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values}, {1, 0});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -55,7 +55,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_bp) {
     auto queries = NDArrayFactory::create<float>('c', {10, 4, 1});
     auto eps = NDArrayFactory::create<float>('c', {10, 4, 1});
 
-    nd4j::ops::dot_product_attention_bp op;
+    sd::ops::dot_product_attention_bp op;
     auto result = op.execute({&queries, &keys, &values, &eps}, {}, {1, 0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -68,7 +68,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_with_weights) {
     auto values = NDArrayFactory::create<float>('c', {10, 4, 3});
     auto queries = NDArrayFactory::create<float>('c', {10, 4, 1});
 
-    nd4j::ops::dot_product_attention op;
+    sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values}, {1, 1});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -82,7 +82,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_with_mask) {
     auto mask = NDArrayFactory::create<float>('c', {10, 3});
     mask.assign(1.);
 
-    nd4j::ops::dot_product_attention op;
+    sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &mask}, {1, 0});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -99,7 +99,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_bp_with_mask) {
     auto mask = NDArrayFactory::create<float>('c', {10, 3});
     mask.assign(1.);
 
-    nd4j::ops::dot_product_attention_bp op;
+    sd::ops::dot_product_attention_bp op;
     auto result = op.execute({&queries, &keys, &values, &eps, &mask}, {}, {1, 0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -114,7 +114,7 @@ TEST_F(AttentionTests, multi_head_input_dot_product_attention_with_mask) {
     auto mask = NDArrayFactory::create<float>('c', {2, 3});
     mask.assign(1.);
 
-    nd4j::ops::dot_product_attention op;
+    sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &mask}, {1, 0});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -131,7 +131,7 @@ TEST_F(AttentionTests, multi_head_input_dot_product_attention_bp_with_mask) {
     auto mask = NDArrayFactory::create<float>('c', {2, 3});
     mask.assign(1.);
 
-    nd4j::ops::dot_product_attention_bp op;
+    sd::ops::dot_product_attention_bp op;
     auto result = op.execute({&queries, &keys, &values, &eps, &mask}, {}, {1, 0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -150,7 +150,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_attention) {
     auto Wq = NDArrayFactory::create<float>('c', {2, 3, 4});
     auto Wo = NDArrayFactory::create<float>('c', {2* 3, 4});
 
-    nd4j::ops::multi_head_dot_product_attention op;
+    sd::ops::multi_head_dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo}, {1, 0});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -172,7 +172,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_bp_attention) {
     auto eps = NDArrayFactory::create<float>('c', {10, 7, 2});
 
 
-    nd4j::ops::multi_head_dot_product_attention_bp op;
+    sd::ops::multi_head_dot_product_attention_bp op;
     auto result = op.execute({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo, &eps}, {}, {1, 0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -194,7 +194,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_attention_with_mask) {
     mask.assign(1.);
 
 
-    nd4j::ops::multi_head_dot_product_attention op;
+    sd::ops::multi_head_dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo, &mask}, {1, 0});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -219,7 +219,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_bp_attention_with_mask) {
     mask.assign(1.);
 
 
-    nd4j::ops::multi_head_dot_product_attention_bp op;
+    sd::ops::multi_head_dot_product_attention_bp op;
     auto result = op.execute({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo, &eps, &mask}, {}, {1, 0}, {});
     ASSERT_EQ(Status::OK(), result->status());
 

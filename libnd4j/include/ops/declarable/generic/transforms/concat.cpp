@@ -23,7 +23,7 @@
 #include<ops/declarable/helpers/transforms.h>
 #include<array>
 
-namespace nd4j {
+namespace sd {
 namespace ops  {
 
 
@@ -104,7 +104,7 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
 
         DECLARE_TYPES(concat) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY);
+                    ->setAllowedInputTypes(sd::DataType::ANY);
                     // ->setSameMode(true);
         }
 
@@ -230,7 +230,7 @@ DECLARE_SHAPE_FN(concat) {
         //     if (_dimension < 0)
         //         _dimension += first->rankOf();
 
-        //     if (nd4j::Environment::getInstance()->isDebugAndVerbose()) {
+        //     if (sd::Environment::getInstance()->isDebugAndVerbose()) {
         //         printf("Shape %i: ", 0);
         //         shape::printShapeInfoLinear((Nd4jLong *) shapes[0]);
         //     }
@@ -248,12 +248,12 @@ DECLARE_SHAPE_FN(concat) {
 
         //         oldScalars &= array->rankOf() == 2 && array->isScalar();
 
-        //         if (nd4j::Environment::getInstance()->isDebugAndVerbose()) {
+        //         if (sd::Environment::getInstance()->isDebugAndVerbose()) {
         //             printf("Shape %i: ", e);
         //             shape::printShapeInfoLinear(array->shapeInfo());
         //         }
         //     }
-        //     if (nd4j::Environment::getInstance()->isDebugAndVerbose())
+        //     if (sd::Environment::getInstance()->isDebugAndVerbose())
         //         fflush(stdout);
 
         //     if (oldScalars) {
@@ -261,11 +261,11 @@ DECLARE_SHAPE_FN(concat) {
         //         _dimension = 1;
         //     }
 
-        //     nd4j::SpecialMethods<T>::concatCpuGeneric(_dimension, elements, buffers, shapes, output->getBuffer(), output->getShapeInfo());
+        //     sd::SpecialMethods<T>::concatCpuGeneric(_dimension, elements, buffers, shapes, output->getBuffer(), output->getShapeInfo());
 
         //     STORE_RESULT(*output);
 
-        //     if (nd4j::Environment::getInstance()->isDebugAndVerbose())
+        //     if (sd::Environment::getInstance()->isDebugAndVerbose())
         //         output->printShapeInfo("Concat result shape");
 
         //     delete[] buffers;
@@ -400,7 +400,7 @@ CUSTOM_OP_IMPL(concat_bp, -1, -1, false, 0, 0) {
 
 DECLARE_TYPES(concat_bp) {
     getOpDescriptor()
-            ->setAllowedInputTypes(nd4j::DataType::ANY)
+            ->setAllowedInputTypes(sd::DataType::ANY)
             ->setAllowedOutputTypes({ALL_FLOATS});
 }
 

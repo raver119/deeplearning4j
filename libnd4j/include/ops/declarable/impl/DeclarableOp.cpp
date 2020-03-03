@@ -19,18 +19,18 @@
 //
 
 #include <ops/declarable/DeclarableOp.h>
-#include <Status.h>
+#include <graph/Status.h>
 #include <helpers/ShapeUtils.h>
-#include <NDArrayFactory.h>
+#include <array/NDArrayFactory.h>
 #include <exceptions/graph_exception.h>
-#include <exceptions/unresolved_input_exception.h>
+#include <graph/exceptions/unresolved_input_exception.h>
 #include <ops/declarable/OpRegistrator.h>
 #include <exceptions/datatype_exception.h>
 #include <helpers/StringUtils.h>
 #include <cstdarg>
 #include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         Nd4jStatus conditionHelper(const char *file, int line, int condition, int argNumber, const char *format, ...) {
             if (!condition) {
@@ -98,7 +98,7 @@ namespace nd4j {
         }
 
 
-        nd4j::NDArray* nd4j::ops::DeclarableOp::getZ(Context& ctx, int inputId) {
+        sd::NDArray* sd::ops::DeclarableOp::getZ(Context& ctx, int inputId) {
             NDArray* z = nullptr;
 
             if (ctx.isFastPath()) {
@@ -142,7 +142,7 @@ namespace nd4j {
             return z;
         }
 
-        int nd4j::ops::DeclarableOp::prepareOutputs(Context &ctx) {
+        int sd::ops::DeclarableOp::prepareOutputs(Context &ctx) {
             auto workspace = ctx.getWorkspace();
             GraphProfile *prof = nullptr;
             NodeProfile *node = nullptr;
@@ -325,7 +325,7 @@ namespace nd4j {
                             //checking out data type equality
                             if (ArrayOptions::dataType(out) != ArrayOptions::dataType(shape)) {
                                 std::string msg = "Provided array [" + StringUtils::valueToString<int>(pair.second) + "] has unexpected data type";
-                                throw nd4j::datatype_exception::build(msg, ArrayOptions::dataType(out), ArrayOptions::dataType(shape));
+                                throw sd::datatype_exception::build(msg, ArrayOptions::dataType(out), ArrayOptions::dataType(shape));
                             }
                              */
                         }
@@ -369,15 +369,15 @@ namespace nd4j {
             }
         }
 
-        void nd4j::ops::DeclarableOp::storeResult(Context &block, int outputNumber, NDArray* array) {
+        void sd::ops::DeclarableOp::storeResult(Context &block, int outputNumber, NDArray* array) {
             this->storeResult(block, outputNumber, *array);
         }
 
-        void nd4j::ops::DeclarableOp::storeResult(nd4j::graph::Context &ctx, int outputNumber, NDArray& array) {
+        void sd::ops::DeclarableOp::storeResult(sd::graph::Context &ctx, int outputNumber, NDArray& array) {
             ctx.pushNDArrayToVariableSpace(ctx.nodeId(), outputNumber, &array, !ctx.isInplace());
         }
 
-        bool nd4j::ops::DeclarableOp::allocateResult(Context& block, Nd4jLong* shape) {
+        bool sd::ops::DeclarableOp::allocateResult(Context& block, Nd4jLong* shape) {
             auto var = block.variable(block.getNodeId(), 0);
 
             auto workspace = block.getWorkspace();
@@ -405,7 +405,7 @@ namespace nd4j {
         }
 
 
-        bool nd4j::ops::DeclarableOp::allocateResult(Context& block, std::initializer_list<Nd4jLong>& shape, char order) {
+        bool sd::ops::DeclarableOp::allocateResult(Context& block, std::initializer_list<Nd4jLong>& shape, char order) {
             auto var = block.variable(block.getNodeId(), 0);
             auto workspace = block.getWorkspace();
 
@@ -422,7 +422,7 @@ namespace nd4j {
             return true;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateDataTypes(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateDataTypes(Context& block) {
             _registrator.lock();
             if (!_registered) {
                 _registered = true;
@@ -432,7 +432,7 @@ namespace nd4j {
 
             // rolling over inputs first
             int cnt = 0, inT = 0;
-            std::vector<nd4j::DataType> inputTypes(block.width());
+            std::vector<sd::DataType> inputTypes(block.width());
             if (block.isFastPath()) {
                 for (auto array: block.fastpath_in()) {
                     if (array == nullptr)
@@ -452,7 +452,7 @@ namespace nd4j {
                     auto var = block.variable(p);
 
                     // we're not checking validity, if ANY types were explicitly allowed
-                    //if (block.dataType(cnt) == nd4j::DataType::ANY)
+                    //if (block.dataType(cnt) == sd::DataType::ANY)
                     //    continue;
 
                     // only validating non-null variables
@@ -584,7 +584,7 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::execute(Context* block) {
+        Nd4jStatus sd::ops::DeclarableOp::execute(Context* block) {
             nd4j_debug("Executing op: [%s]\n", this->getOpName()->c_str());
 
             std::chrono::time_point<std::chrono::system_clock> timeEnter, timeStart, timeEnd;
@@ -617,7 +617,7 @@ namespace nd4j {
             bool hasHelper = false;
 
             // platform helpers use might be forbidden for various reasons, so we'll check it out first
-            if (block->helpersAllowed() && nd4j::Environment::getInstance()->helpersAllowed()) {
+            if (block->helpersAllowed() && sd::Environment::getInstance()->helpersAllowed()) {
                 // if we have platform-specific helper for this op - invoke it
                 if (OpRegistrator::getInstance()->hasHelper(this->getOpHash(), block->engine())) {
                     auto helper = OpRegistrator::getInstance()->getPlatformHelper(this->getOpHash(), block->engine());
@@ -655,7 +655,7 @@ namespace nd4j {
 
 
             // now we print out all outputs for this node
-            if (nd4j::Environment::getInstance()->isDebugAndVerbose()) {
+            if (sd::Environment::getInstance()->isDebugAndVerbose()) {
                 auto vs = block->getVariableSpace();
 
                 for (int e = 0; e < numOutputs; e++) {
@@ -723,7 +723,7 @@ namespace nd4j {
             */
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateArguments(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateArguments(Context& block) {
             /*
              * We're checking number of T and I arguments. If number of args is finite number - we check strict equality
              * If number of args is variable (-1), but variables MUST be present - we check for non-zero number of arguments
@@ -756,7 +756,7 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInputDimensions(Context& block, int rank) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInputDimensions(Context& block, int rank) {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
@@ -774,19 +774,19 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInput2D(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInput2D(Context& block) {
             return validateInputDimensions(block, 2);
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInput3D(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInput3D(Context& block) {
             return validateInputDimensions(block, 3);
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInput4D(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInput4D(Context& block) {
             return validateInputDimensions(block, 4);
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateNonEmptyInput(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateNonEmptyInput(Context& block) {
             if (this->getOpDescriptor()->getNumberOfInputs() == -2 || this->getOpDescriptor()->getNumberOfInputs() == 0)
                 return Status::OK();
 
@@ -831,7 +831,7 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateOrdersMatch(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateOrdersMatch(Context& block) {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
@@ -846,7 +846,7 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::execute(nd4j::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<NDArray*>& outputs, const std::vector<double>& tArgs, const std::vector<Nd4jLong>& iArgs, const std::vector<bool>& bArgs, const std::vector<nd4j::DataType>& dArgs, bool isInplace, nd4j::DataType type) {
+        Nd4jStatus sd::ops::DeclarableOp::execute(sd::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<NDArray*>& outputs, const std::vector<double>& tArgs, const std::vector<Nd4jLong>& iArgs, const std::vector<bool>& bArgs, const std::vector<sd::DataType>& dArgs, bool isInplace, sd::DataType type) {
             VariableSpace variableSpace;
             FlowPath fp;
             variableSpace.setFlowPath(&fp);
@@ -899,16 +899,16 @@ namespace nd4j {
         }
 
         Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs) {
-            return execute(inputs, outputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
         Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, std::initializer_list<double> tArgs) {
-            return execute(inputs, outputs, tArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, tArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, std::initializer_list<nd4j::DataType> dArgs) {
+        Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, std::initializer_list<sd::DataType> dArgs) {
             return execute(inputs, outputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), dArgs);
         }
 
@@ -918,12 +918,12 @@ namespace nd4j {
             for (auto v:tArgs)
                 realArgs.emplace_back(v);
 
-            return execute(inputs, outputs, realArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, realArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
         Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, std::initializer_list<Nd4jLong> iArgs) {
-            return execute(inputs, outputs, std::vector<double>(), iArgs, std::vector<bool>(), std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, std::vector<double>(), iArgs, std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
@@ -932,15 +932,15 @@ namespace nd4j {
             for (auto v:iArgs)
                 realArgs.emplace_back(v);
 
-            return execute(inputs, outputs, std::vector<double>(), realArgs, std::vector<bool>(), std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, std::vector<double>(), realArgs, std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
         Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, std::initializer_list<bool> bArgs) {
-            return execute(inputs, outputs, std::vector<double>(), std::vector<Nd4jLong>(), bArgs, std::vector<nd4j::DataType>());
+            return execute(inputs, outputs, std::vector<double>(), std::vector<Nd4jLong>(), bArgs, std::vector<sd::DataType>());
         }
 
-        Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs, const std::vector<nd4j::DataType> &dArgs, bool isInplace) {
+        Nd4jStatus DeclarableOp::execute(const std::vector<NDArray *> &inputs, const std::vector<NDArray *> &outputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs, const std::vector<sd::DataType> &dArgs, bool isInplace) {
             Context ctx(1);
 
             for (int e = 0; e < inputs.size(); e++) {
@@ -963,49 +963,49 @@ namespace nd4j {
             return execute(&ctx);
         }
 
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs) {
-            return evaluate(inputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs) {
+            return evaluate(inputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<int> iArgs) {
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<int> iArgs) {
             std::vector<Nd4jLong> realArgs;
             for (auto v:iArgs)
                 realArgs.emplace_back(v);
 
-            return evaluate(inputs, std::vector<double>(), realArgs, std::vector<bool>(), std::vector<nd4j::DataType>());
+            return evaluate(inputs, std::vector<double>(), realArgs, std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<Nd4jLong> iArgs) {
-            return evaluate(inputs, std::vector<double>(), iArgs, std::vector<bool>(), std::vector<nd4j::DataType>());
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<Nd4jLong> iArgs) {
+            return evaluate(inputs, std::vector<double>(), iArgs, std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<float> tArgs) {
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<float> tArgs) {
             std::vector<double> realArgs;
             for (auto v:tArgs)
                 realArgs.emplace_back(v);
 
-            return evaluate(inputs, realArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+            return evaluate(inputs, realArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<double> tArgs) {
-            return evaluate(inputs, tArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<nd4j::DataType>());
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<double> tArgs) {
+            return evaluate(inputs, tArgs, std::vector<Nd4jLong>(), std::vector<bool>(), std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<bool> bArgs) {
-            return evaluate(inputs, std::vector<double>(), std::vector<Nd4jLong>(), bArgs, std::vector<nd4j::DataType>());
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<bool> bArgs) {
+            return evaluate(inputs, std::vector<double>(), std::vector<Nd4jLong>(), bArgs, std::vector<sd::DataType>());
         }
 
         template <>
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<nd4j::DataType> bArgs) {
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, std::initializer_list<sd::DataType> bArgs) {
             return evaluate(inputs, std::vector<double>(), std::vector<Nd4jLong>(), std::vector<bool>(), bArgs);
         }
 
-        nd4j::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs, const std::vector<nd4j::DataType> &dArgs, bool isInplace) {
+        sd::ResultSet *DeclarableOp::evaluate(const std::vector<NDArray *> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs, const std::vector<sd::DataType> &dArgs, bool isInplace) {
             VariableSpace variableSpace;
             //ResultSet arrayList;
             FlowPath fp;
@@ -1024,7 +1024,7 @@ namespace nd4j {
             }
 
             Context block(1, &variableSpace, false);
-            block.setDataType(0, nd4j::DataType::FLOAT32);
+            block.setDataType(0, sd::DataType::FLOAT32);
             block.fillInputs(in);
             block.markInplace(isInplace);
             // block.setRNG(ProviderRNG::getInstance().getRNG());
@@ -1058,7 +1058,7 @@ namespace nd4j {
                         auto arr = var->getNDArray();
                         if (!arr->isAttached()) {
                             var->markRemovable(false);
-                            arr->setContext(nd4j::LaunchContext::defaultContext());
+                            arr->setContext(sd::LaunchContext::defaultContext());
                             arrayList->push_back(arr);
                         } else {
                             arrayList->push_back(arr->detach());
@@ -1075,12 +1075,12 @@ namespace nd4j {
             return arrayList;
         }
 
-        nd4j::ResultSet* nd4j::ops::DeclarableOp::execute(const nd4j::OpArgsHolder& holder, bool isInplace) {
+        sd::ResultSet* sd::ops::DeclarableOp::execute(const sd::OpArgsHolder& holder, bool isInplace) {
             // FIXME: add DArgs to OpArgsHolder
-            return evaluate(holder.getInArrs(), holder.getTArgs(), holder.getIArgs(), holder.getBArgs(), std::vector<nd4j::DataType>(), isInplace);
+            return evaluate(holder.getInArrs(), holder.getTArgs(), holder.getIArgs(), holder.getBArgs(), std::vector<sd::DataType>(), isInplace);
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInputDimensionsMatch(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInputDimensionsMatch(Context& block) {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
@@ -1094,7 +1094,7 @@ namespace nd4j {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus nd4j::ops::DeclarableOp::validateInputLengthMatch(Context& block) {
+        Nd4jStatus sd::ops::DeclarableOp::validateInputLengthMatch(Context& block) {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
@@ -1118,7 +1118,7 @@ namespace nd4j {
 
         /*
         template <typename T>
-        int* nd4j::ops::DeclarableOp::calculateOutputShape(int* inputShape, nd4j::graph::Block& block) {
+        int* sd::ops::DeclarableOp::calculateOutputShape(int* inputShape, sd::graph::Block& block) {
             // default implementation suits transform, so just returns the same shape
 
             int* newshape;

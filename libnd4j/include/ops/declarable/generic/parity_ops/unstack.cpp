@@ -18,26 +18,28 @@
 // @author raver119@gmail.com
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_unstack)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ConstantTadHelper.h>
-#include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(unstack, 1, -1, false, 0, 1) {
             auto input = INPUT_VARIABLE(0);
+
             auto dim = INT_ARG(0);
             if (dim < 0)
                 dim += input->rankOf();
+
 
             REQUIRE_TRUE(dim < input->rankOf(), 0, "Unstack dimension should be lower then rank of input %i, but got dimension=%i !", input->rankOf(), dim);
             REQUIRE_TRUE(dim >= 0, 0, "Unstack dimension should be non-negative value, but got %i !", dim);
 
             if(input->isEmpty())
                 return Status::OK();
+
             std::vector<int> dims;
             for (int e = 0; e < input->rankOf(); e++)
                 if (e != dim)
@@ -57,6 +59,7 @@ namespace nd4j {
                 auto tadAtE = tads.at(e);
 
                 outE->assign(tadAtE);
+
                 this->storeResult(block, e, *outE);
             }
 
@@ -67,11 +70,14 @@ namespace nd4j {
 
         DECLARE_SHAPE_FN(unstack) {
             auto inShape = inputShape->at(0);
+
             auto dim = INT_ARG(0);
             if (dim < 0)
                 dim += shape::rank(inShape);
+
             REQUIRE_TRUE(dim < inShape[0], 0, "UNSTACK op: dimension should be lower then rank of input %i, but got dimension=%i !", inShape[0], dim);
             REQUIRE_TRUE(dim >= 0, 0, "UNSTACK op: dimension should be non-negative value, but got %i !", dim);
+
             if(ArrayOptions::arrayType(inShape) == ArrayType::EMPTY) {
                 if(shape::shapeOf(inShape)[dim] == 0)
                     return SHAPELIST();
@@ -80,6 +86,7 @@ namespace nd4j {
                 for(uint i = 0; i < shape::rank(inShape); ++i)
                     if(i != dim)
                         outShape.push_back(shape::shapeOf(inShape)[i]);
+
                 auto result = SHAPELIST();
                 for(uint i = 0; i < numTads; ++i)
                     result->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(ArrayOptions::dataType(inShape), shape::order(inShape), outShape));
@@ -97,11 +104,14 @@ namespace nd4j {
                     result->push_back(ConstantShapeHelper::getInstance()->scalarShapeInfo(ArrayOptions::dataType(inShape)));
                 return result;
             }
-            auto tadPack = nd4j::ConstantTadHelper::getInstance()->tadForDimensions(inShape, dims);
+
+            auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(inShape, dims);
             auto numTads = tadPack.numberOfTads();
+
             std::vector<Nd4jLong> shape(shape::rank(tadPack.primaryShapeInfo()));
             for (int e = 0; e < shape::rank(tadPack.primaryShapeInfo()); e++)
                 shape[e] = shape::shapeOf(tadPack.primaryShapeInfo())[e];
+
             // remove leading and trailing 1
             if (inShape[0] == 2 && shape.size() == 2) {
                 if (shape[0] == 1) {
@@ -110,6 +120,7 @@ namespace nd4j {
                     shape.erase(shape.end());
                 }
             }
+
             auto result = SHAPELIST();
             for (int e = 0; e < numTads; e++) {
                 auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(ArrayOptions::dataType(inShape), shape::order(inShape), shape);

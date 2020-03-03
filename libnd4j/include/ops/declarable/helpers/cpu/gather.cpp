@@ -21,16 +21,16 @@
 #include <ops/declarable/helpers/gather.h>
 #include <numeric>
 #include <execution/Threads.h>
-#include <ShapeUtils.h>
-#include <ConstantTadHelper.h>
+#include <helpers/ShapeUtils.h>
+#include <helpers/ConstantTadHelper.h>
 #include <performance/benchmarking/global_timers.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
 ////////////////////////////////////////////////////////////////////////
-void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs) {
+void gather(sd::LaunchContext * context, const NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs) {
     GlobalTimers* timers = GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 7);
 
