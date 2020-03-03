@@ -35,7 +35,7 @@ template <typename T1, typename T2, typename T3>
 static  void usualGemm(const NDArray* vA, const NDArray* vB, NDArray* vC,
                                  const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
                                  const double alpha, const double beta) {
-    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 4);
 
     const T1* A = vA->bufferAsT<T1>();
@@ -187,7 +187,7 @@ static void usualDot(const Nd4jLong length, const double alpha, const void* vX, 
 //////////////////////////////////////////////////////////////////////////////
 // MXK x KxN = MxN
 NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, const double alpha, const double beta, const char outOrder) {
-    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 4);
     if (A->dataType() != B->dataType())
         throw datatype_exception::build("mmulMxM expects all data types to be the same", A->dataType(), B->dataType());
@@ -449,7 +449,7 @@ static void batchedGemm(const NDArray* vA, const NDArray* vB,  NDArray* vC,
                         const int* aBatchDims, const int* bBatchDims, const int* cBatchDims,
                         const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
                         const double alpha, const double beta) {
-    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
 timers->stopWatch(__LINE__, 4);
 
     const T1* A = vA->bufferAsT<T1>();
@@ -535,7 +535,7 @@ timers->stopWatch(__LINE__, 4);
 //    [M,K] x [bS,K,N] = [bS,M,N]
 // bS could stand for several axes
 NDArray* MmulHelper::mmulNxN(const NDArray* A, const NDArray* B, NDArray* C, const double alpha, const double beta, const char outOrder) {
-    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
 timers->stopWatch(__LINE__, 4);
     const int aRank = A->rankOf();
     const int bRank = B->rankOf();

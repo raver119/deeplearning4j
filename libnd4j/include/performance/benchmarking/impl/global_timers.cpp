@@ -2,7 +2,7 @@
 
 #include "../global_timers.h"
 
-namespace nd4j {
+namespace sd {
 
 GlobalTimers::GlobalTimers()
 {

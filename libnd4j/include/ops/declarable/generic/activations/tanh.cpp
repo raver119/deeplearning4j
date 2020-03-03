@@ -28,7 +28,7 @@
 namespace sd {
         namespace ops {
         CONFIGURABLE_OP_IMPL(tanh, 1, 1, true, 0, 0) {
-            nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+            sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
             timers->stopWatch(__LINE__, 9);
 
             auto first = INPUT_VARIABLE(0);

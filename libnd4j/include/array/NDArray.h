@@ -1518,7 +1518,7 @@ FORCEINLINE R NDArray::templatedGet(void *buffer, Nd4jLong index) const {
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(Nd4jLong *shapeInfo) {
-    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 13);
     auto buffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(shapeInfo);
     timers->stopWatch(__LINE__, 13);

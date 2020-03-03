@@ -43,7 +43,7 @@ ND4J_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
 ////////////////////////////////////////////////////////////////////////
 // copy constructor
 NDArray::NDArray(const NDArray& other) {
-    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 13);
 
     _context = other._context;
@@ -196,7 +196,7 @@ NDArray::NDArray(sd::DataType dtype, sd::LaunchContext* context, const bool isSc
 //////////////////////////////////////////////////////////////////////////
 // move constructor
 NDArray::NDArray(NDArray&& other) noexcept {
-    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 13);
 
     _isView       = other._isView;
@@ -2001,7 +2001,7 @@ bool NDArray::permutei(const std::vector<int>& dimensions) {
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const std::initializer_list<Nd4jLong>& dimensions) {
-    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 13);
     std::vector<Nd4jLong> vec(dimensions);
     timers->stopWatch(__LINE__, 13);
@@ -3218,7 +3218,7 @@ void NDArray::applyBroadcast(sd::broadcast::Ops op, const std::initializer_list<
 
 ////////////////////////////////////////////////////////////////////////
 void* NDArray::operator new(size_t i) {
-nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
 timers->stopWatch(__LINE__, 13);
     if (sd::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached()) {
         timers->stopWatch(__LINE__, 13);

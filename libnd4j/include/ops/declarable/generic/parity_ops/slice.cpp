@@ -28,7 +28,7 @@
 namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(slice, 1, 1, false, 0, -2) {
-            nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+            sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
             timers->stopWatch(__LINE__, 1);
             auto input = INPUT_VARIABLE(0);
             timers->stopWatch(__LINE__, 1);

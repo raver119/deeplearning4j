@@ -10,10 +10,10 @@
 #include <map>
 
 
-namespace nd4j {
+namespace sd {
 class GlobalTimers {
 private:
-    static nd4j::GlobalTimers* _instance;
+    static GlobalTimers* _instance;
     const int num_timers = 20000;
 
 public:

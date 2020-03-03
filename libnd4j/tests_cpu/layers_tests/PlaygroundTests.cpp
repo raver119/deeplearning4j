@@ -248,7 +248,7 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-    nd4j::GlobalTimers::getInstance()->displayTimers();
+    sd::GlobalTimers::getInstance()->displayTimers();
 }
 
 
@@ -350,7 +350,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
 
-    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
     //timers->displayTimers();
 
     /*
@@ -488,7 +488,7 @@ TEST_F(PlaygroundTests, test_matmul_perf_1) {
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    nd4j::GlobalTimers::getInstance()->displayTimers();
+    sd::GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -507,7 +507,7 @@ TEST_F(PlaygroundTests, test_matmul_perf_2) {
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    nd4j::GlobalTimers::getInstance()->displayTimers();
+    sd::GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -529,7 +529,7 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
     ASSERT_TRUE(exp.equalsTo(z));
 
-    nd4j::GlobalTimers::getInstance()->displayTimers();
+    sd::GlobalTimers::getInstance()->displayTimers();
     delete result;
 }
 
@@ -537,7 +537,7 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
 
 TEST_F(PlaygroundTests, test_permut_perf) {
-    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
+    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 17);
 
     NDArray array  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
@@ -558,7 +558,7 @@ TEST_F(PlaygroundTests, test_permut_perf) {
     timers->stopWatch(__LINE__, 17);
     NDArray* yT = new NDArray(x->permute(permut));
 timers->stopWatch(__LINE__, 17);
-    nd4j::GlobalTimers::getInstance()->displayTimers();
+    sd::GlobalTimers::getInstance()->displayTimers();
 }
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
