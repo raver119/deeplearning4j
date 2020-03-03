@@ -3218,7 +3218,7 @@ void NDArray::applyBroadcast(sd::broadcast::Ops op, const std::initializer_list<
 
 ////////////////////////////////////////////////////////////////////////
 void* NDArray::operator new(size_t i) {
-sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+
 
     if (sd::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached()) {
 

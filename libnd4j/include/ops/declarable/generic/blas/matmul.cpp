@@ -32,7 +32,7 @@ namespace sd {
 
 //////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(matmul, 2, 1, false, 0, -2) {
-    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+    
 
 
     auto x = INPUT_VARIABLE(0);

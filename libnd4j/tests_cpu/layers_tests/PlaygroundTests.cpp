@@ -350,7 +350,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
 
-    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+
     //timers->displayTimers();
 
     /*

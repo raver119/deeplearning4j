@@ -199,7 +199,7 @@ NDArray* sd::MmulHelper::tensorDot(const sd::NDArray* a, const sd::NDArray* b, c
 
 //////////////////////////////////////////////////////////////////////////
 sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C , const double alpha, const double beta, const char outOrder) {
-    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+    
 
     int lenDim;
     const int aRank = A->rankOf();
@@ -250,7 +250,7 @@ sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::ND
 //////////////////////////////////////////////////////////////////////////
     void MmulHelper::matmul(const sd::NDArray* x, const sd::NDArray* y, sd::NDArray* z, const bool transX, const bool transY) {
         
-	sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+	
 
 
 	int xRank = x->rankOf();

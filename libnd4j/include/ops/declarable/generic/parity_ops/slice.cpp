@@ -28,7 +28,7 @@
 namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(slice, 1, 1, false, 0, -2) {
-            sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+            
 
             auto input = INPUT_VARIABLE(0);
 

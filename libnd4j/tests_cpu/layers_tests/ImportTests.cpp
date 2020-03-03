@@ -97,7 +97,7 @@ TEST_F(ImportTests, LstmMnist) {
     for(int i=0; i<10; i++)
         nd4j_debug("(%d): %f\n", i, rvec[i]);
     ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
-    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+
     //timers->displayTimers();
     //0.046829
 }

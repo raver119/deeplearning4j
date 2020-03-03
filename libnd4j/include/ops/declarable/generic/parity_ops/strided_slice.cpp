@@ -301,11 +301,8 @@ namespace sd {
 
 
         CUSTOM_OP_IMPL(strided_slice, 1, 1, false, 0, 5) {
-            sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
-
 
             auto x = INPUT_VARIABLE(0);
-
             auto z = OUTPUT_VARIABLE(0);
 
             if (z->isEmpty()) {

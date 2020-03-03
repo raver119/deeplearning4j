@@ -33,7 +33,7 @@ namespace ops  {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(gather, 1, 1, false, 0, -2) {
-    sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+    
 
 	auto input   = INPUT_VARIABLE(0);
     auto indices = block.width() > 1 ? INPUT_VARIABLE(1) : nullptr;

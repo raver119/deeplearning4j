@@ -28,7 +28,7 @@
 namespace sd {
         namespace ops {
         CONFIGURABLE_OP_IMPL(tanh, 1, 1, true, 0, 0) {
-            sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
+            
 
 
             auto first = INPUT_VARIABLE(0);
