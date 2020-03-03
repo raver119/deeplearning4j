@@ -39,7 +39,7 @@ if (SD_CUDA)
     endif()
 endif()
 
-if (AURORA_BUILD)
+if (SD_AURORA_BUILD)
     # nothing
 elseif (APPLE)
     set(CMAKE_CXX_FLAGS  " -fPIC  -fmax-errors=2 -D__APPLE_OS__=true")
