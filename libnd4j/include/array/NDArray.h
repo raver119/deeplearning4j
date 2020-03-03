@@ -1518,29 +1518,20 @@ FORCEINLINE R NDArray::templatedGet(void *buffer, Nd4jLong index) const {
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(Nd4jLong *shapeInfo) {
-    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 13);
     auto buffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(shapeInfo);
-    timers->stopWatch(__LINE__, 13);
     _shapeInfo = buffer.primaryAsT<Nd4jLong>();
-    timers->stopWatch(__LINE__, 13);
     _shapeInfoD = buffer.specialAsT<Nd4jLong>();
-    timers->stopWatch(__LINE__, 13);
 
     if (shapeInfo != nullptr) {
-        timers->stopWatch(__LINE__, 13);
         _dataType = ArrayOptions::dataType(_shapeInfo);
-        timers->stopWatch(__LINE__, 13);
         if(ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
             _length = 0;
         else
             _length = shape::length(_shapeInfo);
-        timers->stopWatch(__LINE__, 13);
     }
     else {
         _dataType = sd::DataType::INHERIT;
         _length = 0;
-        timers->stopWatch(__LINE__, 13);
     }
 }
 

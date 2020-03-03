@@ -55,33 +55,33 @@ namespace sd {
 
     ConstantDataBuffer ConstantShapeHelper::bufferForShapeInfo(const ShapeDescriptor &descriptor) {
         int deviceId = 0;
-        sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-        timers->stopWatch(__LINE__, 15);
+
+
 
         _mutex.lock();
 
-        timers->stopWatch(__LINE__, 15);
+
         if (_cache[deviceId].count(descriptor) == 0) {
             auto hPtr = descriptor.toShapeInfo();
-            timers->stopWatch(__LINE__, 15);
+
             ConstantDataBuffer buffer(hPtr, nullptr, shape::shapeInfoLength(hPtr)*sizeof(Nd4jLong), DataType::INT64);
-            timers->stopWatch(__LINE__, 15);
+
             ShapeDescriptor descriptor1(descriptor);
-            timers->stopWatch(__LINE__, 15);
+
             _cache[deviceId][descriptor1] = buffer;
-            timers->stopWatch(__LINE__, 15);
+
             auto r = _cache[deviceId][descriptor1];
-            timers->stopWatch(__LINE__, 15);
+
             _mutex.unlock();
-            timers->stopWatch(__LINE__, 15);
+
 
             return r;
         } else {
-            timers->stopWatch(__LINE__, 15);
+
             auto r = _cache[deviceId].at(descriptor);
-            timers->stopWatch(__LINE__, 15);
+
             _mutex.unlock();
-            timers->stopWatch(__LINE__, 15);
+
 
             return r;
         }

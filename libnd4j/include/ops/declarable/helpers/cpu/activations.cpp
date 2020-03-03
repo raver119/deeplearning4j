@@ -229,7 +229,7 @@ void softMaxForVector(sd::LaunchContext * context, const NDArray& input, NDArray
     template <typename T>
     FORCEINLINE void softmax_loop(T *input, T *output, Nd4jLong *offsets, Nd4jLong numOfSubArrs, uint32_t tadLen) {
     sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 5);
+
 
         auto func = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
@@ -258,9 +258,9 @@ void softMaxForVector(sd::LaunchContext * context, const NDArray& input, NDArray
                     outBuff[j] /= sum;
             }
         };
-	timers->stopWatch(__LINE__, 5);
+
         samediff::Threads::parallel_tad(func,0, numOfSubArrs);
-        timers->stopWatch(__LINE__, 5);
+
     }
 
 //////////////////////////////////////////////////////////////////////////
@@ -268,52 +268,52 @@ template <typename T>
 static void softmax_(sd::LaunchContext * context, const NDArray& input, NDArray& output, const int dimension) {
 sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
     const int rank = input.rankOf();
-    timers->stopWatch(__LINE__, 5);
+
 
     if(input.isVector()) {
-        timers->stopWatch(__LINE__, 5);
+
 
         if(rank == 1 || input.sizeAt(dimension) != 1)
             softMaxForVector_<T>(input.getBuffer(), input.getShapeInfo(), output.buffer(), output.getShapeInfo());
         else
             output = 1.;
-        timers->stopWatch(__LINE__, 5);
+
     }
     else if(input.isSameShapeStrict(output)) {
 
-        timers->stopWatch(__LINE__, 5);
+
         TadPack tadPack  = sd::ConstantTadHelper::getInstance()->tadForDimensions(input.getShapeInfo(), dimension);
-        timers->stopWatch(__LINE__, 5);
+
         Nd4jLong* tadShapeInfo  = tadPack.primaryShapeInfo();
-        timers->stopWatch(__LINE__, 5);
+
         Nd4jLong* tadOffsets    = tadPack.primaryOffsets();
-        timers->stopWatch(__LINE__, 5);
+
         const uint numOfSubArrs = tadPack.numberOfTads();
-        timers->stopWatch(__LINE__, 5);
+
         const uint tadLen       = shape::length(tadShapeInfo);
-        timers->stopWatch(__LINE__, 5);
+
 
         if(shape::elementWiseStride(tadShapeInfo) == 1){
-            timers->stopWatch(__LINE__, 5);
+
             T *inBuff = input.bufferAsT<T>();
-            timers->stopWatch(__LINE__, 5);
+
             T *outBuff = output.bufferAsT<T>();
-            timers->stopWatch(__LINE__, 5);
+
 
             softmax_loop(inBuff, outBuff, tadOffsets, numOfSubArrs, tadLen);
-            timers->stopWatch(__LINE__, 5);
+
         }
         else {
 
             uint inShapeInfoCast[MAX_RANK];
-            timers->stopWatch(__LINE__, 5);
+
             bool canCast = sd::DataTypeUtils::castShapeInfo(tadShapeInfo, inShapeInfoCast);
 
-            timers->stopWatch(__LINE__, 5);
+
             auto offsets = new Nd4jLong[tadLen];
-            timers->stopWatch(__LINE__, 5);
+
             shape::calcOffsets(tadShapeInfo, offsets);
-            timers->stopWatch(__LINE__, 5);
+
 
             auto func = PRAGMA_THREADS_FOR {
                 for (auto i = start; i < stop; i++) {
@@ -336,27 +336,27 @@ sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
                         outBuff[offsets[j]] /= sum;
                 }
             };
-        timers->stopWatch(__LINE__, 5);
+
 
             samediff::Threads::parallel_tad(func, 0, numOfSubArrs);
-            timers->stopWatch(__LINE__, 5);
+
 
             delete []offsets;
-            timers->stopWatch(__LINE__, 5);
+
         }
     }
     else {
-	timers->stopWatch(__LINE__, 5);        
+
         NDArray max = input.reduceAlongDimension(sd::reduce::Max, {dimension}, true);
-	timers->stopWatch(__LINE__, 5);        
+
         input.applyTrueBroadcast(sd::BroadcastOpsTuple::Subtract(), max, output, false);
-	timers->stopWatch(__LINE__, 5);        
+
         output.applyTransform(sd::transform::Exp, output);
-	timers->stopWatch(__LINE__, 5);        
+
         NDArray sum = output.reduceAlongDimension(sd::reduce::Sum, {dimension}, true);
-	timers->stopWatch(__LINE__, 5);        
+
         output /= sum;
-	timers->stopWatch(__LINE__, 5);        
+
     }
 }
 

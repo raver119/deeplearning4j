@@ -34,12 +34,12 @@ namespace ops  {
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(gather, 1, 1, false, 0, -2) {
     sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
-timers->stopWatch(__LINE__, 6);
+
 	auto input   = INPUT_VARIABLE(0);
     auto indices = block.width() > 1 ? INPUT_VARIABLE(1) : nullptr;
 	auto output  = OUTPUT_VARIABLE(0);
 
-    timers->stopWatch(__LINE__, 6);
+
     const bool checkIndices = block.getBArguments()->empty() ? false : B_ARG(0);
 
 	//Edge case: empty indices -> empty output
@@ -48,7 +48,7 @@ timers->stopWatch(__LINE__, 6);
 		return Status::OK();	//No op
 	}
 
-    timers->stopWatch(__LINE__, 6);
+
     const int numOfIntArgs = block.numI();
 
     std::vector<int> intArgs;
@@ -63,35 +63,35 @@ timers->stopWatch(__LINE__, 6);
 				intArgs.emplace_back(block.getIArguments()->at(i));
 	}
 
-    timers->stopWatch(__LINE__, 6);
+
     const int inputRank = input->rankOf();
 	if(intArgs[0] < 0)
         intArgs[0] += inputRank;
 
-    timers->stopWatch(__LINE__, 6);
+
     // input validation
     REQUIRE_TRUE(intArgs[0] < inputRank, 0, "GATHER op: input axis must be smaller than input array rank, but got %i and %i correspondingly!", intArgs[0], inputRank);
     REQUIRE_TRUE(indices != nullptr || numOfIntArgs > 1, 0, "GATHER op: indices should be provided either as additional input array or as IntArguments !");
 
-    timers->stopWatch(__LINE__, 6);
+
     if(checkIndices) {
 
 		NDArray* pIndices = indices;
-        timers->stopWatch(__LINE__, 6);
+
         if(indices == nullptr)
             pIndices = new NDArray(input->ordering(), {static_cast<int>(intArgs.size()) - 1}, std::vector<double>(intArgs.begin() + 1, intArgs.end()), DataType::INT64, block.launchContext());
-        timers->stopWatch(__LINE__, 6);
+
         const Nd4jLong numOfBadIndx = helpers::checkIndices(block.launchContext(), *pIndices, *input, intArgs[0]);
-        timers->stopWatch(__LINE__, 6);
+
         REQUIRE_TRUE(numOfBadIndx == 0, 0, "GATHER OP: please check elements of indices-array, total number of wrong elements is %lld!", numOfBadIndx);
-        timers->stopWatch(__LINE__, 6);
+
         if(indices == nullptr)
             delete pIndices;
-        timers->stopWatch(__LINE__, 6);
+
     }
-timers->stopWatch(__LINE__, 6);
+
 	helpers::gather(block.launchContext(), input, indices, output, intArgs);
-    timers->stopWatch(__LINE__, 6);
+
 
     return Status::OK();
 }

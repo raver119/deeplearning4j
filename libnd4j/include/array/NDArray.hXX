@@ -43,27 +43,27 @@ ND4J_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
 ////////////////////////////////////////////////////////////////////////
 // copy constructor
 NDArray::NDArray(const NDArray& other) {
-    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 13);
+
+
 
     _context = other._context;
     _offset  = 0;
-    timers->stopWatch(__LINE__, 13);
+
 
     setShapeInfo(ShapeDescriptor(other.dataType(), other.ordering(), other.shapeOf(), other.rankOf()));
-    timers->stopWatch(__LINE__, 13);
+
 
     if(!isEmpty()) {
-        timers->stopWatch(__LINE__, 13);
+
         _buffer = std::make_shared<DataBuffer>(other.lengthOf() * other.sizeOfT(), other.dataType(), other.getContext()->getWorkspace());
-        timers->stopWatch(__LINE__, 13);
+
         this->assign(&other);
-        timers->stopWatch(__LINE__, 13);
+
     }
     else
-        timers->stopWatch(__LINE__, 13);
+
         _buffer = std::make_shared<DataBuffer>();
-        timers->stopWatch(__LINE__, 13);
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -196,33 +196,33 @@ NDArray::NDArray(sd::DataType dtype, sd::LaunchContext* context, const bool isSc
 //////////////////////////////////////////////////////////////////////////
 // move constructor
 NDArray::NDArray(NDArray&& other) noexcept {
-    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 13);
+
+
 
     _isView       = other._isView;
-    timers->stopWatch(__LINE__, 13);
+
 
     _buffer       = other._buffer;
-    timers->stopWatch(__LINE__, 13);
+
     _shapeInfo    = other._shapeInfo;
-    timers->stopWatch(__LINE__, 13);
+
     _shapeInfoD   = other._shapeInfoD;
-    timers->stopWatch(__LINE__, 13);
+
     _context      = other._context;
-    timers->stopWatch(__LINE__, 13);
+
     _dataType     = other._dataType;
-    timers->stopWatch(__LINE__, 13);
+
     _length       = other._length;
-    timers->stopWatch(__LINE__, 13);
+
     _offset       = other._offset;
-    timers->stopWatch(__LINE__, 13);
+
 
     other._buffer = std::make_shared<DataBuffer>();
-    timers->stopWatch(__LINE__, 13);
+
     other._shapeInfo = other._shapeInfoD = nullptr;
-    timers->stopWatch(__LINE__, 13);
+
     other._length = 0;
-    timers->stopWatch(__LINE__, 13);
+
 
 }
 
@@ -2001,16 +2001,16 @@ bool NDArray::permutei(const std::vector<int>& dimensions) {
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::permutei(const std::initializer_list<Nd4jLong>& dimensions) {
-    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 13);
+
+
     std::vector<Nd4jLong> vec(dimensions);
-    timers->stopWatch(__LINE__, 13);
+
     std::vector<int> ivec(dimensions.size());
-    timers->stopWatch(__LINE__, 13);
+
 
     for (int e = 0; e < vec.size(); e++)
         ivec[e] = static_cast<int>(vec[e]);
-    timers->stopWatch(__LINE__, 13);
+
 
     return permutei(ivec);
 }
@@ -3219,19 +3219,19 @@ void NDArray::applyBroadcast(sd::broadcast::Ops op, const std::initializer_list<
 ////////////////////////////////////////////////////////////////////////
 void* NDArray::operator new(size_t i) {
 sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
-timers->stopWatch(__LINE__, 13);
+
     if (sd::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached()) {
-        timers->stopWatch(__LINE__, 13);
+
         sd::memory::Workspace* ws = sd::memory::MemoryRegistrator::getInstance()->getWorkspace();
-        timers->stopWatch(__LINE__, 13);
+
         return ws->allocateBytes((Nd4jLong) i);
     }
     else {
-        timers->stopWatch(__LINE__, 13);
+
         auto p = malloc(i);
-        timers->stopWatch(__LINE__, 13);
+
         CHECK_ALLOC(p, "Failed to allocate new NDArray", i);
-        timers->stopWatch(__LINE__, 13);
+
         return p;
     }
 }

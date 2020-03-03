@@ -29,17 +29,17 @@ namespace sd {
         namespace ops {
         CONFIGURABLE_OP_IMPL(tanh, 1, 1, true, 0, 0) {
             sd::GlobalTimers* timers = sd::GlobalTimers::getInstance();
-            timers->stopWatch(__LINE__, 9);
+
 
             auto first = INPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 9);
+
             auto z = OUTPUT_VARIABLE(0);
-            timers->stopWatch(__LINE__, 9);
+
 
             first->applyTransform(sd::transform::Tanh, *z);
-            timers->stopWatch(__LINE__, 9);
+
             STORE_RESULT(*z);
-            timers->stopWatch(__LINE__, 9);
+
 
             return Status::OK();
         }

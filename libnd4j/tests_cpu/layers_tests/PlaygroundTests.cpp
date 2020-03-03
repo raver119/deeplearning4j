@@ -537,27 +537,27 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
 
 TEST_F(PlaygroundTests, test_permut_perf) {
-    sd::GlobalTimers *timers = sd::GlobalTimers::getInstance();
-    timers->stopWatch(__LINE__, 17);
+
+
 
     NDArray array  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
-    timers->stopWatch(__LINE__, 17);
+
     NDArray* x = &array;
-    timers->stopWatch(__LINE__, 17);
+
     const int rank = x->rankOf();
-    timers->stopWatch(__LINE__, 17);
+
     std::vector<int> permut(rank);
-    timers->stopWatch(__LINE__, 17);
+
     for (int i = 0; i < rank-2; ++i)
         permut[i] = i;
-    timers->stopWatch(__LINE__, 17);
+
     permut[rank-2] = rank - 1;
     permut[rank-1] = rank - 2;
 
     x->linspace(1.);
-    timers->stopWatch(__LINE__, 17);
+
     NDArray* yT = new NDArray(x->permute(permut));
-timers->stopWatch(__LINE__, 17);
+
     sd::GlobalTimers::getInstance()->displayTimers();
 }
 
