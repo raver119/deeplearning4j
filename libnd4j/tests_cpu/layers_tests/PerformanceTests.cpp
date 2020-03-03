@@ -203,19 +203,19 @@ TEST_F(PerformanceTests, subarray_perfs) {
     for(int i = 0; i < y5.lengthOf(); ++i)
         ASSERT_TRUE(y5.e<float>(i) == buffExpY5[i]);
 
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
 }
 
 
 TEST_F(PerformanceTests, concat_perfs) {
-    auto timers = nd4j::GlobalTimers::getInstance();
+    auto timers = nd4j::nd4j::GlobalTimers::getInstance();
     auto x0 = NDArrayFactory::create<double>('c', {1,28});
     auto x1 = NDArrayFactory::create<double>('c', {1,128});
 
     x0.linspace(1);
     x1.linspace(1);
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1}, {}, {1});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
@@ -227,13 +227,13 @@ TEST_F(PerformanceTests, concat_perfs) {
 
 
 TEST_F(PerformanceTests, split_perfs) {
-    auto timers = nd4j::GlobalTimers::getInstance();
+    auto timers = nd4j::nd4j::GlobalTimers::getInstance();
     auto input = NDArrayFactory::create<double>('c', {10},{1.f,2.f,3.f,4.f,5.f,6.f,7.f,8.f,9.f,10.f});
     auto axis = NDArrayFactory::create<double>(-1);
     auto exp1 = NDArrayFactory::create<double>('c', {5}, {1.f,2.f,3.f,4.f,5.f});
     auto exp2 = NDArrayFactory::create<double>('c', {5}, {6.f,7.f,8.f,9.f,10.f});
 
-    nd4j::ops::split op;
+    sd::ops::split op;
     auto results = op.evaluate({&input, &axis}, {}, {2}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, results->status());
@@ -253,7 +253,7 @@ TEST_F(PerformanceTests, split_perfs) {
 
 
 TEST_F(PerformanceTests, stack_1d_perfs) {
-    auto timers = nd4j::GlobalTimers::getInstance();
+    auto timers = nd4j::nd4j::GlobalTimers::getInstance();
     float buff1[]   = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12};
     float buff2[]   = {13,14,16,16,17,18,19,20,21,22,23,24};
     float expBuff[] = {1,2,3,4, 13, 14, 16, 16, 5,6,7,8, 17, 18, 19, 20, 9, 10, 11, 12, 21, 22, 23, 24};
@@ -268,7 +268,7 @@ TEST_F(PerformanceTests, stack_1d_perfs) {
     NDArray input2(buff2, shape2);
     NDArray expected(expBuff, expShape);
 
-    nd4j::ops::stack op;
+    sd::ops::stack op;
     auto results = op.evaluate({&input1, &input2}, {}, {1});
     auto output = results->at(0);
 
@@ -282,14 +282,14 @@ TEST_F(PerformanceTests, stack_1d_perfs) {
 
 
 TEST_F(PerformanceTests, stack_2d_perfs) {
-    auto timers = nd4j::GlobalTimers::getInstance();
+    auto timers = nd4j::nd4j::GlobalTimers::getInstance();
     auto t = NDArrayFactory::create<float>('c', {1, 1}, {1.0f});
     auto u = NDArrayFactory::create<float>('c', {1, 1}, {2.0f});
     auto v = NDArrayFactory::create<float>('c', {1, 1}, {3.0f});
     auto w = NDArrayFactory::create<float>('c', {1, 1}, {4.0f});
     auto exp = NDArrayFactory::create<float>('c', {4, 1, 1}, {1, 2, 3, 4});
 
-    nd4j::ops::stack op;
+    sd::ops::stack op;
     auto result = op.evaluate({&t, &u, &v, &w}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
 

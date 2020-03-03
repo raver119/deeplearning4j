@@ -5,16 +5,15 @@
 #define LIBND4J_GLOBAL_TIMERS_H
 
 #include <chrono>
-#include <dll.h>
 #include <helpers/logger.h>
 #include <string>
 #include <map>
 
 
 namespace nd4j {
-class ND4J_EXPORT GlobalTimers {
+class GlobalTimers {
 private:
-    static GlobalTimers* _instance;
+    static nd4j::GlobalTimers* _instance;
     const int num_timers = 20000;
 
 public:

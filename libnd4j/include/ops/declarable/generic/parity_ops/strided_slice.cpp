@@ -301,7 +301,7 @@ namespace sd {
 
 
         CUSTOM_OP_IMPL(strided_slice, 1, 1, false, 0, 5) {
-            GlobalTimers* timers = GlobalTimers::getInstance();
+            nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
             timers->stopWatch(__LINE__, 12);
 
             auto x = INPUT_VARIABLE(0);

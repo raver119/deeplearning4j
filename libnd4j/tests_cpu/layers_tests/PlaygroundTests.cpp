@@ -73,7 +73,7 @@ TEST_F(PlaygroundTests, test_split_1) {
     auto outC = outA.ulike();
     auto outD = outA.ulike();
 
-    nd4j::ops::split op;
+    sd::ops::split op;
 
     auto timeStart = std::chrono::system_clock::now();
 
@@ -92,7 +92,7 @@ TEST_F(PlaygroundTests, test_concat_1) {
     auto v = NDArrayFactory::create<int>(1);
     auto z = NDArrayFactory::create<double>('c', {1, 156});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&t, &u, &v}, {&z}, {true});
@@ -117,7 +117,7 @@ TEST_F(PlaygroundTests, test_gather_1) {
     x.linspace(1.0f, 0.3f);
 
 
-    nd4j::ops::gather op;
+    sd::ops::gather op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&x, &y}, {&z});
@@ -136,7 +136,7 @@ TEST_F(PlaygroundTests, test_matmul_1) {
     x.linspace(1.0f, 0.3f);
     y.linspace(1.0f, 0.2f);
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&x, &y}, {&z}, {0, 0});
@@ -156,7 +156,7 @@ TEST_F(PlaygroundTests, test_matmul_2) {
     auto y2 = NDArrayFactory::create<float>('c', {768, 768});
     auto z2 = NDArrayFactory::create<float>('c', {512, 768});
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto timeStart1 = std::chrono::system_clock::now();
 
     op.execute({&x1, &y1}, {&z1}, {0, 0});
@@ -181,7 +181,7 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
 
     x.assign(1.f);
 
-    nd4j::ops::reduce_mean op;
+    sd::ops::reduce_mean op;
 
     auto timeStart = std::chrono::system_clock::now();
 
@@ -248,7 +248,7 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
 }
 
 
@@ -350,7 +350,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
 
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     //timers->displayTimers();
 
     /*
@@ -444,7 +444,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     std::vector<Nd4jLong> values;
     Context ctx(1);
 
-    nd4j::ops::biasadd op;
+    sd::ops::biasadd op;
 
     for (int e = 0; e < 1000; e++) {
         auto x = aX[e < pool ? e : e % pool];
@@ -454,7 +454,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
         auto timeStart = std::chrono::system_clock::now();
 
         //op.execute({x, y}, {z});
-        nd4j::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
@@ -481,14 +481,14 @@ TEST_F(PlaygroundTests, test_matmul_perf_1) {
     x.linspace(1.);
     y.linspace(0.5, 0.5);
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto results = op.evaluate({&x, &y}, {}, {});
     auto z = results->at(0);
 
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -500,14 +500,14 @@ TEST_F(PlaygroundTests, test_matmul_perf_2) {
     x.linspace(1.);
     y.linspace(0.5, 0.5);
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto results = op.evaluate({&x, &y}, {0, 1});
     auto z = results->at(0);
 
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -521,7 +521,7 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
     matrix.linspace(1);
 
-    nd4j::ops::strided_slice op;
+    sd::ops::strided_slice op;
     auto result = op.evaluate({&matrix, &b, &e, &s}, {}, {0, 0, 0, 0, 1});
     ASSERT_EQ(Status::OK(), result->status());
 
@@ -529,7 +529,7 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
     ASSERT_TRUE(exp.equalsTo(z));
 
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
     delete result;
 }
 
@@ -537,7 +537,7 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
 
 TEST_F(PlaygroundTests, test_permut_perf) {
-    GlobalTimers *timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 17);
 
     NDArray array  = NDArrayFactory::create<double>('c', {4, 12, 128, 64});
@@ -558,7 +558,7 @@ TEST_F(PlaygroundTests, test_permut_perf) {
     timers->stopWatch(__LINE__, 17);
     NDArray* yT = new NDArray(x->permute(permut));
 timers->stopWatch(__LINE__, 17);
-    GlobalTimers::getInstance()->displayTimers();
+    nd4j::GlobalTimers::getInstance()->displayTimers();
 }
 
 TEST_F(PlaygroundTests, test_broadcast_1) {

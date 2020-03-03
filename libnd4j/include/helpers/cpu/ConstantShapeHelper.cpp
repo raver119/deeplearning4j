@@ -55,7 +55,7 @@ namespace sd {
 
     ConstantDataBuffer ConstantShapeHelper::bufferForShapeInfo(const ShapeDescriptor &descriptor) {
         int deviceId = 0;
-        GlobalTimers *timers = GlobalTimers::getInstance();
+        nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
         timers->stopWatch(__LINE__, 15);
 
         _mutex.lock();

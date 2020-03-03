@@ -316,7 +316,7 @@ std::vector<Nd4jLong> ShapeUtils::evalRepeatShape(int axis, const std::vector<in
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo of permuted array
 Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions, const int rank, const NDArray& arr, sd::memory::Workspace* workspace, const bool setContigStrides) {
-    GlobalTimers *timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers *timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 14);
     if (!arr.nonNull())
         throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments: array is nullptr!");

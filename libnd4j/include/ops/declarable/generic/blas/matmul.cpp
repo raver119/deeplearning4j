@@ -32,7 +32,7 @@ namespace sd {
 
 //////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(matmul, 2, 1, false, 0, -2) {
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 2);
 
     auto x = INPUT_VARIABLE(0);

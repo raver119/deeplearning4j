@@ -228,7 +228,7 @@ void softMaxForVector(sd::LaunchContext * context, const NDArray& input, NDArray
 
     template <typename T>
     FORCEINLINE void softmax_loop(T *input, T *output, Nd4jLong *offsets, Nd4jLong numOfSubArrs, uint32_t tadLen) {
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 5);
 
         auto func = PRAGMA_THREADS_FOR {
@@ -266,7 +266,7 @@ void softMaxForVector(sd::LaunchContext * context, const NDArray& input, NDArray
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 static void softmax_(sd::LaunchContext * context, const NDArray& input, NDArray& output, const int dimension) {
-
+nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     const int rank = input.rankOf();
     timers->stopWatch(__LINE__, 5);
 

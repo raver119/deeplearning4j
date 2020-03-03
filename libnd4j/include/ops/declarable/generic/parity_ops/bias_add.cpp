@@ -31,7 +31,7 @@ namespace ops {
 
 ////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(biasadd, 2, 1, true, 0, 0) {
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 11);
     auto input = INPUT_VARIABLE(0);
     timers->stopWatch(__LINE__, 11);

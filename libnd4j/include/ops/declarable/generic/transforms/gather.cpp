@@ -33,7 +33,7 @@ namespace ops  {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(gather, 1, 1, false, 0, -2) {
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
 timers->stopWatch(__LINE__, 6);
 	auto input   = INPUT_VARIABLE(0);
     auto indices = block.width() > 1 ? INPUT_VARIABLE(1) : nullptr;

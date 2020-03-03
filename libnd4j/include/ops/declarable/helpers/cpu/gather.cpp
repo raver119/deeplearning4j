@@ -31,7 +31,7 @@ namespace helpers {
 
 ////////////////////////////////////////////////////////////////////////
 void gather(sd::LaunchContext * context, const NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs) {
-    GlobalTimers* timers = GlobalTimers::getInstance();
+    nd4j::GlobalTimers* timers = nd4j::GlobalTimers::getInstance();
     timers->stopWatch(__LINE__, 7);
 
     int axis = intArgs.size() > 0 ? intArgs[0] : 0;
