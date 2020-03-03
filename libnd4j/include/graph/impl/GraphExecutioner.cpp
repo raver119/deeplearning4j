@@ -890,6 +890,7 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         *   PLEASE NOTE: This method is mostly suited for tests and debugging/profiling
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
+            nd4j_printf("Starting loading Graph from [%s]\n", filename);
             auto data = readFlatBuffers(filename);
 
             nd4j_printf("Successfully loaded [%s]\n", "FlatGraph");
