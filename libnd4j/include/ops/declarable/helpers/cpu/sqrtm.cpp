@@ -58,33 +58,44 @@ namespace helpers {
         }
     }
 
+    //
+    // Input/output 2D arrays
+    //
     template <typename T>
-    void quasyTriangularCompute(sd::LaunchContext* context, NDArray const* inputR, NDArray* outputT) {
-        auto n = inputR->sizeAt(-1);
+    static void computeTriangulars(sd::LaunchContext* context, NDArray const& input, NDArray& outputPlus, NDArray& outputMinus) {
+        outputPlus.nullify();
+        outputMinus.nullify();
+        auto n = input.sizeAt(-1);
+        for (auto r = 0; r < n; r++) {
+            outputPlus.t<T>(r,r) = sd::math::nd4j_sqrt<T,T>(input.t<T>(r,r));
+            outputMinus.t<T>(r,r) = sd::math::nd4j_sqrt<T,T>(input.t<T>(r,r));
+        }
+        for (auto r = 0; r < n; r++) {
+            for (auto c = r + 1; c < n; c++) {
+                auto sumPlus = T(0.f);
+                auto sumMinus = T(0.f);
+                for (auto j = r + 1; j < c; j++) {
+                    sumPlus += outputPlus.t<T>(r, j) * outputPlus.t<T>(j, c);
+                    sumMinus += outputMinus.t<T>(r, j) * outputMinus.t<T>(j, c);
+                }
+                outputPlus.t<T>(r,c) = (input.t<T>(r,c) - sumPlus) / (outputPlus.t<T>(r,r) + outputPlus.t<T>(c,c));
+                outputMinus.t<T>(r,c) = (input.t<T>(r,c) - sumMinus) / (outputMinus.t<T>(r,r) + outputMinus.t<T>(c,c));
+            }
+        }
+
+    }
+
+    template <typename T>
+    static void quasyTriangularCompute(sd::LaunchContext* context, NDArray const* inputR, NDArray* outputT) {
         auto inputTriangularPart = inputR->allTensorsAlongDimension({-2, -1});
         auto outputTriangularPart = outputT->allTensorsAlongDimension({-2, -1});
 
         for (auto batch = 0; batch < inputTriangularPart.size(); ++batch) {
             auto input = inputTriangularPart[batch];
             auto output = outputTriangularPart[batch];
-            auto outputPlus = output->ulike(); outputPlus.nullify();
-            auto outputMinus = output->ulike(); outputMinus.nullify();
-            for (auto r = 0; r < n; r++) {
-                outputPlus.t<T>(r,r) = sd::math::nd4j_sqrt<T,T>(input->t<T>(r,r));
-                outputMinus.t<T>(r,r) = sd::math::nd4j_sqrt<T,T>(input->t<T>(r,r));
-            }
-            for (auto r = 0; r < n; r++) {
-                for (auto c = r + 1; c < n; c++) {
-                    auto sumPlus = T(0.f);
-                    auto sumMinus = T(0.f);
-                    for (auto j = r + 1; j < c; j++) {
-                        sumPlus += outputPlus.t<T>(r, j) * outputPlus.t<T>(j, c);
-                        sumMinus += outputMinus.t<T>(r, j) * outputMinus.t<T>(j, c);
-                    }
-                    outputPlus.t<T>(r,c) = (inputR->t<T>(r,c) - sumPlus) / (outputPlus.t<T>(r,r) + outputPlus.t<T>(c,c));
-                    outputMinus.t<T>(r,c) = (inputR->t<T>(r,c) - sumMinus) / (outputMinus.t<T>(r,r) + outputMinus.t<T>(c,c));
-                }
-            }
+            auto outputPlus = output->ulike();
+            auto outputMinus = output->ulike();
+            computeTriangulars<T>(context, *input, outputPlus, outputMinus);
         }
     }
 
