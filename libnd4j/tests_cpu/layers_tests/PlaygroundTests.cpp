@@ -72,7 +72,7 @@ TEST_F(PlaygroundTests, test_split_1) {
     auto outC = outA.ulike();
     auto outD = outA.ulike();
 
-    nd4j::ops::split op;
+    sd::ops::split op;
 
     auto timeStart = std::chrono::system_clock::now();
 
@@ -91,7 +91,7 @@ TEST_F(PlaygroundTests, test_concat_1) {
     auto v = NDArrayFactory::create<int>(1);
     auto z = NDArrayFactory::create<double>('c', {1, 156});
 
-    nd4j::ops::concat op;
+    sd::ops::concat op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&t, &u, &v}, {&z}, {true});
@@ -106,7 +106,7 @@ TEST_F(PlaygroundTests, test_concat_1) {
 
 TEST_F(PlaygroundTests, test_gather_1) {
     // this test will run ONLY if this model exists
-    if (nd4j::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
         return;
 
     auto x = NDArrayFactory::create<float>('c', {30522, 768});
@@ -116,7 +116,7 @@ TEST_F(PlaygroundTests, test_gather_1) {
     x.linspace(1.0f, 0.3f);
 
 
-    nd4j::ops::gather op;
+    sd::ops::gather op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&x, &y}, {&z});
@@ -135,7 +135,7 @@ TEST_F(PlaygroundTests, test_matmul_1) {
     x.linspace(1.0f, 0.3f);
     y.linspace(1.0f, 0.2f);
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto timeStart = std::chrono::system_clock::now();
 
     auto status = op.execute({&x, &y}, {&z}, {0, 0});
@@ -155,7 +155,7 @@ TEST_F(PlaygroundTests, test_matmul_2) {
     auto y2 = NDArrayFactory::create<float>('c', {768, 768});
     auto z2 = NDArrayFactory::create<float>('c', {512, 768});
 
-    nd4j::ops::matmul op;
+    sd::ops::matmul op;
     auto timeStart1 = std::chrono::system_clock::now();
 
     op.execute({&x1, &y1}, {&z1}, {0, 0});
@@ -180,7 +180,7 @@ TEST_F(PlaygroundTests, test_reduce_mean_1) {
 
     x.assign(1.f);
 
-    nd4j::ops::reduce_mean op;
+    sd::ops::reduce_mean op;
 
     auto timeStart = std::chrono::system_clock::now();
 
@@ -439,7 +439,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     std::vector<Nd4jLong> values;
     Context ctx(1);
 
-    nd4j::ops::biasadd op;
+    sd::ops::biasadd op;
 
     for (int e = 0; e < 1000; e++) {
         auto x = aX[e < pool ? e : e % pool];
@@ -449,7 +449,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
         auto timeStart = std::chrono::system_clock::now();
 
         //op.execute({x, y}, {z});
-        nd4j::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
