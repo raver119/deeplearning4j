@@ -80,7 +80,7 @@ if(NOT SD_CUDA)
     # we need this definition to avoid global memory use within mkldnn
     add_definitions(-DDNNL_ENABLE_CONCURRENT_EXEC=true)
 
-    if (SD_URORA_BUILD)
+    if (SD_AURORA_BUILD)
         include_directories("/opt/nec/ve/nlc/2.0.0/include")
 
         # FIXME: we don't want sequential version in master
