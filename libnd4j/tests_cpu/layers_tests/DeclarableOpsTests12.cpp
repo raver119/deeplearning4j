@@ -3210,3 +3210,36 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_2) {
     ASSERT_TRUE(exp.equalsTo(z));
     delete res;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_3) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            1.f, 3.f, 7.f,            4.f, 5.f, 8.f,            2.f, 6.f, 9.f
+    });
+
+    auto exp = NDArrayFactory::create<float>('c', {4, 4}, {
+            0.84783936f,  0.18748128f,  1.8922232f,
+               1.51499f,   1.7935737f,  1.1324587f,
+         -0.0015140772f,   1.3237243f,  2.7393053f
+    });
+    /* quasytriangular:
+     * 16.069023 , -4.4122667, -1.4024695,
+        0.       , -0.5345098, -0.9644571,
+        0.       ,  1.9621422, -0.5345098
+
+        orthogonal:
+        -0.427589  , -0.75518346,  0.49685583,
+        -0.6259092 , -0.14923948, -0.76548356,
+        -0.6522311 ,  0.6382991 ,  0.40886328
+     * */
+    sd::ops::sqrtm op;
+
+    auto res = op.evaluate({&a});
+    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
+    auto z = res->at(0);
+
+    z->printIndexedBuffer("MatrixSqrt3");
+    ASSERT_TRUE(exp.equalsTo(z));
+    delete res;
+}
