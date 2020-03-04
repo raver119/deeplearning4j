@@ -356,7 +356,6 @@ namespace sd {
             std::vector<int> end;
             std::vector<int> strides;
 
-
             bool isLive = false;
 
             std::vector<int> args;
@@ -470,23 +469,20 @@ GLOBAL_TIMER(__LINE__, 1)
                 if(moveAxes[dim])
                     continue;
 
-
                 if(b < begin.size() && !ignoreBegin[b] && !addAxes[dim]) {
                     int first = strides[b] > 0 ? begin[b] : math::nd4j_abs<int>(begin[b]) - 1;
                     REQUIRE_TRUE(first <= x->sizeAt(dim), 0, "StridedSlice: begin index should be <= corresponding dimension of input array, but got end_index = %i for dimension %i!", begin[b], dim);
                 }
-
                 if(e < end.size() && !ignoreEnd[e] && !addAxes[dim]) {
                    int last  = strides[e] > 0 ? end[e] : math::nd4j_abs<int>(end[e])   - 1;
                    REQUIRE_TRUE(last <= x->sizeAt(dim), 0, "StridedSlice: end index should be <= corresponding dimension of input array, but got end_index = %i for dimension %i!", end[e], dim);
-
                 }
                 ++b;
                 ++e;
             }
 GLOBAL_TIMER(__LINE__, 1)
 
-
+            
             std::vector<Nd4jLong> indices;
             auto input_shape = x->getShapeAsVector();            
             std::vector<Nd4jLong> final_shape;
@@ -505,10 +501,24 @@ GLOBAL_TIMER(__LINE__, 1)
 //            else {
 GLOBAL_TIMER(__LINE__, 1)
             if (indices.size()) {
-GLOBAL_TIMER(__LINE__, 1)
-                auto sub = (*x)(indices, true, true);
-GLOBAL_TIMER(__LINE__, 1)
-                z->assign(sub);
+                Nd4jLong* subArrShapeInfo = nullptr;
+                ALLOCATE(subArrShapeInfo, block.getWorkspace(), shape::shapeInfoLength(x->rankOf()), Nd4jLong);
+                Nd4jLong offset;
+
+                shape::calcSubArrShapeInfoAndOffset(indices.data(), x->getShapeInfo(), subArrShapeInfo, offset, true, true);
+                auto subArrShapeInfoPack = ConstantShapeHelper::getInstance()->bufferForShapeInfo(subArrShapeInfo);
+
+                NDArray::prepareSpecialUse({z}, {x});
+
+                NativeOpExecutioner::execTransformAny(block.launchContext(), sd::transform::Assign,
+                                                      x->bufferWithOffset(offset), reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.primary()),
+                                                      x->specialBufferWithOffset(offset), reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.special()),
+                                                      z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo(),
+                                                      nullptr, nullptr, nullptr, true);
+
+                NDArray::registerSpecialUse({z}, {x});
+
+                RELEASE(subArrShapeInfo,  block.getWorkspace());
 GLOBAL_TIMER(__LINE__, 1)
             }
             else if (!z->isEmpty()){
@@ -516,7 +526,6 @@ GLOBAL_TIMER(__LINE__, 1)
                 z->assign(x->e(0));
 GLOBAL_TIMER(__LINE__, 1)
             }
-
             return Status::OK();
         }
         DECLARE_SYN(stridedslice, strided_slice);
