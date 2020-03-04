@@ -21,6 +21,7 @@
 #include <ops/declarable/helpers/sqrtm.h>
 #include <ops/declarable/helpers/qr.h>
 #include <helpers/MmulHelper.h>
+#include <array/NDArrayFactory.h>
 
 namespace sd {
 namespace ops {
@@ -82,13 +83,43 @@ namespace helpers {
                 outputMinus.t<T>(r,c) = (input.t<T>(r,c) - sumMinus) / (outputMinus.t<T>(r,r) + outputMinus.t<T>(c,c));
             }
         }
+    }
+    template <typename T>
+    static void computeMarker(sd::LaunchContext* context, NDArray const& input, NDArray& outputMarker) {
+        auto n = input.sizeAt(-1);
+        outputMarker.nullify();
 
+        for (auto j = 0; j < n; j++) {
+            for (auto i = 0; i < j; i++) {
+                outputMarker.t<T>(i,j) += math::nd4j_abs(input.t<T>(i,j));
+            }
+        }
+    }
+
+    template <typename T>
+    static void fillUpTriangularOutput(LaunchContext* context, NDArray const& outputPlus, NDArray const& outputMinus,
+            NDArray const& outputMarkerPlus, NDArray const& outputMarkerMinus, NDArray& output) {
+
+        output.nullify();
+        auto n = output.sizeAt(-1);
+
+        for (auto j = 0; j < n; j++) {
+            for (auto i = 0; i < j; i++) {
+                if (outputMarkerMinus.t<T>(j) >= outputMarkerPlus.t<T>(j)) {
+                    output.t<T>(i,j) = outputPlus.t<T>(i,j);
+                }
+                else {
+                    output.t<T>(i,j) = outputMinus.t<T>(i,j);
+                }
+            }
+        }
     }
 
     template <typename T>
     static void quasyTriangularCompute(sd::LaunchContext* context, NDArray const* inputR, NDArray* outputT) {
         auto inputTriangularPart = inputR->allTensorsAlongDimension({-2, -1});
         auto outputTriangularPart = outputT->allTensorsAlongDimension({-2, -1});
+        auto n = inputR->sizeAt(-1);
 
         for (auto batch = 0; batch < inputTriangularPart.size(); ++batch) {
             auto input = inputTriangularPart[batch];
@@ -96,6 +127,11 @@ namespace helpers {
             auto outputPlus = output->ulike();
             auto outputMinus = output->ulike();
             computeTriangulars<T>(context, *input, outputPlus, outputMinus);
+            auto outputMarkerPlus = NDArrayFactory::create<T>({n});
+            auto outputMarkerMinus = outputMarkerPlus.ulike();
+            computeMarker<T>(context, outputPlus, outputMarkerPlus);
+            computeMarker<T>(context, outputMinus, outputMarkerMinus);
+            fillUpTriangularOutput(context, outputPlus, outputMinus, outputMarkerPlus, outputMarkerMinus, *output);
         }
     }
 
