@@ -45,7 +45,6 @@
 #include <memory>
 #include <array/InteropDataBuffer.h>
 #include <memory/MemoryCounter.h>
-#include <performance/benchmarking/global_timers.h>
 
 
 namespace sd {

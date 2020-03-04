@@ -44,7 +44,6 @@
 
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <execution/ThreadPool.h>
-#include <performance/benchmarking/global_timers.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -202,13 +201,10 @@ TEST_F(PerformanceTests, subarray_perfs) {
         ASSERT_TRUE(y5.getShapeInfo()[i] == shapeExpY5[i]);
     for(int i = 0; i < y5.lengthOf(); ++i)
         ASSERT_TRUE(y5.e<float>(i) == buffExpY5[i]);
-
-    sd::GlobalTimers::getInstance()->displayTimers();
 }
 
 
 TEST_F(PerformanceTests, concat_perfs) {
-    auto timers = sd::GlobalTimers::getInstance();
     auto x0 = NDArrayFactory::create<double>('c', {1,28});
     auto x1 = NDArrayFactory::create<double>('c', {1,128});
 
@@ -222,12 +218,10 @@ TEST_F(PerformanceTests, concat_perfs) {
     auto output = result->at(0);
     delete result;
 
-    //timers->displayTimers();
 }
 
 
 TEST_F(PerformanceTests, split_perfs) {
-    auto timers = sd::GlobalTimers::getInstance();
     auto input = NDArrayFactory::create<double>('c', {10},{1.f,2.f,3.f,4.f,5.f,6.f,7.f,8.f,9.f,10.f});
     auto axis = NDArrayFactory::create<double>(-1);
     auto exp1 = NDArrayFactory::create<double>('c', {5}, {1.f,2.f,3.f,4.f,5.f});
@@ -248,12 +242,10 @@ TEST_F(PerformanceTests, split_perfs) {
 
     delete results;
 
-    //timers->displayTimers();
 }
 
 
 TEST_F(PerformanceTests, stack_1d_perfs) {
-    auto timers = sd::GlobalTimers::getInstance();
     float buff1[]   = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12};
     float buff2[]   = {13,14,16,16,17,18,19,20,21,22,23,24};
     float expBuff[] = {1,2,3,4, 13, 14, 16, 16, 5,6,7,8, 17, 18, 19, 20, 9, 10, 11, 12, 21, 22, 23, 24};
@@ -276,13 +268,11 @@ TEST_F(PerformanceTests, stack_1d_perfs) {
     ASSERT_TRUE(expected.equalsTo(output));
 
     delete results;
-    //timers->displayTimers();
 }
 
 
 
 TEST_F(PerformanceTests, stack_2d_perfs) {
-    auto timers = sd::GlobalTimers::getInstance();
     auto t = NDArrayFactory::create<float>('c', {1, 1}, {1.0f});
     auto u = NDArrayFactory::create<float>('c', {1, 1}, {2.0f});
     auto v = NDArrayFactory::create<float>('c', {1, 1}, {3.0f});
@@ -301,5 +291,4 @@ TEST_F(PerformanceTests, stack_2d_perfs) {
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete result;
-    //timers->displayTimers();
 }

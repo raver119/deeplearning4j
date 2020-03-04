@@ -24,7 +24,6 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include<ops/declarable/helpers/addBias.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
 namespace ops {

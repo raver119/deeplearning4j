@@ -28,9 +28,9 @@
 #include <graph/GraphUtils.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <ops/declarable/generic/parity_ops.cpp>
-#include <performance/benchmarking/global_timers.h>
 #include <iomanip>
 #include <array/NDArray.h>
+#include <performance/benchmarking/global_timers.h>
 
 using namespace sd;
 

@@ -24,7 +24,6 @@
 #include <helpers/ShapeUtils.h>
 #include <exceptions/datatype_exception.h>
 #include <execution/Threads.h>
-#include <performance/benchmarking/global_timers.h>
 
 
 namespace sd {

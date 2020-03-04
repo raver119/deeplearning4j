@@ -30,7 +30,6 @@
 #include <execution/ThreadPool.h>
 #include <helpers/LoopsCoordsHelper.h>
 #include <ops/declarable/helpers/addBias.h>
-#include <performance/benchmarking/global_timers.h>
 
 #if defined(__GNUC__) 
 #define align32 __attribute__((aligned(32)))

@@ -23,7 +23,6 @@
 #include <array/NDArray.h>
 #include <helpers/DebugHelper.h>
 #include <ops/declarable/headers/parity_ops.h>
-#include <performance/benchmarking/global_timers.h>
 
 using namespace sd;
 
@@ -1411,15 +1410,6 @@ TEST_F(NDArrayTest2, subarray_perfs) {
         ASSERT_TRUE(y5.getShapeInfo()[i] == shapeExpY5[i]);
     for(int i = 0; i < y5.lengthOf(); ++i)
         ASSERT_TRUE(y5.e<float>(i) == buffExpY5[i]);
-
-    sd::GlobalTimers::getInstance()->displayTimers();
-    /*auto timers = sd::GlobalTimers::getInstance()->timers;
-    for(int i=1;i<200;i++){
-        auto dt1 = std::chrono::duration_cast<std::chrono::nanoseconds> ((timers[i] - timers[i-1])).count();
-        auto dt2 = std::chrono::duration_cast<std::chrono::microseconds> ((timers[i] - timers[i-1])).count();
-        auto dt3 = std::chrono::duration_cast<std::chrono::milliseconds> ((timers[i] - timers[i-1])).count();
-        nd4j_printf("i=%d, line=%d: %ld ns %ld us %ld ms\n", i,  sd::GlobalTimers::getInstance()->line_numbers[i], dt1, dt2, dt3);
-    }*/
 
 }
 

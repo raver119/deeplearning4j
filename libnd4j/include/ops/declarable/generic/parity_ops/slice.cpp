@@ -23,7 +23,6 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ShapeUtils.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
     namespace ops {

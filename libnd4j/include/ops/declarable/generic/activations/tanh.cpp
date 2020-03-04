@@ -23,7 +23,6 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/legacy_helpers.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
         namespace ops {

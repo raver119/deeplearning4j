@@ -485,7 +485,7 @@ TEST_F(PlaygroundTests, test_matmul_perf_1) {
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    sd::GlobalTimers::getInstance()->displayTimers();
+    GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -504,7 +504,7 @@ TEST_F(PlaygroundTests, test_matmul_perf_2) {
     ASSERT_EQ(Status::OK(), results->status());
     ASSERT_TRUE(exp.isSameShape(z));
 
-    sd::GlobalTimers::getInstance()->displayTimers();
+    GlobalTimers::getInstance()->displayTimers();
     delete results;
 }
 
@@ -532,15 +532,16 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
 TEST_F(PlaygroundTests, test_strided_slice_perf_2) {
     auto matrix = NDArrayFactory::create<double>('c', {4, 128, 768});
-    auto arg1 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
-    auto arg2 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
-    auto arg3 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
+    auto arg1 = NDArrayFactory::create<int>('c', {3}, {0, 0, 0});
+    auto arg2 = NDArrayFactory::create<int>('c', {3}, {0, 1, 0});
+    auto arg3 = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
 
     matrix.linspace(1);
 
     sd::ops::strided_slice op;
     auto result = op.evaluate({&matrix, &arg1, &arg2, &arg3},{}, {5, 0, 5, 0, 0});
     delete result;
+    GlobalTimers::getInstance()->displayTimers();
 }
 
 // printf("strided_slice arguments: %d %d %d %d %d\n", begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask);

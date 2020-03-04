@@ -22,7 +22,6 @@
 #if NOT_EXCLUDED(OP_expand_dims)
 
 #include <ops/declarable/CustomOperations.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
     namespace ops {

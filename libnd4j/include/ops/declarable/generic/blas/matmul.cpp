@@ -23,7 +23,6 @@
 #include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_matmul)
 
-#include <performance/benchmarking/global_timers.h>
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/MmulHelper.h>
 

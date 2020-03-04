@@ -27,7 +27,6 @@
 #include <loops/BroadcastPairwiseConverter.h>
 #include <helpers/PointersManager.h>
 #include <loops/TrueBroadcastHelper.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
 

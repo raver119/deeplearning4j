@@ -33,6 +33,9 @@ public:
     void displayTimers();
 };
 
+#define FIRST_TIMER(x, y) GlobalTimers* _global_timers = GlobalTimers::getInstance(); _global_timers->stopWatch(x,y);
+#define GLOBAL_TIMER(x, y) _global_timers->stopWatch(x,y);
+
 }
 
 #endif

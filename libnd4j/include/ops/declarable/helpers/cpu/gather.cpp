@@ -23,7 +23,6 @@
 #include <execution/Threads.h>
 #include <helpers/ShapeUtils.h>
 #include <helpers/ConstantTadHelper.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
 namespace ops {

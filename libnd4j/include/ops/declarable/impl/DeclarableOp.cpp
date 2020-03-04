@@ -28,7 +28,6 @@
 #include <exceptions/datatype_exception.h>
 #include <helpers/StringUtils.h>
 #include <cstdarg>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
     namespace ops {

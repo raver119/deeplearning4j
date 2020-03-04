@@ -22,7 +22,6 @@
 #include <helpers/ShapeUtils.h>
 #include <graph/Context.h>
 #include <array/InteropDataBuffer.h>
-#include <performance/benchmarking/global_timers.h>
 
 
 namespace sd {

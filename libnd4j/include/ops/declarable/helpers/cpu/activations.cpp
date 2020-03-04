@@ -24,7 +24,6 @@
 #include <numeric>
 #include <helpers/ConstantTadHelper.h>
 #include <execution/Threads.h>
-#include <performance/benchmarking/global_timers.h>
 
 namespace sd    {
 namespace ops     {
