@@ -52,9 +52,17 @@ public class Diag extends DynamicCustomOp {
         super(null, new INDArray[]{input}, wrapOrNull(output));
     }
 
+    public Diag(SameDiff sameDiff, SDVariable input) {
+        this(sameDiff, new SDVariable[]{input}, false);
+    }
+
     public Diag(SameDiff sameDiff, SDVariable[] args, boolean inPlace) {
         super(null, sameDiff, args, inPlace);
 
+    }
+
+    public Diag(SameDiff sameDiff, SDVariable input, boolean inPlace) {
+        this(sameDiff, new SDVariable[]{input}, inPlace);
     }
 
     @Override

@@ -77,7 +77,6 @@ import org.nd4j.linalg.api.ops.impl.transforms.custom.Reverse;
 import org.nd4j.linalg.api.ops.impl.transforms.custom.BatchToSpaceND;
 import org.nd4j.linalg.api.ops.impl.transforms.custom.SoftMax;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.BinaryRelativeError;
-import org.nd4j.linalg.api.ops.impl.transforms.pairwise.MatMul;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.Set;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.Axpy;
 import org.nd4j.linalg.api.ops.impl.transforms.same.Sign;
@@ -8261,22 +8260,6 @@ public class Nd4jTestsC extends BaseNd4jTest {
         assertArrayEquals(new long[]{2, 0, 0}, out0.shape());
         assertArrayEquals(new long[]{0, 1}, out1.shape());
         assertArrayEquals(new long[]{10, 0}, out2.shape());
-    }
-
-    @Test
-    public void testMatmulWrapped() {
-        val mA = Nd4j.create(128, 156).assign(1.0f);
-        val mB = Nd4j.create(156, 256).assign(1.0f);
-
-        val mC = Nd4j.create(128, 256);
-        val mE = Nd4j.create(128, 256).assign(156.0f);
-        val mL = mA.mmul(mB);
-
-        val op = new MatMul(mA,mB,mC);
-
-        Nd4j.getExecutioner().exec(op);
-
-        assertEquals(mE, mC);
     }
 
     @Override

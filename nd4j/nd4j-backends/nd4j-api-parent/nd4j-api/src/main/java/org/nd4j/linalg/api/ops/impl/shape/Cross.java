@@ -48,6 +48,10 @@ public class Cross extends DynamicCustomOp {
         super(null, sameDiff, args, false);
     }
 
+    public Cross(SameDiff sameDiff, SDVariable a, SDVariable b) {
+        this(sameDiff, new SDVariable[]{a,b});
+    }
+
     public Cross(INDArray a, INDArray b){
         this(a,b,null);
     }
