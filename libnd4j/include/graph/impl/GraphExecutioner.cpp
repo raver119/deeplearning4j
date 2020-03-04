@@ -837,9 +837,9 @@ uint8_t* readFlatBuffers(const char * filename) {
     int cnt = 0;
     int b = 0;
     while (cnt < fileLen) {
-        b += fread(data + cnt, 1, 1, in);
+        b = fread(data + cnt, 1, 16384, in);
 
-        cnt++;
+        cnt += b;
     }
     fclose(in);
 
@@ -890,7 +890,11 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         *   PLEASE NOTE: This method is mostly suited for tests and debugging/profiling
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
+            nd4j_printf("Starting loading Graph from [%s]\n", filename);
             auto data = readFlatBuffers(filename);
+
+            nd4j_printf("Successfully loaded [%s]\n", "FlatGraph");
+
             auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
             delete[] data;
             return restoredGraph;

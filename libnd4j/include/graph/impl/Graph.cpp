@@ -885,6 +885,8 @@ namespace sd {
                 workspace->expandBy(_configuration->_footprintForward);
             }
 
+            nd4j_printf("Successfully deserialized [%s]\n", "configuration");
+
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
@@ -893,11 +895,16 @@ namespace sd {
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
                     _variableSpace->putVariable(pair, var);
 
+                    nd4j_printf("      deserialized Variable [%s]\n", var->getName() != nullptr ? var->getName()->c_str() : "unnamed");
+
                     // if that's VariableSpace mode - we're pushing it to _output
                     if (_configuration->_outputMode == OutputMode_VARIABLE_SPACE)
                         pushToOutputOnce(var->id());
                 }
             }
+
+            nd4j_printf("Successfully deserialized [%s]\n", "variables");
+
             // at this point we expect all variables are already registered
             // we're saving outputs only if explicit mode is set
             if (_configuration->_outputMode == OutputMode_EXPLICIT || _configuration->_outputMode == OutputMode_EXPLICIT_AND_IMPLICIT) {
@@ -915,6 +922,8 @@ namespace sd {
                     }
                 }
             }
+
+
             // rolling through nodes
             if (flatGraph != nullptr && flatGraph->nodes() != nullptr && flatGraph->nodes()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->nodes()->size(); e++) {
@@ -924,8 +933,12 @@ namespace sd {
                         nd4j_verbose("Orphan node detected: %i; AutoOutput to be considered\n", node->id());
                     }
 
+
                     nd4j_debug("Node name: [%s]\n", node->name()->c_str());
                     auto nnode = new Node(node);
+
+                    nd4j_printf("      deserialized Node [%s]\n", nnode->getName() != nullptr ? nnode->getName()->c_str() : "unnamed");
+
                     /*
                     expandOnion(e);
                     nnode->setLayer(e);
@@ -942,6 +955,9 @@ namespace sd {
 
                 _built = true;
             }
+
+            nd4j_printf("Successfully deserialized [%s]\n", "nodes");
+
             /**
              *  we allow in-place execution optimizations ONLY if 2 requirements met:
              *  1) this is FeedForward pass ONLY

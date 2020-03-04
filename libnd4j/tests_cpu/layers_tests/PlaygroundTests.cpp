@@ -258,7 +258,7 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
         return;
 
     auto graph = GraphExecutioner::importFromFlatBuffers("resources/BertFull/model.fb");
-
+    nd4j_printf("Graph successfully loaded\n", "");
     auto t = NDArrayFactory::fromNpyFile("resources/BertFull/in0_IteratorGetNext.npy");
     auto u = NDArrayFactory::fromNpyFile("resources/BertFull/in1_IteratorGetNext_1.npy");
     auto v = NDArrayFactory::fromNpyFile("resources/BertFull/in2_IteratorGetNext_4.npy");
@@ -349,9 +349,6 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
-
-
-    //timers->displayTimers();
 
     /*
     std::vector<Nd4jLong> values;
