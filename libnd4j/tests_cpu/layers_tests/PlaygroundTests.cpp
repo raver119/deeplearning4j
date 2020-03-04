@@ -533,7 +533,21 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
     delete result;
 }
 
+TEST_F(PlaygroundTests, test_strided_slice_perf_2) {
+    auto matrix = NDArrayFactory::create<double>('c', {4, 128, 768});
+    auto arg1 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
+    auto arg2 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
+    auto arg3 = NDArrayFactory::create<int>('c', {3}, {5, 0, 5});
 
+    matrix.linspace(1);
+
+    sd::ops::strided_slice op;
+    auto result = op.evaluate({&matrix, &arg1, &arg2, &arg3},{}, {5, 0, 5, 0, 0});
+    delete result;
+}
+
+// printf("strided_slice arguments: %d %d %d %d %d\n", begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask);
+// 5 0 5 0 0
 
 
 TEST_F(PlaygroundTests, test_permut_perf) {

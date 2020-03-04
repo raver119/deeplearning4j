@@ -315,6 +315,8 @@ namespace sd {
             int new_axis_mask = INT_ARG(3);
             int shrink_axis_mask = INT_ARG(4);
 
+            printf("strided_slice arguments: %d %d %d %d %d\n", begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask);
+            // 5 0 5 0 0
             int dim_values = 0; //block.getIArguments()->size() - 5;
             int delta = 0; //dim_values % 3;
             int elements = 0; //dim_values / 3;
@@ -335,8 +337,12 @@ namespace sd {
                 delta = dim_values % 3;
                 elements = dim_values / 3;
 
+                printf("statistically evaluated:\n");
                 for (int e = 5; e < block.getIArguments()->size(); e++)
+                {
                     args.emplace_back(INT_ARG(e));
+                    printf("e%d=%d  ",e,INT_ARG(e));
+                }
 
                 REQUIRE_TRUE(delta == 0, 0, "StridedSlice: Number of Integer arguments should be equal to input rank x 3 = %i, but got %i instead", (x->rankOf() * 3), dim_values);
 
@@ -364,11 +370,17 @@ namespace sd {
 
 
                 for (int e = 0; e < v_begin->lengthOf(); e++)
+                {
                     begin.emplace_back(v_begin->e<int>(e));
+                    printf("e%d=%d  ",e,INT_ARG(e));
+                }
 
 
                 for (int e = 0; e < v_end->lengthOf(); e++)
+                {
                     end.emplace_back(v_end->e<int>(e));
+                    printf("e%d=%d  ",e,INT_ARG(e));
+                }
 
 
                 if (block.width() > 3) {
@@ -381,11 +393,17 @@ namespace sd {
 
 
                     for (int e = 0; e < v_stride->lengthOf(); e++)
+                    {
                         strides.emplace_back(v_stride->e<int>(e));
+                        printf("e%d=%d  ",e,INT_ARG(e));
+                    }
 
                 } else {
                     for (int e = 0; e < v_begin->lengthOf(); e++)
+                    {
                         strides.emplace_back(1);
+                        printf("e%d=%d  ",e,INT_ARG(e));
+                    }
 
                 }
             } else {
