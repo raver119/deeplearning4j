@@ -197,11 +197,10 @@ public class SDLinalg extends SDOps {
    *
    * @param input input tensor (NUMERIC type)
    * @param full full matrices mode
-   * @return output  (FLOATING_POINT type)
    */
-  public SDVariable qr(SDVariable input, boolean full) {
+  public SDVariable[] qr(SDVariable input, boolean full) {
     SDValidation.validateNumerical("Qr", "input", input);
-    return new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, full).outputVariable();
+    return new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, full).outputVariables();
   }
 
   /**
@@ -210,23 +209,21 @@ public class SDLinalg extends SDOps {
    * @param name name May be null. Name for the output variable
    * @param input input tensor (NUMERIC type)
    * @param full full matrices mode
-   * @return output  (FLOATING_POINT type)
    */
-  public SDVariable qr(String name, SDVariable input, boolean full) {
+  public SDVariable[] qr(String name, SDVariable input, boolean full) {
     SDValidation.validateNumerical("Qr", "input", input);
-    SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, full).outputVariable();
-    return updateVariableNameAndReference(out, name);
+    SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, full).outputVariables();
+    return sd.updateVariableNamesAndReferences(out, new String[]{name});
   }
 
   /**
    * Computes the QR decompositions of input matrix.<br>
    *
    * @param input input tensor (NUMERIC type)
-   * @return output  (FLOATING_POINT type)
    */
-  public SDVariable qr(SDVariable input) {
+  public SDVariable[] qr(SDVariable input) {
     SDValidation.validateNumerical("Qr", "input", input);
-    return new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, false).outputVariable();
+    return new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, false).outputVariables();
   }
 
   /**
@@ -234,12 +231,11 @@ public class SDLinalg extends SDOps {
    *
    * @param name name May be null. Name for the output variable
    * @param input input tensor (NUMERIC type)
-   * @return output  (FLOATING_POINT type)
    */
-  public SDVariable qr(String name, SDVariable input) {
+  public SDVariable[] qr(String name, SDVariable input) {
     SDValidation.validateNumerical("Qr", "input", input);
-    SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, false).outputVariable();
-    return updateVariableNameAndReference(out, name);
+    SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, false).outputVariables();
+    return sd.updateVariableNamesAndReferences(out, new String[]{name});
   }
 
   /**
