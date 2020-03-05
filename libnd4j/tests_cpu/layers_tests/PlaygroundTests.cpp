@@ -227,6 +227,31 @@ TEST_F(PlaygroundTests, test_reduce_mean_2) {
 
 }
 
+TEST_F(PlaygroundTests, test_softmax_1) {
+    auto x = NDArrayFactory::create<float>('c', {4, 12, 128, 128});
+    auto y = NDArrayFactory::create<int>(3);
+    auto z = x.ulike();
+    x.linspace(1.f);
+
+    std::vector<Nd4jLong> values;
+
+    sd::ops::softmax op;
+
+    for (int e = 0; e < 1; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        op.execute({&x}, {&z}, {3});
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+}
+
 TEST_F(PlaygroundTests, test_biasAdd_1) {
     auto x = NDArrayFactory::create<float>('c', {512, 3072});
     auto y = NDArrayFactory::create<float>('c', {3072});
