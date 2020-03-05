@@ -239,7 +239,7 @@ TEST_F(PlaygroundTests, test_softmax_1) {
     for (int e = 0; e < 1; e++) {
         auto timeStart = std::chrono::system_clock::now();
 
-        op.execute({&x, &y}, {&z});
+        op.execute({&x}, {&z}, {3});
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
