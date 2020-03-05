@@ -88,9 +88,8 @@ namespace sd {
 
             template <>
             FORCEINLINE void softmax_loop(float *input, float *output, Nd4jLong *offsets, Nd4jLong numOfSubArrs, uint32_t tadLen) {
-                //auto func = PRAGMA_THREADS_FOR {
-#pragma omp parallel for
-                    for (Nd4jLong i = 0; i < numOfSubArrs; i++) {
+                auto func = PRAGMA_THREADS_FOR {
+                    for (auto i = start; i < stop; i++) {
                         auto inBuff = input + offsets[i];
                         auto outBuff = output + offsets[i];
 
@@ -111,9 +110,9 @@ namespace sd {
                         for (uint j = 0; j < tadLen; ++j)
                             outBuff[j] /= sum;
                     }
-                //};
+                };
 
-                //samediff::Threads::parallel_tad(func,0, numOfSubArrs);
+                samediff::Threads::parallel_tad(func,0, numOfSubArrs);
             }
 
 
