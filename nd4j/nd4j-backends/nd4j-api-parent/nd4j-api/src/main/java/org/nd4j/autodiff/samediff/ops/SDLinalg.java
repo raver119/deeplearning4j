@@ -167,7 +167,7 @@ public class SDLinalg extends SDOps {
   }
 
   /**
-   * Computes QR decomposition of input matrix.<br>
+   * Copy a tensor setting outside a central band in each innermost matrix.<br>
    *
    * @param input input tensor (NUMERIC type)
    * @param minLower lower diagonal count
@@ -179,17 +179,17 @@ public class SDLinalg extends SDOps {
   }
 
   /**
-   * Computes QR decomposition of input matrix.<br>
+   * Copy a tensor setting outside a central band in each innermost matrix.<br>
    *
-   * @param name name May be null. Name for the output variable
+   * @param names names May be null. Arrays of names for the output variables.
    * @param input input tensor (NUMERIC type)
    * @param minLower lower diagonal count
    * @param maxUpper upper diagonal count
    */
-  public SDVariable[] matrixBandPart(String name, SDVariable input, int minLower, int maxUpper) {
+  public SDVariable[] matrixBandPart(String[] names, SDVariable input, int minLower, int maxUpper) {
     SDValidation.validateNumerical("MatrixBandPart", "input", input);
     SDVariable[] out =  new org.nd4j.linalg.api.ops.custom.MatrixBandPart(sd,input, minLower, maxUpper).outputVariables();
-    return sd.updateVariableNamesAndReferences(out, new String[]{name});
+    return sd.updateVariableNamesAndReferences(out, names);
   }
 
   /**
@@ -206,14 +206,14 @@ public class SDLinalg extends SDOps {
   /**
    * Computes the QR decompositions of input matrix.<br>
    *
-   * @param name name May be null. Name for the output variable
+   * @param names names May be null. Arrays of names for the output variables.
    * @param input input tensor (NUMERIC type)
    * @param full full matrices mode
    */
-  public SDVariable[] qr(String name, SDVariable input, boolean full) {
+  public SDVariable[] qr(String[] names, SDVariable input, boolean full) {
     SDValidation.validateNumerical("Qr", "input", input);
     SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, full).outputVariables();
-    return sd.updateVariableNamesAndReferences(out, new String[]{name});
+    return sd.updateVariableNamesAndReferences(out, names);
   }
 
   /**
@@ -229,13 +229,13 @@ public class SDLinalg extends SDOps {
   /**
    * Computes the QR decompositions of input matrix.<br>
    *
-   * @param name name May be null. Name for the output variable
+   * @param names names May be null. Arrays of names for the output variables.
    * @param input input tensor (NUMERIC type)
    */
-  public SDVariable[] qr(String name, SDVariable input) {
+  public SDVariable[] qr(String[] names, SDVariable input) {
     SDValidation.validateNumerical("Qr", "input", input);
     SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Qr(sd,input, false).outputVariables();
-    return sd.updateVariableNamesAndReferences(out, new String[]{name});
+    return sd.updateVariableNamesAndReferences(out, names);
   }
 
   /**
@@ -427,6 +427,74 @@ public class SDLinalg extends SDOps {
   public SDVariable logdet(String name, SDVariable input) {
     SDValidation.validateNumerical("logdet", "input", input);
     SDVariable out =  new org.nd4j.linalg.api.ops.custom.Logdet(sd,input).outputVariable();
+    return updateVariableNameAndReference(out, name);
+  }
+
+  /**
+   * Matrix multiplication: out = mmul(x,y)<br>
+   * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
+   *
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
+   * @param transposeX Transpose x (first argument)
+   * @param transposeY Transpose y (second argument)
+   * @param transposeZ Transpose result array
+   * @return output  (NUMERIC type)
+   */
+  public SDVariable mmul(SDVariable x, SDVariable y, boolean transposeX, boolean transposeY,
+      boolean transposeZ) {
+    SDValidation.validateNumerical("mmul", "x", x);
+    SDValidation.validateNumerical("mmul", "y", y);
+    return new org.nd4j.linalg.api.ops.impl.reduce.Mmul(sd,x, y, transposeX, transposeY, transposeZ).outputVariable();
+  }
+
+  /**
+   * Matrix multiplication: out = mmul(x,y)<br>
+   * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
+   * @param transposeX Transpose x (first argument)
+   * @param transposeY Transpose y (second argument)
+   * @param transposeZ Transpose result array
+   * @return output  (NUMERIC type)
+   */
+  public SDVariable mmul(String name, SDVariable x, SDVariable y, boolean transposeX,
+      boolean transposeY, boolean transposeZ) {
+    SDValidation.validateNumerical("mmul", "x", x);
+    SDValidation.validateNumerical("mmul", "y", y);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.reduce.Mmul(sd,x, y, transposeX, transposeY, transposeZ).outputVariable();
+    return updateVariableNameAndReference(out, name);
+  }
+
+  /**
+   * Matrix multiplication: out = mmul(x,y)<br>
+   * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
+   *
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
+   * @return output  (NUMERIC type)
+   */
+  public SDVariable mmul(SDVariable x, SDVariable y) {
+    SDValidation.validateNumerical("mmul", "x", x);
+    SDValidation.validateNumerical("mmul", "y", y);
+    return new org.nd4j.linalg.api.ops.impl.reduce.Mmul(sd,x, y, false, false, false).outputVariable();
+  }
+
+  /**
+   * Matrix multiplication: out = mmul(x,y)<br>
+   * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
+   * @return output  (NUMERIC type)
+   */
+  public SDVariable mmul(String name, SDVariable x, SDVariable y) {
+    SDValidation.validateNumerical("mmul", "x", x);
+    SDValidation.validateNumerical("mmul", "y", y);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.reduce.Mmul(sd,x, y, false, false, false).outputVariable();
     return updateVariableNameAndReference(out, name);
   }
 

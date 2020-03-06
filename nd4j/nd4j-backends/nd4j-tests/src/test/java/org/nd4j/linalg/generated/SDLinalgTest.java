@@ -227,4 +227,33 @@ public class SDLinalgTest {
         SDVariable res = sameDiff.linalg().svd(sdx, false, false);
         assertEquals(expected, res.eval());
     }
+
+    @Test
+    public void testLogdetName() {
+        INDArray x = Nd4j.createFromArray(new double[]{
+                4,12,-16,12,37,-43,-16,-43,98, 4,1.2,-1.6,1.2,3.7,-4.3,-1.6,-4.3,9.8
+        }).reshape(2,3,3);
+
+        SDVariable sdx = sameDiff.var(x);
+
+        SDVariable res = sameDiff.linalg().logdet("logdet", sdx);
+        assertEquals("logdet", res.name());
+    }
+
+    @Test
+    public void testQrNames() {
+        INDArray input = Nd4j.createFromArray(new double[]{
+                12.,  -51.,    4.,
+                6.,   167.,  -68.,
+                -4.,    24.,  -41.,
+                -1.,     1.,    0.,
+                2.,     0.,    3.
+        }).reshape(5,3);
+
+        SDVariable sdInput = sameDiff.var(input);
+        SDVariable[] res = sameDiff.linalg().qr(new String[]{"ret0", "ret1"}, sdInput);
+
+        assertEquals("ret0", res[0].name());
+        assertEquals("ret1", res[1].name());
+    }
 }
