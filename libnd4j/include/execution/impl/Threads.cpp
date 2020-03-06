@@ -505,7 +505,7 @@ namespace samediff {
 #ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
-			#pragma omp parallel for
+			#pragma omp parallel for collapse(2)
 			for (auto x = startX; x < stopX; x += incX) {
 			    for (auto y = startY; y < stopY; y += incY) {
 				    function(omp_get_thread_num(), x, x+1, 1, y, y+1, 1);
@@ -579,7 +579,7 @@ namespace samediff {
 #ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
-            #pragma omp parallel for
+            #pragma omp parallel for collapse(3)
 		    for (auto x = startX; x < stopX; x += incX) {
 		        for (auto y = startY; y < stopY; y += incY) {
 		            for (auto z = startZ; z < stopZ; z += incZ) {
