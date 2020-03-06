@@ -95,7 +95,7 @@ namespace samediff {
     };
 
     class ND4J_EXPORT Threads {
-#ifdef __NEC__
+#ifdef _OPENMP
     public:
     static std::mutex gThreadmutex;
 	static uint64_t _nFreeThreads; 
