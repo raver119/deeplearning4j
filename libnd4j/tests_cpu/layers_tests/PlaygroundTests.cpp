@@ -110,7 +110,7 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     graph->getVariableSpace()->putVariable(659,0, u);
     graph->getVariableSpace()->putVariable(660,0, v);
 
-
+/*
     // validating graph now
     auto timeStart = std::chrono::system_clock::now();
 
@@ -126,8 +126,8 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     ASSERT_EQ(z, *array);
 
     nd4j_printf("BERT execution time: [%lld]\n", outerTime);
+*/
 
-/*
 
     sd::Environment::getInstance()->setProfiling(true);
     auto profile = GraphProfilingHelper::profile(graph, 1);
@@ -136,7 +136,7 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
-*/
+
 /*
     std::vector<Nd4jLong> values;
 
