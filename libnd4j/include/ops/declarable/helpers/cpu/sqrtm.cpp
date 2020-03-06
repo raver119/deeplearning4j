@@ -135,6 +135,60 @@ namespace helpers {
         }
     }
 
+    /*
+     * Hessenberg reduction|decomposition
+     * A = QHQ*, where Q - orthogonal, H - upper hessenberg quasytriangular matrix
+     *
+     * function HessenbergReduction( A::Matrix )
+      //# Reduce A to a Hessenberg matrix H so that A and H are similar:
+
+    n = A.rows() // n - rows()/columns()
+    H = A
+    if ( n > 2 ) // if input matrix more then 2x2
+        a1 = A[2:n, 1] // select first column of the matrix
+        e1 = zeros(n-1); e1[1] = 1 //e1 - orth with 1 on the first position
+        sgn = sign(a1[1]) // -1 or +1 of the first matrix element (e.g. a[1,1])
+        v = (a1 + sgn * norm(a1) * e1); v = v./norm(v) // Householder vector
+        Q1 = eye(n-1) - 2*(v*v') // orthogonal matrix on step 1
+        A[2:n,1] = Q1*A[2:n,1] // the first column of the matrix set up with proper multiplication
+        A[1,2:n] = Q1*A[1,2:n] // the first row of the matrix set up with proper multiplication
+        A[2:n,2:n] = Q1*A[2:n,2:n]*Q1' // reduce to rest (from the second row and the second column submatrice) and produce the step of transformation
+        H = HessenbergReduction( A[2:n,2:n] ) // process all above for submatrix from the second row/column
+    else
+        H = copy(A) // only with matrix shape equals 2x2
+    end
+   return A
+     * */
+
+    template <typename T>
+    void hessenbergReduction(NDArray const& input, NDArray& hessenberg) {
+        auto n = input.rows();
+        hessenberg.assign(input);
+        if (n > 2) {
+            auto a1 = hessenberg({1, n, 0, n}); // the first column
+            auto c1 = hessenberg({1, n, 0, n}); // the first column
+            auto r1 = hessenberg({0, n, 1, n}); // the first column
+
+            auto e1 = NDArrayFactory::create<T>('c', {n - 1});
+            e1.template t<T>(0) = T(1.f);
+            auto sgn = math::nd4j_sign<T,T>(a1.t<T>(0));
+            auto v = a1 + sgn * a1.reduceNumber(reduce::Norm1) * e1;
+            v /= v.reduceNumber(reduce::Norm1);
+            auto a2 = hessenberg({1, n-1, 1, n-1});
+            auto h2 = hessenberg({1, n-1, 1, n-1});
+            auto I = NDArrayFactory::create<T>('c', {n - 1, n - 1});
+            I.setIdentity();
+            auto V = I.ulike();
+            MmulHelper::matmul(&v, &v, false, true);
+            auto Q = I - T(2.f) * V;
+            MmulHelper::matmul(&Q, &a1, &c1, false, false);
+            MmulHelper::matmul(&Q, &r1, &r1, false, false);
+            MmulHelper::matmul(&Q, &a2, &I, false, false);
+            MmulHelper::matmul(&I, &Q, &a2, false, true);
+            hessenbergReduction<T>(a2, h2);
+        }
+    }
+
     template <typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
         qMatrix->setIdentity();
