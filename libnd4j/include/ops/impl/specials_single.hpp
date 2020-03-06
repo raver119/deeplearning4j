@@ -182,6 +182,8 @@ void SpecialMethods<T>::concatCpuGeneric(const std::vector<const NDArray*>& inAr
 
         for (auto i = start; i < stop; i += increment) {
 
+            nd4j_printf("Running [%i];\n", i);
+
             shape::index2coords(i, output.getShapeInfo(), coords);
             const auto zOffset = shape::getOffset(output.getShapeInfo(), coords);
 

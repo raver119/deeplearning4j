@@ -69,7 +69,7 @@ namespace functions {
                 auto startingValue = OpType::startingValue(x);
                 uint xShapeInfoCast[MAX_RANK];
                 const bool canCastX = sd::DataTypeUtils::castShapeInfo(xShapeInfo, xShapeInfoCast);
-                int maxThreads = sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxThreads());
+                int maxThreads = sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxMasterThreads());
                 X intermediate[64];
 
                 PRAGMA_OMP_SIMD
@@ -240,13 +240,26 @@ namespace functions {
 
             auto x = reinterpret_cast<X *>(vx);
             auto extraParams = reinterpret_cast<X *>(vextraParams);
-            int maxThreads = sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxThreads());
+            int maxThreads = sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxMasterThreads());
             X intermediate[64];
 
             PRAGMA_OMP_SIMD
             for (auto e = 0; e < maxThreads; e++)
                 intermediate[e] = OpType::startingValue(x);
 
+#ifdef _OPENMP
+
+            if (xEws == 1) {
+                PRAGMA_OMP_PARALLEL_FOR
+                for (Nd4jLong i = 0; i < length; i++)
+                    intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i], extraParams), extraParams);
+            } else {
+                PRAGMA_OMP_PARALLEL_FOR
+                for (Nd4jLong i = 0; i < length; i++)
+                    intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i * xEws], extraParams), extraParams);
+            }
+
+#else
             auto func = PRAGMA_THREADS_FOR {
                 if (xEws == 1) {
                     for (auto i = start; i < stop; i++)
@@ -258,6 +271,8 @@ namespace functions {
             };
 
             maxThreads = samediff::Threads::parallel_for(func, 0, length, 1, maxThreads);
+
+#endif
 
             // merge results
             for (int e = 1; e < maxThreads; e++)
