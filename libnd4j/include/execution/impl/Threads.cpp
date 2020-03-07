@@ -561,15 +561,6 @@ namespace samediff {
         if (startZ > stopZ)
             throw std::runtime_error("Threads::parallel_for got startZ > stopZ");
 
-        auto delta_x = stopX - startX;
-        auto delta_y = stopY - startY;
-        auto delta_z = stopZ - startZ;
-
-        auto itersX = delta_x / incX;
-        auto itersY = delta_y / incY;
-        auto itersZ = delta_z / incZ;
-
-        numThreads = ThreadsHelper::numberOfThreads3d(numThreads, itersX, itersY, itersZ);
         if (numThreads == 1) {
             // loop is too small - executing function as is
             function(0, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
@@ -599,6 +590,20 @@ namespace samediff {
             return 1;
         }
 #else
+        auto delta_x = stopX - startX;
+        auto delta_y = stopY - startY;
+        auto delta_z = stopZ - startZ;
+
+        auto itersX = delta_x / incX;
+        auto itersY = delta_y / incY;
+        auto itersZ = delta_z / incZ;
+
+        numThreads = ThreadsHelper::numberOfThreads3d(numThreads, itersX, itersY, itersZ);
+        if (numThreads == 1) {
+            // loop is too small - executing function as is
+            function(0, startX, stopX, incX, startY, stopY, incY, startZ, stopZ, incZ);
+            return 1;
+        }
 
         auto ticket = ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
@@ -639,7 +644,7 @@ namespace samediff {
         if (tryAcquire(numThreads)) {
 #pragma omp parallel for
             for (int e = 0; e < numThreads; e++) {
-                function(omp_get_thread_num(), numThreads);
+                function(e, numThreads);
             }
 
             freeThreads(numThreads);
@@ -809,6 +814,24 @@ namespace samediff {
     int  Threads::parallel_aligned_increment(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, size_t type_size, uint32_t req_numThreads) {
         if (start > stop)
             throw std::runtime_error("Threads::parallel_for got start > stop");
+
+#ifdef _OPENMP
+        if (tryAcquire(req_numThreads)) {
+#pragma omp parallel for
+            for (int64_t j = start; j < stop; j += increment) {
+                function(omp_get_thread_num(), j, j+1, 1);
+            }
+            freeThreads(req_numThreads);
+            return req_numThreads;
+        }
+        else {
+            function(0, start, stop, increment);
+            // we tell that parallelism request declined
+            return 1;
+        }
+#endif
+
+
         auto num_elements = (stop - start);
         //this way we preserve increment starts offset
         //so we will parition considering delta but not total elements
@@ -897,21 +920,7 @@ namespace samediff {
         thread_spans[numThreads - 1].start = begin;
         thread_spans[numThreads - 1].end = stop;
 
-#ifdef _OPENMP
-        if (tryAcquire(numThreads)) {
-#pragma omp parallel for
-            for (size_t j = 0; j < numThreads; j++) {
-                function(j, thread_spans[j].start, thread_spans[j].end, increment);
-            }
-            freeThreads(numThreads);
-            return numThreads;
-        }
-        else {
-            function(0, start, stop, increment);
-            // we tell that parallelism request declined
-            return 1;
-        }
-#else
+
         auto ticket = samediff::ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 
@@ -929,7 +938,6 @@ namespace samediff {
 			// we tell that parallelism request declined
 			return 1;
 		}
-#endif
     }
 }
 

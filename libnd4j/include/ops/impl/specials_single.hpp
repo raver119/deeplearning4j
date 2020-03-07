@@ -175,6 +175,8 @@ void SpecialMethods<T>::concatCpuGeneric(const std::vector<const NDArray*>& inAr
     //     return;
     // }
 
+    auto oShapeInfo = output.getShapeInfo();
+
     // general case
     auto func = PRAGMA_THREADS_FOR {
 
@@ -182,10 +184,8 @@ void SpecialMethods<T>::concatCpuGeneric(const std::vector<const NDArray*>& inAr
 
         for (auto i = start; i < stop; i += increment) {
 
-            nd4j_printf("Running [%i];\n", i);
-
-            shape::index2coords(i, output.getShapeInfo(), coords);
-            const auto zOffset = shape::getOffset(output.getShapeInfo(), coords);
+            shape::index2coords(i, oShapeInfo, coords);
+            const auto zOffset = shape::getOffset(oShapeInfo, coords);
 
             uint inArrIdx = 0;
             uint xDim = inArrs[inArrIdx]->sizeAt(axis);
