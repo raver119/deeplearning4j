@@ -79,7 +79,7 @@ namespace functions {
                         intermediate[thread_id] = OpType::update(intermediate[thread_id], OpType::op(x[shape::indexOffset(i, xShapeInfo, xShapeInfoCast, canCastX)], extraParams), extraParams);
                 };
 
-                maxThreads = samediff::Threads::parallel_for(func, 0, length, 1, maxThreads);
+                maxThreads = sd::Threads::parallel_for(func, 0, length, 1, maxThreads);
 
                 // merge results
                 for (int e = 1; e < maxThreads; e++)
@@ -261,7 +261,7 @@ namespace functions {
                 }
             };
 
-            maxThreads = samediff::Threads::parallel_for(func, 0, length, 1, maxThreads);
+            maxThreads = sd::Threads::parallel_for(func, 0, length, 1, maxThreads);
 
 #endif
 

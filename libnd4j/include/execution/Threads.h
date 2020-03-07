@@ -26,7 +26,7 @@
 #include <system/Environment.h>
 #include <system/op_enums.h>
 
-namespace samediff {
+namespace sd {
     class ND4J_EXPORT ThreadsHelper {
     public:
         static int numberOfThreads(int maxThreads, uint64_t numberOfElements);

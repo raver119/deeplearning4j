@@ -238,7 +238,7 @@ namespace functions {
                     }
                 };
 
-                maxThreads = samediff::Threads::parallel_for(func, 0, length, 1, maxThreads);
+                maxThreads = sd::Threads::parallel_for(func, 0, length, 1, maxThreads);
 
 #endif
 

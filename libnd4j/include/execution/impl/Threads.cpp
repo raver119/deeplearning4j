@@ -32,7 +32,7 @@
 #endif
 
 
-namespace samediff {
+namespace sd {
 
     int ThreadsHelper::numberOfThreads(int maxThreads, uint64_t numberOfElements) {
         // let's see how many threads we actually need first
@@ -816,7 +816,7 @@ namespace samediff {
             throw std::runtime_error("Threads::parallel_for got start > stop");
 
 #ifdef _OPENMP
-        if (tryAcquire(req_numThreads)) {
+        if (req_numThreads > 1 && tryAcquire(req_numThreads)) {
 #pragma omp parallel for
             for (int64_t j = start; j < stop; j += increment) {
                 function(omp_get_thread_num(), j, j+1, 1);
@@ -861,7 +861,7 @@ namespace samediff {
 #ifdef _OPENMP
         int adjusted_numThreads = max_thread_count;
 #else
-        int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
+        int adjusted_numThreads = sd::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
 #endif
 
         if (adjusted_numThreads > delta)
@@ -921,7 +921,7 @@ namespace samediff {
         thread_spans[numThreads - 1].end = stop;
 
 
-        auto ticket = samediff::ThreadPool::getInstance()->tryAcquire(numThreads);
+        auto ticket = sd::ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 
 			for (size_t j = 0; j < numThreads; j++) {
