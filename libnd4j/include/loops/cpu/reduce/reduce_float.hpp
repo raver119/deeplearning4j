@@ -252,11 +252,11 @@ namespace functions {
 #ifdef _OPENMP
 
             if (xEws == 1) {
-                PRAGMA_OMP_PARALLEL_FOR
+                PRAGMA_OMP_PARALLEL_FOR_THREADS(maxThreads)
                 for (Nd4jLong i = 0; i < length; i++)
                     intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i], extraParams), extraParams);
             } else {
-                PRAGMA_OMP_PARALLEL_FOR
+                PRAGMA_OMP_PARALLEL_FOR_THREADS(maxThreads)
                 for (Nd4jLong i = 0; i < length; i++)
                     intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i * xEws], extraParams), extraParams);
             }
