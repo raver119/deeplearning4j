@@ -373,7 +373,7 @@ namespace sd {
         if (start > stop)
             throw std::runtime_error("Threads::parallel_for got start > stop");
 
-        auto delta = (stop - start);
+        auto delta = (stop - start) / increment;
 
         if (numThreads > delta)
             numThreads = delta;
@@ -390,7 +390,7 @@ namespace sd {
 #ifdef _OPENMP
 
         if (tryAcquire(numThreads)) {
-#pragma omp parallel for
+#pragma omp parallel for num_threads(numThreads)
             for (auto e = start; e < stop; e += increment) {
                 function(omp_get_thread_num(), e, e + 1, 1);
             }
@@ -505,7 +505,7 @@ namespace sd {
 #ifdef _OPENMP
 
             if (tryAcquire(numThreads)) {
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for num_threads(numThreads) collapse(2)
                 for (auto x = startX; x < stopX; x += incX) {
                     for (auto y = startY; y < stopY; y += incY) {
                         function(omp_get_thread_num(), x, x+1, 1, y, y+1, 1);
@@ -570,7 +570,7 @@ namespace sd {
 #ifdef _OPENMP
 
         if (tryAcquire(numThreads)) {
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for num_threads(numThreads) collapse(3)
             for (auto x = startX; x < stopX; x += incX) {
                 for (auto y = startY; y < stopY; y += incY) {
                     for (auto z = startZ; z < stopZ; z += incZ) {
@@ -642,7 +642,7 @@ namespace sd {
 #ifdef _OPENMP
 
         if (tryAcquire(numThreads)) {
-#pragma omp parallel for
+#pragma omp parallel for num_threads(numThreads)
             for (int e = 0; e < numThreads; e++) {
                 function(e, numThreads);
             }
@@ -814,24 +814,6 @@ namespace sd {
     int  Threads::parallel_aligned_increment(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, size_t type_size, uint32_t req_numThreads) {
         if (start > stop)
             throw std::runtime_error("Threads::parallel_for got start > stop");
-
-#ifdef _OPENMP
-        if (req_numThreads > 1 && tryAcquire(req_numThreads)) {
-#pragma omp parallel for
-            for (int64_t j = start; j < stop; j += increment) {
-                function(omp_get_thread_num(), j, j+1, 1);
-            }
-            freeThreads(req_numThreads);
-            return req_numThreads;
-        }
-        else {
-            function(0, start, stop, increment);
-            // we tell that parallelism request declined
-            return 1;
-        }
-#endif
-
-
         auto num_elements = (stop - start);
         //this way we preserve increment starts offset
         //so we will parition considering delta but not total elements
@@ -861,7 +843,7 @@ namespace sd {
 #ifdef _OPENMP
         int adjusted_numThreads = max_thread_count;
 #else
-        int adjusted_numThreads = sd::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
+        int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
 #endif
 
         if (adjusted_numThreads > delta)
@@ -920,8 +902,22 @@ namespace sd {
         thread_spans[numThreads - 1].start = begin;
         thread_spans[numThreads - 1].end = stop;
 
-
-        auto ticket = sd::ThreadPool::getInstance()->tryAcquire(numThreads);
+#ifdef _OPENMP
+        if (tryAcquire(numThreads)) {
+#pragma omp parallel for num_threads(numThreads)
+            for (size_t j = 0; j < numThreads; j++) {
+                function(j, thread_spans[j].start, thread_spans[j].end, increment);
+            }
+            freeThreads(numThreads);
+            return numThreads;
+        }
+        else {
+            function(0, start, stop, increment);
+            // we tell that parallelism request declined
+            return 1;
+        }
+#else
+        auto ticket = samediff::ThreadPool::getInstance()->tryAcquire(numThreads);
 		if (ticket != nullptr) {
 
 			for (size_t j = 0; j < numThreads; j++) {
@@ -938,6 +934,7 @@ namespace sd {
 			// we tell that parallelism request declined
 			return 1;
 		}
+#endif
     }
 }
 
