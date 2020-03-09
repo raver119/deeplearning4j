@@ -46,15 +46,21 @@ public class GraphOptimizer {
         );
     }
 
-    public static SameDiff optimize(SameDiff graph){
-        return optimize(graph, defaultOptimizations());
+    public static SameDiff optimize(SameDiff graph, String... requiredOutputs){
+        return optimize(graph, Arrays.asList(requiredOutputs));
     }
 
-    public static SameDiff optimize(SameDiff graph, List<OptimizerSet> optimizations) {
-        return optimize(graph, optimizations, null);
+    public static SameDiff optimize(SameDiff graph, List<String> requiredOutputs){
+        return optimize(graph, requiredOutputs, defaultOptimizations());
     }
 
-    public static SameDiff optimize(SameDiff graph, List<OptimizerSet> optimizations, OptimizationDebugger debugger){
+    public static SameDiff optimize(SameDiff graph, List<String> requiredOutputs, List<OptimizerSet> optimizations) {
+        return optimize(graph, requiredOutputs, optimizations, null);
+    }
+
+    public static SameDiff optimize(SameDiff graph, List<String> requiredOutputs, List<OptimizerSet> optimizations, OptimizationDebugger debugger){
+        //TODO Use required outputs - strip unnecessary graph components
+
         SameDiff sd = graph.dup();
 
         ArrayHolder cArr = sd.getConstantArrays();

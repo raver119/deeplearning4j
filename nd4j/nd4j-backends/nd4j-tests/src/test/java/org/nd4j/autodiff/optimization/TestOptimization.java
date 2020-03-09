@@ -10,15 +10,16 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.VariableType;
 import org.nd4j.autodiff.samediff.optimize.GraphOptimizer;
 import org.nd4j.autodiff.samediff.optimize.optimizations.ConstantFunctionOptimizations;
+import org.nd4j.autodiff.samediff.optimize.optimizations.IdentityFunctionOptimizations;
 import org.nd4j.linalg.BaseNd4jTest;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class TestOptimization extends BaseNd4jTest {
 
@@ -54,7 +55,7 @@ public class TestOptimization extends BaseNd4jTest {
 
         SameDiff copy = sd.dup();
 
-        SameDiff optimized = GraphOptimizer.optimize(sd);
+        SameDiff optimized = GraphOptimizer.optimize(sd, "out");
         assertEquals(3, optimized.getVariables().size());       //"add", "variable", "out" -> "c" should be removed
         assertEquals(VariableType.CONSTANT, optimized.getVariable("add").getVariableType());
         assertEquals(1, optimized.getOps().size());
@@ -99,5 +100,35 @@ public class TestOptimization extends BaseNd4jTest {
 
         assertEquals(sd.outputSingle(Collections.emptyMap(), "out"), optimized.outputSingle(Collections.emptyMap(), "out"));
 
+    }
+
+    @Test
+    public void testIdentityRemoval(){
+
+        //Ensure that optimizer is actually used when calling output methods:
+        SameDiff sd = SameDiff.create();
+        SDVariable in = sd.placeHolder("in", DataType.FLOAT, -1, 4);
+        SDVariable w = sd.var("w", Nd4j.rand(DataType.FLOAT, 4, 3));
+        SDVariable b = sd.var("b", Nd4j.rand(DataType.FLOAT, 3));
+        SDVariable i1 = sd.identity(in);
+        SDVariable i2 = sd.identity(w);
+        SDVariable i3 = sd.identity(b);
+        SDVariable out = sd.nn.softmax("out", sd.identity(i1.mmul(i2).add(i3)));
+
+        OptTestConfig conf = OptTestConfig.builder()
+                .original(sd)
+                .outputs(Collections.singletonList("out"))
+                .placeholder("in", Nd4j.rand(DataType.FLOAT, 5, 4))
+                .mustApply(sd.getVariables().get(i1.name()).getOutputOfOp(), IdentityFunctionOptimizations.RemoveIdentityOps.class)
+                .mustApply(sd.getVariables().get(i2.name()).getOutputOfOp(), IdentityFunctionOptimizations.RemoveIdentityOps.class)
+                .mustApply(sd.getVariables().get(i3.name()).getOutputOfOp(), IdentityFunctionOptimizations.RemoveIdentityOps.class)
+                .build();
+
+        SameDiff optimized = OptimizationTestUtil.testOptimization(conf);
+        assertEquals(3, optimized.getOps().size());
+        assertFalse(optimized.hasVariable(i1.name()));
+        assertFalse(optimized.hasVariable(i2.name()));
+        assertFalse(optimized.hasVariable(i3.name()));
+        assertTrue(optimized.hasVariable("out"));
     }
 }

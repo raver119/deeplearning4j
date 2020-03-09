@@ -6,6 +6,7 @@ import org.nd4j.autodiff.samediff.VariableType;
 import org.nd4j.autodiff.samediff.optimize.GraphOptimizer;
 import org.nd4j.autodiff.samediff.optimize.Optimizer;
 import org.nd4j.autodiff.samediff.optimize.OptimizerSet;
+import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.io.File;
@@ -24,6 +25,7 @@ public class OptimizationTestUtil {
     private OptimizationTestUtil(){ }
 
     public static SameDiff testOptimization(OptTestConfig config){
+        Preconditions.checkNotNull(config.getTempFolder(), "Temp folder should be specified before running test");
 
         List<OptimizerSet> optimizerSets = config.getOptimizerSets();
         if(optimizerSets == null)
@@ -35,7 +37,7 @@ public class OptimizationTestUtil {
         List<String> outputs = config.getOutputs();
         SameDiff original = config.getOriginal();
         SameDiff copy = original.dup();
-        SameDiff optimized = GraphOptimizer.optimize(original, optimizerSets, debugger);
+        SameDiff optimized = GraphOptimizer.optimize(original, outputs, optimizerSets, debugger);
 
         //Check that SOMETHING changed in the optimized - number of constants, variables, or ops; or the settings for ops; or the values of some arrays
         //TODO

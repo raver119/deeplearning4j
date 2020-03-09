@@ -58,4 +58,8 @@ public class OptimizationUtils {
         }
     }
 
+    public static void removeVariable(@NonNull SameDiff sd, @NonNull String varToRemove){
+        sd.getVariables().remove(varToRemove);
+    }
+
 }

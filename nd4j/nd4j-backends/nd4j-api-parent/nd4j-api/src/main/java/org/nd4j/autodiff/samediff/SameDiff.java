@@ -38,6 +38,8 @@ import org.nd4j.autodiff.samediff.config.FitConfig;
 import org.nd4j.autodiff.samediff.config.OutputConfig;
 import org.nd4j.autodiff.samediff.internal.*;
 import org.nd4j.autodiff.samediff.ops.*;
+import org.nd4j.autodiff.samediff.optimize.GraphOptimizer;
+import org.nd4j.autodiff.samediff.optimize.OptimizationConfig;
 import org.nd4j.autodiff.samediff.serde.FlatBuffersMapper;
 import org.nd4j.base.Preconditions;
 import org.nd4j.evaluation.IEvaluation;
@@ -109,6 +111,7 @@ import static org.nd4j.autodiff.util.TrainingUtils.stackOutputs;
 @Slf4j
 public class SameDiff extends SDBaseOps {
     protected static final String GRAD_FN_KEY = "grad";
+    protected static final String OPTIMIZED_FN_KEY = "optimized";
 
     //Fields for graph structure and execution
     @Getter
@@ -239,6 +242,11 @@ public class SameDiff extends SDBaseOps {
     public SDBitwise bitwise(){
         return bitwise;
     }
+
+    @Setter @Getter
+    private boolean allowOptimization = true;
+    private String[] optimizedWRT = null;
+
 
     private Map<String, SameDiff> sameDiffFunctionInstances;
 
@@ -2554,6 +2562,23 @@ public class SameDiff extends SDBaseOps {
             for (Listener l : listeners)
                 if (l.isActive(operation))
                     activeListeners.add(l);
+        }
+
+        if(allowOptimization){
+            if(!sameDiffFunctionInstances.containsKey(OPTIMIZED_FN_KEY) || optimizedWRT == null || !Arrays.equals(optimizedWRT, outputs)){
+                //Need to create optimized version
+
+                SameDiff sd = optimize(Arrays.asList(outputs));
+                sameDiffFunctionInstances.put(OPTIMIZED_FN_KEY, sd);
+
+
+                //TODO clean up old version optimized SameDiff if necessary
+            }
+            SameDiff optimized = sameDiffFunctionInstances.get(OPTIMIZED_FN_KEY);
+            if(optimized.isAllowOptimization())
+                optimized.setAllowOptimization(false);  //Prevent recursive optimizations
+
+            return optimized.batchOutputHelper(placeholders, activeListeners, operation, outputs);
         }
 
         for (Listener l : activeListeners) {
@@ -5864,5 +5889,11 @@ public class SameDiff extends SDBaseOps {
         }
 
         return base + "_" + inc;
+    }
+
+    protected SameDiff optimize(List<String> withRespectToOutputs){
+        SameDiff sd = GraphOptimizer.optimize(this, withRespectToOutputs);
+        sd.setAllowOptimization(false); //Prevent recursive optimization attempts when output is called
+        return sd;
     }
 }
