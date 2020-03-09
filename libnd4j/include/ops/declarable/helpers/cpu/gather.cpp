@@ -21,15 +21,15 @@
 #include <ops/declarable/helpers/gather.h>
 #include <numeric>
 #include <execution/Threads.h>
-#include <ShapeUtils.h>
-#include <ConstantTadHelper.h>
+#include <helpers/ShapeUtils.h>
+#include <helpers/ConstantTadHelper.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops {
 namespace helpers {
 
 ////////////////////////////////////////////////////////////////////////
-void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs) {
+void gather(sd::LaunchContext * context, const NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs) {
 
     int axis = intArgs.size() > 0 ? intArgs[0] : 0;
     const int inputRank = input->rankOf();
@@ -59,7 +59,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
             if(input->rankOf() == 1 && output->rankOf() == 1) {
 
                 auto func = PRAGMA_THREADS_FOR {
-                    for (auto i = start; i < stop; i += increment)
+                    for (auto i = start; i < stop; i++)
                         output->p(i, input->e(indices->e<Nd4jLong>(i)));
                 };
 
@@ -88,7 +88,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                     auto func = PRAGMA_THREADS_FOR {
 
-                        for (auto i = start; i < stop; i += increment) {
+                        for (auto i = start; i < stop; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -100,7 +100,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
                 }
                 else {
                     auto func = PRAGMA_THREADS_FOR {
-                        for (auto i = start; i < stop; i += increment) {
+                        for (auto i = start; i < stop; i++) {
 
                             void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[indices->e<Nd4jLong>(i)]);
                             void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -140,7 +140,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                 auto func = PRAGMA_THREADS_FOR {
 
-                    for (auto i = start; i < stop; i += increment) {
+                    for (auto i = start; i < stop; i++) {
 
                         void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[intArgs[i + 1]]);
                         void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
@@ -155,7 +155,7 @@ void gather(nd4j::LaunchContext * context, const NDArray* input, const NDArray* 
 
                 auto func = PRAGMA_THREADS_FOR {
 
-                    for (auto i = start; i < stop; i += increment) {
+                    for (auto i = start; i < stop; i++) {
 
                         void* inBuff  =  input->bufferWithOffset(inTadPack.primaryOffsets()[intArgs[i + 1]]);
                         void* outBuff = output->bufferWithOffset(outTadPack.primaryOffsets()[i]);
