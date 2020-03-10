@@ -99,6 +99,6 @@ TEST_F(BertPerfTests, test_bert_full_no_prof) {
     nd4j_printf("\tLoading graph    : %lld us;\n", deltaLoad);
     nd4j_printf("\tLoading in/out   : %lld us;\n", deltaInOut);
     nd4j_printf("\tPreparing intputs: %lld us;\n", deltaPrepare);
-    nd4j_printf("\txecuting graph   : %lld us;\n", deltaExec);
+    nd4j_printf("\tExecuting graph   : %lld us;\n", deltaExec);
     delete graph;
 }

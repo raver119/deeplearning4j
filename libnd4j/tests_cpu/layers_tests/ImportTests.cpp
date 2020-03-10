@@ -30,7 +30,6 @@
 #include <ops/declarable/generic/parity_ops.cpp>
 #include <iomanip>
 #include <array/NDArray.h>
-#include <performance/benchmarking/global_timers.h>
 
 using namespace sd;
 
@@ -80,9 +79,9 @@ TEST_F(ImportTests, LstmMnist) {
 //    nd4j_printf("Execution:\n------------\n",0);
     int height = 28;
     int width = 28;
-    int batchsize = 1;
+    int batchsize = 128;
 
-    NDArray* inputArray = NDArrayFactory::create_<double>('c', {1, height, width});
+    NDArray* inputArray = NDArrayFactory::create_<double>('c', {batchsize, height, width});
     Variable* input = new Variable(inputArray, "input");
     graph->getVariableSpace()->replaceVariable(input);
 
@@ -103,8 +102,6 @@ TEST_F(ImportTests, LstmMnist) {
 }
 
 TEST_F(ImportTests, ConcatPerfTest) {
-    auto timers = sd::GlobalTimers::getInstance();
-    nd4j_printf("Timers: %p\n", (void*)(timers));
     auto x0 = NDArrayFactory::create<double>('c', {1,28});
     auto x1 = NDArrayFactory::create<double>('c', {1,128});
 
