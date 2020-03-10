@@ -156,11 +156,12 @@ namespace functions {
 
             uint tadShapeShapeInfoCast[MAX_RANK];
             const bool canCast = tadEWS == 1 && tadOrder == 'c' ? false : sd::DataTypeUtils::castShapeInfo<uint>(tadShapeShapeInfo, tadShapeShapeInfoCast);
+            auto pOffsets = tadPack.primaryOffsets();
 
             auto func = PRAGMA_THREADS_FOR {
                 for (auto r = start; r < stop; r++) {
 
-                    auto tadOffsetForBlock = tadPack.primaryOffsets()[r];
+                    auto tadOffsetForBlock = pOffsets[r];
                     auto tx = x + tadOffsetForBlock;
                     SummaryStatsData <X> comp;
                     comp.initWithValue(tx[0]);
@@ -187,7 +188,7 @@ namespace functions {
                 }
             };
 
-            sd::Threads::parallel_tad(func,  0, resultLength, 1);
+            sd::Threads::parallel_tad(func, 0, resultLength, 1);
         }
 
 
