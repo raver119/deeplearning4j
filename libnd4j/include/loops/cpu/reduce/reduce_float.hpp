@@ -242,26 +242,49 @@ namespace functions {
 
             auto x = reinterpret_cast<X *>(vx);
             auto extraParams = reinterpret_cast<Z *>(vextraParams);
-            int maxThreads = sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxMasterThreads());
+
+#ifdef _OPENMP
+            int chunks = length / 1024;
+            int maxThreads = sd::math::nd4j_min<int>(sd::Environment::getInstance()->maxMasterThreads(), chunks);
+
+            Z intermediate = OpType::startingValue(x);
+
+            switch (OpType::reduceType) {
+                case functions::ReduceType::AMAX: {
+                    if (xEws == 1) {
+                        #pragma omp parallel for reduction(amaxT:intermediate) num_threads(maxThreads) if (maxThreads > 1)
+                        for (Nd4jLong i = 0; i < length; i++)
+                            intermediate = OpType::update(intermediate, OpType::op(x[i], extraParams), extraParams);
+                    } else {
+                        #pragma omp parallel for reduction(amaxT:intermediate) num_threads(maxThreads)
+                        for (Nd4jLong i = 0; i < length; i++)
+                            intermediate = OpType::update(intermediate, OpType::op(x[i * xEws], extraParams), extraParams);
+                    }
+                }
+                    break;
+                case functions::ReduceType::SUM: {
+                    if (xEws == 1) {
+                        #pragma omp parallel for reduction(sumT:intermediate) num_threads(maxThreads) if (maxThreads > 1)
+                        for (Nd4jLong i = 0; i < length; i++)
+                            intermediate = OpType::update(intermediate, OpType::op(x[i], extraParams), extraParams);
+                    } else {
+                            #pragma omp parallel for reduction(sumT:intermediate) num_threads(maxThreads)
+                            for (Nd4jLong i = 0; i < length; i++)
+                                intermediate = OpType::update(intermediate, OpType::op(x[i * xEws], extraParams), extraParams);
+                        }
+                    }
+                    break;
+            }
+
+            return OpType::postProcess(intermediate, length, extraParams);
+
+#else
+            int maxThreads = sd::math::nd4j_min<int>(sd::Environment::getInstance()->maxMasterThreads(), 64);
             Z intermediate[64];
 
             PRAGMA_OMP_SIMD
             for (auto e = 0; e < maxThreads; e++)
                 intermediate[e] = OpType::startingValue(x);
-
-#ifdef _OPENMP
-
-            if (xEws == 1) {
-                PRAGMA_OMP_PARALLEL_FOR_THREADS(maxThreads)
-                for (Nd4jLong i = 0; i < length; i++)
-                    intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i], extraParams), extraParams);
-            } else {
-                PRAGMA_OMP_PARALLEL_FOR_THREADS(maxThreads)
-                for (Nd4jLong i = 0; i < length; i++)
-                    intermediate[omp_get_thread_num()] = OpType::update(intermediate[omp_get_thread_num()], OpType::op(x[i * xEws], extraParams), extraParams);
-            }
-
-#else
 
             auto func = PRAGMA_THREADS_FOR {
                 if (xEws == 1) {
@@ -275,14 +298,14 @@ namespace functions {
 
             maxThreads = sd::Threads::parallel_for(func, 0, length, 1, maxThreads);
 
-#endif
-
             // merge results
             for (int e = 1; e < maxThreads; e++)
                 intermediate[0] = OpType::update(intermediate[0], intermediate[e], extraParams);
 
             // return result
             return OpType::postProcess(intermediate[0], length, extraParams);
+
+#endif
         }
     }
 }

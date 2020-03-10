@@ -3457,7 +3457,7 @@ namespace simdOps {
         no_op_exec_special_accumulation
         no_op_exec_special_accumulation_cuda
 
-        const static functions::ReduceType reduceType = functions::ReduceType::SUM;
+        const static functions::ReduceType reduceType = functions::ReduceType::AMAX;
 
 		op_def static X startingValue(const X *input) {
 			return static_cast<X>(0);
