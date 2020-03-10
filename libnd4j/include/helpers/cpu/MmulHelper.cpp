@@ -832,12 +832,11 @@ static void inner_gemm_no_checks(const Nd4jLong M, const Nd4jLong N,const Nd4jLo
 }
 
 
- 
 template <typename T1, typename T2, typename T3>
-static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
+static void parallel_batchedGemm3( const NDArray* vA, const NDArray* vB, NDArray* vC,
     const int* aBatchDims, const int* bBatchDims, const int* cBatchDims,
     const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
-    const double alpha, const double beta) {
+    const double alpha, const double beta, Nd4jLong start, Nd4jLong stop) {
 
     const T1* A = vA->bufferAsT<T1>();
     const T2* B = vB->bufferAsT<T2>();
@@ -876,10 +875,10 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
     int max_rank = aRank > bRank ? aRank : bRank;
     max_rank = max_rank > cRank ? max_rank : cRank;
 
-    Nd4jLong batch_len = 1;
-    for (int i = 0; i < max_rank - 2; i++) {
-        batch_len *= bases[i];
-    }
+    //Nd4jLong batch_len = 1;
+    //for (int i = 0; i < max_rank - 2; i++) {
+    //    batch_len *= bases[i];
+    //}
 
     const int M = vA->sizeAt(aMaxis);
     const int K = vA->sizeAt(aKaxis);
@@ -891,8 +890,6 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
     Nd4jLong cStride_M = cStrides[aRank - 2];
     Nd4jLong cStride_N = cStrides[aRank - 1];
      
-    auto func = PRAGMA_THREADS_FOR{
-
         Nd4jLong coords[MAX_RANK] = {};
         Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
         sd::index2coords_C(start, max_rank - 2, bases, ptr_coords);
@@ -905,15 +902,15 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
         bool packed_C = false;
         T3* __restrict C_PTR_ORIG = C;
         bool out_order_f = cStride_M < cStride_N;
-        if (out_order_f || cStride_N!=1) {
+        if (out_order_f || cStride_N != 1) {
             C_PTR_ORIG = new T3[M * N];
             memset(C_PTR_ORIG, 0, sizeof(T3) * M * N);
             packed_C = true;
- 
+
         }
 
         if (packed_C) {
-            
+
             for (Nd4jLong i = 0; i < loop; i++) {
                 T3* __restrict C_PTR = C_PTR_ORIG;
                 // memset(C_PTR, 0, sizeof(T3) * M * N);
@@ -933,20 +930,20 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
                             }//N
                             CX += cStride_N;
                         }//M 
-                          
+
 
                     }
                     else {
                         for (Nd4jLong n = 0; n < N; n++) {
                             T3* __restrict C_SOURCE = &(C_PTR[n]);
                             for (Nd4jLong m = 0; m < M; m++) {
-                                CX[m * cStride_M] =  C_SOURCE[0];
+                                CX[m * cStride_M] = C_SOURCE[0];
                                 C_SOURCE[0] = 0;
                                 C_SOURCE += N;
                             }//N
                             CX += cStride_N;
                         }//M  
-                        
+
                     }
 
                 }
@@ -955,16 +952,16 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
                         for (Nd4jLong m = 0; m < M; m++) {
 
                             for (Nd4jLong n = 0; n < N; n++) {
-                                CX[n * cStride_N] = beta * CX[n * cStride_N]  + C_PTR[n];
+                                CX[n * cStride_N] = beta * CX[n * cStride_N] + C_PTR[n];
                                 C_PTR[n] = 0;
                             }//M
 
                             C_PTR += N;
-                            CX +=  cStride_M;
+                            CX += cStride_M;
                         }//N
                     }
                     else {
-                        for (Nd4jLong m = 0; m < M; m++) { 
+                        for (Nd4jLong m = 0; m < M; m++) {
 
                             for (Nd4jLong n = 0; n < N; n++) {
                                 CX[n * cStride_N] = C_PTR[n];
@@ -980,7 +977,7 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
 
                 offset = sd::inc_coords(bases, aStrides, bStrides, cStrides, ptr_coords, offset, max_rank, 2);
             }
-            delete [] C_PTR_ORIG;
+            delete[] C_PTR_ORIG;
 
         }
         else {
@@ -1012,10 +1009,40 @@ static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
                 offset = sd::inc_coords(bases, aStrides, bStrides, cStrides, ptr_coords, offset, max_rank, 2);
             }
         }
- 
-    };
+         
+}
 
-    samediff::Threads::parallel_tad(func, 0, batch_len);
+ 
+ 
+template <typename T1, typename T2, typename T3>
+static void batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray* vC,
+    const int* aBatchDims, const int* bBatchDims, const int* cBatchDims,
+    const int aMaxis, const int aKaxis, const int bKaxis, const int bNaxis, const int cMaxis, const int cNaxis,
+    const double alpha, const double beta) {
+ 
+    const Nd4jLong* cShapeInfo = vC->getShapeInfo();
+
+    const Nd4jLong* bases = &(cShapeInfo[1]);
+
+ 
+    const int aRank = vA->rankOf();
+    const int bRank = vB->rankOf();
+    const int cRank = vC->rankOf();
+ 
+    int max_rank = aRank > bRank ? aRank : bRank;
+    max_rank = max_rank > cRank ? max_rank : cRank;
+
+    Nd4jLong batch_len = 1;
+    for (int i = 0; i < max_rank - 2; i++) {
+        batch_len *= bases[i];
+    }
+    auto func = [vA, vB, vC, aBatchDims, bBatchDims, cBatchDims, aMaxis, aKaxis, bKaxis, bNaxis, cMaxis, cNaxis, alpha, beta](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+
+        parallel_batchedGemm3<T1,T2,T3>(vA, vB, vC, aBatchDims, bBatchDims, cBatchDims, aMaxis, aKaxis, bKaxis, bNaxis, cMaxis, cNaxis, alpha, beta, start, stop);
+    };
+  
+   // samediff::Threads::parallel_tad(func, 0, batch_len);
+    samediff::Threads::parallel_aligned_increment(func, 0, batch_len, 1  ,false);
 }
 //////////////////////////////////////////////////////////////////////////
 // [bS,M,K] x [bS,K,N] = [bS,M,N]

@@ -801,7 +801,7 @@ namespace samediff {
 	}
 
 
-	int  Threads::parallel_aligned_increment(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, size_t type_size, uint32_t req_numThreads) {
+	int  Threads::parallel_aligned_increment(FUNC_1D function, int64_t start, int64_t stop, int64_t increment, bool adjust, size_t type_size, uint32_t req_numThreads) {
 		if (start > stop)
 			throw std::runtime_error("Threads::parallel_for got start > stop");
 		auto num_elements = (stop - start);
@@ -833,7 +833,7 @@ namespace samediff {
 #ifdef __NEC__
 		int adjusted_numThreads = max_thread_count;
 #else
-		int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
+		int adjusted_numThreads = (!adjust)? req_numThreads :samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
 #endif
 
 		if (adjusted_numThreads > delta)

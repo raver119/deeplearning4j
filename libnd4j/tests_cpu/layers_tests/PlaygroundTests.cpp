@@ -78,7 +78,7 @@ constexpr int outter_loops = 1;// 10;
 constexpr int inner_loops = 1;// 10;
 #else
 constexpr int outter_loops = 2;
-constexpr int inner_loops = 2;
+constexpr int inner_loops =2;
 #endif
 #define CHECK_CORRECTNESS 1
 template<typename Op, typename... Args>
@@ -202,6 +202,7 @@ int bnch_cases[][5] = {
 	{1,1,32,64,64},
 	{1,1,64,64,64},
 	{1,1,64,256,64},
+	{4,12,128,128,64},
 	{4*32,128,16,16,16},
 	{1,4 * 32*128,16,16,16},
 	{32,128,64,64,64}, 
