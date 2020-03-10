@@ -161,7 +161,7 @@ TEST_F(PlaygroundTests, AddMatrices1) {
 
     sd::ops::add addOp;
 
-    addOp.execute(block);
+    auto result = op.evaluate({&x, &y});
 
 
     delete exp;
