@@ -149,6 +149,24 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     delete graph;
 }
 
+//////////////////////////////////////////////////////////////////////
+TEST_F(PlaygroundTests, AddMatrices1) {
+
+    auto x = NDArrayFactory::create_<float>('c', { 512, 768 });
+    auto y = NDArrayFactory::create_<float>('c', { 512, 768 });
+    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
+    x->linspace(1);
+    y->linspace(1);
+
+
+    sd::ops::add addOp;
+
+    addOp.execute(block);
+
+
+    delete exp;
+}
+
 
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
