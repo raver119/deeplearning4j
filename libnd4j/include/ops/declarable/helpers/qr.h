@@ -27,6 +27,7 @@ namespace ops {
 namespace helpers {
 
     void qr(sd::LaunchContext * context, NDArray const* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies);
+    void schur(sd::LaunchContext* context, NDArray const* input, NDArray* outputQ, NDArray* outputU);
 
 
 }

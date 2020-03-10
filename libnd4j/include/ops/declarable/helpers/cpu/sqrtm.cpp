@@ -172,8 +172,8 @@ namespace helpers {
             auto e1 = NDArrayFactory::create<T>('c', {n - 1});
             e1.template t<T>(0) = T(1.f);
             auto sgn = math::nd4j_sign<T,T>(a1.t<T>(0));
-            auto v = a1 + sgn * a1.reduceNumber(reduce::Norm1) * e1;
-            v /= v.reduceNumber(reduce::Norm1);
+            auto v = a1 + sgn * a1.reduceNumber(reduce::Norm2) * e1;
+            v /= v.reduceNumber(reduce::Norm2);
             auto a2 = hessenberg({1, n-1, 1, n-1});
             auto h2 = hessenberg({1, n-1, 1, n-1});
             auto I = NDArrayFactory::create<T>('c', {n - 1, n - 1});
@@ -201,8 +201,9 @@ namespace helpers {
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
 
-        schurDecomposition<T>(context, pInput, &outputQ, &outputT);
-
+        schur(context, input, &outputQ, &outputT);
+        outputQ.printIndexedBuffer("Q matrix");
+        outputT.printIndexedBuffer("T matrix");
 //        auto outputT = outputR.ulike();
 
         upperTriangularSqrt<T>(context, &outputT, output);

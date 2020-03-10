@@ -104,6 +104,57 @@ namespace helpers {
             R->assign(resR({0,N, 0, 0}));
         }
     }
+/*
+ * householder to reduce to Hessenberg (U) - quasydiagonal
+ * as real Schur decomposition: A = QUQT
+ * */
+    template <typename T>
+    void schurSingle(NDArray* matrix, NDArray* Q, NDArray* U) {
+        Nd4jLong M = matrix->sizeAt(-2);
+        Nd4jLong N = matrix->sizeAt(-1);
+        auto resQ = Q->ulike();
+        auto resU = U->ulike();
+        std::vector<NDArray> q(M);
+
+        NDArray z = *matrix;
+        NDArray e('c', {M}, DataTypeUtils::fromT<T>()); // two internal buffers and scalar for squared norm
+
+        for (Nd4jLong k = 0; k < N - 1; k++) { // loop for columns, but not further then row number
+            e.nullify();
+            z = matrixMinor<T>(z, k); // minor computing for current column with given matrix z (initally is a input matrix)
+//            z.printIndexedBuffer("Minor!!!");
+
+            auto currentColumn = z({0, 0, k, k + 1}); // retrieve k column from z to x buffer
+            auto norm = currentColumn.reduceAlongDimension(reduce::Norm2, {0});
+            if (matrix->t<T>(k,k) > T(0.f)) // negate on positive matrix diagonal element
+                norm *= T(-1.f);//.applyTransform(transform::Neg, nullptr, nullptr); //t<T>(0) = -norm.t<T>(0);
+            //e.t<T>(k) = T(1.f); // e - is filled by 0 vector except diagonal element (filled by 1)
+            //auto tE = e;
+            //tE *= norm;
+//            norm.printIndexedBuffer("Norm!!!");
+            e.p(k, norm);
+            e += currentColumn;//  e += tE; // e[i] = x[i] + a * e[i] for each i from 0 to n - 1
+            auto normE = e.reduceAlongDimension(reduce::Norm2, {0});
+            e /= normE;
+            q[k] = vmul<T>(e, M);
+            auto qQ = z.ulike();
+            MmulHelper::matmul(&q[k], &z, &qQ, true, false);
+            MmulHelper::matmul(&qQ, &q[k], &z, false, false);
+//            z = std::move(qQ);
+        }
+        resQ.assign(q[0]); //
+//        MmulHelper::matmul(&q[0], matrix, &resR, false, false);
+        for (Nd4jLong i = 1; i < M - 1; i++) {
+            auto tempResQ = resQ;
+            MmulHelper::matmul(&q[i], &resQ, &tempResQ, false, false); // use mmulMxM?
+            resQ = std::move(tempResQ);
+        }
+        MmulHelper::matmul(&resQ, matrix, &resU, false, false);
+        // resR *= -1.f;
+        resQ.transposei();
+        Q->assign(resQ);//({0,0, 0, N}));
+        U->assign(resU);
+    }
 
     template <typename T>
     void qr_(NDArray const* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies) {
@@ -123,8 +174,30 @@ namespace helpers {
 
     }
 
+    template <typename T>
+    void schur_(NDArray const* input, NDArray* outputQ, NDArray* outputU) {
+        Nd4jLong lastDim = input->rankOf() - 1;
+        Nd4jLong preLastDim = input->rankOf() - 2;
+        ResultSet listOutQ(outputQ->allTensorsAlongDimension({(int)preLastDim, (int)lastDim}));
+        ResultSet listOutR(outputU->allTensorsAlongDimension({(int)preLastDim, (int)lastDim}));
+        ResultSet listInput(input->allTensorsAlongDimension({(int)preLastDim, (int)lastDim}));
+        auto batching = PRAGMA_THREADS_FOR {
+            for (auto batch = start; batch < stop; batch++) {
+                //qr here
+                schurSingle<T>(listInput.at(batch), listOutQ.at(batch), listOutR.at(batch));
+            }
+        };
+
+        samediff::Threads::parallel_tad(batching, 0, listOutQ.size(), 1);
+
+    }
+
     void qr(sd::LaunchContext* context, NDArray const* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies) {
         BUILD_SINGLE_SELECTOR(input->dataType(), qr_, (input, outputQ, outputR, fullMatricies), FLOAT_TYPES);
+    }
+
+    void schur(sd::LaunchContext* context, NDArray const* input, NDArray* outputQ, NDArray* outputU) {
+        BUILD_SINGLE_SELECTOR(input->dataType(), schur_, (input, outputQ, outputU), FLOAT_TYPES);
     }
 
 }
