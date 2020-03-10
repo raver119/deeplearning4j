@@ -42,9 +42,7 @@ TEST_F(AttentionTests, basic_dot_product_attention) {
 
     sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values}, {1, 0});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 /*
@@ -70,9 +68,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_with_weights) {
 
     sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values}, {1, 1});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 TEST_F(AttentionTests, basic_dot_product_attention_with_mask) {
@@ -84,9 +80,7 @@ TEST_F(AttentionTests, basic_dot_product_attention_with_mask) {
 
     sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &mask}, {1, 0});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 /*
@@ -116,9 +110,7 @@ TEST_F(AttentionTests, multi_head_input_dot_product_attention_with_mask) {
 
     sd::ops::dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &mask}, {1, 0});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 /*
@@ -152,9 +144,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_attention) {
 
     sd::ops::multi_head_dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo}, {1, 0});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 /*
@@ -196,9 +186,7 @@ TEST_F(AttentionTests, basic_multi_head_dot_product_attention_with_mask) {
 
     sd::ops::multi_head_dot_product_attention op;
     auto result = op.evaluate({&queries, &keys, &values, &Wk, &Wv, &Wq, &Wo, &mask}, {1, 0});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    delete result;
+    ASSERT_EQ(Status::OK(), result.status());
 }
 
 /*
