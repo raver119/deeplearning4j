@@ -3161,13 +3161,13 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_1) {
     sd::ops::sqrtm op;
 
     auto res = op.evaluate({&a});
-    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
-    auto z = res->at(0);
+    ASSERT_EQ(res.status(), ND4J_STATUS_OK);
+    auto z = res.at(0);
 
     z->printIndexedBuffer("Triangular Sqrt");
 
     ASSERT_TRUE(exp.equalsTo(z));
-    delete res;
+//    delete res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3199,14 +3199,14 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_2) {
     sd::ops::sqrtm op;
 
     auto res = op.evaluate({&triangular});
-    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
-    auto z = res->at(0);
+    ASSERT_EQ(res.status(), ND4J_STATUS_OK);
+    auto z = res.at(0);
 
     z->printIndexedBuffer("Sqrt");
     MmulHelper::matmul(&orthogonal, z, &a, false, false);
     MmulHelper::matmul(&a, &orthogonal, z, false, true);
     ASSERT_TRUE(exp.equalsTo(z));
-    delete res;
+//    delete res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3234,12 +3234,12 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_3) {
     sd::ops::sqrtm op;
 
     auto res = op.evaluate({&a});
-    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
-    auto z = res->at(0);
+    ASSERT_EQ(res.status(), ND4J_STATUS_OK);
+    auto z = res.at(0);
 
     z->printIndexedBuffer("MatrixSqrt3");
     ASSERT_TRUE(exp.equalsTo(z));
-    delete res;
+//    delete res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3271,12 +3271,14 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
     sd::ops::sqrtm op;
 
     auto res = op.evaluate({&a});
-    ASSERT_EQ(res->status(), ND4J_STATUS_OK);
-    auto z = res->at(0);
+    ASSERT_EQ(res.status(), ND4J_STATUS_OK);
+    auto z = res.at(0);
 
     z->printIndexedBuffer("Sqrt");
 //    MmulHelper::matmul(&orthogonal, z, &a, false, false);
 //    MmulHelper::matmul(&a, &orthogonal, z, false, true);
     ASSERT_TRUE(exp.equalsTo(z));
-    delete res;
+//    delete res;
 }
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
