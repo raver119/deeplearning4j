@@ -165,21 +165,24 @@ namespace helpers {
         auto n = input.rows();
         hessenberg.assign(input);
         if (n > 2) {
-            auto a1 = hessenberg({1, n, 0, n}); // the first column
-            auto c1 = hessenberg({1, n, 0, n}); // the first column
-            auto r1 = hessenberg({0, n, 1, n}); // the first column
-
-            auto e1 = NDArrayFactory::create<T>('c', {n - 1});
+            auto a1 = hessenberg({1, n, 0, 1}); // the first column
+            auto c1 = hessenberg({1, n, 0, 1}); // the first column = shape {2, 1} with 'c'
+            auto r1 = hessenberg({0, 1, 1, n}); // the first row = shape {1, 3} with 'c'
+            a1.printShapeInfo("A1");c1.printShapeInfo("C1");r1.printShapeInfo("R1");
+            a1.printIndexedBuffer("A1 data");r1.printIndexedBuffer("R1 data");
+            auto e1 = a1.ulike();//NDArrayFactory::create<T>('c', {n - 1});
             e1.template t<T>(0) = T(1.f);
             auto sgn = math::nd4j_sign<T,T>(a1.t<T>(0));
             auto v = a1 + sgn * a1.reduceNumber(reduce::Norm2) * e1;
             v /= v.reduceNumber(reduce::Norm2);
-            auto a2 = hessenberg({1, n-1, 1, n-1});
-            auto h2 = hessenberg({1, n-1, 1, n-1});
+            auto a2 = hessenberg({1, n, 1, n});
+            auto h2 = hessenberg({1, n, 1, n});
             auto I = NDArrayFactory::create<T>('c', {n - 1, n - 1});
             I.setIdentity();
             auto V = I.ulike();
-            MmulHelper::matmul(&v, &v, false, true);
+            v.reshapei({n - 1, 1});
+            //auto v1 = v.reshape({1, n - 1});
+            MmulHelper::matmul(&v, &v, &V, false, true);
             auto Q = I - T(2.f) * V;
             MmulHelper::matmul(&Q, &a1, &c1, false, false);
             MmulHelper::matmul(&Q, &r1, &r1, false, false);
@@ -200,12 +203,13 @@ namespace helpers {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
-
+        input->printIndexedBuffer("Input");
         schur(context, input, &outputQ, &outputT);
         outputQ.printIndexedBuffer("Q matrix");
         outputT.printIndexedBuffer("T matrix");
 //        auto outputT = outputR.ulike();
-
+        hessenbergReduction<T>(*input, outputT);
+        outputT.printIndexedBuffer("H matrix");
         upperTriangularSqrt<T>(context, &outputT, output);
         MmulHelper::matmul(&outputQ, output, &outputT, false, false);
         MmulHelper::matmul(&outputT, &outputQ, output, false, true);
