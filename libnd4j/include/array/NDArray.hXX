@@ -27,6 +27,7 @@
 #include <loops/BroadcastPairwiseConverter.h>
 #include <helpers/PointersManager.h>
 #include <loops/TrueBroadcastHelper.h>
+#include <performance/benchmarking/global_timers.h>
 
 namespace sd {
 
@@ -145,24 +146,34 @@ NDArray::NDArray(void* buffer, const char order, const std::vector<Nd4jLong> &sh
 ////////////////////////////////////////////////////////////////////////
 // creates new NDArray using shape information from "shapeInfo" array, set all elements in new array to be zeros
 NDArray::NDArray(Nd4jLong* shapeInfo, const sd::DataType dtype, const bool copyStrides, sd::LaunchContext * context) {
-
+    FIRST_TIMER(__LINE__, 1);
+    GLOBAL_TIMER(__LINE__,1);
     if (shapeInfo == nullptr)
         throw std::runtime_error("NDArray constructor: can't be initalized without shapeinfo");
-
+GLOBAL_TIMER(__LINE__,1);
     if ((int) shapeInfo[0] > MAX_RANK)
         throw std::invalid_argument("Rank of NDArray can't exceed 32");
-
+GLOBAL_TIMER(__LINE__,1);
     _context = context;
     _offset  = 0;
-
-    if (copyStrides)
+GLOBAL_TIMER(__LINE__,1);
+    if (copyStrides){
+        GLOBAL_TIMER(__LINE__,1);
         setShapeInfo(ShapeDescriptor(shapeInfo, dtype));
-    else
+        GLOBAL_TIMER(__LINE__,1);
+    }
+    else{
+        GLOBAL_TIMER(__LINE__,1);
         setShapeInfo(ShapeDescriptor(dtype, shape::order(shapeInfo), shape::shapeOf(shapeInfo), shape::rank(shapeInfo)));
+        GLOBAL_TIMER(__LINE__,1);
+    }
 
     if (!isEmpty()) {
+        GLOBAL_TIMER(__LINE__,1);
         _buffer = std::make_shared<DataBuffer>(lengthOf() * sizeOfT(), dtype, getContext()->getWorkspace());
+        GLOBAL_TIMER(__LINE__,1);
         _buffer->setToZeroBuffers();
+        GLOBAL_TIMER(__LINE__,1);
     }
 }
 
