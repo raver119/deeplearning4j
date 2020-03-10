@@ -23,21 +23,32 @@
 #define LIBND4J_MMULHELPER_H
 
 #include "array/NDArray.h"
-
+#define AURORA_BNCH 1
 namespace sd {
     class ND4J_EXPORT MmulHelper {
 
     private:
-
+#ifdef AURORA_BNCH
+    public:
+#endif
         // multiptication N-dimensions tensor on other N-dimensions one
         static sd::NDArray* mmulNxN(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C, const double alpha = 1.0, const double beta = 0.0, const char outOrder = 'f');
 
+        static sd::NDArray* mmulNxN_2(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C, const double alpha = 1.0, const double beta = 0.0, const char outOrder = 'f');
+        static sd::NDArray* mmulNxN_3(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C, const double alpha = 1.0, const double beta = 0.0, const char outOrder = 'f');
+#ifdef AURORA_BNCH
+    private:
+#endif
         // dot product of vectors (X * Y) = Z[0]
         static sd::NDArray* dot(const sd::NDArray* X, const sd::NDArray* Y, sd::NDArray* Z, const double alpha = 1.0, const double beta = 0.0);
-
+#ifdef AURORA_BNCH
+    public:
+#endif
         // multiptication Matrix to Matrix
         static sd::NDArray* mmulMxM(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C, double alpha = 1.0, double beta = 0.0, const char outOrder = 'f');
-
+#ifdef AURORA_BNCH
+    private:
+#endif
         // multiptication Matrix to vector
         static sd::NDArray* mmulMxV(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C, double alpha = 1.0, double beta = 0.0, const char outOrder = 'f');
 
