@@ -43,6 +43,7 @@
 #include <array>
 #include <performance/benchmarking/FullBenchmarkSuit.h>
 #include <performance/benchmarking/LightBenchmarkSuit.h>
+#include <performance/benchmarking/global_timers.h>
 
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/addBias.h>
@@ -162,7 +163,7 @@ TEST_F(PlaygroundTests, AddMatrices1) {
     sd::ops::add addOp;
 
     auto result = addOp.evaluate({&x, &y});
-
+    GlobalTimers::getInstance()->displayTimers();
 
     delete exp;
 }
