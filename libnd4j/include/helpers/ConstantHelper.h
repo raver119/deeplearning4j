@@ -43,7 +43,7 @@ namespace sd {
         // tracking of per-device constant memory buffers (CUDA only atm)
         std::vector<Nd4jPointer> _devicePointers;
         std::vector<Nd4jLong> _deviceOffsets;
-        std::mutex _mutex;
+        static std::mutex _mutex;
         std::mutex _mutexHolder;
 
         std::vector<Nd4jLong> _counters;

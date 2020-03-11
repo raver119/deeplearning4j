@@ -38,6 +38,7 @@ namespace sd {
     }
 
     ConstantShapeHelper* ConstantShapeHelper::getInstance() {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (!_INSTANCE)
             _INSTANCE = new ConstantShapeHelper();
 
@@ -188,6 +189,7 @@ ConstantDataBuffer ConstantShapeHelper::createShapeInfoWithUnitiesForBroadcast(c
 }
 
 
-sd::ConstantShapeHelper* sd::ConstantShapeHelper::_INSTANCE = 0;
+    sd::ConstantShapeHelper* sd::ConstantShapeHelper::_INSTANCE = 0;
+    std::mutex ConstantShapeHelper::_mutex;
 
 }

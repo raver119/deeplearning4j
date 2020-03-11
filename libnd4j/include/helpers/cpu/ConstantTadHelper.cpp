@@ -33,6 +33,7 @@ namespace sd {
     }
 
     ConstantTadHelper* ConstantTadHelper::getInstance() {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (!_INSTANCE)
             _INSTANCE = new ConstantTadHelper();
 
@@ -59,8 +60,8 @@ namespace sd {
 
     TadPack ConstantTadHelper::tadForDimensions(TadDescriptor &descriptor) {
         const int deviceId = 0;
+        std::lock_guard<std::mutex> lock(_mutex);
 
-        _mutex.lock();
         if (_cache[deviceId].count(descriptor) == 0) {
 
             const auto shapeInfo = descriptor.originalShape().toShapeInfo();
@@ -100,20 +101,19 @@ namespace sd {
             _cache[deviceId][descriptor] = t;
 
             TadPack &r = _cache[deviceId][descriptor];
-            _mutex.unlock();
 
             delete[] shapeInfo;
 
             return r;
         } else {
             TadPack r = _cache[deviceId][descriptor];
-            _mutex.unlock();
 
             return r;
         }
     }
 
     sd::ConstantTadHelper* sd::ConstantTadHelper::_INSTANCE = 0;
+    std::mutex ConstantTadHelper::_mutex;
 }
 
 #endif

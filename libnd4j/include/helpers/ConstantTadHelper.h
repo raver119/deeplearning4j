@@ -37,7 +37,7 @@ namespace sd {
     private:
         static ConstantTadHelper *_INSTANCE;
 
-        std::mutex _mutex;
+        static std::mutex _mutex;
         std::vector<MAP_IMPL<TadDescriptor, TadPack>> _cache;
 
         ConstantTadHelper();

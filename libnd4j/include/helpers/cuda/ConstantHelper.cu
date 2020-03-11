@@ -85,6 +85,7 @@ namespace sd {
     }
 
     ConstantHelper* ConstantHelper::getInstance() {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (!_INSTANCE)
             _INSTANCE = new sd::ConstantHelper();
 
@@ -186,4 +187,5 @@ namespace sd {
     }
 
     sd::ConstantHelper* sd::ConstantHelper::_INSTANCE = 0;
+    std::mutex ConstantHelper::_mutex;
 }

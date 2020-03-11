@@ -37,7 +37,7 @@ namespace sd {
     private:
         static ConstantShapeHelper *_INSTANCE;
 
-        std::mutex _mutex;
+        static std::mutex _mutex;
         std::vector<MAP_IMPL<ShapeDescriptor, ConstantDataBuffer>> _cache;
 
 

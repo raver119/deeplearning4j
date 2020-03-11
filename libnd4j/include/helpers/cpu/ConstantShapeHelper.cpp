@@ -35,6 +35,7 @@ namespace sd {
     }
 
     ConstantShapeHelper* ConstantShapeHelper::getInstance() {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (!_INSTANCE)
             _INSTANCE = new ConstantShapeHelper();
 
@@ -55,22 +56,16 @@ namespace sd {
     ConstantDataBuffer ConstantShapeHelper::bufferForShapeInfo(const ShapeDescriptor &descriptor) {
         int deviceId = 0;
 
-        _mutex.lock();
+        std::lock_guard<std::mutex> lock(_mutex);
 
         if (_cache[deviceId].count(descriptor) == 0) {
             auto hPtr = descriptor.toShapeInfo();
             ConstantDataBuffer buffer(hPtr, nullptr, shape::shapeInfoLength(hPtr)*sizeof(Nd4jLong), DataType::INT64);
             ShapeDescriptor descriptor1(descriptor);
             _cache[deviceId][descriptor1] = buffer;
-            auto r = _cache[deviceId][descriptor1];
-            _mutex.unlock();
-
-            return r;
+            return _cache[deviceId][descriptor1];
         } else {
-            auto r = _cache[deviceId].at(descriptor);
-            _mutex.unlock();
-
-            return r;
+            return _cache[deviceId].at(descriptor);
         }
     }
 
@@ -82,16 +77,9 @@ namespace sd {
     bool ConstantShapeHelper::checkBufferExistenceForShapeInfo(ShapeDescriptor &descriptor) {
         bool result;
         int deviceId = 0;
-        _mutex.lock();
+        std::lock_guard<std::mutex> lock(_mutex);
 
-        if (_cache[deviceId].count(descriptor) == 0)
-            result = false;
-        else
-            result = true;
-
-        _mutex.unlock();
-
-        return result;
+        return _cache[deviceId].count(descriptor) != 0;
     }
 
     Nd4jLong* ConstantShapeHelper::createShapeInfo(const sd::DataType dataType, const char order, const int rank, const Nd4jLong* shape) {
@@ -200,7 +188,8 @@ ConstantDataBuffer ConstantShapeHelper::createShapeInfoWithUnitiesForBroadcast(c
 }
 
 
-sd::ConstantShapeHelper* sd::ConstantShapeHelper::_INSTANCE = 0;
+    sd::ConstantShapeHelper* sd::ConstantShapeHelper::_INSTANCE = 0;
+    std::mutex ConstantShapeHelper::_mutex;
 
 }
 

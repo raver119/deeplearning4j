@@ -37,6 +37,7 @@ namespace sd {
     }
 
     ConstantTadHelper* ConstantTadHelper::getInstance() {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (!_INSTANCE)
             _INSTANCE = new ConstantTadHelper();
 
@@ -109,4 +110,6 @@ namespace sd {
     }
 
     sd::ConstantTadHelper* sd::ConstantTadHelper::_INSTANCE = 0;
+    std::mutex ConstantTadHelper::_mutex;
+
 }
