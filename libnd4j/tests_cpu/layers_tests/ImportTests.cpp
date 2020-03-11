@@ -111,32 +111,4 @@ TEST_F(ImportTests, ConcatPerfTest) {
     sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1}, {}, {1});
-    ASSERT_EQ(ND4J_STATUS_OK, result->status());
-    auto output = result->at(0);
-    delete result;
-
-    //timers->displayTimers();
-
-    /*auto timeStart = std::chrono::system_clock::now();
-    timers[198] = std::chrono::high_resolution_clock::now();
-    int suma = 1;
-    int sumb = 1;
-    for(int i=0;i<100000;i++){
-        int c = suma;
-        suma = sumb +suma;
-        sumb = c;
-    }
-    printf("suma = %d\n", suma);
-    nd4j_printf("Timers: %p\n", (void*)(timers));
-    timers[199] = std::chrono::high_resolution_clock::now();
-    auto lines = sd::GlobalTimers::getInstance()->line_numbers;
-    for(int i=1;i<200;i++){
-        if(lines[i-1]==0) continue;
-        if(lines[i]==0) continue;
-        auto dt1 = std::chrono::duration_cast<std::chrono::nanoseconds> ((timers[i] - timers[i-1])).count();
-        auto dt2 = std::chrono::duration_cast<std::chrono::microseconds> ((timers[i] - timers[i-1])).count();
-        auto dt3 = std::chrono::duration_cast<std::chrono::milliseconds> ((timers[i] - timers[i-1])).count();
-        nd4j_printf("i=%d, line=%d: %ld ns %ld us %ld ms\n", i,  sd::GlobalTimers::getInstance()->line_numbers[i], dt1, dt2, dt3);
-    }*/
-
 }
