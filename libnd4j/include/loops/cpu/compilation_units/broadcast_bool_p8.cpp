@@ -15,35 +15,13 @@
  ******************************************************************************/
 
 //
-// Created by raver119 on 13.01.2018.
+// Created by raver119 on 23/09/18.
 //
 
-#include "testlayers.h"
-#include <ops/declarable/CustomOperations.h>
+#include "../broadcasting_bool.hpp"
 
-using namespace sd;
-using namespace sd::ops;
-using namespace sd::graph;
-
-class BackpropTests : public testing::Test {
-public:
-
-};
-
-TEST_F(BackpropTests, Test_Add_1) {
-
-    NDArray x('c', {2, 3, 4}, sd::DataType::FLOAT32);
-    NDArray y('c', {3, 4}, sd::DataType::FLOAT32);
-    NDArray e('c', {2, 3, 4}, sd::DataType::FLOAT32);
-
-    sd::ops::add_bp op;
-    auto result = op.evaluate({&x, &y, &e});
-
-    ASSERT_EQ(Status::OK(), result.status());
-
-    auto eps = result.at(0);
-    auto grad = result.at(1);
-
-    ASSERT_TRUE(x.isSameShape(eps));
-    ASSERT_TRUE(y.isSameShape(grad));
+namespace functions {
+    namespace broadcast {
+        BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT BroadcastBool, , LIBND4J_TYPES_8, BOOL_TYPES);
+    }
 }
