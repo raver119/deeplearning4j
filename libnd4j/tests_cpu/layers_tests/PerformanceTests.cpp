@@ -263,7 +263,4 @@ TEST_F(PerformanceTests, stack_2d_perfs) {
 
     sd::ops::stack op;
     auto result = op.evaluate({&t, &u, &v, &w}, {}, {0});
-    ASSERT_EQ(ND4J_STATUS_OK, result->status());
-
-    auto z = result->at(0);
 }
