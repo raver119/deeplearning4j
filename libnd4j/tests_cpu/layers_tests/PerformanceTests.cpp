@@ -226,10 +226,6 @@ TEST_F(PerformanceTests, split_perfs) {
     sd::ops::split op;
     auto results = op.evaluate({&input, &axis}, {}, {2}, {});
 
-    ASSERT_EQ(ND4J_STATUS_OK, results->status());
-
-    auto out1 = results->at(0);
-    auto out2 = results->at(1);
 }
 
 
