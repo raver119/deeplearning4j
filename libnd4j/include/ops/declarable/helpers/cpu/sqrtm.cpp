@@ -199,6 +199,25 @@ namespace helpers {
     }
 
     template <typename T>
+    bool hasSqrt(NDArray const& input) {
+        auto matricies =input.allTensorsAlongDimension({-2, -1});
+        auto result = true;
+        auto n = input.sizeAt(-1);
+
+        for (auto i = 0; i < matricies.size(); ++i) {
+            result = math::nd4j_sign<T,T>(input.t<T>(0,0)) == T(-1.f);
+            if (result)
+            for (auto r = 1; r < n; r++) {
+                if (math::nd4j_sign<T,T>(input.t<T>(r,r)) == T(-1.f) && input.t<T>(r, r - 1) == T(0.f)) // if diagonal element and
+                    return false;
+            }
+            else
+                return result;
+        }
+        return result;
+    }
+
+    template <typename T>
     int sqrtMatrixFunctor_(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
@@ -210,11 +229,14 @@ namespace helpers {
 //        auto outputT = outputR.ulike();
         hessenbergReduction<T>(*input, outputT);
         outputT.printIndexedBuffer("H matrix");
-        upperTriangularSqrt<T>(context, &outputT, output);
-        MmulHelper::matmul(&outputQ, output, &outputT, false, false);
-        MmulHelper::matmul(&outputT, &outputQ, output, false, true);
+        if (hasSqrt<T>(outputT)) {
+            upperTriangularSqrt<T>(context, &outputT, output);
+            MmulHelper::matmul(&outputQ, output, &outputT, false, false);
+            MmulHelper::matmul(&outputT, &outputQ, output, false, true);
 
-        return Status::OK();
+            return Status::OK();
+        }
+        return Status::CODE(ND4J_STATUS_BAD_INPUT, "helpers::sqrtMatrixFunctor::Cannot retrieve sqrt for given matrix due negative real eighenvals appears.");
     }
 
     int sqrtMatrixFunctor(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
