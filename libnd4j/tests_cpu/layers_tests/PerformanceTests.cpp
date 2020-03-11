@@ -214,10 +214,6 @@ TEST_F(PerformanceTests, concat_perfs) {
     sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1}, {}, {1});
-    ASSERT_EQ(ND4J_STATUS_OK, result->status());
-    auto output = result->at(0);
-    delete result;
-
 }
 
 
@@ -234,14 +230,6 @@ TEST_F(PerformanceTests, split_perfs) {
 
     auto out1 = results->at(0);
     auto out2 = results->at(1);
-
-    ASSERT_TRUE(exp1.isSameShape(out1));
-    ASSERT_TRUE(exp2.isSameShape(out2));
-    ASSERT_TRUE(exp1.equalsTo(out1));
-    ASSERT_TRUE(exp2.equalsTo(out2));
-
-    delete results;
-
 }
 
 
@@ -262,12 +250,6 @@ TEST_F(PerformanceTests, stack_1d_perfs) {
 
     sd::ops::stack op;
     auto results = op.evaluate({&input1, &input2}, {}, {1});
-    auto output = results->at(0);
-
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
-    ASSERT_TRUE(expected.equalsTo(output));
-
-    delete results;
 }
 
 
@@ -284,11 +266,4 @@ TEST_F(PerformanceTests, stack_2d_perfs) {
     ASSERT_EQ(ND4J_STATUS_OK, result->status());
 
     auto z = result->at(0);
-
-    // z->printShapeInfo("z shape");
-
-    ASSERT_TRUE(exp.isSameShape(z));
-    ASSERT_TRUE(exp.equalsTo(z));
-
-    delete result;
 }
