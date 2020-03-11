@@ -92,15 +92,15 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/BertFull/model.fb") < 0)
+    if (sd::graph::getFileSize("resources/BertFull/model.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/BertFull/model.fb");
 
-    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in0_IteratorGetNext.npy");
-    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in1_IteratorGetNext_1.npy");
-    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in2_IteratorGetNext_4.npy");
-    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/out_loss-Softmax.npy");
+    auto t = NDArrayFactory::fromNpyFile("resources/BertFull/in0_IteratorGetNext.npy");
+    auto u = NDArrayFactory::fromNpyFile("resources/BertFull/in1_IteratorGetNext_1.npy");
+    auto v = NDArrayFactory::fromNpyFile("resources/BertFull/in2_IteratorGetNext_4.npy");
+    auto z = NDArrayFactory::fromNpyFile("resources/BertFull/out_loss-Softmax.npy");
 
     //graph->printOut();
 
@@ -152,15 +152,15 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (sd::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/Bert_minimal_model/bert_minimal_model.fb");
 
-    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
-    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
-    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
-    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model_output.numpy");
+    auto t = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
+    auto u = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
+    auto v = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
+    auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
     //graph->printOut();
 
@@ -210,10 +210,10 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
 TEST_F(PlaygroundTests, test_bert_2) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
+    if (sd::graph::getFileSize("resources/Bert_minimal_model/bert_like_ops.fb") < 0)
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/Bert_minimal_model/bert_like_ops.fb");
 
     //graph->printOut();
 
