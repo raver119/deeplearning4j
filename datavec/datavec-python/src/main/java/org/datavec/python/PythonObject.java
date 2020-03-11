@@ -23,8 +23,11 @@ import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.Pointer;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.nd4j.linalg.api.buffer.BaseDataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.util.*;
@@ -142,6 +145,7 @@ public class PythonObject {
         PyTuple_SetItem(argsTuple3, 1, shapeTuple);
         nativePythonObject = PyObject_Call(asArray, argsTuple3, null);
 
+
         Py_DecRef(ctypesPointer);
         Py_DecRef(ctypesLib);
         Py_DecRef(argsTuple);
@@ -149,6 +153,7 @@ public class PythonObject {
         Py_DecRef(argsTuple3);
         Py_DecRef(cast);
         Py_DecRef(asArray);
+        
 
     }
 
