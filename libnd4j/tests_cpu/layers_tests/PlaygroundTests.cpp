@@ -504,7 +504,6 @@ TEST_F(PlaygroundTests, test_matmul_perf_1) {
 
     sd::ops::matmul op;
     auto results = op.evaluate({&x, &y}, {}, {});
-    auto z = results->at(0);
 
     GlobalTimers::getInstance()->displayTimers();
 }
