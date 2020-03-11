@@ -506,11 +506,7 @@ TEST_F(PlaygroundTests, test_matmul_perf_1) {
     auto results = op.evaluate({&x, &y}, {}, {});
     auto z = results->at(0);
 
-    ASSERT_EQ(Status::OK(), results->status());
-    ASSERT_TRUE(exp.isSameShape(z));
-
     GlobalTimers::getInstance()->displayTimers();
-    delete results;
 }
 
 TEST_F(PlaygroundTests, test_matmul_perf_2) {
@@ -523,13 +519,8 @@ TEST_F(PlaygroundTests, test_matmul_perf_2) {
 
     sd::ops::matmul op;
     auto results = op.evaluate({&x, &y}, {0, 1});
-    auto z = results->at(0);
-
-    ASSERT_EQ(Status::OK(), results->status());
-    ASSERT_TRUE(exp.isSameShape(z));
 
     GlobalTimers::getInstance()->displayTimers();
-    delete results;
 }
 
 TEST_F(PlaygroundTests, test_strided_slice_perf) {
@@ -544,14 +535,8 @@ TEST_F(PlaygroundTests, test_strided_slice_perf) {
 
     sd::ops::strided_slice op;
     auto result = op.evaluate({&matrix, &b, &e, &s}, {}, {0, 0, 0, 0, 1});
-    ASSERT_EQ(Status::OK(), result->status());
-
-    auto z = result->at(0);
-
-    ASSERT_TRUE(exp.equalsTo(z));
 
     sd::GlobalTimers::getInstance()->displayTimers();
-    delete result;
 }
 
 TEST_F(PlaygroundTests, test_strided_slice_perf_2) {
@@ -564,7 +549,6 @@ TEST_F(PlaygroundTests, test_strided_slice_perf_2) {
 
     sd::ops::strided_slice op;
     auto result = op.evaluate({&matrix, &arg1, &arg2, &arg3},{}, {5, 0, 5, 0, 0});
-    delete result;
     GlobalTimers::getInstance()->displayTimers();
 }
 
