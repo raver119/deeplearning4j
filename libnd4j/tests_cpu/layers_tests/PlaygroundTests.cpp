@@ -446,7 +446,7 @@ TEST_F(PlaygroundTests, test_bert_2) {
     delete graph;
 }
 
-/*
+
 
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
     int pool = 1000;
@@ -455,9 +455,9 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     std::vector<NDArray*> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create_<float>('c', {3072});
-        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aX[e] = NDArrayFactory::create_<float>('c', {4, 12, 128, 128});
+        aY[e] = NDArrayFactory::create_<float>('c', {4, 1, 128, 128});
+        aZ[e] = NDArrayFactory::create_<float>('c', {4, 12, 128, 128});
 
         aX[e]->assign(119 * (e+1));
         aY[e]->assign(119 * (e+3));
@@ -466,7 +466,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     std::vector<Nd4jLong> values;
     Context ctx(1);
 
-    sd::ops::biasadd op;
+    sd::ops::add op;
 
     for (int e = 0; e < 1000; e++) {
         auto x = aX[e < pool ? e : e % pool];
@@ -475,8 +475,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
 
         auto timeStart = std::chrono::system_clock::now();
 
-        //op.execute({x, y}, {z});
-        sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        op.execute({x, y}, {z});
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
@@ -493,7 +492,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
         delete aZ[e];
     }
 }
-*/
+
 
 TEST_F(PlaygroundTests, test_matmul_perf_1) {
     auto x  = NDArrayFactory::create<double>('c', {512, 768});

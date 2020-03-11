@@ -345,7 +345,7 @@ namespace samediff {
 		return 1;
 	}
 
-#ifdef __NEC__
+#ifdef _OPENMP
 
     std::mutex Threads::gThreadmutex;
 	uint64_t Threads::_nFreeThreads = sd::Environment::getInstance()->maxThreads();
@@ -387,7 +387,7 @@ namespace samediff {
 			return 1;
 		}
 
-#ifdef __NEC__
+#ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for
@@ -502,10 +502,10 @@ namespace samediff {
 			return numThreads;
 		}
 		else {
-#ifdef __NEC__
+#ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
-			#pragma omp parallel for
+			#pragma omp parallel for collapse(2)
 			for (auto x = startX; x < stopX; x += incX) {
 			    for (auto y = startY; y < stopY; y += incY) {
 				    function(omp_get_thread_num(), x, x+1, 1, y, y+1, 1);
@@ -576,10 +576,10 @@ namespace samediff {
 			return 1;
 		}
 
-#ifdef __NEC__
+#ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
-            #pragma omp parallel for
+            #pragma omp parallel for collapse(3)
 		    for (auto x = startX; x < stopX; x += incX) {
 		        for (auto y = startY; y < stopY; y += incY) {
 		            for (auto z = startZ; z < stopZ; z += incZ) {
@@ -634,7 +634,7 @@ namespace samediff {
 			return 1;
 		}
 
-#ifdef __NEC__
+#ifdef _OPENMP
 
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for
@@ -697,7 +697,7 @@ namespace samediff {
 		int64_t intermediatery[256];
 		auto span = delta / numThreads;
 
-#ifdef __NEC__
+#ifdef _OPENMP
 		if (tryAcquire(numThreads)) {
 			#pragma omp parallel for num_threads(numThreads)
             for (int e = 0; e < numThreads; e++) {
@@ -759,7 +759,7 @@ namespace samediff {
 		double intermediatery[256];
 		auto span = delta / numThreads;
 
-#ifdef __NEC__
+#ifdef _OPENMP
 
         if (tryAcquire(numThreads)) {
 			#pragma omp parallel for num_threads(numThreads)
@@ -826,7 +826,7 @@ namespace samediff {
 			Nd4jLong start;
 			Nd4jLong end;
 		};
-#ifdef __NEC__
+#ifdef _OPENMP
 		constexpr int max_thread_count = 8;
 #else
 		constexpr int max_thread_count = 1024;
@@ -835,7 +835,7 @@ namespace samediff {
 
 		req_numThreads = req_numThreads > max_thread_count ? max_thread_count : req_numThreads;
 
-#ifdef __NEC__
+#ifdef _OPENMP
 		int adjusted_numThreads = max_thread_count;
 #else
 		int adjusted_numThreads = samediff::ThreadsHelper::numberOfThreads(req_numThreads, (num_elements * sizeof(double)) / (200 * type_size));
@@ -897,7 +897,7 @@ namespace samediff {
 		thread_spans[numThreads - 1].start = begin;
 		thread_spans[numThreads - 1].end = stop;
 
-#ifdef __NEC__
+#ifdef _OPENMP
 		if (tryAcquire(numThreads)) {
 #pragma omp parallel for
 			for (size_t j = 0; j < numThreads; j++) {

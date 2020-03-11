@@ -167,6 +167,11 @@ namespace sd {
                 // still do nothing
             }
         }
+
+        const char* blas_fallback = std::getenv("SD_BLAS_FALLBACK");
+        if (blas_fallback != nullptr) {
+            _blasFallback = true;
+        }
 #endif
 
 #ifdef __CUDABLAS__
@@ -192,6 +197,10 @@ namespace sd {
 #else
 
 #endif
+    }
+
+    bool sd::Environment::blasFallback() {
+        return _blasFallback;
     }
 
     sd::Environment::~Environment() {
