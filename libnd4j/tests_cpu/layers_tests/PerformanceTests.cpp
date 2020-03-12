@@ -150,12 +150,12 @@ public:
 
 TEST_F(PerformanceTests, benchmarksLight) {
     LightBenchmarkSuit bench;
-    bench.runSuit();
+    printf("%s\n", bench.runSuit().c_str());
 }
 
 TEST_F(PerformanceTests, benchmarksFull) {
     FullBenchmarkSuit bench;
-    bench.runSuit();
+    printf("%s\n", bench.runSuit().c_str());
 }
 
 TEST_F(PerformanceTests, benchmarksLSTM) {
@@ -167,6 +167,7 @@ TEST_F(PerformanceTests, benchmarksLSTM) {
         nd4j_printf("Running LightBenchmarkSuite.lstmBenchmark [%s]\n", DataTypeUtils::asString(t).c_str());
         BUILD_SINGLE_SELECTOR(t, result += lstmBenchmark, (), LIBND4J_TYPES);
     }
+    printf("%s\n", result.c_str());
 }
 
 
