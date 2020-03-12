@@ -148,9 +148,6 @@ TEST_F(ImportTests, ConcatPerfTest) {
     sd::ops::concat op;
 
     auto result = op.evaluate({&x0, &x1}, {}, {1});
-    ASSERT_EQ(ND4J_STATUS_OK, result->status());
-    auto output = result->at(0);
-    delete result;
 
     //timers->displayTimers();
 
