@@ -101,6 +101,43 @@ TEST_F(ImportTests, LstmMnist) {
     //0.046829
 }
 
+TEST_F(ImportTests, LstmMnistBig) {
+        const char* modelFilename = "resources/lstm_mnist_big.fb";
+    auto timeStart = std::chrono::system_clock::now();
+//    nd4j_printf("Importing file:", 0);
+    auto graph = GraphExecutioner::importFromFlatBuffers(modelFilename);
+    auto timeEnd = std::chrono::system_clock::now();
+    auto dt = std::chrono::duration_cast<std::chrono::milliseconds> ((timeEnd - timeStart)).count();
+//    nd4j_printf(" %d ms\n", dt);
+//    nd4j_printf("Building graph\n", 0);
+    graph->buildGraph();
+
+    auto placeholders = graph->getPlaceholders();
+    auto variablespace = graph->getVariableSpace()->getVariables();
+    int height = 28;
+    int width = 768;
+    int batchsize = 128;
+
+    NDArray* inputArray = NDArrayFactory::create_<double>('c', {batchsize, height, width});
+    Variable* input = new Variable(inputArray, "input");
+    graph->getVariableSpace()->replaceVariable(input);
+
+    auto profile = GraphProfilingHelper::profile(graph, 10);
+    profile->printOut();
+    delete profile;
+
+    Nd4jStatus status = GraphExecutioner::execute(graph);
+    std::string outputLayerName = "output";
+    NDArray* result = graph->getVariableSpace()->getVariable(&outputLayerName)->getNDArray();
+    std::vector<double> rvec = result->getBufferAsVector<double>();
+    for(int i=0; i<10; i++)
+        nd4j_debug("(%d): %f\n", i, rvec[i]);
+    ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
+
+    //timers->displayTimers();
+    //0.046829
+}
+
 TEST_F(ImportTests, ConcatPerfTest) {
     auto x0 = NDArrayFactory::create<double>('c', {1,28});
     auto x1 = NDArrayFactory::create<double>('c', {1,128});
