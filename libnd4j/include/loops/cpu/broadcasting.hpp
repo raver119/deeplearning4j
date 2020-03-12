@@ -704,11 +704,12 @@ void Broadcast<X, Y, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo, const 
 
         case 4: {
 
-            auto func = PRAGMA_THREADS_FOR_3D {
+            //auto func = PRAGMA_THREADS_FOR_3D {
 
-                for (auto i0 = start_x; i0 < stop_x; ++i0) {
-                    for (auto i1 = start_y; i1 < stop_y; ++i1) {
-                        for (auto i2 = start_z; i2 < stop_z; ++i2) {
+#pragma omp parallel for collapse(3)
+                for (uint i0 = 0; i0 < zAxis0; ++i0) {
+                    for (uint i1 = 0; i1 < zAxis1; ++i1) {
+                        for (uint i2 = 0; i2 < zAxis2; ++i2) {
 
                             auto x2 = x + i0 * xStrd0 + i1 * xStrd1 + i2 * xStrd2;
                             auto y2 = y + i0 * yStrd0 + i1 * yStrd1 + i2 * yStrd2;
@@ -729,8 +730,8 @@ void Broadcast<X, Y, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo, const 
                         }
                     }
                 }
-            };
-            samediff::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
+            //};
+            //samediff::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
         }
         break;
 
