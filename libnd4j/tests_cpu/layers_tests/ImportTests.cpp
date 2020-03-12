@@ -115,7 +115,7 @@ TEST_F(ImportTests, LstmMnistBig) {
     auto placeholders = graph->getPlaceholders();
     auto variablespace = graph->getVariableSpace()->getVariables();
     int height = 28;
-    int width = 768;
+    int width = 28*28;
     int batchsize = 128;
 
     NDArray* inputArray = NDArrayFactory::create_<double>('c', {batchsize, height, width});
@@ -132,7 +132,7 @@ TEST_F(ImportTests, LstmMnistBig) {
     std::vector<double> rvec = result->getBufferAsVector<double>();
     for(int i=0; i<10; i++)
         nd4j_debug("(%d): %f\n", i, rvec[i]);
-    ASSERT_NEAR(rvec[0], 0.046829, 0.0001);
+    ASSERT_NEAR(rvec[0], 0.057751849719229739,, 0.0001);
 
     //timers->displayTimers();
     //0.046829
