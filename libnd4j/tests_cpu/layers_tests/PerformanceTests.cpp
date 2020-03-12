@@ -57,6 +57,31 @@ public:
     }
 };
 
+TEST_F(PerformanceTests, benchmarksLight) {
+    LightBenchmarkSuit bench;
+    bench.runSuit();
+}
+
+TEST_F(PerformanceTests, benchmarksFull) {
+    BenchmarkSuit bench;
+    bench.runSuit();
+}
+
+TEST_F(PerformanceTests, benchmarksLSTM) {
+    std::vector<sd::DataType> dtypes({sd::DataType::FLOAT32});
+
+    std::string result;
+
+    for (auto t:dtypes) {
+        nd4j_printf("Running LightBenchmarkSuite.lstmBenchmark [%s]\n", DataTypeUtils::asString(t).c_str());
+        BUILD_SINGLE_SELECTOR(t, result += lstmBenchmark, (), LIBND4J_TYPES);
+    }
+}
+
+
+
+
+
 #ifdef RELEASE_BUILD
 
 TEST_F(PerformanceTests, test_maxpooling2d_1) {
