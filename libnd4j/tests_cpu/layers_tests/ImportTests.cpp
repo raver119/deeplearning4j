@@ -115,7 +115,7 @@ TEST_F(ImportTests, LstmMnistBig) {
     auto placeholders = graph->getPlaceholders();
     auto variablespace = graph->getVariableSpace()->getVariables();
     int height = 28;
-    int width = 768;
+    int width = 784;
     int batchsize = 128;
 
     NDArray* inputArray = NDArrayFactory::create_<double>('c', {batchsize, height, width});
