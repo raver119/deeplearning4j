@@ -45,6 +45,10 @@
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <execution/ThreadPool.h>
 
+#include <ops/declarable/CustomOperations.h>
+#include "performance/benchmarking/LightBenchmarkSuit.h"
+
+
 using namespace sd;
 using namespace sd::graph;
 
