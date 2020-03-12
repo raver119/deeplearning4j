@@ -705,6 +705,7 @@ void Broadcast<X, Y, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo, const 
         case 4: {
 
             //auto func = PRAGMA_THREADS_FOR_3D {
+            auto timeStart = std::chrono::system_clock::now();
 
 #pragma omp parallel for collapse(3)
                 for (uint i0 = 0; i0 < zAxis0; ++i0) {
@@ -730,6 +731,10 @@ void Broadcast<X, Y, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo, const 
                         }
                     }
                 }
+
+            auto timeEnd = std::chrono::system_clock::now();
+            int outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+            nd4j_printf("Broadcast time: [%i us]\n", outerTime);
             //};
             //samediff::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
         }

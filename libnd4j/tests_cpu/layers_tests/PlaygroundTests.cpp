@@ -469,7 +469,7 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
 
     sd::ops::add op;
 
-    for (int e = 0; e < 1000; e++) {
+    for (int e = 0; e < 1; e++) {
         auto x = aX[e < pool ? e : e % pool];
         auto y = aY[e < pool ? e : e % pool];
         auto z = aZ[e < pool ? e : e % pool];
