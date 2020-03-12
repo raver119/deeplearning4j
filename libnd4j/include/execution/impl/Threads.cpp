@@ -353,13 +353,11 @@ namespace samediff {
      bool   Threads::tryAcquire(int numThreads){
 		 std::lock_guard<std::mutex> lock( gThreadmutex );
 		 auto nThreads = _nFreeThreads - numThreads;
-		 if(nThreads >= 1){
+		 if(nThreads >= 0){
 			 _nFreeThreads = nThreads;
 
-			 nd4j_printf("Running in parallel\n","");
 			 return true;
 		 }
-		 nd4j_printf("Running single threaded\n","");
 		 return false;
 	 }
 
