@@ -356,8 +356,10 @@ namespace samediff {
 		 if(nThreads >= 1){
 			 _nFreeThreads = nThreads;
 
+			 nd4j_printf("Running in parallel\n","");
 			 return true;
 		 }
+		 nd4j_printf("Running single threaded\n","");
 		 return false;
 	 }
 

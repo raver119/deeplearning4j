@@ -450,15 +450,15 @@ TEST_F(PlaygroundTests, test_bert_2) {
 
 
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
-    int pool = 1000;
+    int pool = 1;
     std::vector<NDArray*> aX(pool);
     std::vector<NDArray*> aY(pool);
     std::vector<NDArray*> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {4, 12, 128, 128});
-        aY[e] = NDArrayFactory::create_<float>('c', {4, 1, 128, 128});
-        aZ[e] = NDArrayFactory::create_<float>('c', {4, 12, 128, 128});
+        aX[e] = NDArrayFactory::create_<float>('c', {4, 12, 128});
+        aY[e] = NDArrayFactory::create_<float>('c', {4, 1, 128});
+        aZ[e] = NDArrayFactory::create_<float>('c', {4, 12, 128});
 
         aX[e]->assign(119 * (e+1));
         aY[e]->assign(119 * (e+3));
