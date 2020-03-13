@@ -52,8 +52,8 @@
 using namespace sd;
 using namespace sd::graph;
 
-#define WARMUP 1
-#define NUM_ITER 1
+#define WARMUP 5
+#define NUM_ITER 100
 
 
 template <typename T>
