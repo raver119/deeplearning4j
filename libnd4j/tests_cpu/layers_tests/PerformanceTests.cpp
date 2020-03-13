@@ -375,3 +375,20 @@ TEST_F(PerformanceTests, stack_2d_perfs) {
     sd::ops::stack op;
     auto result = op.evaluate({&t, &u, &v, &w}, {}, {0});
 }
+
+
+TEST_F(PerformanceTests, test_matmul_512_various) {
+
+    for(int dim=512;dim<516;dim++){
+        auto x1 = NDArrayFactory::create<float>('c', {dim, 512});
+        auto y1 = NDArrayFactory::create<float>('c', {512, dim});
+        auto z1 = NDArrayFactory::create<float>('c', {dim, dim});
+        sd::ops::matmul op;
+        auto timeStart = std::chrono::system_clock::now();
+        op.execute({&x1, &y1}, {&z1}, {0, 0});
+        auto timeEnd = std::chrono::system_clock::now();
+        auto t1 = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        nd4j_printf("Mat mul [%d,512]x[512,%d] = [%d,%d]: %lld ms\n", dim,dim,dim,dim,t1);
+    }
+
+}
