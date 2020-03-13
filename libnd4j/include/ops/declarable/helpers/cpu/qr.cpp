@@ -117,30 +117,29 @@ namespace helpers {
         std::vector<NDArray> q(M);
 
         NDArray z = *matrix;
-        NDArray e('c', {M}, DataTypeUtils::fromT<T>()); // two internal buffers and scalar for squared norm
+        NDArray w('c', {M}, DataTypeUtils::fromT<T>()); // two internal buffers and scalar for squared norm
 
         for (Nd4jLong k = 0; k < N - 1; k++) { // loop for columns, but not further then row number
-            e.nullify();
-            z = matrixMinor<T>(z, k); // minor computing for current column with given matrix z (initally is a input matrix)
+            w.nullify();
+            z = matrixMinor<T>(z, k); // minor computing for current column with given matrix z (initally is a input matrix) -- fill up the column with 0 and 1 on k row
 //            z.printIndexedBuffer("Minor!!!");
 
             auto currentColumn = z({0, 0, k, k + 1}); // retrieve k column from z to x buffer
-            auto norm = currentColumn.reduceAlongDimension(reduce::Norm2, {0});
+            auto norm = currentColumn.reduceNumber(reduce::Norm2);
             if (matrix->t<T>(k,k) > T(0.f)) // negate on positive matrix diagonal element
                 norm *= T(-1.f);//.applyTransform(transform::Neg, nullptr, nullptr); //t<T>(0) = -norm.t<T>(0);
             //e.t<T>(k) = T(1.f); // e - is filled by 0 vector except diagonal element (filled by 1)
             //auto tE = e;
             //tE *= norm;
 //            norm.printIndexedBuffer("Norm!!!");
-            e.p(k, norm);
-            e += currentColumn;//  e += tE; // e[i] = x[i] + a * e[i] for each i from 0 to n - 1
-            auto normE = e.reduceAlongDimension(reduce::Norm2, {0});
-            e /= normE;
-            q[k] = vmul<T>(e, M);
+            w.p(k, norm);
+            w += currentColumn;//  e += tE; // e[i] = x[i] + a * e[i] for each i from 0 to n - 1
+            w /= w.reduceNumber(reduce::Norm2);
+            q[k] = vmul<T>(w, M);
             auto qQ = z.ulike();
             MmulHelper::matmul(&q[k], &z, &qQ, true, false);
-            MmulHelper::matmul(&qQ, &q[k], &z, false, false);
-//            z = std::move(qQ);
+            //MmulHelper::matmul(&qQ, &q[k], &z, false, false);
+            z = std::move(qQ);
         }
         resQ.assign(q[0]); //
 //        MmulHelper::matmul(&q[0], matrix, &resR, false, false);

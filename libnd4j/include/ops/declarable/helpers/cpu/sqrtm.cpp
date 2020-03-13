@@ -165,9 +165,9 @@ namespace helpers {
         auto n = input.rows();
         hessenberg.assign(input);
         if (n > 2) {
-            auto a1 = hessenberg({1, n, 0, 1}); // the first column
-            auto c1 = hessenberg({1, n, 0, 1}); // the first column = shape {2, 1} with 'c'
-            auto r1 = hessenberg({0, 1, 1, n}); // the first row = shape {1, 3} with 'c'
+            auto a1 = hessenberg({1, n, 0, 1}); // the first column shifted by 1
+            auto c1 = hessenberg({0, n, 0, 1}); // the first column as is
+            auto r1 = hessenberg({0, 1, 0, n}); // the first row as is
             a1.printShapeInfo("A1");c1.printShapeInfo("C1");r1.printShapeInfo("R1");
             a1.printIndexedBuffer("A1 data");r1.printIndexedBuffer("R1 data");
             auto e1 = a1.ulike();//NDArrayFactory::create<T>('c', {n - 1});
