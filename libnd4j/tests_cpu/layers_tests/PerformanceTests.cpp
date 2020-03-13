@@ -169,6 +169,43 @@ TEST_F(PerformanceTests, benchmarksLSTM) {
     printf("%s\n", result.c_str());
 }
 
+TEST_F(PerformanceTests, test_matmul_512_various) {
+    const int warmup=10;
+    const int numiter=50;
+
+    for(int dim=512;dim<516;dim++){
+        auto x1 = NDArrayFactory::create<float>('c', {dim, 512});
+        auto y1 = NDArrayFactory::create<float>('c', {512, dim});
+        auto z1 = NDArrayFactory::create<float>('c', {dim, dim});
+        sd::ops::matmul op;
+        x1.linspace(1.0f);
+        y1.linspace(1.0f);
+        for(int k=0; k<warmup;k++){
+            op.execute({&x1, &y1}, {&z1}, {0, 0});
+        }
+        auto timeStart = std::chrono::system_clock::now();
+        for(int k=0; k<numiter;k++) op.execute({&x1, &y1}, {&z1}, {0, 0});
+        auto timeEnd = std::chrono::system_clock::now();
+        auto t1 = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count()/numiter;
+        nd4j_printf("Mat mul [%d,512]x[512,%d] = [%d,%d]: %lld usec\n", dim,dim,dim,dim,t1);
+    }
+
+    for(int dim=512;dim>509;dim--){
+        auto x1 = NDArrayFactory::create<float>('c', {dim, 512});
+        auto y1 = NDArrayFactory::create<float>('c', {512, dim});
+        auto z1 = NDArrayFactory::create<float>('c', {dim, dim});
+        sd::ops::matmul op;
+        x1.linspace(1.0f);
+        y1.linspace(1.0f);
+        for(int k=0; k<warmup;k++) op.execute({&x1, &y1}, {&z1}, {0, 0});
+        auto timeStart = std::chrono::system_clock::now();
+        for(int k=0; k<numiter;k++) op.execute({&x1, &y1}, {&z1}, {0, 0});
+        auto timeEnd = std::chrono::system_clock::now();
+        auto t1 = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count()/numiter;
+        nd4j_printf("Mat mul [%d,512]x[512,%d] = [%d,%d]: %lld usec\n", dim,dim,dim,dim,t1);
+    }
+
+}
 
 
 #ifdef RELEASE_BUILD
