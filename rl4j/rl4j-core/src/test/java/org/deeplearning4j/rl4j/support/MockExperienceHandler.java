@@ -1,0 +1,41 @@
+package org.deeplearning4j.rl4j.support;
+
+import org.deeplearning4j.rl4j.experience.ExperienceHandler;
+import org.deeplearning4j.rl4j.experience.StateActionPair;
+import org.deeplearning4j.rl4j.learning.sync.Transition;
+import org.deeplearning4j.rl4j.observation.Observation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MockExperienceHandler implements ExperienceHandler<Integer, Transition<Integer>> {
+    public List<StateActionPair<Integer>> addExperienceArgs = new ArrayList<StateActionPair<Integer>>();
+    public Observation finalObservation;
+    public boolean isGetExperienceCalled;
+    public boolean isResetCalled;
+
+    @Override
+    public void addExperience(Observation observation, Integer action, double reward, boolean isTerminal) {
+        addExperienceArgs.add(new StateActionPair<>(observation, action, reward, isTerminal));
+    }
+
+    @Override
+    public void setFinalObservation(Observation observation) {
+        finalObservation = observation;
+    }
+
+    @Override
+    public List<Transition<Integer>> getExperience() {
+        isGetExperienceCalled = true;
+        return new ArrayList<>() {
+            {
+                add(new Transition<>(null, 0, 0.0, false));
+            }
+        };
+    }
+
+    @Override
+    public void reset() {
+        isResetCalled = true;
+    }
+}

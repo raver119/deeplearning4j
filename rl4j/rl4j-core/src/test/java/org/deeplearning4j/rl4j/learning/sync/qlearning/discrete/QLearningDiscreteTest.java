@@ -1,5 +1,7 @@
 package org.deeplearning4j.rl4j.learning.sync.qlearning.discrete;
 
+import org.deeplearning4j.rl4j.experience.ExperienceHandler;
+import org.deeplearning4j.rl4j.experience.StateActionPair;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
 import org.deeplearning4j.rl4j.learning.sync.IExpReplay;
 import org.deeplearning4j.rl4j.learning.sync.Transition;
@@ -45,8 +47,8 @@ public class QLearningDiscreteTest {
         QLearning.QLConfiguration conf = new QLearning.QLConfiguration(0, 24, 0, 5, 1, 1000,
                 initStepCount, 1.0, 0, 0, 0, 0, true);
         MockDataManager dataManager = new MockDataManager(false);
-        MockExpReplay expReplay = new MockExpReplay();
-        TestQLearningDiscrete sut = new TestQLearningDiscrete(mdp, dqn, conf, dataManager, expReplay, 10, random);
+        MockExperienceHandler experienceHandler = new MockExperienceHandler();
+        TestQLearningDiscrete sut = new TestQLearningDiscrete(mdp, dqn, conf, dataManager, experienceHandler, 10, random);
         IHistoryProcessor.Configuration hpConf = new IHistoryProcessor.Configuration(5, 4, 4, 4, 4, 0, 0, 2);
         MockHistoryProcessor hp = new MockHistoryProcessor(hpConf);
         sut.setHistoryProcessor(hp);
@@ -103,7 +105,7 @@ public class QLearningDiscreteTest {
         // MDP calls
         assertArrayEquals(new Integer[] {0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 4, 4, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 }, mdp.actions.toArray());
 
-        // ExpReplay calls
+        // ExperienceHandler calls
         double[] expectedTrRewards = new double[] { 9.0, 21.0, 25.0, 29.0, 33.0, 37.0, 41.0 };
         int[] expectedTrActions = new int[] { 1, 4, 2, 4, 4, 4, 4, 4 };
         double[] expectedTrNextObservation = new double[] { 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0 };
@@ -117,16 +119,17 @@ public class QLearningDiscreteTest {
                 new double[] { 12.0, 14.0, 16.0, 18.0, 20.0 },
                 new double[] { 14.0, 16.0, 18.0, 20.0, 22.0 },
         };
-        assertEquals(expectedTrObservations.length, expReplay.transitions.size());
+
+        assertEquals(expectedTrObservations.length, experienceHandler.addExperienceArgs.size());
         for(int i = 0; i < expectedTrRewards.length; ++i) {
-            Transition tr = expReplay.transitions.get(i);
-            assertEquals(expectedTrRewards[i], tr.getReward(), 0.0001);
-            assertEquals(expectedTrActions[i], tr.getAction());
-            assertEquals(expectedTrNextObservation[i], 255.0 * tr.getNextObservation().getDouble(0), 0.0001);
+            StateActionPair<Integer> stateActionPair = experienceHandler.addExperienceArgs.get(i);
+            assertEquals(expectedTrRewards[i], stateActionPair.getReward(), 0.0001);
+            assertEquals((int)expectedTrActions[i], (int)stateActionPair.getAction());
             for(int j = 0; j < expectedTrObservations[i].length; ++j) {
-                assertEquals("row: "+ i + " col: " + j, expectedTrObservations[i][j], 255.0 * tr.getObservation().getData().getDouble(0, j, 0), 0.0001);
+                assertEquals("row: "+ i + " col: " + j, expectedTrObservations[i][j], 255.0 * stateActionPair.getObservation().getData().getDouble(0, j, 0), 0.0001);
             }
         }
+        assertEquals(expectedTrNextObservation[expectedTrNextObservation.length - 1], 255.0 * experienceHandler.finalObservation.getData().getDouble(0), 0.0001);
 
         // trainEpoch result
         assertEquals(initStepCount + 16, result.getStepCounter());
@@ -137,20 +140,16 @@ public class QLearningDiscreteTest {
 
     public static class TestQLearningDiscrete extends QLearningDiscrete<MockEncodable> {
         public TestQLearningDiscrete(MDP<MockEncodable, Integer, DiscreteSpace> mdp, IDQN dqn,
-                                     QLConfiguration conf, IDataManager dataManager, MockExpReplay expReplay,
+                                     QLConfiguration conf, IDataManager dataManager, ExperienceHandler<Integer, Transition<Integer>> experienceHandler,
                                      int epsilonNbStep, Random rnd) {
             super(mdp, dqn, conf, epsilonNbStep, rnd);
             addListener(new DataManagerTrainingListener(dataManager));
-            setExpReplay(expReplay);
+            setExperienceHandler(experienceHandler);
         }
 
         @Override
-        protected DataSet setTarget(ArrayList<Transition<Integer>> transitions) {
+        protected DataSet setTarget(List<Transition<Integer>> transitions) {
             return new org.nd4j.linalg.dataset.DataSet(Nd4j.create(new double[] { 123.0 }), Nd4j.create(new double[] { 234.0 }));
-        }
-
-        public void setExpReplay(IExpReplay<Integer> exp){
-            this.expReplay = exp;
         }
 
         @Override

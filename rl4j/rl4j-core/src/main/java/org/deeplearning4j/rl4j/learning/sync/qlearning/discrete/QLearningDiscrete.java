@@ -20,6 +20,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.deeplearning4j.gym.StepReply;
+import org.deeplearning4j.rl4j.experience.ExperienceHandler;
+import org.deeplearning4j.rl4j.experience.ReplayMemoryExperienceHandler;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
 import org.deeplearning4j.rl4j.learning.Learning;
 import org.deeplearning4j.rl4j.learning.sync.Transition;
@@ -41,6 +43,7 @@ import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -70,9 +73,11 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
     private int lastAction;
     private double accuReward = 0;
 
-    private Transition pendingTransition;
-
     ITDTargetAlgorithm tdTargetAlgorithm;
+
+    // TODO: User a builder and remove the setter
+    @Getter(AccessLevel.PROTECTED) @Setter
+    private ExperienceHandler<Integer, Transition<Integer>> experienceHandler;
 
     protected LegacyMDPWrapper<O, Integer, DiscreteSpace> getLegacyMDPWrapper() {
         return mdp;
@@ -85,7 +90,6 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
 
     public QLearningDiscrete(MDP<O, Integer, DiscreteSpace> mdp, IDQN dqn, QLConfiguration conf,
                              int epsilonNbStep, Random random) {
-        super(conf);
         this.configuration = conf;
         this.mdp = new LegacyMDPWrapper<O, Integer, DiscreteSpace>(mdp, null, this);
         qNetwork = dqn;
@@ -98,6 +102,7 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
                 ? new DoubleDQN(this, conf.getGamma(), conf.getErrorClamp())
                 : new StandardDQN(this, conf.getGamma(), conf.getErrorClamp());
 
+        experienceHandler = new ReplayMemoryExperienceHandler(conf.getExpRepMaxSize(), conf.getBatchSize(), random);
     }
 
     public MDP<O, Integer, DiscreteSpace> getMdp() {
@@ -114,7 +119,7 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
     public void preEpoch() {
         lastAction = mdp.getActionSpace().noOp();
         accuReward = 0;
-        pendingTransition = null;
+        experienceHandler.reset();
     }
 
     @Override
@@ -130,8 +135,6 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
      */
     protected QLStepReturn<Observation> trainStep(Observation obs) {
 
-        Integer action;
-
         boolean isHistoryProcessor = getHistoryProcessor() != null;
         int skipFrame = isHistoryProcessor ? getHistoryProcessor().getConf().getSkipFrame() : 1;
         int historyLength = isHistoryProcessor ? getHistoryProcessor().getConf().getHistoryLength() : 1;
@@ -141,37 +144,28 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
         Double maxQ = Double.NaN; //ignore if Nan for stats
 
         //if step of training, just repeat lastAction
-        if (obs.isSkipped()) {
-            action = lastAction;
-        } else {
+        if (!obs.isSkipped()) {
             INDArray qs = getQNetwork().output(obs);
             int maxAction = Learning.getMaxAction(qs);
             maxQ = qs.getDouble(maxAction);
 
-            action = getEgPolicy().nextAction(obs);
+            lastAction = getEgPolicy().nextAction(obs);
         }
 
-        lastAction = action;
-
-        StepReply<Observation> stepReply = mdp.step(action);
-
+        StepReply<Observation> stepReply = mdp.step(lastAction);
         accuReward += stepReply.getReward() * configuration.getRewardFactor();
 
         //if it's not a skipped frame, you can do a step of training
         if (!obs.isSkipped()) {
 
             // Add experience
-            if(pendingTransition != null) {
-                pendingTransition.setNextObservation(obs);
-                getExpReplay().store(pendingTransition);
-            }
-            pendingTransition = new Transition(obs, action, accuReward, stepReply.isDone());
+            experienceHandler.addExperience(obs, lastAction, accuReward, stepReply.isDone());
             accuReward = 0;
 
             // Update NN
             // FIXME: maybe start updating when experience replay has reached a certain size instead of using "updateStart"?
             if (getStepCounter() > updateStart) {
-                DataSet targets = setTarget(getExpReplay().getBatch());
+                DataSet targets = setTarget(experienceHandler.getExperience());
                 getQNetwork().fit(targets.getFeatures(), targets.getLabels());
             }
         }
@@ -179,7 +173,7 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
         return new QLStepReturn<Observation>(maxQ, getQNetwork().getLatestScore(), stepReply);
     }
 
-    protected DataSet setTarget(ArrayList<Transition<Integer>> transitions) {
+    protected DataSet setTarget(List<Transition<Integer>> transitions) {
         if (transitions.size() == 0)
             throw new IllegalArgumentException("too few transitions");
 
@@ -188,9 +182,6 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
 
     @Override
     protected void finishEpoch(Observation observation) {
-        if(pendingTransition != null) {
-            pendingTransition.setNextObservation(observation);
-            getExpReplay().store(pendingTransition);
-        }
+        experienceHandler.setFinalObservation(observation);
     }
 }

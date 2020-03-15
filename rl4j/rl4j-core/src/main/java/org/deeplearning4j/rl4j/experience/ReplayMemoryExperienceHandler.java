@@ -1,0 +1,75 @@
+/*******************************************************************************
+ * Copyright (c) 2020 Konduit K.K.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
+package org.deeplearning4j.rl4j.experience;
+
+import org.deeplearning4j.rl4j.learning.sync.ExpReplay;
+import org.deeplearning4j.rl4j.learning.sync.IExpReplay;
+import org.deeplearning4j.rl4j.learning.sync.Transition;
+import org.deeplearning4j.rl4j.observation.Observation;
+import org.nd4j.linalg.api.rng.Random;
+
+import java.util.List;
+
+/**
+ * A experience handler that stores the experience in a replay memory. See https://arxiv.org/abs/1312.5602
+ * The experience container is a {@link Transition Transition} that stores the tuple observation-action-reward-nextObservation,
+ * as well as whether or the not the episode ended after the Transition
+ *
+ * @param <A> Action type
+ */
+public class ReplayMemoryExperienceHandler<A> implements ExperienceHandler<A, Transition<A>> {
+    private IExpReplay<A> expReplay;
+
+    private Transition<A> pendingTransition;
+
+    public ReplayMemoryExperienceHandler(IExpReplay<A> expReplay) {
+        this.expReplay = expReplay;
+    }
+
+    public ReplayMemoryExperienceHandler(int maxReplayMemorySize, int batchSize, Random random) {
+        this(new ExpReplay<>(maxReplayMemorySize, batchSize, random));
+    }
+
+    public void addExperience(Observation observation, A action, double reward, boolean isTerminal) {
+        setNextObservationOnPending(observation);
+        pendingTransition = new Transition(observation, action, reward, isTerminal);
+    }
+
+    public void setFinalObservation(Observation observation) {
+        setNextObservationOnPending(observation);
+        pendingTransition = null;
+    }
+
+    /**
+     * @return A batch of experience selected from the replay memory. The replay memory is unchanged after the call.
+     */
+    @Override
+    public List<Transition<A>> getExperience() {
+        return expReplay.getBatch();
+    }
+
+    @Override
+    public void reset() {
+        pendingTransition = null;
+    }
+
+    private void setNextObservationOnPending(Observation observation) {
+        if(pendingTransition != null) {
+            pendingTransition.setNextObservation(observation);
+            expReplay.store(pendingTransition);
+        }
+    }
+}
