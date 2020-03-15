@@ -3,14 +3,12 @@ package org.deeplearning4j.rl4j.learning.async.a3c.discrete;
 import org.deeplearning4j.nn.api.NeuralNetwork;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.rl4j.experience.StateActionPair;
-import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
-import org.deeplearning4j.rl4j.learning.async.MiniTrans;
-import org.deeplearning4j.rl4j.learning.async.nstep.discrete.AsyncNStepQLearningDiscrete;
-import org.deeplearning4j.rl4j.learning.async.nstep.discrete.AsyncNStepQLearningThreadDiscrete;
 import org.deeplearning4j.rl4j.network.NeuralNet;
 import org.deeplearning4j.rl4j.network.ac.IActorCritic;
 import org.deeplearning4j.rl4j.observation.Observation;
-import org.deeplearning4j.rl4j.support.*;
+import org.deeplearning4j.rl4j.support.MockAsyncGlobal;
+import org.deeplearning4j.rl4j.support.MockMDP;
+import org.deeplearning4j.rl4j.support.MockObservationSpace;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -20,9 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class A3CUpdateAlgorithmTest {

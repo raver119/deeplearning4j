@@ -27,9 +27,9 @@ public class MockExperienceHandler implements ExperienceHandler<Integer, Transit
     @Override
     public List<Transition<Integer>> getExperience() {
         isGetExperienceCalled = true;
-        return new ArrayList<>() {
+        return new ArrayList<Transition<Integer>>() {
             {
-                add(new Transition<>(null, 0, 0.0, false));
+                add(new Transition<Integer>(null, 0, 0.0, false));
             }
         };
     }

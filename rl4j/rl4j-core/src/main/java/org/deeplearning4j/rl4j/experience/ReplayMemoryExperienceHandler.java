@@ -40,7 +40,7 @@ public class ReplayMemoryExperienceHandler<A> implements ExperienceHandler<A, Tr
     }
 
     public ReplayMemoryExperienceHandler(int maxReplayMemorySize, int batchSize, Random random) {
-        this(new ExpReplay<>(maxReplayMemorySize, batchSize, random));
+        this(new ExpReplay<A>(maxReplayMemorySize, batchSize, random));
     }
 
     public void addExperience(Observation observation, A action, double reward, boolean isTerminal) {

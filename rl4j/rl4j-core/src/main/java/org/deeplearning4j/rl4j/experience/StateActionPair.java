@@ -45,5 +45,5 @@ public class StateActionPair<A> {
      * True if the episode ended after the action has been taken.
      */
     @Getter
-    private final boolean isTerminal;
+    private final boolean terminal;
 }
