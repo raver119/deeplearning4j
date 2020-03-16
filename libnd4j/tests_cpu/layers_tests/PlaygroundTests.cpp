@@ -318,46 +318,6 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     delete graph;
 }
 
-TEST_F(PlaygroundTests, test_bert_full_1) {
-    // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("resources/BertFull/model.fb") < 0)
-        return;
-
-    auto graph = GraphExecutioner::importFromFlatBuffers("resources/BertFull/model.fb");
-    nd4j_printf("Graph successfully loaded\n", "");
-    auto t = NDArrayFactory::fromNpyFile("resources/BertFull/in0_IteratorGetNext.npy");
-    auto u = NDArrayFactory::fromNpyFile("resources/BertFull/in1_IteratorGetNext_1.npy");
-    auto v = NDArrayFactory::fromNpyFile("resources/BertFull/in2_IteratorGetNext_4.npy");
-    auto z = NDArrayFactory::fromNpyFile("resources/BertFull/out_loss-Softmax.npy");
-
-    //graph->printOut();
-
-    graph->tagInplaceNodes();
-
-    graph->getVariableSpace()->putVariable(658,0, t);
-    graph->getVariableSpace()->putVariable(659,0, u);
-    graph->getVariableSpace()->putVariable(660,0, v);
-
-
-    // validating graph now
-    auto status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1620));
-
-    auto array = graph->getVariableSpace()->getVariable(1620)->getNDArray();
-    ASSERT_EQ(z, *array);
-
-
-
-    sd::Environment::getInstance()->setProfiling(true);
-    auto profile = GraphProfilingHelper::profile(graph, 1);
-
-    profile->printOut();
-
-    sd::Environment::getInstance()->setProfiling(false);
-    delete profile;
-    delete graph;
-}
 
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
     std::vector<std::string> filenames = {
