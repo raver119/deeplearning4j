@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019-2020 Konduit K.K.
+ * Copyright (c) 2015-2018 Skymind, Inc.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -18,10 +18,10 @@
 // @author raver119@gmail.com
 //
 
-#include "../TrueBroadcastHelper.hpp"
+#include "../../scalar.chpp"
 
-namespace sd {
-    namespace helpers {
-        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_3);
+namespace functions {
+    namespace scalar {
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT ScalarTransform, , PAIRWISE_TYPES_11);
     }
 }

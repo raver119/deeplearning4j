@@ -178,7 +178,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     graph->getVariableSpace()->putVariable(86,0, u);
     graph->getVariableSpace()->putVariable(87,0, v);
 
-
+/*
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
@@ -187,7 +187,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
     auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
     ASSERT_EQ(z, *array);
 
-/*
+*/
     sd::Environment::getInstance()->setProfiling(true);
     auto profile = GraphProfilingHelper::profile(graph, 1);
 
@@ -195,7 +195,7 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     sd::Environment::getInstance()->setProfiling(false);
     delete profile;
-*/
+
 /*
     std::vector<Nd4jLong> values;
 
@@ -265,6 +265,7 @@ TEST_F(PlaygroundTests, test_bert_2) {
 */
     delete graph;
 }
+
 
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
     auto x = NDArrayFactory::create<float>('c', {4, 128, 768});

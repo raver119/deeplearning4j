@@ -118,6 +118,7 @@ namespace shape {
     ND4J_EXPORT _CUDA_HD bool haveSameShapeAndStrides(const Nd4jLong *shapeInfo1, const Nd4jLong *shapeInfo2, const Nd4jLong *shapeInfo3);
 
     ND4J_EXPORT _CUDA_HD int sizeAt(const Nd4jLong *shapeInfo, const int dim);
+    ND4J_EXPORT _CUDA_HD Nd4jLong strideAt(const Nd4jLong *shapeInfo, const int dim);
 
     template <typename T>
     ND4J_EXPORT _CUDA_HD void fill(T* buffer, T value, Nd4jLong length);
@@ -914,12 +915,14 @@ namespace shape {
     ND4J_EXPORT _CUDA_HD void index2coords(Nd4jLong index, const Nd4jLong *shapeInfo,  uint *coords);
     ND4J_EXPORT _CUDA_HD void index2coords(Nd4jLong index, const int rank, const Nd4jLong *shape, Nd4jLong *coords);
     ND4J_EXPORT _CUDA_HD void index2coords(Nd4jLong index, const int rank, const Nd4jLong *shape, int *coords);
+
+    ND4J_EXPORT _CUDA_HD void index2coordsCPU(const Nd4jLong& startIndex, const Nd4jLong& index, const Nd4jLong *shapeInfo, Nd4jLong *coords);
+    ND4J_EXPORT _CUDA_HD void index2coordsCPU(const Nd4jLong& startIndex, const Nd4jLong& index, const Nd4jLong *shapeInfo, int *coords);
+
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    ND4J_EXPORT _CUDA_HD void index2coords(Nd4jLong index, const Nd4jLong *shapeInfo, Nd4jLong *coords, const int dimsSize, const int* tadDims);
-
-
+    ND4J_EXPORT _CUDA_HD void index2coords(Nd4jLong index, const Nd4jLong *shapeInfo, int *coords, const int dimsSize, const int* tadDims);
 
     /**
     * Convert coordinates to the corresponding linear index (sequence number in other words)
@@ -928,11 +931,11 @@ namespace shape {
     ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const Nd4jLong *coords);
     ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const int *coords);
     ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const uint *coords);
-    ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const int rank, const Nd4jLong *shape, const Nd4jLong *coords);
+    ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const int rank, const Nd4jLong *shape, const int *coords);
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const Nd4jLong *coords, const int dimsSize, const int* tadDims);
+    ND4J_EXPORT _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const int *coords, const int dimsSize, const int* tadDims);
 
    /**
    * increment n-dimensional array by one iteration by changing coord appropriately
@@ -987,17 +990,17 @@ namespace shape {
     // function calculates the coordinates of min array (and saves them into minIdxs) given coordinates of max array (already stored in maxIdxs)
     // dimsToExclude - should be sorted in increasing order
     // dimsLen - length of dimsToExclude, if not set (= -1), then it is calculated as maxRank - minRank
-    ND4J_EXPORT _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude = nullptr, const int dimsLen = -1);
+    ND4J_EXPORT _CUDA_HD void maxIndToMinInd(int* maxIdxs, int* minIdxs, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude = nullptr, const int dimsLen = -1);
 
     // calculate indexes of max-array, these output indexes correspond to one minIdx index of min-array which is sub-array of max-array
     // dimsToExclude - should be sorted in increasing order
-    ND4J_EXPORT _CUDA_HD int outerArrayIndexes(Nd4jLong* maxIdxs, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude = nullptr);
+    ND4J_EXPORT _CUDA_HD int outerArrayIndexes(int* maxIdxs, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude = nullptr);
 
     // calculate offsets of max-array, these offsets correspond to one minIdx index of min-array which is sub-array of max-array
     // maxOffsets - will contain calculated offsets of max-array, buffer for maxOffsets should be allocated beforehand
     // dimsToExclude - should be sorted in increasing order
     // memBuff - auxiliary memory buffer (size = 2 * max_rank) for coordinates and increments storing, should be allocated beforehand
-    ND4J_EXPORT _CUDA_HD int outerArrayOffsets(Nd4jLong* maxOffsets, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, Nd4jLong* memBuff, const int* dimsToExclude = nullptr);
+    ND4J_EXPORT _CUDA_HD int outerArrayOffsets(Nd4jLong* maxOffsets, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, int* memBuff, const int* dimsToExclude = nullptr);
 
     // calculates offsets for entities (elements or sub-arrays), shape in context of sub-array means dimensions excluded from outer array
     // rank is equal to size of shape
@@ -1063,7 +1066,7 @@ namespace shape {
     * get stride over contiguous axis (contiguous axis must have stride = 1)
     * for example when inShapeInfo is {4, 2,5,4,3,  60,1,5,20, 16384,0,99} then output is 5 (that is smallest stride in inShapeInfo except those equal to 1)
     */
-    INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo);
+    // INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo);
 
 
 
@@ -1831,7 +1834,7 @@ INLINEDEF _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const uint *
 }
 
 //////////////////////////////////////////////////////////////////////
-INLINEDEF _CUDA_HD Nd4jLong coords2index(const int rank, const Nd4jLong *shape, const Nd4jLong *indices) {
+INLINEDEF _CUDA_HD Nd4jLong coords2index(const int rank, const Nd4jLong *shape, const int *indices) {
 
     Nd4jLong index, shift = 1;;
 
@@ -1844,7 +1847,7 @@ INLINEDEF _CUDA_HD Nd4jLong coords2index(const int rank, const Nd4jLong *shape, 
     return index;
 }
 
-INLINEDEF _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const Nd4jLong *coords, const int dimsSize, const int* tadDims) {
+INLINEDEF _CUDA_HD Nd4jLong coords2index(const Nd4jLong *shapeInfo, const int *coords, const int dimsSize, const int* tadDims) {
 
     Nd4jLong index, shift = 1;;
 
@@ -2966,10 +2969,8 @@ INLINEDEF _CUDA_HD bool haveSameShapeAndStrides(const Nd4jLong *shapeInfo1, cons
     if (shapeInfo1[0] == 0)
         return true;
 
-    int range = 2 * shapeInfo1[0];
-
-    for (int e = 1; e <= range; e++)
-            if (shapeInfo1[e] != shapeInfo2[e])
+    for (uint e = 0; e < static_cast<uint>(shape::rank(shapeInfo1)); ++e)
+        if (shape::shapeOf(shapeInfo1)[e] != shape::shapeOf(shapeInfo2)[e] || shape::stride(shapeInfo1)[e] != shape::stride(shapeInfo2)[e])
             return false;
 
     return true;
@@ -2987,6 +2988,15 @@ INLINEDEF _CUDA_HD bool haveSameShapeAndStrides(const Nd4jLong *shapeInfo1, cons
             return shapeInfo[1+dim];
         else
             return shapeInfo[1+(rank(shapeInfo) + dim)];
+    }
+
+    INLINEDEF _CUDA_HD Nd4jLong strideAt(const Nd4jLong *shapeInfo, const int dim) {
+        if (0 == rank(shapeInfo))
+            return 1;
+        if (dim >= 0)
+            return shapeInfo[1 + rank(shapeInfo) + dim];
+        else
+            return shapeInfo[1 + 2*rank(shapeInfo) + dim];
     }
 
     /**
@@ -4117,7 +4127,7 @@ INLINEDEF _CUDA_HD bool reshapeC(const Nd4jLong* oldShapeInfo, Nd4jLong* newShap
         *shape::ews(newShapeInfo) = oldEws;                         // ews
     }
 
-    newShapeInfo[2 * newRank + 1] = shape::type(oldShapeInfo);      // type
+    sd::ArrayOptions::copyDataType(newShapeInfo, oldShapeInfo); // type
 
     return true;
 }
@@ -4266,7 +4276,7 @@ INLINEDEF _CUDA_HD bool reshapeC(const Nd4jLong* oldShapeInfo, Nd4jLong* newShap
 
 // max array is outer for min array, min array is sub-array of max array
 // function calculates the coordinates of min array (and saves them into minIdxs) given coordinates of max array (already stored in maxIdxs)
-INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude, int dimsLen) {
+INLINEDEF _CUDA_HD void maxIndToMinInd(int* maxIdxs, int* minIdxs, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude, int dimsLen) {
 
     const auto maxRank = shape::rank(maxShapeInfo);
     const auto minRank = shape::rank(minShapeInfo);
@@ -4352,10 +4362,10 @@ INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, con
     //////////////////////////////////////////////////////////////////////
     INLINEDEF _CUDA_HD Nd4jLong subArrayIndex(const Nd4jLong maxIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude, const int dimsLen) {
 
-        Nd4jLong maxIdxs[MAX_RANK];
+        int maxIdxs[MAX_RANK];
         shape::index2coords(const_cast<Nd4jLong&>(maxIdx), maxShapeInfo, maxIdxs);
 
-        Nd4jLong minIdxs[MAX_RANK];
+        int minIdxs[MAX_RANK];
         maxIndToMinInd(maxIdxs, minIdxs, maxShapeInfo, minShapeInfo, dimsToExclude, dimsLen);
 
         return shape::coords2index(minShapeInfo, minIdxs);
@@ -4364,17 +4374,17 @@ INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, con
     //////////////////////////////////////////////////////////////////////
     INLINEDEF _CUDA_HD Nd4jLong subArrayOffset(const Nd4jLong maxIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude, const int dimsLen) {
 
-        Nd4jLong maxIdxs[MAX_RANK];
+        int maxIdxs[MAX_RANK];
         shape::index2coords(const_cast<Nd4jLong&>(maxIdx), maxShapeInfo, maxIdxs);
 
-        Nd4jLong minIdxs[MAX_RANK];
+        int minIdxs[MAX_RANK];
         maxIndToMinInd(maxIdxs, minIdxs, maxShapeInfo, minShapeInfo, dimsToExclude, dimsLen);
 
         return getOffset(minShapeInfo, minIdxs);
     }
 
     //////////////////////////////////////////////////////////////////////
-    INLINEDEF _CUDA_HD int outerArrayOffsets(Nd4jLong* maxOffsets, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, Nd4jLong* memBuff, const int* dimsToExclude) {
+    INLINEDEF _CUDA_HD int outerArrayOffsets(Nd4jLong* maxOffsets, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, int* memBuff, const int* dimsToExclude) {
 
         const auto rankMin = shape::rank(minShapeInfo);
         const auto rankMax = shape::rank(maxShapeInfo);
@@ -4384,8 +4394,8 @@ INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, con
 
         const auto diff = rankMax - rankMin;     // the size of dimsToExclude is equal to diff
 
-        Nd4jLong* indices   = memBuff;
-        Nd4jLong* increment = memBuff + rankMax;
+        int* indices   = memBuff;
+        int* increment = memBuff + rankMax;
 
         int N, minI, maxI;
 
@@ -4447,7 +4457,7 @@ INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, con
     }
 
     //////////////////////////////////////////////////////////////////////
-    INLINEDEF _CUDA_HD int outerArrayIndexes(Nd4jLong* maxIdxs, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude) {
+    INLINEDEF _CUDA_HD int outerArrayIndexes(int* maxIdxs, const Nd4jLong minIdx, const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo, const int* dimsToExclude) {
 
         const auto rankMin = shape::rank(minShapeInfo);
         const auto rankMax = shape::rank(maxShapeInfo);
@@ -4459,9 +4469,7 @@ INLINEDEF _CUDA_HD void maxIndToMinInd(Nd4jLong* maxIdxs, Nd4jLong* minIdxs, con
 
         const auto diff    = rankMax - rankMin;     // the size of dimsToExclude is equal to diff
 
-        Nd4jLong buffer[MAX_RANK];
-        Nd4jLong* indices = buffer;
-        Nd4jLong* increment = buffer + MAX_RANK/2;
+        int indices[MAX_RANK], increment[MAX_RANK];
 
         int N, minI, maxI;
 
@@ -4742,7 +4750,7 @@ INLINEDEF _CUDA_HD void calcSubArrsShapeInfoAndOffsets(const Nd4jLong* wholeShap
     const int subArrRank = keepUnitiesInShape ? rank : rank - dimsSize;
 
     subArrShapeInfo[0] = subArrRank;                                    // rank
-    subArrShapeInfo[2 * subArrRank + 1] = shape::type(wholeShapeInfo);  // type
+    sd::ArrayOptions::copyDataType(subArrShapeInfo, wholeShapeInfo);    // type
     subArrShapeInfo[2 * subArrRank + 3] = shape::order(wholeShapeInfo); // order
 
     Nd4jLong* shape   = new Nd4jLong[dimsSize];
@@ -4820,7 +4828,7 @@ INLINEDEF void calcSubArrShapeInfoAndOffset(const Nd4jLong* idx, const Nd4jLong*
     }
 
     minShapeInfo[2 * shape::rank(minShapeInfo) + 3] = shape::order(maxShapeInfo);   // order
-    minShapeInfo[2 * shape::rank(minShapeInfo) + 1] = shape::type(maxShapeInfo);    // type
+    sd::ArrayOptions::copyDataType(minShapeInfo, maxShapeInfo);                     // type
 
     shape::checkStridesEwsAndOrder(minShapeInfo);
 }
@@ -4876,13 +4884,41 @@ INLINEDEF void _CUDA_HD index2coords(Nd4jLong index, const int rank, const Nd4jL
 }
 
 //////////////////////////////////////////////////////////////////////
-INLINEDEF void _CUDA_HD index2coords(Nd4jLong index, const Nd4jLong *shapeInfo, Nd4jLong *coords, const int dimsSize, const int* tadDims) {
+INLINEDEF _CUDA_HD void index2coords(Nd4jLong index, const Nd4jLong *shapeInfo, int *coords, const int dimsSize, const int* tadDims) {
 
     for(uint i = dimsSize - 1; i > 0; --i) {
         coords[tadDims[i]] = index % shapeInfo[1 + tadDims[i]];
         index /= shapeInfo[1 + tadDims[i]];
     }
     coords[tadDims[0]] = index;      // last iteration
+}
+
+//////////////////////////////////////////////////////////////////////
+INLINEDEF _CUDA_HD void index2coordsCPU(const Nd4jLong& startIndex, const Nd4jLong& index, const Nd4jLong *shapeInfo, Nd4jLong *coords) {
+
+    if(startIndex == index) {
+        shape::index2coords(index, shapeInfo, coords);
+    }
+    else {
+        int axis = shapeInfo[0] - 1;
+        while(coords[axis] == shape::sizeAt(shapeInfo, axis) - 1)
+            coords[axis--] = 0;
+        ++coords[axis];
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+INLINEDEF _CUDA_HD void index2coordsCPU(const Nd4jLong& startIndex, const Nd4jLong& index, const Nd4jLong *shapeInfo, int *coords) {
+
+    if(startIndex == index) {
+        shape::index2coords(index, shapeInfo, coords);
+    }
+    else {
+        int axis = shapeInfo[0] - 1;
+        while(coords[axis] == shape::sizeAt(shapeInfo, axis) - 1)
+            coords[axis--] = 0;
+        ++coords[axis];
+    }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -5114,30 +5150,30 @@ INLINEDEF _CUDA_HD void excludeUnitiesFromShapeInfo(const Nd4jLong* inShapeInfo,
         shape::stride(outShapeInfo)[k++] = shape::stride(inShapeInfo)[i];
     }
 
-    outShapeInfo[2 * outShapeInfo[0] + 1] = shape::type(inShapeInfo);   // type
-    *shape::ews(outShapeInfo)             = shape::elementWiseStride(inShapeInfo);   // ews
-    outShapeInfo[2 * outShapeInfo[0] + 3] = shape::order(inShapeInfo);  // order
+    sd::ArrayOptions::copyDataType(outShapeInfo, inShapeInfo);                      // type
+    *shape::ews(outShapeInfo)             = shape::elementWiseStride(inShapeInfo);  // ews
+    outShapeInfo[2 * outShapeInfo[0] + 3] = shape::order(inShapeInfo);              // order
 }
 
 
 //////////////////////////////////////////////////////////////////////
-INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo) {
+// INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo) {
 
-    Nd4jLong result = 9223372036854775807LL;
+//     Nd4jLong result = 9223372036854775807LL;
 
-    for(uint i = 0; i < shape::rank(inShapeInfo); ++i) {
+//     for(uint i = 0; i < shape::rank(inShapeInfo); ++i) {
 
-        const auto currentStride = shape::stride(inShapeInfo)[i];
+//         const auto currentStride = shape::stride(inShapeInfo)[i];
 
-        if(i == axis || shape::shapeOf(inShapeInfo)[i] == 1)
-            continue;
+//         if(i == axis || shape::shapeOf(inShapeInfo)[i] == 1)
+//             continue;
 
-        if(result > currentStride)
-            result = currentStride;
-    }
+//         if(result > currentStride)
+//             result = currentStride;
+//     }
 
-    return result == 9223372036854775807LL ? 1 : result;
-}
+//     return result == 9223372036854775807LL ? 1 : result;
+// }
 
 
 

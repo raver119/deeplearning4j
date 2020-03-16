@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019-2020 Konduit K.K.
+ * Copyright (c) 2015-2018 Skymind, Inc.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -15,13 +15,13 @@
  ******************************************************************************/
 
 //
-// @author raver119@gmail.com
+// Created by raver119 on 23/09/18.
 //
 
-#include "../TrueBroadcastHelper.hpp"
+#include "loops/cpu/pairwise.hpp"
 
-namespace sd {
-    namespace helpers {
-        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT TrueBroadcastHelper, , PAIRWISE_TYPES_6);
+namespace functions {
+    namespace pairwise_transforms {
+        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT PairWiseTransform, , PAIRWISE_TYPES_12);
     }
 }
