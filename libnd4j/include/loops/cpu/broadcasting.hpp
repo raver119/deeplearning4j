@@ -584,18 +584,22 @@ static void execRank1(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
     //auto func = PRAGMA_THREADS_FOR{
 
         if(zStrd0 == 1 && xStrd0 == 1 && yStrd0 == 0) {
+#pragma omp parallel for
             for (uint i0 = 0; i0 < zAxis0; ++i0)
                 z[i0] = OpType::op(x[i0], *y);
         }
         else if(zStrd0 == 1 && xStrd0 == 0 && yStrd0 == 1) {
+#pragma omp parallel for
             for (uint i0 = 0; i0 < zAxis0; ++i0)
                 z[i0] = OpType::op(*x, y[i0]);
         }
         else if(zStrd0 == 1 && xStrd0 == 1 && yStrd0 == 1) {
+#pragma omp parallel for
             for (uint i0 = 0; i0 < zAxis0; ++i0)
                 z[i0] = OpType::op(x[i0], y[i0]);
         }
         else {
+#pragma omp parallel for
             for (uint i0 = 0; i0 < zAxis0; ++i0)
                 z[i0 * zStrd0] = OpType::op(x[i0 * xStrd0], y[i0 * yStrd0]);
         }
@@ -681,7 +685,6 @@ static void execRank3(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
                         z1[i2 * zStrd2] = OpType::op(x1[i2 * xStrd2], y1[i2 * yStrd2]);
             }
         }
-    };
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -732,7 +735,8 @@ static void execRank4(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
                         }
                     }
                 }
-        }
+        };
+
         ////////////////////////////////////////////////////////////////////////
 template <typename X, typename  Y, typename Z, typename OpType>
 static void execRank5(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const Nd4jLong *yShapeInfo, Z* z, const Nd4jLong *zShapeInfo) {
