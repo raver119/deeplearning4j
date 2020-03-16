@@ -489,6 +489,10 @@ void NativeOpExecutioner::execPairwiseTransform(sd::LaunchContext  *lc,
 
 #ifdef __ND4J_EXPERIMENTAL__
     BUILD_PAIRWISE_SELECTOR(xType, yType, zType, functions::pairwise_transforms::PairWiseTransform, ::exec(opNum, hX, hXShapeInfo, hY, hYShapeInfo, hZ, hZShapeInfo, extraParams), LIBND4J_TYPES, LIBND4J_TYPES);
+
+#elif _OPENMP
+    auto zLen = shape::length(hZShapeInfo);
+    BUILD_SINGLE_SELECTOR_THRICE(xType, functions::pairwise_transforms::PairWiseTransform, ::exec(opNum, hX, hXShapeInfo, hY, hYShapeInfo, hZ, hZShapeInfo, extraParams, 0, zLen), LIBND4J_TYPES);
 #else
     auto func = PRAGMA_THREADS_FOR {
         BUILD_SINGLE_SELECTOR_THRICE(xType, functions::pairwise_transforms::PairWiseTransform,
@@ -968,6 +972,10 @@ void NativeOpExecutioner::execScalar(sd::LaunchContext  *lc,
 
 #ifdef __ND4J_EXPERIMENTAL__
     BUILD_PAIRWISE_SELECTOR(xType, yType, zType, functions::scalar::ScalarTransform, ::transform(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, hScalar, extraParams), LIBND4J_TYPES, LIBND4J_TYPES);
+
+#elif _OPENMP
+    auto zLen = shape::length(hZShapeInfo);
+    BUILD_SINGLE_SELECTOR_THRICE(xType, functions::scalar::ScalarTransform,::transform(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, hScalar, extraParams, 0, zLen), LIBND4J_TYPES);
 #else
     if (xType != yType || xType != zType)
         throw sd::datatype_exception::build("NativeOpExecutioner::execScalar", zType, xType, yType);
