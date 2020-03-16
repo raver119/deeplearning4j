@@ -150,6 +150,78 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 }
 
 
+
+TEST_F(PlaygroundTests, test_bert_7_sizes) {
+    std::vector<std::string> paths = {
+        "b1024_s128/",
+        "b1152_s128/",
+        "b128_s128/",
+        "b2048_s128/",
+        "b32_s128/",
+        "b4096_s128/",
+        "b512_s128/"
+    };
+    // this test will run ONLY if the models exist
+    for(auto&& fn: paths){
+        std::string fullpath = std::string("resources/") + fn + std::string("bert_minimal_model.fb");
+
+        if (sd::graph::getFileSize(fullpath.c_str()) < 0)
+            return;
+
+        auto graph = GraphExecutioner::importFromFlatBuffers(std::string("resources/") + fn + std::string("bert_minimal_model.fb"));
+
+        auto t = NDArrayFactory::fromNpyFile(std::string("resources/") + fn + std::string("bert_minimal_input_IteratorGetNext.numpy");
+        auto u = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
+        auto v = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
+        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
+
+        //graph->printOut();
+
+        graph->tagInplaceNodes();
+
+        graph->getVariableSpace()->putVariable(85,0, t);
+        graph->getVariableSpace()->putVariable(86,0, u);
+        graph->getVariableSpace()->putVariable(87,0, v);
+
+    /*
+        // validating graph now
+        auto status = GraphExecutioner::execute(graph);
+        ASSERT_EQ(Status::OK(), status);
+        ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
+
+        auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
+        ASSERT_EQ(z, *array);
+
+    */
+        sd::Environment::getInstance()->setProfiling(true);
+        auto profile = GraphProfilingHelper::profile(graph, 1);
+
+        profile->printOut();
+
+        sd::Environment::getInstance()->setProfiling(false);
+        delete profile;
+
+    /*
+        std::vector<Nd4jLong> values;
+
+        for (int e = 0; e < 1; e++) {
+            auto timeStart = std::chrono::system_clock::now();
+
+            GraphExecutioner::execute(graph);
+
+            auto timeEnd = std::chrono::system_clock::now();
+            auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+            values.emplace_back(outerTime);
+        }
+
+        std::sort(values.begin(), values.end());
+
+        nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+    */
+        delete graph;
+    }
+}
+
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
     if (sd::graph::getFileSize("resources/Bert_minimal_model/bert_minimal_model.fb") < 0)
