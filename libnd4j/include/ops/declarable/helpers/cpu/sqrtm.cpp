@@ -161,6 +161,19 @@ namespace helpers {
      * */
 
     template <typename T>
+    bool isDiagonal(NDArray const* matrix) {
+         bool res = true;
+         for (auto r = 0; r < matrix->rows(); r++)
+             for (auto c = 0; c < matrix->columns(); c++) {
+                 if (r == c) {
+                     if (math::nd4j_abs(matrix->t<T>(r,c)) < T(1.e-5f)) return false;
+                 }
+                 else if (math::nd4j_abs(matrix->t<T>(r,c)) > T(1.e-5)) return false;
+             }
+         return res;
+    }
+
+    template <typename T>
     void hessenbergReduction(NDArray const& input, NDArray& hessenberg) {
         auto n = input.rows();
         hessenberg.assign(input);
@@ -194,8 +207,23 @@ namespace helpers {
 
     template <typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
-        qMatrix->setIdentity();
         tMatrix->assign(input);
+        auto k = 0;
+        auto resQ = qMatrix->ulike();
+        qMatrix->setIdentity();
+
+        do {
+            auto temp = tMatrix->ulike(); temp.nullify();
+            auto tempQ(*qMatrix);
+            helpers::qr(context, tMatrix, &resQ, &temp, false);
+            MmulHelper::matmul(&temp, &resQ, tMatrix, false, false);
+            tMatrix->printIndexedBuffer("Upper triangle");
+            resQ.printIndexedBuffer("Orthogonal");
+            k++;
+            nd4j_printf("Iteration %d\n", k);
+            MmulHelper::matmul(&tempQ, &resQ, qMatrix, false, false);
+        }
+        while (!isDiagonal<T>(&resQ));
     }
 
     template <typename T>
@@ -205,11 +233,13 @@ namespace helpers {
         auto n = input.sizeAt(-1);
 
         for (auto i = 0; i < matricies.size(); ++i) {
-            result = math::nd4j_sign<T,T>(input.t<T>(0,0)) == T(-1.f);
-            if (result)
-            for (auto r = 1; r < n; r++) {
-                if (math::nd4j_sign<T,T>(input.t<T>(r,r)) == T(-1.f) && input.t<T>(r, r - 1) == T(0.f)) // if diagonal element and
-                    return false;
+            result = math::nd4j_sign<T,T>(input.t<T>(0,0)) > T(0.f);
+            if (result) {
+                for (auto r = 1; r < n - 1; r++) {
+                    if (math::nd4j_sign<T, T>(input.t<T>(r, r)) < T(0.f) &&
+                        input.t<T>(r + 1, r) == T(0.f)) // if diagonal element and
+                        return false;
+                }
             }
             else
                 return result;
@@ -222,13 +252,13 @@ namespace helpers {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
-        input->printIndexedBuffer("Input");
-        schur(context, input, &outputQ, &outputT);
-        outputQ.printIndexedBuffer("Q matrix");
-        outputT.printIndexedBuffer("T matrix");
+//        input->printIndexedBuffer("Input");
+        schurDecomposition<T>(context, input, &outputQ, &outputT);
+//        outputQ.printIndexedBuffer("Q matrix");
+//        outputT.printIndexedBuffer("T matrix");
 //        auto outputT = outputR.ulike();
-        hessenbergReduction<T>(*input, outputT);
-        outputT.printIndexedBuffer("H matrix");
+//        hessenbergReduction<T>(*input, outputT);
+//        outputT.printIndexedBuffer("H matrix");
         if (hasSqrt<T>(outputT)) {
             upperTriangularSqrt<T>(context, &outputT, output);
             MmulHelper::matmul(&outputQ, output, &outputT, false, false);

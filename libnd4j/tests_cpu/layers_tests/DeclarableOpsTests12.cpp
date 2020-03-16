@@ -3238,7 +3238,7 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_3) {
     auto z = res.at(0);
 
     z->printIndexedBuffer("MatrixSqrt3");
-    ASSERT_TRUE(exp.equalsTo(z));
+    ASSERT_TRUE(exp.equalsTo(z, 1.e-3));
 //    delete res;
 }
 
@@ -3274,10 +3274,10 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
 
-    z->printIndexedBuffer("Sqrt");
+//    z->printIndexedBuffer("Sqrt");
 //    MmulHelper::matmul(&orthogonal, z, &a, false, false);
 //    MmulHelper::matmul(&a, &orthogonal, z, false, true);
-    ASSERT_TRUE(exp.equalsTo(z));
+    ASSERT_TRUE(exp.equalsTo(z, 1.e-3));
 //    delete res;
 }
 ////////////////////////////////////////////////////////////////////////////////
