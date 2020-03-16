@@ -353,7 +353,7 @@ namespace sd {
     bool   Threads::tryAcquire(int numThreads){
         std::lock_guard<std::mutex> lock( gThreadmutex );
         auto nThreads = _nFreeThreads - numThreads;
-        if(nThreads >= 1){
+        if(nThreads >= 0){
             _nFreeThreads = nThreads;
 
             return true;
