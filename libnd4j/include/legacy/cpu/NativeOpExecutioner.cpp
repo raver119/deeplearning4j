@@ -1318,12 +1318,15 @@ void NativeOpExecutioner::execTransformAny(sd::LaunchContext  *lc,
         memcpy(hZ, hX, shape::length(hXShapeInfo) * sd::DataTypeUtils::sizeOfElement(xType));
     }
     else {
+#ifdef _OPENMP
+        BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformAny, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, 0, 1), LIBND4J_TYPES, LIBND4J_TYPES);
+#else
         auto func = PRAGMA_THREADS_DO {
-
             BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformAny, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, thread_id, numThreads), LIBND4J_TYPES, LIBND4J_TYPES);
         };
 
         samediff::Threads::parallel_do(func, sd::math::nd4j_max<int>(1, sd::math::nd4j_min<int>(shape::length(hZShapeInfo) / 1024, sd::Environment::getInstance()->maxMasterThreads())));
+#endif
     }
 }
 
