@@ -600,7 +600,7 @@ static void execRank1(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
                 z[i0 * zStrd0] = OpType::op(x[i0 * xStrd0], y[i0 * yStrd0]);
         }
     };
-    samediff::Threads::parallel_tad(func, 0, zAxis0);
+    sd::Threads::parallel_tad(func, 0, zAxis0);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -640,7 +640,7 @@ static void execRank2(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
         }
     };
 
-    samediff::Threads::parallel_tad(func, 0, zAxis0);
+    sd::Threads::parallel_tad(func, 0, zAxis0);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -687,7 +687,7 @@ static void execRank3(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
         }
     };
 
-    samediff::Threads::parallel_for(func, 0,zAxis0,1,  0,zAxis1,1);
+    sd::Threads::parallel_for(func, 0,zAxis0,1,  0,zAxis1,1);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -741,7 +741,7 @@ static void execRank4(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
         }
     };
 
-    samediff::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
+    sd::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -802,7 +802,7 @@ static void execRank5(const X *x, const Nd4jLong *xShapeInfo, const Y *y, const 
         }
     };
 
-    samediff::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
+    sd::Threads::parallel_for(func,  0,zAxis0,1,  0,zAxis1,1,  0,zAxis2,1);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -835,7 +835,7 @@ static void execDefault(const X *x, const Nd4jLong *xShapeInfo, const Y *y, cons
         }
     };
 
-    samediff::Threads::parallel_for(func, 0, shape::length(zShapeInfo));
+    sd::Threads::parallel_for(func, 0, shape::length(zShapeInfo));
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -1302,7 +1302,7 @@ TYPED_TEST(TypedConvolutionTests2, avgpool3d_bp_test1) {
     gradO = 2.;
 
     sd::ops::avgpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 1, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 1, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1335,7 +1335,7 @@ TYPED_TEST(TypedConvolutionTests2, avgpool3d_bp_test2) {
     gradO = 2.;
 
     sd::ops::avgpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 1, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 1, dataFormat});
     auto output = results.at(0);
 
     // output->printBuffer();
@@ -1369,7 +1369,7 @@ TYPED_TEST(TypedConvolutionTests2, avgpool3d_bp_test3) {
     gradO = 2.;
 
     sd::ops::avgpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 0, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 0, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1399,7 +1399,7 @@ TYPED_TEST(TypedConvolutionTests2, avgpool3d_bp_test4) {
     gradO = 2.;
 
     sd::ops::avgpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 0, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW,  paddingMode, 0, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1460,7 +1460,7 @@ TYPED_TEST(TypedConvolutionTests2, maxpool3d_bp_test2) {
     gradO.linspace(0.1, 0.1);
 
     sd::ops::maxpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW, dD,dH,dW, paddingMode, 1, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW, dD,dH,dW, paddingMode, 1, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1490,7 +1490,7 @@ TYPED_TEST(TypedConvolutionTests2, maxpool3d_bp_test3) {
     gradO.linspace(0.1, 0.1);
 
     sd::ops::maxpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, 1, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, 1, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1521,7 +1521,7 @@ TYPED_TEST(TypedConvolutionTests2, maxpool3d_bp_test4) {
     gradO.linspace(0.1, 0.1);
 
     sd::ops::maxpool3dnew_bp op;
-    auto results = op.evaluate({&input, &gradO}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW, dD,dH,dW,  paddingMode, 1, dataFormat});
+    auto results = op.evaluate({&input, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW, dD,dH,dW,  paddingMode, 1, dataFormat});
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
