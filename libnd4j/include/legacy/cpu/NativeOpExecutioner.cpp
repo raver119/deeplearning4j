@@ -1269,11 +1269,15 @@ void NativeOpExecutioner::execTransformFloat(sd::LaunchContext  *lc,
     if (shape::isEmpty(hXShapeInfo))
         return;
 
+#ifdef _OPENMP
+    BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformFloat, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, 0, 1), LIBND4J_TYPES, FLOAT_TYPES);
+#else
     auto func = PRAGMA_THREADS_DO {
         BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformFloat, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, thread_id, numThreads), LIBND4J_TYPES, FLOAT_TYPES);
     };
 
     samediff::Threads::parallel_do(func, sd::math::nd4j_max<int>(1, sd::math::nd4j_min<int>(shape::length(hZShapeInfo) / 1024, sd::Environment::getInstance()->maxMasterThreads())));
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1291,11 +1295,15 @@ void NativeOpExecutioner::execTransformBool(sd::LaunchContext  *lc,
     if (shape::isEmpty(hXShapeInfo))
         return;
 
+#ifdef _OPENMP
+    BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformBool, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, 0, 1), LIBND4J_TYPES, BOOL_TYPES);
+#else
     auto func = PRAGMA_THREADS_DO {
         BUILD_DOUBLE_SELECTOR(xType, zType, functions::transform::TransformBool, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, thread_id, numThreads), LIBND4J_TYPES, BOOL_TYPES);
     };
 
     samediff::Threads::parallel_do(func, sd::math::nd4j_max<int>(1, sd::math::nd4j_min<int>(shape::length(hZShapeInfo) / 1024, sd::Environment::getInstance()->maxMasterThreads())));
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1367,11 +1375,15 @@ void NativeOpExecutioner::execTransformStrict(sd::LaunchContext  *lc,
     if (shape::isEmpty(hXShapeInfo))
         return;
 
+#ifdef _OPENMP
+    BUILD_SINGLE_SELECTOR(xType, functions::transform::TransformStrict, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, 0, 1), FLOAT_TYPES);
+#else
     auto func = PRAGMA_THREADS_DO {
         BUILD_SINGLE_SELECTOR(xType, functions::transform::TransformStrict, ::exec(opNum, hX, hXShapeInfo, hZ, hZShapeInfo, extraParams, thread_id, numThreads), FLOAT_TYPES);
     };
 
     samediff::Threads::parallel_do(func, sd::math::nd4j_max<int>(1, sd::math::nd4j_min<int>(shape::length(hZShapeInfo) / 1024, sd::Environment::getInstance()->maxMasterThreads())));
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
