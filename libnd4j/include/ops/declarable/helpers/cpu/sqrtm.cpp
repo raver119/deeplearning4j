@@ -205,7 +205,26 @@ namespace helpers {
         }
     }
 
-#define MAX_ITERATION 40
+    /*
+     * When real schur decomposition the diagonal elements are 1x1 or 2x2 (when complex eigenvals)
+     * to process complex eigenvals matrix (2x2) follow procedure
+     * */
+    template <typename T>
+    void complexEigenSqrt(sd::LaunchContext* context, NDArray const* input, NDArray* output) {
+        auto r11 = input->t<T>(0, 0);
+        auto r22 = input->t<T>(1, 1);
+        auto r12 = input->t<T>(0, 1);
+        auto r21 = input->t<T>(1, 0);
+        auto theta = (r11 + r22) / T(2.f);
+        auto mu = math::p_sqrt(-(r11 - r22) * (r11 - r22) - T(4.f) * r21 * r12) / T(2.f);
+        auto alpha = (theta > 0)?math::p_sqrt((theta + math::p_sqrt(theta * theta + mu * mu))/T(2.f)):mu / math::p_sqrt(T(2.f) * (-theta + math::p_sqrt(theta*theta + mu * mu)));
+
+        output->t<T>(0,0) = alpha + (r11 - r22)/(T(4.f)* alpha);
+        output->t<T>(1,1) = alpha - (r11 - r22)/(T(4.f)* alpha);
+
+        output->t<T>(0,1) = r12/(T(2.f)* alpha);
+        output->t<T>(1,0) = r21/(T(2.f)* alpha);
+    }
 
     template <typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
@@ -213,6 +232,8 @@ namespace helpers {
         auto k = 0;
         auto resQ = qMatrix->ulike();
         qMatrix->setIdentity();
+        auto const kMaxIteration = 40;
+
 //        auto shiftProc = []( T a, T b, T c ) -> T {
 //            auto middle = (a - c) / T(2.f);
 //            return c - math::nd4j_sign<T,T>(middle) * b * b / (math::nd4j_abs(middle) + math::nd4j_sqrt<T,T>(middle * middle + b * b));
@@ -236,7 +257,7 @@ namespace helpers {
             MmulHelper::matmul(&tempQ, &resQ, qMatrix, false, false);
 
         }
-        while (!isDiagonal<T>(&resQ) && k < n * MAX_ITERATION);
+        while (!isDiagonal<T>(&resQ) && k < n * kMaxIteration);
     }
 
     template <typename T>
