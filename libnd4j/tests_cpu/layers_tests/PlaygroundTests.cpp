@@ -319,32 +319,32 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 }
 
 
+
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
     std::vector<std::string> paths = {
+        "b32_s128/",
+        "b128_s128/",
+        "b512_s128/",
         "b1024_s128/",
         "b1152_s128/",
-        "b128_s128/",
         "b2048_s128/",
-        "b32_s128/",
-        "b4096_s128/",
-        "b512_s128/"
+        "b4096_s128/"
     };
 
     std::vector<std::string> filenames = {
+        "bert_frozen_mb32_len128.samediff",
+        "bert_frozen_mb128_len128.samediff",
+        "bert_frozen_mb512_len128.samediff",
         "bert_frozen_mb1024_len128.samediff",
         "bert_frozen_mb1152_len128.samediff",
-        "bert_frozen_mb128_len128.samediff",
         "bert_frozen_mb2048_len128.samediff",
-        "bert_frozen_mb32_len128.samediff",
         "bert_frozen_mb4096_len128.samediff",
-        "bert_frozen_mb512_len128.samediff"
     };
 
 
     std::string base_path = "resources/bert/";
     for (int i=0;i<paths.size();i++){
         std::string full_path = base_path + paths[i] + filenames[i];
-        nd4j_printf("* Profiling %s\n", full_path.c_str());
         auto graph = GraphExecutioner::importFromFlatBuffers(full_path.c_str());
 
         full_path = base_path + paths[i] + "in0_IteratorGetNext.npy";
@@ -356,6 +356,14 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
 //        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
         graph->tagInplaceNodes();
+        //graph->printOut();
+
+
+
+        graph->getVariableSpace()->putVariable(735,0, t);
+        graph->getVariableSpace()->putVariable(736,0, u);
+        graph->getVariableSpace()->putVariable(737,0, v);
+
 
         sd::Environment::getInstance()->setProfiling(true);
         auto profile = GraphProfilingHelper::profile(graph, 1);
@@ -367,8 +375,6 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
         delete graph;
     }
 }
-
-
 
 
 TEST_F(PlaygroundTests, test_bert_1) {
