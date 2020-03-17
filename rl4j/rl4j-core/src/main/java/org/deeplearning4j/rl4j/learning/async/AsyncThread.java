@@ -129,7 +129,7 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
 
             log.info("ThreadNum-" + threadNumber + " Started!");
 
-            while (!getAsyncGlobal().isTrainingComplete() && getAsyncGlobal().isRunning()) {
+            while (!getAsyncGlobal().isTrainingComplete()) {
                 if (!isEpochStarted) {
                     boolean canContinue = startNewEpoch(context);
                     if (!canContinue) {
@@ -187,7 +187,6 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
     }
 
     private void terminateWork() {
-        getAsyncGlobal().terminate();
         if(isEpochStarted) {
             postEpoch();
         }

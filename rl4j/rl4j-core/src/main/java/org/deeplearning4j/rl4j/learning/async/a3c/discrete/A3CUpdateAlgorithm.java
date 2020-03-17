@@ -65,9 +65,9 @@ public class A3CUpdateAlgorithm implements UpdateAlgorithm<IActorCritic> {
                 : Nd4j.zeros(size, actionSpaceSize);
 
         StateActionPair<Integer> stateActionPair = experience.get(size - 1);
-        double r;
+        double value;
         if(stateActionPair.isTerminal()) {
-            r = 0;
+            value = 0;
         }
         else {
             INDArray[] output = null;
@@ -76,7 +76,7 @@ public class A3CUpdateAlgorithm implements UpdateAlgorithm<IActorCritic> {
             else synchronized (asyncGlobal) {
                 output = asyncGlobal.getTarget().outputAll(stateActionPair.getObservation().getData());
             }
-            r = output[0].getDouble(0);
+            value = output[0].getDouble(0);
         }
 
         for (int i = size - 1; i >= 0; --i) {
@@ -86,7 +86,7 @@ public class A3CUpdateAlgorithm implements UpdateAlgorithm<IActorCritic> {
 
             INDArray[] output = current.outputAll(observationData);
 
-            r = stateActionPair.getReward() + gamma * r;
+            value = stateActionPair.getReward() + gamma * value;
             if (recurrent) {
                 input.get(NDArrayIndex.point(0), NDArrayIndex.all(), NDArrayIndex.point(i)).assign(observationData);
             } else {
@@ -94,11 +94,11 @@ public class A3CUpdateAlgorithm implements UpdateAlgorithm<IActorCritic> {
             }
 
             //the critic
-            targets.putScalar(i, r);
+            targets.putScalar(i, value);
 
             //the actor
             double expectedV = output[0].getDouble(0);
-            double advantage = r - expectedV;
+            double advantage = value - expectedV;
             if (recurrent) {
                 logSoftmax.putScalar(0, stateActionPair.getAction(), i, advantage);
             } else {

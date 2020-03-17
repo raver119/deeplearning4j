@@ -16,47 +16,27 @@ public class MockAsyncGlobal<NN extends NeuralNet> implements IAsyncGlobal<NN> {
     public boolean hasBeenStarted = false;
     public boolean hasBeenTerminated = false;
 
-    public int enqueueCallCount = 0;
+    @Getter
+    int workerUpdateCount = 0;
+
+    @Getter
+    int stepCount = 0;
 
     @Setter
-    private int maxLoops;
-    @Setter
-    private int numLoopsStopRunning;
-    private int currentLoop = 0;
+    private int maxSteps;
 
     public MockAsyncGlobal() {
         this(null);
     }
 
     public MockAsyncGlobal(NN current) {
-        maxLoops = Integer.MAX_VALUE;
-        numLoopsStopRunning = Integer.MAX_VALUE;
+        maxSteps = Integer.MAX_VALUE;
         this.current = current;
     }
 
     @Override
-    public boolean isRunning() {
-        return currentLoop < numLoopsStopRunning;
-    }
-
-    @Override
-    public void terminate() {
-        hasBeenTerminated = true;
-    }
-
-    @Override
     public boolean isTrainingComplete() {
-        return currentLoop >= maxLoops;
-    }
-
-    @Override
-    public void start() {
-        hasBeenStarted = true;
-    }
-
-    @Override
-    public AtomicInteger getT() {
-        return null;
+        return stepCount >= maxSteps;
     }
 
     @Override
@@ -65,11 +45,9 @@ public class MockAsyncGlobal<NN extends NeuralNet> implements IAsyncGlobal<NN> {
     }
 
     @Override
-    public void enqueue(Gradient[] gradient, Integer nstep) {
-        ++enqueueCallCount;
+    public void applyGradient(Gradient[] gradient, int batchSize) {
+        workerUpdateCount++;
+        stepCount+=batchSize;
     }
 
-    public void increaseCurrentLoop() {
-        ++currentLoop;
-    }
 }

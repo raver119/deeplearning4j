@@ -2,6 +2,7 @@ package org.deeplearning4j.rl4j.learning.async;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
 import org.deeplearning4j.rl4j.learning.listener.TrainingListenerList;
 import org.deeplearning4j.rl4j.mdp.MDP;
@@ -135,7 +136,7 @@ public class AsyncThreadTest {
         public final MockAsyncThread sut = new MockAsyncThread(asyncGlobal, 0, neuralNet, mdp, config, listeners);
 
         public TestContext(int numEpochs) {
-            asyncGlobal.setMaxLoops(numEpochs);
+            asyncGlobal.setMaxSteps(numEpochs);
             listeners.add(listener);
             sut.setHistoryProcessor(historyProcessor);
             sut.getLegacyMDPWrapper().setTransformProcess(MockMDP.buildTransformProcess(observationSpace.getShape(), hpConf.getSkipFrame(), hpConf.getHistoryLength()));
@@ -195,11 +196,11 @@ public class AsyncThreadTest {
 
         @Override
         protected SubEpochReturn trainSubEpoch(Observation obs, int nstep) {
-            asyncGlobal.increaseCurrentLoop();
             trainSubEpochParams.add(new TrainSubEpochParams(obs, nstep));
             for(int i = 0; i < nstep; ++i) {
                 incrementStep();
             }
+            asyncGlobal.applyGradient(new Gradient[] {}, nstep);
             return new SubEpochReturn(nstep, null, 1.0, 1.0);
         }
 

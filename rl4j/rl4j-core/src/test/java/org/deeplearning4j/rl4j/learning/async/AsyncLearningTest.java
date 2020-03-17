@@ -15,7 +15,7 @@ public class AsyncLearningTest {
     public void when_training_expect_AsyncGlobalStarted() {
         // Arrange
         TestContext context = new TestContext();
-        context.asyncGlobal.setMaxLoops(1);
+        context.asyncGlobal.setMaxSteps(1);
 
         // Act
         context.sut.train();
@@ -76,7 +76,7 @@ public class AsyncLearningTest {
 
         public TestContext() {
             sut.addListener(listener);
-            asyncGlobal.setMaxLoops(1);
+            asyncGlobal.setMaxSteps(1);
             sut.setProgressMonitorFrequency(1);
         }
     }

@@ -1,6 +1,7 @@
 package org.deeplearning4j.rl4j.support;
 
 import lombok.Setter;
+import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.rl4j.learning.IEpochTrainer;
 import org.deeplearning4j.rl4j.learning.ILearning;
 import org.deeplearning4j.rl4j.learning.listener.*;
@@ -65,7 +66,7 @@ public class MockTrainingListener implements TrainingListener {
         ++onTrainingProgressCallCount;
         --remainingonTrainingProgressCallCount;
         if(asyncGlobal != null) {
-            asyncGlobal.increaseCurrentLoop();
+            asyncGlobal.applyGradient(new Gradient[] {}, 1);
         }
         return remainingonTrainingProgressCallCount < 0 ? ListenerResponse.STOP : ListenerResponse.CONTINUE;
     }

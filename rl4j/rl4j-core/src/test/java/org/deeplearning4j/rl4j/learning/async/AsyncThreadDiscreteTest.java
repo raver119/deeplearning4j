@@ -29,7 +29,7 @@ public class AsyncThreadDiscreteTest {
         IHistoryProcessor.Configuration hpConf = new IHistoryProcessor.Configuration(5, 4, 4, 4, 4, 0, 0, 2);
         MockHistoryProcessor hpMock = new MockHistoryProcessor(hpConf);
         MockAsyncGlobal asyncGlobalMock = new MockAsyncGlobal(nnMock);
-        asyncGlobalMock.setMaxLoops(hpConf.getSkipFrame() * numEpochs);
+        asyncGlobalMock.setMaxSteps(hpConf.getSkipFrame() * numEpochs);
         MockObservationSpace observationSpace = new MockObservationSpace();
         MockMDP mdpMock = new MockMDP(observationSpace);
         TrainingListenerList listeners = new TrainingListenerList();
@@ -63,7 +63,7 @@ public class AsyncThreadDiscreteTest {
                 assertEquals(expectedLastObservation[j], 255.0 * result.getLastObs().getData().getDouble(j), 0.00001);
             }
         }
-        assertEquals(2, asyncGlobalMock.enqueueCallCount);
+        assertEquals(2, asyncGlobalMock.getWorkerUpdateCount());
 
         // HistoryProcessor
         double[] expectedRecordValues = new double[] { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, };
@@ -152,9 +152,9 @@ public class AsyncThreadDiscreteTest {
 
         @Override
         public SubEpochReturn trainSubEpoch(Observation sObs, int nstep) {
-            asyncGlobal.increaseCurrentLoop();
             SubEpochReturn result = super.trainSubEpoch(sObs, nstep);
             trainSubEpochResults.add(result);
+            asyncGlobal.applyGradient(new Gradient[] {}, nstep);
             return result;
         }
     }

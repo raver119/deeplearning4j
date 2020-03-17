@@ -91,7 +91,7 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
     public SubEpochReturn trainSubEpoch(Observation sObs, int nstep) {
 
         synchronized (getAsyncGlobal()) {
-            current.copy(getAsyncGlobal().getCurrent());
+            current.copy(getAsyncGlobal().getTarget());
         }
 
         Observation obs = sObs;
@@ -130,7 +130,7 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
             experienceHandler.setFinalObservation(obs);
         }
 
-        getAsyncGlobal().enqueue(updateAlgorithm.computeGradients(current, experienceHandler.getExperience()), getCurrentEpochStep());
+        getAsyncGlobal().applyGradient(updateAlgorithm.computeGradients(current, experienceHandler.getExperience()), getCurrentEpochStep());
 
         return new SubEpochReturn(getCurrentEpochStep() - stepAtStart, obs, reward, current.getLatestScore());
     }
