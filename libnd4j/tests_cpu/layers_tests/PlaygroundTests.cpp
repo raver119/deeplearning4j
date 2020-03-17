@@ -345,14 +345,14 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
     for (int i=0;i<paths.size();i++){
         std::string full_path = base_path + paths[i] + filenames[i];
         nd4j_printf("* Profiling %s\n", full_path.c_str());
-        auto graph = GraphExecutioner::importFromFlatBuffers(full_path);
+        auto graph = GraphExecutioner::importFromFlatBuffers(full_path.c_str());
 
         full_path = base_path + paths[i] + "in0_IteratorGetNext.npy";
-        auto t = NDArrayFactory::fromNpyFile(full_path);
+        auto t = NDArrayFactory::fromNpyFile(full_path.c_str());
         full_path = base_path + paths[i] + "in1_IteratorGetNext_1.npy";
-        auto u = NDArrayFactory::fromNpyFile(full_path);
+        auto u = NDArrayFactory::fromNpyFile(full_path.c_str());
         full_path = base_path + paths[i] + "in2_IteratorGetNext_4.npy";
-        auto v = NDArrayFactory::fromNpyFile(full_path);
+        auto v = NDArrayFactory::fromNpyFile(full_path.c_str());
 //        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
         graph->tagInplaceNodes();
