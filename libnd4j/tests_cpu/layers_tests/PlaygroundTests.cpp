@@ -154,23 +154,23 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
     std::vector<std::string> paths = {
+        "b32_s128/",
+        "b128_s128/",
+        "b512_s128/",
         "b1024_s128/",
         "b1152_s128/",
-        "b128_s128/",
         "b2048_s128/",
-        "b32_s128/",
-        "b4096_s128/",
-        "b512_s128/"
+        "b4096_s128/"
     };
 
     std::vector<std::string> filenames = {
+        "bert_frozen_mb32_len128.samediff",
+        "bert_frozen_mb128_len128.samediff",
+        "bert_frozen_mb512_len128.samediff",
         "bert_frozen_mb1024_len128.samediff",
         "bert_frozen_mb1152_len128.samediff",
-        "bert_frozen_mb128_len128.samediff",
         "bert_frozen_mb2048_len128.samediff",
-        "bert_frozen_mb32_len128.samediff",
         "bert_frozen_mb4096_len128.samediff",
-        "bert_frozen_mb512_len128.samediff"
     };
 
 
@@ -179,25 +179,45 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
         std::string full_path = base_path + paths[i] + filenames[i];
         nd4j_printf("* Profiling %s\n", full_path.c_str());
         auto graph = GraphExecutioner::importFromFlatBuffers(full_path.c_str());
+        nd4j_printf("Loaded %s\n", full_path.c_str());
 
         full_path = base_path + paths[i] + "in0_IteratorGetNext.npy";
         auto t = NDArrayFactory::fromNpyFile(full_path.c_str());
+        nd4j_printf("Loaded %s\n", full_path.c_str());
         full_path = base_path + paths[i] + "in1_IteratorGetNext_1.npy";
         auto u = NDArrayFactory::fromNpyFile(full_path.c_str());
+        nd4j_printf("Loaded %s\n", full_path.c_str());
         full_path = base_path + paths[i] + "in2_IteratorGetNext_4.npy";
         auto v = NDArrayFactory::fromNpyFile(full_path.c_str());
+        nd4j_printf("Loaded %s\n", full_path.c_str());
 //        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
         graph->tagInplaceNodes();
+        nd4j_printf("Trace %d\n", __LINE__);
+        //graph->printOut();
+
+
+
+        graph->getVariableSpace()->putVariable(735,0, t);
+        graph->getVariableSpace()->putVariable(736,0, u);
+        graph->getVariableSpace()->putVariable(737,0, v);
+        nd4j_printf("Trace %d\n", __LINE__);
+
 
         sd::Environment::getInstance()->setProfiling(true);
+        nd4j_printf("Trace %d\n", __LINE__);
         auto profile = GraphProfilingHelper::profile(graph, 1);
+        nd4j_printf("Trace %d\n", __LINE__);
 
         profile->printOut();
+        nd4j_printf("Trace %d\n", __LINE__);
 
         sd::Environment::getInstance()->setProfiling(false);
+        nd4j_printf("Trace %d\n", __LINE__);
         delete profile;
+        nd4j_printf("Trace %d\n", __LINE__);
         delete graph;
+        nd4j_printf("Trace %d\n", __LINE__);
     }
 }
 
