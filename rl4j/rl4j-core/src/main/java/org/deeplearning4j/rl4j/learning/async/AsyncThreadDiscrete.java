@@ -90,9 +90,7 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
      */
     public SubEpochReturn trainSubEpoch(Observation sObs, int nstep) {
 
-        synchronized (getAsyncGlobal()) {
-            current.copy(getAsyncGlobal().getTarget());
-        }
+        current.copy(getAsyncGlobal().getTarget());
 
         Observation obs = sObs;
         IPolicy<O, Integer> policy = getPolicy(current);
@@ -103,9 +101,8 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
 
         double reward = 0;
         double accuReward = 0;
-        int stepAtStart = getCurrentEpochStep();
-        int lastStep = nstep * skipFrame + stepAtStart;
-        while (!getMdp().isDone() && getCurrentEpochStep() < lastStep) {
+
+        while (!getMdp().isDone() && !hasCollectedNSteps(experienceHandler, nstep, skipFrame)) {
 
             //if step of training, just repeat lastAction
             if (!obs.isSkipped()) {
@@ -126,12 +123,24 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
             incrementStep();
         }
 
-        if (getMdp().isDone() && getCurrentEpochStep() < lastStep) {
+        boolean episodeComplete = getMdp().isDone();
+
+        if (episodeComplete && hasCollectedNSteps(experienceHandler, nstep, skipFrame)) {
             experienceHandler.setFinalObservation(obs);
         }
 
-        getAsyncGlobal().applyGradient(updateAlgorithm.computeGradients(current, experienceHandler.getExperience()), getCurrentEpochStep());
+        int experienceSize = experienceHandler.getExperience().size();
 
-        return new SubEpochReturn(getCurrentEpochStep() - stepAtStart, obs, reward, current.getLatestScore());
+        getAsyncGlobal().applyGradient(updateAlgorithm.computeGradients(current, experienceHandler.getExperience()), experienceSize);
+
+        experienceHandler.reset();
+
+        return new SubEpochReturn(experienceSize, obs, reward, current.getLatestScore(), episodeComplete);
+    }
+
+    private boolean hasCollectedNSteps(ExperienceHandler experienceHandler, int nSteps, int skipFrames) {
+        int experienceSize = experienceHandler.getExperience().size();
+        int updateFrequency = nSteps * skipFrames;
+        return experienceSize > 0 && experienceSize % updateFrequency == 0;
     }
 }

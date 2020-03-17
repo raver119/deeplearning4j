@@ -50,25 +50,49 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
 
     @Getter
     private int threadNumber;
+
     @Getter
     protected final int deviceNum;
+
+    /**
+     * The number of steps that this async thread has produced
+     */
     @Getter @Setter
-    private int stepCounter = 0;
+    protected int stepCount = 0;
+
+    /**
+     * The number of epochs (updates) that this thread has sent to the global learner
+     */
     @Getter @Setter
-    private int epochCounter = 0;
+    protected int epochCount = 0;
+
+    /**
+     * The number of environment episodes that have been played out
+     */
+    @Getter @Setter
+    protected int episodeCount = 0;
+
+    /**
+     * The number of steps in the current episode
+     */
+    @Getter
+    protected int currentEpisodeStepCount = 0;
+
+    /**
+     * If the current episode needs to be reset
+     */
+    boolean episodeComplete = true;
+
     @Getter @Setter
     private IHistoryProcessor historyProcessor;
 
-    @Getter
-    private int currentEpochStep = 0;
-
-    private boolean isEpochStarted = false;
+    private boolean isEpisodeStarted = false;
     private final LegacyMDPWrapper<O, A, AS> mdp;
 
     private final TrainingListenerList listeners;
 
     public AsyncThread(IAsyncGlobal<NN> asyncGlobal, MDP<O, A, AS> mdp, TrainingListenerList listeners, int threadNumber, int deviceNum) {
-        this.mdp = new LegacyMDPWrapper<O, A, AS>(mdp, null,  this);
+        this.mdp = new LegacyMDPWrapper<O, A, AS>(mdp, null);
         this.listeners = listeners;
         this.threadNumber = threadNumber;
         this.deviceNum = deviceNum;
@@ -130,23 +154,24 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
             log.info("ThreadNum-" + threadNumber + " Started!");
 
             while (!getAsyncGlobal().isTrainingComplete()) {
-                if (!isEpochStarted) {
+
+                if (episodeComplete) {
                     boolean canContinue = startNewEpoch(context);
                     if (!canContinue) {
                         break;
                     }
                 }
 
-                handleTraining(context);
+                episodeComplete = handleTraining(context);
 
-                if (currentEpochStep >= getConf().getMaxEpochStep() || getMdp().isDone()) {
-                    boolean canContinue = finishEpoch(context);
+                if(episodeComplete) {
+                    boolean canContinue = finishEpisode(context);
                     if (!canContinue) {
                         break;
                     }
-
-                    ++epochCounter;
                 }
+
+                epochCount++;
             }
         }
         finally {
@@ -154,13 +179,15 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
         }
     }
 
-    private void handleTraining(RunContext context) {
-        int maxSteps = Math.min(getConf().getNstep(), getConf().getMaxEpochStep() - currentEpochStep);
+    private boolean handleTraining(RunContext context) {
+        int maxSteps = Math.min(getConf().getNstep(), getConf().getMaxEpochStep());
         SubEpochReturn subEpochReturn = trainSubEpoch(context.obs, maxSteps);
 
         context.obs = subEpochReturn.getLastObs();
         context.rewards += subEpochReturn.getReward();
         context.score = subEpochReturn.getScore();
+
+        return subEpochReturn.isEpisodeComplete();
     }
 
     private boolean startNewEpoch(RunContext context) {
@@ -170,24 +197,24 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
         context.obs = initMdp.getLastObs();
         context.rewards = initMdp.getReward();
 
-        isEpochStarted = true;
         preEpoch();
 
         return listeners.notifyNewEpoch(this);
     }
 
-    private boolean finishEpoch(RunContext context) {
-        isEpochStarted = false;
+    private boolean finishEpisode(RunContext context) {
         postEpoch();
-        IDataManager.StatEntry statEntry = new AsyncStatEntry(getStepCounter(), epochCounter, context.rewards, currentEpochStep, context.score);
+        IDataManager.StatEntry statEntry = new AsyncStatEntry(stepCount, epochCount, context.rewards, currentEpisodeStepCount, context.score);
 
-        log.info("ThreadNum-" + threadNumber + " Epoch: " + getCurrentEpochStep() + ", reward: " + context.rewards);
+        log.info("ThreadNum-{} Episode steps: {}, reward: {}", threadNumber, currentEpisodeStepCount, context.rewards);
+
+        episodeCount++;
 
         return listeners.notifyEpochTrainingResult(this, statEntry);
     }
 
     private void terminateWork() {
-        if(isEpochStarted) {
+        if(episodeComplete) {
             postEpoch();
         }
     }
@@ -203,7 +230,7 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
     protected abstract SubEpochReturn trainSubEpoch(Observation obs, int nstep);
 
     private Learning.InitMdp<Observation> refacInitMdp() {
-        currentEpochStep = 0;
+        currentEpisodeStepCount = 0;
 
         double reward = 0;
 
@@ -225,8 +252,8 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
     }
 
     public void incrementStep() {
-        ++stepCounter;
-        ++currentEpochStep;
+        stepCount++;
+        currentEpisodeStepCount++;
     }
 
     @AllArgsConstructor
@@ -236,6 +263,7 @@ public abstract class AsyncThread<O, A, AS extends ActionSpace<A>, NN extends Ne
         Observation lastObs;
         double reward;
         double score;
+        boolean episodeComplete;
     }
 
     @AllArgsConstructor

@@ -90,22 +90,22 @@ public class SyncLearningTest {
         private final LConfiguration conf;
 
         @Getter
-        private int currentEpochStep = 0;
+        private int currentEpisodeStepCount = 0;
 
         public MockSyncLearning(LConfiguration conf) {
             this.conf = conf;
         }
 
         @Override
-        protected void preEpoch() { currentEpochStep = 0;  }
+        protected void preEpoch() { currentEpisodeStepCount = 0;  }
 
         @Override
         protected void postEpoch() { }
 
         @Override
         protected IDataManager.StatEntry trainEpoch() {
-            setStepCounter(getStepCounter() + 1);
-            return new MockStatEntry(getCurrentEpochStep(), getStepCounter(), 1.0);
+            stepCount++;
+            return new MockStatEntry(getCurrentEpisodeStepCount(), this.getStepCount(), 1.0);
         }
 
         @Override
@@ -121,6 +121,16 @@ public class SyncLearningTest {
         @Override
         public LConfiguration getConfiguration() {
             return conf;
+        }
+
+        @Override
+        public int getEpisodeCount() {
+            return 0;
+        }
+
+        @Override
+        public int getCurrentEpisodeStepCount() {
+            return 0;
         }
 
         @Override

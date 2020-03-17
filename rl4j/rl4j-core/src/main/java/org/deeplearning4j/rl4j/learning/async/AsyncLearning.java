@@ -88,7 +88,7 @@ public abstract class AsyncLearning<O extends Encodable, A, AS extends ActionSpa
      * @return The current step
      */
     @Override
-    public int getStepCounter() {
+    public int getStepCount() {
         return getAsyncGlobal().getStepCount();
     }
 

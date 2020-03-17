@@ -201,7 +201,7 @@ public class AsyncThreadTest {
                 incrementStep();
             }
             asyncGlobal.applyGradient(new Gradient[] {}, nstep);
-            return new SubEpochReturn(nstep, null, 1.0, 1.0);
+            return new SubEpochReturn(nstep, null, 1.0, 1.0, false);
         }
 
         @AllArgsConstructor

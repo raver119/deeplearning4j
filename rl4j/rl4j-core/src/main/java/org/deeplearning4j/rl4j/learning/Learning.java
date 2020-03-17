@@ -42,9 +42,9 @@ public abstract class Learning<O, A, AS extends ActionSpace<A>, NN extends Neura
                 implements ILearning<O, A, AS>, NeuralNetFetchable<NN> {
 
     @Getter @Setter
-    private int stepCounter = 0;
+    protected int stepCount = 0;
     @Getter @Setter
-    private int epochCounter = 0;
+    private int epochCount = 0;
     @Getter @Setter
     private IHistoryProcessor historyProcessor = null;
 
@@ -73,11 +73,11 @@ public abstract class Learning<O, A, AS extends ActionSpace<A>, NN extends Neura
     public abstract NN getNeuralNet();
 
     public void incrementStep() {
-        stepCounter++;
+        stepCount++;
     }
 
     public void incrementEpoch() {
-        epochCounter++;
+        epochCount++;
     }
 
     public void setHistoryProcessor(HistoryProcessor.Configuration conf) {

@@ -48,10 +48,7 @@ public class StateActionExperienceHandler<A> implements ExperienceHandler<A, Sta
      */
     @Override
     public List<StateActionPair<A>> getExperience() {
-        List<StateActionPair<A>> result = stateActionPairs;
-        stateActionPairs = new ArrayList<>();
-
-        return result;
+        return stateActionPairs;
     }
 
     @Override

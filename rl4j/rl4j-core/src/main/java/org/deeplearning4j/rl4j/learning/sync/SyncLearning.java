@@ -84,7 +84,7 @@ public abstract class SyncLearning<O, A, AS extends ActionSpace<A>, NN extends N
 
         boolean canContinue = listeners.notifyTrainingStarted();
         if (canContinue) {
-            while (getStepCounter() < getConfiguration().getMaxStep()) {
+            while (this.getStepCount() < getConfiguration().getMaxStep()) {
                 preEpoch();
                 canContinue = listeners.notifyNewEpoch(this);
                 if (!canContinue) {
@@ -99,14 +99,14 @@ public abstract class SyncLearning<O, A, AS extends ActionSpace<A>, NN extends N
 
                 postEpoch();
 
-                if(getEpochCounter() % progressMonitorFrequency == 0) {
+                if(getEpochCount() % progressMonitorFrequency == 0) {
                     canContinue = listeners.notifyTrainingProgress(this);
                     if (!canContinue) {
                         break;
                     }
                 }
 
-                log.info("Epoch: " + getEpochCounter() + ", reward: " + statEntry.getReward());
+                log.info("Epoch: " + getEpochCount() + ", reward: " + statEntry.getReward());
                 incrementEpoch();
             }
         }

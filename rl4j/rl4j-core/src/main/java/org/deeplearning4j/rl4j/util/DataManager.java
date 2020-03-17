@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.deeplearning4j.rl4j.learning.NeuralNetFetchable;
 import org.nd4j.linalg.primitives.Pair;
 import org.deeplearning4j.rl4j.learning.ILearning;
-import org.deeplearning4j.rl4j.learning.Learning;
 import org.deeplearning4j.rl4j.network.ac.IActorCritic;
 import org.deeplearning4j.rl4j.network.dqn.DQN;
 import org.deeplearning4j.rl4j.network.dqn.IDQN;
@@ -264,7 +263,7 @@ public class DataManager implements IDataManager {
         Path infoPath = Paths.get(getInfo());
 
         Info info = new Info(iLearning.getClass().getSimpleName(), iLearning.getMdp().getClass().getSimpleName(),
-                        iLearning.getConfiguration(), iLearning.getStepCounter(), System.currentTimeMillis());
+                        iLearning.getConfiguration(), iLearning.getStepCount(), System.currentTimeMillis());
         String toWrite = toJson(info);
 
         Files.write(infoPath, toWrite.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
@@ -286,12 +285,12 @@ public class DataManager implements IDataManager {
         if (!saveData)
             return;
 
-        save(getModelDir() + "/" + learning.getStepCounter() + ".training", learning);
+        save(getModelDir() + "/" + learning.getStepCount() + ".training", learning);
         if(learning instanceof  NeuralNetFetchable) {
             try {
-                ((NeuralNetFetchable)learning).getNeuralNet().save(getModelDir() + "/" + learning.getStepCounter() + ".model");
+                ((NeuralNetFetchable)learning).getNeuralNet().save(getModelDir() + "/" + learning.getStepCount() + ".model");
             } catch (UnsupportedOperationException e) {
-                String path = getModelDir() + "/" + learning.getStepCounter();
+                String path = getModelDir() + "/" + learning.getStepCount();
                 ((IActorCritic)((NeuralNetFetchable)learning).getNeuralNet()).save(path + "_value.model", path + "_policy.model");
             }
         }

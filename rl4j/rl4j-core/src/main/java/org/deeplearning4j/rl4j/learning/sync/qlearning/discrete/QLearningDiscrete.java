@@ -42,7 +42,6 @@ import org.nd4j.linalg.api.rng.Random;
 import org.nd4j.linalg.dataset.api.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -91,7 +90,7 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
     public QLearningDiscrete(MDP<O, Integer, DiscreteSpace> mdp, IDQN dqn, QLConfiguration conf,
                              int epsilonNbStep, Random random) {
         this.configuration = conf;
-        this.mdp = new LegacyMDPWrapper<O, Integer, DiscreteSpace>(mdp, null, this);
+        this.mdp = new LegacyMDPWrapper<O, Integer, DiscreteSpace>(mdp, null);
         qNetwork = dqn;
         targetQNetwork = dqn.clone();
         policy = new DQNPolicy(getQNetwork());
@@ -164,7 +163,7 @@ public abstract class QLearningDiscrete<O extends Encodable> extends QLearning<O
 
             // Update NN
             // FIXME: maybe start updating when experience replay has reached a certain size instead of using "updateStart"?
-            if (getStepCounter() > updateStart) {
+            if (this.getStepCount() > updateStart) {
                 DataSet targets = setTarget(experienceHandler.getExperience());
                 getQNetwork().fit(targets.getFeatures(), targets.getLabels());
             }

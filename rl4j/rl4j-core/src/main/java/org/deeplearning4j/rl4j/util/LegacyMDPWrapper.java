@@ -8,7 +8,6 @@ import org.datavec.image.transform.CropImageTransform;
 import org.datavec.image.transform.MultiImageTransform;
 import org.datavec.image.transform.ResizeImageTransform;
 import org.deeplearning4j.gym.StepReply;
-import org.deeplearning4j.rl4j.learning.EpochStepCounter;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.observation.Observation;
@@ -25,11 +24,6 @@ import org.deeplearning4j.rl4j.space.ObservationSpace;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
-
 public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Observation, A, AS> {
 
     @Getter
@@ -44,16 +38,14 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
     @Getter(AccessLevel.PRIVATE)
     private IHistoryProcessor historyProcessor;
 
-    private final EpochStepCounter epochStepCounter;
-
     private int skipFrame = 1;
+    private int steps = 0;
 
-    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, IHistoryProcessor historyProcessor, EpochStepCounter epochStepCounter) {
+    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, IHistoryProcessor historyProcessor) {
         this.wrappedMDP = wrappedMDP;
         this.shape = wrappedMDP.getObservationSpace().getShape();
         this.observationSpace = new WrapperObservationSpace(shape);
         this.historyProcessor = historyProcessor;
-        this.epochStepCounter = epochStepCounter;
 
         setHistoryProcessor(historyProcessor);
     }
@@ -159,7 +151,7 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
 
     @Override
     public MDP<Observation, A, AS> newInstance() {
-        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), historyProcessor, epochStepCounter);
+        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), historyProcessor);
     }
 
     private INDArray getInput(O obs) {
