@@ -205,25 +205,38 @@ namespace helpers {
         }
     }
 
+#define MAX_ITERATION 40
+
     template <typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
         tMatrix->assign(input);
         auto k = 0;
         auto resQ = qMatrix->ulike();
         qMatrix->setIdentity();
-
+//        auto shiftProc = []( T a, T b, T c ) -> T {
+//            auto middle = (a - c) / T(2.f);
+//            return c - math::nd4j_sign<T,T>(middle) * b * b / (math::nd4j_abs(middle) + math::nd4j_sqrt<T,T>(middle * middle + b * b));
+//        };
+        auto n = input->sizeAt(-1);
         do {
             auto temp = tMatrix->ulike(); temp.nullify();
             auto tempQ(*qMatrix);
+//            auto wilkisonShift = shiftProc(tMatrix->t<T>(n - 2, n - 2), tMatrix->t<T>(n - 1, n - 1), tMatrix->t<T>(n - 2, n - 1));
+//            auto tempT(*tMatrix);
+//            auto wI = tempT.ulike(); wI.setIdentity(); wI *= wilkisonShift;
+//            tempT -= wI;
             helpers::qr(context, tMatrix, &resQ, &temp, false);
             MmulHelper::matmul(&temp, &resQ, tMatrix, false, false);
             tMatrix->printIndexedBuffer("Upper triangle");
+//            tMatrix->assign(tempT + wI);
             resQ.printIndexedBuffer("Orthogonal");
             k++;
-            nd4j_printf("Iteration %d\n", k);
+            nd4j_printf("Iteration %d\n", k)
+            ;
             MmulHelper::matmul(&tempQ, &resQ, qMatrix, false, false);
+
         }
-        while (!isDiagonal<T>(&resQ));
+        while (!isDiagonal<T>(&resQ) && k < n * MAX_ITERATION);
     }
 
     template <typename T>
