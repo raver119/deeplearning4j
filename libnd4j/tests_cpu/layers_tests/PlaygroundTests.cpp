@@ -320,18 +320,51 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
 
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
-    std::vector<std::string> filenames = {
-        "bert_batch1024_seq128.zip",
-        "bert_batch1152_seq128.zip",
-        "bert_batch128_seq128.zip",
-        "bert_batch2048_seq128.zip",
-        "bert_batch32_seq128.zip",
-        "bert_batch4096_seq128.zip",
-        "bert_batch512_seq128.zip"
+    std::vector<std::string> paths = {
+        "b1024_s128/",
+        "b1152_s128/",
+        "b128_s128/",
+        "b2048_s128/",
+        "b32_s128/",
+        "b4096_s128/",
+        "b512_s128/"
     };
 
-    for(auto&& fn: filenames){
+    std::vector<std::string> filenames = {
+        "bert_frozen_mb1024_len128.samediff",
+        "bert_frozen_mb1152_len128.samediff",
+        "bert_frozen_mb128_len128.samediff",
+        "bert_frozen_mb2048_len128.samediff",
+        "bert_frozen_mb32_len128.samediff",
+        "bert_frozen_mb4096_len128.samediff",
+        "bert_frozen_mb512_len128.samediff"
+    };
 
+
+    std::string base_path = "resources/bert/";
+    for (int i=0;i<paths.size();i++){
+        std::string full_path = base_path + paths[i] + filenames[i];
+        nd4j_printf("* Profiling %s\n", full_path.c_str());
+        auto graph = GraphExecutioner::importFromFlatBuffers(full_path);
+
+        full_path = base_path + paths[i] + "in0_IteratorGetNext.npy";
+        auto t = NDArrayFactory::fromNpyFile(full_path);
+        full_path = base_path + paths[i] + "in1_IteratorGetNext_1.npy";
+        auto u = NDArrayFactory::fromNpyFile(full_path);
+        full_path = base_path + paths[i] + "in2_IteratorGetNext_4.npy";
+        auto v = NDArrayFactory::fromNpyFile(full_path);
+//        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
+
+        graph->tagInplaceNodes();
+
+        sd::Environment::getInstance()->setProfiling(true);
+        auto profile = GraphProfilingHelper::profile(graph, 1);
+
+        profile->printOut();
+
+        sd::Environment::getInstance()->setProfiling(false);
+        delete profile;
+        delete graph;
     }
 }
 
