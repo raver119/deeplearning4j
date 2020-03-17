@@ -151,6 +151,7 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
 
 
+
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
     std::vector<std::string> paths = {
         "b1024_s128/",
@@ -161,38 +162,34 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
         "b4096_s128/",
         "b512_s128/"
     };
-    // this test will run ONLY if the models exist
-    for(auto&& fn: paths){
-        std::string fullpath = std::string("resources/") + fn + std::string("bert_minimal_model.fb");
 
-        if (sd::graph::getFileSize(fullpath.c_str()) < 0)
-            return;
+    std::vector<std::string> filenames = {
+        "bert_frozen_mb1024_len128.samediff",
+        "bert_frozen_mb1152_len128.samediff",
+        "bert_frozen_mb128_len128.samediff",
+        "bert_frozen_mb2048_len128.samediff",
+        "bert_frozen_mb32_len128.samediff",
+        "bert_frozen_mb4096_len128.samediff",
+        "bert_frozen_mb512_len128.samediff"
+    };
 
-        auto graph = GraphExecutioner::importFromFlatBuffers(std::string("resources/") + fn + std::string("bert_minimal_model.fb"));
 
-        auto t = NDArrayFactory::fromNpyFile(std::string("resources/") + fn + std::string("bert_minimal_input_IteratorGetNext.numpy");
-        auto u = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
-        auto v = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
-        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
+    std::string base_path = "resources/bert/";
+    for (int i=0;i<paths.size();i++){
+        std::string full_path = base_path + paths[i] + filenames[i];
+        nd4j_printf("* Profiling %s\n", full_path.c_str());
+        auto graph = GraphExecutioner::importFromFlatBuffers(full_path.c_str());
 
-        //graph->printOut();
+        full_path = base_path + paths[i] + "in0_IteratorGetNext.npy";
+        auto t = NDArrayFactory::fromNpyFile(full_path.c_str());
+        full_path = base_path + paths[i] + "in1_IteratorGetNext_1.npy";
+        auto u = NDArrayFactory::fromNpyFile(full_path.c_str());
+        full_path = base_path + paths[i] + "in2_IteratorGetNext_4.npy";
+        auto v = NDArrayFactory::fromNpyFile(full_path.c_str());
+//        auto z = NDArrayFactory::fromNpyFile("resources/Bert_minimal_model/bert_minimal_model_output.numpy");
 
         graph->tagInplaceNodes();
 
-        graph->getVariableSpace()->putVariable(85,0, t);
-        graph->getVariableSpace()->putVariable(86,0, u);
-        graph->getVariableSpace()->putVariable(87,0, v);
-
-    /*
-        // validating graph now
-        auto status = GraphExecutioner::execute(graph);
-        ASSERT_EQ(Status::OK(), status);
-        ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
-
-        auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
-        ASSERT_EQ(z, *array);
-
-    */
         sd::Environment::getInstance()->setProfiling(true);
         auto profile = GraphProfilingHelper::profile(graph, 1);
 
@@ -200,24 +197,6 @@ TEST_F(PlaygroundTests, test_bert_7_sizes) {
 
         sd::Environment::getInstance()->setProfiling(false);
         delete profile;
-
-    /*
-        std::vector<Nd4jLong> values;
-
-        for (int e = 0; e < 1; e++) {
-            auto timeStart = std::chrono::system_clock::now();
-
-            GraphExecutioner::execute(graph);
-
-            auto timeEnd = std::chrono::system_clock::now();
-            auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-            values.emplace_back(outerTime);
-        }
-
-        std::sort(values.begin(), values.end());
-
-        nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-    */
         delete graph;
     }
 }
