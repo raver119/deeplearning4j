@@ -144,6 +144,30 @@
         (sd::DataType::INT32, int32_t), \
         (sd::DataType::INT64, Nd4jLong)
 
+#define INTEGER_TYPES_0 \
+        (sd::DataType::INT8, int8_t)
+
+#define INTEGER_TYPES_1 \
+        (sd::DataType::UINT8, uint8_t)
+
+#define INTEGER_TYPES_2 \
+        (sd::DataType::UINT16, uint16_t)
+
+#define INTEGER_TYPES_3 \
+        (sd::DataType::UINT32, uint32_t)
+
+#define INTEGER_TYPES_4 \
+        (sd::DataType::UINT64, uint64_t)
+
+#define INTEGER_TYPES_5 \
+        (sd::DataType::INT16, int16_t)
+
+#define INTEGER_TYPES_6 \
+        (sd::DataType::INT32, int32_t)
+
+#define INTEGER_TYPES_7 \
+        (sd::DataType::INT64, Nd4jLong)
+
 
 #define NUMERIC_TYPES \
         (sd::DataType::HALF, float16), \
@@ -436,9 +460,7 @@
 
 #define PAIRWISE_TYPES_4 \
 (int16_t, int16_t, int16_t) , \
-(int16_t, bool, int16_t),\
-(uint16_t, uint16_t, uint16_t) ,\
-(uint16_t, bool, uint16_t)
+(int16_t, bool, int16_t)
 
 #define PAIRWISE_TYPES_5 \
 (uint8_t, uint8_t, uint8_t) , \
@@ -446,22 +468,30 @@
 
 #define PAIRWISE_TYPES_6 \
 (int, int, int) ,\
-(int, bool, int) ,\
-(uint32_t, uint32_t, uint32_t) ,\
-(uint32_t, bool, uint32_t)
+(int, bool, int)
 
 #define PAIRWISE_TYPES_7 \
 (bool, bool, bool)
 
 #define PAIRWISE_TYPES_8 \
 (Nd4jLong, Nd4jLong, Nd4jLong) ,\
-(Nd4jLong, bool, Nd4jLong) ,\
-(uint64_t, uint64_t, uint64_t) ,\
-(uint64_t, bool, uint64_t)
+(Nd4jLong, bool, Nd4jLong)
 
 #define PAIRWISE_TYPES_9 \
 (bfloat16, bfloat16, bfloat16) , \
 (bfloat16, bool, bfloat16)
+
+#define PAIRWISE_TYPES_10 \
+(uint64_t, uint64_t, uint64_t) ,\
+(uint64_t, bool, uint64_t)
+
+#define PAIRWISE_TYPES_11 \
+(uint32_t, uint32_t, uint32_t) ,\
+(uint32_t, bool, uint32_t)
+
+#define PAIRWISE_TYPES_12 \
+(uint16_t, uint16_t, uint16_t) ,\
+(uint16_t, bool, uint16_t)
 
 #endif
 
