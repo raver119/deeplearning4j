@@ -51,8 +51,8 @@
     int limit5 = 5;
     int limit3 = 3;
 #else
-    int wIterations = 0;
-    int rIterations = 1;
+    int wIterations = 5;
+    int rIterations = 10;
     int gemmRegularUpperPow = 7;
     int scalarBenchmarkPowLimit = 10;
     int transformBenchmarkPowLimit = 10;
