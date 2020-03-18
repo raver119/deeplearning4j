@@ -22,17 +22,27 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.resources.Resources;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class TFKerasTests extends BaseDL4JTest{
 
     @Test
-    public void testModelWithTFOp() throws Exception{
-        File f = new File("C:\\Users\\fariz\\desktop\\model.h5");
+    public void testModelWithTFOp1() throws Exception{
+        File f = Resources.asFile("modelimport/keras/tfkeras/reshape.h5");
        ComputationGraph graph = KerasModelImport.importKerasModelAndWeights(f.getAbsolutePath());
         INDArray out = graph.outputSingle(Nd4j.zeros(12, 3, 2));
         Assert.assertArrayEquals(new long[]{12, 3}, out.shape());
+    }
+
+    @Test
+    public void testModelWithTFOp2() throws Exception{
+        File f = Resources.asFile("modelimport/keras/tfkeras/permute.h5");
+        ComputationGraph graph = KerasModelImport.importKerasModelAndWeights(f.getAbsolutePath());
+        INDArray out = graph.outputSingle(Nd4j.zeros(12, 3, 2));
+        Assert.assertArrayEquals(new long[]{12, 2, 5}, out.shape());
     }
 
 }

@@ -21,12 +21,12 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.TFGraphRunner;
+import org.nd4j.TensorDataType;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
-import org.nd4j.tensorflow.conversion.TensorDataType;
-import org.nd4j.tensorflow.conversion.graphrunner.GraphRunner;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -44,9 +44,9 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
 
     private Map nodeDef;
     private INDArray[] inputs;
-    private GraphRunner graphRunner;
+    private TFGraphRunner graphRunner;
     private List<String> inputNames;
-    private List<TensorDataType> inputDtypes;
+    private List<DataType> inputDtypes;
 
 
     public TFOpLayer(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
@@ -91,7 +91,7 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             for (Map.Entry<String, AttrValue> e: attrMap.entrySet()){
                 String dtName = e.getValue().getType().toString();
                 inputDataTypeNames.add(dtName);
-                inputDtypes.add(TensorDataType.fromProtoValue(dtName));
+                inputDtypes.add(TensorDataType.toNd4jType(TensorDataType.fromProtoValue(dtName)));
             }
             String graph = "node{\n" + nodeDef.toString() + "\n}\nversions {\n producer: 22\n}";
             for (int i = 0; i < inputNames.size(); i++){
@@ -105,11 +105,21 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             GraphDef graphDef = graphDefBuilder.build();
             org.nd4j.shade.protobuf.ByteString serialized = graphDef.toByteString();
             byte[] binaryString = serialized.toByteArray();
-            Map<String, TensorDataType> dtypeMap = new HashMap<>();
+            Map<String, DataType> dtypeMap = new HashMap<>();
             for (int i = 0; i < inputNames.size(); i++){
                 dtypeMap.put(inputNames.get(i), inputDtypes.get(i));
             }
-            graphRunner = GraphRunner.builder().inputNames(inputNames).outputNames(outputNames).graphBytes(binaryString).inputDataTypes(dtypeMap).build();
+
+            ServiceLoader<TFGraphRunner> gr = ServiceLoader.load(TFGraphRunner.class);
+            Iterator<TFGraphRunner> iter = gr.iterator();
+            if (!iter.hasNext()){
+                throw new RuntimeException("nd4j-tensorflow not available!");
+            }
+            this.graphRunner = iter.next();
+            graphRunner.setInputNames(inputNames);
+            graphRunner.setOutputNames(outputNames);
+            graphRunner.setGraphBytes(binaryString);
+            graphRunner.setInputDataTypes(dtypeMap);
         }
         catch (Exception e){
             throw new RuntimeException("Error parsing protobuf", e);

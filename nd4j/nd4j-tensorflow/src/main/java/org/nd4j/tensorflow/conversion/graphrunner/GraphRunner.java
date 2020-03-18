@@ -16,20 +16,19 @@
 
 package org.nd4j.tensorflow.conversion.graphrunner;
 
-import lombok.Builder;
-import lombok.Singular;
+import lombok.*;
 import org.apache.commons.io.FileUtils;
+import org.nd4j.TFGraphRunner;
 import org.nd4j.base.Preconditions;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.shade.protobuf.ByteString;
 import org.nd4j.shade.protobuf.InvalidProtocolBufferException;
 import org.nd4j.shade.protobuf.util.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.nd4j.tensorflow.conversion.TensorDataType;
+import org.nd4j.TensorDataType;
 import org.apache.commons.io.IOUtils;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.PointerPointer;
@@ -56,7 +55,8 @@ import static org.bytedeco.tensorflow.global.tensorflow.*;
  * @author Adam Gibson
  */
 @Slf4j
-public class GraphRunner implements Closeable {
+@NoArgsConstructor
+public class GraphRunner implements Closeable, TFGraphRunner {
 
     private static boolean isTfWarmedUp = false;
     private static boolean isTfWarmingUp = false;
@@ -103,6 +103,9 @@ public class GraphRunner implements Closeable {
      * @param inputDataTypes the expected input data types
      * @param outputDataTypes the expected output data types
      */
+
+
+
     @Builder
     public GraphRunner(List<String> inputNames,
                        List<String> outputNames,
@@ -683,4 +686,24 @@ public class GraphRunner implements Closeable {
 
         return builder1.build();
     }
+
+
+    public void setGraphBytes(byte[] graphBytes){
+        this.graph = conversion.loadGraph(graphBytes, status);
+        initSessionAndStatusIfNeeded(graphBytes);
+    }
+    public void setInputNames(List<String> inputNames){
+        this.inputOrder = inputNames;
+    }
+
+    public void setOutputNames(List<String> outputNames){
+        this.outputOrder = outputNames;
+    }
+    public void setInputDataTypes(Map<String, DataType> inputDataTypes){
+        this.inputDataTypes.clear();
+        for (Map.Entry<String, DataType> e: inputDataTypes.entrySet()){
+            this.inputDataTypes.put(e.getKey(), TensorDataType.fromNd4jType(e.getValue()));
+        }
+    }
+
 }
