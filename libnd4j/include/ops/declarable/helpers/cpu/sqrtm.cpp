@@ -226,8 +226,21 @@ namespace helpers {
         output->t<T>(1,0) = r21/(T(2.f)* alpha);
     }
 
+    /*
+     * real schur decomposition algorithm:
+     * 1) Reduce input matrix to hessenberg form with housholder transformation
+     * 2) Use Francis double shift algorithm to compute decomposition
+     * 3) Accumulate transformation matrix QU: A = QHQ^T; H = UTU^T => A = UTU^TQ^T
+     *
+     * */
+
     template <typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
+
+    }
+
+    template <typename T>
+    void primitiveSchurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
         tMatrix->assign(input);
         auto k = 0;
         auto resQ = qMatrix->ulike();
@@ -260,6 +273,10 @@ namespace helpers {
         while (!isDiagonal<T>(&resQ) && k < n * kMaxIteration);
     }
 
+    /*
+     * Lemma. the upper triangular matrix with eigen vals has sqrt only when all real eigenvals are positive
+     * To check this:
+     * */
     template <typename T>
     bool hasSqrt(NDArray const& input) {
         auto matricies =input.allTensorsAlongDimension({-2, -1});
