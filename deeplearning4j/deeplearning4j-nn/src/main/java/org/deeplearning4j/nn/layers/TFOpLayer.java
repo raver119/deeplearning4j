@@ -110,10 +110,10 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
                 dtypeMap.put(inputNames.get(i), inputDtypes.get(i));
             }
 
-            ServiceLoader<TFGraphRunner> gr = ServiceLoader.load(TFGraphRunner.class);
-            Iterator<TFGraphRunner> iter = gr.iterator();
+            ServiceLoader<TFGraphRunner> sl = ServiceLoader.load(TFGraphRunner.class);
+            Iterator<TFGraphRunner> iter = sl.iterator();
             if (!iter.hasNext()){
-                throw new RuntimeException("nd4j-tensorflow not available!");
+                throw new RuntimeException("TFGraphRunner service provider not loaded!");
             }
             this.graphRunner = iter.next();
             graphRunner.setInputNames(inputNames);
