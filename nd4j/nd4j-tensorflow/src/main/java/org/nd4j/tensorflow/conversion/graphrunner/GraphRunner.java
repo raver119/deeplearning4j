@@ -443,6 +443,8 @@ public class GraphRunner implements Closeable, TFGraphRunner {
      * @return a map of the output names to the
      * ndarrays matching each output specified in the graph
      */
+
+    @Override
     public Map<String,INDArray> run(Map<String,INDArray> inputs) {
         if (!isTfWarmedUp && !isTfWarmingUp){
             isTfWarmingUp = true;
@@ -688,17 +690,23 @@ public class GraphRunner implements Closeable, TFGraphRunner {
     }
 
 
+    @Override
     public void setGraphBytes(byte[] graphBytes){
         this.graph = conversion.loadGraph(graphBytes, status);
         initSessionAndStatusIfNeeded(graphBytes);
     }
+
+    @Override
     public void setInputNames(List<String> inputNames){
         this.inputOrder = inputNames;
     }
 
+    @Override
     public void setOutputNames(List<String> outputNames){
         this.outputOrder = outputNames;
     }
+
+    @Override
     public void setInputDataTypes(Map<String, DataType> inputDataTypes){
         this.inputDataTypes.clear();
         for (Map.Entry<String, DataType> e: inputDataTypes.entrySet()){
