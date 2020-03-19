@@ -83,12 +83,12 @@
             <version>${nd4j.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- ND4J Shaded Jackson Dependency -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
+        <!-- ND4J Shaded Jackson Dependency -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>jackson</artifactId>
