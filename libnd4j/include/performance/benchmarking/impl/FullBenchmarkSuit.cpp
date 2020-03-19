@@ -1851,9 +1851,9 @@ namespace sd {
         nd4j_printf("Running FullBenchmarkSuite.fastReduceToScalarBenchmark\n", "");
         result += fastReduceToScalarBenchmark();
         start = done(start);
-        nd4j_printf("Running FullBenchmarkSuite.fastReduceAlongDimBenchmark\n", "");
+        /*nd4j_printf("Running FullBenchmarkSuite.fastReduceAlongDimBenchmark\n", "");
         result += fastReduceAlongDimBenchmark();
-        start = done(start);
+        start = done(start);*/
         nd4j_printf("Running FullBenchmarkSuite.fastStridedReductionsRegular\n", "");
         result += fastStridedReductionsRegular();
         start = done(start);
