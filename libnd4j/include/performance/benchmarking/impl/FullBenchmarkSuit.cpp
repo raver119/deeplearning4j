@@ -1908,9 +1908,9 @@ namespace sd {
         nd4j_printf("Running FullBenchmarkSuite.lstmBenchmark\n", "");
         result += lstmBenchmark();
         start = done(start);
-        nd4j_printf("Running FullBenchmarkSuite.conv3dBenchmark\n", "");
+        /*nd4j_printf("Running FullBenchmarkSuite.conv3dBenchmark\n", "");
         result += conv3dBenchmark();
-        start = done(start);
+        start = done(start);*/
         nd4j_printf("Running FullBenchmarkSuite.maxPool3DBenchmark\n", "");
         result += maxPool3DBenchmark();
         start = done(start);
