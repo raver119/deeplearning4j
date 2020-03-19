@@ -178,9 +178,10 @@ namespace helpers {
         auto n = input.rows();
         hessenberg.assign(input);
         if (n > 2) {
-            auto a1 = hessenberg({1, n, 0, 1}); // the first column shifted by 1
-            auto c1 = hessenberg({0, n, 0, 1}); // the first column as is
-            auto r1 = hessenberg({0, 1, 0, n}); // the first row as is
+            auto a1 = hessenberg({1, n, 0, 1}).reshape('c', {n-1, 1}); // the first column shifted by 1
+            auto c1 = hessenberg({1, n, 0, 1}).reshape('c', {n-1, 1}); // the first column skipped the first
+            auto r1 = hessenberg({0, 1, 1, n}).reshape('c', {1, n - 1}); // the first row skipped the first
+            auto rr = hessenberg({0, 1, 1, n});
             a1.printShapeInfo("A1");c1.printShapeInfo("C1");r1.printShapeInfo("R1");
             a1.printIndexedBuffer("A1 data");r1.printIndexedBuffer("R1 data");
             auto e1 = a1.ulike();//NDArrayFactory::create<T>('c', {n - 1});
@@ -193,12 +194,12 @@ namespace helpers {
             auto I = NDArrayFactory::create<T>('c', {n - 1, n - 1});
             I.setIdentity();
             auto V = I.ulike();
-            v.reshapei({n - 1, 1});
+            v.reshapei({n - 1, 1});rr.reshapei({1, n-1});
             //auto v1 = v.reshape({1, n - 1});
             MmulHelper::matmul(&v, &v, &V, false, true);
             auto Q = I - T(2.f) * V;
             MmulHelper::matmul(&Q, &a1, &c1, false, false);
-            MmulHelper::matmul(&Q, &r1, &r1, false, false);
+            MmulHelper::matmul(&r1, &Q, &rr, false, false);
             MmulHelper::matmul(&Q, &a2, &I, false, false);
             MmulHelper::matmul(&I, &Q, &a2, false, true);
             hessenbergReduction<T>(a2, h2);
@@ -304,6 +305,8 @@ namespace helpers {
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
 //        input->printIndexedBuffer("Input");
+        hessenbergReduction<T>(*input, outputT);
+        outputT.printIndexedBuffer("Hessenberg");
         schurDecomposition<T>(context, input, &outputQ, &outputT);
 //        outputQ.printIndexedBuffer("Q matrix");
 //        outputT.printIndexedBuffer("T matrix");
