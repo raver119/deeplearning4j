@@ -14,4 +14,4 @@
  # SPDX-License-Identifier: Apache-2.0
  ################################################################################
 
-org.nd4j.tensorflow.conversion.graphrunner.GraphRunner
+org.nd4j.tensorflow.conversion.graphrunner.GraphRunnerServiceProvider

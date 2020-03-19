@@ -24,10 +24,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import java.util.List;
 import java.util.Map;
 
-public interface TFGraphRunner{
-    void setInputNames(List<String> inputNames);
-    void setOutputNames(List<String> outputNames);
-    void setInputDataTypes(Map<String, DataType> inputDTypes);
-    void setGraphBytes(byte[] graphBytes);
+public interface TFGraphRunnerService{
+    TFGraphRunnerService init(
+            List<String> inputNames,
+            List<String> outputNames,
+            byte[] graphBytes,
+            List<String> inputDataTypes
+    );
     Map<String,INDArray> run(Map<String,INDArray> inputs);
 }

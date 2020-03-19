@@ -77,11 +77,12 @@
             <artifactId>nd4j-common</artifactId>
             <version>${nd4j.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.nd4j</groupId>-->
-            <!--<artifactId>nd4j-tensorflow</artifactId>-->
-            <!--<version>${nd4j.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-tensorflow</artifactId>
+            <version>${nd4j.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- ND4J Shaded Jackson Dependency -->
         <dependency>
             <groupId>com.google.code.gson</groupId>

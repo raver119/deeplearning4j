@@ -28,7 +28,7 @@ import org.nd4j.shade.protobuf.ByteString;
 import org.nd4j.shade.protobuf.InvalidProtocolBufferException;
 import org.nd4j.shade.protobuf.util.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.nd4j.TensorDataType;
+import org.nd4j.tensorflow.conversion.TensorDataType;
 import org.apache.commons.io.IOUtils;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.PointerPointer;
@@ -56,7 +56,7 @@ import static org.bytedeco.tensorflow.global.tensorflow.*;
  */
 @Slf4j
 @NoArgsConstructor
-public class GraphRunner implements Closeable, TFGraphRunner {
+public class GraphRunner implements Closeable {
 
     private static boolean isTfWarmedUp = false;
     private static boolean isTfWarmingUp = false;
@@ -444,7 +444,6 @@ public class GraphRunner implements Closeable, TFGraphRunner {
      * ndarrays matching each output specified in the graph
      */
 
-    @Override
     public Map<String,INDArray> run(Map<String,INDArray> inputs) {
         if (!isTfWarmedUp && !isTfWarmingUp){
             isTfWarmingUp = true;
@@ -690,28 +689,5 @@ public class GraphRunner implements Closeable, TFGraphRunner {
     }
 
 
-    @Override
-    public void setGraphBytes(byte[] graphBytes){
-        this.graph = conversion.loadGraph(graphBytes, status);
-        initSessionAndStatusIfNeeded(graphBytes);
-    }
-
-    @Override
-    public void setInputNames(List<String> inputNames){
-        this.inputOrder = inputNames;
-    }
-
-    @Override
-    public void setOutputNames(List<String> outputNames){
-        this.outputOrder = outputNames;
-    }
-
-    @Override
-    public void setInputDataTypes(Map<String, DataType> inputDataTypes){
-        this.inputDataTypes.clear();
-        for (Map.Entry<String, DataType> e: inputDataTypes.entrySet()){
-            this.inputDataTypes.put(e.getKey(), TensorDataType.fromNd4jType(e.getValue()));
-        }
-    }
 
 }

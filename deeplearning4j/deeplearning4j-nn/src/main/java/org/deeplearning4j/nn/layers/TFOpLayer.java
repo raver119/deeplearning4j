@@ -21,8 +21,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
-import org.nd4j.TFGraphRunner;
-import org.nd4j.TensorDataType;
+import org.nd4j.TFGraphRunnerService;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -44,10 +43,9 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
 
     private Map nodeDef;
     private INDArray[] inputs;
-    private TFGraphRunner graphRunner;
     private List<String> inputNames;
-    private List<DataType> inputDtypes;
-
+    List<String> inputDataTypes;
+    TFGraphRunnerService graphRunnerService;
 
     public TFOpLayer(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
         super(conf, dtype);
@@ -85,18 +83,16 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             for (int i = 0; i < nodeDef.getInputCount(); i++){
                 inputNames.add(nodeDef.getInput(i));
             }
-            inputDtypes = new ArrayList<>();
-            List<String> inputDataTypeNames = new ArrayList<>();
+            inputDataTypes = new ArrayList<>();
             Map<String, AttrValue> attrMap = nodeDef.getAttrMap();
             for (Map.Entry<String, AttrValue> e: attrMap.entrySet()){
                 String dtName = e.getValue().getType().toString();
-                inputDataTypeNames.add(dtName);
-                inputDtypes.add(TensorDataType.toNd4jType(TensorDataType.fromProtoValue(dtName)));
+                inputDataTypes.add(dtName);
             }
             String graph = "node{\n" + nodeDef.toString() + "\n}\nversions {\n producer: 22\n}";
             for (int i = 0; i < inputNames.size(); i++){
                 String inpName = inputNames.get(i);
-                String dtype = inputDataTypeNames.get(i);
+                String dtype = inputDataTypes.get(i);
                 graph = "node{\nname: \"" + inpName + "\"\nop: \"Placeholder\"\nattr{\nkey: \"dtype\"\n value {\n type: " + dtype + "}\n}\n}\n" + graph;
             }
             log.info(graph);
@@ -104,22 +100,15 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             TextFormat.getParser().merge(graph, graphDefBuilder);
             GraphDef graphDef = graphDefBuilder.build();
             org.nd4j.shade.protobuf.ByteString serialized = graphDef.toByteString();
-            byte[] binaryString = serialized.toByteArray();
-            Map<String, DataType> dtypeMap = new HashMap<>();
-            for (int i = 0; i < inputNames.size(); i++){
-                dtypeMap.put(inputNames.get(i), inputDtypes.get(i));
+            byte[] graphBytes = serialized.toByteArray();
+
+            ServiceLoader<TFGraphRunnerService> sl = ServiceLoader.load(TFGraphRunnerService.class);
+            Iterator<TFGraphRunnerService> iter = sl.iterator();
+            if (!iter.hasNext()){
+                throw new RuntimeException("The model contains a Tensorflow Op, which requires the nd4j-tensorflow dependency to execute.");
             }
 
-            ServiceLoader<TFGraphRunner> sl = ServiceLoader.load(TFGraphRunner.class);
-            Iterator<TFGraphRunner> iter = sl.iterator();
-            if (!iter.hasNext()){
-                throw new RuntimeException("TFGraphRunner service provider not loaded!");
-            }
-            this.graphRunner = iter.next();
-            graphRunner.setInputNames(inputNames);
-            graphRunner.setOutputNames(outputNames);
-            graphRunner.setGraphBytes(binaryString);
-            graphRunner.setInputDataTypes(dtypeMap);
+            this.graphRunnerService = iter.next().init(inputNames, outputNames, graphBytes, inputDataTypes);
         }
         catch (Exception e){
             throw new RuntimeException("Error parsing protobuf", e);
@@ -137,7 +126,7 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
         for (int i = 0; i < inputs.length; i++){
             inputMap.put(inputNames.get(i), inputs[i]);
         }
-        INDArray out = graphRunner.run(inputMap).values().toArray(new INDArray[0])[0];
+        INDArray out = graphRunnerService.run(inputMap).values().toArray(new INDArray[0])[0];
         log.debug(out.toString());
         if (out.rank() == 3){
             out = out.permute(1, 0, 2); // TODO post-processing?
