@@ -29,7 +29,9 @@ public interface TFGraphRunnerService{
             List<String> inputNames,
             List<String> outputNames,
             byte[] graphBytes,
-            List<String> inputDataTypes
+            Map<String, INDArray> constants,
+            Map<String, String> inputDataTypes
     );
+
     Map<String,INDArray> run(Map<String,INDArray> inputs);
 }

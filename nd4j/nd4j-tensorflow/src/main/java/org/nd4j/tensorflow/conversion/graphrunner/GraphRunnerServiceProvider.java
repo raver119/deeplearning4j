@@ -12,23 +12,31 @@ import java.util.Map;
 public class GraphRunnerServiceProvider implements TFGraphRunnerService {
 
     private GraphRunner graphRunner;
+    Map<String, INDArray> inputs;
 
     @Override
     public TFGraphRunnerService init(
             List<String> inputNames,
             List<String> outputNames,
             byte[] graphBytes,
-            List<String> inputDataTypes){
+            Map<String, INDArray> constants,
+            Map<String, String> inputDataTypes){
         if (inputNames.size() != inputDataTypes.size()){
             throw new IllegalArgumentException("inputNames.size() != inputDataTypes.size()");
         }
         Map<String, TensorDataType> convertedDataTypes = new HashMap<>();
         for (int i = 0; i < inputNames.size(); i++){
-            convertedDataTypes.put(inputNames.get(i), TensorDataType.fromProtoValue(inputDataTypes.get(i)));
+            convertedDataTypes.put(inputNames.get(i), TensorDataType.fromProtoValue(inputDataTypes.get(inputNames.get(i))));
         }
+        Map<String, INDArray> castConstants = new HashMap<>();
+        for (Map.Entry<String, INDArray> e: constants.entrySet()) {
+            DataType requiredDtype = TensorDataType.toNd4jType(TensorDataType.fromProtoValue(inputDataTypes.get(e.getKey())));
+            castConstants.put(e.getKey(), e.getValue().castTo(requiredDtype));
+        }
+        this.inputs = castConstants;
         graphRunner = GraphRunner.builder().inputNames(inputNames)
                 .outputNames(outputNames).graphBytes(graphBytes)
-                .outputDataTypes(convertedDataTypes).build();
+                .inputDataTypes(convertedDataTypes).build();
         return this;
 
     }
@@ -38,6 +46,7 @@ public class GraphRunnerServiceProvider implements TFGraphRunnerService {
         if (graphRunner == null){
             throw new RuntimeException("GraphRunner not initialized.");
         }
-        return graphRunner.run(inputs);
+        this.inputs.putAll(inputs);
+        return graphRunner.run(this.inputs);
     }
 }

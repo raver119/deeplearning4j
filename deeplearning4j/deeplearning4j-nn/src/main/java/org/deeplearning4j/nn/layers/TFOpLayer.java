@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.layers;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -38,33 +39,29 @@ import java.util.List;
 
 
 @Slf4j
+@Data
 public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.TFOpLayer> {
 
 
     private Map nodeDef;
-    private INDArray[] inputs;
-    private List<String> inputNames;
-    List<String> inputDataTypes;
+    private Map constants;
+    private List<String> variables;
+    private List<String> inputNames;  // both variables and constants
+    Map<String, String> inputDataTypes;
     TFGraphRunnerService graphRunnerService;
 
     public TFOpLayer(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
         super(conf, dtype);
         this.nodeDef = nodeDef;
+        this.constants = constants;
         setGraphRunner(nodeDef);
-        INDArray[] inputs = new INDArray[constants.size() + 1];
-        for (int i = 1; i < inputs.length; i++){
-            List<Number> list = (List<Number>)constants.get(String.valueOf(i));
-            if (list == null){
-                throw new RuntimeException("Invalid constants map.");
-            }
-            inputs[i] = Nd4j.create(list);
-        }
-        this.inputs = inputs;
     }
 
     @Override
     public Pair<Gradient, INDArray> backpropGradient(INDArray epsilon, LayerWorkspaceMgr workspaceMgr){
-        throw new RuntimeException("Backprop through TFOplayer is not supported yet.");
+        throw new RuntimeException("Backprop through TFOpLayer is not supported yet." +
+                " TFOpLayer is created when importing TensorFlow 2.0 Keras models " +
+                "(tf.keras) into DL4J, that contains TensorFlow operations not just Keras layers.");
     }
 
     /**
@@ -77,22 +74,35 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
             NodeDef.Builder builder = NodeDef.newBuilder();
             org.nd4j.shade.protobuf.util.JsonFormat.parser().merge(json, builder);
             NodeDef nodeDef = builder.build();
-            List<String> inputNames = new ArrayList<>();
+            this.inputNames = new ArrayList<>();
+            this.inputDataTypes = new HashMap<>();
+            Map<String, INDArray> constArrays = new HashMap();
+            variables = new ArrayList<>();
             List<String> outputNames = Arrays.asList(nodeDef.getName());
-            this.inputNames = inputNames;
-            for (int i = 0; i < nodeDef.getInputCount(); i++){
-                inputNames.add(nodeDef.getInput(i));
-            }
-            inputDataTypes = new ArrayList<>();
             Map<String, AttrValue> attrMap = nodeDef.getAttrMap();
-            for (Map.Entry<String, AttrValue> e: attrMap.entrySet()){
-                String dtName = e.getValue().getType().toString();
-                inputDataTypes.add(dtName);
+            for (int i = 0; i < nodeDef.getInputCount(); i++){
+                String inputName = nodeDef.getInput(i);
+                String[] split = inputName.split("/");
+                String attrKey;
+                if (split.length == 1){
+                    attrKey = "T";
+                }
+                else{
+                    attrKey = "T" + split[split.length - 1];
+                }
+                inputNames.add(nodeDef.getInput(i));
+                inputDataTypes.put(nodeDef.getInput(i), attrMap.get(attrKey).getType().toString());
+                if (constants.containsKey(String.valueOf(i))){
+                    constArrays.put(nodeDef.getInput(i), Nd4j.create((List<Number>)constants.get(String.valueOf(i))));
+                }
+                else{
+                    variables.add(nodeDef.getInput(i));
+                }
             }
             String graph = "node{\n" + nodeDef.toString() + "\n}\nversions {\n producer: 22\n}";
             for (int i = 0; i < inputNames.size(); i++){
                 String inpName = inputNames.get(i);
-                String dtype = inputDataTypes.get(i);
+                String dtype = inputDataTypes.get(inpName);
                 graph = "node{\nname: \"" + inpName + "\"\nop: \"Placeholder\"\nattr{\nkey: \"dtype\"\n value {\n type: " + dtype + "}\n}\n}\n" + graph;
             }
             log.info(graph);
@@ -108,7 +118,7 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
                 throw new RuntimeException("The model contains a Tensorflow Op, which requires the nd4j-tensorflow dependency to execute.");
             }
 
-            this.graphRunnerService = iter.next().init(inputNames, outputNames, graphBytes, inputDataTypes);
+            this.graphRunnerService = iter.next().init(inputNames, outputNames, graphBytes, constArrays, inputDataTypes);
         }
         catch (Exception e){
             throw new RuntimeException("Error parsing protobuf", e);
@@ -119,18 +129,15 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
     private INDArray runGraph(INDArray input){
         if (input.rank() == 3){
             // TODO make this a preprocessor
-            input = input.permute(1, 0, 2);
+            input = input.permute(0, 2, 1);
         }
-        inputs[0] = input;
         Map<String, INDArray> inputMap = new HashMap<>();
-        for (int i = 0; i < inputs.length; i++){
-            inputMap.put(inputNames.get(i), inputs[i]);
-        }
+        inputMap.put(variables.get(0), input);
         INDArray out = graphRunnerService.run(inputMap).values().toArray(new INDArray[0])[0];
-        log.debug(out.toString());
         if (out.rank() == 3){
-            out = out.permute(1, 0, 2); // TODO post-processing?
+            out = out.permute(0, 2, 1); // TODO post-processing?
         }
+
         return out;
     }
 

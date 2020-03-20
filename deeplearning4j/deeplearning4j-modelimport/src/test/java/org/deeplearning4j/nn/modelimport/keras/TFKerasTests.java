@@ -33,7 +33,7 @@ public class TFKerasTests extends BaseDL4JTest{
     public void testModelWithTFOp1() throws Exception{
         File f = Resources.asFile("modelimport/keras/tfkeras/reshape.h5");
        ComputationGraph graph = KerasModelImport.importKerasModelAndWeights(f.getAbsolutePath());
-        INDArray out = graph.outputSingle(Nd4j.zeros(12, 3, 2));
+        INDArray out = graph.outputSingle(Nd4j.zeros(12, 2, 3));
         Assert.assertArrayEquals(new long[]{12, 3}, out.shape());
     }
 
@@ -41,8 +41,10 @@ public class TFKerasTests extends BaseDL4JTest{
     public void testModelWithTFOp2() throws Exception{
         File f = Resources.asFile("modelimport/keras/tfkeras/permute.h5");
         ComputationGraph graph = KerasModelImport.importKerasModelAndWeights(f.getAbsolutePath());
-        INDArray out = graph.outputSingle(Nd4j.zeros(12, 3, 2));
-        Assert.assertArrayEquals(new long[]{12, 2, 5}, out.shape());
+        INDArray out = graph.outputSingle(Nd4j.zeros(12, 2, 3));
+        // dl4j's feedforward doesn't support 3D output, so batch and time axes gets squashed
+        long[] expectedShape = new long[]{12 * 2, 5};
+        Assert.assertArrayEquals(expectedShape, out.shape());
     }
 
 }
