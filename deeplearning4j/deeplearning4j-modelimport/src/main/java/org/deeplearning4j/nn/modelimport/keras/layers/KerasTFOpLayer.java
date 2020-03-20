@@ -56,9 +56,6 @@ public class KerasTFOpLayer extends KerasLayer {
      */
     public KerasTFOpLayer(Map<String, Object> layerConfig, boolean enforceTrainingConfig) throws UnsupportedKerasConfigurationException, InvalidKerasConfigurationException{
         super(layerConfig, enforceTrainingConfig);
-        for(Map.Entry<String, Object> e: layerConfig.entrySet()){
-            System.out.println(e.getKey() + " : " + e.getValue());
-        }
         this.layer = new TFOpLayer((Map)((Map)layerConfig.get("config")).get("node_def"), (Map)((Map)layerConfig.get("config")).get("constants"));
     }
 
