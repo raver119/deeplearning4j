@@ -18,7 +18,6 @@ package org.nd4j.tensorflow.conversion.graphrunner;
 
 import lombok.*;
 import org.apache.commons.io.FileUtils;
-import org.nd4j.TFGraphRunner;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
