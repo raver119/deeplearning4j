@@ -14,30 +14,29 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.nn.conf.layers;
+package org.deeplearning4j.nn.modelimport.keras.layers;
 
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.conf.GradientNormalization;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
-import org.deeplearning4j.nn.conf.preprocessor.RnnToFeedForwardPreProcessor;
+import org.deeplearning4j.nn.modelimport.keras.layers.TFOpLayerImpl;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.preprocessor.PermuteDataSetPreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 
-public class TFOpLayer extends Layer{
+public class TFOpLayer extends Layer {
 
     private Map nodeDef;
     private Map constants;
@@ -64,7 +63,7 @@ public class TFOpLayer extends Layer{
     @Override
     public InputType getOutputType(int idx, InputType inputType){
         long[] shape = inputType.getShape(true);
-        org.deeplearning4j.nn.layers.TFOpLayer tempLayer = new org.deeplearning4j.nn.layers.TFOpLayer(nodeDef, constants, null, null);
+        TFOpLayerImpl tempLayer = new TFOpLayerImpl(nodeDef, constants, null, null);
         long[] outputShape = tempLayer.getOutputShape(shape);
         return InputType.inferInputType(Nd4j.create(outputShape));
 
@@ -83,10 +82,10 @@ public class TFOpLayer extends Layer{
                                                                 Collection<TrainingListener> trainingListeners, int layerIndex, INDArray layerParamsView,
                                                                 boolean initializeParams, DataType networkDataType) {
 
-        org.deeplearning4j.nn.layers.TFOpLayer tfOpLayer = new org.deeplearning4j.nn.layers.TFOpLayer(nodeDef, constants, conf, networkDataType);
-        tfOpLayer.setListeners(trainingListeners);
-        tfOpLayer.setIndex(layerIndex);
-        return tfOpLayer;
+        TFOpLayerImpl tfOpLayerImpl = new TFOpLayerImpl(nodeDef, constants, conf, networkDataType);
+        tfOpLayerImpl.setListeners(trainingListeners);
+        tfOpLayerImpl.setIndex(layerIndex);
+        return tfOpLayerImpl;
     }
 
     @Override

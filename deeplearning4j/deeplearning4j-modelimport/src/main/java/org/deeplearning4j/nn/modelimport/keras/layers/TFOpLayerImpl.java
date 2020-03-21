@@ -14,13 +14,14 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.nn.layers;
+package org.deeplearning4j.nn.modelimport.keras.layers;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.gradient.Gradient;
+import org.deeplearning4j.nn.layers.AbstractLayer;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.nd4j.TFGraphRunnerService;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -40,7 +41,7 @@ import java.util.List;
 
 @Slf4j
 @Data
-public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.TFOpLayer> {
+public class TFOpLayerImpl extends AbstractLayer<TFOpLayer> {
 
 
     private Map nodeDef;
@@ -48,7 +49,7 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
     private List<String> inputNames;
     TFGraphRunnerService graphRunnerService;
 
-    public TFOpLayer(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
+    public TFOpLayerImpl(Map nodeDef, Map constants, NeuralNetConfiguration conf, DataType dtype){
         super(conf, dtype);
         this.nodeDef = nodeDef;
         this.constants = constants;
@@ -57,8 +58,8 @@ public class TFOpLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.T
 
     @Override
     public Pair<Gradient, INDArray> backpropGradient(INDArray epsilon, LayerWorkspaceMgr workspaceMgr){
-        throw new RuntimeException("Backprop through TFOpLayer is not supported yet." +
-                " TFOpLayer is created when importing TensorFlow 2.0 Keras models " +
+        throw new RuntimeException("Backprop through TFOpLayerImpl is not supported yet." +
+                " TFOpLayerImpl is created when importing TensorFlow 2.0 Keras models " +
                 "(tf.keras) into DL4J, that contains TensorFlow operations not just Keras layers.");
     }
 
