@@ -53,7 +53,7 @@ public class TFOpLayerImpl extends AbstractLayer<TFOpLayer> {
         super(conf, dtype);
         this.nodeDef = nodeDef;
         this.constants = constants;
-        setGraphRunner(nodeDef);
+        setGraphRunner();
     }
 
     @Override
@@ -65,11 +65,10 @@ public class TFOpLayerImpl extends AbstractLayer<TFOpLayer> {
 
     /**
      * Converts a Map representation of Nodedef to a singleton TF Graph and instantiates a GraphRunner.
-     * @param nodedefMap
      */
-    private void setGraphRunner(Map<String, Object> nodedefMap) {
+    private void setGraphRunner() {
         try{
-            String json = new Gson().toJson(nodedefMap);
+            String json = new Gson().toJson(nodeDef);
             NodeDef.Builder builder = NodeDef.newBuilder();
             org.nd4j.shade.protobuf.util.JsonFormat.parser().merge(json, builder);
             NodeDef nodeDef = builder.build();
