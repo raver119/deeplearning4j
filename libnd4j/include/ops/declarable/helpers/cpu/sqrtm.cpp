@@ -175,16 +175,15 @@ namespace helpers {
 
     template <typename T>
     void hessenbergReduction(NDArray const& input, NDArray& hessenberg, NDArray& transformQ) {
-        auto n = input.sizeAt(-1); nd4j_printf("N = %d\n", n);
+        auto n = input.sizeAt(-1);
         hessenberg.assign(input);
-        //transformQ.setIdentity();
+        transformQ.setIdentity();
         if (n > 2) {
             auto a1 = hessenberg({1, n, 0, 1}).reshape('c', {n-1, 1}); // the first column shifted by 1
             auto c1 = hessenberg({1, n, 0, 1}); c1.reshapei({n-1, 1}); // the first column skipped the first
             auto r1 = hessenberg({0, 1, 1, n}).reshape('c', {1, n - 1}); // the first row skipped the first
             auto rr = hessenberg({0, 1, 1, n}); rr.reshapei({1, n-1});
-            a1.printShapeInfo("A1");c1.printShapeInfo("C1");r1.printShapeInfo("R1");
-            a1.printIndexedBuffer("A1 data");r1.printIndexedBuffer("R1 data");
+
             auto e1 = a1.ulike();//NDArrayFactory::create<T>('c', {n - 1});
             e1.template t<T>(0) = T(1.f);
             auto sgn = math::nd4j_sign<T,T>(a1.t<T>(0));
@@ -202,26 +201,15 @@ namespace helpers {
             MmulHelper::matmul(&v, &v, &V, false, true);
             auto Q = transformQ({1, n, 1, n});
             I -= T(2.f)* V; V.nullify();
-            //Q.assign(I);
-            //Q.assign( I ); Q.printIndexedBuffer("Q");
-            //auto tempQ(Q);
-            I.printIndexedBuffer("Householder transformation matrix");a1.printIndexedBuffer("A1 prp");
-            r1.printIndexedBuffer("R1 before");rr.printIndexedBuffer("RR before");rr.printShapeInfo("Shape infor for RR");
-            MmulHelper::matmul(&I, &a1, &cr, false, false);cr.printIndexedBuffer("C1 after");c1.assign(cr);
-            MmulHelper::matmul(&r1, &I, &rc, false, false);rc.printIndexedBuffer("R1 after");rr.assign(rc);
+
+            MmulHelper::matmul(&I, &a1, &cr, false, false);c1.assign(cr);
+            MmulHelper::matmul(&r1, &I, &rc, false, false);rr.assign(rc);
             MmulHelper::matmul(&I, &a2, &V, false, false);
             MmulHelper::matmul(&V, &I, &a2, false, true);
-            //MmulHelper::matmul(&tempQ, &I, &Q, false, false);
-            //transformQ.assign(Q);
-                //auto Q2 = Q({1, n - 1, 1, n - 1});
-            //V.assign(Q);
-            nd4j_printf("Step %d:", n); hessenberg.printIndexedBuffer("Hessenberg");
-            V.assign(I); I.setIdentity();
-            hessenbergReduction<T>(a2, h2, I);
-            Q.printIndexedBuffer("NowQ"); I.printIndexedBuffer("Computed Q");
-            //auto resQ = transformQ({1, n, 1, n});
-            MmulHelper::matmul(&V, &I, &Q, false, false);
 
+            V.assign(I); //I.setIdentity();
+            hessenbergReduction<T>(a2, h2, I);
+            MmulHelper::matmul(&V, &I, &Q, false, false);
         }
     }
 
@@ -324,7 +312,7 @@ namespace helpers {
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
 //        input->printIndexedBuffer("Input");
-        outputQ.setIdentity();
+        //outputQ.setIdentity();
         hessenbergReduction<T>(*input, outputT, outputQ);
         outputT.printIndexedBuffer("Hessenberg");
         outputQ.printIndexedBuffer("Output Q for hessenberg transform");
