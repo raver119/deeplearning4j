@@ -1996,11 +1996,13 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
     @Override
     public String getString(DataBuffer buffer, long index) {
         Preconditions.checkArgument(buffer instanceof Utf8Buffer, "Expected Utf8Buffer");
-
+/*
         val addr = ((LongIndexer) buffer.indexer()).get(index);
         val ptr = new PagedPointer(addr);
         val str = new Nd4jAurora.utf8string(ptr);
         return str._buffer().capacity(str._length()).getString();
+        */
+        return null;
     }
 
     @Override
