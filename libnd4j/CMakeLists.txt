@@ -116,10 +116,11 @@ if(NOT SD_CUDA)
         #we don't want static OpenBLAS on Apple
         set(BLA_STATIC ON)
         if (NOT APPLE)
+            # note: this is not a typo
             set(BLA_VENDOR "OpenBLAS")
         endif()
 
-        # look around for system blas instead
+        # look around for system blas instead, see: https://cmake.org/cmake/help/latest/module/FindBLAS.html
         find_package(BLAS REQUIRED)
         if (BLAS_FOUND)
             message("Found external BLAS implementation: ${BLAS_LIBRARIES} ")
@@ -128,6 +129,7 @@ if(NOT SD_CUDA)
     else()
         # if we have externally provided OPENBLAS_PATH - let's use it
         set(HAVE_OPENBLAS 1)
+        message("Setting openblas")
         include_directories(${OPENBLAS_PATH}/include/)
         link_directories(${OPENBLAS_PATH} ${OPENBLAS_PATH}/lib/)
         set(OPENBLAS_LIBRARIES openblas)

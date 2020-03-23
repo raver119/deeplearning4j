@@ -1521,6 +1521,7 @@
 
 #define INPUT_VARIABLE(INDEX)     block.array(INDEX)
 #define OUTPUT_VARIABLE(INDEX)    reinterpret_cast<sd::NDArray *>(this->getZ(block, INDEX))
+#define OUTPUT_NULLIFIED(INDEX)    reinterpret_cast<sd::NDArray *>(this->getNullifiedZ(block, INDEX))
 
 #define INPUT_LIST(INDEX)     reinterpret_cast<sd::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList())
 
