@@ -14,6 +14,7 @@ import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.PointerPointer;
 import org.bytedeco.javacpp.ShortPointer;
+import org.bytedeco.javacpp.annotation.Cast;
 import org.nd4j.linalg.api.memory.pointers.PagedPointer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -375,153 +376,482 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public void execIndexReduceScalar(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10) {
-        call("execIndexReduceScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execIndexReduceScalar(PointerPointer arg0,
+                                      int arg1,
+                                      OpaqueDataBuffer arg2,
+                                      @Cast("Nd4jLong *") LongPointer arg3,
+                                      @Cast("Nd4jLong *") LongPointer arg4,
+                                      Pointer arg5,
+                                      OpaqueDataBuffer arg6,
+                                      @Cast("Nd4jLong *") LongPointer arg7,
+                                      @Cast("Nd4jLong *") LongPointer arg8) {
+        call("execIndexReduceScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execIndexReduce(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execIndexReduce", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execIndexReduce(PointerPointer arg0,
+                                int arg1,
+                                OpaqueDataBuffer arg2,
+                                @Cast("Nd4jLong *") LongPointer arg3,
+                                @Cast("Nd4jLong *") LongPointer arg4,
+                                Pointer arg5,
+                                OpaqueDataBuffer arg6,
+                                @Cast("Nd4jLong *") LongPointer arg7,
+                                @Cast("Nd4jLong *") LongPointer arg8,
+                                OpaqueDataBuffer arg9,
+                                @Cast("Nd4jLong *") LongPointer arg10,
+                                @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execIndexReduce", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execBroadcast(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14, LongPointer arg15, Pointer arg16, LongPointer arg17) {
-        call("execBroadcast", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17);
+    public void execBroadcast(PointerPointer arg0,
+                              int arg1,
+                              OpaqueDataBuffer arg2,
+                              @Cast("Nd4jLong *") LongPointer arg3,
+                              @Cast("Nd4jLong *") LongPointer arg4,
+                              OpaqueDataBuffer arg5,
+                              @Cast("Nd4jLong *") LongPointer arg6,
+                              @Cast("Nd4jLong *") LongPointer arg7,
+                              OpaqueDataBuffer arg8,
+                              @Cast("Nd4jLong *") LongPointer arg9,
+                              @Cast("Nd4jLong *") LongPointer arg10,
+                              OpaqueDataBuffer arg12,
+                              @Cast("Nd4jLong *") LongPointer arg13,
+                              @Cast("Nd4jLong *") LongPointer arg14) {
+        call("execBroadcast", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg12, arg13, arg14);
     }
 
     @Override
-    public void execBroadcastBool(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14, LongPointer arg15, Pointer arg16, LongPointer arg17) {
-        call("execBroadcastBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17);
+    public void execBroadcastBool(PointerPointer arg0,
+                                  int arg1,
+                                  OpaqueDataBuffer arg2,
+                                  @Cast("Nd4jLong *") LongPointer arg3,
+                                  @Cast("Nd4jLong *") LongPointer arg4,
+                                  OpaqueDataBuffer arg5,
+                                  @Cast("Nd4jLong *") LongPointer arg6,
+                                  @Cast("Nd4jLong *") LongPointer arg7,
+                                  OpaqueDataBuffer arg8,
+                                  @Cast("Nd4jLong *") LongPointer arg9,
+                                  @Cast("Nd4jLong *") LongPointer arg10,
+                                  Pointer arg11,
+                                  OpaqueDataBuffer arg12,
+                                  @Cast("Nd4jLong *") LongPointer arg13,
+                                  @Cast("Nd4jLong *") LongPointer arg14) {
+        call("execBroadcastBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     }
 
     @Override
-    public void execPairwiseTransform(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14) {
-        call("execPairwiseTransform", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execPairwiseTransform(PointerPointer arg0,
+                                      int arg1,
+                                      OpaqueDataBuffer arg2,
+                                      @Cast("Nd4jLong *") LongPointer arg3,
+                                      @Cast("Nd4jLong *") LongPointer arg4,
+                                      OpaqueDataBuffer arg5,
+                                      @Cast("Nd4jLong *") LongPointer arg6,
+                                      @Cast("Nd4jLong *") LongPointer arg7,
+                                      OpaqueDataBuffer arg8,
+                                      @Cast("Nd4jLong *") LongPointer arg9,
+                                      @Cast("Nd4jLong *") LongPointer arg10,
+                                      Pointer arg11) {
+        call("execPairwiseTransform", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execPairwiseTransformBool(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14) {
-        call("execPairwiseTransformBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execPairwiseTransformBool(PointerPointer arg0,
+                                          int arg1,
+                                          OpaqueDataBuffer arg2,
+                                          @Cast("Nd4jLong *") LongPointer arg3,
+                                          @Cast("Nd4jLong *") LongPointer arg4,
+                                          OpaqueDataBuffer arg5,
+                                          @Cast("Nd4jLong *") LongPointer arg6,
+                                          @Cast("Nd4jLong *") LongPointer arg7,
+                                          OpaqueDataBuffer arg8,
+                                          @Cast("Nd4jLong *") LongPointer arg9,
+                                          @Cast("Nd4jLong *") LongPointer arg10,
+                                          Pointer arg11) {
+        call("execPairwiseTransformBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduceFloat(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10) {
-        call("execReduceFloat", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execReduceFloat(PointerPointer arg0,
+                                int arg1,
+                                OpaqueDataBuffer arg2,
+                                @Cast("Nd4jLong *") LongPointer arg3,
+                                @Cast("Nd4jLong *") LongPointer arg4,
+                                Pointer arg5,
+                                OpaqueDataBuffer arg6,
+                                @Cast("Nd4jLong *") LongPointer arg7,
+                                @Cast("Nd4jLong *") LongPointer arg8) {
+        call("execReduceFloat", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execReduceSame(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10) {
-        call("execReduceSame", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execReduceSame(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               Pointer arg5,
+                               OpaqueDataBuffer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               @Cast("Nd4jLong *") LongPointer arg8) {
+        call("execReduceSame", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execReduceBool(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10) {
-        call("execReduceBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execReduceBool(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               Pointer arg5,
+                               OpaqueDataBuffer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               @Cast("Nd4jLong *") LongPointer arg8) {
+        call("execReduceBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execReduceLong(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10) {
-        call("execReduceLong", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execReduceLong(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               Pointer arg5,
+                               OpaqueDataBuffer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               @Cast("Nd4jLong *") LongPointer arg8) {
+        call("execReduceLong", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execReduceFloat2(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduceFloat2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduceFloat2(PointerPointer arg0,
+                                 int arg1,
+                                 OpaqueDataBuffer arg2,
+                                 @Cast("Nd4jLong *") LongPointer arg3,
+                                 @Cast("Nd4jLong *") LongPointer arg4,
+                                 Pointer arg5,
+                                 OpaqueDataBuffer arg6,
+                                 @Cast("Nd4jLong *") LongPointer arg7,
+                                 @Cast("Nd4jLong *") LongPointer arg8,
+                                 OpaqueDataBuffer arg9,
+                                 @Cast("Nd4jLong *") LongPointer arg10,
+                                 @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduceFloat2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduceSame2(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduceSame2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduceSame2(PointerPointer arg0,
+                                int arg1,
+                                OpaqueDataBuffer arg2,
+                                @Cast("Nd4jLong *") LongPointer arg3,
+                                @Cast("Nd4jLong *") LongPointer arg4,
+                                Pointer arg5,
+                                OpaqueDataBuffer arg6,
+                                @Cast("Nd4jLong *") LongPointer arg7,
+                                @Cast("Nd4jLong *") LongPointer arg8,
+                                OpaqueDataBuffer arg9,
+                                @Cast("Nd4jLong *") LongPointer arg10,
+                                @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduceSame2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduceBool2(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduceBool2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduceBool2(PointerPointer arg0,
+                                int arg1,
+                                OpaqueDataBuffer arg2,
+                                @Cast("Nd4jLong *") LongPointer arg3,
+                                @Cast("Nd4jLong *") LongPointer arg4,
+                                Pointer arg5,
+                                OpaqueDataBuffer arg6,
+                                @Cast("Nd4jLong *") LongPointer arg7,
+                                @Cast("Nd4jLong *") LongPointer arg8,
+                                OpaqueDataBuffer arg9,
+                                @Cast("Nd4jLong *") LongPointer arg10,
+                                @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduceBool2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduceLong2(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduceLong2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduceLong2(PointerPointer arg0,
+                                int arg1,
+                                OpaqueDataBuffer arg2,
+                                @Cast("Nd4jLong *") LongPointer arg3,
+                                @Cast("Nd4jLong *") LongPointer arg4,
+                                Pointer arg5,
+                                OpaqueDataBuffer arg6,
+                                @Cast("Nd4jLong *") LongPointer arg7,
+                                @Cast("Nd4jLong *") LongPointer arg8,
+                                OpaqueDataBuffer arg9,
+                                @Cast("Nd4jLong *") LongPointer arg10,
+                                @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduceLong2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduce3(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduce3", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduce3(PointerPointer arg0,
+                            int arg1,
+                            OpaqueDataBuffer arg2,
+                            @Cast("Nd4jLong *") LongPointer arg3,
+                            @Cast("Nd4jLong *") LongPointer arg4,
+                            Pointer arg5,
+                            OpaqueDataBuffer arg6,
+                            @Cast("Nd4jLong *") LongPointer arg7,
+                            @Cast("Nd4jLong *") LongPointer arg8,
+                            OpaqueDataBuffer arg9,
+                            @Cast("Nd4jLong *") LongPointer arg10,
+                            @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduce3", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduce3Scalar(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14) {
-        call("execReduce3Scalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execReduce3Scalar(PointerPointer arg0, int arg1,
+                                  OpaqueDataBuffer arg2,
+                                  @Cast("Nd4jLong *") LongPointer arg3,
+                                  @Cast("Nd4jLong *") LongPointer arg4,
+                                  Pointer arg5,
+                                  OpaqueDataBuffer arg6,
+                                  @Cast("Nd4jLong *") LongPointer arg7,
+                                  @Cast("Nd4jLong *") LongPointer arg8,
+                                  OpaqueDataBuffer arg9,
+                                  @Cast("Nd4jLong *") LongPointer arg10,
+                                  @Cast("Nd4jLong *") LongPointer arg11) {
+        call("execReduce3Scalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execReduce3Tad(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14, Pointer arg15, LongPointer arg16, Pointer arg17, LongPointer arg18, LongPointer arg19, LongPointer arg20, LongPointer arg21, LongPointer arg22) {
-        call("execReduce3Tad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22);
+    public void execReduce3Tad(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               Pointer arg5,
+                               OpaqueDataBuffer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               @Cast("Nd4jLong *") LongPointer arg8,
+                               OpaqueDataBuffer arg9,
+                               @Cast("Nd4jLong *") LongPointer arg10,
+                               @Cast("Nd4jLong *") LongPointer arg11,
+                               OpaqueDataBuffer arg12,
+                               @Cast("Nd4jLong *") LongPointer arg13,
+                               @Cast("Nd4jLong *") LongPointer arg14,
+                               @Cast("Nd4jLong *") LongPointer arg15, @Cast("Nd4jLong *") LongPointer arg16,
+                               @Cast("Nd4jLong *") LongPointer arg17, @Cast("Nd4jLong *") LongPointer arg18) {
+        call("execReduce3Tad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18);
     }
 
     @Override
-    public void execReduce3All(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14, Pointer arg15, LongPointer arg16, Pointer arg17, LongPointer arg18, LongPointer arg19, LongPointer arg20, LongPointer arg21, LongPointer arg22) {
-        call("execReduce3All", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22);
+    public void execReduce3All(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               Pointer arg5,
+                               OpaqueDataBuffer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               @Cast("Nd4jLong *") LongPointer arg8,
+                               OpaqueDataBuffer arg9,
+                               @Cast("Nd4jLong *") LongPointer arg10,
+                               @Cast("Nd4jLong *") LongPointer arg11,
+                               OpaqueDataBuffer arg12,
+                               @Cast("Nd4jLong *") LongPointer arg13,
+                               @Cast("Nd4jLong *") LongPointer arg14,
+                               @Cast("Nd4jLong *") LongPointer arg15,
+                               @Cast("Nd4jLong *") LongPointer arg16,
+                               @Cast("Nd4jLong *") LongPointer arg17,
+                               @Cast("Nd4jLong *") LongPointer arg18) {
+        call("execReduce3All", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18);
     }
 
     @Override
-    public void execScalar(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14) {
-        call("execScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execScalar(PointerPointer arg0,
+                           int arg1,
+                           OpaqueDataBuffer arg2,
+                           @Cast("Nd4jLong *") LongPointer arg3,
+                           @Cast("Nd4jLong *") LongPointer arg4,
+                           OpaqueDataBuffer arg5,
+                           @Cast("Nd4jLong *") LongPointer arg6,
+                           @Cast("Nd4jLong *") LongPointer arg7,
+                           OpaqueDataBuffer arg8,
+                           @Cast("Nd4jLong *") LongPointer arg9,
+                           @Cast("Nd4jLong *") LongPointer arg10,
+                           Pointer arg11) {
+        call("execScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execScalarBool(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14) {
-        call("execScalarBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void execScalarBool(PointerPointer arg0,
+                               int arg1,
+                               OpaqueDataBuffer arg2,
+                               @Cast("Nd4jLong *") LongPointer arg3,
+                               @Cast("Nd4jLong *") LongPointer arg4,
+                               OpaqueDataBuffer arg5,
+                               @Cast("Nd4jLong *") LongPointer arg6,
+                               @Cast("Nd4jLong *") LongPointer arg7,
+                               OpaqueDataBuffer arg8,
+                               @Cast("Nd4jLong *") LongPointer arg9,
+                               @Cast("Nd4jLong *") LongPointer arg10,
+                               Pointer arg11) {
+        call("execScalarBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
     }
 
     @Override
-    public void execSummaryStatsScalar(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, boolean arg11) {
-        call("execSummaryStatsScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+    public void execSummaryStatsScalar(PointerPointer arg0,
+                                       int arg1,
+                                       OpaqueDataBuffer arg2,
+                                       @Cast("Nd4jLong *") LongPointer arg3,
+                                       @Cast("Nd4jLong *") LongPointer arg4,
+                                       Pointer arg5,
+                                       OpaqueDataBuffer arg6,
+                                       @Cast("Nd4jLong *") LongPointer arg7,
+                                       @Cast("Nd4jLong *") LongPointer arg8,
+                                       boolean arg9) {
+        call("execSummaryStatsScalar", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     }
 
     @Override
-    public void execSummaryStats(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, boolean arg11) {
-        call("execSummaryStats", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+    public void execSummaryStats(PointerPointer arg0,
+                                 int arg1,
+                                 OpaqueDataBuffer arg2,
+                                 @Cast("Nd4jLong *") LongPointer arg3,
+                                 @Cast("Nd4jLong *") LongPointer arg4,
+                                 Pointer arg5,
+                                 OpaqueDataBuffer arg6,
+                                 @Cast("Nd4jLong *") LongPointer arg7,
+                                 @Cast("Nd4jLong *") LongPointer arg8,
+                                 boolean arg9) {
+        call("execSummaryStats", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     }
 
     @Override
-    public void execSummaryStatsTad(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14, boolean arg15, LongPointer arg16, LongPointer arg17) {
-        call("execSummaryStatsTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17);
+    public void execSummaryStatsTad(PointerPointer arg0,
+                                    int arg1,
+                                    OpaqueDataBuffer arg2,
+                                    @Cast("Nd4jLong *") LongPointer arg3,
+                                    @Cast("Nd4jLong *") LongPointer arg4,
+                                    Pointer arg5,
+                                    OpaqueDataBuffer arg6,
+                                    @Cast("Nd4jLong *") LongPointer arg7,
+                                    @Cast("Nd4jLong *") LongPointer arg8,
+                                    OpaqueDataBuffer arg9,
+                                    @Cast("Nd4jLong *") LongPointer arg10,
+                                    @Cast("Nd4jLong *") LongPointer arg11,
+                                    boolean arg12,
+                                    @Cast("Nd4jLong *") LongPointer arg13,
+                                    @Cast("Nd4jLong *") LongPointer arg14) {
+        call("execSummaryStatsTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
     }
 
     @Override
-    public void execTransformFloat(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10) {
-        call("execTransformFloat", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execTransformFloat(PointerPointer arg0,
+                                   int arg1,
+                                   OpaqueDataBuffer arg2,
+                                   @Cast("Nd4jLong *") LongPointer arg3,
+                                   @Cast("Nd4jLong *") LongPointer arg4,
+                                   OpaqueDataBuffer arg5,
+                                   @Cast("Nd4jLong *") LongPointer arg6,
+                                   @Cast("Nd4jLong *") LongPointer arg7,
+                                   Pointer arg8) {
+        call("execTransformFloat", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execTransformSame(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10) {
-        call("execTransformSame", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execTransformSame(PointerPointer arg0,
+                                  int arg1,
+                                  OpaqueDataBuffer arg2,
+                                  @Cast("Nd4jLong *") LongPointer arg3,
+                                  @Cast("Nd4jLong *") LongPointer arg4,
+                                  OpaqueDataBuffer arg5,
+                                  @Cast("Nd4jLong *") LongPointer arg6,
+                                  @Cast("Nd4jLong *") LongPointer arg7,
+                                  Pointer arg8) {
+        call("execTransformSame", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execTransformStrict(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10) {
-        call("execTransformStrict", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execTransformStrict(PointerPointer arg0,
+                                    int arg1,
+                                    OpaqueDataBuffer arg2,
+                                    @Cast("Nd4jLong *") LongPointer arg3,
+                                    @Cast("Nd4jLong *") LongPointer arg4,
+                                    OpaqueDataBuffer arg5,
+                                    @Cast("Nd4jLong *") LongPointer arg6,
+                                    @Cast("Nd4jLong *") LongPointer arg7,
+                                    Pointer arg8) {
+        call("execTransformStrict", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execTransformBool(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10) {
-        call("execTransformBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execTransformBool(PointerPointer arg0,
+                                  int arg1,
+                                  OpaqueDataBuffer arg2,
+                                  @Cast("Nd4jLong *") LongPointer arg3,
+                                  @Cast("Nd4jLong *") LongPointer arg4,
+                                  OpaqueDataBuffer arg5,
+                                  @Cast("Nd4jLong *") LongPointer arg6,
+                                  @Cast("Nd4jLong *") LongPointer arg7,
+                                  Pointer arg8) {
+        call("execTransformBool", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execTransformAny(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10) {
-        call("execTransformAny", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+    public void execTransformAny(PointerPointer arg0,
+                                 int arg1,
+                                 OpaqueDataBuffer arg2,
+                                 @Cast("Nd4jLong *") LongPointer arg3,
+                                 @Cast("Nd4jLong *") LongPointer arg4,
+                                 OpaqueDataBuffer arg5,
+                                 @Cast("Nd4jLong *") LongPointer arg6,
+                                 @Cast("Nd4jLong *") LongPointer arg7,
+                                 Pointer arg8) {
+        call("execTransformAny", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
     }
 
     @Override
-    public void execScalarTad(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14, Pointer arg15, LongPointer arg16, Pointer arg17, LongPointer arg18, LongPointer arg19, LongPointer arg20, LongPointer arg21, LongPointer arg22) {
-        call("execScalarTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22);
+    public void execScalarTad(PointerPointer arg0,
+                              int arg1,
+                              OpaqueDataBuffer arg2,
+                              @Cast("Nd4jLong *") LongPointer arg3,
+                              @Cast("Nd4jLong *") LongPointer arg4,
+                              OpaqueDataBuffer arg5,
+                              @Cast("Nd4jLong *") LongPointer arg6,
+                              @Cast("Nd4jLong *") LongPointer arg7,
+                              OpaqueDataBuffer arg8,
+                              @Cast("Nd4jLong *") LongPointer arg9,
+                              @Cast("Nd4jLong *") LongPointer arg10,
+                              Pointer arg11,
+                              OpaqueDataBuffer arg12,
+                              @Cast("Nd4jLong *") LongPointer arg13,
+                              @Cast("Nd4jLong *") LongPointer arg14,
+                              @Cast("Nd4jLong *") LongPointer arg15,
+                              @Cast("Nd4jLong *") LongPointer arg16,
+                              @Cast("Nd4jLong *") LongPointer arg17,
+                              @Cast("Nd4jLong *") LongPointer arg18) {
+        call("execScalarTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18);
     }
 
     @Override
-    public void execScalarBoolTad(PointerPointer arg0, int arg1, Pointer arg2, LongPointer arg3, Pointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, Pointer arg8, LongPointer arg9, Pointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, Pointer arg14, Pointer arg15, LongPointer arg16, Pointer arg17, LongPointer arg18, LongPointer arg19, LongPointer arg20, LongPointer arg21, LongPointer arg22) {
-        call("execScalarBoolTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22);
+    public void execScalarBoolTad(PointerPointer arg0,
+                                  int arg1,
+                                  OpaqueDataBuffer arg2,
+                                  @Cast("Nd4jLong *") LongPointer arg3,
+                                  @Cast("Nd4jLong *") LongPointer arg4,
+                                  OpaqueDataBuffer arg5,
+                                  @Cast("Nd4jLong *") LongPointer arg6,
+                                  @Cast("Nd4jLong *") LongPointer arg7,
+                                  OpaqueDataBuffer arg8,
+                                  @Cast("Nd4jLong *") LongPointer arg9,
+                                  @Cast("Nd4jLong *") LongPointer arg10,
+                                  Pointer arg11,
+                                  OpaqueDataBuffer arg12,
+                                  @Cast("Nd4jLong *") LongPointer arg13,
+                                  @Cast("Nd4jLong *") LongPointer arg14,
+                                  @Cast("Nd4jLong *") LongPointer arg15,
+                                  @Cast("Nd4jLong *") LongPointer arg16,
+                                  @Cast("Nd4jLong *") LongPointer arg17,
+                                  @Cast("Nd4jLong *") LongPointer arg18) {
+        call("execScalarBoolTad", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18);
     }
 
     @Override
@@ -720,8 +1050,20 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public void pullRows(PointerPointer arg0, Pointer arg1, LongPointer arg2, Pointer arg3, LongPointer arg4, Pointer arg5, LongPointer arg6, Pointer arg7, LongPointer arg8, long arg9, LongPointer arg10, LongPointer arg11, LongPointer arg12, LongPointer arg13, LongPointer arg14) {
-        call("pullRows", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+    public void pullRows(PointerPointer arg0,
+                         OpaqueDataBuffer arg1,
+                         @Cast("Nd4jLong *") LongPointer arg2,
+                         @Cast("Nd4jLong *") LongPointer arg3,
+                         OpaqueDataBuffer arg4,
+                         @Cast("Nd4jLong *") LongPointer arg5,
+                         @Cast("Nd4jLong *") LongPointer arg6,
+                         long arg7,
+                         @Cast("Nd4jLong *") LongPointer arg8,
+                         @Cast("Nd4jLong *") LongPointer arg9,
+                         @Cast("Nd4jLong *") LongPointer arg10,
+                         @Cast("Nd4jLong *") LongPointer arg11,
+                         @Cast("Nd4jLong *") LongPointer arg12) {
+        call("pullRows", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
     }
 
     @Override
@@ -775,18 +1117,45 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public void execRandom(PointerPointer arg0, int arg1, Pointer arg2, Pointer arg3, LongPointer arg4, Pointer arg5, LongPointer arg6, Pointer arg7) {
-        call("execRandom", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+    public void execRandom(PointerPointer arg0,
+                           int arg1,
+                           Pointer arg2,
+                           OpaqueDataBuffer arg3,
+                           @Cast("Nd4jLong *") LongPointer arg4,
+                           @Cast("Nd4jLong *") LongPointer arg5,
+                           Pointer arg6) {
+        call("execRandom", arg0, arg1, arg2, arg3, arg4, arg5, arg6);
     }
 
     @Override
-    public void execRandom3(PointerPointer arg0, int arg1, Pointer arg2, Pointer arg3, LongPointer arg4, Pointer arg5, LongPointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11, LongPointer arg12, Pointer arg13, LongPointer arg14, Pointer arg15) {
-        call("execRandom3", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+    public void execRandom3(PointerPointer arg0,
+                            int arg1,
+                            Pointer arg2,
+                            OpaqueDataBuffer arg3,
+                            @Cast("Nd4jLong *") LongPointer arg4,
+                            @Cast("Nd4jLong *") LongPointer arg5,
+                            OpaqueDataBuffer arg6,
+                            @Cast("Nd4jLong *") LongPointer arg7,
+                            @Cast("Nd4jLong *") LongPointer arg8,
+                            OpaqueDataBuffer arg9,
+                            @Cast("Nd4jLong *") LongPointer arg10,
+                            @Cast("Nd4jLong *") LongPointer arg11,
+                            Pointer arg12) {
+        call("execRandom3", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
     }
 
     @Override
-    public void execRandom2(PointerPointer arg0, int arg1, Pointer arg2, Pointer arg3, LongPointer arg4, Pointer arg5, LongPointer arg6, Pointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, Pointer arg11) {
-        call("execRandom2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+    public void execRandom2(PointerPointer arg0,
+                            int arg1,
+                            Pointer arg2,
+                            OpaqueDataBuffer arg3,
+                            @Cast("Nd4jLong *") LongPointer arg4,
+                            @Cast("Nd4jLong *") LongPointer arg5,
+                            OpaqueDataBuffer arg6,
+                            @Cast("Nd4jLong *") LongPointer arg7,
+                            @Cast("Nd4jLong *") LongPointer arg8,
+                            Pointer arg9) {
+        call("execRandom2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
     }
 
     @Override
@@ -925,8 +1294,15 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public void tear(PointerPointer arg0, Pointer arg1, LongPointer arg2, Pointer arg3, LongPointer arg4, PointerPointer arg5, LongPointer arg6, LongPointer arg7, LongPointer arg8) {
-        call("tear", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+    public void tear(PointerPointer arg0,
+                     OpaqueDataBuffer arg1,
+                     @Cast("Nd4jLong *") LongPointer arg2,
+                     @Cast("Nd4jLong *") LongPointer arg3,
+                     PointerPointer arg4,
+                     @Cast("Nd4jLong *") LongPointer arg5,
+                     @Cast("Nd4jLong *") LongPointer arg6,
+                     @Cast("Nd4jLong *") LongPointer arg7) {
+        call("tear", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
     }
 
     @Override
@@ -1025,8 +1401,8 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public OpaqueShapeList calculateOutputShapes2(PointerPointer arg0, long arg1, PointerPointer arg2, PointerPointer arg3, int arg4, DoublePointer arg5, int arg6, LongPointer arg7, int arg8, BooleanPointer arg9, int arg10) {
-        return new OpaqueShapeList(callPointer("calculateOutputShapes2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
+    public OpaqueShapeList calculateOutputShapes2(PointerPointer arg0, long arg1, PointerPointer arg2, PointerPointer arg3, int arg4, DoublePointer arg5, int arg6, @Cast("Nd4jLong *") LongPointer arg7, int arg8, @Cast("bool *") BooleanPointer arg9, int arg10, @Cast("int *") IntPointer arg11, int arg12) {
+        return new OpaqueShapeList(callPointer("calculateOutputShapes2", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12));
     }
 
     @Override
@@ -1155,8 +1531,13 @@ public class Nd4jAuroraOps implements NativeOps {
     }
 
     @Override
-    public void scatterUpdate(PointerPointer arg0, int arg1, int arg2, Pointer arg3, LongPointer arg4, LongPointer arg5, Pointer arg6, LongPointer arg7, LongPointer arg8, Pointer arg9, LongPointer arg10, LongPointer arg11, Pointer arg12, LongPointer arg13, LongPointer arg14, IntPointer arg15, IntPointer arg16) {
-        call("scatterUpdate", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+    public void scatterUpdate(PointerPointer arg0, int arg1, int arg2,
+                              Pointer arg3, @Cast("Nd4jLong *") LongPointer arg4, @Cast("Nd4jLong *") LongPointer arg5,
+                              Pointer arg6, @Cast("Nd4jLong *") LongPointer arg7, @Cast("Nd4jLong *") LongPointer arg8,
+                              Pointer arg9, @Cast("Nd4jLong *") LongPointer arg10, @Cast("Nd4jLong *") LongPointer arg11,
+                              Pointer arg12, @Cast("Nd4jLong *") LongPointer arg13, @Cast("Nd4jLong *") LongPointer arg14,
+                              Pointer arg15, @Cast("Nd4jLong *") LongPointer arg16, Pointer arg17, @Cast("Nd4jLong *") LongPointer arg18) {
+        call("scatterUpdate", arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18);
     }
 
     @Override
@@ -1387,5 +1768,165 @@ public class Nd4jAuroraOps implements NativeOps {
     @Override
     public boolean isBlasVersionMatches(int major, int minor, int build) {
         return callBoolean("isBlasVersionMatches", major, minor, build);
+    }
+
+    @Override
+    public void setGraphContextInputBuffer(OpaqueContext ptr, int index, OpaqueDataBuffer databuffer, Pointer shapeInfo, Pointer specialShapeInfo) {
+        call("setGraphContextInputBuffer", ptr, index, databuffer, shapeInfo, specialShapeInfo);
+    }
+
+    @Override
+    public void setGraphContextOutputBuffer(OpaqueContext ptr, int index, OpaqueDataBuffer databuffer, Pointer shapeInfo, Pointer specialShapeInfo) {
+        call("setGraphContextOutputBuffer", ptr, index, databuffer, shapeInfo, specialShapeInfo);
+    }
+
+    @Override
+    public void setGraphContextDArguments(OpaqueContext ptr, IntPointer arguments, int numberOfArguments) {
+        call("setGraphContextDArguments", ptr, arguments, numberOfArguments);
+    }
+
+    @Override
+    public void ctxAllowHelpers(OpaqueContext ptr, boolean reallyAllow) {
+        call("ctxAllowHelpers", ptr, reallyAllow);
+    }
+
+    @Override
+    public void ctxSetExecutionMode(OpaqueContext ptr, int execMode) {
+        call("ctxSetExecutionMode", ptr, execMode);
+    }
+
+    @Override
+    public void ctxShapeFunctionOverride(OpaqueContext ptr, boolean reallyOverride) {
+        call("ctxShapeFunctionOverride", ptr, reallyOverride);
+    }
+
+    @Override
+    public void ctxPurge(OpaqueContext ptr) {
+        call("ctxPurge", ptr);
+    }
+
+    @Override
+    public int binaryLevel() {
+        return 0;
+    }
+
+    @Override
+    public int optimalLevel() {
+        return 0;
+    }
+
+    @Override
+    public boolean isMinimalRequirementsMet() {
+        return false;
+    }
+
+    @Override
+    public boolean isOptimalRequirementsMet() {
+        return false;
+    }
+
+    @Override
+    public OpaqueDataBuffer allocateDataBuffer(long elements, int dataType, boolean allocateBoth) {
+        return (OpaqueDataBuffer) callPointer("allocateDataBuffer", elements, dataType, allocateBoth);
+    }
+
+    @Override
+    public OpaqueDataBuffer dbCreateView(OpaqueDataBuffer dataBuffer, long length, long offset) {
+        return (OpaqueDataBuffer) callPointer("dbCreateView", dataBuffer, length, offset);
+    }
+
+    @Override
+    public Pointer dbPrimaryBuffer(OpaqueDataBuffer dataBuffer) {
+        return callPointer("dbPrimaryBuffer", dataBuffer);
+    }
+
+    @Override
+    public Pointer dbSpecialBuffer(OpaqueDataBuffer dataBuffer) {
+        return callPointer("dbPrimaryBuffer", dataBuffer);
+    }
+
+    @Override
+    public void dbExpandBuffer(OpaqueDataBuffer dataBuffer, long elements) {
+        call("dbExpandBuffer", dataBuffer, elements);
+    }
+
+    @Override
+    public void dbAllocatePrimaryBuffer(OpaqueDataBuffer dataBuffer) {
+        call("dbAllocatePrimaryBuffer", dataBuffer);
+    }
+
+    @Override
+    public void dbAllocateSpecialBuffer(OpaqueDataBuffer dataBuffer) {
+        call("dbAllocateSpecialBuffer", dataBuffer);
+    }
+
+    @Override
+    public void dbSetPrimaryBuffer(OpaqueDataBuffer dataBuffer, Pointer primaryBuffer, long numBytes) {
+        call("dbSetPrimaryBuffer", dataBuffer, primaryBuffer, numBytes);
+    }
+
+    @Override
+    public void dbSetSpecialBuffer(OpaqueDataBuffer dataBuffer, Pointer specialBuffer, long numBytes) {
+        call("dbSetSpecialBuffer", dataBuffer, specialBuffer, numBytes);
+    }
+
+    @Override
+    public void dbSyncToSpecial(OpaqueDataBuffer dataBuffer) {
+        call("dbSyncToSpecial", dataBuffer);
+    }
+
+    @Override
+    public void dbSyncToPrimary(OpaqueDataBuffer dataBuffer) {
+        call("dbSyncToPrimary", dataBuffer);
+    }
+
+    @Override
+    public void dbTickHostRead(OpaqueDataBuffer dataBuffer) {
+        call("dbTickHostRead", dataBuffer);
+    }
+
+    @Override
+    public void dbTickHostWrite(OpaqueDataBuffer dataBuffer) {
+        call("dbTickHostWrite", dataBuffer);
+    }
+
+    @Override
+    public void dbTickDeviceRead(OpaqueDataBuffer dataBuffer) {
+        call("dbTickDeviceRead", dataBuffer);
+    }
+
+    @Override
+    public void dbTickDeviceWrite(OpaqueDataBuffer dataBuffer) {
+        call("dbTickDeviceWrite", dataBuffer);
+    }
+
+    @Override
+    public void deleteDataBuffer(OpaqueDataBuffer dataBuffer) {
+        call("deleteDataBuffer", dataBuffer);
+    }
+
+    @Override
+    public void dbClose(OpaqueDataBuffer dataBuffer) {
+        call("dbClose", dataBuffer);
+    }
+
+    @Override
+    public int dbLocality(OpaqueDataBuffer dataBuffer) {
+        return 0;
+    }
+
+    @Override
+    public int dbDeviceId(OpaqueDataBuffer dataBuffer) {
+        return 0;
+    }
+
+    @Override
+    public void dbSetDeviceId(OpaqueDataBuffer dataBuffer, int deviceId) {
+        call("dbSetDeviceId", dataBuffer, deviceId);
+    }
+
+    @Override
+    public void dbExpand(OpaqueDataBuffer dataBuffer, long newLength) {
+        call("dbExpand", dataBuffer, newLength);
     }
 }
