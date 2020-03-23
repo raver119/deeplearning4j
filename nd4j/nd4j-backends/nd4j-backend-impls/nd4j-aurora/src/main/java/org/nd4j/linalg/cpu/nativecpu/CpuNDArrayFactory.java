@@ -24,27 +24,22 @@ import org.nd4j.config.ND4JSystemProperties;
 import org.nd4j.linalg.api.buffer.*;
 import org.nd4j.linalg.api.ops.custom.Flatten;
 import org.nd4j.linalg.api.ops.impl.shape.Concat;
-import org.nd4j.linalg.api.ops.performance.PerformanceTracker;
 import org.nd4j.linalg.api.shape.options.ArrayOptionsHelper;
 import org.nd4j.linalg.api.shape.options.ArrayType;
 import org.nd4j.linalg.compression.CompressionUtils;
-import org.nd4j.linalg.memory.MemcpyDirection;
+import org.nd4j.linalg.cpu.nativecpu.buffer.BaseAuroraDataBuffer;
+import org.nd4j.linalg.cpu.nativecpu.buffer.LongBuffer;
+import org.nd4j.linalg.cpu.nativecpu.buffer.Utf8Buffer;
 import org.nd4j.linalg.primitives.Pair;
 import org.bytedeco.javacpp.*;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.api.shape.Shape;
-import org.nd4j.linalg.api.shape.options.ArrayOptionsHelper;
-import org.nd4j.linalg.api.shape.options.ArrayType;
-import org.nd4j.linalg.cache.TADManager;
 import org.nd4j.linalg.compression.CompressedDataBuffer;
 import org.nd4j.linalg.compression.CompressionDescriptor;
 import org.nd4j.linalg.compression.CompressionType;
-import org.nd4j.linalg.compression.CompressionUtils;
 import org.nd4j.linalg.cpu.nativecpu.blas.*;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.linalg.util.ArrayUtil;
 import org.nd4j.nativeblas.BaseNativeNDArrayFactory;
 import org.nd4j.nativeblas.LongPointerWrapper;
@@ -515,20 +510,20 @@ public class CpuNDArrayFactory extends BaseNativeNDArrayFactory {
 
         int numTads = (int)(tensor.length() / tadLength);
         INDArray[] result = new INDArray[numTads];
-        Pointer[] targets = new Pointer[numTads];
+
+        PointerPointer targets = new PointerPointer(numTads);
 
         for (int x = 0; x < numTads; x++) {
             result[x] = Nd4j.createUninitialized(shape);
-            targets[x] = result[x].data().pointer();
+
+            targets.put(x, result[x].data().pointer());
         }
 
-            nativeOps.tear(null,
-                    tensor.data().pointer(), (LongPointer) tensor.shapeInfoDataBuffer().pointer(),
-                    null, null,
-                    new PointerPointer(targets), (LongPointer) result[0].shapeInfoDataBuffer().pointer(),
-                    (LongPointer) tadBuffers.getFirst().pointer(),
-                    new LongPointerWrapper(tadBuffers.getSecond().pointer())
-            );
+        nativeOps.tear(null,
+                ((BaseAuroraDataBuffer) tensor.data()).getOpaqueDataBuffer(), (LongPointer) tensor.shapeInfoDataBuffer().pointer(), null,
+                targets, (LongPointer) result[0].shapeInfoDataBuffer().pointer(),
+                (LongPointer) tadBuffers.getFirst().pointer(), new LongPointerWrapper(tadBuffers.getSecond().pointer())
+        );
 
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
@@ -666,15 +661,13 @@ public class CpuNDArrayFactory extends BaseNativeNDArrayFactory {
 
 
         nativeOps.pullRows(dummy,
-                    source.data().addressPointer(), (LongPointer) source.shapeInfoDataBuffer().addressPointer(),
-                    null, null,
-                    ret.data().addressPointer(), (LongPointer) ret.shapeInfoDataBuffer().addressPointer(),
-                    null, null,
-                    indexes.length, pIndex,
-                    (LongPointer) hostTadShapeInfo,
-                    new LongPointerWrapper(hostTadOffsets),
-                    (LongPointer) zTadShapeInfo,
-                    new LongPointerWrapper(zTadOffsets));
+                ((BaseAuroraDataBuffer) source.data()).getOpaqueDataBuffer(), (LongPointer) source.shapeInfoDataBuffer().addressPointer(), null,
+                ((BaseAuroraDataBuffer) ret.data()).getOpaqueDataBuffer(), (LongPointer) ret.shapeInfoDataBuffer().addressPointer(), null,
+                indexes.length, pIndex,
+                (LongPointer) hostTadShapeInfo,
+                new LongPointerWrapper(hostTadOffsets),
+                (LongPointer) zTadShapeInfo,
+                new LongPointerWrapper(zTadOffsets));
 
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
@@ -999,59 +992,6 @@ public class CpuNDArrayFactory extends BaseNativeNDArrayFactory {
     public void convertDataEx(DataTypeEx typeSrc, DataBuffer source, DataTypeEx typeDst,
                               DataBuffer target) {
         convertDataEx(typeSrc, source.addressPointer(), typeDst, target.addressPointer(), target.length());
-    }
-
-
-
-    @Override
-    public INDArray createSparseCSR(double[] data, int[] columns, int[] pointerB, int[] pointerE, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCSR(float[] data, int[] columns, int[] pointerB, int[] pointerE, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCSR(DataBuffer data, int[] columns, int[] pointerB, int[] pointerE, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(double[] values, int[][] indices, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(float[] values, int[][] indices, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(double[] values, long[][] indices, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(float[] values, long[][] indices, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(DataBuffer values, DataBuffer indices, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public INDArray createSparseCOO(DataBuffer values, DataBuffer indices, DataBuffer sparseInformation, long[] shape) {
-        throw new UnsupportedOperationException();
-    }
-
-
-    @Override
-    public INDArray createSparseCOO(DataBuffer values, DataBuffer indices, long[] sparseOffsets, int[] flags, int[] hiddenDimensions, int underlyingRank, long[] shape) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

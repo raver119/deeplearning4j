@@ -21,10 +21,14 @@ import org.bytedeco.javacpp.BooleanPointer;
 import org.bytedeco.javacpp.DoublePointer;
 import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.Pointer;
+import org.nd4j.linalg.api.memory.Deallocatable;
+import org.nd4j.linalg.api.memory.Deallocator;
 import org.nd4j.linalg.api.memory.pointers.PagedPointer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.BaseOpContext;
+import org.nd4j.linalg.api.ops.ExecutionMode;
 import org.nd4j.linalg.api.ops.OpContext;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
 import org.nd4j.nativeblas.NativeOps;
 import org.nd4j.nativeblas.NativeOpsHolder;
@@ -40,10 +44,11 @@ import java.util.Map;
  *
  * @author raver119@gmail.com
  */
-public class CpuOpContext extends BaseOpContext implements OpContext {
+public class CpuOpContext extends BaseOpContext implements OpContext, Deallocatable {
     // we might want to have configurable
     private NativeOps nativeOps = NativeOpsHolder.getInstance().getDeviceNativeOps();
-    private OpaqueContext context = nativeOps.createGraphContext(1);
+    private final transient long id = Nd4j.getDeallocatorService().nextValue();
+    private OpaqueContext context = nativeOps.createGraphContext((int) id);
 
     protected Map<Integer,Pointer> inputDeviceBuffers = new HashMap<>();
     protected Map<Integer,Pointer> inputDeviceShapes = new HashMap<>();
@@ -158,5 +163,43 @@ public class CpuOpContext extends BaseOpContext implements OpContext {
     @Override
     public void markInplace(boolean reallyInplace) {
         nativeOps.markGraphContextInplace(context, reallyInplace);
+    }
+
+
+    @Override
+    public void allowHelpers(boolean reallyAllow) {
+        nativeOps.ctxAllowHelpers(context, reallyAllow);
+    }
+
+    @Override
+    public void shapeFunctionOverride(boolean reallyOverride) {
+        nativeOps.ctxShapeFunctionOverride(context, reallyOverride);
+    }
+
+    @Override
+    public void setExecutionMode(@NonNull ExecutionMode mode) {
+        super.setExecutionMode(mode);
+        nativeOps.ctxSetExecutionMode(context, mode.ordinal());
+    }
+
+    @Override
+    public void purge() {
+        super.purge();
+        nativeOps.ctxPurge(context);
+    }
+
+    @Override
+    public String getUniqueId() {
+        return new String("CTX_" + id);
+    }
+
+    @Override
+    public Deallocator deallocator() {
+        return new AuroraOpContextDeallocator(this);
+    }
+
+    @Override
+    public int targetDevice() {
+        return 0;
     }
 }

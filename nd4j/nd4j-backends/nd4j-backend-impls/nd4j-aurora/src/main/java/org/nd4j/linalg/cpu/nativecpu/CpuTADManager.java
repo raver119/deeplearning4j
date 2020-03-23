@@ -23,8 +23,6 @@ import org.bytedeco.javacpp.LongPointer;
 import org.bytedeco.javacpp.Pointer;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.buffer.IntBuffer;
-import org.nd4j.linalg.api.buffer.LongBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.cache.ConstantHandler;
 import org.nd4j.linalg.cache.TADManager;

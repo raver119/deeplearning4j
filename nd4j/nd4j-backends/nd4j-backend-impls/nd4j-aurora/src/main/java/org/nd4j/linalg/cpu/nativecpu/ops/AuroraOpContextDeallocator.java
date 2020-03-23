@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,12 +14,21 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.cpu.nativecpu;
+package org.nd4j.linalg.cpu.nativecpu.ops;
 
-import org.nd4j.linalg.factory.BaseSparseBlasWrapper;
+import org.nd4j.linalg.api.memory.Deallocator;
+import org.nd4j.nativeblas.NativeOpsHolder;
+import org.nd4j.nativeblas.OpaqueContext;
 
-/**
- * @author Audrey Loeffel
- */
-public class SparseBlasWrapper extends BaseSparseBlasWrapper {
+public class AuroraOpContextDeallocator implements Deallocator {
+    private transient final OpaqueContext context;
+
+    public AuroraOpContextDeallocator(CpuOpContext ctx) {
+        context = (OpaqueContext) ctx.contextPointer();
+    }
+
+    @Override
+    public void deallocate() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().deleteGraphContext(context);
+    }
 }
