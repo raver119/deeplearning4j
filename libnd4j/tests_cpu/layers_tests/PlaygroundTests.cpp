@@ -318,7 +318,11 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     delete graph;
 }
 
+/*
+    std::vector<Nd4jLong> values;
 
+    for (int e = 0; e < 1; e++) {
+        auto timeStart = std::chrono::system_clock::now();
 
 TEST_F(PlaygroundTests, test_bert_7_sizes) {
     std::vector<std::string> paths = {

@@ -199,12 +199,10 @@ NDArray* sd::MmulHelper::tensorDot(const sd::NDArray* a, const sd::NDArray* b, c
 
 //////////////////////////////////////////////////////////////////////////
 sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C , const double alpha, const double beta, const char outOrder) {
-    
 
     int lenDim;
     const int aRank = A->rankOf();
     const int bRank = B->rankOf();
-
     const bool isAVector = shape::isCommonVector(A->getShapeInfo(), lenDim);
     const bool isBVector = shape::isCommonVector(B->getShapeInfo(), lenDim);
 
@@ -222,21 +220,14 @@ sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::ND
 
     // vector x matrix, A{M} x B{M,N} = C{N} -> reduce to matrix x matrix A2{1,M} x B{M,N} = C2{1,N}, since there is no corresponding blas operation sgevm
     if(isAVector && bRank == 2) {
-
         NDArray* A2 = new NDArray(A->reshape(A->ordering(), {1, A->lengthOf()}));               // A{M} -> A2{1,M}
-
         NDArray* C2 = C ? new NDArray(C->reshape(C->ordering(), {1, C->lengthOf()}, false)) : nullptr; // C{N} -> C2{1,N}
-
         auto result = mmulMxM(A2, B, C2, alpha, beta, outOrder);                                // result{1,N}
-
         delete A2;
-
         delete C2;
 
         if(!C) {
-
             result->reshapei({result->lengthOf()});                                             // result{1,N} -> result{N}
-
             return result;
         }
         return C;
@@ -249,15 +240,10 @@ sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::ND
 
 //////////////////////////////////////////////////////////////////////////
     void MmulHelper::matmul(const sd::NDArray* x, const sd::NDArray* y, sd::NDArray* z, const bool transX, const bool transY) {
-        
-	
-
-
-	int xRank = x->rankOf();
+        int xRank = x->rankOf();
         int yRank = y->rankOf();
 
         auto outShape = ShapeUtils::evalShapeForMatmul(x->getShapeInfo(), y->getShapeInfo(), transX, transY);
-
         if(!z->isSameShape(outShape)) {
             nd4j_printf("NDArrayFactory::matmul static method: input shape of output array is wrong, actual is %s and expected is %s ! \n", ShapeUtils::shapeAsString(z).c_str(), ShapeUtils::shapeAsString(outShape).c_str());
             throw std::invalid_argument("");
@@ -269,56 +255,25 @@ sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::ND
         NDArray* xT(const_cast<NDArray*>(x)), *yT(const_cast<NDArray*>(y)), *zT(z);
 
         if((transX && xRank > 1) || (transY && yRank > 1)) {
-
             const int rank = xRank >= yRank ? xRank : yRank;
-
             std::vector<int> permut(rank);
-
             for (int i = 0; i < rank-2; ++i)
                 permut[i] = i;
-
             permut[rank-2] = rank - 1;
             permut[rank-1] = rank - 2;
 
             if(transX)
                 xT = new NDArray(x->permute(permut));
 
-            if(transY){
-
+            if(transY)
                 yT = new NDArray(y->permute(permut));
-	     }
-
         }
 
-        if(xRank <= 2 && yRank <= 2) {  // dot (1Dx1D), vector-matrix (1Dx2D), matrix-vector (2Dx1D), matrix-matrix (2Dx2D) product cases
-
-            if(xRank == 1 && yRank == 2) {   // reduce vector-matrix to matrix-matrix case
-
-                xT = new NDArray(x->reshape(x->ordering(), {1, x->lengthOf()})); // please note x is not transposed in this case (since xRank=1)
-
-                zT = new NDArray(z->reshape(z->ordering(), {1, z->lengthOf()}));
-            }
-
-            mmul(xT, yT, zT, 1., 0.);
-
+        if (xRank == 1 && yRank == 2) {   // reduce vector-matrix to matrix-matrix case
+                xT = new NDArray(x->reshape(x->ordering(), { 1, x->lengthOf() })); // please note x is not transposed in this case (since xRank=1)
+                zT = new NDArray(z->reshape(z->ordering(), { 1, z->lengthOf() }));
         }
-        else {  // rest cases -  batched mmul
-
-            const int batchRank = xRank - 2;
-            std::vector<int> dimsToExclude(batchRank);
-            for(int i = 0; i < batchRank; ++i)
-                dimsToExclude[i] = i;
-
-            const Nd4jLong numOfSubArrs = ShapeUtils::getNumOfSubArrs(xT->getShapeInfo(), dimsToExclude);
-
-//PRAGMA_OMP_PARALLEL_FOR
-            for(Nd4jLong i = 0; i < numOfSubArrs; ++i) {
-                auto xSubArr = (*xT)(i, dimsToExclude);
-                auto ySubArr = (*yT)(i, dimsToExclude);
-                auto zSubArr = (*zT)(i, dimsToExclude);
-                mmul(&xSubArr, &ySubArr, &zSubArr, 1., 0.);
-            }
-        }
+        mmul(xT, yT, zT, 1., 0.);
 
         if(xT != x)
             delete xT;

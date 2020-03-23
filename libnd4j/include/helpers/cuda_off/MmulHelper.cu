@@ -252,6 +252,8 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, dou
     const bool typeIntFloat  = AB  && aType == DataType::INT8 && cType == DataType::FLOAT32 && major >= 6;
     const bool typeHalfFloat = AB  && aType == DataType::HALF && cType == DataType::FLOAT32  && major >= 6;
 
+    std::lock_guard<std::mutex> lock(*LaunchContext::deviceMutex());
+
     auto handle = reinterpret_cast<cublasHandle_t *>(A->getContext()->getCublasHandle());
     auto stream = A->getContext()->getCudaStream();
 
@@ -394,6 +396,8 @@ NDArray* MmulHelper::mmulMxV(const NDArray* A, const NDArray* X, sd::NDArray* Y,
     const bool typeDouble = AXY && aType == DataType::DOUBLE;
     const bool typeFloat  = AXY && aType == DataType::FLOAT32;
 
+    std::lock_guard<std::mutex> lock(*LaunchContext::deviceMutex());
+
     auto handle = reinterpret_cast<cublasHandle_t *>(A->getContext()->getCublasHandle());
     auto stream = A->getContext()->getCudaStream();
 
@@ -471,8 +475,8 @@ NDArray* MmulHelper::dot(const NDArray* X, const NDArray* Y, sd::NDArray* Z, con
         throw std::runtime_error("MmulHelper::dot cuda: X array must be vector !");
     if(!shape::isCommonVector(Y->getShapeInfo(), yLenDim))
         throw std::runtime_error("MmulHelper::dot cuda: Y array must be vector !");
-    if(Z != nullptr && !Z->isScalar())
-        throw std::runtime_error("MmulHelper::dot cuda: Z array must be scalar !");
+    if(Z != nullptr && Z->lengthOf() != 1)
+        throw std::runtime_error("MmulHelper::dot cuda: Z array must have length equal to unity !");
 
     const auto length = X->lengthOf();
 
