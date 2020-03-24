@@ -303,9 +303,11 @@ public class Nd4jAuroraOps implements NativeOps {
             veo_proc_destroy(proc);
         }
         if (LOAD_SHARED_LIBRARY) {
+            log.info("Loading shared library");
             proc = veo_proc_create(deviceId);
             handle = veo_load_library(proc, veobin);
         } else {
+            log.info("Initializing static library");
             proc = veo_proc_create_static(deviceId, veobin);
             handle = 0;
         }
