@@ -31,6 +31,8 @@
 #include <graph/exceptions/unresolved_input_exception.h>
 #include <graph/exceptions/unresolved_output_exception.h>
 
+#include <performance/benchmarking/global_timers.h>
+
 namespace sd {
     namespace graph {
         std::vector<Node*>* Graph::getAllNodes() {
@@ -866,19 +868,27 @@ namespace sd {
         }
 
         Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace) {
+            FIRST_TIMER(__LINE__, 2)
             this->_onion = new MAP_IMPL<int, std::vector<Node *> *>();
+            GLOBAL_TIMER(__LINE__, 2)
             this->_mapped = new MAP_IMPL<int, Node *> ();
+            GLOBAL_TIMER(__LINE__, 2)
             this->_nodes = new std::vector<int>();
+            GLOBAL_TIMER(__LINE__, 2)
             this->_variableSpace = variableSpace == nullptr ? new VariableSpace() : variableSpace;
+            GLOBAL_TIMER(__LINE__, 2)
             bool trusted = flatGraph != nullptr;
+            GLOBAL_TIMER(__LINE__, 2)
 
             // add 0 layer
             this->expandOnion(0);
+GLOBAL_TIMER(__LINE__, 2)
             // if there was no exec configuration in flatgraph - create default one
             if (flatGraph != nullptr && flatGraph->configuration() != nullptr) {
                 _configuration = new ExecutorConfiguration(flatGraph->configuration());
             } else
                 _configuration = new ExecutorConfiguration();
+GLOBAL_TIMER(__LINE__, 2)
             // if memory reqs were set - initialize workspace
             if (_configuration->_footprintForward > 0) {
                 sd::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
@@ -887,10 +897,12 @@ namespace sd {
 
             nd4j_printf("Successfully deserialized [%s]\n", "configuration");
 
+GLOBAL_TIMER(__LINE__, 2)
             // parsing variables here
             if (flatGraph != nullptr && flatGraph->variables() != nullptr && flatGraph->variables()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->variables()->size(); e++) {
                     auto flatVar = flatGraph->variables()->Get(e);
+
                     auto var = new Variable(flatVar);
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
                     _variableSpace->putVariable(pair, var);
@@ -900,11 +912,13 @@ namespace sd {
                     // if that's VariableSpace mode - we're pushing it to _output
                     if (_configuration->_outputMode == OutputMode_VARIABLE_SPACE)
                         pushToOutputOnce(var->id());
+
                 }
             }
 
             nd4j_printf("Successfully deserialized [%s]\n", "variables");
 
+GLOBAL_TIMER(__LINE__, 2)
             // at this point we expect all variables are already registered
             // we're saving outputs only if explicit mode is set
             if (_configuration->_outputMode == OutputMode_EXPLICIT || _configuration->_outputMode == OutputMode_EXPLICIT_AND_IMPLICIT) {
@@ -922,8 +936,7 @@ namespace sd {
                     }
                 }
             }
-
-
+GLOBAL_TIMER(__LINE__, 2)
             // rolling through nodes
             if (flatGraph != nullptr && flatGraph->nodes() != nullptr && flatGraph->nodes()->size() > 0) {
                 for (unsigned int e = 0; e < flatGraph->nodes()->size(); e++) {
@@ -958,6 +971,7 @@ namespace sd {
 
             nd4j_printf("Successfully deserialized [%s]\n", "nodes");
 
+GLOBAL_TIMER(__LINE__, 2)
             /**
              *  we allow in-place execution optimizations ONLY if 2 requirements met:
              *  1) this is FeedForward pass ONLY

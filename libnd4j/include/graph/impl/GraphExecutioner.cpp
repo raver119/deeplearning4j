@@ -56,6 +56,8 @@
 #include <exceptions/no_results_exception.h>
 #include <graph/FlatUtils.h>
 
+#include <performance/benchmarking/global_timers.h>
+
 namespace sd{
 namespace graph {
 
@@ -891,18 +893,23 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
             nd4j_printf("Starting loading Graph from [%s]\n", filename);
+            FIRST_TIMER(__LINE__,1)
             auto data = readFlatBuffers(filename);
 
             nd4j_printf("Successfully loaded [%s]\n", "FlatGraph");
 
+            GLOBAL_TIMER(__LINE,1)
             auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
             delete[] data;
             return restoredGraph;
         }
 
         Graph *GraphExecutioner::importFromFlatPointer(Nd4jPointer ptr) {
+            FIRST_TIMER(__LINE__,1)
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
+            GLOBAL_TIMER(__LINE,1)
             auto restoredGraph = new Graph(fg);
+            GLOBAL_TIMER(__LINE,1)
             return restoredGraph;
         }
     }
