@@ -46,6 +46,7 @@ public class Nd4jAuroraOps implements NativeOps {
             File f = Loader.cacheResource(Loader.getPlatform() + (LOAD_SHARED_LIBRARY ? "/libnd4jaurora.so" : "/nd4jaurora"));
             f.setExecutable(true);
             veobin = f.getAbsolutePath();
+            log.info("veobin: {}", veobin);
             setDevice(deviceId);
             pointerArrayField = PointerPointer.class.getDeclaredField("pointerArray");
             pointerArrayField.setAccessible(true);
