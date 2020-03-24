@@ -19,7 +19,7 @@ public class StateActionExperienceHandlerTest {
         sut.addExperience(observation, 123, 234.0, true);
 
         // Act
-        List<StateActionPair<Integer>> result = sut.getExperience();
+        List<StateActionPair<Integer>> result = sut.generateTrainingBatch();
 
         // Assert
         assertEquals(1, result.size());
@@ -39,7 +39,7 @@ public class StateActionExperienceHandlerTest {
         sut.addExperience(null, 3, 3.0, false);
 
         // Act
-        List<StateActionPair<Integer>> result = sut.getExperience();
+        List<StateActionPair<Integer>> result = sut.generateTrainingBatch();
 
         // Assert
         assertEquals(3, result.size());
@@ -56,8 +56,8 @@ public class StateActionExperienceHandlerTest {
         sut.addExperience(null, 1, 1.0, false);
 
         // Act
-        List<StateActionPair<Integer>> firstResult = sut.getExperience();
-        List<StateActionPair<Integer>> secondResult = sut.getExperience();
+        List<StateActionPair<Integer>> firstResult = sut.generateTrainingBatch();
+        List<StateActionPair<Integer>> secondResult = sut.generateTrainingBatch();
 
         // Assert
         assertEquals(1, firstResult.size());

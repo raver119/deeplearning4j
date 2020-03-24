@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * A simple {@link ExperienceHandler experience handler} that stores the experiences.
- * Note: Calling {@link StateActionExperienceHandler#getExperience() getExperience()} will clear the stored experiences
+ * Note: Calling {@link StateActionExperienceHandler#generateTrainingBatch() getExperience()} will clear the stored experiences
  *
  * @param <A> Action type
  *
@@ -47,8 +47,11 @@ public class StateActionExperienceHandler<A> implements ExperienceHandler<A, Sta
      * @return The list of experience elements
      */
     @Override
-    public List<StateActionPair<A>> getExperience() {
-        return stateActionPairs;
+    public List<StateActionPair<A>> generateTrainingBatch() {
+        List<StateActionPair<A>> result = stateActionPairs;
+        stateActionPairs = new ArrayList<>();
+
+        return result;
     }
 
     @Override

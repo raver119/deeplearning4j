@@ -44,7 +44,6 @@ public class AsyncThreadDiscreteTest {
         sut.run();
 
         // Assert
-        // FIXME
         assertEquals(2, sut.trainSubEpochResults.size());
         double[][] expectedLastObservations = new double[][] {
                 new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 },

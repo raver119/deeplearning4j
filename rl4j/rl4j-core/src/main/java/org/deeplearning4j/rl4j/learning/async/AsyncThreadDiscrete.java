@@ -129,9 +129,9 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
             experienceHandler.setFinalObservation(obs);
         }
 
-        int experienceSize = experienceHandler.getExperience().size();
+        int experienceSize = experienceHandler.generateTrainingBatch().size();
 
-        getAsyncGlobal().applyGradient(updateAlgorithm.computeGradients(current, experienceHandler.getExperience()), experienceSize);
+        getAsyncGlobal().applyGradient(updateAlgorithm.computeGradients(current, experienceHandler.generateTrainingBatch()), experienceSize);
 
         experienceHandler.reset();
 
@@ -139,7 +139,7 @@ public abstract class AsyncThreadDiscrete<O, NN extends NeuralNet>
     }
 
     private boolean hasCollectedNSteps(ExperienceHandler experienceHandler, int nSteps, int skipFrames) {
-        int experienceSize = experienceHandler.getExperience().size();
+        int experienceSize = experienceHandler.generateTrainingBatch().size();
         int updateFrequency = nSteps * skipFrames;
         return experienceSize > 0 && experienceSize % updateFrequency == 0;
     }

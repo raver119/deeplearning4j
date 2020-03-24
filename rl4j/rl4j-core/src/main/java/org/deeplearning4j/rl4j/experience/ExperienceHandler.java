@@ -40,7 +40,7 @@ public interface ExperienceHandler<A, E> {
      * The elements are returned in the historical order (i.e. in the order they happened)
      * @return The list of experience elements
      */
-    List<E> getExperience();
+    List<E> generateTrainingBatch();
 
     /**
      * Signal the experience handler that a new episode is starting
