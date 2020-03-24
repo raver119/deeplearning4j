@@ -276,6 +276,26 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
     sd::GlobalTimers::getInstance()->displayTimers();
 }
 
+TEST_F(PlaygroundTests, test_file_load) {
+    // this test will run ONLY if this model exists
+    FIRST_TIMER(__LINE__,0);
+    if (sd::graph::getFileSize("resources/BertFull/model.fb") < 0)
+        return;
+    GLOBAL_TIMER(__LINE__,0);
+
+    auto graph = GraphExecutioner::importFromFlatBuffers("resources/BertFull/model.fb");
+    GLOBAL_TIMER(__LINE__,0);
+    nd4j_printf("Graph successfully loaded\n", "");
+    auto t = NDArrayFactory::fromNpyFile("resources/BertFull/in0_IteratorGetNext.npy");
+    GLOBAL_TIMER(__LINE__,0);
+    auto u = NDArrayFactory::fromNpyFile("resources/BertFull/in1_IteratorGetNext_1.npy");
+    GLOBAL_TIMER(__LINE__,0);
+    auto v = NDArrayFactory::fromNpyFile("resources/BertFull/in2_IteratorGetNext_4.npy");
+    GLOBAL_TIMER(__LINE__,0);
+    auto z = NDArrayFactory::fromNpyFile("resources/BertFull/out_loss-Softmax.npy");
+    GLOBAL_TIMER(__LINE__,0);
+    GlobalTimers::getInstance()->displayTimers();
+}
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
     // this test will run ONLY if this model exists
