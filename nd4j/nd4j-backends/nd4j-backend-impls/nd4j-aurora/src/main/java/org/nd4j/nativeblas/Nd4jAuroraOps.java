@@ -313,6 +313,9 @@ public class Nd4jAuroraOps implements NativeOps {
         if (proc == null)
             throw new RuntimeException("veo_proc is null");
 
+        if (handle < 1)
+            throw new RuntimeException("handle is [" + handle + "]");
+
         ctx = veo_context_open(proc);
         if (proc == null || ctx == null) {
             throw new RuntimeException("setDevice() failed");
