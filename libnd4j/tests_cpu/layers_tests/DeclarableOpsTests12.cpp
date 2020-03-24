@@ -3262,12 +3262,76 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
             0.f       ,   0.f        ,   0.15283372f,  -0.06929458f,
             0.f       ,   0.f        ,   0.f        ,   0.65546906f
     });
+
+    auto hessenberg = NDArrayFactory::create<float>('c', {4,4}, {
+            12.000000f, -19.788715f, -13.257765f,  9.090570f,
+            -7.681145f,  15.745762f,  12.805375f, -9.160070f,
+            -0.000000f,   5.475967f,   8.863721f, -6.195451f,
+            -0.000000f,   0.000000f,   0.313995f,  0.390518f    });
+
     auto orthogonal = NDArrayFactory::create<float>('c', {4,4}, {
             -0.7910926f,  0.34244207f,  0.48180673f, -0.15737976f,
             -0.47435293f,  0.17957106f,  -0.8141399f,  0.28270072f,
             -0.36143053f,  -0.8554431f, -0.10193637f, -0.35664293f,
             -0.13612571f, -0.34453574f,  0.30764785f,  0.87642324f
     });
+    auto n = a.sizeAt(-1);
+    auto& h = hessenberg; // h - hessenberg reduction for a in general
+    auto  hh = h({n - 2, 4, n - 2, 4});// band 2x2 last by diagonal
+    auto trHH = hh.t<float>(0, 0) + hh.t<float>(1,1);
+    auto detHH = hh.t<float>(0, 0) * hh.t<float>(1,1) - hh.t<float>(0,1) * hh.t<float>(1,0);
+    auto lHH = NDArrayFactory::create<float>({0,0});
+    auto b = -1.f;
+    auto c = 1.f;
+    auto trHH2 = trHH * trHH;
+    auto detHH4 = 4 * detHH;
+    if (trHH2 > detHH4) {
+        nd4j_printf("There are real eigenvals for matrix \n", "");
+        lHH.t<float>(0) = (trHH + math::p_sqrt(trHH2 - detHH4 )) / 2.f;
+        lHH.t<float>(1) = (trHH - math::p_sqrt(trHH2 - detHH4 )) / 2.f;
+        // after this lHH will be contained equals values
+        if (math::nd4j_abs(lHH.t<float>(0) - h.t<float>(n - 1, n - 1)) < math::nd4j_abs(lHH.t<float>(1) - h.t<float>(n - 1, n - 1)))
+            lHH.t<float>(1) = lHH.t<float>(0);
+        else
+            lHH.t<float>(0) = lHH.t<float>(1);
+        b = - 2 * lHH.t<float>(0); // - lHH.t<float>(1);
+        c = lHH.t<float>(0) * lHH.t<float>(1);
+    }
+    else {
+        nd4j_printf("There are only complex eigenvals for matrix \n", "");
+        b = -trHH;
+        c = detHH;
+    }
+    nd4j_printf("a = 1.f, b = %8.4f, c = %8.4f\n", b, c);
+    // C1      = H(1:3,1:2)*H(1:2,1
+    auto C1 = NDArrayFactory::create<float>('c', {3,1}, {h.t<float>(0,0) * h.t<float>(0,0) + h.t<float>(0, 1) * h.t<float>(1, 0), h.t<float>(1, 0) * h.t<float>(0,0) + h.t<float>(1,1)* h.t<float>(1, 0), h.t<float>(2, 1) * h.t<float>(1, 0)});//h({0,3, 0, 2});
+    C1.printIndexedBuffer("theH3x2");
+    C1.t<float>(0, 0) += b * h.t<float>(0,0);
+    C1.t<float>(1, 0) += b * h.t<float>(1, 0);
+    C1.t<float>(0, 0) += c;
+    C1.printIndexedBuffer("C1");
+    auto v = C1 / C1.reduceNumber(reduce::Norm2);
+    v.printIndexedBuffer("v");
+    auto h3xNres = h({0, 3, 0, n});
+    auto hNx3res = h({0, n, 0, 3});
+    auto h3xNsource(h3xNres);// = h({0, 3, 0, n});
+    h3xNres.printIndexedBuffer("h3xN");
+    auto V = NDArrayFactory::create<float>('c', {3,3});
+    MmulHelper::matmul(&v, &v, &V, false, true);
+    V *= 2.f;
+    V.printIndexedBuffer("V");
+    auto hNx3(hNx3res);
+    auto Vt(V);
+    MmulHelper::matmul(&V, &V, &Vt, false, false); Vt.printIndexedBuffer("Checked householder transform");
+    MmulHelper::matmul(&V, &h3xNres, &h3xNsource, false, false);
+    MmulHelper::matmul(&hNx3res, &V, &hNx3, false, false);
+    h3xNres -= h3xNsource;
+    hNx3res -= hNx3;
+    h3xNres.printIndexedBuffer("The first three rows");
+    h.printIndexedBuffer("H");
+//    h.printIndexedBuffer("Index buffer");
+//    hh.printIndexedBuffer("HH");
+    return;
     sd::ops::sqrtm op;
 
     auto res = op.evaluate({&a});

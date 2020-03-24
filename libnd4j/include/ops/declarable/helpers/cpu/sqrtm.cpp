@@ -234,6 +234,48 @@ namespace helpers {
         output->t<T>(1,0) = r21/(T(2.f)* alpha);
     }
 
+
+    template <typename T>
+    void francisStep(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
+         auto n = input->sizeAt(-1);
+         auto p = n - 1;
+
+         while(p > 1) {
+             auto q = p - 1;
+             auto s = input->t<T>(q,q) + input->t<T>(p,p);
+             auto t = input->t<T>(q,q) * input->t<T>(p,p) - input->t<T>(q,p) * input->t<T>(p,q);
+             auto x = input->t<T>(0,0) * input->t<T>(0,0) + input->t<T>(0,1) * input->t<T>(1,0) - s * input->t<T>(0,0) + t;
+             auto y = input->t<T>(1,0) * (input->t<T>(0,0) + input->t<T>(1,1) - s);
+             auto z = input->t<t>(1,0) * input->t<T>(2,1);
+
+             for (auto k = 0; k < p-2; k++) {
+
+             }
+         }
+    }
+
+    /** \internal Look for single small sub-diagonal element and returns its index
+     *
+     * @tparam MatrixType
+     * @param iu
+     * @return
+     */
+    template<typename T>
+    static inline Nd4jLong findSmallerSubdiagonalEntry(NDArray const* matrix, Nd4jLong initialIndex)
+    {
+        Nd4jLong res = initialIndex;
+        T const epsilon = T(1.e-5);
+
+        while (res > 0)
+        {
+            auto s = math::nd4j_abs(matrix->t<T>(res-1,res-1)) + abs(matrix->t<T>(res,res));
+            if (math::nd4j_abs(matrix->t<T>(res,res-1)) <= epsilon * s)
+                break;
+            res--;
+        }
+        return res;
+    }
+
     /*
      * real schur decomposition algorithm:
      * 1) Reduce input matrix to hessenberg form with housholder transformation
@@ -311,23 +353,34 @@ namespace helpers {
         auto pInput = const_cast<NDArray*>(input);
         auto outputQ = pInput->ulike();
         auto outputT = outputQ.ulike();
+        auto outputH = outputQ.ulike();
 //        input->printIndexedBuffer("Input");
         //outputQ.setIdentity();
-        hessenbergReduction<T>(*input, outputT, outputQ);
-        outputT.printIndexedBuffer("Hessenberg");
+        hessenbergReduction<T>(*input, outputH, outputQ);
+        outputH.printIndexedBuffer("Hessenberg");
         outputQ.printIndexedBuffer("Output Q for hessenberg transform");
-        MmulHelper::matmul(&outputQ, pInput, &outputT, true, false); //outputT.printIndexedBuffer("Res");
-        MmulHelper::matmul(&outputT, &outputQ, output, false, false); output->printIndexedBuffer("Res");
-        MmulHelper::matmul(&outputQ, &outputQ, output, false, true); output->printIndexedBuffer("Should be identity matrix");
-        schurDecomposition<T>(context, input, &outputQ, &outputT);
+        MmulHelper::matmul(&outputQ, input, &outputT, true, false); //outputT.printIndexedBuffer("Res");
+        MmulHelper::matmul(&outputT, &outputQ, output, false, false); output->printIndexedBuffer("Hessenberg restored");
+        outputT.assign(output);
+//        MmulHelper::matmul(&outputQ, &outputQ, output, false, true); output->printIndexedBuffer("Should be identity matrix");
+          auto outputU = outputQ.ulike(); outputT.nullify();
+          primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
+          outputT.printIndexedBuffer("Triangular after Schur");
+//        schurDecomposition<T>(context, input, &outputQ, &outputT);
 //        outputQ.printIndexedBuffer("Q matrix");
 //        outputT.printIndexedBuffer("T matrix");
 //        auto outputT = outputR.ulike();
 //        hessenbergReduction<T>(*input, outputT);
 //        outputT.printIndexedBuffer("H matrix");
         if (hasSqrt<T>(outputT)) {
-            upperTriangularSqrt<T>(context, &outputT, output);
-            MmulHelper::matmul(&outputQ, output, &outputT, false, false);
+            auto outputR = outputT.ulike();
+            upperTriangularSqrt<T>(context, &outputT, &outputR);
+            // restore to hessenberg reduced
+            MmulHelper::matmul(&outputU, &outputR, &outputT, false, false);
+            MmulHelper::matmul(&outputT, &outputU, &outputR, false, true);
+
+            // restore to initial
+            MmulHelper::matmul(&outputQ, &outputR, &outputT, false, false);
             MmulHelper::matmul(&outputT, &outputQ, output, false, true);
 
             return Status::OK();
