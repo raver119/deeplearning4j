@@ -134,11 +134,9 @@ namespace sd {
 
         bool _preprocess_strided_slice(std::vector<Nd4jLong>* indicesList, std::vector<Nd4jLong>* final_shape, std::vector<Nd4jLong>& input_shape, std::vector<int>& begin, std::vector<int>& end, std::vector<int>& strides, int begin_mask, int ellipsis_mask, int end_mask, int new_axis_mask, int shrink_axis_mask, bool* is_identity, bool* is_simple_slice, bool* slice_dim0) {
 
-            FIRST_TIMER(__LINE__, 1)
             std::vector<int> preshape;
 
             bool ellipsis_seen = false;
-            GLOBAL_TIMER(__LINE__, 1)
 
             StridedSliceSparseSpec sparse_spec = {(int) strides.size(),
                                         0,
@@ -150,7 +148,6 @@ namespace sd {
                                         ellipsis_mask,
                                         new_axis_mask,
                                         shrink_axis_mask};
-            GLOBAL_TIMER(__LINE__, 1)
 
             for (int i = 0; i < sparse_spec.dims; i++) {
                 if (ellipsis_seen && ((1 << i) & new_axis_mask) != 0) {
@@ -160,47 +157,38 @@ namespace sd {
                     ellipsis_seen = true;
                 }
             }
-            GLOBAL_TIMER(__LINE__, 1)
 
             // If no ellipsis insert one at the end
             if (!ellipsis_seen) {
                 sparse_spec.ellipsis_mask |= (1 << sparse_spec.dims);
                 sparse_spec.dims++;  // this effects loop iteration below
             }
-            GLOBAL_TIMER(__LINE__, 1)
 
             StridedSliceDenseSpec dense_spec = {(int) input_shape.size(), 0, 0, false, false, begin, end, strides};
             if (!dense_spec.buildDenseSpec(sparse_spec))
                 return false;
-            GLOBAL_TIMER(__LINE__, 1)
 
             //nd4j_printv("Input shape: ", input_shape);
 
             for (int e = 0; e < (int) input_shape.size(); e++) {
-                GLOBAL_TIMER(__LINE__, 1)
                 int begin_idx = begin[e];
                 int end_idx = end[e];
                 int stride_idx = strides[e];
                 int size_idx = input_shape[e];
 
-                GLOBAL_TIMER(__LINE__, 1)
                 bool shrink_i = (dense_spec.shrink_axis_mask & (1 << e));
 
                 if (stride_idx == 0) {
                     nd4j_printf("Stride is 0 at index %i\n", e);
                     return false;
                 }
-                GLOBAL_TIMER(__LINE__, 1)
                 if (size_idx == -1) {
                     preshape.emplace_back(shrink_i ? 1 : -1);
                     continue;
                 }
 
-                GLOBAL_TIMER(__LINE__, 1)
                 const std::array<int, 2> masks = {{dense_spec.begin_mask & (1 << e), dense_spec.end_mask & (1 << e)}};
-                GLOBAL_TIMER(__LINE__, 1)
                 const std::array<int, 2> valid_range = {{stride_idx > 0 ? 0 : -1, stride_idx > 0 ? size_idx : size_idx - 1}};
-                        GLOBAL_TIMER(__LINE__, 1)
 
                 auto canonical = [stride_idx, e, size_idx, masks, valid_range](int x, int c) {
                     if (masks[c]) {
@@ -211,21 +199,16 @@ namespace sd {
                     }
                 };
 
-                        GLOBAL_TIMER(__LINE__, 1)
                 if (shrink_i && stride_idx <= 0) {
                     nd4j_printf("StridedSlice: only stride 1 allowed on non-range indexing\n", e);
                     return false;
                 }
-                        GLOBAL_TIMER(__LINE__, 1)
 
                 (*is_simple_slice) &= stride_idx == 1;
-                        GLOBAL_TIMER(__LINE__, 1)
 
                 const bool begin_and_end_masked = (begin_mask & (1 << e)) && (end_mask & (1 << e));
 
-                        GLOBAL_TIMER(__LINE__, 1)
                 if (dense_spec.begin_valid && dense_spec.end_valid) {
-                        GLOBAL_TIMER(__LINE__, 1)
                     if (shrink_i) {
                         int x_fwd = begin_idx < 0 ? size_idx + begin_idx : begin_idx;
                         begin_idx = x_fwd;
@@ -238,13 +221,10 @@ namespace sd {
                         begin_idx = canonical(begin_idx, 0);
                         end_idx = canonical(end_idx, 1);
                     }
-                        GLOBAL_TIMER(__LINE__, 1)
                 } else {
                     (*is_identity) &= stride_idx == 1 && begin_and_end_masked;
                     (*slice_dim0) &= (e == 0 && stride_idx == 1) || begin_and_end_masked;
-                        GLOBAL_TIMER(__LINE__, 1)
                 }
-                        GLOBAL_TIMER(__LINE__, 1)
 
                 int interval_length = 1;
                 bool known_interval = false;
@@ -266,7 +246,6 @@ namespace sd {
                     }
                 }
 
-                        GLOBAL_TIMER(__LINE__, 1)
                 if (known_interval) {
                     int size_i;
                     if (interval_length == 0 || ((interval_length < 0) != (stride_idx < 0))) {
@@ -300,13 +279,11 @@ namespace sd {
                 }
             }
 
-                        GLOBAL_TIMER(__LINE__, 1)
 
             std::vector<int> postshape;
             //nd4j_printv("Preshape: ", preshape);
 
             final_shape->clear();
-                        GLOBAL_TIMER(__LINE__, 1)
             for (auto gather_index : dense_spec.final_shape_gather_indices) {
                 if (gather_index >= 0) {
                     if (preshape.size() > gather_index)
@@ -318,7 +295,6 @@ namespace sd {
                 }
             }
 
-                        GLOBAL_TIMER(__LINE__, 1)
             //nd4j_printv("Preshape: ", preshape);
             //nd4j_printv("Postshape: ", *final_shape);
 
@@ -327,16 +303,12 @@ namespace sd {
 
 
         CUSTOM_OP_IMPL(strided_slice, 1, 1, false, 0, 5) {
-            FIRST_TIMER(__LINE__, 1)
             auto x = INPUT_VARIABLE(0);
-            GLOBAL_TIMER(__LINE__, 1)
             auto z = OUTPUT_VARIABLE(0);
-            GLOBAL_TIMER(__LINE__, 1)
 
             if (z->isEmpty()) {
                 return ND4J_STATUS_OK;
             }
-            GLOBAL_TIMER(__LINE__, 1)
 
             int begin_mask = INT_ARG(0);
             int ellipsis_mask = INT_ARG(1);
@@ -344,14 +316,12 @@ namespace sd {
             int new_axis_mask = INT_ARG(3);
             int shrink_axis_mask = INT_ARG(4);
 
-            GLOBAL_TIMER(__LINE__, 1)
 //            printf("strided_slice arguments: %d %d %d %d %d\n", begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask);
             // 5 0 5 0 0
             int dim_values = 0; //block.getIArguments()->size() - 5;
             int delta = 0; //dim_values % 3;
             int elements = 0; //dim_values / 3;
 
-            GLOBAL_TIMER(__LINE__, 1)
             std::vector<int> begin;
             std::vector<int> end;
             std::vector<int> strides;
@@ -359,53 +329,37 @@ namespace sd {
             bool isLive = false;
 
             std::vector<int> args;
-            GLOBAL_TIMER(__LINE__, 1)
             // statically evaluated 
             if (block.getIArguments()->size() > 5) {
-GLOBAL_TIMER(__LINE__, 1)
                 dim_values = block.getIArguments()->size() - 5;
-GLOBAL_TIMER(__LINE__, 1)
                 delta = dim_values % 3;
                 elements = dim_values / 3;
-GLOBAL_TIMER(__LINE__, 1)
 //                printf("statistically evaluated:\n");
                 for (int e = 5; e < block.getIArguments()->size(); e++)
                 {
                     args.emplace_back(INT_ARG(e));
 //                    printf("e%d=%d  ",e,INT_ARG(e));
                 }
-GLOBAL_TIMER(__LINE__, 1)
                 REQUIRE_TRUE(delta == 0, 0, "StridedSlice: Number of Integer arguments should be equal to input rank x 3 = %i, but got %i instead", (x->rankOf() * 3), dim_values);
-GLOBAL_TIMER(__LINE__, 1)
                 ShapeUtils::copyVectorPart(begin, args, elements, 0);
-GLOBAL_TIMER(__LINE__, 1)
                 ShapeUtils::copyVectorPart(end, args, elements, elements);
-GLOBAL_TIMER(__LINE__, 1)
                 ShapeUtils::copyVectorPart(strides, args, elements, elements * 2);
-GLOBAL_TIMER(__LINE__, 1)
 
             } else if (block.width() > 1) {
                 isLive = true;
-GLOBAL_TIMER(__LINE__, 1)
                 auto v_begin = INPUT_VARIABLE(1);
-GLOBAL_TIMER(__LINE__, 1)
                 auto v_end = INPUT_VARIABLE(2);
-GLOBAL_TIMER(__LINE__, 1)
 
                 elements = v_begin->lengthOf();
-GLOBAL_TIMER(__LINE__, 1)
 
                 REQUIRE_TRUE(v_begin->lengthOf() == v_end->lengthOf(), 0, "StridedSlice: Length of begin/end should match, but got %i vs %i instead", (int) v_begin->lengthOf(), (int) v_end->lengthOf());
-GLOBAL_TIMER(__LINE__, 1)
                 REQUIRE_TRUE((v_begin->rankOf() == 1 ) && (v_begin->rankOf() == v_end->rankOf()), 0, "StridedSlice: Rank of begin and ends should be 1, but %i given instead", (int)v_end->rankOf());
-GLOBAL_TIMER(__LINE__, 1)
 
                 for (int e = 0; e < v_begin->lengthOf(); e++)
                 {
                     begin.emplace_back(v_begin->e<int>(e));
 //                    printf("e%d=%d  ",e,INT_ARG(e));
                 }
-GLOBAL_TIMER(__LINE__, 1)
 
                 for (int e = 0; e < v_end->lengthOf(); e++)
                 {
@@ -413,35 +367,26 @@ GLOBAL_TIMER(__LINE__, 1)
 //                    printf("e%d=%d  ",e,INT_ARG(e));
                 }
 
-GLOBAL_TIMER(__LINE__, 1)
                 if (block.width() > 3) {
                     auto v_stride = INPUT_VARIABLE(3);
 
-GLOBAL_TIMER(__LINE__, 1)
                     REQUIRE_TRUE(v_stride->lengthOf() == v_begin->lengthOf(), 0, "StridedSlice: Length of begin/end/stride should match, but got %i vs %i vs %i instead", (int) v_begin->lengthOf(), (int) v_end->lengthOf(), (int) v_stride->lengthOf());
-GLOBAL_TIMER(__LINE__, 1)
                     REQUIRE_TRUE((v_begin->rankOf() == v_stride->rankOf()), 0, "StridedSlice: Rank of begin and ends should be %i, but %i given instead", (int) v_begin->rankOf(), v_stride->rankOf());
 
-GLOBAL_TIMER(__LINE__, 1)
                     for (int e = 0; e < v_stride->lengthOf(); e++)
                     {
                         strides.emplace_back(v_stride->e<int>(e));
 //                        printf("e%d=%d  ",e,INT_ARG(e));
                     }
-GLOBAL_TIMER(__LINE__, 1)
                 } else {
-    GLOBAL_TIMER(__LINE__, 1)
                     for (int e = 0; e < v_begin->lengthOf(); e++)
                     {
                         strides.emplace_back(1);
 //                        printf("e%d=%d  ",e,INT_ARG(e));
                     }
-GLOBAL_TIMER(__LINE__, 1)
                 }
             } else {
-GLOBAL_TIMER(__LINE__, 1)
                 REQUIRE_TRUE(false, 0, "StridedSlice: Can't find begin/end/stride information neither in IArguments or in input arrays");
-GLOBAL_TIMER(__LINE__, 1)
             }
 
 //            printf("\n");
@@ -462,7 +407,6 @@ GLOBAL_TIMER(__LINE__, 1)
             std::vector<int> ignoreEnd   = BitwiseUtils::valueBits(end_mask);
             std::vector<int> addAxes     = BitwiseUtils::valueBits(new_axis_mask);
             std::vector<int> moveAxes    = BitwiseUtils::valueBits(shrink_axis_mask);
-GLOBAL_TIMER(__LINE__, 1)
             if (shrink_axis_mask == 0)
             for (int dim = 0, b = 0, e = 0; dim < x->rankOf(); ++dim) {
 
@@ -480,7 +424,6 @@ GLOBAL_TIMER(__LINE__, 1)
                 ++b;
                 ++e;
             }
-GLOBAL_TIMER(__LINE__, 1)
 
             
             std::vector<Nd4jLong> indices;
@@ -490,16 +433,13 @@ GLOBAL_TIMER(__LINE__, 1)
             bool is_simple_slice;
             bool is_dim0;
 
-GLOBAL_TIMER(__LINE__, 1)
             // FIXME: remove this method once we get 1D vectors supported
             //vectorize(input_shape);
             REQUIRE_TRUE(_preprocess_strided_slice(&indices, &final_shape, input_shape, begin, end, strides, begin_mask, ellipsis_mask, end_mask, new_axis_mask, shrink_axis_mask, &is_identity, &is_simple_slice, &is_dim0), 0, "StridedSlice: shape calculation failed");
-GLOBAL_TIMER(__LINE__, 1)
 //            if(z->lengthOf() == 1 && !z->isEmpty() && (input_shape.size() == 2 && input_shape[0] == 1)) { //(indices.size() == 6) && (indices[2] - indices[0] == 1)) {
 //                z->assign(x->e<float>(indices[0]));
 //            }
 //            else {
-GLOBAL_TIMER(__LINE__, 1)
             if (indices.size()) {
                 Nd4jLong* subArrShapeInfo = nullptr;
                 ALLOCATE(subArrShapeInfo, block.getWorkspace(), shape::shapeInfoLength(x->rankOf()), Nd4jLong);
@@ -519,12 +459,9 @@ GLOBAL_TIMER(__LINE__, 1)
                 NDArray::registerSpecialUse({z}, {x});
 
                 RELEASE(subArrShapeInfo,  block.getWorkspace());
-GLOBAL_TIMER(__LINE__, 1)
             }
             else if (!z->isEmpty()){
-GLOBAL_TIMER(__LINE__, 1)
                 z->assign(x->e(0));
-GLOBAL_TIMER(__LINE__, 1)
             }
             return Status::OK();
         }

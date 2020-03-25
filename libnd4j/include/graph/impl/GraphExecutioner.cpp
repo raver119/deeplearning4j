@@ -56,8 +56,6 @@
 #include <exceptions/no_results_exception.h>
 #include <graph/FlatUtils.h>
 
-#include <performance/benchmarking/global_timers.h>
-
 namespace sd{
 namespace graph {
 
@@ -830,17 +828,14 @@ uint8_t* readFlatBuffers(const char * filename) {
         nd4j_printf("File [%s] wasn't found. Please check path and permissions\n", filename);
         throw std::runtime_error("File not found");
     }
-
     nd4j_debug("File length: %i\n", fileLen);
 
     uint8_t * data = new uint8_t[fileLen];
-
     FILE *in = fopen(filename, "rb");
     int cnt = 0;
     int b = 0;
     while (cnt < fileLen) {
-        b = fread(data + cnt, 1, 1, in);
-
+        b = fread(data + cnt, 1, 16536, in);
         cnt += b;
     }
     fclose(in);
@@ -893,23 +888,18 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
         */
         Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
             nd4j_printf("Starting loading Graph from [%s]\n", filename);
-            FIRST_TIMER(__LINE__,1)
             auto data = readFlatBuffers(filename);
 
             nd4j_printf("Successfully loaded [%s]\n", "FlatGraph");
 
-            GLOBAL_TIMER(__LINE,1)
             auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
             delete[] data;
             return restoredGraph;
         }
 
         Graph *GraphExecutioner::importFromFlatPointer(Nd4jPointer ptr) {
-            FIRST_TIMER(__LINE__,1)
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
-            GLOBAL_TIMER(__LINE,1)
             auto restoredGraph = new Graph(fg);
-            GLOBAL_TIMER(__LINE,1)
             return restoredGraph;
         }
     }
