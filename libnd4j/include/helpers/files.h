@@ -32,7 +32,7 @@ char *strsave(const char *s, const char *lim);
 char ** shellpath(void);
 void freeshellpath (char *shellpath[]);
 unsigned maxpathlen(char *path[], const char *base);
-bool file_exists(char *name);
+bool file_exists(const char *name);
 
 void *malloc_check(const char *what, size_t n) {
     void *p = malloc(n);
@@ -65,7 +65,7 @@ char ** shellpath(void) {
 #ifdef _WIN32
         char *q = strchr(p, ';'); // windows uses ; as delimiter
 #else
-        char *q = strchr(p, ':'); // linux and derivatives use : as delimiter
+        char *q = strchr(const_cast<char*>(p), ':'); // linux and derivatives use : as delimiter
 #endif
         vector[next++] = strsave(p, q);
         p = q ? q + 1 : NULL;
@@ -89,8 +89,8 @@ unsigned maxpathlen(char *path[], const char *base) {
     }
     return blen+n+1;
 }
-bool file_exists(char *name){
-    printf("Trying file: [%s]\n", name);
+bool file_exists(const char *name){
+    //printf("Trying file: [%s]\n", name);
     FILE *file;
     if (file = fopen(name, "r")) {
         fclose(file);

@@ -30,6 +30,7 @@
 #include <exceptions/graph_exception.h>
 #include <graph/exceptions/unresolved_input_exception.h>
 #include <graph/exceptions/unresolved_output_exception.h>
+#include <helpers/FileUtils.h>
 
 namespace sd {
     namespace graph {
@@ -1452,6 +1453,34 @@ namespace sd {
             nd4j_debug("Graph hash: %lld\n", hash);
 
             return hash;
+        }
+
+
+        Graph* Graph::fromFlatBuffers(const char* fileName) {
+            // check if file exists
+            if (!FileUtils::fileExists(fileName))
+                throw std::runtime_error("Graph file doesn't exist");
+
+            // get file size
+            auto fsize = FileUtils::fileSize(fileName);
+            Nd4jLong *ref;
+            void *ptrGraph;
+
+            // check if mmap is supported
+            if (true) {
+                // mmap this file
+                ref = ::mmapFile(nullptr, fileName, fsize);
+                ptrGraph = reinterpret_cast<void*>(ref[0]);
+            } else {
+                // if mmap is not supported - load it directly
+
+            }
+
+            // get FlatGraph out of it
+            auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptrGraph));
+
+            // return Graph from this FlatGraph
+            return new Graph(fg);
         }
     }
 }

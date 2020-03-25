@@ -48,6 +48,18 @@ TEST_F(OneOffTests, test_avg_pool_3d_1) {
     delete graph;
 }
 
+TEST_F(OneOffTests, test_avg_pool_3d_2) {
+    auto graph = Graph::fromFlatBuffers("./resources/avg_pooling3d.fb");
+
+    ASSERT_TRUE(graph != nullptr);
+
+    // graph->printOut();
+
+    Nd4jStatus status = GraphExecutioner::execute(graph);
+    ASSERT_EQ(Status::OK(), status);
+    delete graph;
+}
+
 TEST_F(OneOffTests, test_non2d_0A_1) {
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/non2d_0A.fb");
 

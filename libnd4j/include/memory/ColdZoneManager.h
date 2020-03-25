@@ -27,6 +27,14 @@
 namespace sd {
     class ColdZoneManager : public ZoneManager  {
     public:
+        /**
+         * This constructor is used to initialize ZoneManager with existing FlatBuffers file
+         * @param filename - full path to existing file (i.e. FlatBuffers file)
+         */
+        explicit ColdZoneManager(const char* filename);
+        ColdZoneManager() = default;
+        ~ColdZoneManager() = default;
+
 
     };
 }

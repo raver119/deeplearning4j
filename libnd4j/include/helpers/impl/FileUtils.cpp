@@ -18,10 +18,23 @@
 // @author raver119@gmail.com
 //
 
-#include <memory/ColdZoneManager.h>
+#include <helpers/FileUtils.h>
+#include <helpers/files.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 namespace sd {
-    ColdZoneManager::ColdZoneManager(const char* filename) {
+    bool FileUtils::fileExists(const char *filename) {
+        if (filename == nullptr)
+            return false;
 
+        return file_exists(filename);
+    }
+
+    int64_t FileUtils::fileSize(const char *filename) {
+        struct stat stat_buf;
+        int rc = stat(filename, &stat_buf);
+        return rc == 0 ? stat_buf.st_size : -1;
     }
 }
