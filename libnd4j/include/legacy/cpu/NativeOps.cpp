@@ -2172,7 +2172,7 @@ int execCustomOp(Nd4jPointer* extraPointers, Nd4jLong hash, Nd4jPointer* inputBu
 
 int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer flatBufferPointer) {
     try {
-        auto graph = sd::graph::GraphExecutioner::importFromFlatPointer(flatBufferPointer);
+        auto graph = sd::graph::Graph::fromFlatPointer(flatBufferPointer);
 
         sd::graph::GraphHolder::getInstance()->registerGraph(graphId, graph);
 

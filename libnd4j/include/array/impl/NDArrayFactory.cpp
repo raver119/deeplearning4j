@@ -33,6 +33,7 @@
 
 #include <helpers/StringUtils.h>
 #include <legacy/NativeOps.h>
+#include <helpers/FileUtils.h>
 
 namespace sd {
 
@@ -694,8 +695,7 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
 
 
       NDArray NDArrayFactory::fromNpyFile(const char *fileName) {
-          auto size = sd::graph::getFileSize(fileName);
-          if (size < 0)
+          if (!FileUtils::fileExists(fileName))
               throw std::runtime_error("File doesn't exit");
 
           auto pNPY = reinterpret_cast<char*>(::numpyFromFile(std::string(fileName)));

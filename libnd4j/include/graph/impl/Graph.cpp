@@ -1466,7 +1466,7 @@ namespace sd {
             Nd4jLong *ref;
             void *ptrGraph;
 
-            // check if mmap is supported
+            // TODO: check if mmap is supported
             if (true) {
                 // mmap this file
                 ref = ::mmapFile(nullptr, fileName, fsize);
@@ -1474,10 +1474,26 @@ namespace sd {
             } else {
                 // if mmap is not supported - load it directly
 
+                ptrGraph = new uint8_t[fsize];
+                auto data = reinterpret_cast<uint8_t*>(ptrGraph);
+
+                FILE *in = fopen(fileName, "rb");
+                int cnt = 0;
+                int b = 0;
+                while (cnt < fsize) {
+                    b = fread(data + cnt, 1, fsize < 16384 ? fsize : 16384, in);
+
+                    cnt += b;
+                }
+                fclose(in);
             }
 
+            return fromFlatPointer(ptrGraph);
+        }
+
+        Graph* Graph::fromFlatPointer(void *ptr) {
             // get FlatGraph out of it
-            auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptrGraph));
+            auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
 
             // return Graph from this FlatGraph
             return new Graph(fg);

@@ -85,7 +85,8 @@ namespace sd {
 
             ~Graph();
 
-            static Graph* fromFlatBuffers(const char* fileName);
+            static Graph* fromFlatBuffers(const char *fileName);
+            static Graph* fromFlatPointer(void *ptr);
 
             // this method applies toposort to nodes
             void toposortNodes();

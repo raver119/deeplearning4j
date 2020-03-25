@@ -809,43 +809,6 @@ Graph* GraphExecutioner::importFromTensorFlow(const char *fileName) {
     return nullptr;
 }
 
-/**
-*   This function returns file size for the given file name, or -1 if something went wrong
-*/
-long getFileSize(const char * filename) {
-    struct stat stat_buf;
-    int rc = stat(filename, &stat_buf);
-    return rc == 0 ? stat_buf.st_size : -1;
-}
-
-/**
-*   Helper function, that loads given filename into uint8_t array
-*
-*/
-uint8_t* readFlatBuffers(const char * filename) {
-    long fileLen = getFileSize(filename);
-    if (fileLen < 0) {
-        nd4j_printf("File [%s] wasn't found. Please check path and permissions\n", filename);
-        throw std::runtime_error("File not found");
-    }
-
-    nd4j_debug("File length: %i\n", fileLen);
-
-    uint8_t * data = new uint8_t[fileLen];
-
-    FILE *in = fopen(filename, "rb");
-    int cnt = 0;
-    int b = 0;
-    while (cnt < fileLen) {
-        b = fread(data + cnt, 1, 1, in);
-
-        cnt += b;
-    }
-    fclose(in);
-
-    return data;
-}
-
 flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request) {
     ExecutionResult result;
     auto varSpace = graph->getVariableSpace();
@@ -884,23 +847,5 @@ flatbuffers::Offset<FlatResult> GraphExecutioner::execute(Graph *graph, flatbuff
 }
 
 
-        /**
-        *   This method reads given FlatBuffers file, and returns Graph instance
-        *
-        *   PLEASE NOTE: This method is mostly suited for tests and debugging/profiling
-        */
-        Graph* GraphExecutioner::importFromFlatBuffers(const char *filename) {
-            auto data = readFlatBuffers(filename);
-            auto restoredGraph = importFromFlatPointer(reinterpret_cast<Nd4jPointer>(data));
-            delete[] data;
-            return restoredGraph;
-        }
-
-        Graph *GraphExecutioner::importFromFlatPointer(Nd4jPointer ptr) {
-            auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
-            auto restoredGraph = new Graph(fg);
-
-            return restoredGraph;
-        }
     }
 }

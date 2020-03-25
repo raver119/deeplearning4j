@@ -46,6 +46,7 @@
 
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/addBias.h>
+#include <helpers/FileUtils.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -92,10 +93,10 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/BertFull/model.fb") < 0)
+    if (!FileUtils::fileExists("/home/raver119/Downloads/BertFull/model.fb"))
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
+    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
 
     auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in0_IteratorGetNext.npy");
     auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in1_IteratorGetNext_1.npy");
@@ -152,10 +153,10 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
 TEST_F(PlaygroundTests, test_bert_1) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+    if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb"))
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
+    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
 
     auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
     auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
@@ -210,10 +211,10 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
 TEST_F(PlaygroundTests, test_bert_2) {
     // this test will run ONLY if this model exists
-    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
+    if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb"))
         return;
 
-    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
+    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
 
     //graph->printOut();
 
