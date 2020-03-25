@@ -276,6 +276,127 @@ namespace helpers {
         return res;
     }
 
+    template <typename T>
+    struct GivenceRotate {
+         T _c, _s;
+
+         void rotate(T const p, T const q, T* r = nullptr) {
+            if(q == T(0.f))
+            {
+                _c = math::nd4j_sign(p);// < T(0.f) ? Scalar(-1) : Scalar(1);
+                _s = T(0.f);
+                //*r = math::nd4j_abs(p);
+            }
+            else if( p == T(0.f))
+            {
+                _c = p;
+                _s = -math::nd4j_sign(q);
+                //*r = math::nd4j_abs(q);
+            }
+            else if(math::nd4j_abs(p) > math::nd4j_abs(q))
+            {
+                T t = q/p;
+                T u = math::p_sqrt(T(1.f) + t * t);
+                if(p < T(0.f))
+                    u = -u;
+                _c = T(1.f) / u;
+                _s = -t * _c;
+                //if(r) *r = p * u;
+            }
+            else
+            {
+                T t = p/q;
+                T u = math::p_sqrt(T(1.f) + t*t);
+                if(q < T(0.f))
+                    u = -u;
+                _s = - T(1.f) / u;
+                _c = -t * _s;
+                //*r = q * u;
+            }
+        }
+
+        GivenceRotate<T> adjointRotate() const{
+             GivenceRotate<T> res;
+             res._c = _c;
+             res._s = -_s;
+
+             return res;
+         }
+
+    };
+
+    /* applyOnTheLeft
+    RowXpr x(this->row(p)); // retrieve p-row from matrix
+    RowXpr y(this->row(q)); // retrieve q-row from matrix
+    internal::apply_rotation_in_the_plane(x, y, j); // rotate with given c and s params
+
+
+     *
+     * applyOnTheRight
+     *  RowXpr x(this->row(p)); // retrieve p-row from matrix  = *ioMatrixT({p, n, 0, n})
+     *  RowXpr y(this->row(q)); // retrieve q-row from matrix  = *ioMatrixT({q, n, 0, n})
+     *  internal::apply_rotation_in_the_plane(x, y, j.transpose()); // j.transpose() == j.adjointRotate() // with c and -s params
+     *
+     *  ---------------------------------------------
+     *  internal::apply_rotation_in_the_plane:
+     *
+     *
+     *
+     */
+    template<typename X, typename Y>
+    struct ApplyRotationInThePlaneSelector {
+        void operator()(X *x, Nd4jLong incrx, X *y, Nd4jLong incry, Nd4jLong size, Y c, Y s) {
+            for(Nd4jLong i=0; i<size; ++i)
+            {
+                X xi = *x;
+                X yi = *y;
+                *x =  c * xi + s * yi;
+                *y = -s * xi + c * yi;
+                x += incrx;
+                y += incry;
+            }
+        }
+    };
+
+/** \internal Update T given that rows initialIndex - 1 and initialIndex decouple from the rest. *
+ *
+ * @tparam ioMatrixT - hessenberg reduced input
+ * @param ioMatrixQ - transformation matrix as H = QTQ*
+ * @param initialIndex - given row for process
+ * @param exshift - shift for Francis QR step
+ */
+template<typename T>
+    static inline  void splitOffTwoRows(NDArray* ioMatrixT, NDArray* ioMatrixQ, Nd4jLong initialIndex, const T exshift)
+    {
+//!  CAUSSION:  initialIndex should be > 0
+        const auto size = ioMatrixT->sizeAt(-1);
+
+        // The eigenvalues of the 2x2 matrix [a b; c d] are
+        // trace +/- sqrt(discr/4) where discr = tr^2 - 4*det, tr = a + d, det = ad - bc
+        T p = T(0.5f) * (ioMatrixT->t<T>(initialIndex - 1, initialIndex - 1) - ioMatrixT->t<T>(initialIndex,initialIndex));
+        T q = p * p + ioMatrixT->t<T>(initialIndex, initialIndex - 1) * ioMatrixT->t<T>(initialIndex - 1, initialIndex);   // q = tr^2 / 4 - det = discr/4
+        ioMatrixT->t<T>(initialIndex,initialIndex) += exshift;
+        ioMatrixT->t<T>(initialIndex - 1, initialIndex - 1) += exshift;
+
+        if (q >= T(0.f)) // Two real eigenvalues
+        {
+            T z = math::p_sqrt(math::nd4j_abs(q));
+            // Givens rotation:
+            GivenceRotate<T> rot;
+            if (p >= T(0.f))
+                rot.rotate(p + z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
+            else
+                rot.rotate(p - z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
+
+//            ioMatrixT->rightCols(size - initialIndex + 1).applyOnTheLeft(initialIndex - 1, initialIndex, rot.adjointRotate());
+//            ioMatrixT->topRows(initialIndex + 1).applyOnTheRight(initialIndex - 1, initialIndex, rot);
+//            ioMatrixT->t<T>(initialIndex, initialIndex - 1) = T(0.f);
+//            ioMatrixQ->applyOnTheRight(initialIndex - 1, initialIndex, rot);
+        }
+
+        if (initialIndex > 1) // for next bands
+            ioMatrixT->t<T>(initialIndex - 1, initialIndex - 2) = T(0.f);
+    }
     /*
      * real schur decomposition algorithm:
      * 1) Reduce input matrix to hessenberg form with housholder transformation
