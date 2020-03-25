@@ -92,6 +92,10 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
+#ifdef _RELEASE
+
+
+
     // this test will run ONLY if this model exists
     if (!FileUtils::fileExists("/home/raver119/Downloads/BertFull/model.fb"))
         return;
@@ -148,10 +152,13 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 */
     delete graph;
+
+#endif
 }
 
 
 TEST_F(PlaygroundTests, test_bert_1) {
+#ifdef _RELEASE
     // this test will run ONLY if this model exists
     if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb"))
         return;
@@ -207,9 +214,13 @@ TEST_F(PlaygroundTests, test_bert_1) {
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 */
     delete graph;
+
+#endif
 }
 
 TEST_F(PlaygroundTests, test_bert_2) {
+#ifdef _RELEASE
+
     // this test will run ONLY if this model exists
     if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb"))
         return;
@@ -257,6 +268,8 @@ TEST_F(PlaygroundTests, test_bert_2) {
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 */
     delete graph;
+
+#endif
 }
 
 
