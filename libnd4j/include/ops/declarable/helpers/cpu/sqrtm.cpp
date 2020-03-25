@@ -333,8 +333,8 @@ namespace helpers {
 
      *
      * applyOnTheRight
-     *  RowXpr x(this->row(p)); // retrieve p-row from matrix  = *ioMatrixT({p, n, 0, n})
-     *  RowXpr y(this->row(q)); // retrieve q-row from matrix  = *ioMatrixT({q, n, 0, n})
+     *  RowXpr x(this->row(p)); // retrieve p-row from matrix  = *ioMatrixT({p, p + 1, 0, n})
+     *  RowXpr y(this->row(q)); // retrieve q-row from matrix  = *ioMatrixT({q, q + 1, 0, n})
      *  internal::apply_rotation_in_the_plane(x, y, j.transpose()); // j.transpose() == j.adjointRotate() // with c and -s params
      *
      *  ---------------------------------------------

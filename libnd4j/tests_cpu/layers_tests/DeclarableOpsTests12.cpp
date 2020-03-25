@@ -3276,10 +3276,18 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
             -0.13612571f, -0.34453574f,  0.30764785f,  0.87642324f
     });
     auto n = a.sizeAt(-1);
+    auto k = 2;
     auto r1 = a({0, 1, 0, n});
     auto r3 = a({2, 3, 0, n});
+    auto rK = a({k, k+1, 0, n});
     r1.printIndexedBuffer("The first row");
-    r3.printIndexedBuffer("The last row");
+    r3.printIndexedBuffer("The third row");
+    rK.printIndexedBuffer("The k-th row");
+    auto rightColsK = a({0, 0, k, n}); // right columns from the kth (not including one or including one if is k a shift)
+    rightColsK.printIndexedBuffer("right cols for k(k = 2)");
+    auto topRowsK = a({0, k, 0, 0}); // top rows under the k-th and does not include one
+    topRowsK.printIndexedBuffer("top rows for k (k = 2) (0 and 1)");
+
     auto& h = hessenberg; // h - hessenberg reduction for a in general
     auto  hh = h({n - 2, 4, n - 2, 4});// band 2x2 last by diagonal
     auto trHH = hh.t<float>(0, 0) + hh.t<float>(1,1);
