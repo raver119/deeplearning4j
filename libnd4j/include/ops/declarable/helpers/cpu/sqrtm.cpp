@@ -337,26 +337,64 @@ namespace helpers {
      *  RowXpr y(this->row(q)); // retrieve q-row from matrix  = *ioMatrixT({q, q + 1, 0, n})
      *  internal::apply_rotation_in_the_plane(x, y, j.transpose()); // j.transpose() == j.adjointRotate() // with c and -s params
      *
-     *  ---------------------------------------------
+     *  ---------------------------------------------------
      *  internal::apply_rotation_in_the_plane:
      *
+     * template<typename VectorX, typename VectorY, typename OtherScalar>
+     * void  apply_rotation_in_the_plane(DenseBase<VectorX>& xpr_x, DenseBase<VectorY>& xpr_y, const JacobiRotation<OtherScalar>& j)
+     * {
+     *   typedef typename VectorX::Scalar Scalar;
+     *   const bool Vectorizable =    (VectorX::Flags & VectorY::Flags & PacketAccessBit)
+     *                            && (int(packet_traits<Scalar>::size) == int(packet_traits<OtherScalar>::size));
      *
+     * eigen_assert(xpr_x.size() == xpr_y.size());
+     * Index size = xpr_x.size();
+     * Index incrx = xpr_x.derived().innerStride();
+     * Index incry = xpr_y.derived().innerStride();
      *
+     * Scalar* EIGEN_RESTRICT x = &xpr_x.derived().coeffRef(0);
+     * Scalar* EIGEN_RESTRICT y = &xpr_y.derived().coeffRef(0);
+     *
+     * OtherScalar c = j.c();
+     * OtherScalar s = j.s();
+     * if (c==OtherScalar(1) && s==OtherScalar(0))
+     * return;
+     *
+     * apply_rotation_in_the_plane_selector<
+     *       Scalar,OtherScalar,
+     *       VectorX::SizeAtCompileTime,
+     *       EIGEN_PLAIN_ENUM_MIN(evaluator<VectorX>::Alignment, evaluator<VectorY>::Alignment),
+     *       Vectorizable>::run(x,incrx,y,incry,size,c,s);
+     * }
+     *
+     *  ---------------------------------------------------
      */
-    template<typename X, typename Y>
-    struct ApplyRotationInThePlaneSelector {
-        void operator()(X *x, Nd4jLong incrx, X *y, Nd4jLong incry, Nd4jLong size, Y c, Y s) {
-            for(Nd4jLong i=0; i<size; ++i)
-            {
-                X xi = *x;
-                X yi = *y;
-                *x =  c * xi + s * yi;
-                *y = -s * xi + c * yi;
-                x += incrx;
-                y += incry;
-            }
+
+//    template<typename X, typename Y>
+//    struct ApplyRotationInThePlaneSelector {
+//        void operator()(X *x, Nd4jLong incrx, X *y, Nd4jLong incry, Nd4jLong size, Y c, Y s) {
+//            for(Nd4jLong i=0; i<size; ++i)
+//            {
+//                X xi = *x;
+//                X yi = *y;
+//                *x =  c * xi + s * yi;
+//                *y = -s * xi + c * yi;
+//                x += incrx;
+//                y += incry;
+//            }
+//        }
+//    };
+
+    template <typename T>
+    static void applyGivenceRotate(NDArray& xRow, NDArray& yRow, const GivenceRotate<T>& rotation) {
+        T c = rotation._c;
+        T s = rotation._s;
+        auto size = xRow.lengthOf();
+        for(Nd4jLong i=0; i < size; ++i) {
+            xRow.t<T>(i) = c * xRow.t<T>(i) + s * yRow.t<T>(i);
+            yRow.t<T>(i) = -s * xRow.t<T>(i) + c * yRow.t<T>(i);
         }
-    };
+    }
 
 /** \internal Update T given that rows initialIndex - 1 and initialIndex decouple from the rest. *
  *
@@ -389,10 +427,23 @@ template<typename T>
                 rot.rotate(p - z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
             auto rightCols = (*ioMatrixT)({0, 0, size-initialIndex + 1, size}); // set of right columns to rotate by givens
             auto topRows = (*ioMatrixT)({0, initialIndex + 1, 0, 0}); // set of upper rows to rotate by givens
-//            ioMatrixT->rightCols(size - initialIndex + 1).applyOnTheLeft(initialIndex - 1, initialIndex, rot.adjointRotate());
-//            ioMatrixT->topRows(initialIndex + 1).applyOnTheRight(initialIndex - 1, initialIndex, rot);
-//            ioMatrixT->t<T>(initialIndex, initialIndex - 1) = T(0.f);
-//            ioMatrixQ->applyOnTheRight(initialIndex - 1, initialIndex, rot); //rotate transformation matrix also
+
+            // rotate rows with shifts
+            auto xRow = rightCols({initialIndex -1, initialIndex, 0, 0});
+            auto yRow = rightCols({initialIndex, initialIndex + 1, 0, 0});
+            applyGivenceRotate(xRow, yRow, rot.adjointRotate());
+
+            // rotate rows without shifts
+            xRow = topRows({initialIndex - 1, initialIndex, 0, 0});
+            yRow = topRows({initialIndex, initialIndex + 1, 0, 0});
+            applyGivenceRotate(xRow, yRow, rot.adjointRotate());
+
+            ioMatrixT->t<T>(initialIndex, initialIndex - 1) = T(0.f);
+
+            // rotate transformation matrix rows
+            xRow = (*ioMatrixQ)({initialIndex - 1, initialIndex, 0, 0});
+            yRow = (*ioMatrixQ)({initialIndex, initialIndex + 1, 0, 0});
+            applyGivenceRotate(xRow, yRow, rot.adjointRotate());
         }
 
         if (initialIndex > 1) // for next bands
