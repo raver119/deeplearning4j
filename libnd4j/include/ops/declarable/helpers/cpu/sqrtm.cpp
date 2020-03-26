@@ -387,11 +387,12 @@ template<typename T>
                 rot.rotate(p + z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
             else
                 rot.rotate(p - z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
-
+            auto rightCols = (*ioMatrixT)({0, 0, size-initialIndex + 1, size}); // set of right columns to rotate by givens
+            auto topRows = (*ioMatrixT)({0, initialIndex + 1, 0, 0}); // set of upper rows to rotate by givens
 //            ioMatrixT->rightCols(size - initialIndex + 1).applyOnTheLeft(initialIndex - 1, initialIndex, rot.adjointRotate());
 //            ioMatrixT->topRows(initialIndex + 1).applyOnTheRight(initialIndex - 1, initialIndex, rot);
 //            ioMatrixT->t<T>(initialIndex, initialIndex - 1) = T(0.f);
-//            ioMatrixQ->applyOnTheRight(initialIndex - 1, initialIndex, rot);
+//            ioMatrixQ->applyOnTheRight(initialIndex - 1, initialIndex, rot); //rotate transformation matrix also
         }
 
         if (initialIndex > 1) // for next bands
