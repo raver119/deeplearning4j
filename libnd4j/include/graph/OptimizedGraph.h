@@ -27,7 +27,7 @@
 namespace sd {
     namespace graph {
         /**
-         * This class acts as a topologically sorted & optimized for top
+         * This class acts as a topologically sorted & optimized Graph representation, ready for execution
          */
         class OptimizedGraph {
         protected:
