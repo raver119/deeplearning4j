@@ -493,6 +493,85 @@ template<typename T>
         }
     }
 
+
+/** \internal Compute index im at which Francis QR step starts and the first Householder vector. */
+    template<typename T>
+    inline void initFrancisQRStep(NDArray const& inputMatrix, Nd4jLong initialLowIndex, Nd4jLong initialUpperIndex, const ShiftInfo<T>& shiftInfo, Nd4jLong& initialFrancisIndex, ShiftInfo<T>& firstHouseholderVector) {
+        for (initialFrancisIndex = initialUpperIndex - 2; initialFrancisIndex >= initialLowIndex; --initialFrancisIndex) {
+            const T Tmm = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex);
+            const T r = shiftInfo.x - Tmm;
+            const T s = shiftInfo.y - Tmm;
+            firstHouseholderVector.x = (r * s - shiftInfo.coeff(2)) / inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex) + inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex + 1);
+            firstHouseholderVector.x = inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1) - Tmm - r - s;
+            firstHouseholderVector.x = inputMatrix.t<T>(initialFrancisIndex + 2, initialFrancisIndex + 1);
+            if (initialFrancisIndex == initialLowIndex) {
+                break;
+            }
+            const T lhs = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex - 1) * (math::nd4j_abs(firstHouseholderVector.y) + math::nd4j_abs(firstHouseholderVector.z));
+            const T rhs = firstHouseholderVector.x * (math::nd4j_abs(inputMatrix.t<T>(initialFrancisIndex - 1, initialFrancisIndex - 1)) + math::nd4j_abs(Tmm) + abs(inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1)));
+            if (math::nd4j_abs(lhs) < 1.e-5f * rhs)
+                break;
+        }
+    }
+
+/** \internal Perform a Francis QR step involving rows il:iu and columns im:iu. */
+    template<typename T>
+    inline void performFrancisQRStep(NDArray& m_matT, NDArray& m_matU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, bool computeU, const ShiftInfo<T>& firstHouseholderVector) {
+        const Nd4jLong size = m_matT.sizeAt(-1);
+
+        for (Nd4jLong k = indexMedium; k <= indexUpper - 2; ++k)
+        {
+            bool firstIteration = (k == indexMedium);
+
+            ShiftInfo<T> v;
+            if (firstIteration)
+                v = firstHouseholderVector;
+            else {
+                v.x = m_matT.t<T>(k, k - 1);// = m_matT({k, k + 3, k - 1, k});//.template block<3,1>(k,k-1);
+                v.y = m_matT.t<T>(k + 1, k - 1);
+                v.z = m_matT.t<T>(k + 2, k - 1);
+            }
+
+            T tau, beta;
+            NDArray ess('c', {2, 1}, DataTypeUtils::fromT<T>());
+//            v.makeHouseholder(ess, tau, beta);
+
+            if (beta != T(0.f)) // if v is not zero
+            {
+                if (firstIteration && k > indexLower)
+                    m_matT.t<T>(k,k-1) = -m_matT.t<T>(k, k - 1);
+                else if (!firstIteration)
+                    m_matT.t<T>(k,k-1) = beta;
+
+                // These Householder transformations form the O(n^3) part of the algorithm
+//                m_matT.block(k, k, 3, size-k).applyHouseholderOnTheLeft(ess, tau, workspace);
+//                m_matT.block(0, k, (std::min)(iu,k+3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+//                m_matU.block(0, k, size, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+            }
+        }
+
+        auto v = m_matT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
+        T tau, beta;
+        NDArray ess;
+//        v.makeHouseholder(ess, tau, beta);
+
+        if (beta != T(0)) // if v is not zero
+        {
+            m_matT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
+//            m_matT.block(iu-1, iu-1, 2, size-iu+1).applyHouseholderOnTheLeft(ess, tau, workspace);
+//            m_matT.block(0, iu-1, iu+1, 2).applyHouseholderOnTheRight(ess, tau, workspace);
+//            m_matU.block(0, iu-1, size, 2).applyHouseholderOnTheRight(ess, tau, workspace);
+        }
+
+        // clean up pollution due to round-off errors
+        for (Nd4jLong i = indexMedium + 2; i <= indexUpper; ++i)
+        {
+            m_matT.t<T>(i, i - 2) = T(0.f);
+            if (i > indexMedium + 2)
+                m_matT.t<T>(i, i - 3) = T(0.f);
+        }
+    }
+
         /*
      * real schur decomposition algorithm:
      * 1) Reduce input matrix to hessenberg form with housholder transformation
