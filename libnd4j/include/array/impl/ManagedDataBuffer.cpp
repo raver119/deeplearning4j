@@ -18,20 +18,4 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_FILEUTILS_H
-#define SD_FILEUTILS_H
-
-#include <cstdint>
-#include <system/dll.h>
-
-namespace sd {
-    class ND4J_EXPORT FileUtils {
-    public:
-        static bool fileExists(const char *filename);
-
-        static int64_t fileSize(const char *filename);
-    };
-}
-
-
-#endif //SD_FILEUTILS_H
+#include <array/ManagedDataBuffer.h>

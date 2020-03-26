@@ -18,20 +18,21 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_FILEUTILS_H
-#define SD_FILEUTILS_H
+#ifndef SD_MANAGEDDATABUFFER_H
+#define SD_MANAGEDDATABUFFER_H
 
-#include <cstdint>
-#include <system/dll.h>
+#include <array/DataBuffer.h>
 
 namespace sd {
-    class ND4J_EXPORT FileUtils {
+    /**
+     * This class provides special DataBuffer implementation for use within Graphs
+     */
+    class ManagedDataBuffer : public DataBuffer  {
+    protected:
     public:
-        static bool fileExists(const char *filename);
-
-        static int64_t fileSize(const char *filename);
+        ManagedDataBuffer() = default;
+        ~ManagedDataBuffer() = default;
     };
 }
 
-
-#endif //SD_FILEUTILS_H
+#endif //SD_MANAGEDDATABUFFER_H

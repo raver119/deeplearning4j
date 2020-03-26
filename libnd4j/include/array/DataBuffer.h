@@ -34,7 +34,7 @@ namespace sd {
 
 class ND4J_EXPORT DataBuffer {
 
-    private:
+    protected:
 
         void* _primaryBuffer = nullptr;
         void* _specialBuffer = nullptr;

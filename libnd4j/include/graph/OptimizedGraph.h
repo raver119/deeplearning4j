@@ -29,7 +29,7 @@ namespace sd {
         /**
          * This class acts as a topologically sorted & optimized Graph representation, ready for execution
          */
-        class OptimizedGraph {
+        class ND4J_EXPORT OptimizedGraph {
         protected:
             // here we store independent OpSequences
             // Graph starts from layer 0, and goes deeper step by step
