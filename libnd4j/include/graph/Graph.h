@@ -85,6 +85,10 @@ namespace sd {
 
             ~Graph();
 
+            /**
+             * Methods that allow Graph imports
+             */
+            static Graph *importFromTensorFlow(const char *fileName);
             static Graph* fromFlatBuffers(const char *fileName);
             static Graph* fromFlatPointer(void *ptr);
 

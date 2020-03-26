@@ -65,8 +65,6 @@ namespace sd {
         static sd::graph::ResultWrapper* executeFlatBuffer(Nd4jPointer pointer);
 
         static flatbuffers::Offset<FlatResult> execute(Graph *graph, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request);
-
-        static Graph *importFromTensorFlow(const char *fileName);
     };
 
 
