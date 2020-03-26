@@ -449,7 +449,51 @@ template<typename T>
         if (initialIndex > 1) // for next bands
             ioMatrixT->t<T>(initialIndex - 1, initialIndex - 2) = T(0.f);
     }
-    /*
+
+    template <typename T>
+    struct ShiftInfo {
+                T x,y,z;
+            };
+
+    /** \internal Form shift in shiftInfo, and update exshift if an exceptional shift is performed. */
+    template<typename T>
+    inline void computeShift(NDArray const& inputMatrix, Nd4jLong initialIndex, Nd4jLong iteration, T& exshift, ShiftInfo<T>& shiftInfo) {
+        shiftInfo.x = inputMatrix.t<T>(initialIndex, initialIndex);
+        shiftInfo.y = inputMatrix.t<T>(initialIndex - 1, initialIndex - 1);
+        shiftInfo.z = inputMatrix.t<T>(initialIndex, initialIndex - 1) * inputMatrix.t<T>(initialIndex - 1, initialIndex);
+
+        // Wilkinson's original ad hoc shift
+        if (iteration == 10) {
+            exshift += shiftInfo.x;
+            for (Nd4jLong i = 0; i <= initialIndex; ++i)
+                inputMatrix.t<T>(i, i) -= shiftInfo.x;
+            T wilkinsonShift = math::nd4j_abs(inputMatrix.t<T>(initialIndex, initialIndex - 1)) + math::nd4j_abs(inputMatrix.t<T>(initialIndex - 1, initialIndex - 2));
+            shiftInfo.x = T(0.75) * wilkinsonShift;
+            shiftInfo.y = T(0.75) * wilkinsonShift;
+            shiftInfo.z = T(-0.4375) * wilkinsonShift * wilkinsonShift;
+        }
+
+        // MATLAB's new ad hoc shift
+        if (iteration == 30)
+        {
+            T wilkinsonShift = (shiftInfo.y - shiftInfo.x) / T(2.0);
+            wilkinsonShift = wilkinsonShift * wilkinsonShift + shiftInfo.z;
+            if (wilkinsonShift > T(0.f))
+            {
+                wilkinsonShift = math::p_sqrt(wilkinsonShift);
+                if (shiftInfo.y < shiftInfo.x)
+                    wilkinsonShift = -wilkinsonShift;
+                wilkinsonShift = wilkinsonShift + (shiftInfo.y - shiftInfo.x) / T(2.0);
+                wilkinsonShift = shiftInfo.x - shiftInfo.z / wilkinsonShift;
+                exshift += wilkinsonShift;
+                for (Nd4jLong i = 0; i <= initialIndex; ++i)
+                    inputMatrix.t<T>(i, i) -= wilkinsonShift;
+                shiftInfo.x = shiftInfo.y = shiftInfo.z = T(0.964); // wilkinson shift after the 30th iteration
+            }
+        }
+    }
+
+        /*
      * real schur decomposition algorithm:
      * 1) Reduce input matrix to hessenberg form with housholder transformation
      * 2) Use Francis double shift algorithm to compute decomposition
