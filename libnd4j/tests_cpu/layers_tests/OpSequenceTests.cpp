@@ -66,4 +66,13 @@ TEST_F(OpSequenceTests, test_iterator_1) {
 
     optimizedGraph.append(sequence);
     ASSERT_EQ(1, optimizedGraph.layers());
+
+    auto layer = optimizedGraph.layer(0);
+
+    // we expect exactly 1 sequence in this layer
+    ASSERT_EQ(1, layer.size());
+
+    auto seq = layer[0];
+
+    ASSERT_EQ(2, seq.length());
 }
