@@ -36,6 +36,7 @@
 #include <graph/generated/config_generated.h>
 #include <graph/ExecutorConfiguration.h>
 #include <ops/declarable/OpDescriptor.h>
+#include <graph/OptimizedGraph.h>
 
 namespace sd {
     namespace graph {
@@ -240,6 +241,9 @@ namespace sd {
             FORCEINLINE bool built();
 
             FORCEINLINE void pullState(Graph *other);
+
+
+            OptimizedGraph optimizedGraph() const;
         };
 
         FORCEINLINE std::vector<int>* Graph::nodes() {

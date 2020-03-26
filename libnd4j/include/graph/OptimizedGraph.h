@@ -39,6 +39,17 @@ namespace sd {
             OptimizedGraph() = default;
             ~OptimizedGraph() = default;
 
+            OptimizedGraph(const OptimizedGraph& other) noexcept;
+
+            OptimizedGraph& operator=(const OptimizedGraph& other) noexcept;
+
+            // move constructor
+            OptimizedGraph(OptimizedGraph&& other) noexcept;
+
+            // move assignment operator
+            OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
+
+
             /**
              * This method returns number of layers within OptimizedGraph
              * @return

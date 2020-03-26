@@ -30,14 +30,14 @@ namespace sd {
     /**
     * This class represents independent and immutable sequence of operations
     */
-    class OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> {
+    class OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
         // our internal iterator for OpSequence
         class iterator;
         protected:
             // main thing here. sorted list of operations and their contexts
-            std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> _ops;
+            std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> _ops;
         public:
-            explicit OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> &ops);
+            explicit OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops);
             OpSequence() = default;
             ~OpSequence() = default;
 
@@ -60,9 +60,9 @@ namespace sd {
             /**
              * This method allows to add DeclarableOp to the end of execution queue
              * @param op - Op to be executed
-             * @param ctx - Context for this operation with inputs/outputs/args defined
+             * @param ctx - ContextPrototype for this operation with inputs/outputs/args defined
              */
-            void append(sd::ops::DeclarableOp *op, sd::graph::Context *ctx);
+            void append(sd::ops::DeclarableOp *op, sd::graph::ContextPrototype *ctx);
 
             /**
              * Iterator functionality for OpSequence
@@ -74,13 +74,13 @@ namespace sd {
 
             // additional private section
         private:
-            class iterator : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> {
+            class iterator : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
             private:
                 uint64_t _position = 0;
                 OpSequence & _container;
             public:
                 explicit iterator(OpSequence & container, uint64_t index = 0);
-                std::pair<sd::ops::DeclarableOp*, sd::graph::Context*> operator*() const;
+                std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> operator*() const;
                 iterator & operator++();
                 iterator & operator++(int);
                 bool operator!=(const iterator &) const;

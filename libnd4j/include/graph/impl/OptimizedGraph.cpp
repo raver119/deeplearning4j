@@ -22,6 +22,32 @@
 
 namespace sd {
     namespace graph {
+        OptimizedGraph::OptimizedGraph(const OptimizedGraph &other) noexcept {
+            _onion = other._onion;
+        }
+
+        OptimizedGraph &OptimizedGraph::operator=(const OptimizedGraph &other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _onion = other._onion;
+
+            return *this;
+        }
+
+        OptimizedGraph::OptimizedGraph(OptimizedGraph &&other) noexcept {
+            _onion = std::move(other._onion);
+        }
+
+        OptimizedGraph &OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _onion = std::move(other._onion);
+
+            return *this;
+        }
+
         uint64_t OptimizedGraph::layers() const {
             return _onion.size();
         }

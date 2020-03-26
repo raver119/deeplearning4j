@@ -22,7 +22,7 @@
 
 namespace sd {
     namespace graph {
-        OpSequence::OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> &ops) {
+        OpSequence::OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops) {
             for (const auto v : ops)
                 _ops.emplace_back(v);
         }
@@ -61,8 +61,8 @@ namespace sd {
             return _ops.size();
         }
 
-        void OpSequence::append(sd::ops::DeclarableOp *op, sd::graph::Context *ctx) {
-            _ops.emplace_back(std::pair<sd::ops::DeclarableOp *, sd::graph::Context *>{op, ctx});
+        void OpSequence::append(sd::ops::DeclarableOp *op, sd::graph::ContextPrototype *ctx) {
+            _ops.emplace_back(std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *>{op, ctx});
         }
 
 
@@ -80,7 +80,7 @@ namespace sd {
             //
         }
 
-        std::pair<sd::ops::DeclarableOp*, sd::graph::Context*> OpSequence::iterator::operator*() const {
+        std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> OpSequence::iterator::operator*() const {
             return _container._ops[_position];
         }
 

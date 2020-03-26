@@ -1697,6 +1697,12 @@ namespace sd {
             return graph;
              */
         }
+
+
+        OptimizedGraph Graph::optimizedGraph() const {
+            // TODO: implement this method
+            return OptimizedGraph();
+        }
     }
 }
 
