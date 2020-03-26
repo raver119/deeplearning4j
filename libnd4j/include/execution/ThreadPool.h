@@ -68,4 +68,4 @@ namespace samediff {
 }
 
 
-#endif //DEV_TESTS_THREADPOOL_H
+#endif //SD_THREADPOOL_H

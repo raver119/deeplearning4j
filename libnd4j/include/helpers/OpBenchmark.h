@@ -18,8 +18,8 @@
 // Created by raver on 2/28/2019.
 //
 
-#ifndef DEV_TESTS_OPEXECUTIONER_H
-#define DEV_TESTS_OPEXECUTIONER_H
+#ifndef SD_OPEXECUTIONER_H
+#define SD_OPEXECUTIONER_H
 
 #include <legacy/NativeOpExecutioner.h>
 #include <array/NDArray.h>
@@ -73,4 +73,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_OPEXECUTIONER_H
+#endif //SD_OPEXECUTIONER_H

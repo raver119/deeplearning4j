@@ -20,8 +20,8 @@
 
 #include <ops/declarable/helpers/helpers.h>
 
-#ifndef DEV_TESTS_TOGGLE_BITS_H
-#define DEV_TESTS_TOGGLE_BITS_H
+#ifndef SD_TOGGLE_BITS_H
+#define SD_TOGGLE_BITS_H
 
 namespace sd {
     namespace ops {
@@ -34,4 +34,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_TOGGLE_BITS_H
+#endif //SD_TOGGLE_BITS_H

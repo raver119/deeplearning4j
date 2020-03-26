@@ -43,4 +43,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_AFFINITYMANAGER_H
+#endif //SD_AFFINITYMANAGER_H

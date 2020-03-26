@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_UNRESOLVED_INPUT_H
-#define DEV_TESTS_UNRESOLVED_INPUT_H
+#ifndef SD_UNRESOLVED_INPUT_H
+#define SD_UNRESOLVED_INPUT_H
 
 #include <utility>
 #include <string>
@@ -39,4 +39,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_UNRESOLVED_INPUT_H
+#endif //SD_UNRESOLVED_INPUT_H

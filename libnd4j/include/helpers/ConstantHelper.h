@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CONSTANTHELPER_H
-#define DEV_TESTS_CONSTANTHELPER_H
+#ifndef SD_CONSTANTHELPER_H
+#define SD_CONSTANTHELPER_H
 
 #include <system/op_boilerplate.h>
 #include <system/dll.h>
@@ -61,4 +61,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_CONSTANTHELPER_H
+#endif //SD_CONSTANTHELPER_H

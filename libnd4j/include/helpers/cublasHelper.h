@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CUBLASHELPER_H
-#define DEV_TESTS_CUBLASHELPER_H
+#ifndef SD_CUBLASHELPER_H
+#define SD_CUBLASHELPER_H
 
 #include <system/dll.h>
 #include <system/pointercast.h>
@@ -49,4 +49,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_CUBLASHELPER_H
+#endif //SD_CUBLASHELPER_H

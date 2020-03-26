@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_TADPACK_H
-#define DEV_TESTS_TADPACK_H
+#ifndef SD_TADPACK_H
+#define SD_TADPACK_H
 
 #include "ConstantDataBuffer.h"
 
@@ -54,4 +54,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_TADPACK_H
+#endif //SD_TADPACK_H

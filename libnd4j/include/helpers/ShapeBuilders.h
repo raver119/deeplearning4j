@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_SHAPEBUILDERS_H
-#define DEV_TESTS_SHAPEBUILDERS_H
+#ifndef SD_SHAPEBUILDERS_H
+#define SD_SHAPEBUILDERS_H
 
 #include <vector>
 #include <helpers/shape.h>
@@ -66,4 +66,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_SHAPEBUILDERS_H
+#endif //SD_SHAPEBUILDERS_H

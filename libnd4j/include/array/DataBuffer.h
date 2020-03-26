@@ -19,8 +19,8 @@
 // @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
-#ifndef DEV_TESTS_DATABUFFER_H
-#define DEV_TESTS_DATABUFFER_H
+#ifndef SD_DATABUFFER_H
+#define SD_DATABUFFER_H
 
 #include <cstring>
 #include <system/op_boilerplate.h>
@@ -55,9 +55,9 @@ class ND4J_EXPORT DataBuffer {
 
         void setCountersToZero();
         void copyCounters(const DataBuffer& other);
-        void deleteSpecial();
-        void deletePrimary();
-        void deleteBuffers();
+        virtual void deleteSpecial();
+        virtual void deletePrimary();
+        virtual void deleteBuffers();
         void setAllocFlags(const bool isOwnerPrimary, const bool isOwnerSpecial = false);
         void allocateBuffers(const bool allocBoth = false);
         void setSpecial(void* special, const bool isOwnerSpecial);
@@ -87,8 +87,8 @@ class ND4J_EXPORT DataBuffer {
         explicit DataBuffer();
         ~DataBuffer();
 
-        DataBuffer& operator=(const DataBuffer& other);
-        DataBuffer& operator=(DataBuffer&& other) noexcept;
+        virtual DataBuffer& operator=(const DataBuffer& other);
+        virtual DataBuffer& operator=(DataBuffer&& other) noexcept;
 
         DataType getDataType();
         void setDataType(DataType dataType);
@@ -97,8 +97,8 @@ class ND4J_EXPORT DataBuffer {
         void* primary();
         void* special();
 
-        void allocatePrimary();
-        void allocateSpecial();
+        virtual void allocatePrimary();
+        virtual void allocateSpecial();
 
         void writePrimary() const;
         void writeSpecial() const;
@@ -107,11 +107,12 @@ class ND4J_EXPORT DataBuffer {
         bool isPrimaryActual() const;
         bool isSpecialActual() const;
 
-        void expand(const uint64_t size);
+        virtual void expand(const uint64_t size);
 
         int deviceId() const;
         void setDeviceId(int deviceId);
-        void migrate();
+
+        virtual void migrate();
 
         template <typename T> FORCEINLINE T* primaryAsT();
         template <typename T> FORCEINLINE T* specialAsT();
@@ -119,35 +120,35 @@ class ND4J_EXPORT DataBuffer {
         void syncToPrimary(const LaunchContext* context, const bool forceSync = false);
         void syncToSpecial(const bool forceSync = false);
 
-        void setToZeroBuffers(const bool both = false);
+        virtual void setToZeroBuffers(const bool both = false);
 
         void copyBufferFrom(const DataBuffer& other, size_t sizeToCopyinBytes = 0, const Nd4jLong offsetThis = 0, const Nd4jLong offsetOther = 0);
 
         static void memcpy(const DataBuffer &dst, const DataBuffer &src);
 
-        void setPrimaryBuffer(void *buffer, size_t length);
-        void setSpecialBuffer(void *buffer, size_t length);
+        virtual void setPrimaryBuffer(void *buffer, size_t length);
+        virtual void setSpecialBuffer(void *buffer, size_t length);
 
         /**
          * This method deletes buffers, if we're owners
          */
-        void close();
+        virtual void close();
 };
 ///// IMLEMENTATION OF INLINE METHODS /////
 
 ////////////////////////////////////////////////////////////////////////
     template <typename T>
     T* DataBuffer::primaryAsT() {
-        return reinterpret_cast<T*>(_primaryBuffer);
+        return reinterpret_cast<T*>(primary());
     }
 
 ////////////////////////////////////////////////////////////////////////
     template <typename T>
     T* DataBuffer::specialAsT() {
-        return reinterpret_cast<T*>(_specialBuffer);
+        return reinterpret_cast<T*>(special());
     }
 
 }
 
 
-#endif //DEV_TESTS_DATABUFFER_H
+#endif //SD_DATABUFFER_H

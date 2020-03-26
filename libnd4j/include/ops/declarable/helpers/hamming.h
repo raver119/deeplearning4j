@@ -29,4 +29,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_HAMMING_H
+#endif //SD_HAMMING_H

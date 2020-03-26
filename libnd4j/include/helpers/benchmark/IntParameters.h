@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_INTPARAMETERS_H
-#define DEV_TESTS_INTPARAMETERS_H
+#ifndef SD_INTPARAMETERS_H
+#define SD_INTPARAMETERS_H
 
 #include <map>
 #include <vector>
@@ -52,4 +52,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_INTPARAMETERS_H
+#endif //SD_INTPARAMETERS_H

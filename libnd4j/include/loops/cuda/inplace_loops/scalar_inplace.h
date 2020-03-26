@@ -19,8 +19,8 @@
 //
 
 
-#ifndef DEV_TESTS_SCALAR_INPLACE_H
-#define DEV_TESTS_SCALAR_INPLACE_H
+#ifndef SD_SCALAR_INPLACE_H
+#define SD_SCALAR_INPLACE_H
 
 #include <ops.h>
 #include <types/types.h>
@@ -79,4 +79,4 @@ namespace functions {
     }
 }
 
-#endif //DEV_TESTS_SCALAR_INPLACE_H
+#endif //SD_SCALAR_INPLACE_H

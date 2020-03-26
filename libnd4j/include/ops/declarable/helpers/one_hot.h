@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_ONE_HOT_H
-#define DEV_TESTS_ONE_HOT_H
+#ifndef SD_ONE_HOT_H
+#define SD_ONE_HOT_H
 
 #include <system/op_boilerplate.h>
 #include <array/NDArray.h>
@@ -34,4 +34,4 @@ namespace helpers 	{
 }
 }
 
-#endif //DEV_TESTS_ONE_HOT_H
+#endif //SD_ONE_HOT_H

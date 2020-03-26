@@ -18,8 +18,8 @@
 // Created by raver on 11/26/2018.
 //
 
-#ifndef DEV_TESTS_DATATYPE_EXCEPTION_H
-#define DEV_TESTS_DATATYPE_EXCEPTION_H
+#ifndef SD_DATATYPE_EXCEPTION_H
+#define SD_DATATYPE_EXCEPTION_H
 
 #include <string>
 #include <stdexcept>
@@ -47,4 +47,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_DATATYPE_EXCEPTION_H
+#endif //SD_DATATYPE_EXCEPTION_H

@@ -36,4 +36,4 @@
 
 #endif
 
-#endif //DEV_TESTS_MSVC_H
+#endif //SD_MSVC_H

@@ -62,4 +62,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_CONSTANTHOLDER_H
+#endif //SD_CONSTANTHOLDER_H

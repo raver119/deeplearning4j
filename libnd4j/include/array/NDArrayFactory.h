@@ -20,8 +20,8 @@
 // @author Oleg Semeniv <oleg.semeniv@gmail.com>
 //
 
-#ifndef DEV_TESTS_NDARRAYFACTORY_H
-#define DEV_TESTS_NDARRAYFACTORY_H
+#ifndef SD_NDARRAYFACTORY_H
+#define SD_NDARRAYFACTORY_H
 
 #include <vector>
 #include <initializer_list>
@@ -188,4 +188,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_NDARRAYFACTORY_H
+#endif //SD_NDARRAYFACTORY_H

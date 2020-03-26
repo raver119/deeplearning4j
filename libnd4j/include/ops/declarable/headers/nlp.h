@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_NLP_H
-#define DEV_TESTS_NLP_H
+#ifndef SD_NLP_H
+#define SD_NLP_H
 #include <ops/declarable/headers/common.h>
 
 namespace sd {
@@ -35,4 +35,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_NLP_H
+#endif //SD_NLP_H

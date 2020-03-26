@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_SHAPEDESCRIPTOR_H
-#define DEV_TESTS_SHAPEDESCRIPTOR_H
+#ifndef SD_SHAPEDESCRIPTOR_H
+#define SD_SHAPEDESCRIPTOR_H
 
 #include <unordered_map>
 #include <vector>
@@ -100,4 +100,4 @@ namespace std {
 #endif
 
 
-#endif //DEV_TESTS_SHAPEDESCRIPTOR_H
+#endif //SD_SHAPEDESCRIPTOR_H

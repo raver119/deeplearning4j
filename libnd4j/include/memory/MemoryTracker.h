@@ -18,8 +18,8 @@
 // Created by raver119 on 07.05.19.
 //
 
-#ifndef DEV_TESTS_MEMORYTRACKER_H
-#define DEV_TESTS_MEMORYTRACKER_H
+#ifndef SD_MEMORYTRACKER_H
+#define SD_MEMORYTRACKER_H
 
 #include <map>
 #include <string>
@@ -55,4 +55,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_MEMORYTRACKER_H
+#endif //SD_MEMORYTRACKER_H

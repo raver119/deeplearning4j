@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_BOOLPARAMETERS_H
-#define DEV_TESTS_BOOLPARAMETERS_H
+#ifndef SD_BOOLPARAMETERS_H
+#define SD_BOOLPARAMETERS_H
 
 #include <map>
 #include <vector>
@@ -45,4 +45,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_PARAMETERSPACE_H
+#endif //SD_PARAMETERSPACE_H

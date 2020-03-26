@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_SHIFT_H
-#define DEV_TESTS_SHIFT_H
+#ifndef SD_SHIFT_H
+#define SD_SHIFT_H
 
 #include <system/op_boilerplate.h>
 #include <types/types.h>
@@ -39,4 +39,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_SHIFT_H
+#endif //SD_SHIFT_H

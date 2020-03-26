@@ -18,8 +18,8 @@
 // Created by raver119 on 24/09/18.
 //
 
-#ifndef DEV_TESTS_WHERE_H
-#define DEV_TESTS_WHERE_H
+#ifndef SD_WHERE_H
+#define SD_WHERE_H
 
 #include <ops/declarable/helpers/helpers.h>
 
@@ -31,4 +31,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_WHERE_H
+#endif //SD_WHERE_H

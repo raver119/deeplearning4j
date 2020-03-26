@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_OPENMP_PRAGMAS_H
-#define DEV_TESTS_OPENMP_PRAGMAS_H
+#ifndef SD_OPENMP_PRAGMAS_H
+#define SD_OPENMP_PRAGMAS_H
 
 #if defined(_MSC_VER)
 
@@ -135,4 +135,4 @@
 #define PRAGMA_THREADS_FOR_2D [&](uint64_t thread_id, int64_t start_x, int64_t stop_x, int64_t inc_x, int64_t start_y, int64_t stop_y, int64_t inc_y) -> void
 #define PRAGMA_THREADS_FOR_3D [&](uint64_t thread_id, int64_t start_x, int64_t stop_x, int64_t inc_x, int64_t start_y, int64_t stop_y, int64_t inc_y, int64_t start_z, int64_t stop_z, int64_t inc_z) -> void
 
-#endif //DEV_TESTS_OPENMP_PRAGMAS_H
+#endif //SD_OPENMP_PRAGMAS_H

@@ -31,4 +31,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_LIGHTBENCHMARKSUIT_H
+#endif //SD_LIGHTBENCHMARKSUIT_H

@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_TRANSFORM_FLOAT_INPLACE_H
-#define DEV_TESTS_TRANSFORM_FLOAT_INPLACE_H
+#ifndef SD_TRANSFORM_FLOAT_INPLACE_H
+#define SD_TRANSFORM_FLOAT_INPLACE_H
 
 #include <ops.h>
 #include <types/types.h>
@@ -96,4 +96,4 @@ namespace functions {
 }
 
 #undef LOCAL_TRANSFORM_STRICT_OPS
-#endif //DEV_TESTS_TRANSFORM_FLOAT_INPLACE_H
+#endif //SD_TRANSFORM_FLOAT_INPLACE_H

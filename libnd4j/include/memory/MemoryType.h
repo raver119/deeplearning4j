@@ -2,8 +2,8 @@
 // Created by raver119 on 07.05.19.
 //
 
-#ifndef DEV_TESTS_MEMORYTYPE_H
-#define DEV_TESTS_MEMORYTYPE_H
+#ifndef SD_MEMORYTYPE_H
+#define SD_MEMORYTYPE_H
 
 namespace sd {
     namespace memory {
@@ -14,4 +14,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_MEMORYTYPE_H
+#endif //SD_MEMORYTYPE_H

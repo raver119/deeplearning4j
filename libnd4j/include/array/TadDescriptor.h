@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_TADDESCRIPTOR_H
-#define DEV_TESTS_TADDESCRIPTOR_H
+#ifndef SD_TADDESCRIPTOR_H
+#define SD_TADDESCRIPTOR_H
 
 #include "ShapeDescriptor.h"
 #include <system/dll.h>
@@ -71,4 +71,4 @@ namespace std {
 #endif
 
 
-#endif //DEV_TESTS_TADDESCRIPTOR_H
+#endif //SD_TADDESCRIPTOR_H

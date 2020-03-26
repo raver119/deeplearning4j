@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_EXTRAARGUMENTS_H
-#define DEV_TESTS_EXTRAARGUMENTS_H
+#ifndef SD_EXTRAARGUMENTS_H
+#define SD_EXTRAARGUMENTS_H
 
 #include <system/dll.h>
 #include <initializer_list>
@@ -62,4 +62,4 @@ namespace sd {
 
 
 
-#endif //DEV_TESTS_EXTRAARGUMENTS_H
+#endif //SD_EXTRAARGUMENTS_H

@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_SCATTER_H
-#define DEV_TESTS_SCATTER_H
+#ifndef SD_SCATTER_H
+#define SD_SCATTER_H
 
 #include <array/NDArray.h>
 
@@ -37,4 +37,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_SCATTER_H
+#endif //SD_SCATTER_H

@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_FLATTEN_H
-#define DEV_TESTS_FLATTEN_H
+#ifndef SD_FLATTEN_H
+#define SD_FLATTEN_H
 
 #include <vector>
 #include <array/NDArray.h>
@@ -65,4 +65,4 @@ INLINEDEF _CUDA_HD Nd4jLong getIndexOffsetOrdered(Nd4jLong index, const Nd4jLong
 }
 }
 
-#endif //DEV_TESTS_FLATTEN_H
+#endif //SD_FLATTEN_H

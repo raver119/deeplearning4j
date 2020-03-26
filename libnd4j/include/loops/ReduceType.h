@@ -18,8 +18,8 @@
  * @author raver119@gmail.com
  */
 
-#ifndef DEV_TESTS_REDUCETYPE_H
-#define DEV_TESTS_REDUCETYPE_H
+#ifndef SD_REDUCETYPE_H
+#define SD_REDUCETYPE_H
 
 namespace functions {
     enum ReduceType {
@@ -33,4 +33,4 @@ namespace functions {
     };
 }
 
-#endif //DEV_TESTS_REDUCETYPE_H
+#endif //SD_REDUCETYPE_H

@@ -56,4 +56,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_CONSTANTDATABUFFER_H
+#endif //SD_CONSTANTDATABUFFER_H

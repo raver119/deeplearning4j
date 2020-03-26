@@ -37,4 +37,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_BLASVERSIONHELPER_H
+#endif //SD_BLASVERSIONHELPER_H

@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CALLABLEWITHARGUMENTS_H
-#define DEV_TESTS_CALLABLEWITHARGUMENTS_H
+#ifndef SD_CALLABLEWITHARGUMENTS_H
+#define SD_CALLABLEWITHARGUMENTS_H
 
 #include <functional>
 #include <vector>
@@ -89,4 +89,4 @@ namespace samediff {
 }
 
 
-#endif //DEV_TESTS_CALLABLEWITHARGUMENTS_H
+#endif //SD_CALLABLEWITHARGUMENTS_H

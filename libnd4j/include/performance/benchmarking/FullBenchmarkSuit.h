@@ -31,4 +31,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_FULLBENCHMARKSUIT_H
+#endif //SD_FULLBENCHMARKSUIT_H

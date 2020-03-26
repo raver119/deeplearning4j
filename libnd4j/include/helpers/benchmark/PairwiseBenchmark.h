@@ -20,8 +20,8 @@
 
 #include "../OpBenchmark.h"
 
-#ifndef DEV_TESTS_PAIRWISEBENCHMARK_H
-#define DEV_TESTS_PAIRWISEBENCHMARK_H
+#ifndef SD_PAIRWISEBENCHMARK_H
+#define SD_PAIRWISEBENCHMARK_H
 
 using namespace sd::graph;
 
@@ -105,4 +105,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_SCALARBENCHMARK_H
+#endif //SD_SCALARBENCHMARK_H

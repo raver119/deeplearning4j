@@ -19,8 +19,8 @@
  // @author Yurii Shyrma (iuriish@yahoo.com)
  //
 
-#ifndef DEV_TESTS_MKLDNNUTILS_H
-#define DEV_TESTS_MKLDNNUTILS_H
+#ifndef SD_MKLDNNUTILS_H
+#define SD_MKLDNNUTILS_H
 
 
 #include <legacy/NativeOps.h>
@@ -194,4 +194,4 @@ namespace sd {
 
 
 
-#endif //DEV_TESTS_MKLDNNUTILS_H
+#endif //SD_MKLDNNUTILS_H

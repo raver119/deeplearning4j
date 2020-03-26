@@ -17,8 +17,8 @@
 //
 // @author raver119@gmail.com
 //
-#ifndef DEV_TESTS_INFERENCEREQUEST_H
-#define DEV_TESTS_INFERENCEREQUEST_H
+#ifndef SD_INFERENCEREQUEST_H
+#define SD_INFERENCEREQUEST_H
 
 #include <system/op_boilerplate.h>
 #include <system/pointercast.h>
@@ -57,4 +57,4 @@ namespace sd {
 
 
 
-#endif //DEV_TESTS_INFERENCEREQUEST_H
+#endif //SD_INFERENCEREQUEST_H

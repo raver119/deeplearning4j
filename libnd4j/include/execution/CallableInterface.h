@@ -91,4 +91,4 @@ namespace samediff {
 }
 
 
-#endif //DEV_TESTS_CALLABLEINTERFACE_H
+#endif //SD_CALLABLEINTERFACE_H

@@ -57,4 +57,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_READWRITELOCK_H
+#endif //SD_READWRITELOCK_H

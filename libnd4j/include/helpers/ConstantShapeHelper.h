@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CONSTANTSHAPEHELPER_H
-#define DEV_TESTS_CONSTANTSHAPEHELPER_H
+#ifndef SD_CONSTANTSHAPEHELPER_H
+#define SD_CONSTANTSHAPEHELPER_H
 
 #include <system/dll.h>
 #include <system/pointercast.h>
@@ -95,4 +95,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_CONSTANTSHAPEHELPER_H
+#endif //SD_CONSTANTSHAPEHELPER_H

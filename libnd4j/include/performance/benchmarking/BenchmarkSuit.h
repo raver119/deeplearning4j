@@ -38,4 +38,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_BENCHMARKSUIT_H
+#endif //SD_BENCHMARKSUIT_H

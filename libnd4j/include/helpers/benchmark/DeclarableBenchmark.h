@@ -19,8 +19,8 @@
 // Created by raver on 3/2/2019.
 //
 
-#ifndef DEV_TESTS_DECLARABLEBENCHMARK_H
-#define DEV_TESTS_DECLARABLEBENCHMARK_H
+#ifndef SD_DECLARABLEBENCHMARK_H
+#define SD_DECLARABLEBENCHMARK_H
 
 #include <array/NDArray.h>
 #include <graph/Context.h>
@@ -174,4 +174,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_DECLARABLEBENCHMARKS_H
+#endif //SD_DECLARABLEBENCHMARKS_H

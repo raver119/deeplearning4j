@@ -18,8 +18,8 @@
 // @author Yurii Shyrma (iuriish@yahoo.com), created on 09.04.2019
 //
 
-#ifndef DEV_TESTS_BROADCASTPAIRWISECONVERTER_H
-#define DEV_TESTS_BROADCASTPAIRWISECONVERTER_H
+#ifndef SD_BROADCASTPAIRWISECONVERTER_H
+#define SD_BROADCASTPAIRWISECONVERTER_H
 
 #include <system/op_boilerplate.h>
 #include <stdexcept>
@@ -93,4 +93,4 @@ inline pairwise::BoolOps fromBroadcastToPairwiseBool(broadcast::BoolOps op) {
     }
 }
 
-#endif //DEV_TESTS_BROADCASTPAIRWISECONVERTER_H
+#endif //SD_BROADCASTPAIRWISECONVERTER_H

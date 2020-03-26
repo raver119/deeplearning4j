@@ -31,4 +31,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_HISTOGRAM_H
+#endif //SD_HISTOGRAM_H

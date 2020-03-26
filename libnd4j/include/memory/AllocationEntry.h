@@ -18,8 +18,8 @@
 // Created by raver119 on 07.05.19.
 //
 
-#ifndef DEV_TESTS_ALLOCATIONENTRY_H
-#define DEV_TESTS_ALLOCATIONENTRY_H
+#ifndef SD_ALLOCATIONENTRY_H
+#define SD_ALLOCATIONENTRY_H
 
 #include <system/pointercast.h>
 #include <string>
@@ -47,4 +47,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_ALLOCATIONENTRY_H
+#endif //SD_ALLOCATIONENTRY_H

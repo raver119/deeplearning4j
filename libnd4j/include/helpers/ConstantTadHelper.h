@@ -19,8 +19,8 @@
 //
 
 
-#ifndef DEV_TESTS_CONSTANTTADHELPER_H
-#define DEV_TESTS_CONSTANTTADHELPER_H
+#ifndef SD_CONSTANTTADHELPER_H
+#define SD_CONSTANTTADHELPER_H
 
 #include <system/dll.h>
 #include <system/op_boilerplate.h>
@@ -86,4 +86,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_CONSTANTTADHELPER_H
+#endif //SD_CONSTANTTADHELPER_H

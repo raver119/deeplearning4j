@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_ERRORREFERENCE_H
-#define DEV_TESTS_ERRORREFERENCE_H
+#ifndef SD_ERRORREFERENCE_H
+#define SD_ERRORREFERENCE_H
 
 #include <string>
 #include <system/dll.h>
@@ -43,4 +43,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_ERRORREFERENCE_H
+#endif //SD_ERRORREFERENCE_H

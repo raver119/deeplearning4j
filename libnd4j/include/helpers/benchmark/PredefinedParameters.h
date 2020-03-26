@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_PREDEFINEDPARAMETERS_H
-#define DEV_TESTS_PREDEFINEDPARAMETERS_H
+#ifndef SD_PREDEFINEDPARAMETERS_H
+#define SD_PREDEFINEDPARAMETERS_H
 
 #include "ParametersSpace.h"
 
@@ -43,4 +43,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_PREDEFINEDPARAMETERS_H
+#endif //SD_PREDEFINEDPARAMETERS_H

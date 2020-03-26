@@ -86,4 +86,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_BENCHMARKHELPER_H
+#endif //SD_BENCHMARKHELPER_H

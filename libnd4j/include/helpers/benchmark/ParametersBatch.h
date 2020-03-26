@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_PARAMETERSBATCH_H
-#define DEV_TESTS_PARAMETERSBATCH_H
+#ifndef SD_PARAMETERSBATCH_H
+#define SD_PARAMETERSBATCH_H
 
 #include <helpers/benchmark/ParametersSpace.h>
 #include <vector>
@@ -81,4 +81,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_PARAMETERSBATCH_H
+#endif //SD_PARAMETERSBATCH_H

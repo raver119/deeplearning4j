@@ -20,8 +20,8 @@
 
 #include "../OpBenchmark.h"
 
-#ifndef DEV_TESTS_BROADCASTBENCHMARK_H
-#define DEV_TESTS_BROADCASTBENCHMARK_H
+#ifndef SD_BROADCASTBENCHMARK_H
+#define SD_BROADCASTBENCHMARK_H
 
 namespace sd {
     class ND4J_EXPORT BroadcastBenchmark : public OpBenchmark {
@@ -130,4 +130,4 @@ void executeOnce() override {
     };
 }
 
-#endif //DEV_TESTS_BROADCASTBENCHMARK_H
+#endif //SD_BROADCASTBENCHMARK_H

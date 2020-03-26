@@ -54,4 +54,4 @@ namespace sd {
 
 
 
-#endif //DEV_TESTS_GRAPH_EXCEPTION_H
+#endif //SD_GRAPH_EXCEPTION_H

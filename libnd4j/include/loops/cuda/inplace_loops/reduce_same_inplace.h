@@ -19,8 +19,8 @@
 //
 
 
-#ifndef DEV_TESTS_REDUCE_SAME_LOOPS_H
-#define DEV_TESTS_REDUCE_SAME_LOOPS_H
+#ifndef SD_REDUCE_SAME_LOOPS_H
+#define SD_REDUCE_SAME_LOOPS_H
 
 #include <ops.h>
 #include <types/types.h>
@@ -170,4 +170,4 @@ namespace functions {
     }
 }
 
-#endif //DEV_TESTS_REDUCE_SAME_LOOPS_H
+#endif //SD_REDUCE_SAME_LOOPS_H

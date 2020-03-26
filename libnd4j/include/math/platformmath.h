@@ -871,4 +871,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_PLATFORM_MATH_H
+#endif //SD_PLATFORM_MATH_H

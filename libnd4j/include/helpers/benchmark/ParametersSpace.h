@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_PARAMETERSPACE_H
-#define DEV_TESTS_PARAMETERSPACE_H
+#ifndef SD_PARAMETERSPACE_H
+#define SD_PARAMETERSPACE_H
 
 #include <vector>
 
@@ -39,4 +39,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_PARAMETERSPACE_H
+#endif //SD_PARAMETERSPACE_H

@@ -18,8 +18,8 @@
  * @author raver119@gmail.com
  */
 
-#ifndef DEV_TESTS_BASICSUIT_H
-#define DEV_TESTS_BASICSUIT_H
+#ifndef SD_BASICSUIT_H
+#define SD_BASICSUIT_H
 
 namespace sd {
     class BasicSuit {
@@ -30,4 +30,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_BASICSUIT_H
+#endif //SD_BASICSUIT_H

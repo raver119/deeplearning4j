@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_BROADCASTINTOPSTUPLE_H
-#define DEV_TESTS_BROADCASTINTOPSTUPLE_H
+#ifndef SD_BROADCASTINTOPSTUPLE_H
+#define SD_BROADCASTINTOPSTUPLE_H
 
 #include <system/op_enums.h>
 #include <system/dll.h>
@@ -47,4 +47,4 @@ namespace sd {
 }
 
 
-#endif //DEV_TESTS_BROADCASTOPSTUPLE_H
+#endif //SD_BROADCASTOPSTUPLE_H

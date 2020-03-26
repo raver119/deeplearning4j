@@ -18,8 +18,8 @@
 // Created by raver on 8/31/2018.
 //
 
-#ifndef DEV_TESTS_NO_RESULTS_EXCEPTION_H
-#define DEV_TESTS_NO_RESULTS_EXCEPTION_H
+#ifndef SD_NO_RESULTS_EXCEPTION_H
+#define SD_NO_RESULTS_EXCEPTION_H
 
 #include <system/op_boilerplate.h>
 #include <system/pointercast.h>
@@ -41,4 +41,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_UNKNOWN_GRAPH_EXCEPTION_H
+#endif //SD_UNKNOWN_GRAPH_EXCEPTION_H

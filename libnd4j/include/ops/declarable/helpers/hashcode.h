@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_HASHCODE_H
-#define DEV_TESTS_HASHCODE_H
+#ifndef SD_HASHCODE_H
+#define SD_HASHCODE_H
 
 #include "helpers.h"
 
@@ -67,4 +67,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_HASHCODE_H
+#endif //SD_HASHCODE_H

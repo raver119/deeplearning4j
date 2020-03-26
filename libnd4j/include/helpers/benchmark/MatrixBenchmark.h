@@ -21,8 +21,8 @@
 #include <helpers/OpBenchmark.h>
 #include <helpers/MmulHelper.h>
 
-#ifndef DEV_TESTS_MATRIXBENCHMARK_H
-#define DEV_TESTS_MATRIXBENCHMARK_H
+#ifndef SD_MATRIXBENCHMARK_H
+#define SD_MATRIXBENCHMARK_H
 
 namespace sd {
     class ND4J_EXPORT MatrixBenchmark : public OpBenchmark {
@@ -121,4 +121,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_SCALARBENCHMARK_H
+#endif //SD_SCALARBENCHMARK_H

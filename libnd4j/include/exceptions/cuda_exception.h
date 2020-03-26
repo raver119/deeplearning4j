@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CUDA_EXCEPTION_H
-#define DEV_TESTS_CUDA_EXCEPTION_H
+#ifndef SD_CUDA_EXCEPTION_H
+#define SD_CUDA_EXCEPTION_H
 
 #include <string>
 #include <stdexcept>
@@ -44,4 +44,4 @@ namespace sd {
 
 
 
-#endif //DEV_TESTS_CUDA_EXCEPTION_H
+#endif //SD_CUDA_EXCEPTION_H

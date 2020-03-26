@@ -19,8 +19,8 @@
 //
 #include "../OpBenchmark.h"
 
-#ifndef DEV_TESTS_SCALARBENCHMARK_H
-#define DEV_TESTS_SCALARBENCHMARK_H
+#ifndef SD_SCALARBENCHMARK_H
+#define SD_SCALARBENCHMARK_H
 
 using namespace sd::graph;
 
@@ -98,4 +98,4 @@ namespace sd {
     };
 }
 
-#endif //DEV_TESTS_SCALARBENCHMARK_H
+#endif //SD_SCALARBENCHMARK_H

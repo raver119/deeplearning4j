@@ -18,8 +18,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef DEV_TESTS_CONSTANTDESCRIPTOR_H
-#define DEV_TESTS_CONSTANTDESCRIPTOR_H
+#ifndef SD_CONSTANTDESCRIPTOR_H
+#define SD_CONSTANTDESCRIPTOR_H
 
 #include <array/DataType.h>
 #include <unordered_map>
@@ -72,4 +72,4 @@ namespace std {
 #endif
 
 
-#endif //DEV_TESTS_CONSTANTDESCRIPTOR_H
+#endif //SD_CONSTANTDESCRIPTOR_H

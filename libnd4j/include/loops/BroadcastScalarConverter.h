@@ -17,8 +17,8 @@
 /**
  * @author raver119@gmail.com
  */
-#ifndef DEV_TESTS_BROADCASTSCALARCONVERTER_H
-#define DEV_TESTS_BROADCASTSCALARCONVERTER_H
+#ifndef SD_BROADCASTSCALARCONVERTER_H
+#define SD_BROADCASTSCALARCONVERTER_H
 
 #include <system/op_boilerplate.h>
 #include <stdexcept>
@@ -54,4 +54,4 @@ namespace sd {
     }
 }
 
-#endif //DEV_TESTS_BROADCASTSCALARCONVERTER_H
+#endif //SD_BROADCASTSCALARCONVERTER_H
