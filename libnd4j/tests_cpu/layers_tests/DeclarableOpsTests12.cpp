@@ -3275,6 +3275,8 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
             -0.36143053f,  -0.8554431f, -0.10193637f, -0.35664293f,
             -0.13612571f, -0.34453574f,  0.30764785f,  0.87642324f
     });
+    auto row = NDArrayFactory::create<float>({-7.681145f,  15.745762f,  12.805375f, -9.160070f});
+    auto tail = row({1,4}); tail.printIndexedBuffer("TAIL");
     auto n = a.sizeAt(-1);
     auto k = 2;
     auto r1 = a({0, 1, 0, n});

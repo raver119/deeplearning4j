@@ -493,6 +493,29 @@ template<typename T>
         }
     }
 
+        template<typename T>
+        void makeHouseholder(NDArray& aThis, NDArray& essential, T& tau, T& beta)
+        {
+            auto size = aThis.lengthOf();
+            auto tail = aThis({1, size});//derived(), 1, size()-1);
+            T tailSqNorm = size == 1 ? T(0.f) : tail.reduceNumber(reduce::Norm2);
+            T c0 = aThis.t<T>(0);
+            const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
+
+            if(tailSqNorm <= tol)     {
+                tau = T(0.f);
+                beta = c0;
+                essential.nullify();
+            }
+            else
+            {
+                beta = sqrt( c0 * c0 + tailSqNorm);
+                if (c0 >= T(0.f))
+                    beta = -beta;
+                essential = tail / (c0 - beta);
+                tau = (beta - c0) / beta;
+            }
+        }
 
 /** \internal Compute index im at which Francis QR step starts and the first Householder vector. */
     template<typename T>
@@ -511,6 +534,23 @@ template<typename T>
             const T rhs = firstHouseholderVector.x * (math::nd4j_abs(inputMatrix.t<T>(initialFrancisIndex - 1, initialFrancisIndex - 1)) + math::nd4j_abs(Tmm) + abs(inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1)));
             if (math::nd4j_abs(lhs) < 1.e-5f * rhs)
                 break;
+        }
+    }
+
+    template <typename T>
+    void applyHouseholderOnTheLeft( NDArray& ioMatrix,  NDArray const& essential, T const& tau) {
+        if(ioMatrix.rows() == 1) { // when the vector-row
+            ioMatrix *= T(1.f) - tau;
+        }
+        else if(tau != T(0.f)) {
+            auto n = ioMatrix.sizeAt(-1);
+            //Map<typename internal::plain_row_type<PlainObject>::type> tmp(workspace,cols());
+            //Block<Derived, EssentialPart::SizeAtCompileTime, Derived::ColsAtCompileTime> bottom(derived(), 1, 0, rows()-1, cols());
+            auto bottom = ioMatrix({1, n, 0, 0}); // all rows from the second
+            auto tmp = essential * bottom;
+            tmp += ioMatrix({0, 1, 0, 0});//this->row(0);
+            ioMatrix({0, 1, 0, 0})  -= tau * tmp;
+            bottom -= tau * essential * tmp;
         }
     }
 
@@ -534,7 +574,7 @@ template<typename T>
 
             T tau, beta;
             NDArray ess('c', {2, 1}, DataTypeUtils::fromT<T>());
-//            v.makeHouseholder(ess, tau, beta);
+            makeHouseholder(v, ess, tau, beta);
 
             if (beta != T(0.f)) // if v is not zero
             {
