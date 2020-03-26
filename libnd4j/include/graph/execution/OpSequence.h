@@ -27,6 +27,9 @@
 
 namespace sd {
     namespace graph {
+    /**
+    * This class represents independent and immutable sequence of operations
+    */
     class OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> {
         // our internal iterator for OpSequence
         class iterator;
