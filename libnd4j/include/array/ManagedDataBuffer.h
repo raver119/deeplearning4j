@@ -27,7 +27,7 @@ namespace sd {
     /**
      * This class provides special DataBuffer implementation for use within Graphs
      */
-    class ManagedDataBuffer : public DataBuffer  {
+    class ND4J_EXPORT ManagedDataBuffer : public DataBuffer  {
     protected:
     public:
         ManagedDataBuffer() = default;
