@@ -1703,6 +1703,11 @@ namespace sd {
             // TODO: implement this method
             return OptimizedGraph();
         }
+
+        std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs) const {
+            // TODO: implement this method
+            return std::map<std::string, NDArray>();
+        }
     }
 }
 

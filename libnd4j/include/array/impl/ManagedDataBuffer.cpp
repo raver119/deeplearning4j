@@ -19,3 +19,9 @@
 //
 
 #include <array/ManagedDataBuffer.h>
+
+namespace sd {
+    ManagedDataBuffer::~ManagedDataBuffer() {
+        //
+    }
+}

@@ -31,7 +31,7 @@ namespace sd {
     protected:
     public:
         ManagedDataBuffer() = default;
-        ~ManagedDataBuffer() = default;
+        ~ManagedDataBuffer();
     };
 }
 

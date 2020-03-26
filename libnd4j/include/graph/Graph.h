@@ -244,6 +244,13 @@ namespace sd {
 
 
             OptimizedGraph optimizedGraph() const;
+
+            /**
+             * This method executes this Graph instance and returns execution results
+             * @param dictionary
+             * @return
+             */
+            std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}) const;
         };
 
         FORCEINLINE std::vector<int>* Graph::nodes() {
