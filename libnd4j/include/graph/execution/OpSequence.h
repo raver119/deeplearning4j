@@ -27,7 +27,9 @@
 
 namespace sd {
     namespace graph {
-        class OpSequence {
+    class OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> {
+        // our internal iterator for OpSequence
+        class iterator;
         protected:
             // main thing here. sorted list of operations and their contexts
             std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> _ops;
@@ -50,7 +52,7 @@ namespace sd {
              * This method returns number of individual operations within this sequence
              * @return
              */
-            uint64_t length();
+            uint64_t length() const;
 
             /**
              * This method allows to add DeclarableOp to the end of execution queue
@@ -58,6 +60,28 @@ namespace sd {
              * @param ctx - Context for this operation with inputs/outputs/args defined
              */
             void append(sd::ops::DeclarableOp *op, sd::graph::Context *ctx);
+
+            /**
+             * Iterator functionality for OpSequence
+             * @return
+             */
+
+            iterator begin();
+            iterator end();
+
+            // additional private section
+        private:
+            class iterator : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::Context*>> {
+            private:
+                uint64_t _position = 0;
+                OpSequence & _container;
+            public:
+                explicit iterator(OpSequence & container, uint64_t index = 0);
+                std::pair<sd::ops::DeclarableOp*, sd::graph::Context*> operator*() const;
+                iterator & operator++();
+                iterator & operator++(int);
+                bool operator!=(const iterator &) const;
+            };
         };
     }
 }

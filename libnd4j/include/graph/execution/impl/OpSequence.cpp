@@ -57,12 +57,44 @@ namespace sd {
             return *this;
         }
 
-        uint64_t OpSequence::length() {
+        uint64_t OpSequence::length() const {
             return _ops.size();
         }
 
         void OpSequence::append(sd::ops::DeclarableOp *op, sd::graph::Context *ctx) {
             _ops.emplace_back(std::pair<sd::ops::DeclarableOp *, sd::graph::Context *>{op, ctx});
+        }
+
+
+        OpSequence::iterator
+        OpSequence::begin() {
+            return OpSequence::iterator(*this, 0);
+        }
+
+        OpSequence::iterator
+        OpSequence::end() {
+            return OpSequence::iterator(*this, length());
+        }
+
+        OpSequence::iterator::iterator(OpSequence &container, uint64_t index) :_container(container), _position(index) {
+            //
+        }
+
+        std::pair<sd::ops::DeclarableOp*, sd::graph::Context*> OpSequence::iterator::operator*() const {
+            return _container._ops[_position];
+        }
+
+        OpSequence::iterator &OpSequence::iterator::operator++() {
+            _position++;
+            return *this;
+        }
+
+        OpSequence::iterator &OpSequence::iterator::operator++(int inc) {
+            return ++(*this);
+        }
+
+        bool OpSequence::iterator::operator!=(const OpSequence::iterator &other) const {
+            return _position != other._position;
         }
     }
 }
