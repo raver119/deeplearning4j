@@ -59,5 +59,9 @@ namespace sd {
         void OptimizedGraph::append(const std::vector<OpSequence> &layer) {
             _onion[_onion.size()] = layer;
         }
+
+        void OptimizedGraph::append(OpSequence &sequence) {
+            append(std::vector<OpSequence>{sequence});
+        }
     }
 }

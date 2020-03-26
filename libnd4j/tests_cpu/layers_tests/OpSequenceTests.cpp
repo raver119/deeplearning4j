@@ -25,6 +25,7 @@
 #include <helpers/OpTracker.h>
 #include <ops/declarable/CustomOperations.h>
 #include <graph/execution/OpSequence.h>
+#include <graph/OptimizedGraph.h>
 
 using namespace sd;
 using namespace sd::ops;
@@ -59,4 +60,10 @@ TEST_F(OpSequenceTests, test_iterator_1) {
     }
 
     ASSERT_EQ(3, cnt);
+
+    OptimizedGraph optimizedGraph;
+    ASSERT_EQ(0, optimizedGraph.layers());
+
+    optimizedGraph.append(sequence);
+    ASSERT_EQ(1, optimizedGraph.layers());
 }

@@ -68,6 +68,7 @@ namespace sd {
              */
              // FIXME: this method should be removed or made private
             void append(const std::vector<OpSequence> &layer);
+            void append(OpSequence &sequence);
         };
     }
 }
