@@ -23,6 +23,7 @@
 #include <array/NDArray.h>
 #include <legacy/NativeOps.h>
 #include <fstream>
+#include <array/ManagedDataBuffer.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -33,3 +34,9 @@ public:
         //
     }
 };
+
+TEST_F(ManagedDataBufferTests, basic_constructor_test_1) {
+    auto mdb = std::make_shared<ManagedDataBuffer>();
+
+    NDArray array(mdb, 'c', {0});
+}
