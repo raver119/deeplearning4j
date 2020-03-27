@@ -3285,6 +3285,7 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_4) {
     r1.printIndexedBuffer("The first row");
     r3.printIndexedBuffer("The third row");
     rK.printIndexedBuffer("The k-th row");
+    triangular({0, 4, 2, 2 + 1}).reduceNumber(reduce::Norm1).printIndexedBuffer("Norm1 for third column");
     auto rightColsK = a({0, 0, k, n}); // right columns from the kth (not including one or including one if is k a shift)
     rightColsK.printIndexedBuffer("right cols for k(k = 2)");
     auto topRowsK = a({0, k, 0, 0}); // top rows under the k-th and does not include one

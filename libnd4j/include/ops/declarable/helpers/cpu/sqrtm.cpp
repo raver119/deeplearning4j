@@ -636,6 +636,74 @@ template<typename T>
     void schurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
 
     }
+        /** \internal Computes and returns vector L1 norm of T */
+        template<typename T>
+        inline T computeNormOfT(NDArray const& m_matT) {
+            const auto size = m_matT.columns();
+            // FIXME to be efficient the following would requires a triangular reduxion code
+            // Scalar norm = m_matT.upper().cwiseAbs().sum()
+            //               + m_matT.bottomLeftCorner(size-1,size-1).diagonal().cwiseAbs().sum();
+            T norm(0.);
+            for (auto j = 0; j < size; ++j)
+                norm += m_matT({0, math::nd4j_min<Nd4jLong>(size, j + 2), j, j + 1}).reduceNumber(reduce::Norm1);
+            return norm;
+        }
+
+        template<typename T>
+        void computeFromHessenberg(const NDArray& matrixH, const NDArray& matrixQ, NDArray& m_matT, NDArray& m_matU) {
+
+            m_matT.assign(matrixH);
+            m_matU.assign(matrixQ);
+
+            Nd4jULong maxIters = m_matT.rows() * 40;// max count of iterations
+
+            // The matrix m_matT is divided in three parts.
+            // Rows 0,...,il-1 are decoupled from the rest because m_matT(il,il-1) is zero.
+            // Rows il,...,iu is the part we are working on (the active window).
+            // Rows iu+1,...,end are already brought in triangular form.
+            Nd4jLong indexUpper = m_matT.columns() - 1;
+            Nd4jLong iter = 0;      // iteration count for current eigenvalue
+            Nd4jLong totalIter = 0; // iteration count for whole matrix
+            T exshift(0.f);   // sum of exceptional shifts
+            T norm = computeNormOfT<T>();
+
+            if(norm != T(0.f)) // check for inversibility
+            {
+                while (indexUpper >= 0)
+                {
+                    Nd4jLong indexLower = findSmallerSubdiagonalEntry<T>(&m_matT, indexUpper);
+
+                    // Check for convergence
+                    if (indexLower == indexUpper) {// One root found
+                        m_matT.t<T>(indexUpper, indexUpper) = m_matT.t<T>(indexUpper, indexUpper) + exshift;
+                        if (indexUpper > 0)
+                            m_matT.t<T>(indexUpper, indexUpper - 1) = T(0.f);
+                        indexUpper--;
+                        iter = 0;
+                    }
+                    else if (indexLower == indexUpper - 1) { // Two roots found - the 2x2 band
+                        splitOffTwoRows<T>(m_matT, m_matU, indexUpper, exshift);
+                        indexUpper -= 2;
+                        iter = 0;
+                    }
+                    else { // No convergence yet
+                        // The firstHouseholderVector vector has to be initialized to something to get rid of a silly GCC warning (-O1 -Wall -DNDEBUG )
+                        ShiftInfo<T> firstHouseholderVector = {0}, shiftInfo;
+                        computeShift(indexUpper, iter, exshift, shiftInfo);
+                        iter = iter + 1;
+                        totalIter = totalIter + 1;
+                        if (totalIter > maxIters) break;
+                        Nd4jLong indexMedium;
+                        initFrancisQRStep<T>(m_matT, indexLower, indexUpper, shiftInfo, indexMedium, firstHouseholderVector);
+                        performFrancisQRStep<T>(m_matT, m_matU, indexLower, indexMedium, indexUpper, firstHouseholderVector);
+                    }
+                }
+            }
+
+            if(totalIter > maxIters)
+                throw std::runtime_error("schur decomposition: Input matrix does not convergence");
+        }
+
 
     template <typename T>
     void primitiveSchurDecomposition(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
