@@ -21,6 +21,7 @@
 #ifndef SD_ZONEMANAGER_H
 #define SD_ZONEMANAGER_H
 
+#include <system/dll.h>
 #include <memory/MemoryZone.h>
 #include <cstdint>
 
@@ -28,7 +29,7 @@ namespace sd {
     /**
      * Abstract class that defines common methods for zone managers
      */
-    class ZoneManager {
+    class ND4J_EXPORT ZoneManager {
     public:
         ZoneManager() = default;
         ~ZoneManager() = default;
