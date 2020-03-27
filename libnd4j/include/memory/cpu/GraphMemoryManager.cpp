@@ -32,6 +32,11 @@ namespace sd {
             _zones[MemoryZone::COLD] = new memory::ColdZoneManager();
         }
 
+        GraphMemoryManager::~GraphMemoryManager() {
+            delete _zones[MemoryZone::HOT];
+            delete _zones[MemoryZone::COLD];
+        }
+
         MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes, MemoryZone zone) {
             if (zone == MemoryZone::WARM)
                 zone = MemoryZone::HOT;
@@ -40,7 +45,7 @@ namespace sd {
         }
 
         void GraphMemoryManager::release(MemoryDescriptor &descriptor) {
-
+            _zones[descriptor.zone()]->release(descriptor);
         }
     }
 }

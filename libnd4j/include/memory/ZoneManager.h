@@ -39,7 +39,7 @@ namespace sd {
         public:
             ZoneManager() = default;
 
-            ~ZoneManager() = default;
+            virtual ~ZoneManager() = default;
 
             /**
              * This method returns id of the current zone served by this manager instance

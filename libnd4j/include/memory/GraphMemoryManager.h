@@ -36,7 +36,7 @@ namespace sd {
 
         public:
             GraphMemoryManager();
-            ~GraphMemoryManager() = default;
+            ~GraphMemoryManager();
 
             /**
              * This method does allocation (probably) and returns structure that describes it
@@ -44,13 +44,13 @@ namespace sd {
              * @param zone - memory zone for allocation
              * @return
              */
-            MemoryDescriptor allocate(size_t numBytes, MemoryZone zone);
+            virtual MemoryDescriptor allocate(size_t numBytes, MemoryZone zone);
 
             /**
              * This method releases (probably) memory chunk described by given descriptor
              * @param descriptor
              */
-            void release(MemoryDescriptor &descriptor);
+            virtual void release(MemoryDescriptor &descriptor);
         };
     }
 }
