@@ -41,9 +41,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.freemarker</groupId>
+            <groupId>org.nd4j</groupId>
             <artifactId>freemarker</artifactId>
-            <version>${freemarker.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

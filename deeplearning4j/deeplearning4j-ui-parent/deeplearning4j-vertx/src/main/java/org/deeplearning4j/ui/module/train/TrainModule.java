@@ -17,10 +17,10 @@
 
 package org.deeplearning4j.ui.module.train;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.Version;
+import org.nd4j.shade.freemarker.template.Configuration;
+import org.nd4j.shade.freemarker.template.Template;
+import org.nd4j.shade.freemarker.template.TemplateExceptionHandler;
+import org.nd4j.shade.freemarker.template.Version;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.ext.web.RoutingContext;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
