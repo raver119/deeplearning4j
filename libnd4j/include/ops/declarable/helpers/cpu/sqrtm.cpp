@@ -554,6 +554,21 @@ template<typename T>
         }
     }
 
+    template<typename T>
+    void applyHouseholderOnTheRight(NDArray& ioMatrix, const NDArray& essential, const T& tau) {
+        if(ioMatrix.sizeAt(-1) == 1) {
+            ioMatrix *= T(1.f) - tau;
+        }
+        else if(tau != T(0.f)) {
+            auto right = ioMatrix({0, 0, 1, 0}); // input matrix from the second column //(derived(), 0, 1, rows(), cols()-1);
+            auto tmp = right * essential.transpose();
+            tmp += ioMatrix({0, 0, 0, 1}); // the first column //this->col(0);
+            ioMatrix({0, 0, 0, 1}) -= tau * tmp;
+            right -= tau * tmp * essential.transpose();
+        }
+    }
+
+
 /** \internal Perform a Francis QR step involving rows il:iu and columns im:iu. */
     template<typename T>
     inline void performFrancisQRStep(NDArray& m_matT, NDArray& m_matU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, bool computeU, const ShiftInfo<T>& firstHouseholderVector) {
@@ -576,16 +591,16 @@ template<typename T>
             NDArray ess('c', {2, 1}, DataTypeUtils::fromT<T>());
             makeHouseholder(v, ess, tau, beta);
 
-            if (beta != T(0.f)) // if v is not zero
-            {
+            if (beta != T(0.f)) {// if v is not zero
                 if (firstIteration && k > indexLower)
                     m_matT.t<T>(k,k-1) = -m_matT.t<T>(k, k - 1);
                 else if (!firstIteration)
                     m_matT.t<T>(k,k-1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-//                m_matT.block(k, k, 3, size-k).applyHouseholderOnTheLeft(ess, tau, workspace);
+                applyHouseholderOnTheRight(m_matT({k, k + 3, k, size}), ess, tau);
 //                m_matT.block(0, k, (std::min)(iu,k+3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                applyHouseholderOnTheRight(m_matU({0, k, size, k + 3}), ess, tau);
 //                m_matU.block(0, k, size, 3).applyHouseholderOnTheRight(ess, tau, workspace);
             }
         }
