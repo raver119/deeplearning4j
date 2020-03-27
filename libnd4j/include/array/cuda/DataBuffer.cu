@@ -281,6 +281,10 @@ void DataBuffer::migrate() {
     _specialBuffer = newBuffer;
 }
 
+    void *DataBuffer::platform() {
+        return special();
+    }
+
 ////////////////////////////////////////////////////////////////////////
 void DataBuffer::writePrimary() const    {_writePrimary = ++_counter; }
 void DataBuffer::writeSpecial() const    { _writeSpecial = ++_counter; }

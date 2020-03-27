@@ -22,16 +22,28 @@
 #define SD_MANAGEDDATABUFFER_H
 
 #include <array/DataBuffer.h>
+#include <memory/GraphMemoryManager.h>
 
 namespace sd {
     /**
      * This class provides special DataBuffer implementation for use within Graphs
      */
     class ND4J_EXPORT ManagedDataBuffer : public DataBuffer  {
+    private:
+        graph::GraphMemoryManager &_manager;
+
     protected:
+        uint64_t _bytes;
+        DataType _dtype;
+        memory::MemoryZone _zone;
+        MemoryDescriptor _descriptor;
+
     public:
-        ManagedDataBuffer() = default;
+        ManagedDataBuffer(graph::GraphMemoryManager &manager, uint64_t numberOfBytes, DataType dtype, memory::MemoryZone zone);
         ~ManagedDataBuffer();
+
+        void* primary() override;
+        void* special() override;
     };
 }
 

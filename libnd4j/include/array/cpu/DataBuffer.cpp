@@ -127,6 +127,10 @@ void DataBuffer::memcpy(const DataBuffer &dst, const DataBuffer &src) {
     dst.readPrimary();
 }
 
+    void *DataBuffer::platform() {
+        return primary();
+    }
+
 
 ////////////////////////////////////////////////////////////////////////
 void DataBuffer::writePrimary() const    { }

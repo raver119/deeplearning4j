@@ -21,16 +21,11 @@
 #include <array/ManagedDataBuffer.h>
 
 namespace sd {
-    ManagedDataBuffer::ManagedDataBuffer(graph::GraphMemoryManager &manager, uint64_t numberOfBytes, DataType dtype, memory::MemoryZone zone) :
-            _manager(manager),
-            _bytes(numberOfBytes),
-            _dtype(dtype),
-            _zone(zone),
-            _descriptor(manager.allocate(numberOfBytes, zone)) {
-        // everything already initialized
+    void *ManagedDataBuffer::primary() {
+        return _descriptor.address();
     }
 
-    ManagedDataBuffer::~ManagedDataBuffer() {
-        //
+    void *ManagedDataBuffer::special() {
+        return nullptr;
     }
 }

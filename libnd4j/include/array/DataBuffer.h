@@ -94,8 +94,9 @@ class ND4J_EXPORT DataBuffer {
         void setDataType(DataType dataType);
         size_t getLenInBytes() const;
 
-        void* primary();
-        void* special();
+        virtual void* primary();
+        virtual void* special();
+        virtual void* platform();
 
         virtual void allocatePrimary();
         virtual void allocateSpecial();
@@ -116,6 +117,7 @@ class ND4J_EXPORT DataBuffer {
 
         template <typename T> FORCEINLINE T* primaryAsT();
         template <typename T> FORCEINLINE T* specialAsT();
+        template <typename T> FORCEINLINE T* platformAsT();
 
         void syncToPrimary(const LaunchContext* context, const bool forceSync = false);
         void syncToSpecial(const bool forceSync = false);
@@ -148,6 +150,11 @@ class ND4J_EXPORT DataBuffer {
         return reinterpret_cast<T*>(special());
     }
 
+////////////////////////////////////////////////////////////////////////
+    template <typename T>
+    T* DataBuffer::platformAsT() {
+        return reinterpret_cast<T*>(platform());
+    }
 }
 
 
