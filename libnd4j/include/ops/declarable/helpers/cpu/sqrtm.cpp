@@ -598,7 +598,8 @@ template<typename T>
         if (beta != T(0)) // if v is not zero
         {
             m_matT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
-//            m_matT.block(iu-1, iu-1, 2, size-iu+1).applyHouseholderOnTheLeft(ess, tau, workspace);
+            applyHouseholderOnTheLeft(m_matT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size}), ess, tau);
+//            m_matT.block(iu-1, iu-1, 2, size - iu + 1).applyHouseholderOnTheLeft(ess, tau, workspace);
 //            m_matT.block(0, iu-1, iu+1, 2).applyHouseholderOnTheRight(ess, tau, workspace);
 //            m_matU.block(0, iu-1, size, 2).applyHouseholderOnTheRight(ess, tau, workspace);
         }
