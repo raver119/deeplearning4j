@@ -21,7 +21,9 @@
 #include <memory/ColdZoneManager.h>
 
 namespace sd {
-    ColdZoneManager::ColdZoneManager(const char* filename) {
+    namespace memory {
+        ColdZoneManager::ColdZoneManager(const char *filename) {
 
+        }
     }
 }

@@ -26,32 +26,35 @@
 #include <cstdint>
 
 namespace sd {
-    /**
-     * Abstract class that defines common methods for zone managers
-     */
-    class ND4J_EXPORT ZoneManager {
-    public:
-        ZoneManager() = default;
-        ~ZoneManager() = default;
-
+    namespace memory {
         /**
-         * This method returns id of the current zone served by this manager instance
-         * @return MemoryZone enum
+         * Abstract class that defines common methods for zone managers
          */
-        virtual MemoryZone zone() const = 0;
+        class ND4J_EXPORT ZoneManager {
+        public:
+            ZoneManager() = default;
 
-        /**
-         * This method returns amount of memory available in this zone
-         * @return number of bytes
-         */
-        virtual uint64_t available() const = 0;
+            ~ZoneManager() = default;
 
-        /**
-         * This method returns amount of memory currently used in this zone
-         * @return number of bytes
-         */
-        virtual uint64_t used() const = 0;
-    };
+            /**
+             * This method returns id of the current zone served by this manager instance
+             * @return MemoryZone enum
+             */
+            virtual MemoryZone zone() const = 0;
+
+            /**
+             * This method returns amount of memory available in this zone
+             * @return number of bytes
+             */
+            virtual uint64_t available() const = 0;
+
+            /**
+             * This method returns amount of memory currently used in this zone
+             * @return number of bytes
+             */
+            virtual uint64_t used() const = 0;
+        };
+    }
 }
 
 

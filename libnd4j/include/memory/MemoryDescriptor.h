@@ -18,21 +18,36 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_WARMZONEMANAGER_H
-#define SD_WARMZONEMANAGER_H
+#ifndef SD_MEMORYDESCRIPTOR_H
+#define SD_MEMORYDESCRIPTOR_H
 
-#include <memory/ZoneManager.h>
+#include <memory/MemoryZone.h>
+#include <system/dll.h>
+#include <cstdint>
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT WarmZoneManager : public ZoneManager {
-        protected:
+        class ND4J_EXPORT MemoryDescriptor {
+        private:
+            void* _ptr;
+            MemoryZone _zone;
+            uint64_t _bytes;
         public:
-            WarmZoneManager() = default;
-            ~WarmZoneManager() = default;
+            MemoryDescriptor(void *ptr, MemoryZone zone, uint64_t bytes);
+            ~MemoryDescriptor() = default;
+
+            MemoryDescriptor(const MemoryDescriptor& other) noexcept;
+
+            MemoryDescriptor& operator=(const MemoryDescriptor& other) noexcept;
+
+            // move constructor
+            MemoryDescriptor(MemoryDescriptor&& other) noexcept;
+
+            // move assignment operator
+            MemoryDescriptor& operator=(MemoryDescriptor&& other) noexcept;
         };
     }
 }
 
 
-#endif //SD_WARMZONEMANAGER_H
+#endif //SD_MEMORYDESCRIPTOR_H

@@ -24,12 +24,14 @@
 #include <memory/ZoneManager.h>
 
 namespace sd {
-    class ND4J_EXPORT HotZoneManager : public ZoneManager {
-    protected:
-    public:
-        HotZoneManager() = default;
-        ~HotZoneManager() = default;
-    };
+    namespace memory {
+        class ND4J_EXPORT HotZoneManager : public ZoneManager {
+        protected:
+        public:
+            HotZoneManager() = default;
+            ~HotZoneManager() = default;
+        };
+    }
 }
 
 

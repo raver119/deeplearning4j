@@ -22,11 +22,13 @@
 #define SD_MEMORYZONE_H
 
 namespace sd {
-    enum MemoryZone {
-        COLD = 0,
-        WARM = 10,
-        HOT = 20,
-    };
+    namespace memory {
+        enum MemoryZone {
+            COLD = 0,
+            WARM = 10,
+            HOT = 20,
+        };
+    }
 }
 
 #endif //SD_MEMORYZONE_H

@@ -18,21 +18,4 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_WARMZONEMANAGER_H
-#define SD_WARMZONEMANAGER_H
-
-#include <memory/ZoneManager.h>
-
-namespace sd {
-    namespace memory {
-        class ND4J_EXPORT WarmZoneManager : public ZoneManager {
-        protected:
-        public:
-            WarmZoneManager() = default;
-            ~WarmZoneManager() = default;
-        };
-    }
-}
-
-
-#endif //SD_WARMZONEMANAGER_H
+#include <memory/GraphMemoryManager.h>
