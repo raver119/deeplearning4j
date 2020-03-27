@@ -571,8 +571,8 @@ template<typename T>
 
 /** \internal Perform a Francis QR step involving rows il:iu and columns im:iu. */
     template<typename T>
-    inline void performFrancisQRStep(NDArray& m_matT, NDArray& m_matU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, bool computeU, const ShiftInfo<T>& firstHouseholderVector) {
-        const Nd4jLong size = m_matT.sizeAt(-1);
+    inline void performFrancisQRStep(NDArray& ioMatrixT, NDArray& ioMatrixU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, bool computeU, const ShiftInfo<T>& firstHouseholderVector) {
+        const Nd4jLong size = ioMatrixT.sizeAt(-1);
 
         for (Nd4jLong k = indexMedium; k <= indexUpper - 2; ++k)
         {
@@ -582,9 +582,9 @@ template<typename T>
             if (firstIteration)
                 v = firstHouseholderVector;
             else {
-                v.x = m_matT.t<T>(k, k - 1);// = m_matT({k, k + 3, k - 1, k});//.template block<3,1>(k,k-1);
-                v.y = m_matT.t<T>(k + 1, k - 1);
-                v.z = m_matT.t<T>(k + 2, k - 1);
+                v.x = ioMatrixT.t<T>(k, k - 1);// = m_matT({k, k + 3, k - 1, k});//.template block<3,1>(k,k-1);
+                v.y = ioMatrixT.t<T>(k + 1, k - 1);
+                v.z = ioMatrixT.t<T>(k + 2, k - 1);
             }
 
             T tau, beta;
@@ -593,38 +593,34 @@ template<typename T>
 
             if (beta != T(0.f)) {// if v is not zero
                 if (firstIteration && k > indexLower)
-                    m_matT.t<T>(k,k-1) = -m_matT.t<T>(k, k - 1);
+                    ioMatrixT.t<T>(k, k - 1) = -ioMatrixT.t<T>(k, k - 1);
                 else if (!firstIteration)
-                    m_matT.t<T>(k,k-1) = beta;
+                    ioMatrixT.t<T>(k, k - 1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-                applyHouseholderOnTheRight(m_matT({k, k + 3, k, size}), ess, tau);
-//                m_matT.block(0, k, (std::min)(iu,k+3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
-                applyHouseholderOnTheRight(m_matU({0, k, size, k + 3}), ess, tau);
-//                m_matU.block(0, k, size, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                applyHouseholderOnTheLeft(ioMatrixT({k, k + 3, k, size}), ess, tau);
+                applyHouseholderOnTheRight(ioMatrixT({0, k, math::nd4j_min(indexUpper, k + 3), k + 3}), ess, tau);
+                applyHouseholderOnTheRight(ioMatrixU({0, k, size, k + 3}), ess, tau);
             }
         }
 
-        auto v = m_matT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
+        auto v = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
         T tau, beta;
         NDArray ess;
-//        v.makeHouseholder(ess, tau, beta);
+        makeHouseholder(v, ess, tau, beta);
 
-        if (beta != T(0)) // if v is not zero
-        {
-            m_matT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
-            applyHouseholderOnTheLeft(m_matT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size}), ess, tau);
-//            m_matT.block(iu-1, iu-1, 2, size - iu + 1).applyHouseholderOnTheLeft(ess, tau, workspace);
-//            m_matT.block(0, iu-1, iu+1, 2).applyHouseholderOnTheRight(ess, tau, workspace);
-//            m_matU.block(0, iu-1, size, 2).applyHouseholderOnTheRight(ess, tau, workspace);
+        if (beta != T(0)) { // if v is not zero
+            ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
+            applyHouseholderOnTheLeft(ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size}), ess, tau);
+            applyHouseholderOnTheRight(ioMatrixT({0, indexUpper + 1, indexUpper - 1, indexUpper + 1}), ess, tau);
+            applyHouseholderOnTheRight(ioMatrixU({0, size, indexUpper - 1, indexUpper + 1}), ess, tau);
         }
 
         // clean up pollution due to round-off errors
-        for (Nd4jLong i = indexMedium + 2; i <= indexUpper; ++i)
-        {
-            m_matT.t<T>(i, i - 2) = T(0.f);
+        for (Nd4jLong i = indexMedium + 2; i <= indexUpper; ++i) {
+            ioMatrixT.t<T>(i, i - 2) = T(0.f);
             if (i > indexMedium + 2)
-                m_matT.t<T>(i, i - 3) = T(0.f);
+                ioMatrixT.t<T>(i, i - 3) = T(0.f);
         }
     }
 
