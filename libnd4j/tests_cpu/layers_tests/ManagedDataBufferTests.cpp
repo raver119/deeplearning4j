@@ -31,7 +31,7 @@ using namespace sd::graph;
 class ManagedDataBufferTests : public testing::Test {
 public:
     ManagedDataBufferTests() {
-        //
+        ///
     }
 };
 
