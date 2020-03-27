@@ -18,12 +18,24 @@
 // @author raver119@gmail.com
 //
 
-#include <memory/ColdZoneManager.h>
+#ifndef SD_HOTRAMZONEMANAGER_H
+#define SD_HOTRAMZONEMANAGER_H
+
+#include <memory/HotZoneManager.h>
 
 namespace sd {
     namespace memory {
-        ColdZoneManager::ColdZoneManager(const char *filename) {
+        class HotRamZoneManager : public HotZoneManager {
+        public:
+            HotRamZoneManager() = default;
+            ~HotRamZoneManager() = default;
 
-        }
+            MemoryDescriptor allocate(uint64_t numBytes) override;
+
+            void release(MemoryDescriptor &descriptor) override;
+        };
     }
 }
+
+
+#endif //SD_HOTRAMZONEMANAGER_H

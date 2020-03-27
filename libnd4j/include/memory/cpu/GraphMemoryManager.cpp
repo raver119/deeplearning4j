@@ -19,11 +19,24 @@
 //
 
 #include <memory/GraphMemoryManager.h>
+#include <memory/HotRamZoneManager.h>
+#include <memory/ColdZoneManager.h>
 
 namespace sd {
     namespace graph {
+        GraphMemoryManager::GraphMemoryManager() {
+            // first of all we initialize all memory managers
+            // CPU backend only has two: HOT and COLD
+
+            _zones[MemoryZone::HOT] = new memory::HotRamZoneManager();
+            _zones[MemoryZone::COLD] = new memory::ColdZoneManager();
+        }
+
         MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes, MemoryZone zone) {
-            return MemoryDescriptor(nullptr, COLD, 0);
+            if (zone == MemoryZone::WARM)
+                zone = MemoryZone::HOT;
+
+            return _zones[zone]->allocate(numBytes);
         }
 
         void GraphMemoryManager::release(MemoryDescriptor &descriptor) {

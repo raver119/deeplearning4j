@@ -27,10 +27,11 @@ namespace sd {
             _dtype(dtype),
             _zone(zone),
             _descriptor(manager.allocate(numberOfBytes, zone)) {
-        // everything already initialized
+        // everything already initialized by now
     }
 
     ManagedDataBuffer::~ManagedDataBuffer() {
-        //
+        // if we know that MDB can be released - it means that all NDArrays were released, so it's really safe to release
+        _manager.release(_descriptor);
     }
 }

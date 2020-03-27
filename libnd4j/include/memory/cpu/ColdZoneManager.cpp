@@ -18,37 +18,32 @@
 // @author raver119@gmail.com
 //
 
-
-#ifndef SD_COLDZONEMANAGER_H
-#define SD_COLDZONEMANAGER_H
-
-#include <memory/ZoneManager.h>
+#include <memory/ColdZoneManager.h>
 
 namespace sd {
     namespace memory {
-        class ColdZoneManager : public ZoneManager {
-        public:
-            /**
-             * This constructor is used to initialize ZoneManager with existing FlatBuffers file
-             * @param filename - full path to existing file (i.e. FlatBuffers file)
-             */
-            explicit ColdZoneManager(const char *filename);
+        ColdZoneManager::ColdZoneManager(const char *filename) {
+            //
+        }
 
-            ColdZoneManager() = default;
-            ~ColdZoneManager() = default;
+        MemoryZone ColdZoneManager::zone() const {
+            return COLD;
+        }
 
-            MemoryZone zone() const override;
+        uint64_t ColdZoneManager::available() const {
+            return 0;
+        }
 
-            uint64_t available() const override;
+        uint64_t ColdZoneManager::used() const {
+            return 0;
+        }
 
-            uint64_t used() const override;
+        MemoryDescriptor ColdZoneManager::allocate(uint64_t numBytes) {
+            return MemoryDescriptor(nullptr, COLD, numBytes);
+        }
 
-            MemoryDescriptor allocate(uint64_t numBytes) override;
-
-            void release(MemoryDescriptor &descriptor) override;
-        };
+        void ColdZoneManager::release(MemoryDescriptor &descriptor) {
+            //
+        }
     }
 }
-
-
-#endif //SD_COLDZONEMANAGER_H

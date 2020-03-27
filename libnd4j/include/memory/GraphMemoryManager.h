@@ -35,7 +35,7 @@ namespace sd {
             std::map<MemoryZone, ZoneManager*> _zones;
 
         public:
-            GraphMemoryManager() = default;
+            GraphMemoryManager();
             ~GraphMemoryManager() = default;
 
             /**

@@ -19,3 +19,20 @@
 //
 
 #include <memory/HotZoneManager.h>
+
+
+namespace sd {
+    namespace memory {
+        MemoryZone HotZoneManager::zone() const {
+            return HOT;
+        }
+
+        uint64_t HotZoneManager::available() const {
+            return _available;
+        }
+
+        uint64_t HotZoneManager::used() const {
+            return _used;
+        }
+    }
+}

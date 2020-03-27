@@ -23,7 +23,9 @@
 
 #include <system/dll.h>
 #include <memory/MemoryZone.h>
+#include <memory/MemoryDescriptor.h>
 #include <cstdint>
+#include <mutex>
 
 namespace sd {
     namespace memory {
@@ -31,6 +33,9 @@ namespace sd {
          * Abstract class that defines common methods for zone managers
          */
         class ND4J_EXPORT ZoneManager {
+        protected:
+            std::mutex _lock;
+
         public:
             ZoneManager() = default;
 
@@ -53,6 +58,21 @@ namespace sd {
              * @return number of bytes
              */
             virtual uint64_t used() const = 0;
+
+            /**
+             * This method allocates (probably) some memory chunk, and returns you pointer to it.
+             * @param numBytes
+             * @return
+             */
+            virtual MemoryDescriptor allocate(uint64_t numBytes) = 0;
+
+            /**
+             * This method releases (probably) memory described by given MemoryDescriptor
+             * @param descriptor
+             */
+            virtual void release(MemoryDescriptor &descriptor) = 0;
+
+
         };
     }
 }

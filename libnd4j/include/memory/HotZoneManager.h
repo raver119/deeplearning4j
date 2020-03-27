@@ -22,14 +22,28 @@
 #define SD_HOTZONEMANAGER_H
 
 #include <memory/ZoneManager.h>
+#include <atomic>
 
 namespace sd {
     namespace memory {
         class ND4J_EXPORT HotZoneManager : public ZoneManager {
         protected:
+            std::atomic<uint64_t> _used = {0};
+            std::atomic<uint64_t> _available = {0};
+
         public:
             HotZoneManager() = default;
             ~HotZoneManager() = default;
+
+            MemoryZone zone() const override;
+
+            uint64_t available() const override;
+
+            uint64_t used() const override;
+
+            virtual MemoryDescriptor allocate(uint64_t numBytes) = 0;
+
+            virtual void release(MemoryDescriptor &descriptor) = 0;
         };
     }
 }
