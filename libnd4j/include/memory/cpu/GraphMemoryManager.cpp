@@ -19,3 +19,15 @@
 //
 
 #include <memory/GraphMemoryManager.h>
+
+namespace sd {
+    namespace graph {
+        MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes, MemoryZone zone) {
+            return MemoryDescriptor(nullptr, COLD, 0);
+        }
+
+        void GraphMemoryManager::release(MemoryDescriptor &descriptor) {
+
+        }
+    }
+}

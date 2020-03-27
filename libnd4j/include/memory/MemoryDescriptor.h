@@ -45,6 +45,10 @@ namespace sd {
 
             // move assignment operator
             MemoryDescriptor& operator=(MemoryDescriptor&& other) noexcept;
+
+            void* address() const;
+            MemoryZone zone() const;
+            uint64_t bytes() const;
         };
     }
 }

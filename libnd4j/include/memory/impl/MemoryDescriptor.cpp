@@ -55,5 +55,17 @@ namespace sd {
 
             return *this;
         }
+
+        void *MemoryDescriptor::address() const {
+            return _ptr;
+        }
+
+        MemoryZone MemoryDescriptor::zone() const {
+            return _zone;
+        }
+
+        uint64_t MemoryDescriptor::bytes() const {
+            return _bytes;
+        }
     }
 }
