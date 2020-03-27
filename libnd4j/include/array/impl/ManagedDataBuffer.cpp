@@ -23,11 +23,11 @@
 namespace sd {
     ManagedDataBuffer::ManagedDataBuffer(graph::GraphMemoryManager &manager, uint64_t numberOfBytes, DataType dtype, memory::MemoryZone zone) :
             _manager(manager),
-            _bytes(numberOfBytes),
-            _dtype(dtype),
             _zone(zone),
             _descriptor(manager.allocate(numberOfBytes, zone)) {
-        // everything already initialized by now
+
+        _lenInBytes = numberOfBytes;
+        _dataType = dtype;
     }
 
     ManagedDataBuffer::~ManagedDataBuffer() {

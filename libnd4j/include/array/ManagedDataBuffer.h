@@ -33,8 +33,6 @@ namespace sd {
         graph::GraphMemoryManager &_manager;
 
     protected:
-        uint64_t _bytes;
-        DataType _dtype;
         memory::MemoryZone _zone;
         MemoryDescriptor _descriptor;
 

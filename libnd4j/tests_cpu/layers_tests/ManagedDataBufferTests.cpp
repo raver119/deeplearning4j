@@ -43,10 +43,15 @@ TEST_F(ManagedDataBufferTests, basic_constructor_test_1) {
 }
 
 TEST_F(ManagedDataBufferTests, basic_constructor_test_2) {
+    auto exp = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+
     GraphMemoryManager mgr;
     auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 20, DataType::FLOAT32, memory::MemoryZone::HOT);
 
     ASSERT_NE(nullptr, mdb->platform());
 
     NDArray array(mdb, 'c', {5});
+    array.assign(1.0f);
+
+    ASSERT_EQ(exp, array);
 }
