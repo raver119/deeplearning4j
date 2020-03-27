@@ -23,7 +23,6 @@
 #define LIBND4J_FILES_H
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <stdio.h>
 
 
@@ -63,7 +62,7 @@ char ** shellpath(void) {
     int next = 0;
     while (p) {
 #ifdef _WIN32
-        char *q = strchr(p, ';'); // windows uses ; as delimiter
+        char *q = strchr(const_cast<char*>(p), ';'); // windows uses ; as delimiter
 #else
         char *q = strchr(const_cast<char*>(p), ':'); // linux and derivatives use : as delimiter
 #endif

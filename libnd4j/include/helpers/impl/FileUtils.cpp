@@ -22,7 +22,6 @@
 #include <helpers/files.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 namespace sd {
     bool FileUtils::fileExists(const char *filename) {

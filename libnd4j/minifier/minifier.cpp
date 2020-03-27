@@ -110,7 +110,7 @@ main(int argc, char *argv[]) {
 #endif  
             if (st.st_size != 0) {
                 //std::cout << "File " << file << " exists and can be read" << std::endl;
-                auto graph = GraphExecutioner::importFromFlatBuffers(file.c_str());
+                auto graph = Graph::fromFlatBuffers(file.c_str());
                 auto ops = graph->getOperations();
 
                 for (auto &v:ops) {
