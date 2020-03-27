@@ -36,7 +36,17 @@ public:
 };
 
 TEST_F(ManagedDataBufferTests, basic_constructor_test_1) {
-    auto mdb = std::make_shared<ManagedDataBuffer>();
+    GraphMemoryManager mgr;
+    auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 0, DataType::FLOAT32, memory::MemoryZone::HOT);
 
     NDArray array(mdb, 'c', {0});
+}
+
+TEST_F(ManagedDataBufferTests, basic_constructor_test_2) {
+    GraphMemoryManager mgr;
+    auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 20, DataType::FLOAT32, memory::MemoryZone::HOT);
+
+    ASSERT_NE(nullptr, mdb->platform());
+
+    NDArray array(mdb, 'c', {5});
 }
