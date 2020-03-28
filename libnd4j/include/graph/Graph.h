@@ -195,12 +195,12 @@ namespace sd {
             /**
              * This method returns clone of the graph
              */
-            Graph* clone();
+            Graph* clone() const;
 
             /**
              * This method returns clone of the graph, backed by VariableProxy instead of VariableSpace
              */
-            Graph* cloneWithProxy();
+            Graph* cloneWithProxy() const;
 
             /**
              * This method removes reference to VariableSpace from this Graph

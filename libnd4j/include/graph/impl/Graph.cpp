@@ -1299,7 +1299,7 @@ namespace sd {
             _configuration = configuration;
         }
 
-        Graph* Graph::cloneWithProxy() {
+        Graph* Graph::cloneWithProxy() const {
             auto clone = new Graph();
 
             clone->replaceState(new VariableProxy(this->_variableSpace), this->_configuration->clone());
@@ -1333,7 +1333,7 @@ namespace sd {
                 for (auto x: *(ovec)) {
                     auto n = x->clone();
                     vec->emplace_back(n);
-                    _handles.emplace_back(n);
+                    clone->_handles.emplace_back(n);
                     (*clone->_mapped)[n->id()] = n;
                 }
 
@@ -1350,7 +1350,7 @@ namespace sd {
             return clone;
         }
 
-        Graph* Graph::clone() {
+        Graph* Graph::clone() const {
             auto clone = new Graph();
 
             clone->replaceState(this->_variableSpace->clone(), this->_configuration->clone());
@@ -1384,7 +1384,7 @@ namespace sd {
                 for (auto x: *(ovec)) {
                     auto n = x->clone();
                     vec->emplace_back(n);
-                    _handles.emplace_back(n);
+                    clone->_handles.emplace_back(n);
                     (*clone->_mapped)[n->id()] = n;
                 }
 
