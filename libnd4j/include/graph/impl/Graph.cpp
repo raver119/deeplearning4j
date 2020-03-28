@@ -309,7 +309,7 @@ namespace sd {
         }
 
         void Graph::addNode(const sd::graph::Node &node) {
-            node.markRemovable(true);
+            node.markRemovable(false);
             addNode(const_cast<Node*>(&node));
         }
 

@@ -107,15 +107,30 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     ASSERT_EQ(2, optimized.layers());
 
     // checking first layer first
-    auto layer = optimized.layer(0);
+    auto layer0 = optimized.layer(0);
 
     // we expect layer has exactly 1 OpSequence
-    ASSERT_EQ(1, layer.size());
-    auto sequence = layer[0];
+    ASSERT_EQ(1, layer0.size());
+    auto sequence = layer0[0];
 
     // we expect that OpSequence has exactly 2 ops
     ASSERT_EQ(1, sequence.length());
 
     ASSERT_EQ(10, sequence.at(0).second->nodeId());
 
+    // checking second layer now
+    auto layer1 = optimized.layer(0);
+
+    // we expect layer has exactly 2 OpSequences
+    ASSERT_EQ(2, layer1.size());
+
+    sequence = layer1[0];
+
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(20, sequence.at(0).second->nodeId());
+
+    sequence = layer1[1];
+
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(30, sequence.at(0).second->nodeId());
 }
