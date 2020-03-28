@@ -100,7 +100,7 @@ namespace sd {
             virtual void putVariable(int id, Variable *variable);
             virtual void putVariable(int id, NDArray *array);
             virtual Variable* putVariable(int id, int idx, NDArray *array);
-            virtual void putVariable(int id, int idx, NDArray &array);
+            virtual void putVariable(int id, int idx, const NDArray &array);
             virtual void putVariable(int id, int idx, Variable *array);
 
             virtual void dropVariable(std::pair<int,int> &pair);

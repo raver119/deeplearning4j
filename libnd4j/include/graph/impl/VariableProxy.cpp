@@ -191,7 +191,7 @@ namespace sd {
             _current->putVariable(id, array);
         }
 
-        void sd::graph::VariableProxy::putVariable(int id, int idx, NDArray &array) {
+        void sd::graph::VariableProxy::putVariable(int id, int idx, const NDArray &array) {
             _current->putVariable(id, idx, array);
         }
         

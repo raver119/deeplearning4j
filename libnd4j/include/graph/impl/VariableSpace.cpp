@@ -305,8 +305,8 @@ namespace sd {
             }
         }
 
-        void sd::graph::VariableSpace::putVariable(int id, int idx, NDArray &array) {
-            auto *var = new sd::graph::Variable(&array, "", id, idx);
+        void sd::graph::VariableSpace::putVariable(int id, int idx, const NDArray &array) {
+            auto *var = new sd::graph::Variable(const_cast<NDArray*>(&array), "", id, idx);
             var->markRemovable(false);
             var->markReadOnly(true);
 
