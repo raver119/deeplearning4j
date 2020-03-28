@@ -27,7 +27,7 @@
 #include <mutex>
 
 namespace sd {
-    class ND4J_EXPORT AffinityManager {
+    class SD_EXPORT AffinityManager {
     private:
         static std::atomic<int> _lastDevice;
         static int _numberOfDevices;

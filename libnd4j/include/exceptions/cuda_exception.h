@@ -33,7 +33,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT cuda_exception : public std::runtime_error {
+    class SD_EXPORT cuda_exception : public std::runtime_error {
     public:
         cuda_exception(std::string message);
         ~cuda_exception() = default;

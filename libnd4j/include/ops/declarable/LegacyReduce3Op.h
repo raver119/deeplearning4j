@@ -28,7 +28,7 @@ namespace sd {
         /**
         *   This class provides wrapper for Reduce3 operations (i.e. dot, cosineDistance etc)
         */
-        class ND4J_EXPORT LegacyReduce3Op : public LegacyOp {
+        class SD_EXPORT LegacyReduce3Op : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
         public:

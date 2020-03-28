@@ -28,7 +28,7 @@ namespace sd {
     /**
      * This class provides special DataBuffer implementation for use within Graphs
      */
-    class ND4J_EXPORT ManagedDataBuffer : public DataBuffer  {
+    class SD_EXPORT ManagedDataBuffer : public DataBuffer  {
     private:
         graph::GraphMemoryManager &_manager;
 

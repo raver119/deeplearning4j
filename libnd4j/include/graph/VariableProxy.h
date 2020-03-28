@@ -22,7 +22,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT VariableProxy: public VariableSpace {
+        class SD_EXPORT VariableProxy: public VariableSpace {
         protected:
             VariableSpace* _backed = nullptr;
             VariableSpace* _current = nullptr;

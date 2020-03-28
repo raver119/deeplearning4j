@@ -52,7 +52,7 @@ namespace sd {
     namespace random {
 
 #ifdef __CUDACC__
-        class ND4J_EXPORT CudaManaged {
+        class SD_EXPORT CudaManaged {
         private:
 
         protected:
@@ -70,9 +70,9 @@ namespace sd {
             }
         };
 
-        class ND4J_EXPORT RandomBuffer : public CudaManaged {
+        class SD_EXPORT RandomBuffer : public CudaManaged {
 #else
-        class ND4J_EXPORT RandomBuffer {
+        class SD_EXPORT RandomBuffer {
 #endif
         private:
             void *devHolder;
@@ -511,7 +511,7 @@ namespace sd {
 
         };
 
-        class ND4J_EXPORT IGenerator {
+        class SD_EXPORT IGenerator {
         protected:
             Nd4jLong limit;
             Nd4jLong seed;
@@ -549,7 +549,7 @@ namespace sd {
 
 
 
-        class ND4J_EXPORT Xoroshiro128 : public IGenerator {
+        class SD_EXPORT Xoroshiro128 : public IGenerator {
         protected:
             uint64_t state[2];
 

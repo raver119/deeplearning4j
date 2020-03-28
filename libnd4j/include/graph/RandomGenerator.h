@@ -38,7 +38,7 @@
 namespace sd {
     namespace graph {
 #ifdef __CUDACC__
-        class ND4J_EXPORT CudaManagedRandomGenerator {
+        class SD_EXPORT CudaManagedRandomGenerator {
         private:
 
         protected:
@@ -59,9 +59,9 @@ namespace sd {
             }
         };
 
-        class ND4J_EXPORT RandomGenerator : public CudaManagedRandomGenerator {
+        class SD_EXPORT RandomGenerator : public CudaManagedRandomGenerator {
 #else
-        class ND4J_EXPORT RandomGenerator {
+        class SD_EXPORT RandomGenerator {
 #endif
         private:
 #ifndef __CUDACC__

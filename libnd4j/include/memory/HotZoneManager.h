@@ -26,7 +26,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT HotZoneManager : public ZoneManager {
+        class SD_EXPORT HotZoneManager : public ZoneManager {
         protected:
             std::atomic<uint64_t> _used = {0};
             std::atomic<uint64_t> _available = {0};

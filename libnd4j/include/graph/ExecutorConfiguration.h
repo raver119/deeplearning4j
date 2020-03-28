@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT ExecutorConfiguration {
+        class SD_EXPORT ExecutorConfiguration {
         public:
             sd::graph::ProfilingMode _profilingMode;
             sd::graph::ExecutionMode _executionMode;

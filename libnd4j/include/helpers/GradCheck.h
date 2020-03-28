@@ -27,7 +27,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT GradCheck {
+class SD_EXPORT GradCheck {
 
     public:
         enum LossFunc {MEAN = 0, SUM = 1};

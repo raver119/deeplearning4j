@@ -32,7 +32,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT DataBuffer {
+class SD_EXPORT DataBuffer {
 
     protected:
 

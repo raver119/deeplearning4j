@@ -52,16 +52,22 @@ namespace sd {
             return _onion.size();
         }
 
-        const std::vector<OpSequence> &OptimizedGraph::layer(uint64_t index) const {
+        const ExecutionLayer &OptimizedGraph::layer(uint64_t index) const {
             return _onion.at(index);
         }
 
         void OptimizedGraph::append(const std::vector<OpSequence> &layer) {
+            std::lock_guard<std::mutex> lock(_mutex);
             _onion[_onion.size()] = layer;
         }
 
         void OptimizedGraph::append(OpSequence &sequence) {
-            append(std::vector<OpSequence>{sequence});
+            append(ExecutionLayer({sequence}));
+        }
+
+        void OptimizedGraph::append(const ExecutionLayer &layer) {
+            std::lock_guard<std::mutex> lock(_mutex);
+            _onion[_onion.size()] = layer;
         }
     }
 }

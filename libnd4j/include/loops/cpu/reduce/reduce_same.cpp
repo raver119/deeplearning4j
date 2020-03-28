@@ -268,6 +268,6 @@ namespace functions {
         }
 
 
-        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT ReduceSameFunction, , LIBND4J_TYPES);
+        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT ReduceSameFunction, , LIBND4J_TYPES);
     }
 }

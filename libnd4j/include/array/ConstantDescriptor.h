@@ -29,7 +29,7 @@
 #include <array/ConstantDataBuffer.h>
 
 namespace sd {
-    class ND4J_EXPORT ConstantDescriptor {
+    class SD_EXPORT ConstantDescriptor {
     private:
         std::vector<Nd4jLong> _integerValues;
         std::vector<double> _floatValues;
@@ -63,7 +63,7 @@ namespace sd {
 
 namespace std {
     template<>
-    class ND4J_EXPORT hash<sd::ConstantDescriptor> {
+    class SD_EXPORT hash<sd::ConstantDescriptor> {
     public:
         size_t operator()(const sd::ConstantDescriptor &k) const;
     };

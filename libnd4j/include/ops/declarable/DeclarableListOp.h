@@ -30,7 +30,7 @@ using namespace sd::graph;
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT DeclarableListOp : public sd::ops::DeclarableOp {
+        class SD_EXPORT DeclarableListOp : public sd::ops::DeclarableOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override = 0;
 

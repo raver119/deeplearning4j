@@ -442,6 +442,6 @@ namespace functions {
             DEBUG_KERNEL(stream, opNum);
         }
 
-        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT RandomFunction, , FLOAT_TYPES);
+        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT RandomFunction, , FLOAT_TYPES);
     }
 }

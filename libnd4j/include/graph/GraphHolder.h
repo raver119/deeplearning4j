@@ -28,7 +28,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT GraphHolder {
+        class SD_EXPORT GraphHolder {
         private:
             static GraphHolder *_INSTANCE;
             MAP_IMPL<Nd4jLong, Graph *> _graphF;

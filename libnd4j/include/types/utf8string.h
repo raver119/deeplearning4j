@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    struct ND4J_EXPORT utf8string {
+    struct SD_EXPORT utf8string {
     private:
         bool _allocated = false;
     public:

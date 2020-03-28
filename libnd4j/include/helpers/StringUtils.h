@@ -32,7 +32,7 @@
 #include <helpers/unicode.h>
 
 namespace sd {
-    class ND4J_EXPORT StringUtils {
+    class SD_EXPORT StringUtils {
     public:
         template <typename T>
         static FORCEINLINE std::string valueToString(T value) {

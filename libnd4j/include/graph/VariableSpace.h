@@ -38,7 +38,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT VariableSpace {
+        class SD_EXPORT VariableSpace {
         protected:
             sd::memory::Workspace *_workspace;
 

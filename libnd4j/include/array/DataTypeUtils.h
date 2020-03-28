@@ -35,7 +35,7 @@
 #include <helpers/logger.h>
 
 namespace sd {
-    class ND4J_EXPORT DataTypeUtils {
+    class SD_EXPORT DataTypeUtils {
     public:
         static int asInt(DataType type);
         static DataType fromInt(int dtype);

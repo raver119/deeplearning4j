@@ -28,7 +28,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT OmpLaunchHelper {
+class SD_EXPORT OmpLaunchHelper {
 	
     public:				
         

@@ -28,7 +28,7 @@ namespace sd {
         /**
         *   This class provides wrapper for Pairwise transform operations
         */
-        class ND4J_EXPORT LegacyPairwiseTransformOp: public LegacyOp {
+        class SD_EXPORT LegacyPairwiseTransformOp: public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
         public:

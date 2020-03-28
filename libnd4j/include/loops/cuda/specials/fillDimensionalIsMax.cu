@@ -90,5 +90,5 @@ namespace sd {
         execfillDimensionalIsMax<T><<<launchDims.x, launchDims.y, launchDims.z, *stream>>>(dX, dZ, zShapeInfo, tadOnlyShapeInfo, dimension, dimensionLength, tadOffsets);
         sd::DebugHelper::checkErrorCode(stream, "fillDimensionalIsMax(...) failed");
     }
-    BUILD_SINGLE_TEMPLATE(template void ND4J_EXPORT fillDimensionalIsMaxGeneric, (dim3& launchDims, cudaStream_t *stream, void *dX, void *dZ, Nd4jLong *zShapeInfo, Nd4jLong *tadOnlyShapeInfo, int *dimension, int dimensionLength, Nd4jLong *tadOffsets), LIBND4J_TYPES);
+    BUILD_SINGLE_TEMPLATE(template void SD_EXPORT fillDimensionalIsMaxGeneric, (dim3& launchDims, cudaStream_t *stream, void *dX, void *dZ, Nd4jLong *zShapeInfo, Nd4jLong *tadOnlyShapeInfo, int *dimension, int dimensionLength, Nd4jLong *tadOffsets), LIBND4J_TYPES);
 }

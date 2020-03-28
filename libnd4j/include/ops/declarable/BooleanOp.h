@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT BooleanOp : public DeclarableOp {
+        class SD_EXPORT BooleanOp : public DeclarableOp {
         protected:
             OpDescriptor * _descriptor;
 

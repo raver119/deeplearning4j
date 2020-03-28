@@ -30,7 +30,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT VariablesSet {
+        class SD_EXPORT VariablesSet {
         protected:
             std::vector<sd::graph::Variable*> _holder;
             Nd4jStatus _status;

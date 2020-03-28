@@ -88,7 +88,7 @@
 
 
 namespace sd {
-    class ND4J_EXPORT ArrayOptions {
+    class SD_EXPORT ArrayOptions {
 
     private:
         static FORCEINLINE _CUDA_HD Nd4jLong& extra(Nd4jLong* shape);

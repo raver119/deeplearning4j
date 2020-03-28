@@ -25,7 +25,7 @@
 #define SD_MATRIXBENCHMARK_H
 
 namespace sd {
-    class ND4J_EXPORT MatrixBenchmark : public OpBenchmark {
+    class SD_EXPORT MatrixBenchmark : public OpBenchmark {
     private:
         float _alpha = 1.0f;
         float _beta = 0.0f;

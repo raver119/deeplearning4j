@@ -29,7 +29,7 @@
 
 namespace sd {
 namespace graph {
-    class ND4J_EXPORT ArgumentsList {
+    class SD_EXPORT ArgumentsList {
     protected:
         std::vector<Pair> _arguments;
     public:

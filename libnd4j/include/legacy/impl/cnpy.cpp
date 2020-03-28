@@ -729,6 +729,6 @@ std::vector<char> cnpy::createNpyHeader(const void *vdata,
     return header;
 }
 
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT std::vector<char> cnpy::createNpyHeader, (const void *data, const unsigned int *shape, const unsigned int ndims, unsigned int wordSize), LIBND4J_TYPES);
-//template ND4J_EXPORT std::vector<char> cnpy::createNpyHeader<void>(const void *data, const unsigned int *shape, const unsigned int ndims, unsigned int wordSize);
-template ND4J_EXPORT void cnpy::npy_save<float>(std::string fname, const float* data, const unsigned int* shape, const unsigned int ndims, std::string mode);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT std::vector<char> cnpy::createNpyHeader, (const void *data, const unsigned int *shape, const unsigned int ndims, unsigned int wordSize), LIBND4J_TYPES);
+//template SD_EXPORT std::vector<char> cnpy::createNpyHeader<void>(const void *data, const unsigned int *shape, const unsigned int ndims, unsigned int wordSize);
+template SD_EXPORT void cnpy::npy_save<float>(std::string fname, const float* data, const unsigned int* shape, const unsigned int ndims, std::string mode);

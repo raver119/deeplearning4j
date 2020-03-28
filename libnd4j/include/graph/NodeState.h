@@ -26,7 +26,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT NodeState {
+        class SD_EXPORT NodeState {
         private:
             // inner time spent on specific node
             Nd4jLong _inner = 0;

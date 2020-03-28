@@ -26,7 +26,7 @@
 using namespace sd::graph;
 
 namespace sd {
-    class ND4J_EXPORT PairwiseBenchmark : public OpBenchmark {
+    class SD_EXPORT PairwiseBenchmark : public OpBenchmark {
     public:
         PairwiseBenchmark() : OpBenchmark() {
             //

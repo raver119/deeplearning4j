@@ -38,7 +38,7 @@
 namespace sd {
     namespace graph {
 
-        class ND4J_EXPORT ContextPrototype {
+        class SD_EXPORT ContextPrototype {
         protected:
             // int ids of the input nodes
             std::vector<std::pair<int, int>> _inputs;

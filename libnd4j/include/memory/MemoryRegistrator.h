@@ -30,7 +30,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT MemoryRegistrator {
+        class SD_EXPORT MemoryRegistrator {
         protected:
             static MemoryRegistrator* _INSTANCE;
             Workspace* _workspace;

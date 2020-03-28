@@ -29,7 +29,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT FlatUtils {
+        class SD_EXPORT FlatUtils {
         public:
             static std::pair<int, int> fromIntPair(IntPair* pair);
 

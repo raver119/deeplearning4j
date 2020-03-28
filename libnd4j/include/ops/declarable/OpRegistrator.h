@@ -62,7 +62,7 @@ namespace sd {
         *   available at runtime via this singleton.
         *
         */
-        class ND4J_EXPORT OpRegistrator {
+        class SD_EXPORT OpRegistrator {
         private:
             static OpRegistrator* _INSTANCE;
             OpRegistrator() {

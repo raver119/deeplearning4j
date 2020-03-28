@@ -26,7 +26,7 @@
 #include <execution/ErrorReference.h>
 
 namespace sd {
-    class ND4J_EXPORT ContextBuffers {
+    class SD_EXPORT ContextBuffers {
     private:
         void* _reductionPointer = nullptr;
         void* _scalarPointer = nullptr;

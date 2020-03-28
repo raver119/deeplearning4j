@@ -205,10 +205,10 @@ void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail, const T coef
 }
 
 
-template class ND4J_EXPORT Householder<float>;
-template class ND4J_EXPORT Householder<float16>;
-template class ND4J_EXPORT Householder<bfloat16>;
-template class ND4J_EXPORT Householder<double>;
+template class SD_EXPORT Householder<float>;
+template class SD_EXPORT Householder<float16>;
+template class SD_EXPORT Householder<bfloat16>;
+template class SD_EXPORT Householder<double>;
 
 
 

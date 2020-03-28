@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT TimeHolder {
+        class SD_EXPORT TimeHolder {
         private:
             std::map<int, Nd4jLong> _outer;
             std::map<int, Nd4jLong> _inner;

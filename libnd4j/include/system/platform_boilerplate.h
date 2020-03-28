@@ -28,7 +28,7 @@
 #define CONCATP(A,B) A ##_##B
 
 
-#define DECLARE_PLATFORM_F(NAME, ENGINE, CNAME)      class ND4J_EXPORT PLATFORM_##CNAME : public PlatformHelper {\
+#define DECLARE_PLATFORM_F(NAME, ENGINE, CNAME)      class SD_EXPORT PLATFORM_##CNAME : public PlatformHelper {\
                                                      public: \
                                                         PLATFORM_##CNAME() :  PlatformHelper(#NAME, samediff::Engine::ENGINE) { } \
                                                         bool isUsable(graph::Context &context) override; \
@@ -37,7 +37,7 @@
 
 #define DECLARE_PLATFORM(NAME, ENGINE) DECLARE_PLATFORM_F(NAME, ENGINE, NAME ##_## ENGINE)
 
-#define PLATFORM_IMPL_F(NAME, ENGINE, CNAME)         struct ND4J_EXPORT __registratorPlatformHelper_##CNAME { \
+#define PLATFORM_IMPL_F(NAME, ENGINE, CNAME)         struct SD_EXPORT __registratorPlatformHelper_##CNAME { \
                                                         __registratorPlatformHelper_##CNAME() { \
                                                             auto helper = new PLATFORM_##CNAME(); \
                                                             OpRegistrator::getInstance()->registerHelper(helper); \

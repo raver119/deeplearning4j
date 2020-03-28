@@ -41,14 +41,14 @@ namespace sd {
     } FloatBits2;
 
 
-    class ND4J_EXPORT SpecialTypeConverter {
+    class SD_EXPORT SpecialTypeConverter {
     public:
         template<typename S, typename T>
         static void convertGeneric(Nd4jPointer * extras, void *dx, Nd4jLong N, void *dz);
     };
 
     template <typename T>
-    class ND4J_EXPORT SpecialMethods {
+    class SD_EXPORT SpecialMethods {
     public:
         static void concatCpuGeneric(const std::vector<const NDArray*>& inArrs, NDArray& output, const int axis);
         static void concatCpuGeneric(int dimension, int numArrays, Nd4jPointer *data, Nd4jPointer *inputShapeInfo, void *result, Nd4jLong *resultShapeInfo);
@@ -72,7 +72,7 @@ namespace sd {
     };
 
     template <typename X, typename Y>
-    class ND4J_EXPORT DoubleMethods{
+    class SD_EXPORT DoubleMethods{
     public:
         static void sortByKey(void *vx, Nd4jLong *xShapeInfo, void *vy, Nd4jLong *yShapeInfo, bool descending);
         static void sortByValue(void *vx, Nd4jLong *xShapeInfo, void *vy, Nd4jLong *yShapeInfo, bool descending);

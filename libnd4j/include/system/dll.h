@@ -25,8 +25,8 @@
 
 #ifdef _WIN32
 //#include <windows.h>
-#  define ND4J_EXPORT __declspec(dllexport)
+#  define SD_EXPORT __declspec(dllexport)
 #else
-#  define ND4J_EXPORT
+#  define SD_EXPORT
 #endif
 #endif //NATIVEOPERATIONS_DLL_H

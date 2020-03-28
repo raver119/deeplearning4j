@@ -22,6 +22,6 @@
 
 namespace functions {
     namespace random {
-        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT RandomFunction, , FLOAT_TYPES_0);
+        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT RandomFunction, , FLOAT_TYPES_0);
     }
 }

@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT Triple {
+    class SD_EXPORT Triple {
     protected:
         int _first = 0;
         int _second = 0;

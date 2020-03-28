@@ -55,18 +55,18 @@ namespace sd {
     T* ConstantDataBuffer::primaryAsT() {
         return reinterpret_cast<T*>(_primaryBuffer);
     }
-    template ND4J_EXPORT float* ConstantDataBuffer::primaryAsT<float>();
-    template ND4J_EXPORT double* ConstantDataBuffer::primaryAsT<double>();
-    template ND4J_EXPORT int* ConstantDataBuffer::primaryAsT<int>();
-    template ND4J_EXPORT Nd4jLong* ConstantDataBuffer::primaryAsT<Nd4jLong>();
+    template SD_EXPORT float* ConstantDataBuffer::primaryAsT<float>();
+    template SD_EXPORT double* ConstantDataBuffer::primaryAsT<double>();
+    template SD_EXPORT int* ConstantDataBuffer::primaryAsT<int>();
+    template SD_EXPORT Nd4jLong* ConstantDataBuffer::primaryAsT<Nd4jLong>();
 
     template <typename T>
     T* ConstantDataBuffer::specialAsT() {
         return reinterpret_cast<T*>(_specialBuffer);
     }
-    template ND4J_EXPORT float* ConstantDataBuffer::specialAsT<float>();
-    template ND4J_EXPORT double* ConstantDataBuffer::specialAsT<double>();
-    template ND4J_EXPORT int* ConstantDataBuffer::specialAsT<int>();
-    template ND4J_EXPORT Nd4jLong* ConstantDataBuffer::specialAsT<Nd4jLong>();
+    template SD_EXPORT float* ConstantDataBuffer::specialAsT<float>();
+    template SD_EXPORT double* ConstantDataBuffer::specialAsT<double>();
+    template SD_EXPORT int* ConstantDataBuffer::specialAsT<int>();
+    template SD_EXPORT Nd4jLong* ConstantDataBuffer::specialAsT<Nd4jLong>();
 
 }

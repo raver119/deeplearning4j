@@ -36,7 +36,7 @@
 namespace sd {
     namespace memory {
 
-        class ND4J_EXPORT Workspace {
+        class SD_EXPORT Workspace {
         protected:
             char* _ptrHost = nullptr;
             char* _ptrDevice = nullptr;

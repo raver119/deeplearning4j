@@ -33,7 +33,7 @@
 
 namespace sd {
 
-    class ND4J_EXPORT ConstantShapeHelper {
+    class SD_EXPORT ConstantShapeHelper {
     private:
         static ConstantShapeHelper *_INSTANCE;
 

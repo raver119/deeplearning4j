@@ -26,7 +26,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT MemoryReport {
+        class SD_EXPORT MemoryReport {
         private:
             Nd4jLong _vm = 0;
             Nd4jLong _rss = 0;

@@ -28,7 +28,7 @@
 
 namespace sd {
 
-    class ND4J_EXPORT Intervals {
+    class SD_EXPORT Intervals {
     
     private:
         std::vector<std::vector<Nd4jLong>> _content;

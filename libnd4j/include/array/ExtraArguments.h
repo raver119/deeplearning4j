@@ -29,7 +29,7 @@
 #include <stdlib.h>
 
 namespace sd {
-    class ND4J_EXPORT ExtraArguments {
+    class SD_EXPORT ExtraArguments {
     private:
         std::vector<double> _fpArgs;
         std::vector<Nd4jLong> _intArgs;

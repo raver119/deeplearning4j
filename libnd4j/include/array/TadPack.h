@@ -24,7 +24,7 @@
 #include "ConstantDataBuffer.h"
 
 namespace sd {
-    class ND4J_EXPORT TadPack {
+    class SD_EXPORT TadPack {
     private:
         ConstantDataBuffer _tadShape;
         ConstantDataBuffer _tadOffsets;

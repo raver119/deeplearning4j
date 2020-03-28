@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT ErrorReference {
+    class SD_EXPORT ErrorReference {
     private:
         int _errorCode = 0;
         std::string _errorMessage;

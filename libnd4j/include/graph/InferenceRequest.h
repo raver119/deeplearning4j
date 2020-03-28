@@ -28,7 +28,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT InferenceRequest {
+        class SD_EXPORT InferenceRequest {
         private:
             Nd4jLong _id;
             std::vector<Variable*> _variables;

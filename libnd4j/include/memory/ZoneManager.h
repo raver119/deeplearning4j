@@ -32,7 +32,7 @@ namespace sd {
         /**
          * Abstract class that defines common methods for zone managers
          */
-        class ND4J_EXPORT ZoneManager {
+        class SD_EXPORT ZoneManager {
         protected:
             std::mutex _lock;
 

@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT ResultWrapper {
+        class SD_EXPORT ResultWrapper {
         private:
             Nd4jLong _size = 0L;
             Nd4jPointer _pointer = nullptr;

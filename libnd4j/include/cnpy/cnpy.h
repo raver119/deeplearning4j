@@ -59,7 +59,7 @@ namespace cnpy {
     /**
      * The numpy array
      */
-    struct ND4J_EXPORT NpyArray {
+    struct SD_EXPORT NpyArray {
         char* data;
         std::vector<unsigned int> shape;
         unsigned int wordSize;
@@ -69,7 +69,7 @@ namespace cnpy {
         }
     };
 
-    struct ND4J_EXPORT npz_t : public std::unordered_map<std::string, NpyArray> {
+    struct SD_EXPORT npz_t : public std::unordered_map<std::string, NpyArray> {
         void destruct() {
             npz_t::iterator it = this->begin();
             for(; it != this->end(); ++it) (*it).second.destruct();
@@ -81,7 +81,7 @@ namespace cnpy {
      * @param path
      * @return
      */
-    ND4J_EXPORT char* loadFile(const char *path);
+    SD_EXPORT char* loadFile(const char *path);
 
 
 
@@ -97,10 +97,10 @@ namespace cnpy {
      * @param t
      * @return
      */
-    ND4J_EXPORT char mapType(const std::type_info &t);
+    SD_EXPORT char mapType(const std::type_info &t);
 
     template <typename T>
-    ND4J_EXPORT char mapType();
+    SD_EXPORT char mapType();
 
     /**
      *
@@ -111,7 +111,7 @@ namespace cnpy {
      * @return
      */
     template<typename T>
-    ND4J_EXPORT std::vector<char> createNpyHeader(const void *data,
+    SD_EXPORT std::vector<char> createNpyHeader(const void *data,
                                       const unsigned int *shape,
                                       const unsigned int ndims,
                                       unsigned int wordSize = 4);
@@ -126,7 +126,7 @@ namespace cnpy {
      * @param ndims
      * @param fortranOrder
      */
-    ND4J_EXPORT void parseNpyHeader(FILE *fp,
+    SD_EXPORT void parseNpyHeader(FILE *fp,
                         unsigned int &wordSize,
                         unsigned int *&shape,
                         unsigned int &ndims,
@@ -143,7 +143,7 @@ namespace cnpy {
     * @param ndims
     * @param fortran_order
     */
-    ND4J_EXPORT void parseNpyHeaderPointer(
+    SD_EXPORT void parseNpyHeaderPointer(
             const char *header,
             unsigned int& word_size,
             unsigned int*& shape,
@@ -156,7 +156,7 @@ namespace cnpy {
      * @param global_header_size
      * @param global_header_offset
      */
-    ND4J_EXPORT void parseZipFooter(FILE *fp,
+    SD_EXPORT void parseZipFooter(FILE *fp,
                         unsigned short &nrecs,
                         unsigned int &global_header_size,
                         unsigned int &global_header_offset);
@@ -167,14 +167,14 @@ namespace cnpy {
      * @param varname
      * @return
      */
-    ND4J_EXPORT NpyArray npzLoad(std::string fname, std::string varname);
+    SD_EXPORT NpyArray npzLoad(std::string fname, std::string varname);
 
     /**
      *
      * @param fname
      * @return
      */
-    ND4J_EXPORT NpyArray npyLoad(std::string fname);
+    SD_EXPORT NpyArray npyLoad(std::string fname);
 
     /**
     * Parse the numpy header from
@@ -187,7 +187,7 @@ namespace cnpy {
     * @param ndims
     * @param fortranOrder
     */
-    ND4J_EXPORT void parseNpyHeaderStr(std::string header,
+    SD_EXPORT void parseNpyHeaderStr(std::string header,
                            unsigned int &wordSize,
                            unsigned int *&shape,
                            unsigned int &ndims,
@@ -199,46 +199,46 @@ namespace cnpy {
      * @param fp
      * @return
      */
-    ND4J_EXPORT int* shapeFromFile(FILE *fp);
+    SD_EXPORT int* shapeFromFile(FILE *fp);
 
     /**
      *
      * @param data
      * @return
      */
-    ND4J_EXPORT int* shapeFromPointer(char *data);
+    SD_EXPORT int* shapeFromPointer(char *data);
 
     /**
      * Load the numpy array from the given file.
      * @param fp the file to load
      * @return the loaded array
      */
-    ND4J_EXPORT NpyArray loadNpyFromFile(FILE *fp);
+    SD_EXPORT NpyArray loadNpyFromFile(FILE *fp);
 
     /**
      * Load the numpy array archive from the given file.
      * @param fp the file to load
      * @return the loaded archive
     */
-    ND4J_EXPORT npz_t npzLoad(FILE* fp);
+    SD_EXPORT npz_t npzLoad(FILE* fp);
     /**
      *
      * @param data
      * @return
      */
-    ND4J_EXPORT NpyArray loadNpyFromPointer(char *data);
+    SD_EXPORT NpyArray loadNpyFromPointer(char *data);
 
     /**
    *
    * @param data
    * @return
    */
-    ND4J_EXPORT NpyArray loadNpyFromHeader(char *data);
+    SD_EXPORT NpyArray loadNpyFromHeader(char *data);
 
 
-    ND4J_EXPORT npz_t npzLoad(std::string fname);
+    SD_EXPORT npz_t npzLoad(std::string fname);
 
-    ND4J_EXPORT sd::DataType dataTypeFromHeader(char *data);
+    SD_EXPORT sd::DataType dataTypeFromHeader(char *data);
 /**
 * Parse the numpy header from
 * the given file
@@ -250,7 +250,7 @@ namespace cnpy {
 * @param ndims
 * @param fortran_order
 */
-    ND4J_EXPORT void parseNpyHeader(std::string header,
+    SD_EXPORT void parseNpyHeader(std::string header,
                         unsigned int &word_size,
                         unsigned int *&shape,
                         unsigned int &ndims,
@@ -273,7 +273,7 @@ namespace cnpy {
 
 
     template<typename T>
-    ND4J_EXPORT void npy_save(std::string fname, const T* data, const unsigned int* shape, const unsigned int ndims, std::string mode = "w");
+    SD_EXPORT void npy_save(std::string fname, const T* data, const unsigned int* shape, const unsigned int ndims, std::string mode = "w");
 
 }
 
@@ -285,7 +285,7 @@ namespace cnpy {
      * @return
      */
     template<typename T>
-    ND4J_EXPORT std::vector<char>& operator+=(std::vector<char>& lhs, const T rhs);
+    SD_EXPORT std::vector<char>& operator+=(std::vector<char>& lhs, const T rhs);
 
 
 #endif

@@ -30,7 +30,7 @@
 #include <helpers/PointersManager.h>
 
 namespace sd {
-    class ND4J_EXPORT DeclarableBenchmark : public OpBenchmark  {
+    class SD_EXPORT DeclarableBenchmark : public OpBenchmark  {
     protected:
         sd::ops::DeclarableOp *_op = nullptr;
         sd::graph::Context *_context = nullptr;

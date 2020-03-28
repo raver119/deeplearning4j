@@ -34,7 +34,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT allocation_exception : public std::runtime_error {
+    class SD_EXPORT allocation_exception : public std::runtime_error {
     public:
         allocation_exception(std::string message);
         ~allocation_exception() = default;

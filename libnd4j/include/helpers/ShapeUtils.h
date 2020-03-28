@@ -26,7 +26,7 @@
 
 namespace sd {
 
-    class ND4J_EXPORT ShapeUtils {
+    class SD_EXPORT ShapeUtils {
 
         public:
 

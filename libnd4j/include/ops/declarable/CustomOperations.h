@@ -59,7 +59,7 @@
 
 
 namespace sd {
-    struct ND4J_EXPORT _loader {
+    struct SD_EXPORT _loader {
         _loader();
     };
 

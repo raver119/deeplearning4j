@@ -48,5 +48,5 @@ namespace sd {
 #endif
     }
 
-    BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT ReductionLongLoops, , LIBND4J_TYPES, LONG_TYPES);
+    BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionLongLoops, , LIBND4J_TYPES, LONG_TYPES);
 }

@@ -40,7 +40,7 @@
 namespace sd {
     namespace graph {
 
-    class ND4J_EXPORT GraphExecutioner {
+    class SD_EXPORT GraphExecutioner {
     protected:
 
 

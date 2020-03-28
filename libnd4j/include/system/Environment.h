@@ -30,7 +30,7 @@
 #include <system/pointercast.h>
 
 namespace sd{
-    class ND4J_EXPORT Environment {
+    class SD_EXPORT Environment {
     private:
         std::atomic<int> _tadThreshold;
         std::atomic<int> _elementThreshold;

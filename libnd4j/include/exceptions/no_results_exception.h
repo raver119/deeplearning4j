@@ -35,7 +35,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT no_results_exception: public graph_exception {
+    class SD_EXPORT no_results_exception: public graph_exception {
     public:
         explicit no_results_exception(Nd4jLong graphId);
     };

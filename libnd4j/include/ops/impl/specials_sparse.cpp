@@ -217,6 +217,6 @@ PRAGMA_OMP_SINGLE_ARGS(nowait)
 #endif
         }
 
-        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT SparseUtils, , LIBND4J_TYPES);
+        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT SparseUtils, , LIBND4J_TYPES);
     }
 }

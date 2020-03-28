@@ -28,7 +28,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT BroadcastableOp : public DeclarableCustomOp{
+        class SD_EXPORT BroadcastableOp : public DeclarableCustomOp{
         protected:
             Nd4jStatus validateAndExecute(Context& block) override = 0;
         public:

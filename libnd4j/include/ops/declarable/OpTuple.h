@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT OpTuple {
+        class SD_EXPORT OpTuple {
         public:
             std::string _opName;
             std::vector<sd::NDArray*> _inputs;

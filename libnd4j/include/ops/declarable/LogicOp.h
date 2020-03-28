@@ -32,7 +32,7 @@ namespace sd {
          * Their code is the part of GraphExecutioner logic. But we still want them to be expressed via Graph
          * @tparam T
          */
-        class ND4J_EXPORT LogicOp : public DeclarableOp {
+        class SD_EXPORT LogicOp : public DeclarableOp {
         protected:
             Nd4jStatus validateAndExecute(sd::graph::Context& block) override;
         public:

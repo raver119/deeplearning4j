@@ -33,7 +33,7 @@ namespace sd {
         /**
          * This class is used for tracking memory allocation wrt their allocation points in code
          */
-        class ND4J_EXPORT MemoryTracker {
+        class SD_EXPORT MemoryTracker {
         private:
             static MemoryTracker* _INSTANCE;
             std::map<Nd4jLong, AllocationEntry> _allocations;

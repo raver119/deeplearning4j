@@ -28,7 +28,7 @@ namespace sd {
         /**
         *   This class provides wrapper for scalar transform operations, i.e. a + b = c, where either a or b is scalar primitive and other operand is NDArray
         */
-        class ND4J_EXPORT LegacyScalarBoolOp : public LegacyOp {
+        class SD_EXPORT LegacyScalarBoolOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
 

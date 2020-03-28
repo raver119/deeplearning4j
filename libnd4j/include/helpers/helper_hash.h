@@ -29,7 +29,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT HashHelper {
+        class SD_EXPORT HashHelper {
         private:
             static HashHelper* _INSTANCE;
 

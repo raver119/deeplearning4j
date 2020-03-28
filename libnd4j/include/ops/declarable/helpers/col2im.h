@@ -27,7 +27,7 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    ND4J_EXPORT void col2im(sd::LaunchContext & context, const NDArray& input,  NDArray& output, const int sH, const int sW, const int pH, const int pW, const int iH, const int iW, const int dH, const int dW);
+    SD_EXPORT void col2im(sd::LaunchContext & context, const NDArray& input,  NDArray& output, const int sH, const int sW, const int pH, const int pW, const int iH, const int iW, const int dH, const int dW);
 
 
 }

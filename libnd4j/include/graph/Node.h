@@ -36,7 +36,7 @@ namespace sd {
 
         class Graph;
 
-        class ND4J_EXPORT Node {
+        class SD_EXPORT Node {
         protected:
             // TODO: this field must be removed
             sd::DataType _dataType;

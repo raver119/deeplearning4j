@@ -25,7 +25,7 @@
 #include "NDIndex.h"
 
 namespace sd {
-    class ND4J_EXPORT IndicesList {
+    class SD_EXPORT IndicesList {
     protected:
         std::vector<NDIndex *> _indices;
     public:

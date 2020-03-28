@@ -28,7 +28,7 @@ namespace sd {
         /**
         *   This class provides wrapper for SummaryStats operations: Variance and Standard Deviation
         */
-        class ND4J_EXPORT LegacyStatsOp : public LegacyOp {
+        class SD_EXPORT LegacyStatsOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context &block) override;
         public:

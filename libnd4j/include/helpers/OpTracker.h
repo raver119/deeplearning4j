@@ -30,7 +30,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT OpTracker {
+    class SD_EXPORT OpTracker {
     private:
         static OpTracker* _INSTANCE;        
 

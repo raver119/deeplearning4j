@@ -31,7 +31,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT GraphProfile {
+        class SD_EXPORT GraphProfile {
         private:
             // this variable
             Nd4jLong _merges = 1L;

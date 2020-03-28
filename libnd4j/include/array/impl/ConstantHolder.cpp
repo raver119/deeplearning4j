@@ -40,7 +40,7 @@ namespace sd {
     bool ConstantHolder::hasBuffer() {
         return hasBuffer(DataTypeUtils::fromT<T>());
     }
-    BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT bool ConstantHolder::hasBuffer, (void), LIBND4J_TYPES);
+    BUILD_SINGLE_TEMPLATE(template SD_EXPORT bool ConstantHolder::hasBuffer, (void), LIBND4J_TYPES);
 
     void ConstantHolder::addBuffer(ConstantDataBuffer &pointer, sd::DataType dataType) {
         _buffers[dataType] = pointer;
@@ -50,7 +50,7 @@ namespace sd {
     void ConstantHolder::addBuffer(ConstantDataBuffer &pointer) {
         addBuffer(pointer, DataTypeUtils::fromT<T>());
     }
-    BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT void ConstantHolder::addBuffer, (ConstantDataBuffer& cb), LIBND4J_TYPES);
+    BUILD_SINGLE_TEMPLATE(template SD_EXPORT void ConstantHolder::addBuffer, (ConstantDataBuffer& cb), LIBND4J_TYPES);
 
     ConstantDataBuffer* ConstantHolder::getConstantDataBuffer(sd::DataType dataType) {
         if (!hasBuffer(dataType))
@@ -63,5 +63,5 @@ namespace sd {
     ConstantDataBuffer* ConstantHolder::getConstantDataBuffer() {
         return getConstantDataBuffer(DataTypeUtils::fromT<T>());
     }
-    BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT ConstantDataBuffer* ConstantHolder::getConstantDataBuffer, (), LIBND4J_TYPES);
+    BUILD_SINGLE_TEMPLATE(template SD_EXPORT ConstantDataBuffer* ConstantHolder::getConstantDataBuffer, (), LIBND4J_TYPES);
 }

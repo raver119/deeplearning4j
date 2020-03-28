@@ -26,7 +26,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT NDIndex {
+    class SD_EXPORT NDIndex {
     protected:
         std::vector<Nd4jLong> _indices;
         Nd4jLong _stride = 1;
@@ -46,7 +46,7 @@ namespace sd {
         static NDIndex* interval(Nd4jLong start, Nd4jLong end, Nd4jLong stride = 1);
     };
 
-    class ND4J_EXPORT NDIndexAll : public NDIndex {
+    class SD_EXPORT NDIndexAll : public NDIndex {
     public:
         NDIndexAll();
         virtual bool isInterval();
@@ -54,14 +54,14 @@ namespace sd {
     };
 
 
-    class ND4J_EXPORT NDIndexPoint : public NDIndex {
+    class SD_EXPORT NDIndexPoint : public NDIndex {
     public:
         NDIndexPoint(Nd4jLong point);
         virtual bool isInterval();
         ~NDIndexPoint() = default;
     };
 
-    class ND4J_EXPORT NDIndexInterval : public NDIndex {
+    class SD_EXPORT NDIndexInterval : public NDIndex {
     public:
         NDIndexInterval(Nd4jLong start, Nd4jLong end, Nd4jLong stride = 1);
         virtual bool isInterval();

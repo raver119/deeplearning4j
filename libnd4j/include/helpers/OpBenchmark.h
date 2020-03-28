@@ -28,7 +28,7 @@
 #include <helpers/ConstantTadHelper.h>
 
 namespace sd {
-    class ND4J_EXPORT OpBenchmark {
+    class SD_EXPORT OpBenchmark {
     protected:
         int _opNum = 0;
         std::string _testName;

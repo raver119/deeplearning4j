@@ -38,7 +38,7 @@
 #endif
 
 namespace sd {
-    struct ND4J_EXPORT DebugInfo {
+    struct SD_EXPORT DebugInfo {
        double _minValue;
        double _maxValue;
        double _meanValue;

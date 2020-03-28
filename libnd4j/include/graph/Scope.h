@@ -34,7 +34,7 @@ namespace sd {
          *
          * @tparam T
          */
-        class ND4J_EXPORT Scope {
+        class SD_EXPORT Scope {
         protected:
             // Graph-unique IDs for Scope instances
             int _id;

@@ -34,7 +34,7 @@ namespace sd {
 
     class NDArray; // forward declaration of template class NDArray
 
-    class ND4J_EXPORT ResultSet {
+    class SD_EXPORT ResultSet {
     private:
         std::vector<sd::NDArray *> _content;
         Nd4jStatus _status = ND4J_STATUS_OK;

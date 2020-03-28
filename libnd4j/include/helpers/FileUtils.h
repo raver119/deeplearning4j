@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT FileUtils {
+    class SD_EXPORT FileUtils {
     public:
         static bool fileExists(const char *filename);
 

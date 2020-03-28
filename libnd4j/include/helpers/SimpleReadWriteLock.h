@@ -32,7 +32,7 @@
  * Basic idea: write lock won't be obtained before all read requests served
  */
 namespace sd {
-    class ND4J_EXPORT SimpleReadWriteLock {
+    class SD_EXPORT SimpleReadWriteLock {
     private:
         std::atomic<unsigned long long int> _read_locks;
         std::atomic<unsigned long long int> _write_locks;

@@ -32,7 +32,7 @@
 
 
 namespace sd {
-    class ND4J_EXPORT NDArrayFactory {
+    class SD_EXPORT NDArrayFactory {
     private:
         template <typename T>
         static void memcpyFromVector(void *ptr, const std::vector<T> &vector);

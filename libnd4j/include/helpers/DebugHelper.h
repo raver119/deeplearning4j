@@ -38,7 +38,7 @@
 #include <helpers/DebugInfo.h>
 namespace sd {
     class NDArray;
-    class ND4J_EXPORT DebugHelper {
+    class SD_EXPORT DebugHelper {
     public:
 
     // cuda-specific debug functions

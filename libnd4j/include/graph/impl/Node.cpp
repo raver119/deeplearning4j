@@ -319,7 +319,7 @@ namespace sd {
             node->_dataType = DataTypeUtils::fromT<T>();
             return node;
         }
-        BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT Node* Node::asT, (), LIBND4J_TYPES);
+        BUILD_SINGLE_TEMPLATE(template SD_EXPORT Node* Node::asT, (), LIBND4J_TYPES);
 
         Node::Node(const std::string &opName, const int id, const std::vector<std::pair<int, int>> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs) {
 

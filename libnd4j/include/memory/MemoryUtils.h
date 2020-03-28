@@ -26,7 +26,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT MemoryUtils {
+        class SD_EXPORT MemoryUtils {
         public:
             static bool retrieveMemoryStatistics(MemoryReport& report);
         };

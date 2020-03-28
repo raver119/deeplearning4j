@@ -756,7 +756,7 @@ void BroadcastBool<X, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo,
     }
 }
 
-        //BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT BroadcastBool, , LIBND4J_TYPES, BOOL_TYPES);
+        //BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT BroadcastBool, , LIBND4J_TYPES, BOOL_TYPES);
 
 
 }

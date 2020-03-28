@@ -42,6 +42,6 @@ namespace sd {
 #endif
     }
 
-    BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT ReductionBoolLoops, , LIBND4J_TYPES, BOOL_TYPES);
+    BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionBoolLoops, , LIBND4J_TYPES, BOOL_TYPES);
 }
 

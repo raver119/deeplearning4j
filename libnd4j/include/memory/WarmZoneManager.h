@@ -25,7 +25,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT WarmZoneManager : public ZoneManager {
+        class SD_EXPORT WarmZoneManager : public ZoneManager {
         protected:
         public:
             WarmZoneManager() = default;

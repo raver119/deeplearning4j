@@ -29,13 +29,13 @@ namespace ops     {
 namespace helpers {
 
 //////////////////////////////////////////////////////////////////////////
-void ND4J_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
+void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                    const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
                    const std::vector<float>& params,
                          NDArray* h, NDArray* c);
 
 //////////////////////////////////////////////////////////////////////////
-void ND4J_EXPORT lstmLayerTimeLoop(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
+void SD_EXPORT lstmLayerTimeLoop(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                         const NDArray* b, const NDArray* seqLen, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
                         const std::vector<float>& params,
                         const bool forward,

@@ -41,7 +41,7 @@
 namespace sd {
     namespace graph {
 
-        class ND4J_EXPORT Graph {
+        class SD_EXPORT Graph {
         protected:
             ExecutorConfiguration *_configuration;
             VariableSpace *_variableSpace;

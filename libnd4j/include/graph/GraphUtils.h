@@ -28,7 +28,7 @@
 namespace sd {
 namespace graph {
 
-class ND4J_EXPORT GraphUtils {
+class SD_EXPORT GraphUtils {
 public:
     typedef std::vector<sd::ops::OpDescriptor> OpList;
 

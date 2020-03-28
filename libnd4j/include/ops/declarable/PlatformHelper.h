@@ -34,7 +34,7 @@ namespace sd {
             /**
              * This abstract class defines methods used by platform-specific helpers implementations
              */
-            class ND4J_EXPORT PlatformHelper {
+            class SD_EXPORT PlatformHelper {
             protected:
                 // target engine for this impl
                 samediff::Engine _engine;

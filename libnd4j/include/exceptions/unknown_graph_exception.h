@@ -35,7 +35,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT unknown_graph_exception: public graph_exception {
+    class SD_EXPORT unknown_graph_exception: public graph_exception {
     public:
         explicit unknown_graph_exception(Nd4jLong graphId);
     };

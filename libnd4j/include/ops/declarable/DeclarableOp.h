@@ -44,7 +44,7 @@ using namespace sd::graph;
 namespace sd {
     namespace ops {
 
-        Nd4jStatus ND4J_EXPORT conditionHelper(const char *file, int line, int condition, int argNumber, const char *format, ...);
+        Nd4jStatus SD_EXPORT conditionHelper(const char *file, int line, int condition, int argNumber, const char *format, ...);
 
 
         template<typename T>
@@ -64,7 +64,7 @@ namespace sd {
          * This class is the basic building block of Graph Operations. Any CustomOp out there is built on top of this "abstract" class.
          *
          */
-        class ND4J_EXPORT DeclarableOp {
+        class SD_EXPORT DeclarableOp {
         private:
             std::mutex _registrator;
             bool _registered = false;

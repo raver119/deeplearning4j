@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT TadDescriptor {
+    class SD_EXPORT TadDescriptor {
     private:
         ShapeDescriptor _originalShape;
 
@@ -62,7 +62,7 @@ namespace sd {
 
 namespace std {
     template<>
-    class ND4J_EXPORT hash<sd::TadDescriptor> {
+    class SD_EXPORT hash<sd::TadDescriptor> {
     public:
         size_t operator()(const sd::TadDescriptor &k) const;
     };

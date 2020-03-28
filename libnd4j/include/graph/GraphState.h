@@ -38,7 +38,7 @@
 namespace sd {
 namespace graph {
 
-    class ND4J_EXPORT GraphState {
+    class SD_EXPORT GraphState {
     protected:
         // id of this GraphState instance
         Nd4jLong _id = 0;

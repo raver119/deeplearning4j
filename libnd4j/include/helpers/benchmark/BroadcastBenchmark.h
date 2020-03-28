@@ -24,7 +24,7 @@
 #define SD_BROADCASTBENCHMARK_H
 
 namespace sd {
-    class ND4J_EXPORT BroadcastBenchmark : public OpBenchmark {
+    class SD_EXPORT BroadcastBenchmark : public OpBenchmark {
     public:
         BroadcastBenchmark() : OpBenchmark() {
             //

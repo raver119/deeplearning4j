@@ -24,7 +24,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT Pair {
+    class SD_EXPORT Pair {
     protected:
         int _first = 0;
         int _second = 0;

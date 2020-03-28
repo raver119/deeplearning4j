@@ -50,7 +50,7 @@ namespace sd {
 
             return result;
         }
-        BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT Variable* Variable::asT, (), LIBND4J_TYPES);
+        BUILD_SINGLE_TEMPLATE(template SD_EXPORT Variable* Variable::asT, (), LIBND4J_TYPES);
 
         sd::graph::Variable* sd::graph::Variable::clone() {
             auto result = new Variable(this->isPlaceholder());

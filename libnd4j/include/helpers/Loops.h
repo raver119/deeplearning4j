@@ -36,7 +36,7 @@
 namespace sd {
 
     template <typename X, typename Z, typename E>
-    class ND4J_EXPORT ReductionLoops {
+    class SD_EXPORT ReductionLoops {
     protected:
     public:
 
@@ -54,7 +54,7 @@ namespace sd {
     };
 
     template <typename X, typename Z>
-    class ND4J_EXPORT ReductionBoolLoops : public ReductionLoops<X, Z, X> {
+    class SD_EXPORT ReductionBoolLoops : public ReductionLoops<X, Z, X> {
     public:
         static void wrapper(const int opNum, X* x, Nd4jLong* xShapeInfo, Z* z, Nd4jLong* zShapeInfo, Nd4jLong* tadShapeInfo, Nd4jLong* tadOffsets, X* extraParams, int64_t start, int64_t stop);
 
@@ -63,7 +63,7 @@ namespace sd {
     };
 
     template <typename X, typename Z>
-    class ND4J_EXPORT ReductionLongLoops : public ReductionLoops<X, Z, X> {
+    class SD_EXPORT ReductionLongLoops : public ReductionLoops<X, Z, X> {
     public:
         static void wrapper(const int opNum, X* x, Nd4jLong* xShapeInfo, Z* z, Nd4jLong* zShapeInfo, Nd4jLong* tadShapeInfo, Nd4jLong* tadOffsets, X* extraParams, int64_t start, int64_t stop);
 
@@ -72,7 +72,7 @@ namespace sd {
     };
 
     template <typename X>
-    class ND4J_EXPORT ReductionSameLoops : public ReductionLoops<X, X, X> {
+    class SD_EXPORT ReductionSameLoops : public ReductionLoops<X, X, X> {
     public:
         static void wrapper(const int opNum, X* x, Nd4jLong* xShapeInfo, X* z, Nd4jLong* zShapeInfo, Nd4jLong* tadShapeInfo, Nd4jLong* tadOffsets, X* extraParams, int64_t start, int64_t stop);
 
@@ -82,7 +82,7 @@ namespace sd {
 
 
     template <typename X, typename Z>
-    class ND4J_EXPORT IndexReductionLoops {
+    class SD_EXPORT IndexReductionLoops {
     private:
     public:
         static void wrapIndexReduce(const int opNum, void* x, Nd4jLong* xShapeInfo, void* z, Nd4jLong* zShapeInfo, Nd4jLong* tadShapeInfo, Nd4jLong* tadOffsets, void* extraParams);
@@ -93,7 +93,7 @@ namespace sd {
 
 
     template <typename X, typename Z, typename E>
-    class ND4J_EXPORT TransformLoops {
+    class SD_EXPORT TransformLoops {
 
     public:
 
@@ -102,7 +102,7 @@ namespace sd {
     };
 
     template <typename X, typename Z>
-    class ND4J_EXPORT Reduction3Loops {
+    class SD_EXPORT Reduction3Loops {
     public:
 
         template <typename OpType>

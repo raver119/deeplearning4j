@@ -25,7 +25,7 @@
 
 
 namespace sd {
-    class ND4J_EXPORT ConstantDataBuffer {
+    class SD_EXPORT ConstantDataBuffer {
     private:
         Nd4jPointer _primaryBuffer = nullptr;
         Nd4jPointer _specialBuffer = nullptr;

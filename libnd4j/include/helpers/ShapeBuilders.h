@@ -29,7 +29,7 @@
 #include <array/ArrayOptions.h>
 
 namespace sd {
-    class ND4J_EXPORT ShapeBuilders {
+    class SD_EXPORT ShapeBuilders {
     public:
         static Nd4jLong* createScalarShapeInfo(sd::DataType dataType, sd::memory::Workspace* workspace = nullptr);
 

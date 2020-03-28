@@ -26,7 +26,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT  ByteOrderUtils {
+    class SD_EXPORT  ByteOrderUtils {
     public:
         static ByteOrder fromFlatByteOrder(sd::graph::ByteOrder order);
     };

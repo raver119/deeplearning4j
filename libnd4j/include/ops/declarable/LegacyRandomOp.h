@@ -30,7 +30,7 @@ namespace sd {
         /**
         *   This class provides wrapper for Random operations (i.e. linspace or Uniform)
         */
-        class ND4J_EXPORT LegacyRandomOp : public LegacyOp {
+        class SD_EXPORT LegacyRandomOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
         public:

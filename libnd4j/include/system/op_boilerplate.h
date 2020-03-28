@@ -1231,12 +1231,12 @@
 #define REQUIRE_OK(A)  if (sd::ops::resultHelper( (A), #A, __FILE__, __LINE__ ) != 0) return ND4J_STATUS_VALIDATION;
 #define REQUIRE_TRUE(COND, ...) if (!(COND)) { if (sd::ops::conditionHelper(__FILE__, __LINE__, COND, __VA_ARGS__) != 0) throw std::invalid_argument("Op validation failed");};
 
-#define DECLARE_ENTRY(NAME, ...)           template struct ND4J_EXPORT __registratorFloat<NAME<float>>; \
-                                      template struct ND4J_EXPORT __registratorHalf<NAME<float16>>; \
-                                      template struct ND4J_EXPORT __registratorDouble<NAME<double>>; \
-                                      template struct ND4J_EXPORT __registratorSynonymHalf<NAME<float16>>; \
-                                      template struct ND4J_EXPORT __registratorSynonymDouble<NAME<double>>; \
-                                      template struct ND4J_EXPORT __registratorSynonymFloat<NAME<float>>;
+#define DECLARE_ENTRY(NAME, ...)           template struct SD_EXPORT __registratorFloat<NAME<float>>; \
+                                      template struct SD_EXPORT __registratorHalf<NAME<float16>>; \
+                                      template struct SD_EXPORT __registratorDouble<NAME<double>>; \
+                                      template struct SD_EXPORT __registratorSynonymHalf<NAME<float16>>; \
+                                      template struct SD_EXPORT __registratorSynonymDouble<NAME<double>>; \
+                                      template struct SD_EXPORT __registratorSynonymFloat<NAME<float>>;
 
 
 #if defined(_MSC_VER) || defined(_WIN64) || defined(_WIN32) || defined(__CLION_IDE__) || defined(__VSCODE__)
@@ -1277,7 +1277,7 @@
 #define REGISTER_C(NAME)
 #endif
 
-#define DECLARE_OP(NAME, NIN, NOUT, INPLACEABLE)   class ND4J_EXPORT NAME: public sd::ops::DeclarableOp { \
+#define DECLARE_OP(NAME, NIN, NOUT, INPLACEABLE)   class SD_EXPORT NAME: public sd::ops::DeclarableOp { \
                                                 public:\
                                                     NAME(); \
                                                     sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block); \
@@ -1287,7 +1287,7 @@
                                                 };\
                                                 REGISTER_H(NAME)
 
-#define DECLARE_BOOLEAN_OP(NAME, NIN, SCALAR)   class ND4J_EXPORT NAME: public sd::ops::BooleanOp { \
+#define DECLARE_BOOLEAN_OP(NAME, NIN, SCALAR)   class SD_EXPORT NAME: public sd::ops::BooleanOp { \
                                                 public:\
                                                     NAME(); \
                                                 protected: \
@@ -1300,7 +1300,7 @@
                                                 REGISTER_C(NAME) \
                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-#define DECLARE_LIST_OP(NAME, NIN, NOUT, TARGS, IARGS)      class ND4J_EXPORT  NAME: public sd::ops::DeclarableListOp { \
+#define DECLARE_LIST_OP(NAME, NIN, NOUT, TARGS, IARGS)      class SD_EXPORT  NAME: public sd::ops::DeclarableListOp { \
                                                             public:\
                                                                 NAME(); \
                                                             protected: \
@@ -1312,7 +1312,7 @@
                                                             REGISTER_C(NAME) \
                                                             Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-#define DECLARE_LOGIC_OP(NAME)      class ND4J_EXPORT NAME: public sd::ops::LogicOp { \
+#define DECLARE_LOGIC_OP(NAME)      class SD_EXPORT NAME: public sd::ops::LogicOp { \
                                     public:\
                                         NAME(); \
                                     protected: \
@@ -1355,7 +1355,7 @@
                                         };\
                                         static sd::ops::__registratorSynonym_##NAME<ORIGINAL> zzz_register_opd_##NAME(#NAME, #ORIGINAL)
 
-#define DECLARE_DIVERGENT_OP(NAME, NIN, NOUT, INPLACEABLE)  class ND4J_EXPORT NAME: public sd::ops::DeclarableOp { \
+#define DECLARE_DIVERGENT_OP(NAME, NIN, NOUT, INPLACEABLE)  class SD_EXPORT NAME: public sd::ops::DeclarableOp { \
                                                             public:\
                                                                 NAME(); \
                                                                 sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block); \
@@ -1378,7 +1378,7 @@
                                                             } \
                                                             Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-#define DECLARE_CONFIGURABLE_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)     class ND4J_EXPORT NAME: public sd::ops::DeclarableOp { \
+#define DECLARE_CONFIGURABLE_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)     class SD_EXPORT NAME: public sd::ops::DeclarableOp { \
                                                                                 public:\
                                                                                     NAME(); \
                                                                                     sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block); \
@@ -1401,7 +1401,7 @@
                                                                                 } \
                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(Context& block)
 
-#define DECLARE_REDUCTION_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        class ND4J_EXPORT NAME: public sd::ops::DeclarableReductionOp { \
+#define DECLARE_REDUCTION_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        class SD_EXPORT NAME: public sd::ops::DeclarableReductionOp { \
                                                                                 public:\
                                                                                     NAME(); \
                                                                                 protected: \
@@ -1415,7 +1415,7 @@
                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
 
-#define DECLARE_CUSTOM_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           class ND4J_EXPORT NAME: public sd::ops::DeclarableCustomOp { \
+#define DECLARE_CUSTOM_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           class SD_EXPORT NAME: public sd::ops::DeclarableCustomOp { \
                                                                                 protected: \
                                                                                     void registerTypes(); \
                                                                                     Nd4jStatus validateAndExecute(Context& block); \
@@ -1437,7 +1437,7 @@
 
 #define DECLARE_TYPES(NAME)                                                     void sd::ops::NAME::registerTypes()
 
-#define DECLARE_BROADCASTABLE_OP(NAME,TARGS, IARGS)                             class ND4J_EXPORT NAME: public sd::ops::BroadcastableOp { \
+#define DECLARE_BROADCASTABLE_OP(NAME,TARGS, IARGS)                             class SD_EXPORT NAME: public sd::ops::BroadcastableOp { \
                                                                                 protected: \
                                                                                     void registerTypes(); \
                                                                                     Nd4jStatus validateAndExecute(Context& block); \

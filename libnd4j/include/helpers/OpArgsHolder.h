@@ -27,7 +27,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT OpArgsHolder {
+class SD_EXPORT OpArgsHolder {
 
 private:
 

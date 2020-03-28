@@ -44,7 +44,7 @@ namespace sd {
         /**
          * This class defines input desired for any given node/operation within graph
          */
-        class ND4J_EXPORT Context : public sd::graph::ContextPrototype {
+        class SD_EXPORT Context : public sd::graph::ContextPrototype {
         protected:
             sd::memory::Workspace* _workspace = nullptr;
             sd::graph::VariableSpace* _variableSpace = nullptr;

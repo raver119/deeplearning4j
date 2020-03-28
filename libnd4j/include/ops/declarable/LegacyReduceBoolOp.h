@@ -25,7 +25,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT LegacyReduceBoolOp : public LegacyOp {
+        class SD_EXPORT LegacyReduceBoolOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
         public:

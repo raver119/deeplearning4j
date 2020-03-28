@@ -25,7 +25,7 @@
 
 namespace sd {
     namespace ops {
-        class ND4J_EXPORT DeclarableCustomOp : public sd::ops::DeclarableOp {
+        class SD_EXPORT DeclarableCustomOp : public sd::ops::DeclarableOp {
         protected:
             /**
              * This method executes this Op

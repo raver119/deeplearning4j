@@ -30,13 +30,13 @@
 namespace sd {
 
 template <>
-ND4J_EXPORT utf8string NDArray::e(const Nd4jLong i) const;
+SD_EXPORT utf8string NDArray::e(const Nd4jLong i) const;
 template <>
-ND4J_EXPORT std::string NDArray::e(const Nd4jLong i) const;
+SD_EXPORT std::string NDArray::e(const Nd4jLong i) const;
 template <>
-ND4J_EXPORT std::u16string NDArray::e(const Nd4jLong i) const;
+SD_EXPORT std::u16string NDArray::e(const Nd4jLong i) const;
 template <>
-ND4J_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
+SD_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
 
 ////////////////////////////////////////////////////////////////////////
 // copy constructor
@@ -985,7 +985,7 @@ std::vector<T> NDArray::getBufferAsVector() {
         vector[e] = this->e<T>(e);
     return vector;
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT std::vector, NDArray::getBufferAsVector(), LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT std::vector, NDArray::getBufferAsVector(), LIBND4J_TYPES);
 
 ////////////////////////////////////////////////////////////////////////
 std::vector<int64_t> NDArray::getShapeAsFlatVector() {
@@ -1121,19 +1121,19 @@ NDArray& NDArray::operator=(const T scalar) {
     this->assign(scalar);
     return *this;
 }
-template ND4J_EXPORT NDArray& NDArray::operator=(const double scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const float scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const float16 scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const bfloat16 scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const Nd4jLong scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const int scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const int8_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const uint8_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const uint16_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const uint32_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const uint64_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const int16_t scalar);
-template ND4J_EXPORT NDArray& NDArray::operator=(const bool scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const double scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const float scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const float16 scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const bfloat16 scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const Nd4jLong scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const int scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const int8_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const uint8_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const uint16_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const uint32_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const uint64_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const int16_t scalar);
+template SD_EXPORT NDArray& NDArray::operator=(const bool scalar);
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::copyBuffersContinuouslyFrom(const NDArray& other, size_t sizeToCopyInBytes, Nd4jLong offsetThis, Nd4jLong offsetOther) {
@@ -1220,19 +1220,19 @@ void NDArray::assign(const T& value, bool allowParallelism) {
     NativeOpExecutioner::execScalar(getContext(), sd::scalar::CopyPws, buffer(), getShapeInfo(), specialBuffer(), getSpecialShapeInfo(), buffer(), getShapeInfo(), specialBuffer(), getSpecialShapeInfo(), temp.buffer(), temp.shapeInfo(), temp.specialBuffer(), temp.getSpecialShapeInfo(), nullptr, allowParallelism);
     NDArray::registerSpecialUse({this}, {&temp});
 }
-template ND4J_EXPORT void NDArray::assign(const double& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const float& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const float16& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const bfloat16& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const Nd4jLong& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const int& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const int8_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const int16_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const uint8_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const uint16_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const uint32_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const uint64_t& value, bool allowParallelism);
-template ND4J_EXPORT void NDArray::assign(const bool& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const double& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const float& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const float16& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const bfloat16& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const Nd4jLong& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const int& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const int8_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const int16_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const uint8_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const uint16_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const uint32_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const uint64_t& value, bool allowParallelism);
+template SD_EXPORT void NDArray::assign(const bool& value, bool allowParallelism);
 
 //////////////////////////////////////////////////////////////////////////
 NDArray* NDArray::detach() {
@@ -1319,7 +1319,7 @@ void NDArray::templatedSet(void *buffer, const Nd4jLong *indices, const void *va
     auto xOffset = shape::getOffset(getShapeInfo(), indices);
     t[xOffset] = static_cast<T>(y);
 }
-BUILD_DOUBLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong *indices, const void *value), LIBND4J_TYPES, LIBND4J_TYPES);
+BUILD_DOUBLE_TEMPLATE(template SD_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong *indices, const void *value), LIBND4J_TYPES, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T, typename Y>
@@ -1329,7 +1329,7 @@ void NDArray::templatedSet(void *buffer, const Nd4jLong offset, const void *valu
 
     t[offset] = static_cast<T>(y);
 }
-BUILD_DOUBLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong offset, const void *value), LIBND4J_TYPES, LIBND4J_TYPES);
+BUILD_DOUBLE_TEMPLATE(template SD_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong offset, const void *value), LIBND4J_TYPES, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setContext(sd::LaunchContext  *context) {
@@ -1795,7 +1795,7 @@ template <typename T>
 void* NDArray::templatedPointerShift(const Nd4jLong offset) const {
     return reinterpret_cast<T*>(getBuffer()) + offset;
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT void* NDArray::templatedPointerShift, (const Nd4jLong offset) const, LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT void* NDArray::templatedPointerShift, (const Nd4jLong offset) const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 // method makes copy of this array and applies to the copy transpose operation, this array remains unaffected
@@ -2158,7 +2158,7 @@ bool NDArray::isUnitary() {
 
 //////////////////////////////////////////////////////////////////////////
 template <>
-std::string* ND4J_EXPORT NDArray::bufferAsT() const {
+std::string* SD_EXPORT NDArray::bufferAsT() const {
     throw std::runtime_error("This method is NOT supposed to be used");
 }
 
@@ -2170,7 +2170,7 @@ T* NDArray::bufferAsT() const {
 
     return reinterpret_cast<T*>(getBuffer());
 }
-BUILD_SINGLE_UNCHAINED_TEMPLATE(template ND4J_EXPORT , * NDArray::bufferAsT() const, LIBND4J_TYPES);
+BUILD_SINGLE_UNCHAINED_TEMPLATE(template SD_EXPORT , * NDArray::bufferAsT() const, LIBND4J_TYPES);
 
 ////////////////////////////////////////////////////////////////////////
 NDArray NDArray::subarray(IndicesList& idx) const {
@@ -2288,7 +2288,7 @@ NDArray NDArray::asT() const{
 
     return result;
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT NDArray NDArray::asT, () const, LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT NDArray NDArray::asT, () const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -2400,7 +2400,7 @@ NDArray NDArray::asS() const {
 
     return res;
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT NDArray NDArray::asS, () const, LIBND4J_STRINGTYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT NDArray NDArray::asS, () const, LIBND4J_STRINGTYPES);
 
 ////////////////////////////////////////////////////////////////////////
 NDArray NDArray::asT(DataType dtype) const {
@@ -2592,13 +2592,13 @@ void NDArray::operator+=(const T value) {
 
     NDArray::registerSpecialUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::operator+=(const double value);
-template ND4J_EXPORT void NDArray::operator+=(const float value);
-template ND4J_EXPORT void NDArray::operator+=(const float16 value);
-template ND4J_EXPORT void NDArray::operator+=(const bfloat16 value);
-template ND4J_EXPORT void NDArray::operator+=(const Nd4jLong value);
-template ND4J_EXPORT void NDArray::operator+=(const int value);
-template ND4J_EXPORT void NDArray::operator+=(const bool value);
+template SD_EXPORT void NDArray::operator+=(const double value);
+template SD_EXPORT void NDArray::operator+=(const float value);
+template SD_EXPORT void NDArray::operator+=(const float16 value);
+template SD_EXPORT void NDArray::operator+=(const bfloat16 value);
+template SD_EXPORT void NDArray::operator+=(const Nd4jLong value);
+template SD_EXPORT void NDArray::operator+=(const int value);
+template SD_EXPORT void NDArray::operator+=(const bool value);
 
 ////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -2614,13 +2614,13 @@ void NDArray::operator-=(const T value) {
 
     NDArray::registerSpecialUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::operator-=(const double value);
-template ND4J_EXPORT void NDArray::operator-=(const float value);
-template ND4J_EXPORT void NDArray::operator-=(const float16 value);
-template ND4J_EXPORT void NDArray::operator-=(const bfloat16 value);
-template ND4J_EXPORT void NDArray::operator-=(const Nd4jLong value);
-template ND4J_EXPORT void NDArray::operator-=(const int value);
-template ND4J_EXPORT void NDArray::operator-=(const bool value);
+template SD_EXPORT void NDArray::operator-=(const double value);
+template SD_EXPORT void NDArray::operator-=(const float value);
+template SD_EXPORT void NDArray::operator-=(const float16 value);
+template SD_EXPORT void NDArray::operator-=(const bfloat16 value);
+template SD_EXPORT void NDArray::operator-=(const Nd4jLong value);
+template SD_EXPORT void NDArray::operator-=(const int value);
+template SD_EXPORT void NDArray::operator-=(const bool value);
 
 ////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -2634,16 +2634,16 @@ void NDArray::operator*=(const T scalar) {
 
     NDArray::registerSpecialUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::operator*=(const double scalar);
-template ND4J_EXPORT void NDArray::operator*=(const float scalar);
-template ND4J_EXPORT void NDArray::operator*=(const float16 scalar);
-template ND4J_EXPORT void NDArray::operator*=(const bfloat16 scalar);
-template ND4J_EXPORT void NDArray::operator*=(const Nd4jLong scalar);
-template ND4J_EXPORT void NDArray::operator*=(const int scalar);
-template ND4J_EXPORT void NDArray::operator*=(const int16_t scalar);
-template ND4J_EXPORT void NDArray::operator*=(const int8_t scalar);
-template ND4J_EXPORT void NDArray::operator*=(const uint8_t scalar);
-template ND4J_EXPORT void NDArray::operator*=(const bool scalar);
+template SD_EXPORT void NDArray::operator*=(const double scalar);
+template SD_EXPORT void NDArray::operator*=(const float scalar);
+template SD_EXPORT void NDArray::operator*=(const float16 scalar);
+template SD_EXPORT void NDArray::operator*=(const bfloat16 scalar);
+template SD_EXPORT void NDArray::operator*=(const Nd4jLong scalar);
+template SD_EXPORT void NDArray::operator*=(const int scalar);
+template SD_EXPORT void NDArray::operator*=(const int16_t scalar);
+template SD_EXPORT void NDArray::operator*=(const int8_t scalar);
+template SD_EXPORT void NDArray::operator*=(const uint8_t scalar);
+template SD_EXPORT void NDArray::operator*=(const bool scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -2656,16 +2656,16 @@ void NDArray::operator/=(const T scalar) {
     NativeOpExecutioner::execScalar(getContext(), sd::scalar::Divide, buffer(), getShapeInfo(), specialBuffer(), getSpecialShapeInfo(), buffer(), getShapeInfo(), specialBuffer(), getSpecialShapeInfo(), other.getBuffer(), other.getShapeInfo(), other.getSpecialBuffer(), other.getSpecialShapeInfo(), nullptr);
     NDArray::registerSpecialUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::operator/=(const double scalar);
-template ND4J_EXPORT void NDArray::operator/=(const float scalar);
-template ND4J_EXPORT void NDArray::operator/=(const float16 scalar);
-template ND4J_EXPORT void NDArray::operator/=(const bfloat16 scalar);
-template ND4J_EXPORT void NDArray::operator/=(const Nd4jLong scalar);
-template ND4J_EXPORT void NDArray::operator/=(const int scalar);
-template ND4J_EXPORT void NDArray::operator/=(const int16_t scalar);
-template ND4J_EXPORT void NDArray::operator/=(const int8_t scalar);
-template ND4J_EXPORT void NDArray::operator/=(const uint8_t scalar);
-template ND4J_EXPORT void NDArray::operator/=(const bool scalar);
+template SD_EXPORT void NDArray::operator/=(const double scalar);
+template SD_EXPORT void NDArray::operator/=(const float scalar);
+template SD_EXPORT void NDArray::operator/=(const float16 scalar);
+template SD_EXPORT void NDArray::operator/=(const bfloat16 scalar);
+template SD_EXPORT void NDArray::operator/=(const Nd4jLong scalar);
+template SD_EXPORT void NDArray::operator/=(const int scalar);
+template SD_EXPORT void NDArray::operator/=(const int16_t scalar);
+template SD_EXPORT void NDArray::operator/=(const int8_t scalar);
+template SD_EXPORT void NDArray::operator/=(const uint8_t scalar);
+template SD_EXPORT void NDArray::operator/=(const bool scalar);
 
 ////////////////////////////////////////////////////////////////////////
 // negative operator, it makes all array elements = -elements
@@ -3243,7 +3243,7 @@ std::vector<T> NDArray::asVectorT() {
 
     return result;
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT std::vector, NDArray::asVectorT(), LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT std::vector, NDArray::asVectorT(), LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 // set new order and shape in case of suitable array length
@@ -3353,7 +3353,7 @@ template <typename T>
 void NDArray::templatedSet(void *buffer, const Nd4jLong xOfsset, sd::DataType dtype, const void *value) {
     BUILD_SINGLE_PARTIAL_SELECTOR(dtype, templatedSet< , T>(buffer, xOfsset, value), LIBND4J_TYPES);
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong xOfsset, sd::DataType dtype, const void *value), LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT void NDArray::templatedSet, (void *buffer, const Nd4jLong xOfsset, sd::DataType dtype, const void *value), LIBND4J_TYPES);
 
 ////////////////////////////////////////////////////////////////////////
 void NDArray::applyPairwiseTransform(sd::pairwise::Ops op, const NDArray& other, NDArray& target, ExtraArguments *extraParams) const{
@@ -3416,7 +3416,7 @@ void NDArray::templatedDoubleAssign(void *xBuffer, const Nd4jLong xOffset, const
     const auto y = reinterpret_cast<const Y *>(yBuffer);
     x[xOffset] = static_cast<X>(y[yOffset]);
 }
-BUILD_DOUBLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedDoubleAssign, (void *xBuffer, const Nd4jLong xOffset, const void *yBuffer, const Nd4jLong yOffset) const, LIBND4J_TYPES, LIBND4J_TYPES);
+BUILD_DOUBLE_TEMPLATE(template SD_EXPORT void NDArray::templatedDoubleAssign, (void *xBuffer, const Nd4jLong xOffset, const void *yBuffer, const Nd4jLong yOffset) const, LIBND4J_TYPES, LIBND4J_TYPES);
 
 ////////////////////////////////////////////////////////////////////////
 void NDArray::varianceAlongDimension(sd::variance::Ops op, NDArray& target, const bool biasCorrected, const std::vector<int>& dimensions) const {
@@ -3737,7 +3737,7 @@ T NDArray::e(const Nd4jLong i) const {
     BUILD_SINGLE_PARTIAL_SELECTOR(dataType(), return templatedGet<, T>(getBuffer(), rp), LIBND4J_TYPES);
 
 }
-BUILD_SINGLE_UNCHAINED_TEMPLATE(template ND4J_EXPORT , NDArray::e(const Nd4jLong) const, LIBND4J_TYPES);
+BUILD_SINGLE_UNCHAINED_TEMPLATE(template SD_EXPORT , NDArray::e(const Nd4jLong) const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 // Returns value from 2D matrix by coordinates/indexes
@@ -3757,7 +3757,7 @@ T NDArray::e(const Nd4jLong i, const Nd4jLong j) const {
 
     return static_cast<T>(119);
 }
-BUILD_SINGLE_UNCHAINED_TEMPLATE(template ND4J_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
+BUILD_SINGLE_UNCHAINED_TEMPLATE(template SD_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 // returns value from 3D tensor by coordinates
@@ -3777,7 +3777,7 @@ T NDArray::e(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k) const {
 
     return static_cast<T>(119);
 }
-BUILD_SINGLE_UNCHAINED_TEMPLATE(template ND4J_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
+BUILD_SINGLE_UNCHAINED_TEMPLATE(template SD_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 // returns value from 3D tensor by coordinates
@@ -3797,7 +3797,7 @@ T NDArray::e(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLon
 
     return static_cast<T>(119);
 }
-BUILD_SINGLE_UNCHAINED_TEMPLATE(template ND4J_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong, const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
+BUILD_SINGLE_UNCHAINED_TEMPLATE(template SD_EXPORT , NDArray::e(const Nd4jLong, const Nd4jLong, const Nd4jLong, const Nd4jLong) const, LIBND4J_TYPES);
 
 //////////////////////////////////////////////////////////////////////////
 NDArray NDArray::e(const Nd4jLong i) const {
@@ -4037,17 +4037,17 @@ void NDArray::applyScalar(sd::scalar::IntOps op, const T scalar, NDArray& target
     applyScalarArr(op, scalarArr, target, extraParams);
 }
 
-template <> ND4J_EXPORT void NDArray::applyScalar(sd::scalar::IntOps op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) const { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
-template ND4J_EXPORT void NDArray::applyScalar<double>(sd::scalar::IntOps op, const double scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<float>(sd::scalar::IntOps op, const float scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<float16>(sd::scalar::IntOps op, const float16 scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<bfloat16>(sd::scalar::IntOps op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<Nd4jLong>(sd::scalar::IntOps op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int>(sd::scalar::IntOps op, const int scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int16_t>(sd::scalar::IntOps op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int8_t>(sd::scalar::IntOps op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<uint8_t>(sd::scalar::IntOps op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<bool>(sd::scalar::IntOps op, const bool scalar, NDArray &target, ExtraArguments *extraParams) const;
+template <> SD_EXPORT void NDArray::applyScalar(sd::scalar::IntOps op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) const { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
+template SD_EXPORT void NDArray::applyScalar<double>(sd::scalar::IntOps op, const double scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<float>(sd::scalar::IntOps op, const float scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<float16>(sd::scalar::IntOps op, const float16 scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<bfloat16>(sd::scalar::IntOps op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<Nd4jLong>(sd::scalar::IntOps op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int>(sd::scalar::IntOps op, const int scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int16_t>(sd::scalar::IntOps op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int8_t>(sd::scalar::IntOps op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<uint8_t>(sd::scalar::IntOps op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<bool>(sd::scalar::IntOps op, const bool scalar, NDArray &target, ExtraArguments *extraParams) const;
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -4056,17 +4056,17 @@ void NDArray::applyScalar(sd::scalar::Ops op, const T scalar, NDArray& target, E
     auto scalarArr = NDArrayFactory::create<T>(dataType(), scalar, this->getContext());
     applyScalarArr(op, scalarArr, target, extraParams);
 }
-template <> ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const double scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const float scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const float16 scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams);
-template ND4J_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const bool scalar, NDArray &target, ExtraArguments *extraParams);
+template <> SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const double scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const float scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const float16 scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams);
+template SD_EXPORT void NDArray::applyScalar(sd::scalar::Ops op, const bool scalar, NDArray &target, ExtraArguments *extraParams);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -4076,17 +4076,17 @@ void NDArray::applyScalar(sd::scalar::BoolOps op, const T scalar, NDArray &targe
     applyScalarArr(op, scalarArr, target, extraParams);
 }
 
-template <> ND4J_EXPORT void NDArray::applyScalar(sd::scalar::BoolOps op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) const { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
-template ND4J_EXPORT void NDArray::applyScalar<double>(sd::scalar::BoolOps op, const double scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<float>(sd::scalar::BoolOps op, const float scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<float16>(sd::scalar::BoolOps op, const float16 scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<bfloat16>(sd::scalar::BoolOps op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<Nd4jLong>(sd::scalar::BoolOps op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int>(sd::scalar::BoolOps op, const int scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int16_t>(sd::scalar::BoolOps op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<int8_t>(sd::scalar::BoolOps op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<uint8_t>(sd::scalar::BoolOps op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
-template ND4J_EXPORT void NDArray::applyScalar<bool>(sd::scalar::BoolOps op, const bool scalar, NDArray &target, ExtraArguments *extraParams) const;
+template <> SD_EXPORT void NDArray::applyScalar(sd::scalar::BoolOps op, const NDArray& scalar, NDArray &target, ExtraArguments *extraParams) const { throw std::runtime_error("NDArray::applyScalar<NDArray*> method: do not use me!");}
+template SD_EXPORT void NDArray::applyScalar<double>(sd::scalar::BoolOps op, const double scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<float>(sd::scalar::BoolOps op, const float scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<float16>(sd::scalar::BoolOps op, const float16 scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<bfloat16>(sd::scalar::BoolOps op, const bfloat16 scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<Nd4jLong>(sd::scalar::BoolOps op, const Nd4jLong scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int>(sd::scalar::BoolOps op, const int scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int16_t>(sd::scalar::BoolOps op, const int16_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<int8_t>(sd::scalar::BoolOps op, const int8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<uint8_t>(sd::scalar::BoolOps op, const uint8_t scalar, NDArray &target, ExtraArguments *extraParams) const;
+template SD_EXPORT void NDArray::applyScalar<bool>(sd::scalar::BoolOps op, const bool scalar, NDArray &target, ExtraArguments *extraParams) const;
 
 ////////////////////////////////////////////////////////////////////////
 void NDArray::applyIndexReduce(sd::indexreduce::Ops op, NDArray& target, const std::vector<int>& dimensions, const ExtraArguments *extraParams) const {
@@ -4377,19 +4377,19 @@ void NDArray::p(const Nd4jLong i, const T value) {
     NDArray::registerPrimaryUse({this}, {});
 }
 
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const double value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const float value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const float16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const bfloat16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const int value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const int8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const uint8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const uint16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const uint32_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const uint64_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const int16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const bool value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const double value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const float value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const float16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const bfloat16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const int value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const int8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const uint8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const uint16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const uint32_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const uint64_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const int16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const bool value);
 
 //////////////////////////////////////////////////////////////////////////
 // This method sets value in 2D matrix to position i, j
@@ -4407,19 +4407,19 @@ void NDArray::p(const Nd4jLong i, const Nd4jLong j, const T value) {
     BUILD_SINGLE_PARTIAL_SELECTOR(dataType(), templatedSet<, T>(this->getBuffer(), xOffset, p), LIBND4J_TYPES);
     NDArray::registerPrimaryUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const double value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const float value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const float16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const bfloat16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint32_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint64_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const bool value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const double value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const float value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const float16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const bfloat16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint32_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const uint64_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const int16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const bool value);
 
 //////////////////////////////////////////////////////////////////////////
 // This method sets value in 3D matrix to position i,j,k
@@ -4437,19 +4437,19 @@ void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const T va
     BUILD_SINGLE_PARTIAL_SELECTOR(dataType(), templatedSet<, T>(this->getBuffer(), xOffset, p), LIBND4J_TYPES);
     NDArray::registerPrimaryUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const double value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const float value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const float16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const bfloat16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint32_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint64_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const bool value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const double value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const float value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const float16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const bfloat16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint32_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const uint64_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const int16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const bool value);
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -4466,19 +4466,19 @@ void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4j
     BUILD_SINGLE_PARTIAL_SELECTOR(dataType(), templatedSet<, T>(this->getBuffer(), xOffset, p), LIBND4J_TYPES);
     NDArray::registerPrimaryUse({this}, {});
 }
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const double value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const float value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const float16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const bfloat16 value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const Nd4jLong value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint8_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint32_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint64_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int16_t value);
-template ND4J_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const bool value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const double value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const float value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const float16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const bfloat16 value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const Nd4jLong value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint8_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint32_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const uint64_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const int16_t value);
+template SD_EXPORT void NDArray::p(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k, const Nd4jLong l, const bool value);
 
 ////////////////////////////////////////////////////////////////////////
 void NDArray::p(const Nd4jLong i, const NDArray& scalar) {
@@ -4667,7 +4667,7 @@ void NDArray::templatedAssign(void *xBuffer, Nd4jLong xOffset, const void *yBuff
     if (xBuffer != nullptr && yBuffer != nullptr)
         *(reinterpret_cast<T*>(xBuffer) + xOffset) = *(reinterpret_cast<const T*>(yBuffer) + yOffset);
 }
-BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT void NDArray::templatedAssign, (void *xBuffer, const Nd4jLong xOffset, const void *yBuffer, const Nd4jLong yOffset) const, LIBND4J_TYPES);
+BUILD_SINGLE_TEMPLATE(template SD_EXPORT void NDArray::templatedAssign, (void *xBuffer, const Nd4jLong xOffset, const void *yBuffer, const Nd4jLong yOffset) const, LIBND4J_TYPES);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -5031,11 +5031,11 @@ NDArray operator+(NDArray&& arr, const T& scalar) {
 
     return std::move(arr);
 }
-template ND4J_EXPORT NDArray operator+(NDArray&& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator+(NDArray&& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator+(NDArray&& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator+(NDArray&& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator+(NDArray&& arr, const int& scalar);
+template SD_EXPORT NDArray operator+(NDArray&& arr, const double& scalar);
+template SD_EXPORT NDArray operator+(NDArray&& arr, const float& scalar);
+template SD_EXPORT NDArray operator+(NDArray&& arr, const float16& scalar);
+template SD_EXPORT NDArray operator+(NDArray&& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator+(NDArray&& arr, const int& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5053,22 +5053,22 @@ NDArray operator+(const NDArray& arr, const T& scalar) {
 
     return result;
 }
-template ND4J_EXPORT NDArray operator+(const NDArray& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator+(const NDArray& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator+(const NDArray& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator+(const NDArray& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator+(const NDArray& arr, const int& scalar);
+template SD_EXPORT NDArray operator+(const NDArray& arr, const double& scalar);
+template SD_EXPORT NDArray operator+(const NDArray& arr, const float& scalar);
+template SD_EXPORT NDArray operator+(const NDArray& arr, const float16& scalar);
+template SD_EXPORT NDArray operator+(const NDArray& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator+(const NDArray& arr, const int& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
 NDArray operator+(const T& scalar, NDArray&& arr) {
     return  std::move(arr) + scalar;
 }
-template ND4J_EXPORT NDArray operator+(const double& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator+(const float& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator+(const float16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator+(const bfloat16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator+(const int& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator+(const double& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator+(const float& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator+(const float16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator+(const bfloat16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator+(const int& scalar, NDArray&& arr);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -5076,9 +5076,9 @@ template <typename T, typename>
 NDArray operator+(const T& scalar, const NDArray& arr) {
     return arr + scalar;
 }
-template ND4J_EXPORT NDArray operator+(const double& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator+(const float& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator+(const int& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator+(const double& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator+(const float& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator+(const int& scalar, const NDArray& arr);
 
 ///////////////////////////////////////////////////////////////////////
 // addition operator array - scalar
@@ -5101,8 +5101,8 @@ NDArray operator-(NDArray&& arr, const T& scalar) {
 
     return std::move(arr);
 }
-template ND4J_EXPORT NDArray operator-(NDArray&& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator-(NDArray&& arr, const float& scalar);
+template SD_EXPORT NDArray operator-(NDArray&& arr, const double& scalar);
+template SD_EXPORT NDArray operator-(NDArray&& arr, const float& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5120,11 +5120,11 @@ NDArray operator-(const NDArray& arr, const T& scalar) {
 
     return result;
 }
-template ND4J_EXPORT NDArray operator-(const NDArray& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator-(const NDArray& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator-(const NDArray& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator-(const NDArray& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator-(const NDArray& arr, const int& scalar);
+template SD_EXPORT NDArray operator-(const NDArray& arr, const double& scalar);
+template SD_EXPORT NDArray operator-(const NDArray& arr, const float& scalar);
+template SD_EXPORT NDArray operator-(const NDArray& arr, const float16& scalar);
+template SD_EXPORT NDArray operator-(const NDArray& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator-(const NDArray& arr, const int& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5145,11 +5145,11 @@ NDArray operator-(const T& scalar, NDArray&& arr) {
     return std::move(arr);
 
 }
-template ND4J_EXPORT NDArray operator-(const double& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator-(const float& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator-(const float16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator-(const bfloat16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator-(const int& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator-(const double& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator-(const float& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator-(const float16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator-(const bfloat16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator-(const int& scalar, NDArray&& arr);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5167,9 +5167,9 @@ NDArray operator-(const T& scalar, const NDArray& arr) {
 
     return result;
 }
-template ND4J_EXPORT NDArray operator-(const double& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator-(const float& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator-(const int& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator-(const double& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator-(const float& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator-(const int& scalar, const NDArray& arr);
 
 ///////////////////////////////////////////////////////////////////////
 // addition operator array + scalar
@@ -5192,12 +5192,12 @@ NDArray operator*(NDArray&& arr, const T& scalar) {
 
     return std::move(arr);
 }
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const int& scalar);
-template ND4J_EXPORT NDArray operator*(NDArray&& arr, const long long& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const double& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const float& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const float16& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const int& scalar);
+template SD_EXPORT NDArray operator*(NDArray&& arr, const long long& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5216,24 +5216,24 @@ NDArray operator*(const NDArray& arr, const T& scalar) {
     return result;
 }
 
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const int& scalar);
-template ND4J_EXPORT NDArray operator*(const NDArray& arr, const long long& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const double& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const float& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const float16& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const int& scalar);
+template SD_EXPORT NDArray operator*(const NDArray& arr, const long long& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
 NDArray operator*(const T& scalar, NDArray&& arr) {
     return  std::move(arr) * scalar;
 }
-template ND4J_EXPORT NDArray operator*(const double& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator*(const float& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator*(const float16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator*(const bfloat16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator*(const int& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator*(const long long& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const double& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const float& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const float16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const bfloat16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const int& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator*(const long long& scalar, NDArray&& arr);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -5241,12 +5241,12 @@ template <typename T, typename>
 NDArray operator*(const T& scalar, const NDArray& arr) {
     return arr * scalar;
 }
-template ND4J_EXPORT NDArray operator*(const double& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator*(const float& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator*(const float16& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator*(const bfloat16& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator*(const int& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator*(const long long& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const double& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const float& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const float16& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const bfloat16& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const int& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator*(const long long& scalar, const NDArray& arr);
 
 ///////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5268,11 +5268,11 @@ NDArray operator/(NDArray&& arr, const T& scalar) {
 
     return std::move(arr);
 }
-template ND4J_EXPORT NDArray operator/(NDArray&& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator/(NDArray&& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator/(NDArray&& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator/(NDArray&& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator/(NDArray&& arr, const long long& scalar);
+template SD_EXPORT NDArray operator/(NDArray&& arr, const double& scalar);
+template SD_EXPORT NDArray operator/(NDArray&& arr, const float& scalar);
+template SD_EXPORT NDArray operator/(NDArray&& arr, const float16& scalar);
+template SD_EXPORT NDArray operator/(NDArray&& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator/(NDArray&& arr, const long long& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5290,12 +5290,12 @@ NDArray operator/(const NDArray& arr, const T& scalar) {
 
     return result;
 }
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const double& scalar);
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const float& scalar);
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const float16& scalar);
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const bfloat16& scalar);
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const int& scalar);
-template ND4J_EXPORT NDArray operator/(const NDArray& arr, const long long& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const double& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const float& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const float16& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const bfloat16& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const int& scalar);
+template SD_EXPORT NDArray operator/(const NDArray& arr, const long long& scalar);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T, typename>
@@ -5316,11 +5316,11 @@ NDArray operator/(const T& scalar, NDArray&& arr) {
     return std::move(arr);
 
 }
-template ND4J_EXPORT NDArray operator/(const double& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator/(const float& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator/(const float16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator/(const bfloat16& scalar, NDArray&& arr);
-template ND4J_EXPORT NDArray operator/(const int& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator/(const double& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator/(const float& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator/(const float16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator/(const bfloat16& scalar, NDArray&& arr);
+template SD_EXPORT NDArray operator/(const int& scalar, NDArray&& arr);
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -5339,9 +5339,9 @@ NDArray operator/(const T& scalar, const NDArray& arr) {
 
     return result;
 }
-template ND4J_EXPORT NDArray operator/(const double& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator/(const float& scalar, const NDArray& arr);
-template ND4J_EXPORT NDArray operator/(const int& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator/(const double& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator/(const float& scalar, const NDArray& arr);
+template SD_EXPORT NDArray operator/(const int& scalar, const NDArray& arr);
 
 ////////////////////////////////////////////////////////////////////////
 // addition operator array + array
@@ -5383,15 +5383,15 @@ NDArray operator+(T1&& arr1, T2&& arr2) {
 
     return std::forward<T1>(arr1).applyTrueBroadcast(sd::BroadcastOpsTuple::Add(), std::forward<T2>(arr2));
 }
-template ND4J_EXPORT NDArray operator+<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator+<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator+<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator+<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator+<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator+<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator+<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator+<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator+<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator+<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator+<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator+<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator+<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
 
 ////////////////////////////////////////////////////////////////////////
 // addition operator array - array
@@ -5433,15 +5433,15 @@ NDArray operator-(T1&& arr1, T2&& arr2) {
 
     return std::forward<T1>(arr1).applyTrueBroadcast(sd::BroadcastOpsTuple::Subtract(), std::forward<T2>(arr2));
 }
-template ND4J_EXPORT NDArray operator-<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator-<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator-<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator-<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator-<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator-<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator-<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator-<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator-<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator-<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator-<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator-<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator-<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
 
 ////////////////////////////////////////////////////////////////////////
 // multiplication operator array*array
@@ -5483,15 +5483,15 @@ NDArray operator*(T1&& arr1, T2&& arr2) {
 
     return std::forward<T1>(arr1).applyTrueBroadcast(sd::BroadcastOpsTuple::Multiply(), std::forward<T2>(arr2));
 }
-template ND4J_EXPORT NDArray operator*<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator*<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator*<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator*<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator*<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator*<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator*<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator*<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator*<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator*<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator*<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator*<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator*<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
 
 ////////////////////////////////////////////////////////////////////////
 // multiplication operator array*array
@@ -5533,15 +5533,15 @@ NDArray operator/(T1&& arr1, T2&& arr2) {
 
     return std::forward<T1>(arr1).applyTrueBroadcast(sd::BroadcastOpsTuple::Divide(), std::forward<T2>(arr2));
 }
-template ND4J_EXPORT NDArray operator/<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator/<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
-template ND4J_EXPORT NDArray operator/<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
-template ND4J_EXPORT NDArray operator/<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator/<NDArray&, NDArray&, void>(NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator/<NDArray&, NDArray, void>(NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator/<NDArray,  NDArray&, void>(NDArray&& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator/<NDArray&, const NDArray&, void>(NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator/<const NDArray&, NDArray&, void>(const NDArray& arr1, NDArray& arr2);
+template SD_EXPORT NDArray operator/<const NDArray&, NDArray, void>(const NDArray& arr1, NDArray&& arr2);
+template SD_EXPORT NDArray operator/<const NDArray&, const NDArray&, void>(const NDArray& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator/<NDArray, const NDArray&, void>(NDArray&& arr1, const NDArray& arr2);
+template SD_EXPORT NDArray operator/<NDArray, NDArray, void>(NDArray&& arr1, NDArray&& arr2);
 
 
 /*

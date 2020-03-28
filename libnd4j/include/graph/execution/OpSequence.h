@@ -30,7 +30,7 @@ namespace sd {
     /**
     * This class represents independent and immutable sequence of operations
     */
-    class ND4J_EXPORT OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
+    class SD_EXPORT OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
         // our internal iterator for OpSequence
         class iterator;
         protected:

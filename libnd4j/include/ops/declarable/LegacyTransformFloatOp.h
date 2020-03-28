@@ -29,7 +29,7 @@ namespace sd {
         /**
         *   This class provides wrapper for Transform operations (i.e. Pow or OneMinus)
         */
-        class ND4J_EXPORT LegacyTransformFloatOp : public LegacyOp {
+        class SD_EXPORT LegacyTransformFloatOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context &block) override;
         public:

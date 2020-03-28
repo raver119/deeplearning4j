@@ -21,20 +21,24 @@
 #define SD_OPTIMIZEDGRAPH_H
 
 #include <graph/execution/OpSequence.h>
+#include <graph/execution/ExecutionLayer.h>
 #include <vector>
 #include <map>
+#include <mutex>
 
 namespace sd {
     namespace graph {
         /**
          * This class acts as a topologically sorted & optimized Graph representation, ready for execution
          */
-        class ND4J_EXPORT OptimizedGraph {
+        class SD_EXPORT OptimizedGraph {
         protected:
             // here we store independent OpSequences
             // Graph starts from layer 0, and goes deeper step by step
             // on each layer we can have 1+ OpSequences that can be executed independent
-            std::map<uint64_t, std::vector<OpSequence>> _onion;
+            std::map<uint64_t, ExecutionLayer> _onion;
+
+            std::mutex _mutex;
         public:
             OptimizedGraph() = default;
             ~OptimizedGraph() = default;
@@ -61,13 +65,14 @@ namespace sd {
              * @param index
              * @return
              */
-            const std::vector<OpSequence>& layer(uint64_t index) const;
+            const ExecutionLayer& layer(uint64_t index) const;
 
             /**
              * This method allows to append layer to this OptimizedGraph instance
              */
              // FIXME: this method should be removed or made private
             void append(const std::vector<OpSequence> &layer);
+            void append(const ExecutionLayer &layer);
             void append(OpSequence &sequence);
         };
     }

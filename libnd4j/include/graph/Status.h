@@ -27,7 +27,7 @@
 #include <helpers/logger.h>
 
 namespace sd {
-    class ND4J_EXPORT Status {
+    class SD_EXPORT Status {
     public:
         static FORCEINLINE Nd4jStatus OK() {
             return ND4J_STATUS_OK;

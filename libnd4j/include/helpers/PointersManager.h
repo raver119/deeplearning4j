@@ -30,7 +30,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT PointersManager {
+class SD_EXPORT PointersManager {
 
     private:
 

@@ -91,5 +91,5 @@ namespace sd {
         sd::DebugHelper::checkErrorCode(stream, "tear(...) failed");
     }
 
-    BUILD_SINGLE_TEMPLATE(template void ND4J_EXPORT tearKernelGeneric, (dim3 & launchDims, cudaStream_t * stream, void * vx, Nd4jLong * xShapeInfo, Nd4jPointer *targets, Nd4jLong * zShapeInfo, Nd4jLong * tadShapeInfo, Nd4jLong * tadOffsets), LIBND4J_TYPES);
+    BUILD_SINGLE_TEMPLATE(template void SD_EXPORT tearKernelGeneric, (dim3 & launchDims, cudaStream_t * stream, void * vx, Nd4jLong * xShapeInfo, Nd4jPointer *targets, Nd4jLong * zShapeInfo, Nd4jLong * tadShapeInfo, Nd4jLong * tadOffsets), LIBND4J_TYPES);
 }

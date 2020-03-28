@@ -49,7 +49,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT Logger {
+    class SD_EXPORT Logger {
 
     public:
 

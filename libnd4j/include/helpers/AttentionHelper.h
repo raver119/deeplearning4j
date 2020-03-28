@@ -24,7 +24,7 @@
 #include "array/NDArray.h"
 
 namespace sd {
-    class ND4J_EXPORT AttentionHelper {
+    class SD_EXPORT AttentionHelper {
 
     public:
         static sd::NDArray multiHeadProject(const sd::NDArray* input, const sd::NDArray* projectionMatrix, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());

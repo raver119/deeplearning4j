@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT FrameState {
+        class SD_EXPORT FrameState {
         private:
             std::string _name;
             Nd4jLong _id = 0;

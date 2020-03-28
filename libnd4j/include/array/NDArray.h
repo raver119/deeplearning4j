@@ -50,56 +50,56 @@
 namespace sd {
 
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator+(const NDArray& arr, const T& scalar);
+    SD_EXPORT NDArray operator+(const NDArray& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator+(NDArray&& arr, const T& scalar);
+    SD_EXPORT NDArray operator+(NDArray&& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator+(const T& scalar, const NDArray& arr);
+    SD_EXPORT NDArray operator+(const T& scalar, const NDArray& arr);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator+(const T& scalar, NDArray&& arr);
+    SD_EXPORT NDArray operator+(const T& scalar, NDArray&& arr);
 
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator-(const NDArray& arr, const T& scalar);
+    SD_EXPORT NDArray operator-(const NDArray& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator-(NDArray&& arr, const T& scalar);
+    SD_EXPORT NDArray operator-(NDArray&& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator-(const T& scalar, const NDArray& arr);
+    SD_EXPORT NDArray operator-(const T& scalar, const NDArray& arr);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator-(const T& scalar, NDArray&& arr);
+    SD_EXPORT NDArray operator-(const T& scalar, NDArray&& arr);
 
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator*(const NDArray& arr, const T& scalar);
+    SD_EXPORT NDArray operator*(const NDArray& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator*(NDArray&& arr, const T& scalar);
+    SD_EXPORT NDArray operator*(NDArray&& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator*(const T& scalar, const NDArray& arr);
+    SD_EXPORT NDArray operator*(const T& scalar, const NDArray& arr);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator*(const T& scalar, NDArray&& arr);
+    SD_EXPORT NDArray operator*(const T& scalar, NDArray&& arr);
 
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator/(const NDArray& arr, const T& scalar);
+    SD_EXPORT NDArray operator/(const NDArray& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator/(NDArray&& arr, const T& scalar);
+    SD_EXPORT NDArray operator/(NDArray&& arr, const T& scalar);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator/(const T& scalar, const NDArray& arr);
+    SD_EXPORT NDArray operator/(const T& scalar, const NDArray& arr);
     template <typename T, typename = typename std::enable_if<DataTypeUtils::scalarTypesForNDarray<T>::value>::type>
-    ND4J_EXPORT NDArray operator/(const T& scalar, NDArray&& arr);
+    SD_EXPORT NDArray operator/(const T& scalar, NDArray&& arr);
 
     template <typename T1, typename T2, typename = typename std::enable_if<std::is_same<NDArray, typename std::decay<T1>::type>::value && std::is_same<NDArray, typename std::decay<T2>::type>::value>::type>
-    ND4J_EXPORT NDArray operator+(T1&& arr1, T2&& arr2);
+    SD_EXPORT NDArray operator+(T1&& arr1, T2&& arr2);
     template <typename T1, typename T2, typename = typename std::enable_if<std::is_same<NDArray, typename std::decay<T1>::type>::value && std::is_same<NDArray, typename std::decay<T2>::type>::value>::type>
-    ND4J_EXPORT NDArray operator-(T1&& arr1, T2&& arr2);
+    SD_EXPORT NDArray operator-(T1&& arr1, T2&& arr2);
     template <typename T1, typename T2, typename = typename std::enable_if<std::is_same<NDArray, typename std::decay<T1>::type>::value && std::is_same<NDArray, typename std::decay<T2>::type>::value>::type>
-    ND4J_EXPORT NDArray operator*(T1&& arr1, T2&& arr2);
+    SD_EXPORT NDArray operator*(T1&& arr1, T2&& arr2);
     template <typename T1, typename T2, typename = typename std::enable_if<std::is_same<NDArray, typename std::decay<T1>::type>::value && std::is_same<NDArray, typename std::decay<T2>::type>::value>::type>
-    ND4J_EXPORT NDArray operator/(T1&& arr1, T2&& arr2);
+    SD_EXPORT NDArray operator/(T1&& arr1, T2&& arr2);
 
 
 
 
-    ND4J_EXPORT NDArray mmul(const NDArray&, const NDArray&);
+    SD_EXPORT NDArray mmul(const NDArray&, const NDArray&);
 
-    class ND4J_EXPORT NDArray {
+    class SD_EXPORT NDArray {
     private:
         /**
          * This method applies given value to the buffer, wrt templates

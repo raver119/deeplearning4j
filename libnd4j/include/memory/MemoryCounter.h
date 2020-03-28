@@ -32,7 +32,7 @@ namespace sd {
         /**
          * This class provides simple per-device counter
          */
-        class ND4J_EXPORT MemoryCounter {
+        class SD_EXPORT MemoryCounter {
         private:
             static MemoryCounter* _INSTANCE;
 

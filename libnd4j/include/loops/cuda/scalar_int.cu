@@ -228,7 +228,7 @@ void ScalarIntTransform<X>::executeCudaAlongDimension(dim3& launchDims, cudaStre
     DISPATCH_BY_OPNUM_T(intermediateAlongDimension, PARAMS(launchDims, stream, vx, xShapeInfo, vz, zShapeInfo, vscalars, vextraParams, dimension, dimensionLength, tadShapeInfo, tadOffsets, tadShapeInfoZ, tadOffsetsZ), SCALAR_INT_OPS);
 }
 
-    BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT ScalarIntTransform, , INTEGER_TYPES);
+    BUILD_SINGLE_TEMPLATE(template class SD_EXPORT ScalarIntTransform, , INTEGER_TYPES);
 
 }
 }

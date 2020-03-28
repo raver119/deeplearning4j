@@ -34,7 +34,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT datatype_exception : public std::runtime_error {
+    class SD_EXPORT datatype_exception : public std::runtime_error {
     public:
         datatype_exception(std::string message);
         ~datatype_exception() = default;

@@ -36,7 +36,7 @@ namespace sd {
         *   This class is very basic info holder for ops. bean/pojo pretty much.
         *
         */
-        class ND4J_EXPORT OpDescriptor {
+        class SD_EXPORT OpDescriptor {
         protected:
             // opNum for legacy XYZ ops
             int _opNum = 0;

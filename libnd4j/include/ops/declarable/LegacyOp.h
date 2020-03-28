@@ -33,7 +33,7 @@ namespace sd {
         *
         *
         */
-        class ND4J_EXPORT LegacyOp : public DeclarableOp {
+        class SD_EXPORT LegacyOp : public DeclarableOp {
         protected:
             // this field is mainly for debugging
             // it defines, which legacy op should be invoked on a given data

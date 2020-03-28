@@ -48,7 +48,7 @@
 
 namespace sd  {
 
-class ND4J_EXPORT LaunchContext {
+class SD_EXPORT LaunchContext {
 
 	private:
         static std::vector<std::shared_ptr<LaunchContext>> _contexts;

@@ -44,7 +44,7 @@
 
 namespace sd {
 
-    class ND4J_EXPORT BenchmarkHelper {
+    class SD_EXPORT BenchmarkHelper {
     private:
         unsigned int _wIterations;
         unsigned int _rIterations;

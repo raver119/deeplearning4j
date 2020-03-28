@@ -30,7 +30,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT ShapeDescriptor {
+class SD_EXPORT ShapeDescriptor {
 
     private:
         int _rank = 0;
@@ -91,7 +91,7 @@ class ND4J_EXPORT ShapeDescriptor {
 
 namespace std {
     template<>
-    class ND4J_EXPORT hash<sd::ShapeDescriptor> {
+    class SD_EXPORT hash<sd::ShapeDescriptor> {
     public:
         size_t operator()(const sd::ShapeDescriptor &k) const;
     };

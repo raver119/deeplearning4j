@@ -34,7 +34,7 @@
  *
  */
 
-class ND4J_EXPORT NativeOpExecutioner {
+class SD_EXPORT NativeOpExecutioner {
 public:
     /**
      *

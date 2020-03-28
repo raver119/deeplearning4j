@@ -34,7 +34,7 @@
 #endif
 
 namespace sd {
-    class ND4J_EXPORT graph_exception : public std::runtime_error {
+    class SD_EXPORT graph_exception : public std::runtime_error {
     protected:
         Nd4jLong _graphId;
         std::string _message;

@@ -33,7 +33,7 @@
 
 namespace sd {
     template <typename T>
-    class ND4J_EXPORT DataTypeConversions {
+    class SD_EXPORT DataTypeConversions {
     private:
         template <typename T2>
         static FORCEINLINE void rconv(bool isBe, bool canKeep, T *buffer, Nd4jLong length, void *src) {

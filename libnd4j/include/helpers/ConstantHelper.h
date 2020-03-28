@@ -33,7 +33,7 @@
 #include <array/ConstantHolder.h>
 
 namespace sd {
-    class ND4J_EXPORT ConstantHelper {
+    class SD_EXPORT ConstantHelper {
     private:
         static ConstantHelper* _INSTANCE;
         ConstantHelper();

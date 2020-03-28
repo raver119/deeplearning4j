@@ -28,7 +28,7 @@ namespace sd {
         /**
         *   This class provides wrapper for broadcast operations. 
         */
-        class ND4J_EXPORT LegacyBroadcastBoolOp : public LegacyOp {
+        class SD_EXPORT LegacyBroadcastBoolOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override ;
         public:

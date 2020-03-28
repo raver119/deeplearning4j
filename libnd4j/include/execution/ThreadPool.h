@@ -33,7 +33,7 @@
 #include <queue>
 
 namespace samediff {
-    class ND4J_EXPORT ThreadPool {
+    class SD_EXPORT ThreadPool {
     private:
         static ThreadPool* _INSTANCE;
 

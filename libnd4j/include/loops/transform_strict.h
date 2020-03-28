@@ -81,7 +81,7 @@ namespace functions {
 			static void exec(int opNum, void *dx, Nd4jLong *xShapeInfo, void *result, Nd4jLong *resultShapeInfo, void *extraParams, uint64_t threadId, uint64_t numThreads);
 
 			template<typename OpType>
-			static ND4J_EXPORT void exec(void *dx, Nd4jLong *xShapeInfo, void *result, Nd4jLong *resultShapeInfo, void *extraParams, uint64_t threadId, uint64_t numThreads);
+			static SD_EXPORT void exec(void *dx, Nd4jLong *xShapeInfo, void *result, Nd4jLong *resultShapeInfo, void *extraParams, uint64_t threadId, uint64_t numThreads);
 
 #endif
         };

@@ -26,7 +26,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT ShapeList {
+    class SD_EXPORT ShapeList {
     protected:
         std::vector<Nd4jLong*> _shapes;
 

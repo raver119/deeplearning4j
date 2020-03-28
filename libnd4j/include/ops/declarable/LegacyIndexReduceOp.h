@@ -30,7 +30,7 @@ namespace sd {
         *
         *   TODO: eventually we want this op class to return long long instead of T
         */
-        class ND4J_EXPORT LegacyIndexReduceOp : public LegacyOp {
+        class SD_EXPORT LegacyIndexReduceOp : public LegacyOp {
         protected:
             Nd4jStatus validateAndExecute(Context& block) override;
         public:

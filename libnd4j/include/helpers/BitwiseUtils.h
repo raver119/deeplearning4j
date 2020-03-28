@@ -28,7 +28,7 @@
 #include <climits>
 
 namespace sd {
-    class ND4J_EXPORT BitwiseUtils {
+    class SD_EXPORT BitwiseUtils {
     public:
 
 

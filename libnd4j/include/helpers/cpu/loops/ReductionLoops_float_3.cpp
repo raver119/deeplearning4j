@@ -43,7 +43,7 @@ namespace sd {
 #endif
     }
 
-    BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT ReductionFloatLoops, , LIBND4J_TYPES, FLOAT_TYPES_3);
+    BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionFloatLoops, , LIBND4J_TYPES, FLOAT_TYPES_3);
 }
 
 

@@ -27,7 +27,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT MemoryDescriptor {
+        class SD_EXPORT MemoryDescriptor {
         private:
             void* _ptr;
             MemoryZone _zone;

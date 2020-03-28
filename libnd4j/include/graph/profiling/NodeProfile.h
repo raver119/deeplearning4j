@@ -28,7 +28,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT NodeProfile {
+        class SD_EXPORT NodeProfile {
         private:
             int _id;
             std::string _name;

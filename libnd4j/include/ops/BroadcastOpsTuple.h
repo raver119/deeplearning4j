@@ -25,7 +25,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT BroadcastOpsTuple {
+    class SD_EXPORT BroadcastOpsTuple {
     private:
 
     public:

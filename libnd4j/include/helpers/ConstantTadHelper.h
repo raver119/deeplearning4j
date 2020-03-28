@@ -33,7 +33,7 @@
 #include <array/TadPack.h>
 
 namespace sd {
-    class ND4J_EXPORT ConstantTadHelper {
+    class SD_EXPORT ConstantTadHelper {
     private:
         static ConstantTadHelper *_INSTANCE;
 

@@ -370,7 +370,7 @@ namespace functions {
             }
         }
 
-        BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT IndexReduce, , LIBND4J_TYPES, INDEXING_TYPES);
+        BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT IndexReduce, , LIBND4J_TYPES, INDEXING_TYPES);
     }
 }
 

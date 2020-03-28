@@ -26,7 +26,7 @@
 #include <cuda_runtime.h>
 
 namespace sd {
-    class ND4J_EXPORT BlasVersionHelper {
+    class SD_EXPORT BlasVersionHelper {
     public:
         int _blasMajorVersion = 0;
         int _blasMinorVersion = 0;

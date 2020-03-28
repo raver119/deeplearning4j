@@ -31,7 +31,7 @@
 #include <system/dll.h>
 
 namespace sd {
-    class ND4J_EXPORT NDArrayList {
+    class SD_EXPORT NDArrayList {
     private:
         // workspace where chunks belong to
         //sd::memory::Workspace* _workspace = nullptr;

@@ -25,7 +25,7 @@
 using namespace sd::graph;
 
 namespace sd {
-    class ND4J_EXPORT ScalarBenchmark : public OpBenchmark {
+    class SD_EXPORT ScalarBenchmark : public OpBenchmark {
     public:
         ScalarBenchmark() : OpBenchmark() {
             //

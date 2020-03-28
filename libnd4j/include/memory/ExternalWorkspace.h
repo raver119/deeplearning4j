@@ -26,7 +26,7 @@
 
 namespace sd {
     namespace memory {
-        class ND4J_EXPORT ExternalWorkspace {
+        class SD_EXPORT ExternalWorkspace {
         private:
             void *_ptrH = nullptr;
             void *_ptrD = nullptr;

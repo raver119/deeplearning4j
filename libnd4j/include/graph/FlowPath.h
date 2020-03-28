@@ -32,7 +32,7 @@
 
 namespace sd {
     namespace graph {
-        class ND4J_EXPORT FlowPath {
+        class SD_EXPORT FlowPath {
         private:
             MAP_IMPL<int, NodeState> _states;
             MAP_IMPL<Nd4jLong, FrameState> _frames;

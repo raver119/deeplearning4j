@@ -231,6 +231,6 @@ namespace functions {
             }
         }
 
-        BUILD_SINGLE_TEMPLATE(template class ND4J_EXPORT PairWiseIntTransform, , INTEGER_TYPES);
+        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT PairWiseIntTransform, , INTEGER_TYPES);
     }
 }
