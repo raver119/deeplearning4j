@@ -39,35 +39,43 @@
 
 namespace sd {
     namespace graph {
-
-    class SD_EXPORT GraphExecutioner {
-    protected:
-
-
-    public:
-        //static Nd4jStatus executeFlatNode(sd::graph::Graph *graph, sd::graph::Node *node, sd::graph::VariableSpace<float> *variableSpace);
-
-        static Nd4jStatus executeFlatNode(Graph *graph, Node *node, VariableSpace *variableSpace);
-
         /**
-        * This method executes given Graph
-        * @return
-        */
-        static Nd4jStatus execute(Graph *graph, VariableSpace *variableSpace = nullptr);
+         * This class provides Graph execution functionality
+         */
+        class SD_EXPORT GraphExecutioner {
+        private:
+        protected:
+
+        public:
+            GraphExecutioner() = default;
+            virtual ~GraphExecutioner() = default;
+
+            virtual Nd4jStatus execute(const OptimizedGraph &graph);
+
+            /**
+             * TODO: REMOVE ALL METHODS BELOW
+             */
+            //static Nd4jStatus executeFlatNode(sd::graph::Graph *graph, sd::graph::Node *node, sd::graph::VariableSpace<float> *variableSpace);
+
+            static Nd4jStatus executeFlatNode(Graph *graph, Node *node, VariableSpace *variableSpace);
+
+            /**
+            * This method executes given Graph
+            * @return
+            */
+            static Nd4jStatus execute(Graph *graph, VariableSpace *variableSpace = nullptr);
 
 
-        /**
-        * This method executes graph stored at given FlatBuffers pointer
-        *
-        * @param pointer Pointer to FlatBuffer
-        * @return pointer to FlatBuffer with result
-        */
-        static sd::graph::ResultWrapper* executeFlatBuffer(Nd4jPointer pointer);
+            /**
+            * This method executes graph stored at given FlatBuffers pointer
+            *
+            * @param pointer Pointer to FlatBuffer
+            * @return pointer to FlatBuffer with result
+            */
+            static sd::graph::ResultWrapper* executeFlatBuffer(Nd4jPointer pointer);
 
-        static flatbuffers::Offset<FlatResult> execute(Graph *graph, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request);
-    };
-
-
+            static flatbuffers::Offset<FlatResult> execute(Graph *graph, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request);
+        };
     }
 }
 
