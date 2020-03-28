@@ -1710,7 +1710,7 @@ namespace sd {
             return OptimizedGraph();
         }
 
-        std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs) const {
+        std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {
             // TODO: implement this method
             return std::map<std::string, NDArray>();
         }

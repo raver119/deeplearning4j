@@ -58,11 +58,6 @@
 
 namespace sd{
     namespace graph {
-
-        Nd4jStatus GraphExecutioner::execute(const OptimizedGraph &graph) {
-            return Status::CODE(500, "Not implemented yet :)");
-        }
-
         /**
          * This method executes given Node (as in Op within Node)
          *

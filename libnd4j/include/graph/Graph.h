@@ -36,6 +36,7 @@
 #include <graph/generated/config_generated.h>
 #include <graph/ExecutorConfiguration.h>
 #include <ops/declarable/OpDescriptor.h>
+#include <graph/execution/GraphExecutor.h>
 #include <graph/OptimizedGraph.h>
 
 namespace sd {
@@ -251,7 +252,7 @@ namespace sd {
              * @param dictionary
              * @return
              */
-            std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}) const;
+            std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}, const GraphExecutor &executor = GraphExecutor()) const;
         };
 
         FORCEINLINE std::vector<int>* Graph::nodes() {

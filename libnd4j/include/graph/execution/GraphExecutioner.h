@@ -40,21 +40,10 @@
 namespace sd {
     namespace graph {
         /**
-         * This class provides Graph execution functionality
+         * TODO: REMOVE THIS CLASS
          */
         class SD_EXPORT GraphExecutioner {
-        private:
-        protected:
-
         public:
-            GraphExecutioner() = default;
-            virtual ~GraphExecutioner() = default;
-
-            virtual Nd4jStatus execute(const OptimizedGraph &graph);
-
-            /**
-             * TODO: REMOVE ALL METHODS BELOW
-             */
             //static Nd4jStatus executeFlatNode(sd::graph::Graph *graph, sd::graph::Node *node, sd::graph::VariableSpace<float> *variableSpace);
 
             static Nd4jStatus executeFlatNode(Graph *graph, Node *node, VariableSpace *variableSpace);
