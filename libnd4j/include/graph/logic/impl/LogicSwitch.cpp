@@ -19,7 +19,7 @@
 //
 
 #include <system/pointercast.h>
-#include <graph/execution/LogicSwitch.h>
+#include <graph/logic/LogicSwitch.h>
 #include <graph/GraphExecutioner.h>
 #include <graph/Status.h>
 

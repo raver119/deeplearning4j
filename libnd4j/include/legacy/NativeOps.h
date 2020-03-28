@@ -73,7 +73,7 @@ bool verbose = false;
 #include <array/TadPack.h>
 #include <graph/VariablesSet.h>
 #include <graph/GraphState.h>
-#include <graph/execution/LogicExecutor.h>
+#include <graph/logic/LogicExecutor.h>
 #include <graph/ResultWrapper.h>
 #include <helpers/DebugInfo.h>
 #include <memory/MemoryCounter.h>

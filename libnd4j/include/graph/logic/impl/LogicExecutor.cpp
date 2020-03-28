@@ -18,18 +18,18 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#include <graph/execution/LogicExecutor.h>
-#include <graph/execution/LogicScope.h>
-#include <graph/execution/LogicWhile.h>
-#include <graph/execution/LogicSwitch.h>
-#include <graph/execution/LogicConditional.h>
-#include <graph/execution/LogicReturn.h>
-#include <graph/execution/LogicExpose.h>
-#include <graph/execution/LogicMerge.h>
-#include <graph/execution/LogicEnter.h>
-#include <graph/execution/LogicExit.h>
-#include <graph/execution/LogicLoopCond.h>
-#include <graph/execution/LogicNextIteration.h>
+#include <graph/logic/LogicExecutor.h>
+#include <graph/logic/LogicScope.h>
+#include <graph/logic/LogicWhile.h>
+#include <graph/logic/LogicSwitch.h>
+#include <graph/logic/LogicConditional.h>
+#include <graph/logic/LogicReturn.h>
+#include <graph/logic/LogicExpose.h>
+#include <graph/logic/LogicMerge.h>
+#include <graph/logic/LogicEnter.h>
+#include <graph/logic/LogicExit.h>
+#include <graph/logic/LogicLoopCond.h>
+#include <graph/logic/LogicNextIteration.h>
 
 
 namespace sd {

@@ -18,7 +18,7 @@
 // Created by raver119 on 30.01.18.
 //
 
-#include <graph/execution/LogicMerge.h>
+#include <graph/logic/LogicMerge.h>
 #include <graph/Status.h>
 
 namespace sd {

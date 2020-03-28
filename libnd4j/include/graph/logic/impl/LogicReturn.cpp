@@ -18,7 +18,7 @@
 // Created by raver119 on 28.10.2017.
 //
 
-#include "graph/execution/LogicReturn.h"
+#include "graph/logic/LogicReturn.h"
 #include <helpers/EnumUtils.h>
 #include <graph/Status.h>
 

@@ -18,7 +18,7 @@
 //  @author raver119@gmail.com
 //
 
-#include <graph/execution/LogicExit.h>
+#include <graph/logic/LogicExit.h>
 
 
 namespace sd {

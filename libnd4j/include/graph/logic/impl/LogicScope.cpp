@@ -15,16 +15,19 @@
  ******************************************************************************/
 
 //
-// Created by raver119 on 12.11.2017.
+// Created by raver119 on 20.10.2017.
 //
 
-#include <graph/execution/LogicExpose.h>
+#include <graph/logic/LogicScope.h>
+#include <graph/Status.h>
+
 
 namespace sd {
     namespace graph {
-        Nd4jStatus LogicExpose::processNode(Graph *graph, Node *node) {
-            // do we really want this?
-            return ND4J_STATUS_OK;
+        Nd4jStatus LogicScope::processNode(Graph *graph, Node *node) {
+            // this op is basically no-op
+            // we just know it exists
+            return sd::Status::OK();
         }
     }
 }

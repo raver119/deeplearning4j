@@ -18,7 +18,7 @@
 //  @author raver119@gmail.com
 //
 
-#include <graph/execution/LogicEnter.h>
+#include <graph/logic/LogicEnter.h>
 #include <graph/Status.h>
 
 

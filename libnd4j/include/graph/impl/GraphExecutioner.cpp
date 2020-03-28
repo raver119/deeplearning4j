@@ -43,7 +43,7 @@
 
 #include <chrono>
 #include <ctime>
-#include <graph/execution/LogicExecutor.h>
+#include <graph/logic/LogicExecutor.h>
 #include <array/DataTypeUtils.h>
 #include <helpers/BitwiseUtils.h>
 #include <graph/generated/array_generated.h>

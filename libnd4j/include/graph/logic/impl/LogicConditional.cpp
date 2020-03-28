@@ -18,9 +18,9 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#include <graph/execution/LogicConditional.h>
+#include <graph/logic/LogicConditional.h>
 #include <graph/GraphExecutioner.h>
-#include <graph/execution/LogicReturn.h>
+#include <graph/logic/LogicReturn.h>
 #include <graph/Status.h>
 
 

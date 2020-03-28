@@ -18,31 +18,35 @@
 //  @author raver119@gmail.com
 //
 
-#include <graph/execution/LogicNextIteration.h>
+#include <graph/logic/LogicLoopCond.h>
 
 
 namespace sd {
     namespace graph {
-        Nd4jStatus LogicNextIeration::processNode(Graph *graph, Node *node) {
+        Nd4jStatus LogicLoopCond::processNode(Graph *graph, Node *node) {
             auto __variableSpace = graph->getVariableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
-            auto inputAddr = node->input()->at(0);
+            Context ctx(node->getContextPrototype(), __variableSpace);
+            auto input = ctx.variable(0)->getNDArray();
 
-            auto var = __variableSpace->getVariable(inputAddr);
+            std::pair<int, int> pair0(node->id(), 0);
 
-            Variable *lvar = nullptr;
-            if (__variableSpace->hasVariable(node->id(), 0))
-                lvar = __variableSpace->getVariable(node->id(), 0);
-            else
-                lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+            if (!__variableSpace->hasVariable(pair0))
+                __variableSpace->putVariable(pair0, new Variable(nullptr, nullptr, node->id(), 0));
 
-//            if (lvar->hasNDArray())
-//                delete lvar->getNDArray();
+            __variableSpace->getVariable(pair0)->setNDArray(input);
+            __variableSpace->getVariable(pair0)->markRemovable(false);
 
-            auto array = var->getNDArray();
-            lvar->setNDArray(array);
-            lvar->markReadOnly(true);
+            // pass further
+            if (input->e<int>(0) > 0) {
+                // if condition is TRUE body will be invoked some time soon
+     //           __flowPath->markFrameActive(node->getFrameId(), true);
+                //__flowPath->i
+            } else {
+                // body won't be activated
+     //           __flowPath->markFrameActive(node->getFrameId(), false);
+            }
 
             return ND4J_STATUS_OK;
         }
