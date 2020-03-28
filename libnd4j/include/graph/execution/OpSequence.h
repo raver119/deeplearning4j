@@ -62,7 +62,8 @@ namespace sd {
              * @param index
              * @return
              */
-            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> at(uint64_t index);
+            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> at(uint64_t index) const;
+            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> operator[](uint64_t index) const;
 
             /**
              * This method allows to add DeclarableOp to the end of execution queue

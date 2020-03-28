@@ -57,8 +57,12 @@ namespace sd {
             return *this;
         }
 
-        std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::at(uint64_t index) {
+        std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::at(uint64_t index) const {
             return _ops[index];
+        }
+
+        std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::operator[](uint64_t index) const {
+            return at(index);
         }
 
         uint64_t OpSequence::length() const {
