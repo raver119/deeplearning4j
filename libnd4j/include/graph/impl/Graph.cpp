@@ -288,14 +288,15 @@ namespace sd {
 
         Graph::~Graph() {
             for (auto &v: *_mapped)
-                delete v.second;
+                if (v.second->isRemovable())
+                    delete v.second;
 
             for (auto &v: _unmapped)
-                delete v.second;
+                if (v.second->isRemovable())
+                    delete v.second;
 
             for (auto &v: *_onion)
                 delete v.second;
-
 
             for (auto v: _scopes)
                 delete v;
@@ -305,6 +306,11 @@ namespace sd {
             delete _variableSpace;
             delete _onion;
             delete _configuration;
+        }
+
+        void Graph::addNode(const sd::graph::Node &node) {
+            node.markRemovable(true);
+            addNode(const_cast<Node*>(&node));
         }
 
         void Graph::addNode(Node *node) {

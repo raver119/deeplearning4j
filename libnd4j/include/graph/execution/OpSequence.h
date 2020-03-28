@@ -58,6 +58,13 @@ namespace sd {
             uint64_t length() const;
 
             /**
+             * This method returns specific Op/ContextPrototype pair for specified index
+             * @param index
+             * @return
+             */
+            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> at(uint64_t index);
+
+            /**
              * This method allows to add DeclarableOp to the end of execution queue
              * @param op - Op to be executed
              * @param ctx - ContextPrototype for this operation with inputs/outputs/args defined

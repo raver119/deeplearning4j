@@ -73,6 +73,14 @@ namespace sd {
             }
         }
 
+        bool Node::isRemovable() const {
+            return _removable;
+        }
+
+        void Node::markRemovable(bool reallyRemovable) const {
+            _removable = reallyRemovable;
+        }
+
         OpClass sd::graph::Node::getOpClass() {
             return _opClass;
         }
@@ -313,6 +321,40 @@ namespace sd {
         }
         BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT Node* Node::asT, (), LIBND4J_TYPES);
 
+        Node::Node(const std::string &opName, const int id, const std::vector<std::pair<int, int>> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs) {
+
+            auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
+
+            this->_opType = OpType_CUSTOM;
+            this->_id = id;
+            this->_opNum = customOp->getOpHash();
+            this->_extraParams = nullptr;
+            this->_dataType = sd::DataType::FLOAT32; // float as default
+            this->_dim = nullptr;
+            this->_customOp = customOp;
+
+            _hasExternalInputs = false;
+            _hasExternalOutputs = false;
+            _hasInternalInputs = false;
+            _hasInternalOutputs = false;
+
+            // FIXME: get rid of this!!!
+            _scalar = NDArrayFactory::create<int>(0);
+
+            for (auto i: inputs)
+                pickInput(i);
+
+            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+
+            for (auto v: iArgs)
+                block->getIArguments()->emplace_back(v);
+
+            for (auto v: tArgs)
+                block->getTArguments()->emplace_back(v);
+
+            this->setContextPrototype(block);
+        }
+
         sd::graph::Node::Node(sd::ops::DeclarableOp *customOp, int id, std::initializer_list<int> input, std::initializer_list<int> output,  std::initializer_list<int> dimensions, float scalar, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs) {
             this->_opType = OpType_CUSTOM;
             this->_id = id;
@@ -327,6 +369,7 @@ namespace sd {
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
 
+            // FIXME: get rid of this!!!
             _scalar = NDArrayFactory::create(scalar);
 
             for (auto i: input)

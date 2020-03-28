@@ -127,6 +127,7 @@ namespace sd {
              * @param node
              */
             void addNode(sd::graph::Node *node);
+            void addNode(const sd::graph::Node &node);
 
             /**
              * This method returns layered representation of the graph

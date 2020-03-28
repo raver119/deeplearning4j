@@ -86,6 +86,9 @@ namespace sd {
             // each node can be active or inactive, if used with divergents, like IF statements
             bool _active = true;
 
+            // meh
+            mutable bool _removable = true;
+
             // these fields contain information about Scope these ops are related to
             int _scope_id = 0;
             std::string _scope_name;
@@ -96,6 +99,7 @@ namespace sd {
             Nd4jLong _frameId = -1;
 
         public:
+            explicit Node(const std::string &opName, const int id = 0, const std::vector<std::pair<int,int>> &inputs = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {});
             explicit Node(sd::ops::DeclarableOp *customOp, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
             explicit Node(OpType opType = OpType_TRANSFORM_SAME, int opNum = 0, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
             explicit Node(const sd::graph::FlatNode *node);
@@ -126,6 +130,9 @@ namespace sd {
 
             bool isMultiInput();
             bool isMultiOutput();
+
+            bool isRemovable() const;
+            void markRemovable(bool reallyRemovable) const;
 
             int getLayer();
             void setLayer(int layer);

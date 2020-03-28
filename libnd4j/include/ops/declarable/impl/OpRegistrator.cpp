@@ -221,7 +221,7 @@ namespace sd {
             return _declarablesLD.at(hash);
         }
 
-        sd::ops::DeclarableOp *OpRegistrator::getOperation(std::string& name) {
+        sd::ops::DeclarableOp *OpRegistrator::getOperation(const std::string& name) {
             if (!_declarablesD.count(name)) {
                 nd4j_debug("Unknown operation requested: [%s]\n", name.c_str());
                 return nullptr;

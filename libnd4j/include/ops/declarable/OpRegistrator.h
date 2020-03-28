@@ -123,7 +123,7 @@ namespace sd {
 
             sd::ops::DeclarableOp* getOperation(const char *name);
             sd::ops::DeclarableOp* getOperation(Nd4jLong hash);
-            sd::ops::DeclarableOp* getOperation(std::string &name);
+            sd::ops::DeclarableOp* getOperation(const std::string &name);
 
             sd::ops::platforms::PlatformHelper* getPlatformHelper(Nd4jLong hash, samediff::Engine engine);
 
