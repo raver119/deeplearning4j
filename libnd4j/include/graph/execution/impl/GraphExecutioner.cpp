@@ -29,7 +29,7 @@
 #include <memory/MemoryRegistrator.h>
 #include <graph/Node.h>
 #include <graph/Scope.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <graph/TimeHolder.h>
 #include <loops/scalar.h>
 #include <loops/pairwise_transform.h>

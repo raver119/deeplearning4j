@@ -19,7 +19,7 @@
 //
 
 #include <graph/GraphHolder.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <exceptions/graph_exists_exception.h>
 #include <exceptions/graph_execution_exception.h>
 

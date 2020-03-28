@@ -19,7 +19,7 @@
 //
 
 #include <graph/profiling/GraphProfilingHelper.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 
 namespace sd {
     namespace graph {

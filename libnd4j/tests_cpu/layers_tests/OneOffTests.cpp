@@ -23,7 +23,7 @@
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/OpTuple.h>
 #include <ops/declarable/OpRegistrator.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <memory/MemoryReport.h>
 #include <memory/MemoryUtils.h>
 #include <helpers/MmulHelper.h>

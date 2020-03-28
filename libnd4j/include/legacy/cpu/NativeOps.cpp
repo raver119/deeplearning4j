@@ -23,7 +23,7 @@
 #include <legacy/NativeOps.h>
 #include "legacy/NativeOpExecutioner.h"
 #include <array/NDArray.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <graph/GraphHolder.h>
 #include <math/templatemath.h>
 #include <types/float8.h>

@@ -20,7 +20,6 @@
 
 #include "testlayers.h"
 #include <array/NDArray.h>
-#include <graph/GraphExecutioner.h>
 #include <ops/declarable/CustomOperations.h>
 
 using namespace sd;

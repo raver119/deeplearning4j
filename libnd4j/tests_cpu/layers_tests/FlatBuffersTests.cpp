@@ -25,7 +25,7 @@
 #include <graph/generated/result_generated.h>
 #include <graph/Node.h>
 #include <graph/Graph.h>
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <ops/declarable/CustomOperations.h>
 
 using namespace sd;
