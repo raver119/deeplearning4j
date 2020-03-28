@@ -23,7 +23,7 @@
 #endif
 #include <cstdlib>
 #include "graphopt.h"
-#include <graph/GraphExecutioner.h>
+#include <graph/execution/GraphExecutioner.h>
 #include <ops/declarable/CustomOperations.h>
 #include <graph/GraphUtils.h>
 
