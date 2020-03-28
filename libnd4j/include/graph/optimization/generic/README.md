@@ -1,0 +1,1 @@
+This folder contains generic NodeOptimizer implementations suitable for all platforms
