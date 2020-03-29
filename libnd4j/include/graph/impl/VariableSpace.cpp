@@ -73,8 +73,8 @@ namespace sd {
                     this->_temporary[pair.first] = variable;
             }
 
-            if (variable->getName() != nullptr && variable->getName()->length() > 0)
-                this->_symbolic[*(variable->getName())] = variable;
+            if (!variable->getName().empty())
+                this->_symbolic[variable->getName()] = variable;
 
             this->_paired[pair] = variable;
 
@@ -89,12 +89,12 @@ namespace sd {
             return _placeholders.size();
         }
 
-        bool sd::graph::VariableSpace::hasVariable(std::string *symbol) {
-            return _symbolic.count(*symbol) == 1;
+        bool sd::graph::VariableSpace::hasVariable(const std::string &symbol) {
+            return _symbolic.count(symbol) == 1;
         }
 
-        sd::graph::Variable * sd::graph::VariableSpace::getVariable(std::string *symbol) {
-            return _symbolic.at(*symbol);
+        sd::graph::Variable * sd::graph::VariableSpace::getVariable(const std::string &symbol) {
+            return _symbolic.at(symbol);
         }
 
         bool sd::graph::VariableSpace::hasVariable(int id, int index) {
@@ -118,7 +118,7 @@ namespace sd {
             return var->isExternal();
         }
 
-        bool VariableSpace::hasExternalVariable(std::string *symbol) {
+        bool VariableSpace::hasExternalVariable(const std::string &symbol) {
             if (!hasVariable(symbol))
                 return false;
 
@@ -235,8 +235,8 @@ namespace sd {
             if (pair.second == 0 && !this->hasVariable(pair.first)) {
                 this->putVariable(pair.first, variable);
             } else {
-                if (variable->getName() != nullptr && variable->getName()->length() != 0) {
-                    _symbolic[*(variable->getName())] = variable;
+                if (!variable->getName().empty()) {
+                    _symbolic[variable->getName()] = variable;
                 }
 
                 _varmap.lock();
@@ -276,9 +276,9 @@ namespace sd {
 
             variable->setId(id);
 
-            if (variable->getName() != nullptr && variable->getName()->length() != 0) {
+            if (!variable->getName().empty()) {
                 //std::pair<std::string, sd::graph::Variable *> pair(*(variable->getName()), variable);
-                _symbolic[*(variable->getName())] = variable;
+                _symbolic[variable->getName()] = variable;
             }
 
             // we have special list for external variables to ensure graph completeness
@@ -378,8 +378,8 @@ namespace sd {
                         this->_temporary[pair.first] = clonedVar;
                 }
 
-                if (clonedVar->getName() != nullptr && clonedVar->getName()->length() > 0)
-                    this->_symbolic[*(clonedVar->getName())] = clonedVar;
+                if (!clonedVar->getName().empty())
+                    this->_symbolic[clonedVar->getName()] = clonedVar;
 
                 this->_paired[pair] = clonedVar;
 
@@ -392,10 +392,10 @@ namespace sd {
         void VariableSpace::replaceVariable(Variable *variable) {
             bool replaced = false;
             // trying name first
-            if (variable->getName() != nullptr && !variable->getName()->empty()) {
-                nd4j_printf("Trying to replace variable by name: [%s]\n", variable->getName()->c_str());
+            if (!variable->getName().empty()) {
+                nd4j_printf("Trying to replace variable by name: [%s]\n", variable->getName().c_str());
                 if (hasVariable(variable->getName())) {
-                    nd4j_printf("Replacing by name: [%s]\n", variable->getName()->c_str());
+                    nd4j_printf("Replacing by name: [%s]\n", variable->getName().c_str());
                     auto vs = getVariable(variable->getName());
                     dropVariable(vs->id(), vs->index());
                     putVariable(vs->id(), vs->index(), variable);

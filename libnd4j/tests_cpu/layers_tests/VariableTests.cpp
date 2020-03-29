@@ -49,12 +49,12 @@ TEST_F(VariableTests, TestClone_1) {
 
     ASSERT_TRUE(array1->equalsTo(array2));
     ASSERT_EQ(var1->id(), var2->id());
-    ASSERT_EQ(*var1->getName(), *var2->getName());
+    ASSERT_EQ(var1->getName(), var2->getName());
 
     delete var1;
 
     std::string str("alpha");
-    ASSERT_EQ(*var2->getName(), str);
+    ASSERT_EQ(var2->getName(), str);
     array2->assign(2.0);
 
     ASSERT_NEAR(2.0, array2->meanNumber().e<float>(0), 1e-5);
@@ -209,7 +209,7 @@ TEST_F(VariableTests, Test_Dtype_Conversion_1) {
     auto vd = v.template asT<double>();
     auto vf = vd->template asT<float>();
 
-    ASSERT_EQ(*v.getName(), *vf->getName());
+    ASSERT_EQ(v.getName(), vf->getName());
     ASSERT_EQ(v.id(), vf->id());
     ASSERT_EQ(v.index(), vf->index());
 

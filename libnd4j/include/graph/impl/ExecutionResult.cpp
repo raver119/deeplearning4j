@@ -55,8 +55,8 @@ namespace sd {
         void ExecutionResult::emplace_back(Variable *variable) {
             _variables.emplace_back(variable);
 
-            if (variable->getName() != nullptr)
-                _stringIdMap[*variable->getName()] = variable;
+            if (!variable->getName().empty())
+                _stringIdMap[variable->getName()] = variable;
 
             std::pair<int,int> p(variable->id(), variable->index());
             _pairIdMap[p] = variable;

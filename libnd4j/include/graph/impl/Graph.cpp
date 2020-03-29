@@ -329,7 +329,7 @@ namespace sd {
             auto cname = node->getName() == nullptr ? nullptr : node->getName()->c_str();
             auto nodeState = _variableSpace->hasVariable(node->id()) ? _variableSpace->getVariable(node->id()) :new Variable(nullptr, cname, node->id());
             if (node->getName() != nullptr)
-                nodeState->setName(node->getName());
+                nodeState->setName(*node->getName());
 
 
             if (node->isInplace())
@@ -420,7 +420,7 @@ namespace sd {
                 // nd4j_logger("Adding auto output variable; Output size: %i\n", node->output()->size());
 
                 var->setId(node->id());
-                var->setName(node->getName());
+                var->setName(*node->getName());
                 _variableSpace->putOutputVariable(var);
                 //node->pickExternalOutput(var->id());
 
@@ -1130,8 +1130,8 @@ namespace sd {
                         auto values = v->getNDArray()->asString(16);
                         auto dtype = DataTypeUtils::asString(v->getNDArray()->dataType());
 
-                        if (v->getName() != nullptr && !v->getName()->empty()) {
-                            nd4j_printf("<%s> <%i:%i> dtype: %s; shape: %s; values: %s;\n", v->getName()->c_str(), v->id(), v->index(), dtype.c_str(), shape.c_str(), values.c_str());
+                        if (!v->getName().empty()) {
+                            nd4j_printf("<%s> <%i:%i> dtype: %s; shape: %s; values: %s;\n", v->getName().c_str(), v->id(), v->index(), dtype.c_str(), shape.c_str(), values.c_str());
                         } else {
                             nd4j_printf("<%i:%i> dtype: %s; shape: %s; values: %s;\n", v->id(), v->index(), dtype.c_str(), shape.c_str(), values.c_str());
                         }
@@ -1702,6 +1702,12 @@ namespace sd {
 
             return graph;
              */
+        }
+
+        void Graph::addPlaceholder(const std::string &nodeName, const int id, DataType dataType, const std::vector<Nd4jLong> &shape) {
+            auto var = new Variable(true, dataType, shape);
+            var->setName(nodeName);
+            _variableSpace->putVariable(id, var);
         }
 
 

@@ -81,17 +81,17 @@ namespace sd {
 
             virtual bool hasExternalVariable(int it);
             virtual bool hasExternalVariable(std::pair<int,int>& pair);
-            virtual bool hasExternalVariable(std::string *symbol);
+            virtual bool hasExternalVariable(const std::string &symbol);
 
             virtual bool hasVariable(int id);
             virtual bool hasVariable(int id, int idx);
             virtual bool hasVariable(std::pair<int,int>& pair);
-            virtual bool hasVariable(std::string *symbol);
+            virtual bool hasVariable(const std::string &symbol);
 
             virtual sd::graph::Variable* getVariable(int id);
             virtual sd::graph::Variable* getVariable(int id, int idx);
             virtual sd::graph::Variable* getVariable(std::pair<int,int>& pair);
-            virtual sd::graph::Variable* getVariable(std::string *symbol);
+            virtual sd::graph::Variable* getVariable(const std::string &symbol);
 
             virtual std::vector<Variable*> getVariables();
 

@@ -596,8 +596,8 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -615,14 +615,14 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     graph->addNode(nodeB);
 
 
-    auto rX = graph->getVariableSpace()->getVariable(&a);
-    auto rZ = graph->getVariableSpace()->getVariable(&o);
+    auto rX = graph->getVariableSpace()->getVariable(a);
+    auto rZ = graph->getVariableSpace()->getVariable(o);
 
     std::string om("omicron");
 
     ASSERT_TRUE(rX->getNDArray() == vX->getNDArray());
     ASSERT_TRUE(rZ->getNDArray() == vZ->getNDArray());
-    ASSERT_FALSE(graph->getVariableSpace()->hasVariable(&om));
+    ASSERT_FALSE(graph->getVariableSpace()->hasVariable(om));
 
 
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1));
@@ -630,8 +630,8 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&p));
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&t));
+    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(p));
+    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(t));
 
     ASSERT_NEAR(1.4142135, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
@@ -654,8 +654,8 @@ TEST_F(GraphTests, OutputValidation1) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -691,8 +691,8 @@ TEST_F(GraphTests, OutputValidation2) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -733,8 +733,8 @@ TEST_F(GraphTests, OutputValidation3) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -773,8 +773,8 @@ TEST_F(GraphTests, OutputValidation4) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -819,8 +819,8 @@ TEST_F(GraphTests, OutputValidation5) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -859,8 +859,8 @@ TEST_F(GraphTests, OutputValidation6) {
     std::string a("alpha");
     std::string o("omega");
 
-    vX->setName(&a);
-    vZ->setName(&o);
+    vX->setName(a);
+    vZ->setName(o);
 
     graph->getVariableSpace()->putVariable(-1, vX);
     graph->getVariableSpace()->putVariable(-2, vZ);
@@ -1173,7 +1173,7 @@ TEST_F(GraphTests, TestGraphInGraph_2) {
 
     // this is placeholder variable
     auto placeHolder = new Variable(true);
-    placeHolder->setName(&nameA1);
+    placeHolder->setName(nameA1);
     graphB.getVariableSpace()->putVariable(-1, placeHolder);
 
     // abs, result is 5

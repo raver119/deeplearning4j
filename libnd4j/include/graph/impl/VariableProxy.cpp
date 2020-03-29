@@ -57,7 +57,7 @@ namespace sd {
         }
 
         
-        bool VariableProxy::hasExternalVariable(std::string *symbol) {
+        bool VariableProxy::hasExternalVariable(const std::string &symbol) {
             return _backed->hasExternalVariable(symbol);
         }
 
@@ -105,7 +105,7 @@ namespace sd {
         }
 
         
-        bool VariableProxy::hasVariable(std::string *symbol) {
+        bool VariableProxy::hasVariable(const std::string &symbol) {
             return _current->hasVariable(symbol) || _backed->hasVariable(symbol);
         }
 
@@ -146,20 +146,20 @@ namespace sd {
         }
 
         
-        sd::graph::Variable *VariableProxy::getVariable(std::string *symbol) {
+        sd::graph::Variable *VariableProxy::getVariable(const std::string &symbol) {
             if (_current->hasVariable(symbol))
                 return _current->getVariable(symbol);
             
             if (_backed->hasVariable(symbol))
                 return _backed->getVariable(symbol);
 
-            nd4j_printf("Unable to get Variable to proxy: [%s]\n", symbol->c_str());
+            nd4j_printf("Unable to get Variable to proxy: [%s]\n", symbol.c_str());
             throw std::runtime_error("Bad arguments");
         }
 
         
         void VariableProxy::replaceVariable(Variable *variable) {
-            if (variable->getName() != nullptr && !variable->getName()->empty()) {
+            if (!variable->getName().empty()) {
                 // if variable has name defined - we should resolve it via backing var space
                 if (_backed->hasVariable(variable->getName())) {
                     auto origVar = _backed->getVariable(variable->getName());

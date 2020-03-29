@@ -2255,7 +2255,7 @@ int getVariableIndex(sd::graph::Variable* variable) {
 }
 
 const char* getVariableName(sd::graph::Variable* variable) {
-    return variable->getName()->c_str();
+    return variable->getName().c_str();
 }
 
 Nd4jLong* getVariableShape(sd::graph::Variable* variable) {

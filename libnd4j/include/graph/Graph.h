@@ -131,6 +131,11 @@ namespace sd {
             void addNode(const sd::graph::Node &node);
 
             /**
+             * This method allows to add placeholder with some pre-defined properties
+             */
+            void addPlaceholder(const std::string &nodeName, const int id = 0, const DataType dataType = sd::DataType::ANY, const std::vector<Nd4jLong> &shape = {});
+
+            /**
              * This method returns layered representation of the graph
              *
              * @return

@@ -180,6 +180,10 @@ namespace sd {
             _input.push_back(pair);
         }
 
+        void Node::pickInput(const std::string &id) {
+            throw std::runtime_error("Node::pickInput - Not implemented yet");
+        }
+
         void sd::graph::Node::pickInput(int inputId, int outputId) {
             std::pair<int,int> p(inputId,outputId);
             pickInput(p);
@@ -321,8 +325,40 @@ namespace sd {
         }
         BUILD_SINGLE_TEMPLATE(template SD_EXPORT Node* Node::asT, (), LIBND4J_TYPES);
 
-        Node::Node(const std::string &opName, const int id, const std::vector<std::pair<int, int>> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs) {
+        Node::Node(const std::string &opName, const std::string &nodeName, const int id, const std::vector<std::string> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs) {
+            auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
 
+            this->_opType = OpType_CUSTOM;
+            this->_id = id;
+            this->_opNum = customOp->getOpHash();
+            this->_extraParams = nullptr;
+            this->_dataType = sd::DataType::FLOAT32; // float as default
+            this->_dim = nullptr;
+            this->_customOp = customOp;
+
+            _hasExternalInputs = false;
+            _hasExternalOutputs = false;
+            _hasInternalInputs = false;
+            _hasInternalOutputs = false;
+
+            // FIXME: get rid of this!!!
+            _scalar = NDArrayFactory::create<int>(0);
+
+            for (auto i: inputs)
+                pickInput(i);
+
+            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+
+            for (auto v: iArgs)
+                block->getIArguments()->emplace_back(v);
+
+            for (auto v: tArgs)
+                block->getTArguments()->emplace_back(v);
+
+            this->setContextPrototype(block);
+        }
+
+        Node::Node(const std::string &opName, const int id, const std::vector<std::pair<int, int>> &inputs, const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs) {
             auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
 
             this->_opType = OpType_CUSTOM;

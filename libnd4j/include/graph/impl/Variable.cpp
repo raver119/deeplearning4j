@@ -30,13 +30,13 @@ namespace sd {
     namespace graph {
 
         template <typename N>
-        Variable* Variable::asT() {
+        Variable* Variable::asT() const {
             auto result = new Variable(this->isPlaceholder());
 
             result->markExternal(this->_external);
             result->setId(this->_id);
             result->markReadOnly(this->_readOnly);
-            result->setName(&this->_name);
+            result->setName(this->_name);
             result->setIndex(this->_index);
 
             if (this->_ndarray != nullptr)
@@ -50,9 +50,9 @@ namespace sd {
 
             return result;
         }
-        BUILD_SINGLE_TEMPLATE(template SD_EXPORT Variable* Variable::asT, (), LIBND4J_TYPES);
+        BUILD_SINGLE_TEMPLATE(template SD_EXPORT Variable* Variable::asT, () const, LIBND4J_TYPES);
 
-        sd::graph::Variable* sd::graph::Variable::clone() {
+        sd::graph::Variable* sd::graph::Variable::clone() const {
             auto result = new Variable(this->isPlaceholder());
             result->_external = this->_external;
             result->_id = this->_id;
@@ -76,7 +76,7 @@ namespace sd {
             _index = index;
         }
 
-        bool sd::graph::Variable::hasNDArray() {
+        bool sd::graph::Variable::hasNDArray() const {
             return _ndarray != nullptr;
         }
 
@@ -84,27 +84,27 @@ namespace sd {
             _variableType = variableType;
         }
 
-        bool sd::graph::Variable::hasNDArrayList() {
+        bool sd::graph::Variable::hasNDArrayList() const {
             return _list != nullptr;
         }
 
-        bool sd::graph::Variable::isPlaceholder() {
+        bool sd::graph::Variable::isPlaceholder() const {
             return _placeholder;
         }
 
-        std::string * sd::graph::Variable::getName() {
-            return &_name;
+        const std::string& sd::graph::Variable::getName() const {
+            return _name;
         }
 
-        void sd::graph::Variable::setName(std::string *name) {
-            _name = *name;
+        void sd::graph::Variable::setName(const std::string &name) {
+            _name = name;
         }
 
-        int sd::graph::Variable::id() {
+        int sd::graph::Variable::id() const {
             return _id;
         }
 
-        int sd::graph::Variable::index() {
+        int sd::graph::Variable::index() const {
             return _index;
         }
 
@@ -112,7 +112,7 @@ namespace sd {
             _id = id;
         }
 
-        bool sd::graph::Variable::isEmpty() {
+        bool sd::graph::Variable::isEmpty() const {
             if (_variableType == VariableType::NDARRAY)
                 return _ndarray == nullptr || !_ndarray->nonNull();
             else if (_variableType == VariableType::ARRAY_LIST)
@@ -121,11 +121,11 @@ namespace sd {
             return false;
         }
 
-        bool sd::graph::Variable::isExternal() {
+        bool sd::graph::Variable::isExternal() const {
             return _external;
         }
 
-        bool sd::graph::Variable::isReadOnly() {
+        bool sd::graph::Variable::isReadOnly() const {
             return _readOnly;
         }
 
@@ -143,7 +143,7 @@ namespace sd {
             this->_readOnly = reallyReadOnly;
         }
 
-        sd::NDArray * sd::graph::Variable::getNDArray() {
+        sd::NDArray * sd::graph::Variable::getNDArray() const {
             if (_variableType != VariableType::NDARRAY) {
                 nd4j_printf("Variable[%i:%i/<%s>] is has [%s] type, but NDArray was requested\n", this->_id, this->_index, this->_name.c_str(), EnumUtils::_VariableTypeToString(_variableType));
             }
@@ -162,7 +162,7 @@ namespace sd {
             return this->_ndarray;
         }
 
-        sd::NDArrayList * sd::graph::Variable::getNDArrayList() {
+        sd::NDArrayList * sd::graph::Variable::getNDArrayList() const {
             if (_variableType != VariableType::ARRAY_LIST) {
                 nd4j_debug("Variable[%i:%i/<%s>] is has [%s] type, but NDArrayList was requested\n", this->_id, this->_index, this->_name.c_str(), EnumUtils::_VariableTypeToString(_variableType));
             }
@@ -170,7 +170,7 @@ namespace sd {
         }
 
 
-        bool Variable::isRemovable() {
+        bool Variable::isRemovable() const {
             return _removable;
         }
 
@@ -187,7 +187,7 @@ namespace sd {
         }
 
 
-        VariableType sd::graph::Variable::variableType() {
+        VariableType sd::graph::Variable::variableType() const {
             return _variableType;
         }
 
@@ -270,12 +270,14 @@ namespace sd {
             }
         }
 
-        std::vector<Nd4jLong>& sd::graph::Variable::shape() {
+        const std::vector<Nd4jLong>& sd::graph::Variable::shape() const {
             return _shape;
         }
 
-        sd::graph::Variable::Variable(bool placeholder) {
+        sd::graph::Variable::Variable(bool placeholder, DataType dataType, const std::vector<Nd4jLong> &shape) {
             _placeholder = placeholder;
+            _dtype = dataType;
+            _shape = shape;
         }
 
 

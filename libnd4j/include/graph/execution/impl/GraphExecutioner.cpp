@@ -126,7 +126,7 @@ namespace sd{
                 ResultSet deletables;
                 int cnt = 0;
                 for (Variable* v: *embedded->getPlaceholders()) {
-                    if (v->getName() != nullptr && v->getName()->size() > 0) {
+                    if (!v->getName().empty()) {
 
                         // trying symbolic lookup first
                         if (variableSpace->hasVariable(v->getName())) {
@@ -136,7 +136,7 @@ namespace sd{
         //                    deletables.push_back(vr);
                             v->setNDArray(vr);
                         } else {
-                            nd4j_debug("Can't find variable [%s] in parent graph...", v->getName()->c_str());
+                            nd4j_debug("Can't find variable [%s] in parent graph...", v->getName().c_str());
                             return ND4J_STATUS_BAD_INPUT;
                             //throw "Can't find desired variable";
                         }
@@ -581,7 +581,7 @@ namespace sd{
 
                 auto fArray = FlatUtils::toFlatArray(builder, *array);
 
-                auto fName = builder.CreateString(*(var->getName()));
+                auto fName = builder.CreateString(var->getName());
                 auto id = CreateIntPair(builder, var->id(), var->index());
 
                 auto fv = CreateFlatVariable(builder, id, fName, static_cast<sd::graph::DType>(array->dataType()), 0, fArray);

@@ -64,6 +64,7 @@ namespace sd {
             std::string _name;
 
             std::vector<Nd4jLong> _shape;
+            DataType _dtype;
 
             bool _external = false;
             bool _readOnly = false;
@@ -80,7 +81,7 @@ namespace sd {
             VariableType _variableType = VariableType::NDARRAY;
             
         public:
-            Variable(bool placeHolder);
+            Variable(bool placeHolder, DataType dataType = DataType::ANY, const std::vector<Nd4jLong> &shape = {});
             Variable(sd::NDArray *arrayw, const char *name, int id, int idx = 0);
             Variable(sd::NDArray *array = nullptr, const char *name = nullptr);
 
@@ -90,27 +91,27 @@ namespace sd {
 
             ~Variable();
 
-            Variable* clone();
+            Variable* clone() const;
 
             template <typename N>
-            SD_EXPORT Variable* asT();
+            SD_EXPORT Variable* asT() const;
 
-            bool hasNDArray();
-            sd::NDArray* getNDArray();
+            bool hasNDArray() const;
+            sd::NDArray* getNDArray() const;
             void setNDArray(sd::NDArray *array);
 
-            bool hasNDArrayList();
-            sd::NDArrayList* getNDArrayList();
+            bool hasNDArrayList() const;
+            sd::NDArrayList* getNDArrayList() const;
             void setNDArrayList(sd::NDArrayList* list);
 
-            bool isExternal();
-            bool isReadOnly();
-            bool isEmpty();
-            bool isRemovable();
+            bool isExternal() const;
+            bool isReadOnly() const;
+            bool isEmpty() const;
+            bool isRemovable() const;
 
-            bool isPlaceholder();
+            bool isPlaceholder() const;
 
-            VariableType variableType();
+            VariableType variableType() const;
             void setVariableType(VariableType variableType);
 
             /**
@@ -124,16 +125,16 @@ namespace sd {
             void markReadOnly(bool reallyReadOnly);
             void markRemovable(bool reallyRemovable);
 
-            int id();
-            int index();
+            int id() const;
+            int index() const;
             void setIndex(int index);
             void setId(int id);
             void setId(int id, int idx);
 
-            std::string *getName();
-            void setName(std::string *name);
+            const std::string &getName() const;
+            void setName(const std::string &name);
 
-            std::vector<Nd4jLong>& shape();
+            const std::vector<Nd4jLong>& shape() const;
 
 #ifndef __JAVACPP_HACK__
             /**
