@@ -38,8 +38,8 @@ namespace sd {
             return &_handles;
         }
 
-        std::vector<Variable*>* Graph::getPlaceholders() {
-            return _variableSpace->getPlaceholders();
+        const std::vector<Variable*>& Graph::getPlaceholders() const {
+            return *_variableSpace->getPlaceholders();
         }
 
         int Graph::numberOfPlaceholders() {

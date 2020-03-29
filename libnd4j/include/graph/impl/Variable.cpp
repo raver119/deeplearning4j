@@ -294,6 +294,9 @@ namespace sd {
                 _variableType = VariableType::NDARRAY;
         }
 
+        DataType Variable::dataType() const {
+            return _dtype;
+        }
 
         sd::graph::Variable::Variable(NDArray *array, const char *name, int id, int idx) : Variable(array, name) {
             _id = id;

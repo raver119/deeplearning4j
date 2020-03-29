@@ -135,6 +135,7 @@ namespace sd {
             void setName(const std::string &name);
 
             const std::vector<Nd4jLong>& shape() const;
+            DataType dataType() const;
 
 #ifndef __JAVACPP_HACK__
             /**

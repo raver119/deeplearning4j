@@ -125,7 +125,7 @@ namespace sd{
                 // we need to propagate required variables to the embedded graph
                 ResultSet deletables;
                 int cnt = 0;
-                for (Variable* v: *embedded->getPlaceholders()) {
+                for (Variable* v: embedded->getPlaceholders()) {
                     if (!v->getName().empty()) {
 
                         // trying symbolic lookup first

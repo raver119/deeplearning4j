@@ -114,7 +114,7 @@ namespace sd {
 
             int numberOfPlaceholders();
 
-            std::vector<sd::graph::Variable*>* getPlaceholders();
+            const std::vector<sd::graph::Variable*>& getPlaceholders() const;
 
             /**
              * This method returns pointer to thread_local VariableSpace
