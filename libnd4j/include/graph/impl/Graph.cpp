@@ -872,7 +872,7 @@ namespace sd {
             }
         }
 
-        Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace) {
+        Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace, const GraphMemoryManager &memoryManager) : _memoryMaager(memoryManager) {
             this->_onion = new MAP_IMPL<int, std::vector<Node *> *>();
             this->_mapped = new MAP_IMPL<int, Node *> ();
             this->_nodes = new std::vector<int>();
@@ -1462,7 +1462,7 @@ namespace sd {
         }
 
 
-        Graph* Graph::fromFlatBuffers(const char* fileName) {
+        Graph* Graph::fromFlatBuffers(const char* fileName, const GraphMemoryManager &memoryManager) {
             // check if file exists
             if (!FileUtils::fileExists(fileName))
                 throw std::runtime_error("Graph file doesn't exist");
@@ -1494,15 +1494,15 @@ namespace sd {
                 fclose(in);
             }
 
-            return fromFlatPointer(ptrGraph);
+            return fromFlatPointer(ptrGraph, memoryManager);
         }
 
-        Graph* Graph::fromFlatPointer(void *ptr) {
+        Graph* Graph::fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager) {
             // get FlatGraph out of it
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
 
             // return Graph from this FlatGraph
-            return new Graph(fg);
+            return new Graph(fg, nullptr, memoryManager);
         }
 
         Graph* Graph::importFromTensorFlow(const char *fileName) {

@@ -23,10 +23,13 @@
 
 #include <system/dll.h>
 #include <graph/OptimizedGraph.h>
+#include <memory/GraphMemoryManager.h>
 
 namespace sd {
     namespace graph {
         class SD_EXPORT GraphExecutor {
+        protected:
+
         public:
             GraphExecutor() = default;
             virtual ~GraphExecutor() = default;

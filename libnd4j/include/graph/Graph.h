@@ -38,6 +38,7 @@
 #include <ops/declarable/OpDescriptor.h>
 #include <graph/execution/GraphExecutor.h>
 #include <graph/OptimizedGraph.h>
+#include <memory/GraphMemoryManager.h>
 
 namespace sd {
     namespace graph {
@@ -69,6 +70,8 @@ namespace sd {
             MAP_IMPL<int, Scope*> _mappedScopes;
             std::vector<Scope*> _scopes;
 
+            const GraphMemoryManager &_memoryMaager;
+
 ////////////////////////////////////////
             Nd4jStatus validateNode(sd::graph::Node *node);
 
@@ -83,7 +86,7 @@ namespace sd {
             void prepareOutputs();
 
         public:
-            Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr);
+            Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
             ~Graph();
 
@@ -91,8 +94,8 @@ namespace sd {
              * Methods that allow Graph imports
              */
             static Graph *importFromTensorFlow(const char *fileName);
-            static Graph* fromFlatBuffers(const char *fileName);
-            static Graph* fromFlatPointer(void *ptr);
+            static Graph* fromFlatBuffers(const char *fileName, const GraphMemoryManager &memoryManager = GraphMemoryManager());
+            static Graph* fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
             // this method applies toposort to nodes
             void toposortNodes();
