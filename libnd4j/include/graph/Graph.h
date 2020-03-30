@@ -261,6 +261,17 @@ namespace sd {
              * @return
              */
             std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}, const GraphExecutor &executor = GraphExecutor()) const;
+protected:
+            /*
+            * Topological graph analysis
+            * @param const start node for search
+            * @param const reference to list of nodes without external inputs
+            * @param const node positions in _handler
+            * @param operation gather
+            * @return stop iterating
+            */
+            bool      topolSearch(const int startNode, const std::set<int>& nodeBranches,
+                const std::unordered_map<int, int>& positions, OpSequence& opSeq) const;
         };
 
         FORCEINLINE std::vector<int>* Graph::nodes() {
