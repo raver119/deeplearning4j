@@ -84,6 +84,21 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>attach-sources</id>
+                    <phase>leave-disabled-to-not-generate-sources-twice-on-release</phase>
+                  </execution>
+                  <execution>
+                    <id>attach-source</id>
+                    <goals>
+                      <goal>jar-no-fork</goal>
+                    </goals>
+                  </execution>
+                </executions>
+              </plugin>
+            <plugin>
                 <groupId>org.bytedeco</groupId>
                 <artifactId>javacpp</artifactId>
                 <version>${javacpp.version}</version>
