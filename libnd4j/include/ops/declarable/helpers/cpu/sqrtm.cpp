@@ -283,14 +283,14 @@ namespace helpers {
          void rotate(T const p, T const q, T* r = nullptr) {
             if(q == T(0.f))
             {
-                _c = math::nd4j_sign(p);// < T(0.f) ? Scalar(-1) : Scalar(1);
+                _c = math::nd4j_sign<T,T>(p);// < T(0.f) ? Scalar(-1) : Scalar(1);
                 _s = T(0.f);
                 //*r = math::nd4j_abs(p);
             }
             else if( p == T(0.f))
             {
                 _c = p;
-                _s = -math::nd4j_sign(q);
+                _s = -math::nd4j_sign<T,T>(q);
                 //*r = math::nd4j_abs(q);
             }
             else if(math::nd4j_abs(p) > math::nd4j_abs(q))
@@ -457,7 +457,7 @@ template<typename T>
 
     /** \internal Form shift in shiftInfo, and update exshift if an exceptional shift is performed. */
     template<typename T>
-    inline void computeShift(NDArray const& inputMatrix, Nd4jLong initialIndex, Nd4jLong iteration, T& exshift, ShiftInfo<T>& shiftInfo) {
+    inline void computeShift(NDArray& inputMatrix, Nd4jLong initialIndex, Nd4jLong iteration, T& exshift, ShiftInfo<T>& shiftInfo) {
         shiftInfo.x = inputMatrix.t<T>(initialIndex, initialIndex);
         shiftInfo.y = inputMatrix.t<T>(initialIndex - 1, initialIndex - 1);
         shiftInfo.z = inputMatrix.t<T>(initialIndex, initialIndex - 1) * inputMatrix.t<T>(initialIndex - 1, initialIndex);
@@ -493,29 +493,28 @@ template<typename T>
         }
     }
 
-        template<typename T>
-        void makeHouseholder(NDArray& aThis, NDArray& essential, T& tau, T& beta)
-        {
-            auto size = aThis.lengthOf();
-            auto tail = aThis({1, size});//derived(), 1, size()-1);
-            T tailSqNorm = size == 1 ? T(0.f) : tail.reduceNumber(reduce::Norm2);
-            T c0 = aThis.t<T>(0);
-            const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
+    template<typename T>
+    void makeHouseholder(NDArray& aThis, NDArray& essential, T& tau, T& beta) {
+        auto size = aThis.lengthOf();
+        auto tail = aThis({1, size});//derived(), 1, size()-1);
+        T tailSqNorm = size == 1 ? T(0.f) : tail.reduceNumber(reduce::Norm2).t<T>(0);
+        T c0 = aThis.t<T>(0);
+        const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
 
-            if(tailSqNorm <= tol)     {
-                tau = T(0.f);
-                beta = c0;
-                essential.nullify();
-            }
-            else
-            {
-                beta = sqrt( c0 * c0 + tailSqNorm);
-                if (c0 >= T(0.f))
-                    beta = -beta;
-                essential = tail / (c0 - beta);
-                tau = (beta - c0) / beta;
-            }
+        if(tailSqNorm <= tol)     {
+            tau = T(0.f);
+            beta = c0;
+            essential.nullify();
         }
+        else
+        {
+            beta = sqrt( c0 * c0 + tailSqNorm);
+            if (c0 >= T(0.f))
+                beta = -beta;
+            essential = tail / (c0 - beta);
+            tau = (beta - c0) / beta;
+        }
+    }
 
 /** \internal Compute index im at which Francis QR step starts and the first Householder vector. */
     template<typename T>
@@ -524,21 +523,21 @@ template<typename T>
             const T Tmm = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex);
             const T r = shiftInfo.x - Tmm;
             const T s = shiftInfo.y - Tmm;
-            firstHouseholderVector.x = (r * s - shiftInfo.coeff(2)) / inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex) + inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex + 1);
-            firstHouseholderVector.x = inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1) - Tmm - r - s;
-            firstHouseholderVector.x = inputMatrix.t<T>(initialFrancisIndex + 2, initialFrancisIndex + 1);
+            firstHouseholderVector.x = (r * s - shiftInfo.z) / inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex) + inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex + 1);
+            firstHouseholderVector.y = inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1) - Tmm - r - s;
+            firstHouseholderVector.z = inputMatrix.t<T>(initialFrancisIndex + 2, initialFrancisIndex + 1);
             if (initialFrancisIndex == initialLowIndex) {
                 break;
             }
             const T lhs = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex - 1) * (math::nd4j_abs(firstHouseholderVector.y) + math::nd4j_abs(firstHouseholderVector.z));
             const T rhs = firstHouseholderVector.x * (math::nd4j_abs(inputMatrix.t<T>(initialFrancisIndex - 1, initialFrancisIndex - 1)) + math::nd4j_abs(Tmm) + abs(inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1)));
-            if (math::nd4j_abs(lhs) < 1.e-5f * rhs)
+            if (math::nd4j_abs(lhs) < T(1.e-5f * rhs))
                 break;
         }
     }
 
     template <typename T>
-    void applyHouseholderOnTheLeft( NDArray& ioMatrix,  NDArray const& essential, T const& tau) {
+    static void applyHouseholderOnTheLeft( NDArray& ioMatrix,  NDArray const& essential, T const& tau) {
         if(ioMatrix.rows() == 1) { // when the vector-row
             ioMatrix *= T(1.f) - tau;
         }
@@ -555,7 +554,7 @@ template<typename T>
     }
 
     template<typename T>
-    void applyHouseholderOnTheRight(NDArray& ioMatrix, const NDArray& essential, const T& tau) {
+    static void applyHouseholderOnTheRight(NDArray& ioMatrix, const NDArray& essential, const T& tau) {
         if(ioMatrix.sizeAt(-1) == 1) {
             ioMatrix *= T(1.f) - tau;
         }
@@ -571,7 +570,7 @@ template<typename T>
 
 /** \internal Perform a Francis QR step involving rows il:iu and columns im:iu. */
     template<typename T>
-    inline void performFrancisQRStep(NDArray& ioMatrixT, NDArray& ioMatrixU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, bool computeU, const ShiftInfo<T>& firstHouseholderVector) {
+    inline void performFrancisQRStep(NDArray& ioMatrixT, NDArray& ioMatrixU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, const ShiftInfo<T>& firstHouseholderVector) {
         const Nd4jLong size = ioMatrixT.sizeAt(-1);
 
         for (Nd4jLong k = indexMedium; k <= indexUpper - 2; ++k)
@@ -589,7 +588,8 @@ template<typename T>
 
             T tau, beta;
             NDArray ess('c', {2, 1}, DataTypeUtils::fromT<T>());
-            makeHouseholder(v, ess, tau, beta);
+            NDArray vArr = NDArrayFactory::create<T>('c', {3, 1}, {v.x, v.y, v.z});
+            makeHouseholder<T>(vArr, ess, tau, beta);
 
             if (beta != T(0.f)) {// if v is not zero
                 if (firstIteration && k > indexLower)
@@ -598,9 +598,12 @@ template<typename T>
                     ioMatrixT.t<T>(k, k - 1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-                applyHouseholderOnTheLeft(ioMatrixT({k, k + 3, k, size}), ess, tau);
-                applyHouseholderOnTheRight(ioMatrixT({0, k, math::nd4j_min(indexUpper, k + 3), k + 3}), ess, tau);
-                applyHouseholderOnTheRight(ioMatrixU({0, k, size, k + 3}), ess, tau);
+                auto matTKK3 = ioMatrixT({k, k + 3, k, size});
+                applyHouseholderOnTheLeft<T>(matTKK3, ess, tau);
+                auto matTK3 = ioMatrixT({0, k, math::nd4j_min(indexUpper, k + 3), k + 3});
+                applyHouseholderOnTheRight<T>(matTK3, ess, tau);
+                auto matT3 = ioMatrixU({0, k, size, k + 3});
+                applyHouseholderOnTheRight<T>(matT3, ess, tau);
             }
         }
 
@@ -611,9 +614,12 @@ template<typename T>
 
         if (beta != T(0)) { // if v is not zero
             ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
-            applyHouseholderOnTheLeft(ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size}), ess, tau);
-            applyHouseholderOnTheRight(ioMatrixT({0, indexUpper + 1, indexUpper - 1, indexUpper + 1}), ess, tau);
-            applyHouseholderOnTheRight(ioMatrixU({0, size, indexUpper - 1, indexUpper + 1}), ess, tau);
+            auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size});
+            applyHouseholderOnTheLeft(matT1, ess, tau);
+            auto matTR1 = ioMatrixT({0, indexUpper + 1, indexUpper - 1, indexUpper + 1});
+            applyHouseholderOnTheRight(matTR1, ess, tau);
+            auto matU1 = ioMatrixU({0, size, indexUpper - 1, indexUpper + 1});
+            applyHouseholderOnTheRight(matU1, ess, tau);
         }
 
         // clean up pollution due to round-off errors
@@ -637,17 +643,17 @@ template<typename T>
 
     }
         /** \internal Computes and returns vector L1 norm of T */
-        template<typename T>
-        inline T computeNormOfT(NDArray const& m_matT) {
-            const auto size = m_matT.columns();
-            // FIXME to be efficient the following would requires a triangular reduxion code
-            // Scalar norm = m_matT.upper().cwiseAbs().sum()
-            //               + m_matT.bottomLeftCorner(size-1,size-1).diagonal().cwiseAbs().sum();
-            T norm(0.);
-            for (auto j = 0; j < size; ++j)
-                norm += m_matT({0, math::nd4j_min<Nd4jLong>(size, j + 2), j, j + 1}).reduceNumber(reduce::Norm1);
-            return norm;
-        }
+    template<typename T>
+    static T computeNormOfT(NDArray const& m_matT) {
+        const auto size = m_matT.columns();
+        // FIXME to be efficient the following would requires a triangular reduxion code
+        // Scalar norm = m_matT.upper().cwiseAbs().sum()
+        //               + m_matT.bottomLeftCorner(size-1,size-1).diagonal().cwiseAbs().sum();
+        NDArray norm; norm.t<T>(0) = T(0.f);
+        for (auto j = 0; j < size; ++j)
+            norm += m_matT({0, math::nd4j_min<Nd4jLong>(size, j + 2), j, j + 1}).reduceNumber(reduce::Norm1);
+        return norm.t<T>(0);
+    }
 
         template<typename T>
         void computeFromHessenberg(const NDArray& matrixH, const NDArray& matrixQ, NDArray& m_matT, NDArray& m_matU) {
@@ -665,7 +671,7 @@ template<typename T>
             Nd4jLong iter = 0;      // iteration count for current eigenvalue
             Nd4jLong totalIter = 0; // iteration count for whole matrix
             T exshift(0.f);   // sum of exceptional shifts
-            T norm = computeNormOfT<T>();
+            T norm = computeNormOfT<T>(matrixH);
 
             if(norm != T(0.f)) // check for inversibility
             {
@@ -682,14 +688,14 @@ template<typename T>
                         iter = 0;
                     }
                     else if (indexLower == indexUpper - 1) { // Two roots found - the 2x2 band
-                        splitOffTwoRows<T>(m_matT, m_matU, indexUpper, exshift);
+                        splitOffTwoRows<T>(&m_matT, &m_matU, indexUpper, exshift);
                         indexUpper -= 2;
                         iter = 0;
                     }
                     else { // No convergence yet
                         // The firstHouseholderVector vector has to be initialized to something to get rid of a silly GCC warning (-O1 -Wall -DNDEBUG )
                         ShiftInfo<T> firstHouseholderVector = {0}, shiftInfo;
-                        computeShift(indexUpper, iter, exshift, shiftInfo);
+                        computeShift<T>(m_matT, indexUpper, iter, exshift, shiftInfo);
                         iter = iter + 1;
                         totalIter = totalIter + 1;
                         if (totalIter > maxIters) break;
@@ -780,7 +786,8 @@ template<typename T>
         outputT.assign(output);
 //        MmulHelper::matmul(&outputQ, &outputQ, output, false, true); output->printIndexedBuffer("Should be identity matrix");
           auto outputU = outputQ.ulike(); outputT.nullify();
-          primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
+        computeFromHessenberg<T>(*output, outputQ, outputT, outputH);
+          //primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
           outputT.printIndexedBuffer("Triangular after Schur");
 //        schurDecomposition<T>(context, input, &outputQ, &outputT);
 //        outputQ.printIndexedBuffer("Q matrix");
