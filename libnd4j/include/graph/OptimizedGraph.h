@@ -29,6 +29,8 @@
 
 namespace sd {
     namespace graph {
+        class Graph;
+
         /**
          * This class acts as a topologically sorted & optimized Graph representation, ready for execution
          */
@@ -39,7 +41,8 @@ namespace sd {
             // on each layer we can have 1+ OpSequences that can be executed independent
             std::map<uint64_t, ExecutionLayer> _onion;
 
-            GraphMemoryManager *_memoryManager;
+            GraphMemoryManager *_memoryManager = nullptr;
+            Graph *_originalGraph = nullptr;
 
             std::mutex _mutex;
         public:
@@ -83,6 +86,12 @@ namespace sd {
              * @return
              */
             const GraphMemoryManager& memoryManager() const;
+
+            /**
+             * This method returns pointer to original Graph
+             * @return
+             */
+            const Graph& originalGraph() const;
         };
     }
 }

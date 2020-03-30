@@ -282,7 +282,7 @@ namespace sd {
             _onion->insert(pair);
         }
 
-        VariableSpace * Graph::getVariableSpace() {
+        VariableSpace * Graph::getVariableSpace() const {
             return _variableSpace;
         }
 

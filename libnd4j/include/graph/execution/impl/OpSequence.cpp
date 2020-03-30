@@ -22,7 +22,13 @@
 
 namespace sd {
     namespace graph {
-        OpSequence::OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops) {
+        OpSequence::OpSequence(const int deviceId) : _deviceId(deviceId) {
+            //
+        }
+
+        OpSequence::OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops, const int deviceId) {
+            _deviceId = deviceId;
+
             for (const auto v : ops)
                 _ops.emplace_back(v);
         }
@@ -55,6 +61,10 @@ namespace sd {
                 _ops.emplace_back(v);
 
             return *this;
+        }
+
+        int OpSequence::deviceId() const {
+            return _deviceId;
         }
 
         std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::at(uint64_t index) const {

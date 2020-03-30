@@ -40,5 +40,5 @@ public:
 };
 
 TEST_F(GraphExecutorTests, test_basic_exec_1) {
-
+    GraphExecutor executor;
 }

@@ -27,14 +27,54 @@
 
 namespace sd {
     namespace graph {
+        class Graph;
+
         class SD_EXPORT GraphExecutor {
         protected:
+            virtual Context prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace) const;
+
+            /*
+             * preprocessor call involves:
+             * - ensure all inputs reside in HOT memory zone
+             * - shape function call
+             * - open workspace
+             */
+            virtual Nd4jStatus preprocess(sd::ops::DeclarableOp *op, Context &context) const;
+
+            /**
+             * postporcessor call involves:
+             * - remove all inputs that are not going to be used later from HOT memory zone
+             * - close workspace
+             * @return
+             */
+            virtual Nd4jStatus postprocess(sd::ops::DeclarableOp *op, Context *context) const;
 
         public:
             GraphExecutor() = default;
             virtual ~GraphExecutor() = default;
 
-            virtual Nd4jStatus execute(const OptimizedGraph &graph) const ;
+            /**
+             * This method executes OptimizedGraph instance
+             * @param graph
+             * @return
+             */
+            virtual Nd4jStatus execute(const OptimizedGraph &graph) const;
+
+            /**
+             * This method executes OpSequence
+             * @param sequence
+             * @param deviceId - this argument allows to override device affinity specified in OpSequence, keep it < 0 to follow OpSequence
+             * @return
+             */
+            virtual Nd4jStatus execute(const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId = -1) const;
+
+            /**
+             * This method executes given op
+             * @param op
+             * @param contextPrototype
+             * @return
+             */
+            virtual Nd4jStatus execute(sd::ops::DeclarableOp *op, ContextPrototype *contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const;
         };
     }
 }

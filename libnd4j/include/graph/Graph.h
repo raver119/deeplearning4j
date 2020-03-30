@@ -123,7 +123,7 @@ namespace sd {
              * This method returns pointer to thread_local VariableSpace
              * @return
              */
-            sd::graph::VariableSpace *getVariableSpace();
+            sd::graph::VariableSpace *getVariableSpace() const;
 
             /**
              * This method adds given node to the graph

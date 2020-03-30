@@ -19,11 +19,54 @@
 //
 
 #include <graph/execution/GraphExecutor.h>
+#include <graph/Graph.h>
 
 namespace sd {
     namespace graph {
+        Context GraphExecutor::prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace) const {
+            // TODO: maybe we'll want to do something here?
+            return Context(contextPrototype, &variableSpace);
+        }
+
+        Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {
+            return Status::OK();
+        }
+
+        Nd4jStatus GraphExecutor::postprocess(sd::ops::DeclarableOp *op, Context *context) const {
+            return Status::OK();
+        }
+
+
+        Nd4jStatus GraphExecutor::execute(sd::ops::DeclarableOp *op, ContextPrototype *contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
+            auto ctx = prepareContext(contextPrototype, *graph.originalGraph().getVariableSpace());
+            return op->execute(&ctx);
+        }
+
+        Nd4jStatus GraphExecutor::execute(const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
+            /*
+             * this is a basic implementation that works without dispatching etc
+             */
+            for (int e = 0; e < sequence.length(); e++) {
+                auto v = sequence[e];
+                auto result = execute(v.first, v.second, sequence, graph, deviceId >= 0 ? deviceId : sequence.deviceId());
+                if (result != Status::OK())
+                    return result;
+            }
+
+            return Status::OK();
+        }
+
         Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph) const {
-            throw std::runtime_error("GraphExecutor::execute - Not implemented yet");
+            /*
+             * this is a basic exection logic: roll through layers and sequences and execute them one by one sequentially
+             */
+            for (uint64_t l = 0; l < graph.layers(); l++) {
+                auto layer = graph.layer(l);
+
+                for (uint64_t o = 0; layer.width(); o++) {
+                    execute(layer[o], graph);
+                }
+            }
         }
     }
 }

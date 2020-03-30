@@ -19,6 +19,7 @@
 //
 
 #include <graph/OptimizedGraph.h>
+#include <graph/Graph.h>
 
 namespace sd {
     namespace graph {
@@ -80,6 +81,10 @@ namespace sd {
 
         const GraphMemoryManager &OptimizedGraph::memoryManager() const {
             return *_memoryManager;
+        }
+
+        const Graph &OptimizedGraph::originalGraph() const {
+            return *_originalGraph;
         }
     }
 }

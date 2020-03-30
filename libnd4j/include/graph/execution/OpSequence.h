@@ -36,9 +36,11 @@ namespace sd {
         protected:
             // main thing here. sorted list of operations and their contexts
             std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> _ops;
+
+            int _deviceId = 0;
         public:
-            explicit OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops);
-            OpSequence() = default;
+            explicit OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops, const int deviceId = 0);
+            OpSequence(const int deviceId = 0);
             ~OpSequence() = default;
 
             OpSequence(const OpSequence& other) noexcept;
@@ -50,6 +52,9 @@ namespace sd {
 
             // move assignment operator
             OpSequence& operator=(OpSequence&& other) noexcept;
+
+
+            int deviceId() const;
 
             /**
              * This method returns number of individual operations within this sequence
@@ -77,8 +82,8 @@ namespace sd {
              * @return
              */
 
-            iterator begin();
-            iterator end();
+            OpSequence::iterator begin();
+            OpSequence::iterator end();
 
             // additional private section
         private:
