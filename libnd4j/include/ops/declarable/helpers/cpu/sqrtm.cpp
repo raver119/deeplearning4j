@@ -496,7 +496,7 @@ template<typename T>
     template<typename T>
     void makeHouseholder(NDArray& aThis, NDArray& essential, T& tau, T& beta) {
         auto size = aThis.lengthOf();
-        auto tail = aThis({1, size});//derived(), 1, size()-1);
+        auto tail = aThis({1, size, 0, 0});//derived(), 1, size()-1);
         T tailSqNorm = size == 1 ? T(0.f) : tail.reduceNumber(reduce::Norm2).t<T>(0);
         T c0 = aThis.t<T>(0);
         const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
@@ -508,7 +508,7 @@ template<typename T>
         }
         else
         {
-            beta = sqrt( c0 * c0 + tailSqNorm);
+            beta = math::p_sqrt( c0 * c0 + tailSqNorm);
             if (c0 >= T(0.f))
                 beta = -beta;
             essential = tail / (c0 - beta);
@@ -543,13 +543,18 @@ template<typename T>
         }
         else if(tau != T(0.f)) {
             auto n = ioMatrix.sizeAt(-1);
+            auto m = ioMatrix.sizeAt(-2);
             //Map<typename internal::plain_row_type<PlainObject>::type> tmp(workspace,cols());
             //Block<Derived, EssentialPart::SizeAtCompileTime, Derived::ColsAtCompileTime> bottom(derived(), 1, 0, rows()-1, cols());
-            auto bottom = ioMatrix({1, n, 0, 0}); // all rows from the second
-            auto tmp = essential * bottom;
+            auto bottom = ioMatrix({1, m, 0, n}); // all rows from the second
+            auto tmp = NDArrayFactory::create<T>('c', {1, n});
+            essential.printShapeInfo("ESS"); bottom.printShapeInfo("BOTTOM");
+            MmulHelper::matmul(&essential, &bottom, &tmp, true, false);
             tmp += ioMatrix({0, 1, 0, 0});//this->row(0);
             ioMatrix({0, 1, 0, 0})  -= tau * tmp;
-            bottom -= tau * essential * tmp;
+            auto bottomTemp = bottom.ulike();
+            MmulHelper::matmul(&essential, &tmp, &bottomTemp, false, false);
+            bottom -= tau * bottomTemp;
         }
     }
 
@@ -598,7 +603,8 @@ template<typename T>
                     ioMatrixT.t<T>(k, k - 1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-                auto matTKK3 = ioMatrixT({k, k + 3, k, size});
+                auto matTKK3 = ioMatrixT({k, k + 3, k, size}); //
+                matTKK3.printShapeInfo("matTKK3 (should be 3x4)");
                 applyHouseholderOnTheLeft<T>(matTKK3, ess, tau);
                 auto matTK3 = ioMatrixT({0, k, math::nd4j_min(indexUpper, k + 3), k + 3});
                 applyHouseholderOnTheRight<T>(matTK3, ess, tau);
@@ -649,10 +655,10 @@ template<typename T>
         // FIXME to be efficient the following would requires a triangular reduxion code
         // Scalar norm = m_matT.upper().cwiseAbs().sum()
         //               + m_matT.bottomLeftCorner(size-1,size-1).diagonal().cwiseAbs().sum();
-        NDArray norm; norm.t<T>(0) = T(0.f);
+        T norm = T(0.f);
         for (auto j = 0; j < size; ++j)
-            norm += m_matT({0, math::nd4j_min<Nd4jLong>(size, j + 2), j, j + 1}).reduceNumber(reduce::Norm1);
-        return norm.t<T>(0);
+            norm += m_matT({0, math::nd4j_min<Nd4jLong>(size, j + 2), j, j + 1}).reduceNumber(reduce::Norm1).t<T>(0);
+        return norm;
     }
 
         template<typename T>
