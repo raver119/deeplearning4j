@@ -1713,7 +1713,7 @@ namespace sd {
 
         OptimizedGraph Graph::optimizedGraph() const {
             // TODO: implement this method
-            return OptimizedGraph();
+            return OptimizedGraph(const_cast<GraphMemoryManager &>(_memoryMaager));
         }
 
         std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {

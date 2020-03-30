@@ -22,6 +22,7 @@
 
 #include <graph/execution/OpSequence.h>
 #include <graph/execution/ExecutionLayer.h>
+#include <memory/GraphMemoryManager.h>
 #include <vector>
 #include <map>
 #include <mutex>
@@ -38,9 +39,11 @@ namespace sd {
             // on each layer we can have 1+ OpSequences that can be executed independent
             std::map<uint64_t, ExecutionLayer> _onion;
 
+            GraphMemoryManager *_memoryManager;
+
             std::mutex _mutex;
         public:
-            OptimizedGraph() = default;
+            OptimizedGraph(GraphMemoryManager &memoryManager);
             ~OptimizedGraph() = default;
 
             OptimizedGraph(const OptimizedGraph& other) noexcept;
@@ -74,6 +77,12 @@ namespace sd {
             void append(const std::vector<OpSequence> &layer);
             void append(const ExecutionLayer &layer);
             void append(OpSequence &sequence);
+
+            /**
+             * This method returns GraphMemoryManager instance that manages this Graph
+             * @return
+             */
+            const GraphMemoryManager& memoryManager() const;
         };
     }
 }

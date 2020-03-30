@@ -61,7 +61,8 @@ TEST_F(OpSequenceTests, test_iterator_1) {
 
     ASSERT_EQ(3, cnt);
 
-    OptimizedGraph optimizedGraph;
+    GraphMemoryManager mgr;
+    OptimizedGraph optimizedGraph(mgr);
     ASSERT_EQ(0, optimizedGraph.layers());
 
     optimizedGraph.append(sequence);
