@@ -31,7 +31,7 @@ namespace sd {
 
         class SD_EXPORT GraphExecutor {
         protected:
-            virtual Context prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace) const;
+            virtual Context prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const;
 
             /*
              * preprocessor call involves:

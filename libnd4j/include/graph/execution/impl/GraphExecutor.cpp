@@ -23,9 +23,9 @@
 
 namespace sd {
     namespace graph {
-        Context GraphExecutor::prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace) const {
+        Context GraphExecutor::prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const {
             // TODO: maybe we'll want to do something here?
-            return Context(contextPrototype, &variableSpace);
+            return Context(contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
         }
 
         Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {
@@ -45,7 +45,7 @@ namespace sd {
 
 
         Nd4jStatus GraphExecutor::execute(sd::ops::DeclarableOp *op, ContextPrototype *contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
-            auto ctx = prepareContext(contextPrototype, *graph.originalGraph().getVariableSpace());
+            auto ctx = prepareContext(contextPrototype, *graph.originalGraph().getVariableSpace(), graph.memoryManager());
             return op->execute(&ctx);
         }
 
