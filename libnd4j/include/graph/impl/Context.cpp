@@ -26,7 +26,8 @@
 
 namespace sd {
     namespace graph {
-        Context::Context(ContextPrototype* prototype, VariableSpace* variableSpace) {
+        Context::Context(ContextPrototype* prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager) {
+            _memoryManager = memoryManager;
             _variableSpace = variableSpace;
             _dataType = prototype->dataType();
 
@@ -584,6 +585,10 @@ namespace sd {
                 delete v;
 
             _handles.clear();
+        }
+
+        const GraphMemoryManager &Context::memoryManager() const {
+            return *_memoryManager;
         }
     }
 }

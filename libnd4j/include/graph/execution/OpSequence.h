@@ -57,6 +57,12 @@ namespace sd {
             int deviceId() const;
 
             /**
+             * This method blocks until all operations within sequence are processed
+             * @return
+             */
+            Nd4jStatus wait() const;
+
+            /**
              * This method returns number of individual operations within this sequence
              * @return
              */

@@ -114,5 +114,10 @@ namespace sd {
         bool OpSequence::iterator::operator!=(const OpSequence::iterator &other) const {
             return _position != other._position;
         }
+
+        Nd4jStatus OpSequence::wait() const {
+            // TODO: to be implemented
+            return Status::OK();
+        }
     }
 }

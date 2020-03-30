@@ -29,6 +29,13 @@ namespace sd {
         }
 
         Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {
+            // time to allocate outputs, if that's not inplace op
+            // inplace case is covered there
+            op->prepareOutputs(context);
+
+            // once prepareOutputs method was called - we don't need shape function anymore
+            context.setShapeFunctionOverride(true);
+
             return Status::OK();
         }
 
@@ -57,16 +64,29 @@ namespace sd {
         }
 
         Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph) const {
+            const auto numDevices = AffinityManager::numberOfDevices();
+
             /*
              * this is a basic exection logic: roll through layers and sequences and execute them one by one sequentially
              */
+            Nd4jStatus result = Status::OK();
             for (uint64_t l = 0; l < graph.layers(); l++) {
                 auto layer = graph.layer(l);
 
                 for (uint64_t o = 0; layer.width(); o++) {
                     execute(layer[o], graph);
                 }
+
+                // optionally block until all sequences in this layer processed
+                if (layer.width() > 0 && numDevices > 1)
+                    for (uint64_t o = 0; layer.width(); o++) {
+                        result = layer[o].wait();
+                        if (result != Status::OK())
+                            return result;
+                    }
             }
+
+            return result;
         }
     }
 }

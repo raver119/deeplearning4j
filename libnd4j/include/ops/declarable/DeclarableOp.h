@@ -108,11 +108,6 @@ namespace sd {
             sd::NDArray* getZ(Context& block, int inputId = 0);
             sd::NDArray* getNullifiedZ(Context& block, int inputId = 0);
 
-            /**
-            *   This method pre-allocates NDArrays for Op output, in case they are not available at op execution time
-            */
-            int prepareOutputs(Context& block);
-
             virtual samediff::EmptyHandling emptyHandling();
         public:
             // for special cases, like BooleanOps
@@ -215,6 +210,11 @@ namespace sd {
 
             // this method checks if number of available arguments matches op expectations
             Nd4jStatus validateArguments(Context& block);
+
+            /**
+                *   This method pre-allocates NDArrays for Op output, in case they are not available at op execution time
+                */
+            int prepareOutputs(Context& block);
         };
     }
 }

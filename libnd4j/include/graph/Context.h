@@ -27,6 +27,7 @@
 #include <graph/Variable.h>
 #include <graph/VariableSpace.h>
 #include <graph/ContextPrototype.h>
+#include <memory/GraphMemoryManager.h>
 #include <memory/Workspace.h>
 #include <execution/Engine.h>
 
@@ -46,7 +47,9 @@ namespace sd {
          */
         class SD_EXPORT Context : public sd::graph::ContextPrototype {
         protected:
+            sd::graph::GraphMemoryManager *_memoryManager = nullptr;
             sd::memory::Workspace* _workspace = nullptr;
+
             sd::graph::VariableSpace* _variableSpace = nullptr;
             std::pair<Nd4jLong, Nd4jLong> _executionTime;
             sd::random::RandomBuffer* _rng = nullptr;
@@ -73,7 +76,7 @@ namespace sd {
             // special flag used during conversion from Graph exec to FastPath exec
             bool _forbidFastPath = false;
         public:
-            Context(ContextPrototype* prototype, VariableSpace* variableSpace);
+            Context(ContextPrototype* prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager = nullptr);
 
             explicit Context(int nodeId, VariableSpace *variableSpace = nullptr);
             Context(int nodeId, VariableSpace *variableSpace, bool isInplace);
@@ -233,6 +236,8 @@ namespace sd {
 
             bool isTraining();
             bool isInference();
+
+            const GraphMemoryManager& memoryManager() const;
         };
     }
 }
