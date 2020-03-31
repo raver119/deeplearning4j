@@ -43,12 +43,12 @@ CUSTOM_OP_IMPL(reshape, 1, 1, false, 0, -2) {
     if (block.width() == 1) {
 
         auto arguments = block.getIArguments();
-        int argsSize = arguments->size();
+        int argsSize = arguments.size();
 
 
 
         int e = 1;
-        char order = (char) -(*arguments)[0];
+        char order = (char) -arguments[0];
         if (order != 'c' && order != 'f') {
             order = 'c'; //x->ordering();
             e = 0;
@@ -58,20 +58,20 @@ CUSTOM_OP_IMPL(reshape, 1, 1, false, 0, -2) {
 
         std::vector<Nd4jLong> shapeNew;
         int e2 = e;
-        for (; e < (int) arguments->size(); e++) {
-            if (arguments->at(e) == -1){
+        for (; e < (int) arguments.size(); e++) {
+            if (arguments.at(e) == -1){
                 Nd4jLong shapeLength = 1;
                 for(; e2 < e; e2++){
-                    shapeLength *= arguments->at(e2);
+                    shapeLength *= arguments.at(e2);
                 }
-                for(e2 = e + 1; e2 < arguments->size(); e2++){
-                    shapeLength *= arguments->at(e2);
+                for(e2 = e + 1; e2 < arguments.size(); e2++){
+                    shapeLength *= arguments.at(e2);
                 }
                 Nd4jLong realShape = x->lengthOf() / shapeLength;
                 shapeNew.push_back(realShape);
             }
             else{
-                shapeNew.push_back(arguments->at(e));
+                shapeNew.push_back(arguments.at(e));
             }
 
         }
@@ -156,10 +156,10 @@ DECLARE_SHAPE_FN(reshape) {
     // we can launch op using Int arguments
     if (inputShape->size() == 1) {
         REQUIRE_TRUE(block.numI() > 0, 0, "Reshape: new shape should be provided as NDArray or int arguments, but nothing was defined");
-        std::vector<int> *arguments = block.getIArguments();
+        std::vector<int> arguments = block.getIArguments();
 
         int e = 1;
-        char order = (char) -(*arguments)[0];
+        char order = (char) -arguments[0];
         if (order != 'c' && order != 'f') {
             order = shape::order(inp);
             e = 0;
@@ -168,16 +168,16 @@ DECLARE_SHAPE_FN(reshape) {
         std::vector<Nd4jLong> shapeNew;
 
         int e2 = e;
-        for (; e < (int) arguments->size(); e++) {
-            if ((int) arguments->at(e) == -1){
+        for (; e < (int) arguments.size(); e++) {
+            if ((int) arguments.at(e) == -1){
 
                 Nd4jLong shapeLength = 1;
                 for(; e2 < e; e2 ++){
-                    shapeLength *= arguments->at(e2);
+                    shapeLength *= arguments.at(e2);
                 }
-                for(e2 = e + 1; e2 < arguments->size(); e2++){
-                    REQUIRE_TRUE(arguments->at(e2) != -1, 0, "Reshape : Only one unknown dimension (-1) is allowed.");
-                    shapeLength *= arguments->at(e2);
+                for(e2 = e + 1; e2 < arguments.size(); e2++){
+                    REQUIRE_TRUE(arguments.at(e2) != -1, 0, "Reshape : Only one unknown dimension (-1) is allowed.");
+                    shapeLength *= arguments.at(e2);
                 }
 
                 if(shapeLength == 0){
@@ -190,7 +190,7 @@ DECLARE_SHAPE_FN(reshape) {
                 }
             }
             else{
-                shapeNew.push_back(arguments->at(e));
+                shapeNew.push_back(arguments.at(e));
             }
         }
 

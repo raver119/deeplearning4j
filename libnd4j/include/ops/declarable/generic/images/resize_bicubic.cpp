@@ -55,9 +55,9 @@ namespace sd {
             auto alignCorners = false;
             auto halfPixelAlign = false;
             if (block.numB() > 0) {
-                alignCorners = block.getBArguments()->at(0);
+                alignCorners = block.getBArguments().at(0);
                 if (block.numB()> 1)
-                    halfPixelAlign = block.getBArguments()->at(1);
+                    halfPixelAlign = block.getBArguments().at(1);
             }
             REQUIRE_TRUE(!halfPixelAlign || (halfPixelAlign && !alignCorners), 0, "resize_bicubic: `half_pixel_centers' should be false or true only when `align_corners' is false");
 

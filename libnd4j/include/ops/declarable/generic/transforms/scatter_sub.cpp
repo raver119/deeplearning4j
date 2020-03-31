@@ -37,8 +37,8 @@ namespace sd {
             if (!block.isInplace())
                 output->assign(input);
 
-            const bool lock = block.getBArguments()->empty() ? false : B_ARG(0);
-            const bool checkIndices = block.getBArguments()->size() <= 1 ? false : B_ARG(1);
+            const bool lock = block.getBArguments().empty() ? false : B_ARG(0);
+            const bool checkIndices = block.numB() <= 1 ? false : B_ARG(1);
 
             const int inRank  = input->rankOf();
             const int indRank = indices->rankOf();

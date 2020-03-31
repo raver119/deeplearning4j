@@ -34,7 +34,7 @@ CUSTOM_OP_IMPL(triu, 1, 1, false, 0, 0) {
 
     REQUIRE_TRUE(input->rankOf() > 0, 0, "TRIU OP: the rank of input array must be > 0, but got %i instead !", input->rankOf());
 
-    const int diag = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+    const int diag = block.numI() > 0 ? INT_ARG(0) : 0;
 
     BUILD_SINGLE_SELECTOR(input->dataType(), input->fillAsTriangular, (0, diag, 0, *output, 'l' ), LIBND4J_TYPES);
 
@@ -81,7 +81,7 @@ CUSTOM_OP_IMPL(triu_bp, 2, 1, false, 0, 0) {
 
     REQUIRE_TRUE(input->rankOf() > 0, 0, "TRIU_BP OP: the rank of input array must be > 0, but got %i instead !", input->rankOf());
 
-    const int diag = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+    const int diag = block.numI() > 0 ? INT_ARG(0) : 0;
 
     helpers::triuBP(block.launchContext(), *input, *gradO, *gradI, diag);
 

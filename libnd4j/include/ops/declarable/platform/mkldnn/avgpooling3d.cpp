@@ -54,7 +54,7 @@ PLATFORM_IMPL(avgpool3dnew, ENGINE_CPU) {
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode  = INT_ARG(12);                                              // 1-SAME,  0-VALID
     int extraParam0 = INT_ARG(13);
-    int isNCDHW  = block.getIArguments()->size() > 14 ? !INT_ARG(14) : 1;       // 0-NCDHW, 1-NDHWC
+    int isNCDHW  = block.numI() > 14 ? !INT_ARG(14) : 1;       // 0-NCDHW, 1-NDHWC
 
     REQUIRE_TRUE(input->rankOf() == 5, 0, "AVGPOOL3DNEW MKLDNN OP: rank of input array must be equal to 5, but got %i instead !", input->rankOf());
     REQUIRE_TRUE(dD != 0 && dH != 0 && dW != 0, 0, "AVGPOOL3DNEW MKLDNN OP: dilation must not be zero, but got instead {%i, %i, %i}", dD, dH, dW);
@@ -102,7 +102,7 @@ PLATFORM_IMPL(avgpool3dnew_bp, ENGINE_CPU) {
     const int dW = INT_ARG(11);                                                 // dilations width
     const int paddingMode = INT_ARG(12);                                         // 1-SAME,  0-VALID
     const int extraParam0 = INT_ARG(13);                                        // define what divisor to use while averaging
-    const int isNCDHW  = block.getIArguments()->size() > 14 ? !INT_ARG(14) : 1; // 0-NCDHW, 1-NDHWC
+    const int isNCDHW  = block.numI() > 14 ? !INT_ARG(14) : 1; // 0-NCDHW, 1-NDHWC
 
     REQUIRE_TRUE(input->rankOf() == 5, 0, "AVGPOOL3DNEW_BP MKLDNN op: input should have rank of 5, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dD != 0 && dH != 0 && dW != 0, 0, "AVGPOOL3DNEW_BP MKLDNN op: dilation must not be zero, but got instead {%i, %i, %i}", dD, dH, dW);

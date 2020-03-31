@@ -54,7 +54,7 @@ PLATFORM_IMPL(maxpool2d, ENGINE_CPU) {
     const int dW = INT_ARG(7);
     const int paddingMode = INT_ARG(8);
     // const int extraParam0 = INT_ARG(9);
-    const int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 1-NHWC, 0-NCHW
+    const int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 1-NHWC, 0-NCHW
 
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "MAXPOOL2D MKLDNN op: dilation must not be zero, but got instead {%i, %i}", dH, dW);
 
@@ -95,7 +95,7 @@ PLATFORM_IMPL(maxpool2d_bp, ENGINE_CPU) {
     int dW = INT_ARG(7);                                                        // dilations width
     int paddingMode = INT_ARG(8);                                                // 0-VALID, 1-SAME
     // int extraParam0 = INT_ARG(9);
-    int isNCHW = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
+    int isNCHW = block.numI() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(input->rankOf() == 4, 0, "MAXPOOL2D_BP MKLDNN op: input should have rank of 4, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "MAXPOOL2D_BP MKLDNN op: dilation must not be zero, but got instead {%i, %i}", dH, dW);

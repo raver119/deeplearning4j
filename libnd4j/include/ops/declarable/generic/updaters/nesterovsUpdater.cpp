@@ -42,7 +42,7 @@ namespace sd {
                 "  expected shape %s, but got %s!", ShapeUtils::shapeAsString(gradient->getShapeInfo()).c_str(),
                 ShapeUtils::shapeAsString(initState->getShapeInfo()).c_str());
 
-            bool bParamsSupply = 4 == block.width() || 2 == block.getTArguments()->size();
+            bool bParamsSupply = 4 == block.width() || 2 == block.numT();
 
             REQUIRE_TRUE(bParamsSupply, 0, "NESTEROVS UPDATER OP: learning rate and momentum were not provided!");
 

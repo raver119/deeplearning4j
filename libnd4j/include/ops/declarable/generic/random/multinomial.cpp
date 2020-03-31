@@ -61,7 +61,7 @@ namespace sd {
             const int rank = input->rankOf();
             REQUIRE_TRUE(rank == 2, 0, "RANDOM_MULTINOMIAL OP: Logits should be a matrix with rank = 2, but got instead rank = %i.", rank);
 
-            const int argSize = block.getIArguments()->size();
+            const int argSize = block.numI();
             const int dimC = argSize > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
 
             auto dimA = (0 == dimC) ? 1 : 0;
@@ -91,7 +91,7 @@ namespace sd {
             const int rank = input->rankOf();
             REQUIRE_TRUE(rank == 2, 0, "RANDOM_MULTINOMIAL OP: Logits should be a matrix with rank = 2, but got instead rank = %i.", rank);
 
-            const int argSize = block.getIArguments()->size();
+            const int argSize = block.numI();
             const int dimC = argSize > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
            
             auto nShape = input->getShapeAsVector();

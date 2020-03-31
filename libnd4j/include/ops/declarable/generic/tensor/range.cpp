@@ -32,8 +32,8 @@ CUSTOM_OP_IMPL(range, -2, 1, false, -2, -2) {
     auto output = OUTPUT_VARIABLE(0);
 
     const int numInArrs = block.width();
-    const int numTArgs  = block.getTArguments()->size();
-    const int numIArgs  = block.getIArguments()->size();
+    const int numTArgs  = block.numT();
+    const int numIArgs  = block.numI();
 
     NDArray *s = nullptr;
     NDArray *d = nullptr;
@@ -126,8 +126,8 @@ CUSTOM_OP_IMPL(range, -2, 1, false, -2, -2) {
 DECLARE_SHAPE_FN(range) {
     
     const int numInArrs = block.width();
-    const int numTArgs  = block.getTArguments()->size();
-    const int numIArgs  = block.getIArguments()->size();    
+    const int numTArgs  = block.numT();
+    const int numIArgs  = block.numI();
 
     Nd4jLong steps = 0;
     sd::DataType dataType = block.numD() ? D_ARG(0) : sd::DataType::INHERIT;

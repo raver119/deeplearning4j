@@ -45,7 +45,7 @@ namespace sd {
 
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyTransformStrictOp");
 
             NativeOpExecutioner::execTransformStrict(block.launchContext(), opNum, input->getBuffer(), input->getShapeInfo(), input->specialBuffer(), input->specialShapeInfo(), z->getBuffer(), z->getShapeInfo(), z->specialBuffer(), z->specialShapeInfo(), extras.argumentsAsT(z->dataType()), nullptr, nullptr);

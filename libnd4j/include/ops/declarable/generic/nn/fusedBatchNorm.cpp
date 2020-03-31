@@ -78,7 +78,7 @@ CUSTOM_OP_IMPL(fused_batch_norm, 3, 3, false, 0, 2) {
 
     // FIXME: double?
     double epsilon;
-    if(block.getTArguments()->size() > 0)
+    if(block.numT() > 0)
         epsilon = T_ARG(0) > 1.001e-5 ? T_ARG(0) : 1.001e-5;
     else
         epsilon = 0.001;

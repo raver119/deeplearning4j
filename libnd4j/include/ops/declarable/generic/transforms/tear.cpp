@@ -30,9 +30,9 @@ namespace sd {
         CUSTOM_OP_IMPL(tear, 1, -1, false, 0, -1) {
             auto input = INPUT_VARIABLE(0);
 
-            REQUIRE_TRUE(!block.getIArguments()->empty(), 0, "At least 1 dimension should be specified for Tear");
+            REQUIRE_TRUE(!block.getIArguments().empty(), 0, "At least 1 dimension should be specified for Tear");
 
-            std::vector<int> dims(*block.getIArguments());
+            std::vector<int> dims(block.getIArguments());
 
             for (auto &v: dims)
                 REQUIRE_TRUE(v >= 0 && v < input->rankOf(), 0, "Tear dimensions should be non-negative values, and lower then input rank. Got %i instead", v);
@@ -52,7 +52,7 @@ namespace sd {
         DECLARE_SHAPE_FN(tear) {
             auto inShape = inputShape->at(0);
 
-            std::vector<int> dims(*block.getIArguments());
+            std::vector<int> dims(block.getIArguments());
 
             if (dims.size() > 1)
                 std::sort(dims.begin(), dims.end());

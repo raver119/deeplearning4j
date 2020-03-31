@@ -32,7 +32,7 @@ namespace sd {
             int maxOutputSize; // = INT_ARG(0);
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
                 REQUIRE_TRUE(false, 0, "image.non_max_suppression_overlaps: Max output size argument cannot be retrieved.");
@@ -44,9 +44,9 @@ namespace sd {
 //                maxOutputSize = scales->lengthOf();
             double overlapThreshold = 0.5;
             double scoreThreshold = -DataTypeUtils::infOrMax<double>();
-            if (block.getTArguments()->size() > 0)
+            if (block.numT() > 0)
                 overlapThreshold = T_ARG(0);
-            if (block.getTArguments()->size() > 1)
+            if (block.numT() > 1)
                 scoreThreshold = T_ARG(1);
 
             // TODO: refactor helpers to multithreaded facility
@@ -63,7 +63,7 @@ namespace sd {
             int maxOutputSize;
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
                 REQUIRE_TRUE(false, 0, "image.non_max_suppression: Max output size argument cannot be retrieved.");

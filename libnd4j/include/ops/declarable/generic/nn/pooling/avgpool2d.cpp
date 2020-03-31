@@ -45,7 +45,7 @@ CUSTOM_OP_IMPL(avgpool2d, 1, 1, false, 0, 10) {
     const auto dW = INT_ARG(7);
     const auto isSameMode = static_cast<bool>(INT_ARG(8));
     const auto extraParam0 = INT_ARG(9);
-    const int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
+    const int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(input->rankOf() == 4, 0, "AVGPOOL2D op: input should have rank of 4, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "AVGPOOL2D op: dilation must not be zero, but got instead {%i, %i}", dH, dW);
@@ -93,7 +93,7 @@ DECLARE_SHAPE_FN(avgpool2d) {
     auto shapeOf = shape::shapeOf(inShape);
 
     // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
-    auto argI = *(block.getIArguments());
+    auto argI = block.getIArguments();
     const int kH = INT_ARG(0);
     const int kW = INT_ARG(1);
     const int sH = INT_ARG(2);
@@ -104,7 +104,7 @@ DECLARE_SHAPE_FN(avgpool2d) {
     const int dW = INT_ARG(7);
     const int isSameMode = INT_ARG(8);
 
-    const int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
+    const int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "AVGPOOL2D op: dilation must not be zero, but got instead {%i, %i}", dH, dW);
 
@@ -159,7 +159,7 @@ CUSTOM_OP_IMPL(avgpool2d_bp, 2, 1, false, 0, 10) {
     int dW = INT_ARG(7);                                                        // dilations width
     int isSameMode = INT_ARG(8);                                                // 0-VALID, 1-SAME
     int extraParam0 = INT_ARG(9);
-    int isNCHW = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
+    int isNCHW = block.numI() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(input->rankOf() == 4, 0, "AVGPOOL2D_BP op: input should have rank of 4, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "AVGPOOL2D_BP op: dilation must not be zero, but got instead {%i, %i}", dH, dW);

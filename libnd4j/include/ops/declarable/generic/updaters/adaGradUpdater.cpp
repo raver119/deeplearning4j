@@ -43,7 +43,7 @@ namespace sd {
                 ShapeUtils::shapeAsString(initState->getShapeInfo()).c_str());
 
 
-            bool bParamsSupply = 4 == block.width() || 2 == block.getTArguments()->size();
+            bool bParamsSupply = 4 == block.width() || 2 == block.numT();
 
             REQUIRE_TRUE(bParamsSupply, 0, "ADA_GRAD UPDATER OP: learning rate and epsilon were not provided!");
 

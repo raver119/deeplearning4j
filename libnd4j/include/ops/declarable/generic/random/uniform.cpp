@@ -41,7 +41,7 @@ namespace sd {
             // uniform distribution
             auto rng = block.randomGenerator();
             auto dtype = DataType::FLOAT32;
-            if (block.getIArguments()->size())
+            if (block.numI())
                 dtype = (DataType)INT_ARG(0);
 
             auto min = block.width() > 1 ? INPUT_VARIABLE(1) : (NDArray*) nullptr;
@@ -75,7 +75,7 @@ namespace sd {
             auto shape = in->template asVectorT<Nd4jLong>();
             auto dtype = DataType::FLOAT32; //ArrayOptions::dataType(inputShape->at(1)); // output type is by given min
 
-            if (block.getIArguments()->size())
+            if (block.numI())
                 dtype = (DataType)INT_ARG(0);
             if (block.width() > 1)
                 REQUIRE_TRUE(dtype == INPUT_VARIABLE(1)->dataType(), 0, "RandomUniform: data type of output and min/max args should be the same");

@@ -42,7 +42,7 @@ namespace sd {
             sd::DataType _dataType;
 
             OpType _opType;
-            ContextPrototype* _protoContext = nullptr;
+            ContextPrototype _protoContext;
             Nd4jLong _opNum;
             int _id = 0;
             std::vector<std::pair<int, int>> _input;
@@ -127,7 +127,7 @@ namespace sd {
             bool equals(Node *other) const;
 
             sd::DataType dataType();
-            ContextPrototype *protoContext() const;
+            const ContextPrototype& protoContext() const;
             OpType opType() const;
             Nd4jLong opNum() const;
             int id() const;
@@ -191,8 +191,8 @@ namespace sd {
             int totalReferences();
             void addReference(int nodeId);
 
-            void setContextPrototype(ContextPrototype *block);
-            ContextPrototype* getContextPrototype();
+            void setContextPrototype(const ContextPrototype &block);
+            const ContextPrototype& contextPrototype() const;
             bool hasBlockAttached();
 
             void setCustomOp(sd::ops::DeclarableOp *customOp = nullptr);
@@ -228,12 +228,8 @@ namespace sd {
             Node* asT();
 
             FORCEINLINE void pullValues(Node *other) {
-
-                if (this->_protoContext != nullptr)
-                    delete _protoContext;
-
                 this->_dataType = other->dataType();
-                this->_protoContext = other->protoContext()->clone();
+                this->_protoContext = other->protoContext();
                 this->_scalar =  other->scalar();
                 this->_hasExternalInputs = other->hasExternalInputs();
                 this->_hasExternalOutputs = other->hasExternalOutputs();

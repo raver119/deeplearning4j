@@ -34,8 +34,8 @@ namespace ops {
 
         auto output = OUTPUT_VARIABLE(0);
 
-        const bool lock = block.getBArguments()->empty() ? false : B_ARG(0);
-        const bool checkIndices = block.getBArguments()->size() <= 1 ? false : B_ARG(1);
+        const bool lock = block.getBArguments().empty() ? false : B_ARG(0);
+        const bool checkIndices = block.numB() <= 1 ? false : B_ARG(1);
 
         const int indRank   = indices->rankOf();
         const int updRank   = updates->rankOf();

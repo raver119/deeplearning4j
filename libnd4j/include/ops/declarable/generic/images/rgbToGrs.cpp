@@ -32,7 +32,7 @@ CUSTOM_OP_IMPL(rgb_to_grs, 1, 1, false, 0, 0) {
          auto output = OUTPUT_VARIABLE(0);
 
     const int inRank = input->rankOf();
-    const int argSize = block.getIArguments()->size();
+    const int argSize = block.numI();
     const int dimC = argSize > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + inRank) : inRank - 1;
 
     REQUIRE_TRUE(inRank >= 1, 0, "RGBtoGrayScale: Fails to meet the inRank requirement: %i >= 1 ", inRank);
@@ -55,7 +55,7 @@ DECLARE_SHAPE_FN(rgb_to_grs) {
     const auto input = INPUT_VARIABLE(0);
     const int inRank = input->rankOf();
     
-    const int argSize = block.getIArguments()->size();
+    const int argSize = block.numI();
     const int dimC = argSize > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + inRank) : inRank - 1;
 
     REQUIRE_TRUE(inRank >= 1, 0, "RGBtoGrayScale: Fails to meet the inRank requirement: %i >= 1 ", inRank);

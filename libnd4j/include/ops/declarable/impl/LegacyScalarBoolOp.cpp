@@ -56,7 +56,7 @@ namespace sd {
 
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyScalarBoolOp");
 
             if (block.width() > 1) {
@@ -65,7 +65,7 @@ namespace sd {
                 NDArray::prepareSpecialUse({z}, {x, y});
 
                 NativeOpExecutioner::execScalarBool(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(), x->specialBuffer(), x->specialShapeInfo(), z->getBuffer(), z->getShapeInfo(), z->specialBuffer(), z->specialShapeInfo(), y->buffer(), y->shapeInfo(), y->specialBuffer(), y->specialShapeInfo(), extras.argumentsAsT(x->dataType()));
-            } else if (block.getTArguments()->size() > 0) {
+            } else if (block.numT() > 0) {
                 auto y = NDArrayFactory::create(T_ARG(0), block.launchContext());
 
                 NDArray::prepareSpecialUse({z}, {x, &y});

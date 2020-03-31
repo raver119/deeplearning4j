@@ -124,11 +124,11 @@ namespace sd {
             block.fillInputs(in);
 
             for (int e = 0; e < tArgs.size(); e++)
-                block.getTArguments()->emplace_back(tArgs.at(e));
+                block.appendT(tArgs.at(e));
 
 
             for (int e = 0; e < iArgs.size(); e++)
-                block.getIArguments()->emplace_back(iArgs.at(e));
+                block.appendI(iArgs.at(e));
 
 
             Nd4jStatus result = this->validateAndExecute(block);

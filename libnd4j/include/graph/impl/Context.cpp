@@ -26,48 +26,44 @@
 
 namespace sd {
     namespace graph {
-        Context::Context(ContextPrototype* prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager) {
+        Context::Context(const ContextPrototype& prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager) {
             _memoryManager = memoryManager;
             _variableSpace = variableSpace;
-            _dataType = prototype->dataType();
+            _dataType = prototype.dataType();
 
-            if (prototype != nullptr) {
-                for (const auto &v: *(prototype->inputs())) {
-                    this->_inputs.push_back(v);
-                }
-
-                for (const auto &v: *(prototype->getTArguments())) {
-                    this->_tArgs.push_back(v);
-                }
-
-                for (const auto &v: *(prototype->getIArguments())) {
-                    this->_iArgs.push_back(v);
-                }
-
-                for (const auto &v: *(prototype->getBArguments())) {
-                    this->_bArgs.push_back(v);
-                }
-
-                for (const auto &v: *(prototype->getAxis())) {
-                    this->_axis.push_back(v);
-                }
-
-                this->_opNum = prototype->opNum();
-                this->_isInplace = prototype->isInplace();
-                this->_nodeId = prototype->nodeId();
-                this->_useMKLDNN = prototype->isUseMKLDNN();
+            for (const auto &v: prototype.inputs()) {
+                this->_inputs.push_back(v);
             }
 
+            for (const auto &v: prototype.getTArguments()) {
+                this->_tArgs.push_back(v);
+            }
+
+            for (const auto &v: prototype.getIArguments()) {
+                this->_iArgs.push_back(v);
+            }
+
+            for (const auto &v: prototype.getBArguments()) {
+                this->_bArgs.push_back(v);
+            }
+
+            for (const auto &v: prototype.getAxis()) {
+                this->_axis.push_back(v);
+            }
+
+            this->_opNum = prototype.opNum();
+            this->_isInplace = prototype.isInplace();
+            this->_nodeId = prototype.nodeId();
+            this->_useMKLDNN = prototype.isUseMKLDNN();
 
             if (variableSpace != nullptr && variableSpace->launchContext()->getWorkspace() != nullptr)
                     this->_workspace = variableSpace->launchContext()->getWorkspace();
         }
-        sd::DataType Context::dataType(int index) {
-
+        sd::DataType Context::dataType(int index) const {
             return _dataType;
         }
 
-        sd::DataType Context::dataType() {
+        sd::DataType Context::dataType() const {
             return dataType(0);
         }
 
@@ -392,7 +388,7 @@ namespace sd {
             }
         }
 
-        unsigned long Context::width() {
+        unsigned long Context::width() const {
             if (!_fastpath_in.empty())
                 return _fastpath_in.size();
             else

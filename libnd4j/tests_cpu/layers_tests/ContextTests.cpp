@@ -48,7 +48,7 @@ TEST_F(ContextTests, Basic_Test_1) {
     block.pickInput(2, 0);
     block.pickInput(2, 1);
 
-    ASSERT_EQ(2, block.inputs()->size());
+    ASSERT_EQ(2, block.inputs().size());
     ASSERT_EQ(2, block.width());
 
     ASSERT_TRUE(variableSpace.hasVariable(2, 0));
@@ -76,7 +76,7 @@ TEST_F(ContextTests, Basic_Test_2) {
     block.pickInput(-1);
     block.pickInput(-2);
 
-    ASSERT_EQ(2, block.inputs()->size());
+    ASSERT_EQ(2, block.inputs().size());
     ASSERT_EQ(2, block.width());
 
     ASSERT_TRUE(variableSpace.hasVariable(-1));
@@ -247,26 +247,26 @@ TEST_F(ContextTests, Prototype_Test_1) {
     prototype.pickInput(12, 3);
     prototype.pickInput(12, 4);
 
-    prototype.getTArguments()->push_back(2.0);
-    prototype.getTArguments()->push_back(-2.0);
+    prototype.appendT(2.0);
+    prototype.appendT(-2.0);
 
-    prototype.getIArguments()->push_back(17);
-    prototype.getIArguments()->push_back(119);
+    prototype.appendI(17);
+    prototype.appendI(119);
 
-    Context ctx(&prototype, nullptr);
+    Context ctx(prototype, nullptr);
 
     ASSERT_EQ(ctx.nodeId(), prototype.nodeId());
     ASSERT_EQ(ctx.isInplace(), prototype.isInplace());
 
-    ASSERT_EQ(2, ctx.inputs()->size());
-    ASSERT_EQ(2, ctx.getTArguments()->size());
-    ASSERT_EQ(2, ctx.getIArguments()->size());
+    ASSERT_EQ(2, ctx.inputs().size());
+    ASSERT_EQ(2, ctx.getTArguments().size());
+    ASSERT_EQ(2, ctx.getIArguments().size());
 
-    ASSERT_EQ(2.0, ctx.getTArguments()->at(0));
-    ASSERT_EQ(-2.0, ctx.getTArguments()->at(1));
+    ASSERT_EQ(2.0, ctx.getTArguments().at(0));
+    ASSERT_EQ(-2.0, ctx.getTArguments().at(1));
 
-    ASSERT_EQ(17, ctx.getIArguments()->at(0));
-    ASSERT_EQ(119, ctx.getIArguments()->at(1));
+    ASSERT_EQ(17, ctx.getIArguments().at(0));
+    ASSERT_EQ(119, ctx.getIArguments().at(1));
 }
 
 
@@ -274,14 +274,14 @@ TEST_F(ContextTests, Prototype_Test_2) {
     ContextPrototype prototype(nullptr, 119, false);
     prototype.setOpNum(179);
 
-    Context ctx(&prototype, nullptr);
+    Context ctx(prototype, nullptr);
 
     ASSERT_EQ(ctx.isInplace(), prototype.isInplace());
     ASSERT_EQ(ctx.opNum(), prototype.opNum());
 
-    ASSERT_EQ(0, ctx.inputs()->size());
-    ASSERT_EQ(0, ctx.getTArguments()->size());
-    ASSERT_EQ(0, ctx.getIArguments()->size());
+    ASSERT_EQ(0, ctx.inputs().size());
+    ASSERT_EQ(0, ctx.getTArguments().size());
+    ASSERT_EQ(0, ctx.getIArguments().size());
 }
 
 TEST_F(ContextTests, test_short_context_1) {

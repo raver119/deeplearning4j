@@ -151,11 +151,13 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     block->fillInputs({-2});
     block->fillInputs({-3});
     block->fillInputs({-4});
-    block->getIArguments()->push_back(0);
-    block->getIArguments()->push_back(0);
-    block->getIArguments()->push_back(1);
-    block->getIArguments()->push_back(0);
-    block->getIArguments()->push_back(0);
+
+    block->appendI(0);
+    block->appendI(0);
+    block->appendI(1);
+    block->appendI(0);
+    block->appendI(0);
+
     auto inputShapes = new ShapeList({ones->getShapeInfo(), b->getShapeInfo(), e->getShapeInfo(), s->getShapeInfo()});
     sd::ops::strided_slice op;
     auto result = op.calculateOutputShape(inputShapes, *block); //execute({ones, &b, &e, &s}, {}, {0, 1, 0, 0, 0});

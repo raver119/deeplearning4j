@@ -47,8 +47,8 @@ CUSTOM_OP_IMPL(pointwise_conv2d, 2, 1, false, 0, 0) {
     int pW = 0;                                                             // paddings width
     int dH = 1;                                                             // dilations height
     int dW = 1;                                                             // dilations width
-    int isNCHW  = block.getIArguments()->size() > 0 ? !INT_ARG(0) : 1;      // INT_ARG(0): 0-NCHW, 1-NHWC
-    int wFormat = block.getIArguments()->size() > 1 ? INT_ARG(1) : 0;       // 0 - [1, 1, iC, oC], 1 - [oC, iC, 1, 1], 2 - [oC, 1, 1, iC]
+    int isNCHW  = block.numI() > 0 ? !INT_ARG(0) : 1;      // INT_ARG(0): 0-NCHW, 1-NHWC
+    int wFormat = block.numI() > 1 ? INT_ARG(1) : 0;       // 0 - [1, 1, iC, oC], 1 - [oC, iC, 1, 1], 2 - [oC, 1, 1, iC]
 
     int bS, iC, iH, iW, oC, oH, oW;                             // batch size, input channels, input height/width, output channels, output height/width;
     int indIOioC, indIiH, indWoC, indWiC, indWkH, indOoH;       // corresponding indexes
@@ -81,8 +81,8 @@ DECLARE_SHAPE_FN(pointwise_conv2d) {
     REQUIRE_TRUE(inputShapeInfo[0]   == rank, 0, "CUSTOM POINTWISECONV2D OP: rank of input array must be equal to %i, but got %i instead !", rank, inputShapeInfo[0]);
     REQUIRE_TRUE(weightsShapeInfo[0] == rank, 0, "CUSTOM POINTWISECONV2D OP: rank of weights array must be equal to %i, but got %i instead !", rank, weightsShapeInfo[0]);
 
-    int isNCHW = block.getIArguments()->size() > 0 ? !INT_ARG(0) : 1;       // INT_ARG(0): 0-NCHW, 1-NHWC
-    int wFormat = block.getIArguments()->size() > 1 ? INT_ARG(1) : 0;       // 0 - [1, 1, iC, oC], 1 - [oC, iC, 1, 1], 2 - [oC, 1, 1, iC]
+    int isNCHW = block.numI() > 0 ? !INT_ARG(0) : 1;       // INT_ARG(0): 0-NCHW, 1-NHWC
+    int wFormat = block.numI() > 1 ? INT_ARG(1) : 0;       // 0 - [1, 1, iC, oC], 1 - [oC, iC, 1, 1], 2 - [oC, 1, 1, iC]
 
     int indIOioC, indWoC(0 == wFormat ? 3 : 0);
     if(!isNCHW)

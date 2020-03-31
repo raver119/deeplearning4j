@@ -44,11 +44,11 @@ namespace sd {
             REQUIRE_TRUE(x->dataType() == output->dataType(), 0, "fake_quant_with_min_max_vars_per_channel: input and output data types must be the same");
 
             int numBits = 8;
-            if (block.getIArguments() && block.getIArguments()->size())
+            if (block.numI())
                 numBits = INT_ARG(0);
             bool narrowed = false;
             //INT_ARG(1);
-            if (block.getBArguments() && block.getBArguments()->size()) {
+            if (block.numB()) {
                 narrowed = B_ARG(0);
             }
 

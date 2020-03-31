@@ -42,7 +42,7 @@ namespace sd {
                 "  expected shape %s, but got %s!", ShapeUtils::shapeAsString(gradient->getShapeInfo()).c_str(),
                 ShapeUtils::shapeAsString(initState->getShapeInfo()).c_str());
 
-            bool bParamsSupply = 5 == block.width() || 3 == block.getTArguments()->size();
+            bool bParamsSupply = 5 == block.width() || 3 == block.numT();
 
             REQUIRE_TRUE(bParamsSupply, 0, "RSM_PROB UPDATER OP: learning rate, rsm decay and epsilon were not provided!");
 

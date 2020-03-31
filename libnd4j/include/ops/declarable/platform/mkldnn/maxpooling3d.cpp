@@ -53,7 +53,7 @@ PLATFORM_IMPL(maxpool3dnew, ENGINE_CPU) {
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode = INT_ARG(12);                                               // 1-SAME,  0-VALID
     // int extraParam0 = INT_ARG(13);                                           // unnecessary for max case, required only for avg and pnorm cases
-    int isNCDHW  = block.getIArguments()->size() > 14 ? !INT_ARG(14) : 1;       // 1-NDHWC, 0-NCDHW
+    int isNCDHW  = block.numI() > 14 ? !INT_ARG(14) : 1;       // 1-NDHWC, 0-NCDHW
 
     REQUIRE_TRUE(input->rankOf() == 5, 0, "MAXPOOL3DNEW MKLDNN OP: rank of input array must be equal to 5, but got %i instead !", input->rankOf());
     REQUIRE_TRUE(dD != 0 && dH != 0 && dW != 0, 0, "MAXPOOL3DNEW MKLDNN op: dilation must not be zero, but got instead {%i, %i, %i}", dD, dH, dW);
@@ -100,7 +100,7 @@ PLATFORM_IMPL(maxpool3dnew_bp, ENGINE_CPU) {
     const int dW = INT_ARG(11);                                                 // dilations width
     const int paddngMode = INT_ARG(12);                                         // 1-SAME,  0-VALID
     // int extraParam0 = INT_ARG(13);                                           // unnecessary for max case, required only for avg and pnorm cases
-    int isNCDHW  = block.getIArguments()->size() > 14 ? !INT_ARG(14) : 1;       // 1-NDHWC, 0-NCDHW
+    int isNCDHW  = block.numI() > 14 ? !INT_ARG(14) : 1;       // 1-NDHWC, 0-NCDHW
 
     REQUIRE_TRUE(input->rankOf() == 5, 0, "MAXPOOL3DNEW_BP MKLDNN op: input should have rank of 5, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dD != 0 && dH != 0 && dW != 0, 0, "MAXPOOL3DNEW_BP MKLDNN op: dilation must not be zero, but got instead {%i, %i, %i}", dD, dH, dW);

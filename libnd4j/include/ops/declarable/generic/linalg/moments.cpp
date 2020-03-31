@@ -31,8 +31,8 @@ namespace sd {
             auto means = OUTPUT_VARIABLE(0);
             auto variances = OUTPUT_VARIABLE(1);
 
-            std::vector<int> axis = *block.getIArguments();
-            const bool keepDims = block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
+            auto axis = block.getIArguments();
+            const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
 
             // axis might be dynamic (i.e. tf mode)
             if (block.width() > 1 && axis.size() == 0) {
@@ -56,7 +56,7 @@ namespace sd {
         }
 
         DECLARE_SHAPE_FN(moments) {
-            auto axis = *block.getIArguments();
+            auto axis = block.getIArguments();
             auto input = INPUT_VARIABLE(0);
 
             // axis might be dynamic (i.e. tf mode)
@@ -73,7 +73,7 @@ namespace sd {
 
             }
             //std::vector<int> dims = ShapeUtils::evalDimsToExclude(input->rankOf(), {axis});
-            const bool keepDims = block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
+            const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
 
             auto meanShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, keepDims, false, block.workspace());
             auto varianceShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, keepDims, false, block.workspace());

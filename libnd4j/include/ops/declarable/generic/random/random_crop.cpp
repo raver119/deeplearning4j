@@ -36,7 +36,7 @@ CUSTOM_OP_IMPL(random_crop, 2, 1, false, 0, 0) {
     
     int seed = 0;
 
-    if (block.getIArguments()->size() > 0)
+    if (block.numI() > 0)
         seed = INT_ARG(0);
 
     REQUIRE_TRUE(shape->isVector(), 0, "random_crop: Shape tensor should be a vector.");

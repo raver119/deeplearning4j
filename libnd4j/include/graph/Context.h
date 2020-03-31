@@ -76,7 +76,7 @@ namespace sd {
             // special flag used during conversion from Graph exec to FastPath exec
             bool _forbidFastPath = false;
         public:
-            Context(ContextPrototype* prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager = nullptr);
+            Context(const ContextPrototype &prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager = nullptr);
 
             explicit Context(int nodeId, VariableSpace *variableSpace = nullptr);
             Context(int nodeId, VariableSpace *variableSpace, bool isInplace);
@@ -90,9 +90,9 @@ namespace sd {
             Nd4jLong getOuterTime();
             Nd4jLong getInnerTime();
 
-            sd::DataType dataType() override;
+            sd::DataType dataType() const override;
 
-            sd::DataType dataType(int index) override;
+            sd::DataType dataType(int index) const override;
             void setDataType(int index, sd::DataType type) override;
             // these methods are related to Workspace abstraction
             bool hasWorkspaceProvided();
@@ -178,7 +178,7 @@ namespace sd {
 
             Variable* ensureVariable(int idx = 0);
 
-            unsigned long width() override;
+            unsigned long width() const override;
 
             // methods used in java interop
             /**

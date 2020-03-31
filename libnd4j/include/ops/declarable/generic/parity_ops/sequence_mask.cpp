@@ -31,7 +31,7 @@ namespace sd {
             //REQUIRE_TRUE(inRank >= 1, 0, "sequence_mask: input array must have rank >= 1, but %i given!", inRank);
             Nd4jLong maxInd = input->argMax();
             float max = input->e<float>(maxInd);
-            if (block.getIArguments()->size() > 0) {
+            if (block.numI() > 0) {
                 maxInd = INT_ARG(0);
                 if (maxInd < max)
                     maxInd = static_cast<Nd4jLong>(max);

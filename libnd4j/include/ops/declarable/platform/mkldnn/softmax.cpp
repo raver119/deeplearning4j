@@ -105,7 +105,7 @@ namespace sd {
                 auto output = OUTPUT_VARIABLE(0);
 
                 const int rank = input->rankOf();
-                int dim = block.getIArguments()->size() > 0 ? INT_ARG(0) : rank - 1;
+                int dim = block.numI() > 0 ? INT_ARG(0) : rank - 1;
 
                 if (dim < 0) {
                     dim += rank;
@@ -224,7 +224,7 @@ namespace sd {
 
                 const int rank = input->rankOf();
                 const int dLdzRank = dLdz->rankOf();
-                int dim = block.getIArguments()->size() > 0 ? INT_ARG(0) : rank - 1;
+                int dim = block.numI() > 0 ? INT_ARG(0) : rank - 1;
 
                 if (dim < 0) {
                     dim += rank;

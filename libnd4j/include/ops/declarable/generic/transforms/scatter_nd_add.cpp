@@ -34,8 +34,8 @@ OP_IMPL(scatter_nd_add, 3, 1, true) {
 
     auto output = OUTPUT_VARIABLE(0);
 
-    const bool lock = block.getBArguments()->empty() ? false : B_ARG(0);
-    const bool checkIndices = block.getBArguments()->size() <= 1 ? false : B_ARG(1);
+    const bool lock = block.getBArguments().empty() ? false : B_ARG(0);
+    const bool checkIndices = block.numB() <= 1 ? false : B_ARG(1);
 
     const int inRank  = input->rankOf();
     const int indRank = indices->rankOf();

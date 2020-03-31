@@ -41,7 +41,7 @@ CONFIGURABLE_OP_IMPL(cumsum, 1, 1, true, 0, 2) {
         return Status::OK();
     }
 
-    if (block.getIArguments()->size() == 2 && block.width() == 1) {
+    if (block.numI() == 2 && block.width() == 1) {
         // all at once case
         sd::ops::helpers::prefix(block.launchContext(), scalar::Add, input, output, exclusive, reverse);
     }

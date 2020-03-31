@@ -32,14 +32,14 @@ namespace sd {
             NDArray* min;
             NDArray* max;
 
-            REQUIRE_TRUE(block.width() == 3 || block.getTArguments()->size() == 2, 0, "fake_quant_with_min_max_vars: No minimum/maximum values provided by either input arrays or TArgs");
+            REQUIRE_TRUE(block.width() == 3 || block.numT() == 2, 0, "fake_quant_with_min_max_vars: No minimum/maximum values provided by either input arrays or TArgs");
 
             NDArray m;
             NDArray m2;
             if(block.width() == 3){
                 min = INPUT_VARIABLE(1);
                 max = INPUT_VARIABLE(2);
-            } else if(block.getTArguments()->size() == 2){
+            } else if(block.numT() == 2){
                 m = NDArrayFactory::create(x->dataType(), T_ARG(0), block.launchContext());
                 m2 = NDArrayFactory::create(x->dataType(), T_ARG(1), block.launchContext());
                 min = &m;
@@ -49,10 +49,10 @@ namespace sd {
             REQUIRE_TRUE(x->dataType() == output->dataType(), 0, "fake_quant_with_min_max_vars: input and output data types must be the same");
 
             int numBits = 8;
-            if (block.getIArguments() && block.getIArguments()->size())
+            if (block.numI())
                 numBits = INT_ARG(0);
             bool narrowed = false;
-            if (block.getBArguments() && block.getBArguments()->size()) {
+            if (block.numB()) {
                narrowed = B_ARG(0);
             }
             REQUIRE_TRUE(numBits > 1 && numBits < 17, 0, "fake_quant_with_min_max_vars: Number of \

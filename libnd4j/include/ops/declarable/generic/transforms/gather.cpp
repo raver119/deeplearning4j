@@ -37,7 +37,7 @@ CUSTOM_OP_IMPL(gather, 1, 1, false, 0, -2) {
     auto indices = block.width() > 1 ? INPUT_VARIABLE(1) : nullptr;
 	auto output  = OUTPUT_VARIABLE(0);
 
-	const bool checkIndices = block.getBArguments()->empty() ? false : B_ARG(0);
+	const bool checkIndices = block.getBArguments().empty() ? false : B_ARG(0);
 
 	//Edge case: empty indices -> empty output
 	if(indices != nullptr && indices->isEmpty()){
@@ -56,7 +56,7 @@ CUSTOM_OP_IMPL(gather, 1, 1, false, 0, -2) {
 			intArgs.emplace_back(0);
 		else
 			for (int i = 0; i < numOfIntArgs; ++i)
-				intArgs.emplace_back(block.getIArguments()->at(i));
+				intArgs.emplace_back(block.getIArguments().at(i));
 	}
 
     const int inputRank = input->rankOf();
@@ -101,7 +101,7 @@ DECLARE_SHAPE_FN(gather) {
 	if (block.width() > 2) {
 		axis = INPUT_VARIABLE(2)->e<int>(0);
 	} else
-		axis = block.numI() > 0 ? block.getIArguments()->at(0) : 0;
+		axis = block.numI() > 0 ? block.getIArguments().at(0) : 0;
 
 	int inputRank = shape::rank(inputShapeInfo);
 	if(axis < 0)

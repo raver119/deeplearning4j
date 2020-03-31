@@ -30,7 +30,7 @@ namespace sd {
             auto first = INPUT_VARIABLE(0);
             auto z = OUTPUT_VARIABLE(0);
 
-            auto scalar = block.numT() > 0 ? block.getTArguments()->at(0) : 0.0;
+            auto scalar = block.numT() > 0 ? block.getTArguments().at(0) : 0.0;
 
             first->applyScalar(sd::scalar::RELU, scalar, *z);
 

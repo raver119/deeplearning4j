@@ -1973,16 +1973,16 @@ sd::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, sd::ops::Decla
     sd::ShapeList inShapes;
 
     for (int e = 0; e < numIArgs; e++)
-        block.getIArguments()->push_back(iArgs[e]);
+        block.appendI(iArgs[e]);
 
     for (int e = 0; e < numTArgs; e++)
-        block.getTArguments()->push_back(tArgs[e]);
+        block.appendT(tArgs[e]);
 
     for (int e = 0; e < numBArgs; e++)
-        block.getBArguments()->push_back(bArgs[e]);
+        block.appendB(bArgs[e]);
 
     for (int e = 0; e < numDArgs; e++)
-        block.getDArguments()->push_back((sd::DataType) dArgs[e]);
+        block.appendD((sd::DataType) dArgs[e]);
 
     for (int e = 0; e < numInputShapes; e++) {
         auto shape_ = reinterpret_cast<Nd4jLong *>(inputShapes[e]);
@@ -2028,10 +2028,10 @@ sd::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, sd::ops::Decla
     sd::ShapeList inShapes;
 
     for (int e = 0; e < numIArgs; e++)
-        block.getIArguments()->push_back(iArgs[e]);
+        block.appendI(iArgs[e]);
 
     for (int e = 0; e < numTArgs; e++)
-        block.getTArguments()->push_back(tArgs[e]);
+        block.appendT(tArgs[e]);
 
     for (int e = 0; e < numInputShapes; e++)
         inShapes.push_back(reinterpret_cast<Nd4jLong *>(inputShapes[e]));

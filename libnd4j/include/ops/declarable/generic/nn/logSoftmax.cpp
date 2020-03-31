@@ -39,7 +39,7 @@ CONFIGURABLE_OP_IMPL(log_softmax, 1, 1, true, 0, 0) {
     auto output = OUTPUT_VARIABLE(0);
 
     const int rank = input->rankOf();
-    const int dim  = block.getIArguments()->size() > 0 ? INT_ARG(0) : rank - 1;
+    const int dim  = block.numI() > 0 ? INT_ARG(0) : rank - 1;
 
     REQUIRE_TRUE(dim < rank, 0, "LOG_SOFTMAX OP: the value of input integer parameter (dimension) must be less than input array rank %i, but got dimension = %i instead !", rank, dim);
 
@@ -62,7 +62,7 @@ CONFIGURABLE_OP_IMPL(log_softmax_bp, 2, 1, true, 0, 0) {
     auto gradI = OUTPUT_VARIABLE(0);
 
     const int rank = input->rankOf();
-    const int dim  = block.getIArguments()->size() > 0 ? INT_ARG(0) : rank - 1;
+    const int dim  = block.numI()> 0 ? INT_ARG(0) : rank - 1;
 
     REQUIRE_TRUE(dim < rank, 0, "LOG_SOFTMAX_BP OP: the value of input integer parameter (dimension) must be less than input array rank %i, but got dimension = %i instead !", rank, dim);
 

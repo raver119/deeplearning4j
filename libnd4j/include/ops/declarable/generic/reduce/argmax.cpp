@@ -37,7 +37,7 @@ namespace sd {
             auto input = INPUT_VARIABLE(0);
             auto output = OUTPUT_VARIABLE(0);
 
-            auto axis = *block.getIArguments();
+            auto axis = block.getIArguments();
 
             // axis might be dynamic (i.e. tf mode)
             if (block.width() > 1 && axis.size() == 0) {
@@ -60,7 +60,7 @@ namespace sd {
             std::vector<int> dims;
 
             if (block.width() == 1) {
-                dims = *block.getIArguments();
+                dims = block.getIArguments();
             } else {
                 auto y = INPUT_VARIABLE(1);
                 dims = y->template asVectorT<int>();

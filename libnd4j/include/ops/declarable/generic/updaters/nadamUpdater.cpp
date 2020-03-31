@@ -48,9 +48,9 @@ namespace sd {
                 "  expected shape %s, but got %s!", ShapeUtils::shapeAsString(gradient->getShapeInfo()).c_str(),
                 ShapeUtils::shapeAsString(initStateV->getShapeInfo()).c_str());
 
-            bool bParamsSupply = 7 == block.width() || 4 == block.getTArguments()->size();
+            bool bParamsSupply = 7 == block.width() || 4 == block.numT();
 
-            auto nIteration = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+            auto nIteration = block.numI() > 0 ? INT_ARG(0) : 0;
 
             REQUIRE_TRUE(bParamsSupply, 0, "NADAM UPDATER OP: learning rate, beta 1, beta 2 and epsilon were not provided!");
 

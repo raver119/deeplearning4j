@@ -325,12 +325,12 @@ namespace sd {
             std::vector<int> args;
 
             // statically evaluated 
-            if (block.getIArguments()->size() > 5) {
-                dim_values = block.getIArguments()->size() - 5;
+            if (block.numI() > 5) {
+                dim_values = block.numI() - 5;
                 delta = dim_values % 3;
                 elements = dim_values / 3;
 
-                for (int e = 5; e < block.getIArguments()->size(); e++)
+                for (int e = 5; e < block.numI(); e++)
                     args.emplace_back(INT_ARG(e));
 
                 REQUIRE_TRUE(delta == 0, 0, "StridedSlice: Number of Integer arguments should be equal to input rank x 3 = %i, but got %i instead", (x->rankOf() * 3), dim_values);
@@ -448,7 +448,7 @@ namespace sd {
 
             int x_rank = shape::rank(inShape);
 
-            int dim_values = block.getIArguments()->size() - 5;
+            int dim_values = block.numI() - 5;
             int delta = dim_values % 3;
             int elements = dim_values / 3;
 
@@ -466,7 +466,7 @@ namespace sd {
                 int delta2 = dim_values / x_rank;
 
                 std::vector<int> args;
-                for (int e = 5; e < block.getIArguments()->size(); e++)
+                for (int e = 5; e < block.numI(); e++)
                     args.emplace_back(INT_ARG(e));
 
                 // FIXME: propably template required here
@@ -558,12 +558,12 @@ namespace sd {
             std::vector<int> args;
 
             // statically evaluated
-            if (block.getIArguments()->size() > 5) {
-                dim_values = block.getIArguments()->size() - 5;
+            if (block.numI() > 5) {
+                dim_values = block.numI() - 5;
                 delta = dim_values % 3;
                 elements = dim_values / 3;
 
-                for (int e = 5; e < block.getIArguments()->size(); e++)
+                for (int e = 5; e < block.numI(); e++)
                     args.emplace_back(INT_ARG(e));
 
                 REQUIRE_TRUE(delta == 0, 0, "StridedSliceBP: Number of Integer arguments should be equal to input rank x 3 = %i, but got %i instead", (x->rankOf() * 3), dim_values);

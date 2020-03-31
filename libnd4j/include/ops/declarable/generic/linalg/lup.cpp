@@ -30,7 +30,7 @@ namespace sd {
             auto z = OUTPUT_VARIABLE(0);
 
             auto p = OUTPUT_VARIABLE(1);
-            if (block.getIArguments()->size()) {
+            if (block.numI()) {
                 DataType dtype = (DataType)INT_ARG(0);
                 REQUIRE_TRUE(dtype == sd::DataType::INT32 || dtype == sd::DataType::INT64, 0, "lu: Permutation data type should be 32bit or 64bit int only, but '%s' given.", DataTypeUtils::asString(dtype).c_str());            }
 
@@ -46,7 +46,7 @@ namespace sd {
             auto shapeVector = ShapeUtils::shapeAsVector(in);
             auto luShape = ShapeBuilders::copyShapeInfoAndType(in, in, true, block.workspace());
             auto dtype = sd::DataType::INT32;
-            if (block.getIArguments()->size()) {
+            if (block.numI()) {
                 dtype = (DataType)INT_ARG(0);
                 REQUIRE_TRUE(dtype == sd::DataType::INT32 || dtype == sd::DataType::INT64, 0, "lu: Permutation data type should be 32bit or 64bit int only, but '%s' given.", DataTypeUtils::asString(dtype).c_str());
             }

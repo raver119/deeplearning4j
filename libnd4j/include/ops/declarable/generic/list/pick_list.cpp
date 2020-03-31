@@ -33,8 +33,8 @@ namespace sd {
                 auto ia = INPUT_VARIABLE(1);
                 for (int e = 0; e < ia->lengthOf(); e++)
                     indices.emplace_back(ia->e<int>(e));
-            } else if (block.getIArguments()->size() > 0) {
-                indices = *(block.getIArguments());
+            } else if (block.numI() > 0) {
+                indices = block.getIArguments();
             } else return ND4J_STATUS_BAD_ARGUMENTS;
 
             for (auto& v: indices) {

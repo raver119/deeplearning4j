@@ -81,26 +81,26 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_1) {
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({-1, -2});
     // 5,5 kernel
-    block->getIArguments()->push_back(kH);
-    block->getIArguments()->push_back(kW);
+    block->appendI(kH);
+    block->appendI(kW);
 
     // 1,1 stride
-    block->getIArguments()->push_back(sH);
-    block->getIArguments()->push_back(sW);
+    block->appendI(sH);
+    block->appendI(sW);
 
     // 0,0 padding
-    block->getIArguments()->push_back(pH);
-    block->getIArguments()->push_back(pW);
+    block->appendI(pH);
+    block->appendI(pW);
 
     // 1,1 dilation
-    block->getIArguments()->push_back(dH);
-    block->getIArguments()->push_back(dW);
+    block->appendI(dH);
+    block->appendI(dW);
 
     // same mode
-    block->getIArguments()->push_back(1);
+    block->appendI(1);
 
     // is NHWC
-    block->getIArguments()->push_back(0);
+    block->appendI(0);
 
     sd::ops::conv2d op;
 
@@ -409,21 +409,21 @@ TEST_F(ConvolutionTests1, sconv2d_1) {
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1, -2});
 
-    block->getIArguments()->push_back(kY);
-    block->getIArguments()->push_back(kX);
+    block->appendI(kY);
+    block->appendI(kX);
 
-    block->getIArguments()->push_back(sY);
-    block->getIArguments()->push_back(sX);
+    block->appendI(sY);
+    block->appendI(sX);
 
-    block->getIArguments()->push_back(pY);
-    block->getIArguments()->push_back(pX);
+    block->appendI(pY);
+    block->appendI(pX);
 
     // dilation
-    block->getIArguments()->push_back(1);
-    block->getIArguments()->push_back(1);
+    block->appendI(1);
+    block->appendI(1);
 
     // NOT same mode
-    block->getIArguments()->push_back(0);
+    block->appendI(0);
 
     sd::ops::sconv2d op;
 
@@ -1984,24 +1984,24 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test9) {
     ShapeList shapeList({x.shapeInfo(), w.shapeInfo()});
     ContextPrototype proto;
     Context ctx(1);
-    ctx.getIArguments()->push_back(2);
-    ctx.getIArguments()->push_back(5);
-    ctx.getIArguments()->push_back(5);
+    ctx.appendI(2);
+    ctx.appendI(5);
+    ctx.appendI(5);
 
-    ctx.getIArguments()->push_back(5);
-    ctx.getIArguments()->push_back(4);
-    ctx.getIArguments()->push_back(3);
+    ctx.appendI(5);
+    ctx.appendI(4);
+    ctx.appendI(3);
 
-    ctx.getIArguments()->push_back(0);
-    ctx.getIArguments()->push_back(0);
-    ctx.getIArguments()->push_back(0);
+    ctx.appendI(0);
+    ctx.appendI(0);
+    ctx.appendI(0);
 
-    ctx.getIArguments()->push_back(1);
-    ctx.getIArguments()->push_back(1);
-    ctx.getIArguments()->push_back(1);
+    ctx.appendI(1);
+    ctx.appendI(1);
+    ctx.appendI(1);
 
-    ctx.getIArguments()->push_back(0);
-    ctx.getIArguments()->push_back(1);  // previous variant was "ctx.getIArguments()->push_back(0)" and this caused fail
+    ctx.appendI(0);
+    ctx.appendI(1);  // previous variant was "ctx.appendI(0)" and this caused fail
 
     auto shapes = op.calculateOutputShape(&shapeList, ctx);
     ASSERT_EQ(1, shapes->size());

@@ -49,10 +49,10 @@ namespace sd {
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
             nd4j_debug("Executing LegacyReduceSameOp: [%i]\n", opNum);
 
-            auto axis = *block.getAxis();
+            auto axis = block.getAxis();
             bool allAxes = false;
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyReduceSameOp");
 
             if (block.width() == 1) {
@@ -99,7 +99,7 @@ namespace sd {
                     dims[e] = f >= 0 ? f : f += x->rankOf();
                 }
 
-                if ((block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()) || allAxes) {
+                if ((block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()) || allAxes) {
                     // scalar
                     NativeOpExecutioner::execReduceSameScalar(block.launchContext(), opNum, x->buffer(), x->shapeInfo(), x->specialBuffer(), x->specialShapeInfo(), extras.argumentsAsT(z->dataType()), z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo());
                 } else {
@@ -136,7 +136,7 @@ namespace sd {
             auto keepDims = block.numB() > 0 ? B_ARG(0) : false;
             auto newFormat = block.numB() > 1 ? B_ARG(1) : true;
 
-            auto axis = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : *block.getAxis();
+            auto axis = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : block.getAxis();
 
             if (axis.size() == shape::rank(inShape))
                 allAxes = true;

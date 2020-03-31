@@ -32,7 +32,7 @@ namespace sd {
             int maxOutputSize; // = INT_ARG(0);
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
                 REQUIRE_TRUE(false, 0, "image.non_max_suppression: Max output size argument cannot be retrieved.");
@@ -43,14 +43,14 @@ namespace sd {
             if (block.width() > 3) {
                 overlayThreshold = INPUT_VARIABLE(3)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 0) {
+            else if (block.numT() > 0) {
                 overlayThreshold = T_ARG(0);
             }
 
             if (block.width() > 4) {
                 scoreThreshold = INPUT_VARIABLE(4)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 1) {
+            else if (block.numT() > 1) {
                 scoreThreshold = T_ARG(1);
             }
             if (boxes->isEmpty() || scales->isEmpty())
@@ -85,16 +85,16 @@ namespace sd {
             int maxOutputSize;
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
                 REQUIRE_TRUE(false, 0, "image.non_max_suppression: Max output size argument cannot be retrieved.");
 
             if (maxOutputSize > 0) {
                 auto actualIndicesCount = shape::sizeAt(in, 0);
-                if (block.getTArguments()->size() > 1 || block.width() > 4) {
+                if (block.numT() > 1 || block.width() > 4) {
                     auto scoreThreshold =
-                            block.getTArguments()->size() > 1 ? T_ARG(1) : INPUT_VARIABLE(4)->e<double>(0);
+                            block.numT() > 1 ? T_ARG(1) : INPUT_VARIABLE(4)->e<double>(0);
                     auto scales = INPUT_VARIABLE(1);
                     scales->syncToHost();
                     for (auto e = 0; e < scales->lengthOf(); e++) {
@@ -130,7 +130,7 @@ namespace sd {
             int maxOutputSize; // = INT_ARG(0);
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
             REQUIRE_TRUE(false, 0, "image.non_max_suppression: Max output size argument cannot be retrieved.");
@@ -141,14 +141,14 @@ namespace sd {
             if (block.width() > 3) {
                 overlayThreshold = INPUT_VARIABLE(3)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 0) {
+            else if (block.numT() > 0) {
                 overlayThreshold = T_ARG(0);
             }
 
             if (block.width() > 4) {
                 scoreThreshold = INPUT_VARIABLE(4)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 1) {
+            else if (block.numT() > 1) {
                 scoreThreshold = T_ARG(1);
             }
             if (boxes->isEmpty() || scales->isEmpty())
@@ -183,7 +183,7 @@ namespace sd {
             int maxOutputSize;
             if (block.width() > 2)
                 maxOutputSize = INPUT_VARIABLE(2)->e<int>(0);
-            else if (block.getIArguments()->size() == 1)
+            else if (block.numI() == 1)
                 maxOutputSize = INT_ARG(0);
             else
             REQUIRE_TRUE(false, 0, "image.non_max_suppression: Max output size argument cannot be retrieved.");
@@ -196,14 +196,14 @@ namespace sd {
             if (block.width() > 3) {
                 overlayThreshold = INPUT_VARIABLE(3)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 0) {
+            else if (block.numT() > 0) {
                 overlayThreshold = T_ARG(0);
             }
 
             if (block.width() > 4) {
                 scoreThreshold = INPUT_VARIABLE(4)->e<double>(0);
             }
-            else if (block.getTArguments()->size() > 1) {
+            else if (block.numT() > 1) {
                 scoreThreshold = T_ARG(1);
             }
 

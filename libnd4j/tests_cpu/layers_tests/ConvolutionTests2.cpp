@@ -909,8 +909,8 @@ TEST_F(ConvolutionTests2, maxpool2d_1) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
@@ -953,8 +953,8 @@ TEST_F(ConvolutionTests2, maxpool2d_2) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
@@ -997,8 +997,8 @@ TEST_F(ConvolutionTests2, maxpool2d_3) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dH,dW, 1};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dH,dW, 1};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
@@ -1041,8 +1041,8 @@ TEST_F(ConvolutionTests2, maxpool2d_4) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dH,dW, 0};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
@@ -1085,8 +1085,8 @@ TEST_F(ConvolutionTests2, maxpool2d_5) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dH,dW, 1};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dH,dW, 1};  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
@@ -1703,8 +1703,8 @@ TEST_F(ConvolutionTests2, maxpool2d_bp_1) {
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
     block->fillInputs({-2});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 0, 0};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 0, 0};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
 
     sd::ops::maxpool2d_bp bp;
     Nd4jStatus status = bp.execute(block);
@@ -1887,8 +1887,8 @@ TEST_F(ConvolutionTests2, avgpool2d_bp_1) {
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1});
     block->fillInputs({-2});
-    std::vector<int>* argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode, 9 - extraParam0 (unnecessary for avg mode), 10 - data format
+    std::vector<int> argI = block->getIArguments();
+    argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode, 9 - extraParam0 (unnecessary for avg mode), 10 - data format
 
     sd::ops::avgpool2d_bp bp;
     Nd4jStatus status = bp.execute(block);
@@ -2059,9 +2059,9 @@ TEST_F(ConvolutionTests2, pnormpool2d_bp_1) {
     block->fillInputs({-1});
     block->fillInputs({-2});
     auto argI = block->getIArguments();
-    *argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 3};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - divisor
-    std::vector<double>* argT = block->getTArguments();
-    *argT = {0.000001};
+    argI = {kH,kW, sH,sW, pH,pW, dW,dH, 0, 3};   // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - divisor
+    std::vector<double> argT = block->getTArguments();
+    argT = {0.000001};
 
     sd::ops::pnormpool2d_bp bp;
     Nd4jStatus status = bp.execute(block);

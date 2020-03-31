@@ -47,7 +47,7 @@ namespace sd {
                 "  expected shape %s, but got %s!", ShapeUtils::shapeAsString(gradient->getShapeInfo()).c_str(),
                 ShapeUtils::shapeAsString(initStateMsdx->getShapeInfo()).c_str());
 
-            bool bParamsSupply = 5 == block.width() || 2 == block.getTArguments()->size();
+            bool bParamsSupply = 5 == block.width() || 2 == block.numT();
 
             REQUIRE_TRUE(bParamsSupply, 0, "ADA_DELTA UPDATER OP: Rho and epsilon were not provided!");
 

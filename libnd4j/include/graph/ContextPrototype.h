@@ -71,19 +71,19 @@ namespace sd {
             explicit ContextPrototype(sd::ops::OpDescriptor* opDescriptor = nullptr, int nodeId = 1, bool inPlace = false);
             ~ContextPrototype() = default;
 
-            int getNodeId();
-            int nodeId();
+            int getNodeId() const;
+            int nodeId() const;
 
             // this method returns true, if inputs are defined
-            bool hasVariablesFilled();
+            bool hasVariablesFilled() const;
 
             void setOpDescriptor(sd::ops::OpDescriptor* opDescriptor);
 
-            virtual sd::DataType dataType();
-            virtual sd::DataType dataType(int index);
+            virtual sd::DataType dataType() const;
+            virtual sd::DataType dataType(int index) const ;
             virtual void setDataType(int index, sd::DataType type);
 
-            bool isInplace();
+            bool isInplace() const;
             void markInplace(bool reallyInplace);
 
             void pickInput(int input);
@@ -91,34 +91,45 @@ namespace sd {
             void pickInput(std::pair<int, int>& p);
             void fillInputs(std::initializer_list<int> inputs);
             void fillInputs(std::vector<int>& inputs);
-            std::vector<std::pair<int, int>>* inputs();
+            std::vector<std::pair<int, int>>& inputs() const;
 
-            std::vector<double>* getTArguments();
-            std::vector<int>* getIArguments();
-            std::vector<bool>* getBArguments();
-            std::vector<sd::DataType>* getDArguments();
-            std::vector<int>* getAxis();
+            const std::vector<double>& getTArguments() const;
+            const std::vector<int>& getIArguments() const;
+            const std::vector<bool>& getBArguments() const;
+            const std::vector<sd::DataType>& getDArguments() const;
+            const std::vector<int>& getAxis() const;
 
-            samediff::Engine engine();
+            void appendI(const std::vector<Nd4jLong> &value);
+            void appendT(const std::vector<double> &value);
+            void appendB(const std::vector<bool> &value);
+            void appendD(const std::vector<DataType> &value);
 
-            size_t numT();
-            size_t numI();
-            size_t numB();
-            size_t numD();
+            void appendA(Nd4jLong value);
+            void appendI(Nd4jLong value);
+            void appendT(double value);
+            void appendB(bool value);
+            void appendD(DataType value);
 
-            std::pair<int, int>* input(int idx);
+            samediff::Engine engine() const;
 
-            int opNum();
+            size_t numT() const;
+            size_t numI() const;
+            size_t numB() const;
+            size_t numD() const;
+
+            const std::pair<int, int>& input(int idx) const;
+
+            int opNum() const;
             void setOpNum(int opNum);
 
-            bool isUseMKLDNN() { return _useMKLDNN; }
+            bool isUseMKLDNN()  const { return _useMKLDNN; }
             void setUseMKLDNN(bool useMKLDNN) { _useMKLDNN = useMKLDNN; }
 
             /**
              * This method returns number of inputs available in this block
              * @return
              */
-            virtual unsigned long width();
+            virtual unsigned long width() const;
 
             // just a clone
             ContextPrototype* clone();

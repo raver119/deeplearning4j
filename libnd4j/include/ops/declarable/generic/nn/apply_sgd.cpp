@@ -37,7 +37,7 @@ namespace sd {
             if (block.width() == 3) {
                 auto tarr = INPUT_VARIABLE(2);
                 lr = tarr->e<double>(0);
-            } else if (block.getTArguments()->size() == 1) {
+            } else if (block.numT() == 1) {
                 lr = T_ARG(0);
             } else {
                 REQUIRE_TRUE(false, 0, "ApplyGradients op should have LR announced either es T argument or additional NDArray!");

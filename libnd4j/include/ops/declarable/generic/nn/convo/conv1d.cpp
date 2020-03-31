@@ -44,8 +44,8 @@ CUSTOM_OP_IMPL(conv1d, 2, 1, false, 0, 5) {
     int pW = INT_ARG(2);                                                        // paddings width
     int dW = INT_ARG(3);                                                        // dilations width
     int paddingMode = INT_ARG(4);                                               // 0-VALID, 1-SAME, 2-CAUSAL
-    int isNCW       = block.getIArguments()->size() > 5 ? !INT_ARG(5) : 1;      // INT_ARG(4): 0-NCW,  1-NWC
-    int wFormat = block.getIArguments()->size() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
+    int isNCW       = block.numI() > 5 ? !INT_ARG(5) : 1;      // INT_ARG(4): 0-NCW,  1-NWC
+    int wFormat = block.numI() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
 
     const int rank = 3;
     REQUIRE_TRUE(input->rankOf()   == rank, 0, "CUSTOM CONV1D OP: rank of input array must be equal to %i, but got %i instead !", rank, input->rankOf());
@@ -105,8 +105,8 @@ DECLARE_SHAPE_FN(conv1d) {
     int pW = INT_ARG(2);                                                        // paddings width
     int dW = INT_ARG(3);                                                        // dilations width
     int paddingMode = INT_ARG(4);                                               // 0-VALID, 1-SAME
-    int isNCW  = block.getIArguments()->size() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
-    int wFormat = block.getIArguments()->size() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
+    int isNCW  = block.numI() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
+    int wFormat = block.numI() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
 
     int indIOioC, indIiW, indWoC(0 == wFormat ? 2 : 0);
     if(!isNCW) {
@@ -178,8 +178,8 @@ CUSTOM_OP_IMPL(conv1d_bp, 3, 2, false, 0, 5) {
     int pW = INT_ARG(2);                                                        // paddings width
     int dW = INT_ARG(3);                                                        // dilations width
     int paddingMode = INT_ARG(4);                                               // 0-VALID, 1-SAME, 2-CAUSAL
-    int isNCW  = block.getIArguments()->size() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
-    int wFormat = block.getIArguments()->size() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
+    int isNCW  = block.numI() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
+    int wFormat = block.numI() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
 
     const int rank = 3;
     REQUIRE_TRUE(input->rankOf()   == rank, 0, "CUSTOM CONV1D_BP OP: rank of input array must be equal to %i, but got %i instead !", rank, input->rankOf());
@@ -253,8 +253,8 @@ DECLARE_SHAPE_FN(conv1d_bp) {
     int pW = INT_ARG(2);                                                        // paddings width
     int dW = INT_ARG(3);                                                        // dilations width
     int paddingMode = INT_ARG(4);                                               // 0-VALID, 1-SAME
-    int isNCW  = block.getIArguments()->size() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
-    int wFormat = block.getIArguments()->size() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
+    int isNCW  = block.numI() > 5 ? !INT_ARG(5) : 1;           // INT_ARG(4): 1-NWC, 0-NCW
+    int wFormat = block.numI() > 6 ? INT_ARG(6) : 0;           // 0 - [kW, iC, oC], 1 - [oC, iC, kW], 2 - [oC, kW, iC]
 
     int indIOioC, indIiW, indWoC(0 == wFormat ? 2 : 0);
     if(!isNCW) {

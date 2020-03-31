@@ -31,7 +31,7 @@ namespace sd {
             NDArray *output = OUTPUT_VARIABLE(0);
 
             auto mode = (int) T_ARG(0);
-            std::vector<int> dims = *block.getIArguments();
+            std::vector<int> dims = block.getIArguments();
             bool overwrite = false;
 
             if (block.width() == 1) {
@@ -40,14 +40,12 @@ namespace sd {
                 auto axisVector = INPUT_VARIABLE(1);
                 dims.resize(axisVector->lengthOf());
                 helpers::adjustAxis(input->rankOf(), axisVector, dims);
-                axisVector->printIndexedBuffer("AXIS");
                 auto shape = ShapeUtils::evalReduceShapeInfo(input->ordering(), dims, *input, false, false);
                 if (!shape::equalsStrict(shape, output->shapeInfo())) {
                     output = new NDArray(shape, false, block.launchContext());
                     overwrite = true;
                 }
             }
-            output->printShapeInfo("Output Shape Info");
             switch(mode) {
                 case 0: {
                     REQUIRE_TRUE(dims.size() == 2 || (input->rankOf() == 2 && dims.size() == 0), 0, "Norm: Frobenius is defined for 2D matrices or TADS only");
@@ -81,7 +79,7 @@ namespace sd {
                 break;
                 default: {
                     // p-norm
-                    REQUIRE_TRUE(block.getIArguments()->size() > 1, 0, "P-Norm reductions requires 2 TArguments, but only 1 was provided");
+                    REQUIRE_TRUE(block.numI() > 1, 0, "P-Norm reductions requires 2 TArguments, but only 1 was provided");
                     // FIXME: p is required here
                     //T p = T_ARG(1);
                     input->reduceAlongDimension(reduce::NormP, *output, dims, false, output->rankOf() == 2);

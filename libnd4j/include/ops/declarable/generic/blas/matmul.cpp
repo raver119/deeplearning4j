@@ -36,7 +36,7 @@ CUSTOM_OP_IMPL(matmul, 2, 1, false, 0, -2) {
     auto y = INPUT_VARIABLE(1);
     auto z = OUTPUT_VARIABLE(0);
 
-    const int iSize = (int) block.getIArguments()->size();
+    const int iSize = (int) block.numI();
     int transX = iSize > 0 ? INT_ARG(0) : 0;
     int transY = iSize > 1 ? INT_ARG(1) : 0;
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;
@@ -98,7 +98,7 @@ DECLARE_SHAPE_FN(matmul) {
     auto xShapeInfo = inputShape->at(0);
     auto yShapeInfo = inputShape->at(1);
 
-    const int iSize = (int) block.getIArguments()->size();
+    const int iSize = (int) block.numI();
     int transX = iSize > 0 ? INT_ARG(0) : 0;
     int transY = iSize > 1 ? INT_ARG(1) : 0;
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;
@@ -147,7 +147,7 @@ CUSTOM_OP_IMPL(matmul_bp, 3, 2, false, 0, -2) {
     auto dldx = OUTPUT_VARIABLE(0);
     auto dldy = OUTPUT_VARIABLE(1);
 
-    const int iSize = (int) block.getIArguments()->size();
+    const int iSize = (int) block.numI();
     int transX = iSize > 0 ? INT_ARG(0) : 0;
     int transY = iSize > 1 ? INT_ARG(1) : 0;
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;

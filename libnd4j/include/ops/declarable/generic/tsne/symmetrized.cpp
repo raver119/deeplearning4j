@@ -37,7 +37,7 @@ namespace ops  {
             auto outputCols = OUTPUT_VARIABLE(1);
             auto outputVals = OUTPUT_VARIABLE(2);
 
-    		if (block.getIArguments()->size() > 0)
+    		if (block.numI() > 0)
     		    N = INT_ARG(0);
 
             if (rowCountsPtr) {
@@ -65,8 +65,9 @@ namespace ops  {
             auto rowP  = INPUT_VARIABLE(0);
             auto colP  = INPUT_VARIABLE(1);
             auto N = rowP->lengthOf() - 1;
-            if (block.getIArguments()->size() > 0)
+            if (block.numI() > 0)
                 N = INT_ARG(0);
+
             auto dataType = rowP->dataType(); //ArrayOptions::dataType(inputShape->at(0));
             NDArray* rowCounts = NDArrayFactory::create_<int>('c', {N}); //rowP->dup();
             //srowCounts->assign(0);

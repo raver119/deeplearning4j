@@ -38,7 +38,7 @@ CONFIGURABLE_OP_IMPL(adjust_saturation, 1, 1, true, 0, 0) {
         return Status::OK();
 
     const int rank = input->rankOf();
-    const int arg_size = block.getIArguments()->size();
+    const int arg_size = block.numI();
     const int dimC = arg_size > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
 
     REQUIRE_TRUE(rank >= 3, 0, "ADJUST_SATURATION: op expects rank of input array to be >= 3, but got %i instead", rank);

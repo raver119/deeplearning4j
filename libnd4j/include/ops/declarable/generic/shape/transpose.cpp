@@ -40,12 +40,12 @@ CUSTOM_OP_IMPL(transpose, 1, 1, false, 0, 0) {
         return Status::OK();    //No op
     }
 
-    if (block.width() == 1 && block.getIArguments()->size() == 0) {
+    if (block.width() == 1 && block.numI() == 0) {
         z->assign(x->transpose());
         return Status::OK();
     }
 
-    std::vector<int> permutationVector = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : *block.getIArguments();
+    std::vector<int> permutationVector = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : block.getIArguments();
 
     z->assign(x->permute(permutationVector));
 
@@ -62,10 +62,10 @@ DECLARE_SHAPE_FN(transpose) {
 
     auto x = INPUT_VARIABLE(0);
 
-    if (block.width() == 1 && block.getIArguments()->size() == 0)
+    if (block.width() == 1 && block.numI() == 0)
         return SHAPELIST(ShapeUtils::evalTranspShapeInfo(*x, block.workspace(), true));
 
-    std::vector<int> permutationVector = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : *block.getIArguments();
+    std::vector<int> permutationVector = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : block.getIArguments();
 
     auto outputShapeInfo = ShapeUtils::evalPermShapeInfo(permutationVector.data(), x->rankOf(), *x, block.workspace(), true);
 

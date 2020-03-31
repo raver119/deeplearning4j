@@ -36,7 +36,7 @@ CUSTOM_OP_IMPL(gather_nd, 2, 1, false, 0, 0) {
     auto indices = INPUT_VARIABLE(1);
     auto output  = OUTPUT_VARIABLE(0);
 
-    const bool checkIndices = block.getBArguments()->empty() ? false : B_ARG(0);
+    const bool checkIndices = block.getBArguments().empty() ? false : B_ARG(0);
 
     const int rankIn = input->rankOf();
     const int rankInd = indices->rankOf();

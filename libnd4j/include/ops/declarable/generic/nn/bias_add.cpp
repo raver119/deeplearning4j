@@ -36,7 +36,7 @@ CUSTOM_OP_IMPL(biasadd, 2, 1, true, 0, 0) {
 
     auto output = OUTPUT_VARIABLE(0);
 
-    const bool isNCHW = !block.getBArguments()->empty() ? B_ARG(0) : false;
+    const bool isNCHW = !block.getBArguments().empty() ? B_ARG(0) : false;
     const int channelDim = isNCHW ? 1 : input->rankOf() - 1;      // second or last
 
     REQUIRE_TRUE(bias->rankOf() == 1, 0, "BIASADD CUSTOM_OP: bias array should have rank = 1, but got %i instead !", bias->rankOf());
@@ -77,7 +77,7 @@ CUSTOM_OP_IMPL(biasadd_bp, 3, 2, false, 0, 0) {
     auto gradI = OUTPUT_VARIABLE(0);
     auto gradB = OUTPUT_VARIABLE(1);
 
-    const bool isNCHW = !block.getBArguments()->empty() ? B_ARG(0) : false;
+    const bool isNCHW = !block.getBArguments().empty() ? B_ARG(0) : false;
     const int channelDim = isNCHW ? 1 : input->rankOf() - 1;      // second or last
 
     gradI->assign(gradO);

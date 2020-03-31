@@ -41,7 +41,7 @@ namespace sd {
             auto output = OUTPUT_VARIABLE(0);
             auto seed = 0;
 
-            if (block.getIArguments()->size()) {
+            if (block.numI()) {
                 seed = INT_ARG(0);
             }
 

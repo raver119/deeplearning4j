@@ -71,7 +71,7 @@ namespace sd {
 
             int numClasses = 0;
 
-            if (block.getIArguments()->size() > 0) {
+            if (block.numI() > 0) {
                 numClasses = INT_ARG(0);
             }
             else  {

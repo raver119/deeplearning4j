@@ -50,9 +50,9 @@ namespace sd {
             nd4j_debug("Executing LegacyReduceFloatOp: [%i]\n", opNum);
 
             bool allAxes = false;
-            auto axis = *block.getAxis();
+            auto axis = block.getAxis();
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyReduceFloatOp");
 
             if (block.width() == 1) {
@@ -62,13 +62,13 @@ namespace sd {
 
                 // _axis.(block.getIArguments()->size() == 0) ||
                 //                    (block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>())
-                if (block.getAxis()->empty() || allAxes) {
+                if (block.getAxis().empty() || allAxes) {
                     // scalar
                     NativeOpExecutioner::execReduceFloatScalar(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(), x->specialBuffer(), x->specialShapeInfo(),
                             extras.argumentsAsT(z->dataType()), z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo());
                 } else {
                     // TAD
-                    std::vector<int> dims(*block.getAxis());
+                    std::vector<int> dims(block.getAxis());
 
                     for (int e = 0; e < dims.size(); e++)
                         if (dims[e] < 0)
@@ -102,7 +102,7 @@ namespace sd {
                     dims[e] = f >= 0 ? f : f += x->rankOf();
                 }
 
-                if ((block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()) || allAxes) {
+                if ((block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()) || allAxes) {
                     // scalar
                     NativeOpExecutioner::execReduceFloatScalar(block.launchContext(), opNum, x->buffer(), x->shapeInfo(), x->specialBuffer(), x->specialShapeInfo(), extras.argumentsAsT(x->dataType()), z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo());
                 } else {
@@ -140,7 +140,7 @@ namespace sd {
             auto keepDims = block.numB() > 0 ? B_ARG(0) : false;
             auto newFormat = block.numB() > 1 ? B_ARG(1) : true;
 
-            auto axis = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : *block.getAxis();
+            auto axis = block.width() > 1 ? INPUT_VARIABLE(1)->asVectorT<int>() : block.getAxis();
 
             if (axis.size() == shape::rank(inShape))
                 allAxes = true;

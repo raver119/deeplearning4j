@@ -124,41 +124,41 @@ namespace sd {
 
         std::string extra() override {
             if(_context != nullptr){
-                std::vector<int>* iargs = _context->getIArguments();
-                std::vector<double>* targs = _context->getTArguments();
-                std::vector<bool>* bargs = _context->getBArguments();
+                auto iargs = _context->getIArguments();
+                auto targs = _context->getTArguments();
+                auto bargs = _context->getBArguments();
                 std::string e;
                 bool any = false;
-                if(iargs != nullptr){
+                if(!iargs.empty()){
                     e += "iargs=[";
-                    for( int i=0; i<iargs->size(); i++ ){
+                    for( int i=0; i<iargs.size(); i++ ){
                         if(i > 0)
                             e += ",";
-                        e += std::to_string(iargs->at(i));
+                        e += std::to_string(iargs.at(i));
                     }
                     e += "]";
                     any = true;
                 }
-                if(targs != nullptr){
+                if(!targs.empty()){
                     if(any)
                         e += ",";
                     e += "targs=[";
-                    for( int i=0; i<targs->size(); i++ ){
+                    for( int i=0; i<targs.size(); i++ ){
                         if(i > 0)
                             e += ",";
-                        e += std::to_string(targs->at(i));
+                        e += std::to_string(targs.at(i));
                     }
                     e += "]";
                     any = true;
                 }
-                if(bargs != nullptr){
+                if(!bargs.empty()){
                     if(any)
                         e += ",";
                     e += "bargs=[";
-                    for( int i=0; i<bargs->size(); i++ ){
+                    for( int i=0; i<bargs.size(); i++ ){
                         if(i > 0)
                             e += ",";
-                        e += std::to_string(bargs->at(i));
+                        e += std::to_string(bargs.at(i));
                     }
                     e += "]";
                 }

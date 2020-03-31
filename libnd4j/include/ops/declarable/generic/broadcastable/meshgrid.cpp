@@ -37,7 +37,7 @@ CUSTOM_OP_IMPL(meshgrid, -1, -1, false, 0, 0) {
         return Status::OK();
     }
 
-    bool swapFirst2Dims = block.getIArguments()->size() > 0 ? (bool)INT_ARG(0) : true;
+    bool swapFirst2Dims = block.numI() > 0 ? (bool)INT_ARG(0) : true;
 
     std::vector<NDArray*> inArrs(rank);
     std::vector<NDArray*> outArrs(rank);
@@ -61,7 +61,7 @@ CUSTOM_OP_IMPL(meshgrid, -1, -1, false, 0, 0) {
 
 
 DECLARE_SHAPE_FN(meshgrid) {
-    bool swapFirst2Dims = block.getIArguments()->size() > 0 ? (bool)INT_ARG(0) : true;
+    bool swapFirst2Dims = block.numI() > 0 ? (bool)INT_ARG(0) : true;
     
     int rank = block.width();
     Nd4jLong* outShapeInfo = nullptr;

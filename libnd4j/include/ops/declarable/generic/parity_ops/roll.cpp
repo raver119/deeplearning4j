@@ -65,7 +65,7 @@ namespace ops {
             else
                 // cut shift to value between 1 and inputLen - 1
                 shift %= inputLen;
-            axes.resize(block.getIArguments()->size() - 1);
+            axes.resize(block.numI() - 1);
             if (axes.size())
                 shifts.resize(axes.size());//emplace_back(shift);
             else

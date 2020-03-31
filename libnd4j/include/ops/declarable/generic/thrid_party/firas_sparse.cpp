@@ -53,7 +53,7 @@ namespace sd {
             int batchSize = x->sizeAt(0);
             int numColumns = x->sizeAt(1);
 
-            std::vector<int> indices(*block.getIArguments());
+            std::vector<int> indices(block.getIArguments());
             std::map<int, int> sparse2dense;
 
 
@@ -92,7 +92,7 @@ namespace sd {
         DECLARE_SHAPE_FN(firas_sparse) {
             auto inP = inputShape->at(0);
 
-            std::vector<Nd4jLong> shape({shape::shapeOf(inP)[0], (Nd4jLong) block.getIArguments()->size()});
+            std::vector<Nd4jLong> shape({shape::shapeOf(inP)[0], (Nd4jLong) block.numI()});
             auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(ArrayOptions::dataType(inP), 'c', shape);
             return SHAPELIST(newShape);
         }

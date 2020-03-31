@@ -30,7 +30,7 @@ namespace ops {
         auto input = INPUT_VARIABLE(0);
         auto output = OUTPUT_VARIABLE(0);
 
-        std::vector<Nd4jLong> outShape(block.getIArguments()->begin(), block.getIArguments()->end());
+        std::vector<Nd4jLong> outShape(block.getIArguments().begin(), block.getIArguments().end());
 
         if (block.isInplace()) {
             input->tileToShape(outShape, *input);
@@ -46,7 +46,7 @@ namespace ops {
 
         // output shape always equals to arguments
 
-        auto conv = ArrayUtils::toLongVector(*block.getIArguments());
+        auto conv = ArrayUtils::toLongVector(block.getIArguments());
 
         auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(ArrayOptions::dataType(in), shape::order(in), conv);
 

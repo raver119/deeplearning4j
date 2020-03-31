@@ -52,7 +52,7 @@ DECLARE_SYN(MergeMaxIndex, mergemaxindex);
 DECLARE_SHAPE_FN(mergemaxindex) {
     auto in = inputShape->at(0);
     auto dtype = DataType::INT32;
-    if (block.getIArguments()->size()> 0)
+    if (block.numI() > 0)
         dtype = (DataType)INT_ARG(0);
 
     auto resShape = ShapeBuilders::copyShapeInfoAndType(in, dtype, block.workspace());

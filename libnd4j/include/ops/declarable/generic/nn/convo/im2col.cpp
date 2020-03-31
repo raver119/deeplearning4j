@@ -45,7 +45,7 @@ namespace sd {
             int dX = INT_ARG(7);			//Dilation, width/x dimension
             bool isSameMode = INT_ARG(8) > 0;
             double zeroPadVal = 0.0;
-            if (block.getTArguments()->size() > 0)
+            if (block.numT() > 0)
                 zeroPadVal = T_ARG(0);
 
             // FIXME: zeropad value is void
@@ -120,7 +120,7 @@ namespace sd {
             int dX = INT_ARG(7);			//Dilation, width/x dimension
             bool isSameMode = INT_ARG(8) > 0;
             double zeroPadVal = 0.0;
-            if (block.getTArguments()->size() > 0)
+            if (block.numT() > 0)
                 zeroPadVal = T_ARG(0);
 
 			//Assuming NCHW format here

@@ -33,20 +33,20 @@ CUSTOM_OP_IMPL(reduce_stdev, 1, 1, false, 0, 0) {
     bool keepDims      = false;//block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
     bool biasCorrected = false;//block.getTArguments()->size() > 1 ? (bool)T_ARG(1) : false;
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     if (block.width() > 1) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
     }
 
-    if (block.getBArguments()->size()) {
+    if (block.numB()) {
         keepDims = B_ARG(0);
-        if (block.getBArguments()->size() > 1)
+        if (block.numB() > 1)
             biasCorrected = B_ARG(1);
     }
-    else if (block.getTArguments()->size()) {
+    else if (block.numT()) {
         keepDims = (bool)T_ARG(0);
-        if (block.getTArguments()->size() > 1)
+        if (block.numT() > 1)
             biasCorrected = (bool)T_ARG(1);
     }
 
@@ -64,17 +64,17 @@ DECLARE_SHAPE_FN(reduce_stdev) {
         auto in = inputShape->at(0);
         auto rank = shape::rank(in);
         bool keepDims      = false;//block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
 
     if (block.width() > 1) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(rank, axesVector, dimensions);
     }
 
-    if (block.getBArguments()->size()) {
+    if (block.numB()) {
         keepDims = B_ARG(0);
     }
-    else if (block.getTArguments()->size()) {
+    else if (block.numT()) {
         keepDims = (bool)T_ARG(0);
     }
 
@@ -105,20 +105,20 @@ CUSTOM_OP_IMPL(reduce_stdev_bp, 2, 1, false, 0, 0) {
     bool keepDims      = false;//block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
     bool biasCorrected = false;//block.getTArguments()->size() > 1 ? (bool)T_ARG(1) : false;
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     if (block.width() > 2) {
         auto axesVector = INPUT_VARIABLE(2);
         helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
     }
 
-    if (block.getBArguments()->size()) {
+    if (block.numB()) {
         keepDims = B_ARG(0);
-        if (block.getBArguments()->size() > 1)
+        if (block.numB() > 1)
             biasCorrected = B_ARG(1);
     }
-    else if (block.getTArguments()->size()) {
+    else if (block.numT()) {
         keepDims = (bool)T_ARG(0);
-        if (block.getTArguments()->size() > 1)
+        if (block.numT() > 1)
             biasCorrected = (bool)T_ARG(1);
     }
 
@@ -150,7 +150,7 @@ CUSTOM_OP_IMPL(reduce_stdev_bp, 2, 1, false, 0, 0) {
 DECLARE_SHAPE_FN(reduce_stdev_bp) {
     auto in = inputShape->at(0);
     auto rank = shape::rank(in);
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     if (block.width() > 2) {
         auto axesVector = INPUT_VARIABLE(2);
         helpers::adjustAxis(rank, axesVector, dimensions);

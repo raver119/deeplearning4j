@@ -32,7 +32,7 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
 
     REQUIRE_TRUE(block.width() > 0, 0, "CONCAT op: No input arrays were provided");
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 
@@ -126,7 +126,7 @@ DECLARE_SHAPE_FN(concat) {
 
     REQUIRE_TRUE(block.width() > 0, 0, "CONCAT op: No input arrays were provided");
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 
@@ -376,7 +376,7 @@ DECLARE_SHAPE_FN(concat) {
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(concat_bp, -1, -1, false, 0, 0) {
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 
@@ -419,7 +419,7 @@ DECLARE_TYPES(concat_bp) {
 
 DECLARE_SHAPE_FN(concat_bp) {
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 

@@ -39,9 +39,9 @@ namespace sd {
             REQUIRE_TRUE(size->lengthOf() == 2, 0, "resize_bilinear: Resize params is a pair of values, not %lld.", size->lengthOf());
             width = size->e<int>(0);
             height = size->e<int>(1);
-            if (block.getBArguments()->size()) {
+            if (block.numB()) {
                 preserveAspectRatio = B_ARG(0);
-                if (block.getBArguments()->size() > 1)
+                if (block.numB() > 1)
                     antialias = B_ARG(1);
             }
 

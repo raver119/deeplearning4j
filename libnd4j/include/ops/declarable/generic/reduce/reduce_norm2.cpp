@@ -36,8 +36,8 @@ CUSTOM_OP_IMPL(reduce_norm2, 1, 1, false, 0, 0) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
     }
-    else if (block.getIArguments()->size())
-        dimensions = *block.getIArguments();
+    else if (block.numI())
+        dimensions = block.getIArguments();
 
     REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_NORM2 OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
 
@@ -45,9 +45,9 @@ CUSTOM_OP_IMPL(reduce_norm2, 1, 1, false, 0, 0) {
         REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0], 0, "REDUCE_NORM2 OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
 
     bool keepDims = false;
-    if (block.getBArguments()->size())
+    if (block.numB())
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size())
+    else if (block.numT())
         keepDims = (bool)T_ARG(0);
 
     input->reduceAlongDimension(reduce::Norm2, *output, dimensions, keepDims);
@@ -59,9 +59,9 @@ CUSTOM_OP_IMPL(reduce_norm2, 1, 1, false, 0, 0) {
 DECLARE_SHAPE_FN(reduce_norm2) {
 
     bool keepDims = false;
-    if (block.getBArguments()->size())
+    if (block.numB())
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size())
+    else if (block.numT())
         keepDims = (bool)T_ARG(0);
 
     std::vector<int> dimensions;
@@ -69,8 +69,8 @@ DECLARE_SHAPE_FN(reduce_norm2) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
     }
-    else if (block.getIArguments()->size())
-        dimensions = *block.getIArguments();
+    else if (block.numI())
+        dimensions = block.getIArguments();
 
     REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0, "REDUCE_NORM2 OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
 
@@ -105,16 +105,16 @@ CUSTOM_OP_IMPL(reduce_norm2_bp, 2, 1, false, 0, 0) {
     else {
 
         bool keepDims = false;
-        auto dimensions = *block.getIArguments();
+        auto dimensions = block.getIArguments();
 
         if (block.width() > 2) {
             auto axesVector = INPUT_VARIABLE(2);
             helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
         }
 
-        if (block.getBArguments()->size())
+        if (block.numB())
             keepDims = B_ARG(0);
-        else if (block.getTArguments()->size())
+        else if (block.numT())
             keepDims = (bool)T_ARG(0);
 
         REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_NORM2_BP OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
@@ -137,7 +137,7 @@ CUSTOM_OP_IMPL(reduce_norm2_bp, 2, 1, false, 0, 0) {
 
 DECLARE_SHAPE_FN(reduce_norm2_bp) {
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     if (block.width() > 2) {
         auto axesVector = INPUT_VARIABLE(2);
         helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);

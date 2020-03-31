@@ -44,10 +44,10 @@ namespace ops {
 
         std::vector<int> params;
 
-        sd::DataType dtype = block.getTArguments()->empty() ? sd::DataType::FLOAT32 : sd::DataTypeUtils::fromInt(T_ARG(0));
+        sd::DataType dtype = block.getTArguments().empty() ? sd::DataType::FLOAT32 : sd::DataTypeUtils::fromInt(T_ARG(0));
 
         if(block.width() == 0) {
-            params = *block.getIArguments();
+            params = block.getIArguments();
         }
         else {
             for (int i = 0; i < block.width(); i++) {

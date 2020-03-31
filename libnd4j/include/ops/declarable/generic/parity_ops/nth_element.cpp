@@ -27,7 +27,7 @@ namespace sd {
             auto input = INPUT_VARIABLE(0);
             auto n = INPUT_VARIABLE(1);
             bool reverse = false;
-            if (block.getIArguments()->size() > 0)
+            if (block.numI() > 0)
                 reverse = (bool)INT_ARG(0);
 
             auto output = OUTPUT_VARIABLE(0);

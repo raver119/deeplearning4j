@@ -39,7 +39,7 @@ CONFIGURABLE_OP_IMPL(adjust_hue, 1, 1, true, 0, 0) {
         return Status::OK();
 
     const int rank     = input->rankOf();
-    const int arg_size = block.getIArguments()->size();
+    const int arg_size = block.numI();
     const int dimC     = arg_size > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
 
     REQUIRE_TRUE(block.numT() > 0 || block.width() > 1, 0, "ADJUST_HUE: delta factor is required !");

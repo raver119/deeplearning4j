@@ -52,8 +52,8 @@ CUSTOM_OP_IMPL(conv3dnew, 2, 1, false, 0, 13) {
     int dH = INT_ARG(10);                                                       // dilations height
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode = INT_ARG(12);                                              // 0-SAME,  1-VALID
-    int isNCDHW = block.getIArguments()->size() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
-    int wFormat = block.getIArguments()->size() > 14 ? INT_ARG(14) : 0;        // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
+    int isNCDHW = block.numI() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
+    int wFormat = block.numI() > 14 ? INT_ARG(14) : 0;        // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
 
     int bS, iC, iD, iH, iW, oC, oD, oH, oW;                     // batch size, input channels, input depth/height/width, output channels, output depth/height/width;
     int indIOioC, indIOioD, indWoC, indWiC, indWkD;             // corresponding indexes
@@ -128,8 +128,8 @@ DECLARE_SHAPE_FN(conv3dnew) {
     int dH = INT_ARG(10);                                                       // dilations height
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode = INT_ARG(12);                                              // 1-SAME,  0-VALID;
-    int isNCDHW  = block.getIArguments()->size() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
-    int wFormat = block.getIArguments()->size() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
+    int isNCDHW  = block.numI() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
+    int wFormat = block.numI() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
 
     const int rank = 5;
     REQUIRE_TRUE(paddingMode < 2, 0, "CUSTOM CONV3D OP: causal padding mode (paddingMode = 2) is not allowed for this operation !");
@@ -211,8 +211,8 @@ CUSTOM_OP_IMPL(conv3dnew_bp, 3, 2, false, 0, 13) {
     int dH = INT_ARG(10);                                                       // dilations height
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode = INT_ARG(12);                                              // 1-SAME,  0-VALID
-    int isNCDHW  = block.getIArguments()->size() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
-    int wFormat = block.getIArguments()->size() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
+    int isNCDHW  = block.numI() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
+    int wFormat = block.numI() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
 
     int bS, iC, iD, iH, iW, oC, oD, oH, oW;                     // batch size, input channels, input depth/height/width, output channels, output depth/height/width;
     int indIOioC, indIOioD, indWoC, indWiC, indWkD;             // corresponding indexes
@@ -318,8 +318,8 @@ DECLARE_SHAPE_FN(conv3dnew_bp) {
     int dH = INT_ARG(10);                                                       // dilations height
     int dW = INT_ARG(11);                                                       // dilations width
     int paddingMode = INT_ARG(12);                                               // 1-SAME,  0-VALID
-    int isNCDHW  = block.getIArguments()->size() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
-    int wFormat = block.getIArguments()->size() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
+    int isNCDHW  = block.numI() > 13 ? !INT_ARG(13) : 1;       // INT_ARG(13): 1-NDHWC, 0-NCDHW
+    int wFormat = block.numI() > 14 ? INT_ARG(14) : 0;         // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW], 2-[oC, kD, kH, kW, iC]
 
     const int rank = 5;
     REQUIRE_TRUE(paddingMode < 2, 0, "CUSTOM CONV3D OP: causal padding mode (paddingMode = 2) is not allowed for this operation !");

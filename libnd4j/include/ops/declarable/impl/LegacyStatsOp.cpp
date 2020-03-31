@@ -38,20 +38,20 @@ namespace sd {
 
             // bias goes as first argument, unlike all other reductions
             bool biasCorrected = false;
-            if (block.getIArguments()->size() > 0)
+            if (block.numI() > 0)
                 biasCorrected = INT_ARG(0) > 0;
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(),"LegacyStatsOp");
 
-            if (block.getIArguments()->size() == 1 || (block.getIArguments()->size() == 2 && INT_ARG(1) == sd::DataTypeUtils::max<int>())) {
+            if (block.numI() == 1 || (block.numI() == 2 && INT_ARG(1) == sd::DataTypeUtils::max<int>())) {
                 // scalar
                 NativeOpExecutioner::execSummaryStatsScalar(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(), x->specialBuffer(), x->specialShapeInfo(),
                         extras.argumentsAsT(z->dataType()), z->getBuffer(), z->getShapeInfo(), z->specialBuffer(), z->specialShapeInfo(), biasCorrected);
             } else {
                 // dimensions for TAD
                 // we should skip first argument here, because it's addressing bias correction
-                std::vector<int> dims(*block.getIArguments());
+                std::vector<int> dims(block.getIArguments());
                 for (int e = 0; e < dims.size(); e++)
                     if (dims[e] < 0)
                         dims[e] += x->rankOf();
@@ -93,7 +93,7 @@ namespace sd {
             auto inShape = inputShape->at(0);
 
             Nd4jLong *newShape;
-            if (block.getIArguments()->size() == 0 || (block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>())) {
+            if (block.numI() == 0 || (block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>())) {
                 // in this case we just return scalar
                 ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
                 newShape[0] = 2;
@@ -108,7 +108,7 @@ namespace sd {
                 // in this case we're building proper shape for reduction
                 auto array = new NDArray(nullptr, inShape, block.launchContext());
 
-                newShape = ShapeUtils::evalReduceShapeInfo('c', *block.getIArguments(), *array, false, true);
+                newShape = ShapeUtils::evalReduceShapeInfo('c', block.getIArguments(), *array, false, true);
 
                 delete array;
             }

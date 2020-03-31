@@ -49,9 +49,9 @@ namespace sd {
                 ShapeUtils::shapeAsString(initStateM->getShapeInfo()).c_str());
 
 
-            bool bParamsSupply = 7 == block.width() || 4 == block.getTArguments()->size();
+            bool bParamsSupply = 7 == block.width() || 4 == block.numT();
 
-            int iteration = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+            int iteration = block.numI() > 0 ? INT_ARG(0) : 0;
 
             REQUIRE_TRUE(bParamsSupply, 0, "ADA_MAX UPDATER OP: learning rate, beta 1, beta 2 and epsilon were not provided!");
 

@@ -50,7 +50,7 @@ CUSTOM_OP_IMPL(batchnorm, 3, 1, false, 1, 2) {
     if(applyOffset)
         beta = INPUT_VARIABLE(3 + (int)applyScale);
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     const int inRank = input->rankOf();
 
     // get axes args to normalize input array over
@@ -156,7 +156,7 @@ CUSTOM_OP_IMPL(batchnorm_bp, 4, 3, false, 1, 2) {
         dLdB = OUTPUT_VARIABLE(3 + (int)applyScale);
     }
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     const int inRank = input->rankOf();
 
     // get axes args to normalize input array over

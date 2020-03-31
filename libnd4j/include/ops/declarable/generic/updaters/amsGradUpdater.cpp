@@ -53,9 +53,9 @@ namespace sd {
                 "  expected shape %s, but got %s!", ShapeUtils::shapeAsString(gradient->getShapeInfo()).c_str(),
                 ShapeUtils::shapeAsString(initStateH->getShapeInfo()).c_str());
 
-            bool bParamsSupply = 8 == block.width() || 4 == block.getTArguments()->size();
+            bool bParamsSupply = 8 == block.width() || 4 == block.numT();
 
-            auto iteration = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+            auto iteration = block.numI() > 0 ? INT_ARG(0) : 0;
 
             REQUIRE_TRUE(bParamsSupply, 0, "AMSGRAD UPDATER OP: learning rate, beta 1, beta 2 and epsilon were not provided!");
 

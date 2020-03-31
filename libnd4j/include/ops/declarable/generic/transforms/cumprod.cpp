@@ -40,7 +40,7 @@ namespace sd {
             const bool exclusive = INT_ARG(0) == 1;
             const bool reverse = INT_ARG(1) == 1;
 
-            if (block.getIArguments()->size() == 2 && block.width() == 1) {
+            if (block.numI() == 2 && block.width() == 1) {
                 // all at once case
                 sd::ops::helpers::prefix(block.launchContext(), scalar::Multiply, input, output, exclusive, reverse);
             } else {

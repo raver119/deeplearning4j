@@ -35,7 +35,7 @@ namespace sd {
             if (input->isEmpty())
                 return Status::OK();
 
-            bool bLearningRate = 2 == block.width() || 1 == block.getTArguments()->size();
+            bool bLearningRate = 2 == block.width() || 1 == block.numT();
 
             REQUIRE_TRUE(bLearningRate, 0, "SGD UPDATER OP: Learning rate was not provided!");
 

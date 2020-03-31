@@ -38,7 +38,7 @@ CUSTOM_OP_IMPL(dynamic_bidirectional_rnn, 7, 4, false, 0, 0) {
 	NDArray* h0BW = nullptr;								// initial cell output for backward RNN (at time step = 0) [bS x numUnitsBW]
 	NDArray* maxTimeStep = nullptr;						// vector [bS] containing integer values within [0,time), each element of this vector set max time step per each input in batch, this means there are no calculations for time >= maxTimeStep
 
-    const int timeMajor = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;       // if non zero then [time, bS, ...], else [bS, time, ...]
+    const int timeMajor = block.numI() > 0 ? INT_ARG(0) : 0;       // if non zero then [time, bS, ...], else [bS, time, ...]
 
 	switch(block.width()) {
 		case 8:
@@ -147,7 +147,7 @@ DECLARE_SHAPE_FN(dynamic_bidirectional_rnn) {
 	NDArray* h0BW = nullptr;								// initial cell output for backward RNN (at time step = 0) [bS x numUnitsBW]
 	NDArray* maxTimeStep = nullptr;						// vector [bS] containing integer values within [0,time), each element of this vector set max time step per each input in batch, this means there are no calculations for time >= maxTimeStep
 
-    const int timeMajor = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
+    const int timeMajor = block.numI() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
 
     switch(block.width()) {
 		case 8:

@@ -44,8 +44,10 @@ namespace sd {
             } else {
                 REQUIRE_TRUE(block.numI() >= x_rank * 2, 0, "Number of IArgs should be equal to [%i] but got [%i] instead", x_rank * 2, block.numI());
 
-                ShapeUtils::copyVectorPart(begin, *(block.getIArguments()), x_rank, 0);
-                ShapeUtils::copyVectorPart(sz, *(block.getIArguments()), x_rank, x_rank);
+                auto vec = block.getIArguments();
+
+                ShapeUtils::copyVectorPart(begin, vec, x_rank, 0);
+                ShapeUtils::copyVectorPart(sz, vec, x_rank, x_rank);
             }
 
             REQUIRE_TRUE(begin.size() == x_rank, 0, "begin array should have length of [%i] but got [%i] instead", x_rank, begin.size());
@@ -131,8 +133,9 @@ namespace sd {
             } else {
                 REQUIRE_TRUE(block.numI() >= x_rank * 2, 0, "Number of IArgs should be equal to [%i] but got [%i] instead", x_rank * 2, block.numI());
 
-                ShapeUtils::copyVectorPart(begin, *(block.getIArguments()), x_rank, 0);
-                ShapeUtils::copyVectorPart(sz, *(block.getIArguments()), x_rank, x_rank);
+                auto vec = block.getIArguments();
+                ShapeUtils::copyVectorPart(begin, vec, x_rank, 0);
+                ShapeUtils::copyVectorPart(sz, vec, x_rank, x_rank);
             }
 
             REQUIRE_TRUE(begin.size() == x_rank, 0, "Begin array should have length of [%i] but got [%i] instead", x_rank, begin.size());
@@ -191,8 +194,10 @@ namespace sd {
             } else {
                 REQUIRE_TRUE(block.numI() >= x_rank * 2, 0, "Number of IArgs should be equal to [%i] but got [%i] instead", x_rank * 2, block.numI());
 
-                ShapeUtils::copyVectorPart(begin, *(block.getIArguments()), x_rank, 0);
-                ShapeUtils::copyVectorPart(end, *(block.getIArguments()), x_rank, x_rank);
+                auto vec = block.getIArguments();
+
+                ShapeUtils::copyVectorPart(begin, vec, x_rank, 0);
+                ShapeUtils::copyVectorPart(end, vec, x_rank, x_rank);
             }
 
             REQUIRE_TRUE(begin.size() == x_rank, 0, "begin array should have length of [%i] but got [%i] instead", x_rank, begin.size());

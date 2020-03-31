@@ -53,7 +53,7 @@ PLATFORM_IMPL(avgpool2d, ENGINE_CPU) {
     const auto dW = INT_ARG(7);
     const auto paddingMode = INT_ARG(8);
     const auto extraParam0 = INT_ARG(9);
-    const int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
+    const int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(input->rankOf() == 4, 0, "AVGPOOL2D MKLDNN op: input should have rank of 4, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "AVGPOOL2D MKLDNN op: dilation must not be zero, but got instead {%i, %i}", dH, dW);
@@ -98,7 +98,7 @@ PLATFORM_IMPL(avgpool2d_bp, ENGINE_CPU) {
     int dW = INT_ARG(7);                                                        // dilations width
     int paddingMode = INT_ARG(8);                                               // 0-VALID, 1-SAME
     int extraParam0 = INT_ARG(9);
-    int isNCHW = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
+    int isNCHW = block.numI() > 10 ? !INT_ARG(10) : 1;         // INT_ARG(10): 0-NCHW, 1-NHWC
 
     REQUIRE_TRUE(input->rankOf() == 4, 0, "AVGPOOL2D_BP MKLDNN op: input should have rank of 4, but got %i instead", input->rankOf());
     REQUIRE_TRUE(dH != 0 && dW != 0, 0, "AVGPOOL2D_BP MKLDNN op: dilation must not be zero, but got instead {%i, %i}", dH, dW);

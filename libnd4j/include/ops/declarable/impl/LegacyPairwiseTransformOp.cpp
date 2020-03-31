@@ -48,7 +48,7 @@ namespace sd {
 
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyPairwiseTransformOp");
 
             NativeOpExecutioner::execPairwiseTransform(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(), x->specialBuffer(), x->specialShapeInfo(),

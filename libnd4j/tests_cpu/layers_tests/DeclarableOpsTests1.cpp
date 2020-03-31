@@ -122,7 +122,7 @@ TEST_F(DeclarableOpsTests1, BasicInitialization1) {
     variableSpace->putVariable(1, nodeVar);
 
     Context block(1, variableSpace);
-    block.getIArguments()->push_back(1);
+    block.appendI(1);
     block.fillInputs({ -1, -2, -3, -4, -5 });
 
     ASSERT_FALSE(nodeVar->hasNDArray());
@@ -872,8 +872,10 @@ TEST_F(DeclarableOpsTests1, ClipByValue1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(1, new Variable());
     auto block = new Context(1, variableSpace, true);
-    block->getTArguments()->push_back(0.0f);
-    block->getTArguments()->push_back(3.0f);
+
+    block->appendT(0.0f);
+    block->appendT(3.0f);
+
     block->fillInputs({ -1 });
 
     sd::ops::clipbyvalue clip;
@@ -1862,11 +1864,12 @@ TEST_F(DeclarableOpsTests1, Reshape2) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
-    std::vector<int>* arguments = block->getIArguments();
-    arguments->push_back(-y->ordering());
-    arguments->push_back(3);
-    arguments->push_back(5);
-    arguments->push_back(4);
+    std::vector<int> arguments = block->getIArguments();
+
+    arguments.push_back(-y->ordering());
+    arguments.push_back(3);
+    arguments.push_back(5);
+    arguments.push_back(4);
 
     sd::ops::reshape reshape;
 
@@ -2005,7 +2008,7 @@ TEST_F(DeclarableOpsTests1, Permute1) {
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({ -1 });
     auto arguments = block->getIArguments();
-    *arguments = perm;      // set dimensions to be permuted
+    arguments = perm;      // set dimensions to be permuted
 
     sd::ops::permute permute;
     Nd4jStatus status = permute.execute(block);
@@ -2059,7 +2062,7 @@ TEST_F(DeclarableOpsTests1, TestReductionShape1) {
     block->fillInputs({ -1 });
 
     // kernel params
-    block->getIArguments()->push_back(MAX_INT);
+    block->appendI(MAX_INT);
 
     sd::ops::testreduction testop;
 
@@ -2095,10 +2098,10 @@ TEST_F(DeclarableOpsTests1, TestReductionShape2) {
 
     // kernel params
     //block->getIArguments()->push_back(4);
-    block->getIArguments()->push_back(1);
-    block->getIArguments()->push_back(2);
-    block->getIArguments()->push_back(3);
-    block->getIArguments()->push_back(4);
+    block->appendI(1);
+    block->appendI(2);
+    block->appendI(3);
+    block->appendI(4);
 
     sd::ops::testreduction testop;
 
@@ -2193,8 +2196,8 @@ TEST_F(DeclarableOpsTests1, Pnormpool2d1) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
-    std::vector<int>* argI = block->getIArguments();
-    *argI = { kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0 };  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - extraParam0 for pnorm case;
+    std::vector<int> argI = block->getIArguments();
+    argI = { kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0 };  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - extraParam0 for pnorm case;
 
     sd::ops::pnormpool2d pooling;
     Nd4jStatus status = pooling.execute(block);

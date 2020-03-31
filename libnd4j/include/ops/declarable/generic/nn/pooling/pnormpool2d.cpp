@@ -52,7 +52,7 @@ namespace sd {
             int oY = 0;
             int oX = 0;
 
-            int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // 1-NHWC, 0-NCHW
+            int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // 1-NHWC, 0-NCHW
 
             if(!isNCHW) {
                 input  = new NDArray(input->permute({0, 3, 1, 2}));                  // [bS, iH, iW, iC] -> [bS, iC, iH, iW]
@@ -93,7 +93,7 @@ namespace sd {
             auto shapeOf = shape::shapeOf(inShape);
 
             // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode;
-            std::vector<int> argI = *(block.getIArguments());
+            auto argI = block.getIArguments();
             int kH = INT_ARG(0);
             int kW = INT_ARG(1);
             int sH = INT_ARG(2);
@@ -103,7 +103,7 @@ namespace sd {
             int dH = INT_ARG(6);
             int dW = INT_ARG(7);
             int isSameMode = INT_ARG(8);
-            int isNCHW  = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;       // 1-NHWC, 0-NCHW
+            int isNCHW  = block.numI() > 10 ? !INT_ARG(10) : 1;       // 1-NHWC, 0-NCHW
 
             REQUIRE_TRUE(dH != 0 && dW != 0, 0, "PNORMPOOL2D op: dilation must not be zero, but got instead {%i, %i}", dH, dW);
 
@@ -157,7 +157,7 @@ CUSTOM_OP_IMPL(pnormpool2d_bp, 2, 1, false, 1, 10) {
     int dW = INT_ARG(7);                                                        // dilations width
     int isSameMode = INT_ARG(8);                                                // 0-VALID, 1-SAME
     int pnorm = INT_ARG(9);
-    int isNCHW = block.getIArguments()->size() > 10 ? !INT_ARG(10) : 1;         // 1-NHWC, 0-NCHW
+    int isNCHW = block.numI() > 10 ? !INT_ARG(10) : 1;         // 1-NHWC, 0-NCHW
 
     // FIXME: double?
     double eps = T_ARG(0);

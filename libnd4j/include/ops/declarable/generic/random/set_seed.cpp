@@ -31,7 +31,7 @@ namespace sd {
             auto rng = block.getRng(); //.getRNG();
 
             Nd4jLong seed = 0;
-            if (block.getIArguments()->size() > 0) {
+            if (block.numI() > 0) {
                 seed = INT_ARG(0);
             } else if (block.width() > 0) {
                 auto input = INPUT_VARIABLE(0);

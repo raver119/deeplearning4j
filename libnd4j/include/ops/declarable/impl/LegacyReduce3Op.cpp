@@ -37,17 +37,17 @@ namespace sd {
 
             nd4j_debug("Executing LegacyReduce3Op: [%i]\n", opNum);
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyReduce3Op");
 
-            if (x->isSameShape(y) && (block.getIArguments()->size() == 0 || (block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()))) {
+            if (x->isSameShape(y) && (block.numI() == 0 || (block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()))) {
                 // reduce3 to scalar
                 NativeOpExecutioner::execReduce3Scalar(block.launchContext(), opNum, x->buffer(), x->shapeInfo(), x->specialBuffer(), x->specialShapeInfo(),
                         extras.argumentsAsT(z->dataType()),
                         y->buffer(), y->shapeInfo(), y->specialBuffer(), y->specialShapeInfo(),
                         z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo());
             } else {
-                std::vector<int> dims(*block.getAxis());
+                std::vector<int> dims(block.getAxis());
                 for (int e = 0; e < dims.size(); e++)
                     if (dims[e] < 0)
                         dims[e] += x->rankOf();
@@ -98,7 +98,7 @@ namespace sd {
 
             Nd4jLong *zShape = nullptr;
 
-            if (shape::equalsSoft(xShape, yShape) && (block.getIArguments()->size() == 0 || (block.getIArguments()->size() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()))) {
+            if (shape::equalsSoft(xShape, yShape) && (block.numI() == 0 || (block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()))) {
                 // reduce3 to scalar case
                 ALLOCATE(zShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
                 zShape[0] = 2;
@@ -112,7 +112,7 @@ namespace sd {
             } else {
                 auto array = new NDArray(nullptr, xShape, block.launchContext());
 
-                xShape = ShapeUtils::evalReduceShapeInfo('c', *block.getIArguments(), *array, false, true);
+                xShape = ShapeUtils::evalReduceShapeInfo('c', block.getIArguments(), *array, false, true);
 
                 delete array;
             }

@@ -25,7 +25,7 @@ namespace sd {
     namespace graph {
         Context GraphExecutor::prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const {
             // TODO: maybe we'll want to do something here?
-            return Context(contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
+            return Context(*contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
         }
 
         Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {

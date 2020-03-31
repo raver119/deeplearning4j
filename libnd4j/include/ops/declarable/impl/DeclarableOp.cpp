@@ -170,7 +170,7 @@ namespace sd {
                     if (fp) {
                         //
                     } else {
-                        for (auto p: *ctx.inputs()) {
+                        for (auto p: ctx.inputs()) {
                             auto var = ctx.variable(p);
                             if (var->variableType() == VariableType::NDARRAY) {
                                 NDArray *array = var->getNDArray();
@@ -187,7 +187,7 @@ namespace sd {
                     int cnt = 0;
                     auto id = ctx.nodeId();
                     auto vs = ctx.getVariableSpace();
-                    for (auto p: *ctx.inputs()) {
+                    for (auto p: ctx.inputs()) {
                         auto var = ctx.variable(p);
                         if (var->variableType() == VariableType::NDARRAY) {
                             NDArray *array = var->getNDArray();
@@ -238,7 +238,7 @@ namespace sd {
                     }
                 } else {
                     int arrCnt = 0;
-                    for (auto p: *ctx.inputs()) {
+                    for (auto p: ctx.inputs()) {
                         auto var = ctx.variable(p);
                         if (var->variableType() == VariableType::NDARRAY) {
                             NDArray *array = var->getNDArray();
@@ -456,7 +456,7 @@ namespace sd {
                     cnt++;
                 }
             } else {
-                for (auto &p: *(block.inputs())) {
+                for (auto &p: block.inputs()) {
                     auto var = block.variable(p);
 
                     // we're not checking validity, if ANY types were explicitly allowed
@@ -737,25 +737,25 @@ namespace sd {
              * If number of args is variable (-1), but variables MUST be present - we check for non-zero number of arguments
              */
             if (_descriptor->getNumberOfTArgs() > 0) {
-                if ((int) block.getTArguments()->size() < _descriptor->getNumberOfTArgs()) {
-                    nd4j_printf("%s: %i T args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfTArgs(), block.getTArguments()->size());
+                if ((int) block.numT() < _descriptor->getNumberOfTArgs()) {
+                    nd4j_printf("%s: %i T args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfTArgs(), block.numT());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
             } else
             if (_descriptor->getNumberOfTArgs() == -1)
-                if (block.getTArguments()->size() == 0) {
+                if (block.numT() == 0) {
                     nd4j_printf("%s: Number of T arguments should be positive number, but got 0 arguments\n", this->getOpName().c_str());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
 
             if (_descriptor->getNumberOfIArgs() > 0) {
-                if ((int) block.getIArguments()->size() < _descriptor->getNumberOfIArgs()) {
-                    nd4j_printf("%s: %i int args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfIArgs(), block.getIArguments()->size());
+                if ((int) block.numI() < _descriptor->getNumberOfIArgs()) {
+                    nd4j_printf("%s: %i int args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfIArgs(), block.numI());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
             } else
             if (_descriptor->getNumberOfIArgs() == -1)
-                if (block.getIArguments()->size() == 0) {
+                if (block.numI() == 0) {
                     nd4j_printf("%s: Number of Integer arguments should be positive number, but got 0 arguments\n", this->getOpName().c_str());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
@@ -768,7 +768,7 @@ namespace sd {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
-            for (auto p: *block.inputs()) {
+            for (auto p: block.inputs()) {
                 auto v = block.variable(p);
                 NDArray *aV = v->getNDArray();
 
@@ -805,7 +805,7 @@ namespace sd {
 
 
             int cnt = 0;
-            for (auto p: *block.inputs()) {
+            for (auto p: block.inputs()) {
                 auto v = block.variable(p);
                 if (v == nullptr) {
                     if (!this->getOpName().empty()) {
@@ -844,7 +844,7 @@ namespace sd {
                 return ND4J_STATUS_OK;
 
             NDArray *a0 = block.variable(0)->getNDArray();
-            for (auto p: *block.inputs()) {
+            for (auto p: block.inputs()) {
                 auto v = block.variable(p);
                 NDArray *aV = v->getNDArray();
                 if (a0->ordering() != aV->ordering())
@@ -889,17 +889,17 @@ namespace sd {
             block.setRng(rng);
 
             for (int e = 0; e < tArgs.size(); e++)
-                block.getTArguments()->emplace_back(tArgs.at(e));
+                block.appendT(tArgs.at(e));
 
             // FIXME: iargs should be Nd4jLong
             for (int e = 0; e < iArgs.size(); e++)
-                block.getIArguments()->emplace_back(static_cast<int>(iArgs.at(e)));
+                block.appendI(static_cast<int>(iArgs.at(e)));
 
             for (int e = 0; e < bArgs.size(); e++)
-                block.getBArguments()->push_back(static_cast<int>(bArgs.at(e)));
+                block.appendB(static_cast<int>(bArgs.at(e)));
 
             for (int e = 0; e < dArgs.size(); e++)
-                block.getDArguments()->push_back(dArgs.at(e));
+                block.appendD(dArgs.at(e));
 
             Nd4jStatus result = this->execute(&block);
 
@@ -1038,16 +1038,16 @@ namespace sd {
             // block.setRNG(ProviderRNG::getInstance().getRNG());
 
             for (int e = 0; e < tArgs.size(); e++)
-                block.getTArguments()->emplace_back(tArgs.at(e));
+                block.appendT(tArgs.at(e));
 
             for (int e = 0; e < iArgs.size(); e++)
-                block.getIArguments()->emplace_back(iArgs.at(e));
+                block.appendI(iArgs.at(e));
 
             for (int e = 0; e < bArgs.size(); e++)
-                block.getBArguments()->push_back(bArgs.at(e));
+                block.appendB(bArgs.at(e));
 
             for (int e = 0; e < dArgs.size(); e++)
-                block.getDArguments()->push_back(dArgs.at(e));
+                block.appendD(dArgs.at(e));
 
             Nd4jStatus status = this->execute(&block);
             ResultSet arrayList;

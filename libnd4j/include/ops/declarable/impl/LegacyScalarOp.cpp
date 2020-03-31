@@ -56,7 +56,7 @@ namespace sd {
 
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyScalarOp");
 
             if (block.width() > 1) {
@@ -67,7 +67,7 @@ namespace sd {
                 NativeOpExecutioner::execScalar(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(), x->specialBuffer(), x->specialShapeInfo(), z->getBuffer(), z->getShapeInfo(), z->specialBuffer(), z->specialShapeInfo(), y->buffer(), y->shapeInfo(), y->specialBuffer(), y->specialShapeInfo(), extras.argumentsAsT(z->dataType()));
 
                 NDArray::registerSpecialUse({z}, {x, y});
-            } else if (block.getTArguments()->size() > 0) {
+            } else if (block.numT() > 0) {
                 auto y = NDArrayFactory::create(x->dataType(), T_ARG(0), block.launchContext());
 
                 x->applyScalarArr(static_cast<sd::scalar::Ops>(opNum), y, *z);

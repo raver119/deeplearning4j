@@ -36,9 +36,9 @@ CUSTOM_OP_IMPL(tile, 1, 1, false, 0, -2) {
     const int inRank = input->rankOf();
     std::vector<Nd4jLong> reps;
 
-    if (block.getIArguments()->size() == inRank) {
+    if (block.numI() == inRank) {
 
-        reps = ArrayUtils::toLongVector(*(block.getIArguments()));        
+        reps = ArrayUtils::toLongVector(block.getIArguments());
     } 
     else if (block.width() > 1)  {
         
@@ -72,9 +72,9 @@ DECLARE_SHAPE_FN(tile) {
     const int inRank = inShape[0];
     std::vector<Nd4jLong> reps;
 
-    if (block.getIArguments()->size() == inRank) {
+    if (block.numI() == inRank) {
 
-        reps = ArrayUtils::toLongVector(*(block.getIArguments()));        
+        reps = ArrayUtils::toLongVector(block.getIArguments());
     } 
     else if (block.width() > 1)  {
         
@@ -109,9 +109,9 @@ CUSTOM_OP_IMPL(tile_bp, 2, 1, false, 0, -2) {
 
     std::vector<Nd4jLong> reps;
 
-    if (block.getIArguments()->size() == inRank) {
+    if (block.numI() == inRank) {
 
-        reps = ArrayUtils::toLongVector(*(block.getIArguments()));        
+        reps = ArrayUtils::toLongVector(block.getIArguments());
     } 
     else if (block.width() > 2)  {
         
@@ -151,9 +151,9 @@ DECLARE_SHAPE_FN(tile_bp) {
 
     std::vector<Nd4jLong> reps;
 
-    if (block.getIArguments()->size() == inRank) {
+    if (block.numI() == inRank) {
 
-        reps = ArrayUtils::toLongVector(*(block.getIArguments()));        
+        reps = ArrayUtils::toLongVector(block.getIArguments());
     } 
     else if (block.width() > 2)  {
         auto reps_vector = INPUT_VARIABLE(1);

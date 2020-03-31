@@ -124,7 +124,8 @@ std::vector<Nd4jLong> ShapeUtils::evalShapeForTensorDot(const NDArray* a,   cons
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate output shape for reduce operation when input shape is empty
-Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, sd::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, const std::vector<int>& vdimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, sd::memory::Workspace* workspace) {
+    auto dimsToExclude = vdimsToExclude;
 
     if (dimsToExclude.size() == 0) {   // return copy of input shape
         Nd4jLong* outShapeInfo = ShapeBuilders::copyShapeInfoAndType(shapeInfo, dataType, true, workspace);
@@ -171,22 +172,23 @@ Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, std::vector<int
     return ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor).primaryAsT<Nd4jLong>();
 }
 
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, const std::vector<int>& dimsToExclude, const NDArray& arr, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, arr, arr.dataType(), keepDims, supportOldShapes, workspace);
 }
 
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong* shapeInfo, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, const std::vector<int>& dimsToExclude, const Nd4jLong* shapeInfo, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, shapeInfo, ArrayOptions::dataType(shapeInfo), keepDims, supportOldShapes, workspace);
 }
 
 //////////////////////////////////////////////////////////////////////////
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, const std::vector<int>& dimsToExclude, const NDArray& arr, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, arr.getShapeInfo(), dataType, keepDims, supportOldShapes, workspace);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shape resulting from reduce operation
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, const std::vector<int>& vdimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
+    auto dimsToExclude = vdimsToExclude;
 
     if(ArrayOptions::arrayType(shapeInfo) == ArrayType::EMPTY)
         return ShapeUtils::evalReduceShapeInfoEmpty(order, dimsToExclude, shapeInfo, dataType, keepDims, workspace);

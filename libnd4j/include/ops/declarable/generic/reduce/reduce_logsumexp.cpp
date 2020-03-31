@@ -32,14 +32,14 @@ namespace ops {
             auto axisVector = INPUT_VARIABLE(1);
             helpers::adjustAxis(input->rankOf(), axisVector, axes );
         }
-        else if (block.getIArguments()->size() > 0) {
-            axes = *block.getIArguments();
+        else if (block.numI() > 0) {
+            axes = block.getIArguments();
         }
 
         for(const auto& item : axes)
             REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item <input->shapeInfo()[0], 0, "REDUCE_LOGSUMEXP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
 
-        const bool keepDims = block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
+        const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
         Nd4jLong maxI = input->argMax();
         auto maxVals = input->e(maxI);
         //void* whereMax = (void*)();
@@ -58,7 +58,7 @@ namespace ops {
     }
     DECLARE_SHAPE_FN(reduce_logsumexp) {
 
-        const bool keepDims = block.getTArguments()->size() > 0 ? (bool)T_ARG(0) : false;
+        const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
         auto input = INPUT_VARIABLE(0);
 
         std::vector<int> axes; // = *block.getIArguments();
@@ -66,8 +66,8 @@ namespace ops {
             auto axisVector = INPUT_VARIABLE(1);
             helpers::adjustAxis(input->rankOf(), axisVector, axes );
         }
-        else if (block.getIArguments()->size() > 0) {
-            axes = *block.getIArguments();
+        else if (block.numI() > 0) {
+            axes = block.getIArguments();
         }
 
         Nd4jLong* outShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(inputShape->at(0)), axes, inputShape->at(0), keepDims, false, block.getWorkspace());

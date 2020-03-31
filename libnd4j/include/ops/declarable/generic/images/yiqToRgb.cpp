@@ -37,7 +37,7 @@ namespace sd {
                 return Status::OK();
 
             const int rank = input->rankOf();
-            const int arg_size = block.getIArguments()->size();
+            const int arg_size = block.numI();
             const int dimC = arg_size > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
 
             REQUIRE_TRUE(rank >= 1, 0, "YIQtoRGB: Fails to meet the rank requirement: %i >= 1 ", rank);

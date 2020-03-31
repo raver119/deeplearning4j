@@ -212,12 +212,12 @@ namespace sd {
 
             if (node.opType() == OpType_CUSTOM) {
                 auto ctx = node.protoContext();
-                if (ctx->getIArguments()->size() > 0) {
+                if (ctx.numI() > 0) {
                     printf("]; iArgs: [");
 
-                    for (int e = 0; e < ctx->getIArguments()->size(); e++) {
-                        printf("%i", ctx->getIArguments()->at(e));
-                        if (e < ctx->getIArguments()->size() - 1)
+                    for (int e = 0; e < ctx.numI(); e++) {
+                        printf("%i", ctx.getIArguments().at(e));
+                        if (e < ctx.getIArguments().size() - 1)
                             nd4j_printf(", ", "");
                     }
                 }

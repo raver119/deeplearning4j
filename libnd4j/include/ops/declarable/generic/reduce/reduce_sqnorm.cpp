@@ -33,16 +33,16 @@ CUSTOM_OP_IMPL(reduce_sqnorm, 1, 1, false, 0, 0) {
 
     bool keepDims = false;
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
 
     if (block.width() > 1) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
     }
 
-    if (block.getBArguments()->size())
+    if (block.numB())
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size())
+    else if (block.numT())
         keepDims = (bool)T_ARG(0);
 
     REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_SQNORM OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
@@ -57,7 +57,7 @@ CUSTOM_OP_IMPL(reduce_sqnorm, 1, 1, false, 0, 0) {
 
 DECLARE_SHAPE_FN(reduce_sqnorm) {
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     bool keepDims = false;
 
     if (block.width() > 1) {
@@ -65,9 +65,9 @@ DECLARE_SHAPE_FN(reduce_sqnorm) {
         helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
     }
 
-    if (block.getBArguments()->size())
+    if (block.numB())
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size())
+    else if (block.numT())
         keepDims = (bool)T_ARG(0);
 
     REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0, "REDUCE_SQNORM OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
@@ -103,16 +103,16 @@ CUSTOM_OP_IMPL(reduce_sqnorm_bp, 2, 1, false, 0, 0) {
     else {
 
         bool keepDims = false;
-        auto dimensions = *block.getIArguments();
+        auto dimensions = block.getIArguments();
 
         if (block.width() > 2) {
             auto axesVector = INPUT_VARIABLE(2);
             helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
         }
 
-        if (block.getBArguments()->size())
+        if (block.numB())
             keepDims = B_ARG(0);
-        else if (block.getTArguments()->size())
+        else if (block.numT())
             keepDims = (bool)T_ARG(0);
 
         REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_SQNORM_BP OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
@@ -135,7 +135,7 @@ DECLARE_SHAPE_FN(reduce_sqnorm_bp) {
 
     if(shape::length(inputShape->at(1)) > 1) {
 
-        auto dimensions = *block.getIArguments();
+        auto dimensions = block.getIArguments();
         if (block.width() > 2) {
             auto axesVector = INPUT_VARIABLE(2);
             helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);

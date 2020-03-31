@@ -31,7 +31,7 @@ namespace ops {
 
         int axis = 0;
 
-        if (block.getIArguments()->size() > 0) {
+        if (block.numI() > 0) {
             axis = INT_ARG(0);
         } else if (block.width() > 2){
             auto _a = INPUT_VARIABLE(2);
@@ -88,7 +88,7 @@ namespace ops {
         // 0 is just default axis
         int axis = 0;
 
-        if (block.getIArguments()->size() > 0)
+        if (block.numI() > 0)
             axis = INT_ARG(0);
         else if (block.width() > 2) {
             auto _a = INPUT_VARIABLE(2);

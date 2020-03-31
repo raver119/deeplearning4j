@@ -40,7 +40,7 @@ namespace sd {
             pickInput(pair);
         }
 
-        int ContextPrototype::opNum() {
+        int ContextPrototype::opNum() const {
             return this->_opNum;
         }
 
@@ -48,8 +48,8 @@ namespace sd {
             this->_opNum = opNum;
         }
 
-        std::vector<std::pair<int, int>>* ContextPrototype::inputs() {
-            return &_inputs;
+        std::vector<std::pair<int, int>> & ContextPrototype::inputs() const {
+            return const_cast<std::vector<std::pair<int, int>> &>(_inputs);
         }
 
         void ContextPrototype::fillInputs(std::vector<int>& inputs) {
@@ -59,32 +59,32 @@ namespace sd {
             }
         }
 
-        samediff::Engine ContextPrototype::engine() {
+        samediff::Engine ContextPrototype::engine() const {
             return _engine;
         }
 
-        bool ContextPrototype::hasVariablesFilled() {
+        bool ContextPrototype::hasVariablesFilled() const {
             return this->_inputs.size() > 0;
         }
 
-        bool ContextPrototype::isInplace() {
+        bool ContextPrototype::isInplace() const {
             return this->_isInplace;
         }
 
-        std::vector<double>* ContextPrototype::getTArguments() {
-            return &(this->_tArgs);
+        const std::vector<double> & ContextPrototype::getTArguments() const {
+            return const_cast<std::vector<double>&>(_tArgs);
         }
 
-        std::vector<int>* ContextPrototype::getIArguments() {
-            return &(this->_iArgs);
+        const std::vector<int> & ContextPrototype::getIArguments() const {
+            return const_cast<std::vector<int>&>(_iArgs);
         }
 
-        std::vector<bool>* ContextPrototype::getBArguments() {
-            return &(this->_bArgs);
+        const std::vector<bool> & ContextPrototype::getBArguments() const {
+            return const_cast<std::vector<bool>&>(_bArgs);
         }
 
-        std::vector<int>* ContextPrototype::getAxis() {
-            return &(this->_axis);
+        const std::vector<int> & ContextPrototype::getAxis() const {
+            return const_cast<std::vector<int>&>(_axis);
         }
 
         void ContextPrototype::pickInput(int input) {
@@ -92,8 +92,8 @@ namespace sd {
             this->_inputs.emplace_back(pair);
         }
 
-        std::pair<int, int>* ContextPrototype::input(int idx) {
-            return &(this->_inputs.at(idx));
+        const std::pair<int, int>& ContextPrototype::input(int idx) const {
+            return this->_inputs.at(idx);
         }
 
         void ContextPrototype::fillInputs(std::initializer_list<int> inputs) {
@@ -102,15 +102,15 @@ namespace sd {
             }
         }
 
-        int ContextPrototype::nodeId() {
+        int ContextPrototype::nodeId() const {
             return getNodeId();
         }
 
-        sd::DataType ContextPrototype::dataType() {
+        sd::DataType ContextPrototype::dataType() const {
             return dataType(0);
         }
 
-        sd::DataType ContextPrototype::dataType(int index) {
+        sd::DataType ContextPrototype::dataType(int index) const {
             return _dataType;
         }
 
@@ -119,19 +119,19 @@ namespace sd {
             _dataType = type;
         }
 
-        size_t ContextPrototype::numT() {
+        size_t ContextPrototype::numT() const {
             return (int) _tArgs.size();
         }
 
-        size_t ContextPrototype::numI() {
+        size_t ContextPrototype::numI() const {
             return (int) _iArgs.size();
         }
 
-        size_t ContextPrototype::numB() {
+        size_t ContextPrototype::numB() const {
             return (int) _bArgs.size();
         }
 
-        int ContextPrototype::getNodeId() {
+        int ContextPrototype::getNodeId() const {
             return this->_nodeId;
         }
 
@@ -139,7 +139,7 @@ namespace sd {
          * This method returns number of inputs available in this block
          * @return
          */
-        unsigned long ContextPrototype::width() {
+        unsigned long ContextPrototype::width() const {
             return this->_inputs.size();
         };
 
@@ -174,12 +174,52 @@ namespace sd {
             return clone;
         }
 
-        std::vector<sd::DataType> *ContextPrototype::getDArguments() {
-            return &_dArgs;
+        const std::vector<sd::DataType> & ContextPrototype::getDArguments() const {
+            return const_cast<std::vector<sd::DataType>&>(_dArgs);
         }
 
-        size_t ContextPrototype::numD() {
+        size_t ContextPrototype::numD() const {
             return _dArgs.size();
+        }
+
+        void ContextPrototype::appendI(const std::vector<Nd4jLong> &value) {
+            for (auto v:value)
+                _iArgs.emplace_back(v);
+        }
+
+        void ContextPrototype::appendT(const std::vector<double> &value) {
+            for (auto v:value)
+                _tArgs.emplace_back(v);
+        }
+
+        void ContextPrototype::appendB(const std::vector<bool> &value) {
+            for (auto v:value)
+                _bArgs.emplace_back(v);
+        }
+
+        void ContextPrototype::appendD(const std::vector<DataType> &value) {
+            for (auto v:value)
+                _dArgs.emplace_back(v);
+        }
+
+        void ContextPrototype::appendA(Nd4jLong value) {
+            _axis.emplace_back(value);
+        }
+
+        void ContextPrototype::appendI(Nd4jLong value) {
+            _iArgs.emplace_back(value);
+        }
+
+        void ContextPrototype::appendT(double value) {
+            _tArgs.emplace_back(value);
+        }
+
+        void ContextPrototype::appendB(bool value) {
+            _bArgs.emplace_back(value);
+        }
+
+        void ContextPrototype::appendD(DataType value) {
+            _dArgs.emplace_back(value);
         }
     }
 }

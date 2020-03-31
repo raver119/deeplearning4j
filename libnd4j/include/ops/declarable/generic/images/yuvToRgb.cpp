@@ -36,7 +36,7 @@ CONFIGURABLE_OP_IMPL(yuv_to_rgb, 1, 1, true, 0, 0) {
         return Status::OK();
 
     const int rank = input->rankOf();
-    const int argSize = block.getIArguments()->size();
+    const int argSize = block.numI();
     const int dimC = argSize > 0 ? (INT_ARG(0) >= 0 ? INT_ARG(0) : INT_ARG(0) + rank) : rank - 1;
 
     REQUIRE_TRUE(rank >= 1, 0, "YUVtoRGB: Fails to meet the rank requirement: %i >= 1 ", rank);

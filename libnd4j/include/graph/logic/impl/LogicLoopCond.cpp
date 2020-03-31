@@ -27,7 +27,7 @@ namespace sd {
             auto __variableSpace = graph->getVariableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
-            Context ctx(node->getContextPrototype(), __variableSpace);
+            Context ctx(node->protoContext(), __variableSpace);
             auto input = ctx.variable(0)->getNDArray();
 
             std::pair<int, int> pair0(node->id(), 0);

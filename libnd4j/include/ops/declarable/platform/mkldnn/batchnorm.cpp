@@ -363,7 +363,7 @@ PLATFORM_IMPL(batchnorm, ENGINE_CPU) {
     if(applyOffset)
         beta = INPUT_VARIABLE(3 + (int)applyScale);
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     const int inRank = input->rankOf();
 
     // get axes args to normalize input array over
@@ -434,7 +434,7 @@ PLATFORM_CHECK(batchnorm, ENGINE_CPU) {
         beta = INPUT_VARIABLE(3 + (int)applyScale);
 
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     std::vector<int> axes;
     if(numOfIntArgs > 2)
         for(int i = 2; i < numOfIntArgs; ++i)
@@ -617,7 +617,7 @@ PLATFORM_IMPL(batchnorm_bp, ENGINE_CPU) {
         dLdB = OUTPUT_VARIABLE(3 + (int)applyScale);
     }
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     const int inRank = input->rankOf();
 
     // get axes args to normalize input array over
@@ -707,7 +707,7 @@ PLATFORM_CHECK(batchnorm_bp, ENGINE_CPU) {
         dLdB = OUTPUT_VARIABLE(3 + (int)applyScale);
     }
 
-    const int numOfIntArgs = block.getIArguments()->size();
+    const int numOfIntArgs = block.numI();
     std::vector<int> axes;
     if(numOfIntArgs > 2)
         for(int i = 2; i < numOfIntArgs; ++i)

@@ -34,7 +34,7 @@ CUSTOM_OP_IMPL(reduce_max, 1, 1, false, 0, 0) {
     auto input = INPUT_VARIABLE(0);
     auto output = OUTPUT_VARIABLE(0);
 
-    std::vector<int> dimensions = *block.getIArguments();
+    std::vector<int> dimensions = block.getIArguments();
 
     if (block.width() > 1) {
         auto axesVector = INPUT_VARIABLE(1);
@@ -47,9 +47,9 @@ CUSTOM_OP_IMPL(reduce_max, 1, 1, false, 0, 0) {
         REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0], 0, "REDUCE_MAX OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
 
     bool keepDims = false;//: false;
-    if (block.getBArguments()->size() > 0)
+    if (block.numB() > 0)
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size() > 0)
+    else if (block.numT() > 0)
         keepDims = (bool)T_ARG(0);
 
     input->reduceAlongDimension(reduce::Max, *output, dimensions, keepDims);
@@ -61,12 +61,12 @@ DECLARE_SHAPE_FN(reduce_max) {
 
     bool keepDims = false;//: false;
 
-    if (block.getBArguments()->size() > 0)
+    if (block.numB() > 0)
         keepDims = B_ARG(0);
-    else if (block.getTArguments()->size() > 0)
+    else if (block.numT() > 0)
         keepDims = (bool)T_ARG(0);
 
-    auto dimensions = *block.getIArguments();
+    auto dimensions = block.getIArguments();
     if (block.width() > 1) {
         auto axesVector = INPUT_VARIABLE(1);
         helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
@@ -98,7 +98,7 @@ CUSTOM_OP_IMPL(reduce_max_bp, 2, 1, false, 0, 0) {
     auto gradO = INPUT_VARIABLE(1);
     auto gradI = OUTPUT_VARIABLE(0);
 
-    std::vector<int> dimensions = *block.getIArguments();
+    std::vector<int> dimensions = block.getIArguments();
 
     if (block.width() > 2) {
         auto axesVector = INPUT_VARIABLE(2);
@@ -131,7 +131,7 @@ CUSTOM_OP_IMPL(reduce_max_bp, 2, 1, false, 0, 0) {
 
 DECLARE_SHAPE_FN(reduce_max_bp) {
 
-    std::vector<int> dimensions = *block.getIArguments();
+    std::vector<int> dimensions = block.getIArguments();
 
     if (block.width() > 2) {
         auto axesVector = INPUT_VARIABLE(2);

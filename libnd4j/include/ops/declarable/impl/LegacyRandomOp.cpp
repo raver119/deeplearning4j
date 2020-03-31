@@ -72,7 +72,7 @@ namespace sd {
 
                         from = arg1->e<T>(0);
                         to = arg2->e<T>(0);
-                    } else if (block.getTArguments()->size() == 2) {
+                    } else if (block.numT() == 2) {
                         from = T_ARG(0);
                         to = T_ARG(1);
                     } else {
@@ -96,7 +96,7 @@ namespace sd {
                             REQUIRE_TRUE(arg->isScalar(), 0, "DropOut: Second argument must be scalar");
 
                             prob = arg->e<T>(0);
-                        } else if (block.getTArguments()->size() > 0) {
+                        } else if (block.numT() > 0) {
                             prob = T_ARG(0);
                         } else {
                             REQUIRE_TRUE(false, 0, "DropOut requires either TArgs or second argument to be present");
@@ -125,7 +125,7 @@ namespace sd {
 
                         mean = arg1->e<T>(0);
                         stdev = arg2->e<T>(0);
-                    } else if (block.getTArguments()->size() == 2) {
+                    } else if (block.numT() == 2) {
                         mean = T_ARG(0);
                         stdev = T_ARG(1);
                     } else {
@@ -154,7 +154,7 @@ namespace sd {
                         REQUIRE_TRUE(arg1->isScalar(), 0, "Bernoulli: Second argument must be scalar");
 
                         prob = arg1->e<T>(0);
-                    } else if (block.getTArguments()->size() > 0) {
+                    } else if (block.numT() > 0) {
                         prob = T_ARG(0);
                     } else {
                         REQUIRE_TRUE(false, 0, "Bernoulli requires either 1 TArg or 2 arguments to be present");
@@ -186,7 +186,7 @@ namespace sd {
 
                         trials = arg1->e<int>(0);
                         prob = arg2->e<T>(0);
-                    } else if (block.getTArguments()->size() == 1 && block.getIArguments()->size() == 1) {
+                    } else if (block.numT() == 1 && block.numI() == 1) {
                         trials = INT_ARG(0);
                         prob = T_ARG(0);
                     } else {
@@ -218,7 +218,7 @@ namespace sd {
 
                         mean = arg1->e<T>(0);
                         stdev = arg2->e<T>(0);
-                    } else if (block.getTArguments()->size() == 2) {
+                    } else if (block.numT() == 2) {
                         mean = T_ARG(0);
                         stdev = T_ARG(1);
                     } else {
@@ -250,7 +250,7 @@ namespace sd {
 
                         mean = arg1->e<T>(0);
                         stdev = arg2->e<T>(0);
-                    } else if (block.getTArguments()->size() == 2) {
+                    } else if (block.numT() == 2) {
                         mean = T_ARG(0);
                         stdev = T_ARG(1);
                     } else {
@@ -286,7 +286,7 @@ namespace sd {
                         a = arg2->e<T>(0);
                         b = arg3->e<T>(0);
                         pa = arg4->e<T>(0);
-                    } else if (block.getTArguments()->size() == 4) {
+                    } else if (block.numT() == 4) {
                         prob = T_ARG(0);
                         a = T_ARG(1);
                         b = T_ARG(2);
@@ -388,11 +388,11 @@ namespace sd {
             block.markInplace(isInplace);
 
             for (int e = 0; e < tArgs.size(); e++)
-                block.getTArguments()->emplace_back(tArgs.at(e));
+                block.appendT(tArgs.at(e));
 
 
             for (int e = 0; e < iArgs.size(); e++)
-                block.getIArguments()->emplace_back(iArgs.at(e));
+                block.appendI(iArgs.at(e));
 
             Nd4jStatus status = this->execute(&block);
             arrayList.setStatus(status);

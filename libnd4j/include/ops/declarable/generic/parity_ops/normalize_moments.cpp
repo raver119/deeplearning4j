@@ -36,7 +36,7 @@ namespace sd {
             // FIXME: double?
             NDArray shift = NDArrayFactory::create<double>(0.);
 
-            if (block.getTArguments()->size() > 0) {
+            if (block.numT() > 0) {
                 shift.assign(T_ARG(0));
             }
 

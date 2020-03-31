@@ -33,7 +33,7 @@ CUSTOM_OP_IMPL(softmax_cross_entropy_loss_with_logits, 2, 1, false, 0, 0) {
     auto labels  = INPUT_VARIABLE(1);
     auto output  = OUTPUT_VARIABLE(0);
 
-    const int classesDim = block.getIArguments()->size() > 0 ? INT_ARG(0) : logits->rankOf()-1;
+    const int classesDim = block.numI() > 0 ? INT_ARG(0) : logits->rankOf()-1;
 
     // input validation
     REQUIRE_TRUE(labels->isSameShape(logits), 0, "SOFTMAX_CROSS_ENTROPY_LOSS_WITH_LOGITS OP: labels and logits arrays must have the same shapes, but got %s and %s correspondingly !", ShapeUtils::shapeAsString(labels).c_str(), ShapeUtils::shapeAsString(logits).c_str());
@@ -62,7 +62,7 @@ DECLARE_SHAPE_FN(softmax_cross_entropy_loss_with_logits) {
 	auto logitsShapeInfo  = inputShape->at(0);
     auto labelsShapeInfo  = inputShape->at(1);
 
-    const int classesDim = block.getIArguments()->size() > 0 ? INT_ARG(0) : -1;
+    const int classesDim = block.numI() > 0 ? INT_ARG(0) : -1;
     std::vector<int> dimensions = {classesDim};
 
 	// labels and logits must have the same shapes
@@ -89,7 +89,7 @@ CUSTOM_OP_IMPL(softmax_cross_entropy_loss_with_logits_grad, 2, 2, false, 0, 0) {
     auto dLdp = OUTPUT_VARIABLE(0);     // dL/dlogits
     auto dLdl = OUTPUT_VARIABLE(1);     // dL/dlabels
 
-    const int classesDim = block.getIArguments()->size() > 0 ? INT_ARG(0) : logits->rankOf()-1;
+    const int classesDim = block.numI() > 0 ? INT_ARG(0) : logits->rankOf()-1;
 
     // input validation
     REQUIRE_TRUE(labels->isSameShape(logits), 0, "SOFTMAX_CROSS_ENTROPY_LOSS_WITH_LOGITS_GRAD OP: labels and logits arrays must have the same shapes, but got %s and %s correspondingly !", ShapeUtils::shapeAsString(labels).c_str(), ShapeUtils::shapeAsString(logits).c_str());

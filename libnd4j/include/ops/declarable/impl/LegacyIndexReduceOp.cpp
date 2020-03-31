@@ -43,7 +43,7 @@ namespace sd {
             auto inShape = inputShape->at(0);
 
             Nd4jLong *newShape;
-            if (block.getAxis()->size() == 0 && block.width() == 1) {
+            if (block.getAxis().size() == 0 && block.width() == 1) {
                 // in this case we just return scalar
                 ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
                 newShape[0] = 2;
@@ -57,11 +57,11 @@ namespace sd {
                 auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(newShape, DataType::INT64));
                 RELEASE(newShape, block.getWorkspace());
                 return SHAPELIST(result);
-            } else if (block.getAxis()->size()){
+            } else if (block.getAxis().size()){
                 // in this case we're building proper shape for reduction
                 auto array = INPUT_VARIABLE(0); //new NDArray(nullptr, inShape, block.getWorkspace());
 
-                newShape = ShapeUtils::evalReduceShapeInfo('c', *block.getAxis(), *array, DataType::INT64, false, true, block.workspace());
+                newShape = ShapeUtils::evalReduceShapeInfo('c', block.getAxis(), *array, DataType::INT64, false, true, block.workspace());
                 return SHAPELIST(newShape);
             }
             else {
@@ -118,11 +118,11 @@ namespace sd {
 
             bool allAxes = false;
 
-            ExtraArguments extras(*block.getTArguments());
+            ExtraArguments extras(block.getTArguments());
             PointersManager manager(block.launchContext(), "LegacyIndexReduceOp");
 
             if (block.width() == 1) {
-                if (block.getAxis()->size() == 0) {
+                if (block.getAxis().size() == 0) {
                     // scalar
                     NativeOpExecutioner::execIndexReduceScalar(block.launchContext(), opNum, x->getBuffer(), x->getShapeInfo(),
                                                                          x->getSpecialBuffer(), x->getSpecialShapeInfo(),
@@ -131,9 +131,9 @@ namespace sd {
                                                                          z->getSpecialBuffer(), z->getSpecialShapeInfo());
                 } else {
                     // TAD
-                    std::vector<int> dims(block.getAxis()->size());
+                    std::vector<int> dims(block.getAxis().size());
                     for (size_t e = 0; e < dims.size(); e++) {
-                        auto axe = block.getAxis()->at(e);
+                        auto axe = block.getAxis().at(e);
                         dims[e] = axe < 0 ? axe + x->rankOf(): axe;
                     }
                     if (dims.size() > 1)

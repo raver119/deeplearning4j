@@ -48,7 +48,7 @@ namespace sd {
 //                OVERWRITE_RESULT(res);
 
                 return result;
-            } else if (block.getIArguments()->size() == 1) {
+            } else if (block.numI() == 1) {
                 auto input = INPUT_VARIABLE(1);
                 auto idx = INT_ARG(0);
 

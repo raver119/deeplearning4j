@@ -36,7 +36,7 @@ CUSTOM_OP_IMPL(dynamic_rnn, 4, 2, false, 0, 0) {
 	NDArray* h0          = nullptr;     		      // initial cell output (at time step = 0) [bS x numUnits]
 	NDArray* maxTimeStep = nullptr;			      // vector [bS] containing integer values within [0,time), each element of this vector set max time step per each input in batch, this means there are no calculations for time >= maxTimeStep
 
-    const int timeMajor = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
+    const int timeMajor = block.numI() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
 
     if(block.width() == 5) {
         if ((*INPUT_VARIABLE(4)).rankOf() == 2)
@@ -112,7 +112,7 @@ DECLARE_SHAPE_FN(dynamic_rnn) {
     Nd4jLong* h0ShapeInfo          = nullptr;                // initial cell output (at time step = 0) [bS x numUnits]
     Nd4jLong* maxTimeStepShapeInfo = nullptr;                // vector [bS] containing integer values within [0,time), each element of this vector set max time step per each input in batch, this means there are no calculations for time >= maxTimeStep
 
-    const int timeMajor = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
+    const int timeMajor = block.numI() > 0 ? INT_ARG(0) : 0;       // if true then [time, bS, ...], else [bS, time, ...]
 
     if(block.width() == 5) {
         if (inputShape->at(4)[0] == 2)

@@ -30,8 +30,9 @@ namespace sd {
             auto outputQ = OUTPUT_VARIABLE(0);
             auto outputR = OUTPUT_VARIABLE(1);
             auto fullMatricies = false;
-            if (block.getBArguments()->size())
+            if (block.numB())
                 fullMatricies = B_ARG(0);
+
             REQUIRE_TRUE(input->rankOf() >=2, 0, "qr: The rank of input array should not be less than 2, but %i is given", input->rankOf());
             REQUIRE_TRUE((fullMatricies && outputQ->sizeAt(-1) == input->sizeAt(-2)) || (!fullMatricies && outputQ->isSameShape(input)), 0, "qr: The last dimmensions should be equal to result Q, but %i and %i are given", outputQ->sizeAt(-1), input->sizeAt(-2));
             REQUIRE_TRUE((fullMatricies && outputR->sizeAt(-1) == input->sizeAt(-1)) || (!fullMatricies && outputR->sizeAt(-1) == outputR->sizeAt(-2)), 0, "qr: The last dimmensions should be equal to result R, but %i and %i are given", outputR->sizeAt(-1), input->sizeAt(-1));
@@ -49,7 +50,7 @@ namespace sd {
             int targetRank = shape::rank(inShape); // last two dimensions will be reduced to scalar
 
             auto fullMatricies = false;
-            if (block.getBArguments()->size())
+            if (block.numB())
                 fullMatricies = B_ARG(0);
 
             auto shape = ShapeUtils::shapeAsVector(inShape);

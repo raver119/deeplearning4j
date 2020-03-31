@@ -30,7 +30,7 @@ namespace ops {
 CUSTOM_OP_IMPL(stack, -1, 1, false, 0, 0) {
 	auto input = INPUT_VARIABLE(0);
 	auto output = OUTPUT_VARIABLE(0);
-	int dim  = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+	int dim  = block.numI() > 0 ? INT_ARG(0) : 0;
 	if(dim < 0)
  		dim += input->rankOf() + 1;
 
@@ -70,7 +70,7 @@ DECLARE_SHAPE_FN(stack) {
 	// check whether input dimension is within rank range
 	auto inShapeInfo = inputShape->at(0);
 	int rank = shape::rank(inShapeInfo);
-    int dim  = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+    int dim  = block.numI() > 0 ? INT_ARG(0) : 0;
     if(dim < 0 )
 		dim += rank + 1;
 

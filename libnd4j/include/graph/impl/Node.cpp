@@ -65,19 +65,12 @@ namespace sd {
             // FIXME: get rid of this!!!
             _scalar = NDArrayFactory::create<int>(0);
 
-            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+            ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
-            for (auto v: iArgs)
-                block->getIArguments()->emplace_back(v);
-
-            for (auto v: tArgs)
-                block->getTArguments()->emplace_back(v);
-
-            for (auto v: bArgs)
-                block->getBArguments()->emplace_back(v);
-
-            for (auto v: dArgs)
-                block->getDArguments()->emplace_back(v);
+            block.appendI(iArgs);
+            block.appendT(tArgs);
+            block.appendB(bArgs);
+            block.appendD(dArgs);
 
             this->setContextPrototype(block);
         }
@@ -104,19 +97,12 @@ namespace sd {
             // FIXME: get rid of this!!!
             _scalar = NDArrayFactory::create<int>(0);
 
-            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+            ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
-            for (auto v: iArgs)
-                block->getIArguments()->emplace_back(v);
-
-            for (auto v: tArgs)
-                block->getTArguments()->emplace_back(v);
-
-            for (auto v: bArgs)
-                block->getBArguments()->emplace_back(v);
-
-            for (auto v: dArgs)
-                block->getDArguments()->emplace_back(v);
+            block.appendI(iArgs);
+            block.appendT(tArgs);
+            block.appendB(bArgs);
+            block.appendD(dArgs);
 
             this->setContextPrototype(block);
         }
@@ -141,9 +127,7 @@ namespace sd {
 
         void Node::markInplace(bool reallyInplace) {
             _isInplace = reallyInplace;
-            if (_protoContext != nullptr) {
-                _protoContext->markInplace(reallyInplace);
-            }
+            _protoContext.markInplace(reallyInplace);
         }
 
         bool Node::isRemovable() const {
@@ -159,7 +143,7 @@ namespace sd {
         }
 
         bool Node::hasBlockAttached() {
-            return _protoContext != nullptr;
+            return true;
         }
 
         bool Node::isInplace() {
@@ -191,21 +175,11 @@ namespace sd {
             _frameId = frameId;
         }
 
-        ContextPrototype * Node::getContextPrototype() {
-            if (_protoContext == nullptr)
-                _protoContext = new ContextPrototype(this->customOp() != nullptr ? this->customOp()->getOpDescriptor() : nullptr, this->id());
-            if (_protoContext->inputs()->empty()) {
-                for (int e = 0; e < this->input().size(); e++) {
-                    _protoContext->inputs()->emplace_back(this->input().at(e));
-                }
-            }
+        const ContextPrototype& Node::contextPrototype() const {
             return _protoContext;
         }
 
-        void Node::setContextPrototype(ContextPrototype *block) {
-            if (_protoContext != nullptr)
-                throw std::runtime_error("Block already exists");
-
+        void Node::setContextPrototype(const ContextPrototype &block) {
             _protoContext = block;
         }
 
@@ -420,13 +394,10 @@ namespace sd {
             for (auto i: inputs)
                 pickInput(i);
 
-            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+            ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
-            for (auto v: iArgs)
-                block->getIArguments()->emplace_back(v);
-
-            for (auto v: tArgs)
-                block->getTArguments()->emplace_back(v);
+            block.appendI(iArgs);
+            block.appendT(tArgs);
 
             this->setContextPrototype(block);
         }
@@ -453,13 +424,10 @@ namespace sd {
             for (auto i: inputs)
                 pickInput(i);
 
-            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+            ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
-            for (auto v: iArgs)
-                block->getIArguments()->emplace_back(v);
-
-            for (auto v: tArgs)
-                block->getTArguments()->emplace_back(v);
+            block.appendI(iArgs);
+            block.appendT(tArgs);
 
             this->setContextPrototype(block);
         }
@@ -496,16 +464,16 @@ namespace sd {
                 }
             }
 
-            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+            ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: dimensions)
-                block->getAxis()->emplace_back(v);
+                block.appendA(v);
 
             for (auto v: iArgs)
-                block->getIArguments()->emplace_back(v);
+                block.appendI(v);
 
             for (auto v: tArgs)
-                block->getTArguments()->emplace_back(v);
+                block.appendT(v);
 
             this->setContextPrototype(block);
         }
@@ -575,32 +543,33 @@ namespace sd {
 
                 this->_isDeductable = true;
 
-                auto block = new ContextPrototype(nullptr, this->id(), false);
+                ContextPrototype block(nullptr, this->id(), false);
 
                 for (auto v: dimensions)
-                    block->getAxis()->emplace_back(v);
+                    block.appendA(v);
 
                 for (auto v: iArgs)
-                    block->getIArguments()->emplace_back(v);
+                    block.appendI(v);
 
                 for (auto v: tArgs)
-                    block->getTArguments()->emplace_back(v);
+                    block.appendT(v);
 
                 this->setContextPrototype(block);
-                this->setCustomOp(Node::buildOpByType(opType, (int) input.size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), opNum, &_scalar));
-                block->setOpDescriptor(this->customOp()->getOpDescriptor());
+
+                this->setCustomOp(Node::buildOpByType(opType, (int) input.size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), opNum, &_scalar));
+                block.setOpDescriptor(this->customOp()->getOpDescriptor());
             } else if (opType == OpType_CUSTOM) {
                 if (this->customOp()) {
-                    auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
+                    ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
                     for (auto v: dimensions)
-                        block->getAxis()->emplace_back(v);
+                        block.appendA(v);
 
                     for (auto v: iArgs)
-                        block->getIArguments()->emplace_back(v);
+                        block.appendI(v);
 
                     for (auto v: tArgs)
-                        block->getTArguments()->emplace_back(v);
+                        block.appendT(v);
 
                     this->setContextPrototype(block);
                 } else throw std::runtime_error("wrong custom operation given");
@@ -718,74 +687,74 @@ namespace sd {
                     if (node->input() != nullptr && node->input()->size() > 0) {
                         this->_isDeductable = true;
 
-                        auto block = new ContextPrototype(nullptr, this->id(), false);
+                        ContextPrototype block(nullptr, this->id(), false);
 
 
                         for (auto v: _dimensions)
-                            block->getAxis()->emplace_back(v);
+                            block.appendA(v);
 
                         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
                             for (int e = 0; e < (int) node->extraParams()->size(); e++) {
-                                block->getTArguments()->emplace_back(static_cast<double>(node->extraParams()->Get(e)));
+                                block.appendT(static_cast<double>(node->extraParams()->Get(e)));
                             }
 
                         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
                             for (int e = 0; e < (int) node->extraBools()->size(); e++) {
-                                block->getBArguments()->push_back(node->extraBools()->Get(e));
+                                block.appendB(node->extraBools()->Get(e));
                             }
 
                         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
                             for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
-                                block->getIArguments()->emplace_back(node->extraInteger()->Get(e));
+                                block.appendI(node->extraInteger()->Get(e));
                             }
 
                         if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
                             for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
-                                block->getDArguments()->emplace_back((sd::DataType) node->extraTypes()->Get(e));
+                                block.appendD((sd::DataType) node->extraTypes()->Get(e));
                             }
                         }
 
                         this->setContextPrototype(block);
-                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), (int) _opNum, &_scalar));
-                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
+                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum, &_scalar));
+                        block.setOpDescriptor(this->customOp()->getOpDescriptor());
                     } else if (node->inputPaired() != nullptr && node->inputPaired()->size() > 0) {
                         this->_isDeductable = true;
 
-                        auto block = new ContextPrototype(nullptr, this->id(), false);
+                        ContextPrototype block(nullptr, this->id(), false);
 
                         for (int e = 0; e < this->input().size(); e++) {
-                            block->inputs()->emplace_back(this->input().at(e));
+                            block.inputs().emplace_back(this->input().at(e));
                         }
 
                         // there's no other IArgs in legacy options, actually
                         for (auto v: _dimensions)
-                            block->getAxis()->emplace_back(v);
+                            block.appendA(v);
 
                         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
                             for (int e = 0; e < (int) node->extraParams()->size(); e++) {
-                                block->getTArguments()->emplace_back(static_cast<double>(node->extraParams()->Get(e)));
+                                block.appendT(static_cast<double>(node->extraParams()->Get(e)));
                             }
 
                         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
                             for (int e = 0; e < (int) node->extraBools()->size(); e++) {
-                                block->getBArguments()->push_back(node->extraBools()->Get(e));
+                                block.appendB(node->extraBools()->Get(e));
                             }
 
                         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
                             for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
-                                block->getIArguments()->emplace_back(node->extraInteger()->Get(e));
+                                block.appendI(node->extraInteger()->Get(e));
                             }
 
                         if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
                             for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
-                                block->getDArguments()->emplace_back((sd::DataType) node->extraTypes()->Get(e));
+                                block.appendD((sd::DataType) node->extraTypes()->Get(e));
                             }
                         }
 
                         this->setContextPrototype(block);
 
-                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->inputPaired()->size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), (int) _opNum, &_scalar));
-                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
+                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->inputPaired()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum, &_scalar));
+                        block.setOpDescriptor(this->customOp()->getOpDescriptor());
                     }
                 } else if (this->_opType == OpType_CUSTOM) {
                         auto op = sd::ops::OpRegistrator::getInstance()->getOperation(this->opNum());
@@ -794,40 +763,40 @@ namespace sd {
                             throw std::runtime_error("Can't find requested operation");
                         }
 
-                        auto block = new ContextPrototype(nullptr, this->id());
+                        ContextPrototype block(nullptr, this->id());
 
                         for (int e = 0; e < this->input().size(); e++) {
-                            block->inputs()->emplace_back(this->input().at(e));
+                            block.inputs().emplace_back(this->input().at(e));
                         }
 
                         if (node->extraInteger() != nullptr)
                             for (uint32_t e = 0; e < node->extraInteger()->size(); e++) {
                                 auto v = node->extraInteger()->Get(e);
                                 // FIXME: remove this static_cast, iArgs should be Nd4jLong
-                                block->getIArguments()->emplace_back(static_cast<int>(v));
+                                block.appendI(static_cast<int>(v));
                             }
 
                         if (node->extraParams() != nullptr)
                             for (uint32_t e = 0; e < node->extraParams()->size(); e++)
-                                block->getTArguments()->emplace_back(static_cast<double>(node->extraParams()->Get(e)));
+                                block.appendT(static_cast<double>(node->extraParams()->Get(e)));
 
                         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
                             for (int e = 0; e < (int) node->extraBools()->size(); e++) {
-                                block->getBArguments()->push_back(node->extraBools()->Get(e));
+                                block.appendB(node->extraBools()->Get(e));
                             }
 
                         if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
                             for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
-                                block->getDArguments()->emplace_back((sd::DataType) node->extraTypes()->Get(e));
+                                block.appendD((sd::DataType) node->extraTypes()->Get(e));
                             }
                         }
 
                         for (auto v: _dimensions)
-                            block->getAxis()->emplace_back(v);
+                            block.appendA(v);
 
                         this->setContextPrototype(block);
                         this->setCustomOp(op);
-                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
+                        block.setOpDescriptor(this->customOp()->getOpDescriptor());
                 }
             } else {
                 // empty dynamic node, tests probably
@@ -838,7 +807,7 @@ namespace sd {
             return _dataType;
         }
 
-        ContextPrototype* Node::protoContext() const {
+        const ContextPrototype& Node::protoContext() const {
             return _protoContext;
         }
 
@@ -848,9 +817,6 @@ namespace sd {
 
             if (_dim != nullptr)
                 delete[] _dim;
-
-            if (_protoContext != nullptr)
-                delete _protoContext;
 
             if (_isDeductable && _customOp != nullptr) {
                 Node::deleteOpByType(_opType, _customOp);
@@ -966,7 +932,6 @@ namespace sd {
             _referencedBy = std::move(other._referencedBy);
             _scalar = std::move(other._scalar);
 
-            other._protoContext = nullptr;
             other._customOp = nullptr;
 
             return *this;
