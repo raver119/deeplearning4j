@@ -24,26 +24,26 @@
 
 namespace sd {
     namespace graph {
-        unresolved_output_exception::unresolved_output_exception(std::string message) : std::runtime_error(message) {
+        unresolved_output_exception::unresolved_output_exception(const std::string &message) : std::runtime_error(message) {
             //
         }
 
-        unresolved_output_exception unresolved_output_exception::build(std::string message, std::pair<int, int> &varIndex) {
+        unresolved_output_exception unresolved_output_exception::build(const std::string &message, std::pair<int, int> &varIndex) {
             auto nodeId = StringUtils::valueToString<int>(varIndex.first);
             auto outputIdx = StringUtils::valueToString<int>(varIndex.second);
-            message += "; Variable: [" + nodeId + ":" +  outputIdx + "]";
-            return unresolved_output_exception(message);
+            auto rmessage = message + "; Variable: [" + nodeId + ":" +  outputIdx + "]";
+            return unresolved_output_exception(rmessage);
         }
 
-        unresolved_output_exception unresolved_output_exception::build(std::string message, int nodeId, int outputIndex) {
+        unresolved_output_exception unresolved_output_exception::build(const std::string &message, int nodeId, int outputIndex) {
             std::pair<int, int> p(nodeId, outputIndex);
             return build(message, p);
         }
 
-        unresolved_output_exception unresolved_output_exception::build(std::string message, std::string &varName, int outputIndex) {
+        unresolved_output_exception unresolved_output_exception::build(const std::string &message, const std::string &varName, int outputIndex) {
             auto outputIdx = StringUtils::valueToString<int>(outputIndex);
-            message += "; Variable: [" + varName + ":" + outputIdx + "]";
-            return unresolved_output_exception(message);
+            auto rmessage = message +"; Variable: [" + varName + ":" + outputIdx + "]";
+            return unresolved_output_exception(rmessage);
         }
     }
 }

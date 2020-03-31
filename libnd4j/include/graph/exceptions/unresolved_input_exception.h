@@ -29,12 +29,12 @@ namespace sd {
     namespace graph {
         class unresolved_input_exception : public std::runtime_error {
         public:
-            unresolved_input_exception(std::string message);
+            unresolved_input_exception(const std::string &message);
             ~unresolved_input_exception() = default;
 
-            static unresolved_input_exception build(std::string message, int nodeId, std::pair<int, int> &varIndex);
-            static unresolved_input_exception build(std::string message, std::pair<int, int> &varIndex);
-            static unresolved_input_exception build(std::string message, std::string &varName);
+            static unresolved_input_exception build(const std::string &message, int nodeId, std::pair<int, int> &varIndex);
+            static unresolved_input_exception build(const std::string &message, std::pair<int, int> &varIndex);
+            static unresolved_input_exception build(const std::string &message, const std::string &varName);
         };
     }
 }

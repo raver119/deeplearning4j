@@ -125,7 +125,8 @@ TEST_F(GraphTests2, test_input_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
+    Node a("tanh_node", sd::ops::tanh());
+    graph.addNode(a, {"input"});
 
     // since we're trying to resolve non-existent placeholder - we expect exception
     ASSERT_THROW(graph.execute({{"array", NDArrayFactory::create(0.5f)}}, {"tanh_node"}), graph::unresolved_input_exception);

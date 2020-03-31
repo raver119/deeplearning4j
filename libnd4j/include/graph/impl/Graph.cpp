@@ -326,6 +326,11 @@ namespace sd {
             addVariable(name, lvalue);
         }
 
+        void Graph::addNode(Node &&node, const std::vector<std::string> &inputs) {
+            auto lvalue = node;
+            addNode(lvalue, inputs);
+        }
+
         void Graph::addNode(Node &node, const std::vector<std::string> &inputs) {
             if (node.id() != 0)
                 throw std::runtime_error("Graph::addNode - Node has id defined");
@@ -1760,6 +1765,12 @@ namespace sd {
         }
 
         std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {
+            // first of all we check existence of placeholders in dictionary
+            for (const auto &v:dictionary) {
+                if (_symbolicLookupTable.count(v.first) == 0)
+                    throw unresolved_input_exception::build("Dictionary entry doesn't exist", v.first);
+            }
+
             // TODO: implement this method
             return std::map<std::string, NDArray>();
         }

@@ -878,11 +878,102 @@ namespace sd {
             _rewindLayer.second = stepId;
         }
 
-        bool Node::equals(Node *other) {
+        bool Node::equals(Node *other) const {
             if (_opType == other->_opType && _dataType == other->_dataType && _opNum == other->_opNum)
                 return true;
 
             return false;
+        }
+
+        Node::Node(const Node &other) noexcept {
+
+        }
+
+        Node &Node::operator=(const Node &other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _dataType = other._dataType;
+            _opType = other._opType;
+            _opClass = other._opClass;
+            _opNum = other._opNum;
+            _customOp = other._customOp;
+            _name = other._name;
+            _scope_id = other._scope_id;
+            _scope_name = other._scope_name;
+            _rewindNode = other._rewindNode;
+            _layer = other._layer;
+
+            _hasExternalOutputs = other._hasExternalOutputs;
+            _hasExternalInputs = other._hasExternalInputs;
+            _hasInternalOutputs = other._hasInternalOutputs;
+            _hasInternalInputs = other._hasInternalInputs;
+            _isInplace = other._isInplace;
+            _isDeductable = other._isDeductable;
+            _active = other._active;
+            _removable = other._removable;
+
+            _graph = other._graph;
+            _customOp = other._customOp;
+            _dim = other._dim;
+            _extraParams = other._extraParams;
+            _protoContext = other._protoContext;
+
+            _input = other._input;
+            _output = other._output;
+            _dimensions = other._dimensions;
+            _rewindLayer = other._rewindLayer;
+            _referencedBy = other._referencedBy;
+            _scalar = other._scalar;
+
+            return *this;
+        }
+
+        Node::Node(Node &&other) noexcept {
+
+        }
+
+        Node &Node::operator=(Node &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _dataType = other._dataType;
+            _opType = other._opType;
+            _opClass = other._opClass;
+            _opNum = other._opNum;
+            _customOp = other._customOp;
+            _scope_id = other._scope_id;
+            _name = std::move(other._name);
+            _scope_name = std::move(other._scope_name);
+            _rewindNode = other._rewindNode;
+            _layer = other._layer;
+
+            _hasExternalOutputs = other._hasExternalOutputs;
+            _hasExternalInputs = other._hasExternalInputs;
+            _hasInternalOutputs = other._hasInternalOutputs;
+            _hasInternalInputs = other._hasInternalInputs;
+            _isInplace = other._isInplace;
+            _isDeductable = other._isDeductable;
+            _active = other._active;
+            _removable = other._removable;
+
+            _graph = other._graph;
+            _customOp = other._customOp;
+            _dim = other._dim;
+            _extraParams = other._extraParams;
+            _protoContext = other._protoContext;
+
+            _input = std::move(other._input);
+            _output = std::move(other._output);
+            _dimensions = std::move(other._dimensions);
+            _rewindLayer = std::move(other._rewindLayer);
+            _referencedBy = std::move(other._referencedBy);
+            _scalar = std::move(other._scalar);
+
+            other._protoContext = nullptr;
+            other._customOp = nullptr;
+
+            return *this;
         }
 
         void Node::deleteOpByType(OpType opType, void *op) {

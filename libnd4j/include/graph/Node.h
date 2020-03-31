@@ -80,7 +80,7 @@ namespace sd {
             OpClass _opClass;
 
             // these fields are used to store embedded CustomOps and Graph in case of Graph-in-Graph scenario
-            sd::graph::Graph * _graph= nullptr;
+            Graph * _graph= nullptr;
             sd::ops::DeclarableOp *_customOp = nullptr;
 
             // each node can be active or inactive, if used with divergents, like IF statements
@@ -102,7 +102,7 @@ namespace sd {
 
             explicit Node(const std::string &nodeName, const sd::ops::DeclarableOp &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
             explicit Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
-            explicit Node(const sd::graph::FlatNode *node);
+            explicit Node(const FlatNode *node);
             ~Node();
 
             /*
@@ -113,7 +113,19 @@ namespace sd {
             explicit Node(sd::ops::DeclarableOp *customOp, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
             explicit Node(OpType opType = OpType_TRANSFORM_SAME, int opNum = 0, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
 
-            bool equals(Node *other);
+
+            Node(const Node& other) noexcept;
+
+            Node& operator=(const Node& other) noexcept;
+
+            // move constructor
+            Node(Node&& other) noexcept;
+
+            // move assignment operator
+            Node& operator=(Node&& other) noexcept;
+
+
+            bool equals(Node *other) const;
 
             sd::DataType dataType();
             ContextPrototype *protoContext();
@@ -188,8 +200,8 @@ namespace sd {
             sd::ops::DeclarableOp* getCustomOp();
             bool hasCustomOp();
 
-            void setGraph(sd::graph::Graph* graph = nullptr);
-            sd::graph::Graph* getGraph();
+            void setGraph(Graph* graph = nullptr);
+            Graph* getGraph();
             bool hasGraphEmbedded();
 
             bool isInplace();

@@ -23,28 +23,28 @@
 
 namespace sd {
     namespace graph {
-        unresolved_input_exception::unresolved_input_exception(std::string message) : std::runtime_error(message) {
+        unresolved_input_exception::unresolved_input_exception(const std::string &message) : std::runtime_error(message) {
             //
         }
 
-        unresolved_input_exception unresolved_input_exception::build(std::string message, int nodeId, std::pair<int, int> &varIndex) {
+        unresolved_input_exception unresolved_input_exception::build(const std::string & message, int nodeId, std::pair<int, int> &varIndex) {
             auto node = StringUtils::valueToString<int>(nodeId);
             auto varId = StringUtils::valueToString<int>(varIndex.first);
             auto outputIdx = StringUtils::valueToString<int>(varIndex.second);
-            message += "; Node: [" + node +":0]; Variable: [" + varId + ":" +  outputIdx + "]";
-            return unresolved_input_exception(message);
+            auto rmessage = message + "; Node: [" + node +":0]; Variable: [" + varId + ":" +  outputIdx + "]";
+            return unresolved_input_exception(rmessage);
         }
 
-        unresolved_input_exception unresolved_input_exception::build(std::string message, std::pair<int, int> &varIndex) {
+        unresolved_input_exception unresolved_input_exception::build(const std::string &message, std::pair<int, int> &varIndex) {
             auto nodeId = StringUtils::valueToString<int>(varIndex.first);
             auto outputIdx = StringUtils::valueToString<int>(varIndex.second);
-            message += "; Variable: [" + nodeId + ":" +  outputIdx + "]";
-            return unresolved_input_exception(message);
+            auto rmessage = message + "; Variable: [" + nodeId + ":" +  outputIdx + "]";
+            return unresolved_input_exception(rmessage);
         }
 
-        unresolved_input_exception unresolved_input_exception::build(std::string message, std::string &varName) {
-            message += "; Variable: [" + varName + "]";
-            return unresolved_input_exception(message);
+        unresolved_input_exception unresolved_input_exception::build(const std::string &message, const std::string &varName) {
+            auto rmessage = message + "; Variable: [" + varName + "]";
+            return unresolved_input_exception(rmessage);
         }
     }
 }
