@@ -40,7 +40,7 @@ namespace sd {
             explicit ExecutorConfiguration(const sd::graph::FlatConfiguration *conf = nullptr);
             ~ExecutorConfiguration() = default;
             
-            ExecutorConfiguration* clone();
+            ExecutorConfiguration clone() const;
 
 #ifndef __JAVACPP_HACK__
             flatbuffers::Offset<FlatConfiguration> asFlatConfiguration(flatbuffers::FlatBufferBuilder &builder);

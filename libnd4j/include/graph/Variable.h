@@ -131,7 +131,8 @@ namespace sd {
             void setId(int id);
             void setId(int id, int idx);
 
-            const std::string &getName() const;
+            const std::string& name() const;
+            const std::string& getName() const;
             void setName(const std::string &name);
 
             const std::vector<Nd4jLong>& shape() const;

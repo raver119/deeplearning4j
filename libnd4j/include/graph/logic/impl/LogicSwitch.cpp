@@ -20,12 +20,13 @@
 
 #include <system/pointercast.h>
 #include <graph/logic/LogicSwitch.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <graph/Status.h>
 
 namespace sd {
     namespace graph {
         Nd4jStatus LogicSwitch::processNode(Graph* graph, Node* node) {
+            throw std::runtime_error("LogicSwitch::processNode - not implemented yet");
+            /*
             auto __variableSpace = graph->getVariableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
@@ -103,6 +104,7 @@ namespace sd {
             }
 
             return sd::Status::OK();
+            */
         };
     }
 }

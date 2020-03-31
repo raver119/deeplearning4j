@@ -23,7 +23,6 @@
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/OpTuple.h>
 #include <ops/declarable/OpRegistrator.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <memory/MemoryReport.h>
 #include <memory/MemoryUtils.h>
 #include <helpers/MmulHelper.h>
@@ -41,10 +40,7 @@ TEST_F(OneOffTests, test_avg_pool_3d_1) {
 
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
     delete graph;
 }
 
@@ -53,10 +49,7 @@ TEST_F(OneOffTests, test_avg_pool_3d_2) {
 
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
     delete graph;
 }
 
@@ -65,10 +58,7 @@ TEST_F(OneOffTests, test_non2d_0A_1) {
 
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
     delete graph;
 }
 
@@ -96,10 +86,7 @@ TEST_F(OneOffTests, test_assert_scalar_float32_2) {
 
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
     delete graph;
 }
 
@@ -110,17 +97,12 @@ TEST_F(OneOffTests, test_pad_1D_1) {
 
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
 
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(4));
 
     auto z = graph->getVariableSpace()->getVariable(4)->getNDArray();
     ASSERT_TRUE(z != nullptr);
-
-    // z->printIndexedBuffer("z");
 
     ASSERT_EQ(e, *z);
     delete graph;
@@ -161,10 +143,7 @@ TEST_F(OneOffTests, test_conv2d_nhwc_failed_1) {
     auto graph = Graph::fromFlatBuffers("./resources/channels_last_b1_k2_s1_d1_SAME_crelu.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
 
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(9));
 
@@ -182,10 +161,8 @@ TEST_F(OneOffTests, test_tensor_array_1) {
     auto graph = Graph::fromFlatBuffers("./resources/tensor_array_close_sz1_float32_nodynamic_noname_noshape.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(5));
 
     auto z = graph->getVariableSpace()->getVariable(5)->getNDArray();
@@ -202,10 +179,8 @@ TEST_F(OneOffTests, test_tensor_array_2) {
     auto graph = Graph::fromFlatBuffers("./resources/tensor_array_split_sz1_float32_nodynamic_noname_noshape.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(6));
 
     auto z = graph->getVariableSpace()->getVariable(6)->getNDArray();
@@ -222,11 +197,8 @@ TEST_F(OneOffTests, test_tensor_array_3) {
     auto graph = Graph::fromFlatBuffers("./resources/tensor_array_stack_sz3-1_int32_dynamic_name_shape.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(15));
 
     auto z = graph->getVariableSpace()->getVariable(15)->getNDArray();
@@ -243,11 +215,8 @@ TEST_F(OneOffTests, test_tensor_array_4) {
     auto graph = Graph::fromFlatBuffers("./resources/tensor_array_unstack_sz1_int64_nodynamic_noname_shape2-3.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(11));
 
     auto z = graph->getVariableSpace()->getVariable(11)->getNDArray();
@@ -264,11 +233,8 @@ TEST_F(OneOffTests, test_assert_4) {
     auto graph = Graph::fromFlatBuffers("./resources/assert_type_rank2_int64.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1));
 
     auto z = graph->getVariableSpace()->getVariable(1)->getNDArray();
@@ -335,11 +301,8 @@ TEST_F(OneOffTests, test_identity_n_2) {
     auto graph = Graph::fromFlatBuffers("./resources/identity_n_2.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
+    graph->execute();
 
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1));
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1, 1));
 
@@ -357,10 +320,7 @@ TEST_F(OneOffTests, test_non2d_1) {
     auto graph = Graph::fromFlatBuffers("./resources/non2d_1.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
 
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(3));
 
@@ -379,10 +339,7 @@ TEST_F(OneOffTests, test_reduce_all_1) {
     auto graph = Graph::fromFlatBuffers("./resources/reduce_all_rank2_d0_keep.fb");
     ASSERT_TRUE(graph != nullptr);
 
-    // graph->printOut();
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
+    graph->execute();
 
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1));
 

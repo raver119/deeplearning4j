@@ -65,7 +65,7 @@ namespace sd {
             // FIXME: get rid of this!!!
             _scalar = NDArrayFactory::create<int>(0);
 
-            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: iArgs)
                 block->getIArguments()->emplace_back(v);
@@ -104,7 +104,7 @@ namespace sd {
             // FIXME: get rid of this!!!
             _scalar = NDArrayFactory::create<int>(0);
 
-            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: iArgs)
                 block->getIArguments()->emplace_back(v);
@@ -135,12 +135,8 @@ namespace sd {
             _graph = graph;
         }
 
-        Graph* Node::getGraph() {
+        Graph* Node::graph() const {
             return _graph;
-        }
-
-        bool Node::hasGraphEmbedded() {
-            return _graph != nullptr;
         }
 
         void Node::markInplace(bool reallyInplace) {
@@ -197,10 +193,10 @@ namespace sd {
 
         ContextPrototype * Node::getContextPrototype() {
             if (_protoContext == nullptr)
-                _protoContext = new ContextPrototype(this->getCustomOp() != nullptr ? this->getCustomOp()->getOpDescriptor() : nullptr, this->id());
+                _protoContext = new ContextPrototype(this->customOp() != nullptr ? this->customOp()->getOpDescriptor() : nullptr, this->id());
             if (_protoContext->inputs()->empty()) {
-                for (int e = 0; e < this->input()->size(); e++) {
-                    _protoContext->inputs()->emplace_back(this->input()->at(e));
+                for (int e = 0; e < this->input().size(); e++) {
+                    _protoContext->inputs()->emplace_back(this->input().at(e));
                 }
             }
             return _protoContext;
@@ -217,7 +213,7 @@ namespace sd {
             _id = id;
         }
 
-        sd::ops::DeclarableOp* Node::getCustomOp() {
+        sd::ops::DeclarableOp* Node::customOp() const {
             return _customOp;
         }
 
@@ -229,7 +225,7 @@ namespace sd {
                 _isInplace = true;
         }
 
-        bool Node::hasCustomOp() {
+        bool Node::hasCustomOp() const {
             return _customOp != nullptr;
         }
 
@@ -355,24 +351,24 @@ namespace sd {
             _referencedBy.emplace_back(nodeId);
         }
 
-        OpType Node::opType() {
+        OpType Node::opType() const {
             return _opType;
         }
 
-        int Node::id() {
+        int Node::id() const {
             return _id;
         }
 
-        Nd4jLong Node::opNum() {
+        Nd4jLong Node::opNum() const {
             return _opNum;
         }
 
-        std::vector<std::pair<int,int>> *Node::input() {
-            return &_input;
+        const std::vector<std::pair<int,int>>& Node::input() const {
+            return _input;
         }
 
-        std::vector<std::pair<int, int>> *Node::output() {
-            return &_output;
+        const std::vector<std::pair<int, int>>& Node::output() const {
+            return _output;
         }
 
         bool Node::isScoped() {
@@ -424,7 +420,7 @@ namespace sd {
             for (auto i: inputs)
                 pickInput(i);
 
-            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: iArgs)
                 block->getIArguments()->emplace_back(v);
@@ -457,7 +453,7 @@ namespace sd {
             for (auto i: inputs)
                 pickInput(i);
 
-            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: iArgs)
                 block->getIArguments()->emplace_back(v);
@@ -500,7 +496,7 @@ namespace sd {
                 }
             }
 
-            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+            auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
             for (auto v: dimensions)
                 block->getAxis()->emplace_back(v);
@@ -592,10 +588,10 @@ namespace sd {
 
                 this->setContextPrototype(block);
                 this->setCustomOp(Node::buildOpByType(opType, (int) input.size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), opNum, &_scalar));
-                block->setOpDescriptor(this->getCustomOp()->getOpDescriptor());
+                block->setOpDescriptor(this->customOp()->getOpDescriptor());
             } else if (opType == OpType_CUSTOM) {
-                if (this->getCustomOp()) {
-                    auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+                if (this->customOp()) {
+                    auto block = new ContextPrototype(this->customOp()->getOpDescriptor(), this->id(), false);
 
                     for (auto v: dimensions)
                         block->getAxis()->emplace_back(v);
@@ -751,14 +747,14 @@ namespace sd {
 
                         this->setContextPrototype(block);
                         this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), (int) _opNum, &_scalar));
-                        block->setOpDescriptor(this->getCustomOp()->getOpDescriptor());
+                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
                     } else if (node->inputPaired() != nullptr && node->inputPaired()->size() > 0) {
                         this->_isDeductable = true;
 
                         auto block = new ContextPrototype(nullptr, this->id(), false);
 
-                        for (int e = 0; e < this->input()->size(); e++) {
-                            block->inputs()->emplace_back(this->input()->at(e));
+                        for (int e = 0; e < this->input().size(); e++) {
+                            block->inputs()->emplace_back(this->input().at(e));
                         }
 
                         // there's no other IArgs in legacy options, actually
@@ -789,7 +785,7 @@ namespace sd {
                         this->setContextPrototype(block);
 
                         this->setCustomOp(Node::buildOpByType(_opType, (int) node->inputPaired()->size(), (int) block->getIArguments()->size(), (int) block->getTArguments()->size(), (int) _opNum, &_scalar));
-                        block->setOpDescriptor(this->getCustomOp()->getOpDescriptor());
+                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
                     }
                 } else if (this->_opType == OpType_CUSTOM) {
                         auto op = sd::ops::OpRegistrator::getInstance()->getOperation(this->opNum());
@@ -800,8 +796,8 @@ namespace sd {
 
                         auto block = new ContextPrototype(nullptr, this->id());
 
-                        for (int e = 0; e < this->input()->size(); e++) {
-                            block->inputs()->emplace_back(this->input()->at(e));
+                        for (int e = 0; e < this->input().size(); e++) {
+                            block->inputs()->emplace_back(this->input().at(e));
                         }
 
                         if (node->extraInteger() != nullptr)
@@ -831,7 +827,7 @@ namespace sd {
 
                         this->setContextPrototype(block);
                         this->setCustomOp(op);
-                        block->setOpDescriptor(this->getCustomOp()->getOpDescriptor());
+                        block->setOpDescriptor(this->customOp()->getOpDescriptor());
                 }
             } else {
                 // empty dynamic node, tests probably
@@ -842,7 +838,7 @@ namespace sd {
             return _dataType;
         }
 
-        ContextPrototype* Node::protoContext() {
+        ContextPrototype* Node::protoContext() const {
             return _protoContext;
         }
 

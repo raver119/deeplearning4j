@@ -39,17 +39,8 @@ namespace sd {
             }
         };
 
-        ExecutorConfiguration* ExecutorConfiguration::clone() {
-            auto clone = new ExecutorConfiguration();
-            clone->_profilingMode = _profilingMode;
-            clone->_executionMode = _executionMode;
-            clone->_outputMode = _outputMode;
-            clone->_timestats = _timestats;
-            clone->_direction = _direction;
-            clone->_footprintForward = _footprintForward;
-            clone->_footprintBackward = _footprintBackward;
-
-            return clone;
+        ExecutorConfiguration ExecutorConfiguration::clone() const {
+            return ExecutorConfiguration(*this);
         };
 
         flatbuffers::Offset<FlatConfiguration> ExecutorConfiguration::asFlatConfiguration(flatbuffers::FlatBufferBuilder &builder) {

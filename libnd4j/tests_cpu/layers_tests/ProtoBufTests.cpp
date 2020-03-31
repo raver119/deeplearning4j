@@ -20,7 +20,6 @@
 
 
 #include "testlayers.h"
-#include <graph/execution/GraphExecutioner.h>
 
 /*
 

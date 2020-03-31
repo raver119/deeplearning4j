@@ -19,7 +19,6 @@
 //
 
 #include <graph/logic/LogicConditional.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <graph/logic/LogicReturn.h>
 #include <graph/Status.h>
 
@@ -27,6 +26,8 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicConditional::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicConditional::processNode - not implemented yet");
+            /*
             auto __variableSpace = graph->getVariableSpace();
 
             auto size = node->input()->size();
@@ -131,6 +132,7 @@ namespace sd {
             }
 
             return sd::Status::OK();
+             */
         }
     }
 }

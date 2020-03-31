@@ -19,7 +19,6 @@
 //
 
 #include "testlayers.h"
-#include <graph/execution/GraphExecutioner.h>
 #include <graph/GraphHolder.h>
 #include <graph/InferenceRequest.h>
 

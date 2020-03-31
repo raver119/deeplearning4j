@@ -39,22 +39,22 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_1) {
     Graph graph;
 
     // A
-    graph.getVariableSpace()->putVariable(-1, 0, NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
 
     // B
-    graph.getVariableSpace()->putVariable(-2, 0, NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
 
     // C
-    graph.getVariableSpace()->putVariable(-3, 0, NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
-    Node a("multiply", 10, {{-1, 0}, {-2, 0}});
-    Node b("add", 20, {{10, 0}, {-3, 0}});
+    Node a("multiply", sd::ops::multiply());
+    Node b("add", sd::ops::add());
 
-    graph.addNode(b);
-    graph.addNode(a);
+    graph.addNode(a, {"A", "B"});
+    graph.addNode(b, {"multiply", "C"});
 
     // we just check that nodes were really added
-    ASSERT_EQ(2, graph.totalNodes());
+    ASSERT_EQ(2, graph.size());
 
     auto optimized = graph.optimizedGraph();
 
@@ -78,28 +78,28 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     Graph graph;
 
     // A
-    graph.getVariableSpace()->putVariable(-1, 0, NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
 
     // B
-    graph.getVariableSpace()->putVariable(-2, 0, NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
 
     // C
-    graph.getVariableSpace()->putVariable(-3, 0, NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
     // D
-    graph.getVariableSpace()->putVariable(-4, 0, NDArrayFactory::create<int>('c', {3}, {4, 4, 4}));
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {4, 4, 4}));
 
-    Node a("multiply", 10, {{-1, 0}, {-2, 0}});
-    Node b("add", 20, {{10, 0}, {-3, 0}});
-    Node c("subtract", 30, {{10, 0}, {-4, 0}});
+    Node a("multiply", sd::ops::multiply());
+    Node b("add", sd::ops::add());
+    Node c("subtract", sd::ops::subtract());
 
 
-    graph.addNode(b);
-    graph.addNode(c);
-    graph.addNode(a);
+    graph.addNode(a, {"A", "B"});
+    graph.addNode(b, {"multiply", "C"});
+    graph.addNode(c, {"multiply", "D"});
 
     // we just check that nodes were really added
-    ASSERT_EQ(3, graph.totalNodes());
+    ASSERT_EQ(3, graph.size());
 
     auto optimized = graph.optimizedGraph();
 

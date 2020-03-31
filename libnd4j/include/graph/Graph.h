@@ -45,51 +45,29 @@ namespace sd {
 
         class SD_EXPORT Graph {
         protected:
-            ExecutorConfiguration *_configuration;
+            ExecutorConfiguration _configuration;
             VariableSpace *_variableSpace;
             Stash* _stash;
 
-            // this list holds references to Node ptrs, which should be free'd in Graph destructor
-            std::vector<Node*> _handles;
+            MAP_IMPL<int, Node> _unmapped;
 
-            // vector holds ID's of top nodes only
-            std::vector<int > *_nodes;
-            MAP_IMPL<int, Node*> *_mapped;
-
-            MAP_IMPL<int, std::vector<Node*> *> *_onion;
-            MAP_IMPL<int, Node*> _unmapped;
+            // string -> id conversion table
             MAP_IMPL<std::string, int> _symbolicLookupTable;
-            std::vector<int> _unmappedMap; // macOS?
 
             std::mutex _mutexPreprocessing;
             std::atomic<bool> _built;
 
-            std::vector<int> _output;
-            std::vector<int> _autos;
-
             // we want to know last node id
             int _maxId = 1;
-
-
-            MAP_IMPL<int, Scope*> _mappedScopes;
-            std::vector<Scope*> _scopes;
 
             const GraphMemoryManager &_memoryMaager;
 
 ////////////////////////////////////////
             Nd4jStatus validateNode(Node *node);
 
-            void expandOnion(int newLayer);
-
-            void injectNode(Node *node);
-
-            void pushToOutputOnce(int id);
-
-            void printOutNode(Node* node);
-
-            void prepareOutputs();
-
             int idByName(const std::string &nodeName) const;
+
+            void printOutNode(const Node &node) const;
         public:
             Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
@@ -102,25 +80,13 @@ namespace sd {
             static Graph* fromFlatBuffers(const char *fileName, const GraphMemoryManager &memoryManager = GraphMemoryManager());
             static Graph* fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
-            // this method applies toposort to nodes
-            void toposortNodes();
-
             // method that'll print out graph
             Nd4jStatus validate();
 
-            // this method will build structured representation of graph
-            Nd4jStatus buildGraph();
-
-            // this method will return estimated memory size (in bytes) required for 1 full graph execution round
-            Nd4jLong estimateRequiredMemory();
-
-            // this method returns number of root nodes in this graph
-            int rootNodes();
-
             // this method returns total number of nodes in this graph
-            int totalNodes();
+            int size() const;
 
-            int numberOfPlaceholders();
+            int numberOfPlaceholders() const;
 
             const std::vector<Variable*>& getPlaceholders() const;
 
@@ -132,19 +98,14 @@ namespace sd {
 
             /**
              * These methods add given node to the graph
-             * FIXME: deprecated
              * @param node
              */
-            void addNode(Node *node);
-            void addNode(const Node &node);
+            //void addNode(Node &&node, const std::vector<std::string> &inputs);
 
-            /**
-             * These methods add given node to the graph
-             * @param node
-             */
-            void addNode(Node &&node, const std::vector<std::string> &inputs);
-            void addNode(Node &node, const std::vector<std::string> &inputs);
-            void addNode(Node &node, const std::vector<std::pair<int, int>> &inputs);
+            void addNode(Node &node, const std::initializer_list<std::string> &inputs);
+            void addNode(Node &node, const std::initializer_list<int> &inputs);
+            void addNode(Node &node, const std::initializer_list<std::pair<int, int>> &inputs);
+
 
             void addVariable(const std::string &name, NDArray &array);
             void addVariable(const std::string &name, NDArray &&array);
@@ -154,68 +115,18 @@ namespace sd {
              */
             void addPlaceholder(const std::string &nodeName, const DataType dataType = sd::DataType::ANY, const std::vector<Nd4jLong> &shape = {});
 
-            /**
-             * This method returns layered representation of the graph
-             *
-             * @return
-             */
-            MAP_IMPL<int, std::vector<Node*> *> *getOnion();
-
-            /**
-             * This method returns map of all nodes of the graph
-             * @return
-             */
-            MAP_IMPL<int, Node*>* getMapped();
-
-            /**
-             * This method returns outputs of this graph
-             * @return
-             */
-            std::vector<Variable*> *fetchOutputs();
 
             /**
              * This method returns pointer to ExecutorConfiguration
              *
              * @return
              */
-            ExecutorConfiguration *getExecutorConfiguration();
-
-            /**
-             * This method adds specified node (by ID) to de
-             * @param id
-             */
-            void addOutput(int id);
-
-            /**
-             * This method returns all nodes at once (order is NOT guaranteed)
-             * @return
-             */
-            std::vector<Node*> *getAllNodes();
+            const ExecutorConfiguration& getExecutorConfiguration() const;
 
             /**
              * This method prints out Graph op-by-op, and respective inputs
              */
             void printOut();
-
-            /**
-             * This method collect all ops from the graph into ops vector
-             */
-            std::vector<sd::ops::OpDescriptor> getOperations();
-
-            /**
-             * This method returns Scope ptr specified with id
-             *
-             * @param id
-             * @return
-             */
-            Scope* scopeById(int id);
-
-            /**
-             * This method returns TRUE if specified ID refers to Scope, and false otherwise
-             * @param id
-             * @return
-             */
-            bool hasScope(int id);
 
             /**
              * This method returns clone of the graph
@@ -233,41 +144,13 @@ namespace sd {
             void forgetVariableSpace();
 
             /**
-             * This method returns Node with given Id
-             */
-            Node* nodeById(int nodeId);
-
-            /**
-             * This method returns True if node with given ID exists, False otherwise
-             * @param nodeId
-             * @return
-             */
-            bool hasNode(int nodeId);
-
-            /**
              * This method returns hash of given Graph instance
              */
-            Nd4jLong hashCode();
+            Nd4jLong hashCode() const;
 
-            /**
-             * PLEASE NOTE: This method will be moved to private section
-             */
-            void tagInplaceNodes();
-
-            void replaceState(VariableSpace *state, ExecutorConfiguration *configuration);
-
-            FORCEINLINE std::vector<int>* nodes();
-
-            FORCEINLINE std::vector<int>* autos();
-
-            FORCEINLINE std::vector<int>* output();
-
-            FORCEINLINE MAP_IMPL<int, Scope*>* scopes();
+            void replaceState(VariableSpace *state, const ExecutorConfiguration &configuration);
 
             FORCEINLINE bool built();
-
-            FORCEINLINE void pullState(Graph *other);
-
 
             OptimizedGraph optimizedGraph() const;
 
@@ -290,58 +173,9 @@ protected:
                 const std::unordered_map<int, int>& positions, OpSequence& opSeq) const;
         };
 
-        FORCEINLINE std::vector<int>* Graph::nodes() {
-            return _nodes;
-        }
-
-        FORCEINLINE std::vector<int>* Graph::autos() {
-            return &_autos;
-        }
-
-        FORCEINLINE std::vector<int>* Graph::output() {
-            return &_output;
-        }
-
-        FORCEINLINE MAP_IMPL<int, Scope*>* Graph::scopes() {
-            return &_mappedScopes;
-        }
 
         FORCEINLINE bool Graph::built() {
             return _built.load();
-        }
-
-        FORCEINLINE void Graph::pullState(Graph *other) {
-            for (int e = 0; e < other->nodes()->size(); e++)
-                this->_nodes->emplace_back(other->nodes()->at(e));
-
-            for (int e = 0; e < other->output()->size(); e++)
-                this->_output.emplace_back(other->output()->at(e));
-
-            for (int e = 0; e < other->autos()->size(); e++)
-                this->_autos.emplace_back(other->autos()->at(e));
-
-            for (auto &v: *other->scopes()) {
-                auto scp = v.second->clone();
-                this->_mappedScopes[v.first] = scp;
-                this->_scopes.emplace_back(scp);
-            }
-
-            for (auto &v: *other->getOnion()) {
-                auto vec = this->_onion->count(v.first) > 0 ? this->_onion->at(v.first) : new std::vector<Node*>();
-
-                auto ovec = (*other->getOnion())[v.first];
-                for (auto x: *(ovec)) {
-                    auto n = x->clone();
-                    vec->emplace_back(n);
-                    _handles.emplace_back(n);
-                    (*this->_mapped)[n->id()] = n;
-                }
-
-                if (this->_onion->count(v.first) < 1)
-                    (*this->_onion)[v.first] = vec;
-            }
-
-            this->_built.store(other->built());
         }
     }
 }

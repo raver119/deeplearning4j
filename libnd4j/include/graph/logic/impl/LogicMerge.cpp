@@ -24,13 +24,15 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicMerge::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicMerge::processNode - not implemented yet");
+            /*
             // at merge node only one of inputs exist if that's just switch and other node isn't LogicNextItration
             auto __variableSpace = graph->getVariableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             // merge MUST have 2 inputs
-            auto inputAddr0 = node->input()->at(0);
-            auto inputAddr1 = node->input()->at(1);
+            auto inputAddr0 = node->input().at(0);
+            auto inputAddr1 = node->input().at(1);
 
             bool isWhile = false;
 
@@ -101,8 +103,8 @@ namespace sd {
             } else {
 
                 // basically, first non-null variable is our target
-                for (int e = 0; e < node->input()->size(); e++) {
-                    auto inputAddr = node->input()->at(e);
+                for (int e = 0; e < node->input().size(); e++) {
+                    auto inputAddr = node->input().at(e);
 
                     if (__variableSpace->hasVariable(inputAddr)) {
                         auto var = __variableSpace->getVariable(inputAddr);
@@ -129,6 +131,7 @@ namespace sd {
             }
 
             return Status::OK();
+            */
         }
     }
 }

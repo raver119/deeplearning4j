@@ -19,7 +19,7 @@
 //
 
 #include <graph/profiling/GraphProfilingHelper.h>
-#include <graph/execution/GraphExecutioner.h>
+
 
 namespace sd {
     namespace graph {
@@ -38,7 +38,7 @@ namespace sd {
                 auto _vs = varSpace->clone();
                 //_vs->workspace()->expandTo(100000);
                 _vs->setFlowPath(&fp);
-                GraphExecutioner::execute(graph, _vs);
+                //GraphExecutioner::execute(graph, _vs);
 
                 delete _vs;
             }
@@ -52,7 +52,7 @@ namespace sd {
                 auto _vs = varSpace->clone();
                 //_vs->workspace()->expandTo(100000);
                 _vs->setFlowPath(&fp);
-                GraphExecutioner::execute(graph, _vs);
+                //GraphExecutioner::execute(graph, _vs);
 
                 auto p = fp.profile();
                 if (e == 0)

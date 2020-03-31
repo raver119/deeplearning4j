@@ -24,7 +24,6 @@
 #include <exceptions/cuda_exception.h>
 #include <helpers/ConstantHelper.h>
 #include <helpers/ConstantShapeHelper.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <helpers/ShapeUtils.h>
 #include <type_traits>
 

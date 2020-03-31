@@ -25,6 +25,8 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicEnter::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicEnter::processNode - not implemented yet");
+            /*
             // this op replicates input variable into the frame. basically happens once for single loop.
             // sure, if there's inner loop within outer loop, it'll be called once for outer loop and multiple times for inner loop
 
@@ -69,6 +71,7 @@ namespace sd {
             }
 
             return sd::Status::OK();
+             */
         }
     }
 }

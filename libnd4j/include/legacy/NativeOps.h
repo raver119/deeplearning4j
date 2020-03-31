@@ -72,7 +72,6 @@ bool verbose = false;
 #include <helpers/ConstantHelper.h>
 #include <array/TadPack.h>
 #include <graph/VariablesSet.h>
-#include <graph/GraphState.h>
 #include <graph/logic/LogicExecutor.h>
 #include <graph/ResultWrapper.h>
 #include <helpers/DebugInfo.h>

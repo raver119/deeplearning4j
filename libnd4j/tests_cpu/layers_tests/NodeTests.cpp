@@ -65,7 +65,7 @@ TEST_F(NodeTests, Test_Dtype_Conversion_2) {
 //    ASSERT_EQ(nodeA->getOpClass(), nf->getOpClass());
     ASSERT_EQ(nodeA->opType(), nf->opType());
     ASSERT_EQ(nodeA->opNum(), nf->opNum());
-    ASSERT_EQ(nodeA->getCustomOp()->getOpHash(), nf->getCustomOp()->getOpHash());
+    ASSERT_EQ(nodeA->customOp()->getOpHash(), nf->customOp()->getOpHash());
 
     delete nodeA;
     delete nd;

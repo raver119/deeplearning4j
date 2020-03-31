@@ -19,7 +19,6 @@
 //
 
 #include <graph/GraphHolder.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <exceptions/graph_exists_exception.h>
 #include <exceptions/graph_execution_exception.h>
 
@@ -115,7 +114,7 @@ namespace sd {
         flatbuffers::Offset<FlatResult> GraphHolder::execute(Nd4jLong graphId, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request) {
             if (!hasGraph(graphId))
                 throw unknown_graph_exception(graphId);
-
+/*
             lockRead(graphId);
 
             auto graph = cloneGraph(graphId);
@@ -125,6 +124,8 @@ namespace sd {
             unlockRead(graphId);
 
             return res;
+            */
+            throw std::runtime_error("GraphHolder::execute - not implemented yet");
         }
 
         GraphHolder* GraphHolder::_INSTANCE = 0;

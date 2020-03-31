@@ -20,7 +20,6 @@
 
 #include <graph/logic/LogicWhile.h>
 #include <graph/logic/LogicReturn.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <graph/logic/LogicExecutor.h>
 #include <graph/Status.h>
 
@@ -28,6 +27,8 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicWhile::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicWhile::processNode - not implemented yet");
+            /*
             auto __variableSpace = graph->getVariableSpace();
 
             nd4j_debug("Starting on WHILE loop: [%i]\n", node->id());
@@ -139,6 +140,7 @@ namespace sd {
             }
 
             return sd::Status::OK();
+             */
         }
     }
 }

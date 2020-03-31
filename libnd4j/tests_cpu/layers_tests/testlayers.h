@@ -33,7 +33,6 @@
 #include <ops/ops.h>
 #include <helpers/shape.h>
 #include <ops/gemm.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <gtest/gtest.h>
 #include <array/NDArrayFactory.h>
 #include <array>

@@ -77,8 +77,8 @@ TEST_F(GraphTests2, test_execution_1) {
     Node a("multiply_node", sd::ops::multiply());
     Node b("add_node", sd::ops::add());
 
-    graph.addNode(a,  std::vector<std::string>{"A", "B"});
-    graph.addNode(b,  std::vector<std::string>{"multiply_node", "C"});
+    graph.addNode(a, {"A", "B"});
+    graph.addNode(b, {"multiply_node", "C"});
 
     auto result = graph.execute({}, {"add_node"});
     ASSERT_EQ(1, result.size());
@@ -90,7 +90,8 @@ TEST_F(GraphTests2, test_placeholder_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
+    Node node("tanh_node", sd::ops::tanh());
+    graph.addNode(node, {"input"});
 
     // this test must throw an exception, because input isn't resolved yet
     ASSERT_ANY_THROW(graph.execute());
@@ -114,7 +115,8 @@ TEST_F(GraphTests2, test_output_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
+    Node node("tanh_node", sd::ops::tanh());
+    graph.addNode(node, {"input"});
 
     // since we're requesting output of non-existent node - we expect exception
     ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"pow_node"}), graph::unresolved_output_exception);

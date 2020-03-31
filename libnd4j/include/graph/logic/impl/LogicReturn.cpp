@@ -25,6 +25,8 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicReturn::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicReturn::processNode - not implemented yet");
+            /*
             auto __variableSpace = graph->getVariableSpace();
 
             for (int e = 0; e < node->input()->size(); e++) {
@@ -50,6 +52,7 @@ namespace sd {
             }
 
             return sd::Status::OK();
+             */
         }
     }
 }

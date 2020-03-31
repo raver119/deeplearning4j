@@ -92,6 +92,10 @@ namespace sd {
             return _placeholder;
         }
 
+        const std::string& sd::graph::Variable::name() const {
+            return _name;
+        }
+
         const std::string& sd::graph::Variable::getName() const {
             return _name;
         }

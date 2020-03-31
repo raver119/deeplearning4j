@@ -124,16 +124,15 @@ namespace sd {
             // move assignment operator
             Node& operator=(Node&& other) noexcept;
 
-
             bool equals(Node *other) const;
 
             sd::DataType dataType();
-            ContextPrototype *protoContext();
-            OpType opType();
-            Nd4jLong opNum();
-            int id();
-            std::vector<std::pair<int,int>> *input();
-            std::vector<std::pair<int, int>> *output();
+            ContextPrototype *protoContext() const;
+            OpType opType() const;
+            Nd4jLong opNum() const;
+            int id() const;
+            const std::vector<std::pair<int,int>>& input() const;
+            const std::vector<std::pair<int, int>>& output() const;
 
             Nd4jLong getFrameId();
             void setFrameId(Nd4jLong frameId);
@@ -197,12 +196,12 @@ namespace sd {
             bool hasBlockAttached();
 
             void setCustomOp(sd::ops::DeclarableOp *customOp = nullptr);
-            sd::ops::DeclarableOp* getCustomOp();
-            bool hasCustomOp();
+            sd::ops::DeclarableOp* customOp() const;
+            bool hasCustomOp() const;
 
             void setGraph(Graph* graph = nullptr);
-            Graph* getGraph();
-            bool hasGraphEmbedded();
+            Graph* graph() const;
+            bool hasGraphEmbedded() const;
 
             bool isInplace();
             void markInplace(bool reallyInplace);
@@ -251,10 +250,10 @@ namespace sd {
                 if (this->_customOp != nullptr && _isDeductable)
                     delete this->_customOp;
 
-                for (auto v: *other->input())
+                for (auto &v: other->input())
                     this->_input.emplace_back(v);
 
-                for (auto v: *other->output())
+                for (auto &v: other->output())
                     this->_output.emplace_back(v);
 
                 for (auto v: *other->getDimensions())
