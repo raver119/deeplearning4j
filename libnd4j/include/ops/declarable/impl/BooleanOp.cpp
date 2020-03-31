@@ -111,7 +111,7 @@ namespace sd {
             if (status == ND4J_STATUS_FALSE || status == ND4J_STATUS_TRUE)
                 return ND4J_STATUS_OK;
             
-            nd4j_printf("%s: node_%i got unexpected result instead of boolean: [%i]\n", this->getOpName()->c_str(), block->nodeId(), status);
+            nd4j_printf("%s: node_%i got unexpected result instead of boolean: [%i]\n", this->getOpName().c_str(), block->nodeId(), status);
             return ND4J_STATUS_KERNEL_FAILURE;
         }
 

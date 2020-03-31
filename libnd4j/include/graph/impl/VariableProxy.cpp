@@ -110,7 +110,7 @@ namespace sd {
         }
 
         
-        sd::graph::Variable *VariableProxy::getVariable(int id) {
+        Variable *VariableProxy::getVariable(int id) {
             if (_current->hasVariable(id))
                 return _current->getVariable(id);
             
@@ -122,7 +122,7 @@ namespace sd {
         }
 
         
-        sd::graph::Variable *VariableProxy::getVariable(int id, int idx) {
+        Variable *VariableProxy::getVariable(int id, int idx) {
             if (_current->hasVariable(id, idx))
                 return _current->getVariable(id, idx);
             
@@ -134,7 +134,7 @@ namespace sd {
         }
 
         
-        sd::graph::Variable *VariableProxy::getVariable(std::pair<int,int>& pair) {
+        Variable *VariableProxy::getVariable(std::pair<int,int>& pair) {
             if (_current->hasVariable(pair))
                 return _current->getVariable(pair);
             
@@ -146,7 +146,7 @@ namespace sd {
         }
 
         
-        sd::graph::Variable *VariableProxy::getVariable(const std::string &symbol) {
+        Variable *VariableProxy::getVariable(const std::string &symbol) {
             if (_current->hasVariable(symbol))
                 return _current->getVariable(symbol);
             
@@ -191,7 +191,7 @@ namespace sd {
             _current->putVariable(id, array);
         }
 
-        void sd::graph::VariableProxy::putVariable(int id, int idx, const NDArray &array) {
+        void VariableProxy::putVariable(int id, int idx, const NDArray &array) {
             _current->putVariable(id, idx, array);
         }
         
@@ -210,7 +210,7 @@ namespace sd {
         }
 
         
-        sd::graph::Stash* VariableProxy::getStash() {
+        Stash* VariableProxy::getStash() {
             return _current->getStash();
         }
 
@@ -260,7 +260,7 @@ namespace sd {
         }
 
         
-        sd::graph::VariableSpace* VariableProxy::clone() {
+        VariableSpace* VariableProxy::clone() {
             auto clone = new VariableProxy(_backed);
 
             delete clone->_current;
@@ -279,7 +279,7 @@ namespace sd {
         }  
 
         
-        sd::memory::Workspace * sd::graph::VariableProxy::workspace() {
+        sd::memory::Workspace * VariableProxy::workspace() {
             return _workspace;
         }
     }

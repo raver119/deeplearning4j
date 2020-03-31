@@ -82,7 +82,7 @@ namespace sd{
             } else if (opType != OpType_CUSTOM) {
                 nd4j_debug("Executing node_%i{%i}\n", node->id(), opNum);
             } else {
-                nd4j_debug("Executing node_%i{%s}\n", node->id(), node->getCustomOp()->getOpName()->c_str());
+                nd4j_debug("Executing node_%i{%s}\n", node->id(), node->getCustomOp()->getOpName().c_str());
             }
 
             Context context(node->getContextPrototype(), variableSpace);

@@ -54,10 +54,11 @@ namespace sd {
 
             // vector holds ID's of top nodes only
             std::vector<int > *_nodes;
-            MAP_IMPL<int, sd::graph::Node*> *_mapped;
+            MAP_IMPL<int, Node*> *_mapped;
 
-            MAP_IMPL<int, std::vector<sd::graph::Node*> *> *_onion;
-            MAP_IMPL<int, sd::graph::Node*> _unmapped;
+            MAP_IMPL<int, std::vector<Node*> *> *_onion;
+            MAP_IMPL<int, Node*> _unmapped;
+            MAP_IMPL<std::string, int> _symbolicLookupTable;
             std::vector<int> _unmappedMap; // macOS?
 
             std::mutex _mutexPreprocessing;
@@ -66,6 +67,9 @@ namespace sd {
             std::vector<int> _output;
             std::vector<int> _autos;
 
+            // we want to know last node id
+            int _maxId = 1;
+
 
             MAP_IMPL<int, Scope*> _mappedScopes;
             std::vector<Scope*> _scopes;
@@ -73,11 +77,11 @@ namespace sd {
             const GraphMemoryManager &_memoryMaager;
 
 ////////////////////////////////////////
-            Nd4jStatus validateNode(sd::graph::Node *node);
+            Nd4jStatus validateNode(Node *node);
 
             void expandOnion(int newLayer);
 
-            void injectNode(sd::graph::Node *node);
+            void injectNode(Node *node);
 
             void pushToOutputOnce(int id);
 
@@ -85,6 +89,7 @@ namespace sd {
 
             void prepareOutputs();
 
+            int idByName(const std::string &nodeName) const;
         public:
             Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
@@ -117,21 +122,21 @@ namespace sd {
 
             int numberOfPlaceholders();
 
-            const std::vector<sd::graph::Variable*>& getPlaceholders() const;
+            const std::vector<Variable*>& getPlaceholders() const;
 
             /**
              * This method returns pointer to thread_local VariableSpace
              * @return
              */
-            sd::graph::VariableSpace *getVariableSpace() const;
+            VariableSpace *getVariableSpace() const;
 
             /**
              * These methods add given node to the graph
              * FIXME: deprecated
              * @param node
              */
-            void addNode(sd::graph::Node *node);
-            void addNode(const sd::graph::Node &node);
+            void addNode(Node *node);
+            void addNode(const Node &node);
 
             /**
              * These methods add given node to the graph
@@ -140,29 +145,32 @@ namespace sd {
             void addNode(Node &node, const std::vector<std::string> &inputs);
             void addNode(Node &node, const std::vector<std::pair<int, int>> &inputs);
 
+            void addVariable(const std::string &name, NDArray &array);
+            void addVariable(const std::string &name, NDArray &&array);
+
             /**
              * This method allows to add placeholder with some pre-defined properties
              */
-            void addPlaceholder(const std::string &nodeName, const int id = 0, const DataType dataType = sd::DataType::ANY, const std::vector<Nd4jLong> &shape = {});
+            void addPlaceholder(const std::string &nodeName, const DataType dataType = sd::DataType::ANY, const std::vector<Nd4jLong> &shape = {});
 
             /**
              * This method returns layered representation of the graph
              *
              * @return
              */
-            MAP_IMPL<int, std::vector<sd::graph::Node*> *> *getOnion();
+            MAP_IMPL<int, std::vector<Node*> *> *getOnion();
 
             /**
              * This method returns map of all nodes of the graph
              * @return
              */
-            MAP_IMPL<int, sd::graph::Node*>* getMapped();
+            MAP_IMPL<int, Node*>* getMapped();
 
             /**
              * This method returns outputs of this graph
              * @return
              */
-            std::vector<sd::graph::Variable*> *fetchOutputs();
+            std::vector<Variable*> *fetchOutputs();
 
             /**
              * This method returns pointer to ExecutorConfiguration
@@ -181,7 +189,7 @@ namespace sd {
              * This method returns all nodes at once (order is NOT guaranteed)
              * @return
              */
-            std::vector<sd::graph::Node*> *getAllNodes();
+            std::vector<Node*> *getAllNodes();
 
             /**
              * This method prints out Graph op-by-op, and respective inputs

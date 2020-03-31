@@ -88,11 +88,11 @@ namespace sd {
             return _descriptor;
         }
 
-        std::string *DeclarableOp::getOpName() {
-            return _descriptor->getOpName();
+        const std::string& DeclarableOp::getOpName() const {
+            return *_descriptor->getOpName();
         }
 
-        Nd4jLong DeclarableOp::getOpHash() {
+        Nd4jLong DeclarableOp::getOpHash() const {
             return _descriptor->getHash();
         }
 
@@ -593,7 +593,7 @@ namespace sd {
         }
 
         Nd4jStatus sd::ops::DeclarableOp::execute(Context* block) {
-            nd4j_debug("Executing op: [%s]\n", this->getOpName()->c_str());
+            nd4j_debug("Executing op: [%s]\n", this->getOpName().c_str());
 
             std::chrono::time_point<std::chrono::system_clock> timeEnter, timeStart, timeEnd;
             Nd4jLong prepTime, outerTime;
@@ -738,25 +738,25 @@ namespace sd {
              */
             if (_descriptor->getNumberOfTArgs() > 0) {
                 if ((int) block.getTArguments()->size() < _descriptor->getNumberOfTArgs()) {
-                    nd4j_printf("%s: %i T args expected, but %i received\n", this->getOpName()->c_str(), _descriptor->getNumberOfTArgs(), block.getTArguments()->size());
+                    nd4j_printf("%s: %i T args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfTArgs(), block.getTArguments()->size());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
             } else
             if (_descriptor->getNumberOfTArgs() == -1)
                 if (block.getTArguments()->size() == 0) {
-                    nd4j_printf("%s: Number of T arguments should be positive number, but got 0 arguments\n", this->getOpName()->c_str());
+                    nd4j_printf("%s: Number of T arguments should be positive number, but got 0 arguments\n", this->getOpName().c_str());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
 
             if (_descriptor->getNumberOfIArgs() > 0) {
                 if ((int) block.getIArguments()->size() < _descriptor->getNumberOfIArgs()) {
-                    nd4j_printf("%s: %i int args expected, but %i received\n", this->getOpName()->c_str(), _descriptor->getNumberOfIArgs(), block.getIArguments()->size());
+                    nd4j_printf("%s: %i int args expected, but %i received\n", this->getOpName().c_str(), _descriptor->getNumberOfIArgs(), block.getIArguments()->size());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
             } else
             if (_descriptor->getNumberOfIArgs() == -1)
                 if (block.getIArguments()->size() == 0) {
-                    nd4j_printf("%s: Number of Integer arguments should be positive number, but got 0 arguments\n", this->getOpName()->c_str());
+                    nd4j_printf("%s: Number of Integer arguments should be positive number, but got 0 arguments\n", this->getOpName().c_str());
                     return ND4J_STATUS_BAD_PARAMS;
                 }
 
@@ -799,7 +799,7 @@ namespace sd {
                 return Status::OK();
 
             if (block.width() < 1) {
-                nd4j_printf("%s: no operands provided for the op", this->getOpName()->c_str());
+                nd4j_printf("%s: no operands provided for the op", this->getOpName().c_str());
                 return ND4J_STATUS_BAD_INPUT;
             }
 
@@ -808,8 +808,8 @@ namespace sd {
             for (auto p: *block.inputs()) {
                 auto v = block.variable(p);
                 if (v == nullptr) {
-                    if (this->getOpName() != nullptr) {
-                        nd4j_printf("Node [%i:<%s>]: Variable [%i] (%i:%i) is NULL\n", block.getNodeId(), this->getOpName()->c_str(), cnt, p.first, p.second);
+                    if (!this->getOpName().empty()) {
+                        nd4j_printf("Node [%i:<%s>]: Variable [%i] (%i:%i) is NULL\n", block.getNodeId(), this->getOpName().c_str(), cnt, p.first, p.second);
                     } else {
                         nd4j_printf("Node [%i:<noname>]: Variable [%i] (%i:%i) is NULL\n", block.getNodeId(), cnt, p.first, p.second);
                     }
@@ -824,8 +824,8 @@ namespace sd {
                         continue;
 
                     if (aV == nullptr || !aV->nonNull()) {
-                        if (this->getOpName() != nullptr) {
-                            nd4j_printf("Node [%i:<%s>]: NDArray [%i] (%i:%i) is NULL\n", block.getNodeId(), this->getOpName()->c_str(), cnt, p.first, p.second);
+                        if (!this->getOpName().empty()) {
+                            nd4j_printf("Node [%i:<%s>]: NDArray [%i] (%i:%i) is NULL\n", block.getNodeId(), this->getOpName().c_str(), cnt, p.first, p.second);
                         } else {
                             nd4j_printf("Node [%i:<noname>]: NDArray [%i] (%i:%i) is NULL\n", block.getNodeId(), cnt, p.first, p.second);
                         }

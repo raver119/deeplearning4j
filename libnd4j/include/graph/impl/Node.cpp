@@ -44,12 +44,51 @@
 
 namespace sd {
     namespace graph {
+        Node::Node(const std::string &nodeName, const ops::DeclarableOp &opName, const std::vector<double> &tArgs,
+                   const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs,
+                   const std::vector<DataType> &dArgs) {
+            auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName.getOpHash());
+
+            this->_name = nodeName;
+            this->_opType = OpType_CUSTOM;
+            this->_opNum = customOp->getOpHash();
+            this->_extraParams = nullptr;
+            this->_dataType = sd::DataType::FLOAT32; // float as default
+            this->_dim = nullptr;
+            this->_customOp = customOp;
+
+            _hasExternalInputs = false;
+            _hasExternalOutputs = false;
+            _hasInternalInputs = false;
+            _hasInternalOutputs = false;
+
+            // FIXME: get rid of this!!!
+            _scalar = NDArrayFactory::create<int>(0);
+
+            auto block = new ContextPrototype(this->getCustomOp()->getOpDescriptor(), this->id(), false);
+
+            for (auto v: iArgs)
+                block->getIArguments()->emplace_back(v);
+
+            for (auto v: tArgs)
+                block->getTArguments()->emplace_back(v);
+
+            for (auto v: bArgs)
+                block->getBArguments()->emplace_back(v);
+
+            for (auto v: dArgs)
+                block->getDArguments()->emplace_back(v);
+
+            this->setContextPrototype(block);
+        }
+
         Node::Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs,
                    const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs,
                    const std::vector<DataType> &dArgs) {
 
             auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
 
+            this->_name = nodeName;
             this->_opType = OpType_CUSTOM;
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;

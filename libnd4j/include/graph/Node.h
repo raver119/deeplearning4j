@@ -44,7 +44,7 @@ namespace sd {
             OpType _opType;
             ContextPrototype* _protoContext = nullptr;
             Nd4jLong _opNum;
-            int _id;
+            int _id = 0;
             std::vector<std::pair<int, int>> _input;
             std::vector<std::pair<int, int>> _output;
             std::vector<int> _dimensions;
@@ -100,6 +100,7 @@ namespace sd {
 
         public:
 
+            explicit Node(const std::string &nodeName, const sd::ops::DeclarableOp &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
             explicit Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
             explicit Node(const sd::graph::FlatNode *node);
             ~Node();

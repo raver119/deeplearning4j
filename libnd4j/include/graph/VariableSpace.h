@@ -43,7 +43,7 @@ namespace sd {
             sd::memory::Workspace *_workspace;
 
             // stash is NOT cloned
-            sd::graph::Stash _stash;
+            Stash _stash;
 
             MAP_IMPL<std::pair<int, int>, Variable*> _paired;
             MAP_IMPL<std::string, Variable*> _symbolic;
@@ -53,7 +53,7 @@ namespace sd {
 
             std::vector<sd::NDArrayList*> _lists;
 
-            std::vector<sd::graph::Variable*> _placeholders;
+            std::vector<Variable*> _placeholders;
 
             void silentPutVariable(std::pair<int,int>& pair, Variable *variable);
 
@@ -61,9 +61,9 @@ namespace sd {
 
             std::mutex _varmap;
 
-            MAP_IMPL<int, sd::graph::Variable*> _temporary;
+            MAP_IMPL<int, Variable*> _temporary;
 
-            std::vector<sd::graph::Variable*> *_handles;
+            std::vector<Variable*> *_handles;
 
             FlowPath* _flow = nullptr;
 
@@ -88,10 +88,10 @@ namespace sd {
             virtual bool hasVariable(std::pair<int,int>& pair);
             virtual bool hasVariable(const std::string &symbol);
 
-            virtual sd::graph::Variable* getVariable(int id);
-            virtual sd::graph::Variable* getVariable(int id, int idx);
-            virtual sd::graph::Variable* getVariable(std::pair<int,int>& pair);
-            virtual sd::graph::Variable* getVariable(const std::string &symbol);
+            virtual Variable* getVariable(int id);
+            virtual Variable* getVariable(int id, int idx);
+            virtual Variable* getVariable(std::pair<int,int>& pair);
+            virtual Variable* getVariable(const std::string &symbol);
 
             virtual std::vector<Variable*> getVariables();
 
@@ -121,17 +121,17 @@ namespace sd {
             virtual int internalEntries();
             virtual int totalEntries();
 
-            virtual sd::graph::VariableSpace* clone();
+            virtual VariableSpace* clone();
 
             std::vector<Variable*> *handles();
 
 
-            sd::graph::VariableSpace* asT();
+            VariableSpace* asT();
             void injectVariable(std::pair<int, int> &pair, Variable* variable);
 
-            virtual sd::graph::Stash* getStash();
+            virtual Stash* getStash();
 
-            virtual std::vector<sd::graph::Variable*> * getExternalVariables();
+            virtual std::vector<Variable*> * getExternalVariables();
 
             virtual void setFlowPath(FlowPath* timers);
             virtual FlowPath* flowPath();

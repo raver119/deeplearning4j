@@ -95,7 +95,7 @@ TYPED_TEST_CASE(TypedDeclarableOpsTests1, TestingTypes);
 TEST_F(DeclarableOpsTests1, BasicInitialization1) {
     auto concat = new sd::ops::concat();
     std::string expName("concat");
-    ASSERT_EQ(expName, *(concat->getOpName()));
+    ASSERT_EQ(expName, concat->getOpName());
 
     auto x0 = NDArrayFactory::create_<float>('c', { 1, 5 });
     auto x1 = NDArrayFactory::create_<float>('c', { 1, 5 });
@@ -148,7 +148,7 @@ TEST_F(DeclarableOpsTests1, BasicInitialization2) {
 
     ASSERT_TRUE(op != nullptr);
     std::string expName("concat");
-    ASSERT_EQ(expName, *(op->getOpName()));
+    ASSERT_EQ(expName, op->getOpName());
 
     ASSERT_EQ(-1, op->getOpDescriptor()->getNumberOfInputs());
     ASSERT_EQ(1, op->getOpDescriptor()->getNumberOfOutputs());
@@ -233,7 +233,7 @@ TEST_F(DeclarableOpsTests1, SynonymInitialization2) {
 
     ASSERT_TRUE(op != nullptr);
     std::string expName("multiply");
-    ASSERT_EQ(expName, *(op->getOpName()));
+    ASSERT_EQ(expName, op->getOpName());
     ASSERT_TRUE(op == op2);
 }
 
@@ -601,7 +601,7 @@ TEST_F(DeclarableOpsTests1, DivergentCheck1) {
 
     ASSERT_TRUE(op != nullptr);
     std::string expName("Switch");
-    ASSERT_EQ(expName, *(op->getOpName()));
+    ASSERT_EQ(expName, op->getOpName());
     ASSERT_TRUE(op->getOpDescriptor()->isDivergent());
     ASSERT_EQ(2, op->getOpDescriptor()->getNumberOfOutputs());
 }

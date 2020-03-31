@@ -169,7 +169,7 @@ namespace sd {
          */
         bool OpRegistrator::registerOperation(sd::ops::DeclarableOp *op) {
             _uniqueD.emplace_back(op);
-            return registerOperation(op->getOpName()->c_str(), op);
+            return registerOperation(op->getOpName().c_str(), op);
         }
 
         void OpRegistrator::registerHelper(sd::ops::platforms::PlatformHelper* op) {

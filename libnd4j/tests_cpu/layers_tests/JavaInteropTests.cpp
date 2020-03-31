@@ -363,8 +363,8 @@ TEST_F(JavaInteropTests, Test_Synonyms_1) {
     ASSERT_TRUE(op != nullptr);
     ASSERT_TRUE(opRef != nullptr);
 
-    std::string name = *(op->getOpName());
-    std::string nameRef = *(opRef->getOpName());
+    std::string name = op->getOpName();
+    std::string nameRef = opRef->getOpName();
 
     ASSERT_EQ(nameExp, nameRef);
     ASSERT_EQ(nameRef, name);
@@ -378,8 +378,8 @@ TEST_F(JavaInteropTests, Test_Synonyms_2) {
     ASSERT_TRUE(op != nullptr);
     ASSERT_TRUE(opRef != nullptr);
 
-    std::string name = *(op->getOpName());
-    std::string nameRef = *(opRef->getOpName());
+    std::string name = op->getOpName();
+    std::string nameRef = opRef->getOpName();
 
     ASSERT_EQ(nameExp, nameRef);
     ASSERT_EQ(nameRef, name);
@@ -393,8 +393,8 @@ TEST_F(JavaInteropTests, Test_Synonyms_3) {
     ASSERT_TRUE(op != nullptr);
     ASSERT_TRUE(opRef != nullptr);
 
-    std::string name = *(op->getOpName());
-    std::string nameRef = *(opRef->getOpName());
+    std::string name = op->getOpName();
+    std::string nameRef = opRef->getOpName();
 
     ASSERT_EQ(nameExp, nameRef);
     ASSERT_EQ(nameRef, name);

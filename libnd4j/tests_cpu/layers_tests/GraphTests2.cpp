@@ -30,6 +30,7 @@
 #include <ops/declarable/generic/parity_ops.cpp>
 #include <graph/exceptions/unresolved_output_exception.h>
 #include <graph/exceptions/unresolved_input_exception.h>
+#include <ops/declarable/CustomOperations.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -45,7 +46,7 @@ public:
 TEST_F(GraphTests2, test_placeholder_1) {
     Graph graph;
 
-    graph.addPlaceholder("input", 0, DataType::BFLOAT16, {4, 12, 48});
+    graph.addPlaceholder("input", DataType::BFLOAT16, {4, 12, 48});
 
     ASSERT_TRUE(graph.getVariableSpace()->hasVariable("input"));
 
@@ -65,19 +66,19 @@ TEST_F(GraphTests2, test_execution_1) {
     Graph graph;
 
     // A
-    graph.getVariableSpace()->putVariable(-1, 0, NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
 
     // B
-    graph.getVariableSpace()->putVariable(-2, 0, NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
 
     // C
-    graph.getVariableSpace()->putVariable(-3, 0, NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
-    Node a("multiply", "multiply_node", 10, {{-1, 0}, {-2, 0}});
-    Node b("add", "add_node", 20, {{10, 0}, {-3, 0}});
+    Node a("multiply_node", sd::ops::multiply());
+    Node b("add_node", sd::ops::add());
 
-    graph.addNode(b);
-    graph.addNode(a);
+    graph.addNode(a,  std::vector<std::string>{"A", "B"});
+    graph.addNode(b,  std::vector<std::string>{"multiply_node", "C"});
 
     auto result = graph.execute({}, {"add_node"});
     ASSERT_EQ(1, result.size());
@@ -87,7 +88,7 @@ TEST_F(GraphTests2, test_execution_1) {
 TEST_F(GraphTests2, test_placeholder_resolution_1) {
     Graph graph;
 
-    graph.addPlaceholder("input", 0, DataType::FLOAT32);
+    graph.addPlaceholder("input", DataType::FLOAT32);
 
     graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
 
@@ -98,18 +99,20 @@ TEST_F(GraphTests2, test_placeholder_resolution_1) {
 TEST_F(GraphTests2, test_placeholder_resolution_2) {
     Graph graph;
 
-    graph.addPlaceholder("input", 0, DataType::FLOAT32);
+    graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
+    Node a("tanh_node", "tanh");
+    graph.addNode(a, {"input"});
 
     auto result = graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"tanh_node"});
 
+    // TODO: add result validation here
 }
 
 TEST_F(GraphTests2, test_output_resolution_1) {
     Graph graph;
 
-    graph.addPlaceholder("input", 0, DataType::FLOAT32);
+    graph.addPlaceholder("input", DataType::FLOAT32);
 
     graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
 
@@ -120,7 +123,7 @@ TEST_F(GraphTests2, test_output_resolution_1) {
 TEST_F(GraphTests2, test_input_resolution_1) {
     Graph graph;
 
-    graph.addPlaceholder("input", 0, DataType::FLOAT32);
+    graph.addPlaceholder("input", DataType::FLOAT32);
 
     graph.addNode(Node ("tanh", "tanh_node", 10, {{"input"}}));
 

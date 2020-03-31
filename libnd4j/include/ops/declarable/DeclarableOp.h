@@ -140,12 +140,12 @@ namespace sd {
              *
              * @return
              */
-            std::string *getOpName();
+            const std::string& getOpName() const;
 
             /**
              * Returns opHash
              */
-            Nd4jLong getOpHash();
+            Nd4jLong getOpHash() const;
 
             /**
              * This method sets arguments for op

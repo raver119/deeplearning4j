@@ -46,10 +46,10 @@ namespace sd {
             virtual bool hasVariable(std::pair<int,int>& pair) override;
             virtual bool hasVariable(const std::string &symbol) override;
 
-            virtual sd::graph::Variable *getVariable(int id) override;
-            virtual sd::graph::Variable *getVariable(int id, int idx) override;
-            virtual sd::graph::Variable *getVariable(std::pair<int,int>& pair) override;
-            virtual sd::graph::Variable *getVariable(const std::string &symbol) override;
+            virtual Variable *getVariable(int id) override;
+            virtual Variable *getVariable(int id, int idx) override;
+            virtual Variable *getVariable(std::pair<int,int>& pair) override;
+            virtual Variable *getVariable(const std::string &symbol) override;
 
             virtual std::vector<Variable*> getVariables() override;
 
@@ -79,9 +79,9 @@ namespace sd {
             virtual int internalEntries() override;
             virtual int totalEntries() override;
 
-            virtual sd::graph::VariableSpace *clone() override;
+            virtual VariableSpace *clone() override;
 
-            virtual sd::graph::Stash* getStash() override;
+            virtual Stash* getStash() override;
             virtual void setFlowPath(FlowPath* timers) override;
             virtual FlowPath* flowPath() override;
         };

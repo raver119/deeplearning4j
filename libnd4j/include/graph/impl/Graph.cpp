@@ -78,7 +78,7 @@ namespace sd {
                         //}
 
 
-                        nd4j_debug("Trying estimation [%i] on [%s]\n", node->id(), node->getCustomOp()->getOpName()->c_str());
+                        nd4j_debug("Trying estimation [%i] on [%s]\n", node->id(), node->getCustomOp()->getOpName().c_str());
 
                         auto op = node->getCustomOp();
                         auto in = node->input()->at(0);
@@ -308,15 +308,48 @@ namespace sd {
             delete _configuration;
         }
 
+        int Graph::idByName(const std::string &nodeName) const {
+            if (_symbolicLookupTable.count(nodeName) == 0)
+                throw std::runtime_error("Can't find node [" + nodeName + "]");
+
+            return _symbolicLookupTable.at(nodeName);
+        }
+
+        void Graph::addVariable(const std::string &name, NDArray &array) {
+            int id = _maxId++;
+            _symbolicLookupTable[name] = id;
+            _variableSpace->putVariable(id, 0, array);
+        }
+
+        void Graph::addVariable(const std::string &name, NDArray &&array) {
+            auto lvalue = array;
+            addVariable(name, lvalue);
+        }
+
         void Graph::addNode(Node &node, const std::vector<std::string> &inputs) {
-            throw std::runtime_error("not implemented yet");
+            if (node.id() != 0)
+                throw std::runtime_error("Graph::addNode - Node has id defined");
+
+            node.markRemovable(false);
+
+            // node must have numeric id
+            node.setId(_maxId++);
+            _symbolicLookupTable[node.name()] = node.id();
+
+            // converting string ids to numeric ones
+            for (auto &v:inputs)
+                node.pickInput(idByName(v), 0);
+
+            addNode(&node);
         }
 
         void Graph::addNode(Node &node, const std::vector<std::pair<int, int>> &inputs) {
+            node.markRemovable(false);
+
             throw std::runtime_error("not implemented yet");
         }
 
-        void Graph::addNode(const sd::graph::Node &node) {
+        void Graph::addNode(const Node &node) {
             node.markRemovable(false);
             addNode(const_cast<Node*>(&node));
         }
@@ -1082,7 +1115,7 @@ namespace sd {
             nd4j_printf("%i. ", node->id());
             switch(node->opType()) {
                 case OpType_CUSTOM: {
-                    printf("%s; ", node->getCustomOp()->getOpName()->c_str());
+                    printf("%s; ", node->getCustomOp()->getOpName().c_str());
                 }
                     break;
                 case OpType_LOGIC: {
@@ -1716,7 +1749,11 @@ namespace sd {
              */
         }
 
-        void Graph::addPlaceholder(const std::string &nodeName, const int id, DataType dataType, const std::vector<Nd4jLong> &shape) {
+        void Graph::addPlaceholder(const std::string &nodeName, DataType dataType, const std::vector<Nd4jLong> &shape) {
+            int id = _maxId++;
+
+            _symbolicLookupTable[nodeName] = id;
+
             auto var = new Variable(true, dataType, shape);
             var->setName(nodeName);
             _variableSpace->putVariable(id, var);
