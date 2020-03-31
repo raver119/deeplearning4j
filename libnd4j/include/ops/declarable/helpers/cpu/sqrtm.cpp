@@ -549,10 +549,17 @@ template<typename T>
             //Block<Derived, EssentialPart::SizeAtCompileTime, Derived::ColsAtCompileTime> bottom(derived(), 1, 0, rows()-1, cols());
             auto bottom = ioMatrix({1, m, 0, n}); // all rows from the second
             auto tmp = NDArrayFactory::create<T>('c', {1, n});
+            if(essential.lengthOf() == 1) {
+                tmp = essential * bottom;
+            }
+            else
             MmulHelper::matmul(&essential, &bottom, &tmp, true, false);
             tmp += ioMatrix({0, 1, 0, 0});//this->row(0);
             ioMatrix({0, 1, 0, 0})  -= tau * tmp;
             auto bottomTemp = bottom.ulike();
+            if (essential.lengthOf() == 1)
+                bottomTemp = essential * tmp;
+            else
             MmulHelper::matmul(&essential, &tmp, &bottomTemp, false, false);
             bottom -= tau * bottomTemp;
         }
@@ -569,16 +576,20 @@ template<typename T>
         else if(tau != T(0.f)) {
             auto right = ioMatrix({0, m, 1, n}); // input matrix from the second column //(derived(), 0, 1, rows(), cols()-1);
 
-            auto tmpShape = ShapeUtils::evalShapeForMatmul(right.getShapeInfo(), essential.getShapeInfo(), false, false);
+            auto tmpShape = essential.lengthOf() > 1?ShapeUtils::evalShapeForMatmul(right.getShapeInfo(), essential.getShapeInfo(), false, false):right.getShapeAsVector();
             auto tmp = NDArrayFactory::create<T>('c', tmpShape);//right * essential.transpose();
-            essential.printShapeInfo("ESS"); right.printShapeInfo("RIGHT");
 
+            if (essential.lengthOf() == 1)
+                tmp = right * essential;
+            else
             MmulHelper::matmul(&right, &essential, &tmp, false, false);
-            tmp.printShapeInfo("TMP");
             auto row = ioMatrix({0, m, 0, 1}).reshape('c', tmpShape);
             tmp += row; // the first column //this->col(0);
             ioMatrix({0, 0, 0, 1}) -= tau * tmp;
-            auto tempE = right.ulike(); tmp.printShapeInfo("TMP again");
+            auto tempE = right.ulike();
+            if (essential.lengthOf() == 1)
+                tempE = tmp * essential;
+            else
             MmulHelper::matmul(&tmp, &essential, &tempE, false, true);
             right -= tau * tempE;
         }
@@ -616,22 +627,21 @@ template<typename T>
 
                 // These Householder transformations form the O(n^3) part of the algorithm
                 auto matTKK3 = ioMatrixT({k, k + 3, k, size}); //
-                matTKK3.printShapeInfo("matTKK3 (should be 3x4)");
                 applyHouseholderOnTheLeft<T>(matTKK3, ess, tau);
                 auto bottomRow = math::nd4j_min(indexUpper, k + 3);
                 auto matTK3 = ioMatrixT({0, bottomRow, k, k + 3});
-                matTK3.printShapeInfo("Should be 3x3");
                 applyHouseholderOnTheRight<T>(matTK3, ess, tau);
                 auto matT3 = ioMatrixU({0, size, k, k + 3});
                 applyHouseholderOnTheRight<T>(matT3, ess, tau);
             }
         }
 
-        auto v = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
+        auto v = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1}).reshape('c', {2,1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
+        v.printIndexedBuffer("V should be 2x1");
         T tau, beta;
-        NDArray ess;
+        NDArray ess = NDArrayFactory::create<T>(0.f);
         makeHouseholder(v, ess, tau, beta);
-
+        ess.printIndexedBuffer("ESS should be 1x1");
         if (beta != T(0)) { // if v is not zero
             ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
             auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size});
