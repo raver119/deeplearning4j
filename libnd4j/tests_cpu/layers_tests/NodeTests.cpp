@@ -39,7 +39,7 @@ TEST_F(NodeTests, Test_Dtype_Conversion_1) {
     auto nf = nd->asT<float>();
 
     ASSERT_EQ(nodeA->id(), nf->id());
-    ASSERT_EQ(*nodeA->name(), *nf->name());
+    ASSERT_EQ(nodeA->name(), nf->name());
     ASSERT_EQ(nodeA->getOpClass(), nf->getOpClass());
     ASSERT_EQ(nodeA->opType(), nf->opType());
     ASSERT_EQ(nodeA->opNum(), nf->opNum());
@@ -61,7 +61,7 @@ TEST_F(NodeTests, Test_Dtype_Conversion_2) {
     auto nf = nd->asT<float>();
 
     ASSERT_EQ(nodeA->id(), nf->id());
-    ASSERT_EQ(*nodeA->name(), *nf->name());
+    ASSERT_EQ(nodeA->name(), nf->name());
 //    ASSERT_EQ(nodeA->getOpClass(), nf->getOpClass());
     ASSERT_EQ(nodeA->opType(), nf->opType());
     ASSERT_EQ(nodeA->opNum(), nf->opNum());

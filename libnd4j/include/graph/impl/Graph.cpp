@@ -308,6 +308,14 @@ namespace sd {
             delete _configuration;
         }
 
+        void Graph::addNode(Node &node, const std::vector<std::string> &inputs) {
+            throw std::runtime_error("not implemented yet");
+        }
+
+        void Graph::addNode(Node &node, const std::vector<std::pair<int, int>> &inputs) {
+            throw std::runtime_error("not implemented yet");
+        }
+
         void Graph::addNode(const sd::graph::Node &node) {
             node.markRemovable(false);
             addNode(const_cast<Node*>(&node));
@@ -320,16 +328,16 @@ namespace sd {
                 // nd4j_debug("Adding LogicOp [%i]\n", node->opNum());
                 // SCOPE
                 if (node->opNum() == logic::Scope) {
-                    auto scope = new Scope(node->id(), node->getName() != nullptr ? node->getName()->c_str() : "");
+                    auto scope = new Scope(node->id(), !node->getName().empty() ? node->getName().c_str() : "");
                     _mappedScopes[node->id()] = scope;
                     _scopes.push_back(scope);
                 }
             }
 
-            auto cname = node->getName() == nullptr ? nullptr : node->getName()->c_str();
+            auto cname = node->name().empty() ? nullptr : node->getName().c_str();
             auto nodeState = _variableSpace->hasVariable(node->id()) ? _variableSpace->getVariable(node->id()) :new Variable(nullptr, cname, node->id());
-            if (node->getName() != nullptr)
-                nodeState->setName(*node->getName());
+            if (!node->name().empty())
+                nodeState->setName(node->name());
 
 
             if (node->isInplace())
@@ -420,7 +428,7 @@ namespace sd {
                 // nd4j_logger("Adding auto output variable; Output size: %i\n", node->output()->size());
 
                 var->setId(node->id());
-                var->setName(*node->getName());
+                var->setName(node->getName());
                 _variableSpace->putOutputVariable(var);
                 //node->pickExternalOutput(var->id());
 
@@ -558,10 +566,10 @@ namespace sd {
                     // single-input node
                     if (node->input()->size() == 1) {
 
-                        if (node->getName() == nullptr) {
+                        if (!node->name().empty()) {
                             nd4j_debug("Trying SI Node_%i\n", node->id());
                         } else {
-                            nd4j_debug("Trying SI Node_%i:[%s]\n", node->id(), node->getName()->c_str());
+                            nd4j_debug("Trying SI Node_%i:[%s]\n", node->id(), node->getName().c_str());
                         }
 
                         int iNode = node->input()->at(0).first;
@@ -628,11 +636,11 @@ namespace sd {
                         queue.emplace_back(node->id());
                     } else {
                         // multi-input node
-                        if (node->getName() == nullptr) {
+                        if (!node->name().empty()) {
                             nd4j_debug("Trying MI Node_%i\n", node->id());
                         } else {
-                            std::string np = *(node->getName());
-                            nd4j_debug("Trying MI Node_%i:[%s]\n", node->id(), node->getName()->c_str());
+                            auto np = node->name();
+                            nd4j_debug("Trying MI Node_%i:[%s]\n", node->id(), node->getName().c_str());
                         }
 
                         int maxLayer = 0;
@@ -823,8 +831,8 @@ namespace sd {
                         continue;
 
                     Node* node = _mapped->at(v);
-                    if (node->name() != nullptr) {
-                        nd4j_debug("Node %i; Name: [%s]\n", v, node->name()->c_str());
+                    if (!node->name().empty()) {
+                        nd4j_debug("Node %i; Name: [%s]\n", v, node->name().c_str());
                     } else {
                         nd4j_debug("Node %i\n", v);
                     }
@@ -849,8 +857,8 @@ namespace sd {
                     Node* node = _mapped->at(v);
 
                     if (!node->hasInternalOutputs()) {
-                        if (node->name() != nullptr) {
-                            nd4j_debug("Output node found: [%i:<%s>]\n", v, node->name()->c_str());
+                        if (!node->name().empty()) {
+                            nd4j_debug("Output node found: [%i:<%s>]\n", v, node->name().c_str());
                         } else {
                             nd4j_debug("Output node found: [%i]\n", v);
                         }
@@ -860,7 +868,7 @@ namespace sd {
                         if (std::find(_output.begin(), _output.end(), node->id()) == _output.end())
                             _output.emplace_back(node->id());
                     } else if (Environment::getInstance()->isDebugAndVerbose()) {
-                        nd4j_debug("Node [%i:<%s>] has %i outputs announced:\n", v, node->name()->c_str(), node->output()->size());
+                        nd4j_debug("Node [%i:<%s>] has %i outputs announced:\n", v, node->name().c_str(), node->output()->size());
                         printf("{");
                         for (auto s : *node->output()) {
                             printf("[%i:%i], ", s.first, s.second);
@@ -1193,7 +1201,9 @@ namespace sd {
 
                 for (int n = 0; n < layerSize; n++) {
                     Node* node = _onion->at(l)->at(n);
-                    if (node->name() == nullptr) continue;
+                    if (node->name().empty())
+                        continue;
+
                     sd::ops::OpDescriptor* pOpDescriptor = nullptr;
                     std::string opNameStr; //node->name();
                     int numInputs = 0;
@@ -1241,7 +1251,9 @@ namespace sd {
                 for (int n = 0; n < scope->nodes()->size(); n++) {
                     Node* node = scope->nodes()->at(n);
                     //printOutNode(node);
-                    if (node->name() == nullptr) continue;
+                    if (node->name().empty())
+                        continue;
+
                     std::string opNameStr; //node->name();
                     sd::ops::OpDescriptor* pOpDescriptor = nullptr;
                     int numInputs = 0;
@@ -1448,8 +1460,8 @@ namespace sd {
                 Node *node = v.second;
 
                 // optional part: node names
-                if (!node->name()->empty()) {
-                    localStamp += *(node->name());
+                if (!node->name().empty()) {
+                    localStamp += node->name();
                 }
             }
 

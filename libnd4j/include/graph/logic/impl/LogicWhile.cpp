@@ -79,7 +79,7 @@ namespace sd {
                         nd4j_debug("Falling back to logic\n","");
                         LogicExecutor::processNode(graph, v);
                     } else {
-                        nd4j_debug("Op [<%s>]\n", v->getName()->c_str());
+                        nd4j_debug("Op [<%s>]\n", v->getName().c_str());
                         Nd4jStatus status = GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
                         if (status != ND4J_STATUS_OK)
                             return status;
@@ -114,7 +114,7 @@ namespace sd {
                             nd4j_debug("Falling back to logic\n","");
                             LogicExecutor::processNode(graph, v);
                         } else {
-                            nd4j_debug("Op [<%s>]\n", v->getName()->c_str());
+                            nd4j_debug("Op [<%s>]\n", v->getName().c_str());
                             //v->getBlock()->updateVariables();
                             Nd4jStatus status = GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
                             if (status != ND4J_STATUS_OK)

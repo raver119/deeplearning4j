@@ -99,12 +99,18 @@ namespace sd {
             Nd4jLong _frameId = -1;
 
         public:
+
+            explicit Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
+            explicit Node(const sd::graph::FlatNode *node);
+            ~Node();
+
+            /*
+             * FIXME: deprecated methods, to be removed
+             */
             explicit Node(const std::string &opName, const std::string &nodeName, const int id, const std::vector<std::string> &inputs = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {});
             explicit Node(const std::string &opName, const int id = 0, const std::vector<std::pair<int,int>> &inputs = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {});
             explicit Node(sd::ops::DeclarableOp *customOp, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
             explicit Node(OpType opType = OpType_TRANSFORM_SAME, int opNum = 0, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
-            explicit Node(const sd::graph::FlatNode *node);
-            ~Node();
 
             bool equals(Node *other);
 
@@ -167,8 +173,8 @@ namespace sd {
 
             void setName(std::string *name);
             void setName(const std::string& name);
-            std::string * getName();
-            std::string * name();
+            const std::string& getName() const;
+            const std::string& name() const;
 
             int totalReferences();
             void addReference(int nodeId);

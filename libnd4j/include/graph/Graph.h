@@ -126,12 +126,19 @@ namespace sd {
             sd::graph::VariableSpace *getVariableSpace() const;
 
             /**
-             * This method adds given node to the graph
-             *
+             * These methods add given node to the graph
+             * FIXME: deprecated
              * @param node
              */
             void addNode(sd::graph::Node *node);
             void addNode(const sd::graph::Node &node);
+
+            /**
+             * These methods add given node to the graph
+             * @param node
+             */
+            void addNode(Node &node, const std::vector<std::string> &inputs);
+            void addNode(Node &node, const std::vector<std::pair<int, int>> &inputs);
 
             /**
              * This method allows to add placeholder with some pre-defined properties

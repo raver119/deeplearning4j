@@ -64,7 +64,7 @@ namespace sd {
                     if (__variableSpace->hasVariable(node->id(), 0))
                         lvar = __variableSpace->getVariable(node->id(), 0);
                     else
-                        lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+                        lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
 //                    if (lvar->hasNDArray())
 //                        delete lvar->getNDArray();
@@ -87,7 +87,7 @@ namespace sd {
                     if (__variableSpace->hasVariable(node->id(), 0))
                         lvar = __variableSpace->getVariable(node->id(), 0);
                     else
-                        lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+                        lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
 //                    if (lvar->hasNDArray())
 //                        delete lvar->getNDArray();
@@ -113,7 +113,7 @@ namespace sd {
                         if (__variableSpace->hasVariable(node->id(), 0))
                             lvar = __variableSpace->getVariable(node->id(), 0);
                         else
-                            lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+                            lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
                         if (lvar->hasNDArray())
                             delete lvar->getNDArray();

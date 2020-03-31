@@ -259,7 +259,7 @@ namespace sd{
                     Node* node = graph->getOnion()->at(l)->at(n);
 
                     if (Environment::getInstance()->isProfiling())
-                        flowPath->profile()->nodeById(node->id(), node->name()->c_str());
+                        flowPath->profile()->nodeById(node->id(), node->name().c_str());
 
                     if (lastId != node->id() && Environment::getInstance()->isProfiling()) {
                         if (lastId != -10000000)
@@ -269,7 +269,7 @@ namespace sd{
                         nodeTime = GraphProfile::currentTime();
                     }
 
-                    nd4j_debug("Step: %lld; Node: %i <%s>\n", exec_counter, node->id(), node->name()->c_str());
+                    nd4j_debug("Step: %lld; Node: %i <%s>\n", exec_counter, node->id(), node->name().c_str());
 
                     // on first non-Exit node after loop we can rewind (if planned)
                     if (!(node->opType() == OpType_LOGIC && node->opNum() == sd::logic::Exit)) {
@@ -552,8 +552,8 @@ namespace sd{
                     continue;
 
                 auto pair = CreateLongPair(builder, flowPath.outerTime(node->id()), flowPath.innerTime(node->id()));
-                if (node->getName() != nullptr) {
-                    auto name = builder.CreateString(node->getName()->c_str());
+                if (!node->name().empty()) {
+                    auto name = builder.CreateString(node->getName().c_str());
                     auto fr = CreateFlatTiming(builder, node->id(), name, pair);
                     timings_vector.push_back(fr);
                 } else {

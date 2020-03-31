@@ -42,7 +42,7 @@ namespace sd {
                         if (__variableSpace->hasVariable(node->id(), 0))
                             lvar = __variableSpace->getVariable(node->id(), 0);
                         else
-                            lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+                            lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
                         auto array = var->getNDArray();
                         lvar->setNDArray(array);
@@ -54,7 +54,7 @@ namespace sd {
                         if (__variableSpace->hasVariable(node->id(), 0))
                             lvar = __variableSpace->getVariable(node->id(), 0);
                         else
-                            lvar = new Variable(nullptr, node->getName()->c_str(), node->id(), 0);
+                            lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
                         auto list = var->getNDArrayList();
                         lvar->setNDArrayList(list);
