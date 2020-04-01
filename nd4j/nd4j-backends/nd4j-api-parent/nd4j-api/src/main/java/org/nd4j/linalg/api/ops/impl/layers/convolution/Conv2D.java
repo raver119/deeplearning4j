@@ -57,6 +57,11 @@ public class Conv2D extends DynamicCustomOp {
     private static final String INVALID_CONFIGURATION = "Invalid Conv2D configuration : sW = %s pH = %s dW = %s ";
     private int wFormat = 0; // Possible values  - [0, 1, 2]
 
+    public Conv2D(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable weights,
+                  SDVariable bias, @NonNull Conv2DConfig conv2DConfig) {
+        this(sameDiff, wrapFilterNull(input, weights, bias), conv2DConfig);
+    }
+
     @Builder(builderMethodName = "sameDiffBuilder")
     public Conv2D(SameDiff sameDiff,
                   SDVariable[] inputFunctions,
@@ -76,12 +81,8 @@ public class Conv2D extends DynamicCustomOp {
         this(wrapFilterNull(input, weights, bias), wrapOrNull(output), config);
     }
 
-    public Conv2D(@NonNull INDArray layerInput, @NonNull INDArray weights, @NonNull Conv2DConfig conv2DConfig) {
-        this(new INDArray[]{layerInput, weights}, null, conv2DConfig);
-    }
-
-    public Conv2D(@NonNull INDArray layerInput, @NonNull INDArray weights, INDArray bias, @NonNull Conv2DConfig conv2DConfig) {
-        this(wrapFilterNull(layerInput, weights,bias), null, conv2DConfig);
+    public Conv2D(INDArray layerInput, INDArray weights, INDArray bias, Conv2DConfig config) {
+        this(layerInput, weights, bias, null, config);
     }
 
     public Conv2D(@NonNull INDArray layerInput, @NonNull INDArray weights, INDArray bias, int wFormat, @NonNull Conv2DConfig conv2DConfig) {
