@@ -146,11 +146,11 @@ namespace sd {
         }
 
         bool OpRegistrator::hasOperation(const std::string &opName) const {
-            return _declarablesD.count(opName) > 1;
+            return _declarablesD.count(opName) > 0;
         }
 
         bool OpRegistrator::hasOperation(Nd4jLong opName) const {
-            return _declarablesLD.count(opName) > 1;
+            return _declarablesLD.count(opName) > 0;
         }
 
         bool OpRegistrator::registerOperation(const std::string &opName, std::shared_ptr<sd::ops::DeclarableOp> op) {

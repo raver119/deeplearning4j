@@ -1120,8 +1120,7 @@ namespace sd {
 
         Node* Node::clone() {
             if (this->_customOp && this->_opType == OpType_CUSTOM) {
-                auto clone = new Node(nullptr, _id);
-                clone->_customOp = _customOp;
+                auto clone = new Node(_customOp.get(), _id);
                 clone->pullValues(this);
                 return clone;
             }
