@@ -19,6 +19,7 @@
 //
 
 #include <graph/execution/OpSequence.h>
+#include <ops/declarable/OpRegistrator.h>
 
 namespace sd {
     namespace graph {
@@ -26,7 +27,7 @@ namespace sd {
             //
         }
 
-        OpSequence::OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops, const int deviceId) {
+        OpSequence::OpSequence(const std::vector<ExecutionTask> &ops, const int deviceId) {
             _deviceId = deviceId;
 
             for (const auto v : ops)
@@ -67,11 +68,11 @@ namespace sd {
             return _deviceId;
         }
 
-        std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::at(uint64_t index) const {
+        ExecutionTask OpSequence::at(uint64_t index) const {
             return _ops[index];
         }
 
-        std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *> OpSequence::operator[](uint64_t index) const {
+        ExecutionTask OpSequence::operator[](uint64_t index) const {
             return at(index);
         }
 
@@ -79,10 +80,15 @@ namespace sd {
             return _ops.size();
         }
 
-        void OpSequence::append(sd::ops::DeclarableOp *op, sd::graph::ContextPrototype *ctx) {
-            _ops.emplace_back(std::pair<sd::ops::DeclarableOp *, sd::graph::ContextPrototype *>{op, ctx});
+        void OpSequence::append(std::shared_ptr<sd::ops::DeclarableOp> op, const sd::graph::ContextPrototype &ctx) {
+            ExecutionTask task(op, ctx);
+            _ops.emplace_back(task);
         }
 
+        void OpSequence::append(sd::ops::DeclarableOp *op, const ContextPrototype &ctx) {
+            auto rop = sd::ops::OpRegistrator::getInstance()->getOperation(op->getOpHash());
+            append(rop, ctx);
+        }
 
         OpSequence::iterator
         OpSequence::begin() {
@@ -98,7 +104,7 @@ namespace sd {
             //
         }
 
-        std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> OpSequence::iterator::operator*() const {
+        ExecutionTask OpSequence::iterator::operator*() const {
             return _container._ops[_position];
         }
 

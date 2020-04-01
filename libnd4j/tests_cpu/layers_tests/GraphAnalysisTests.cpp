@@ -70,8 +70,8 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_1) {
     // we expect that OpSequence has exactly 2 ops
     ASSERT_EQ(2, sequence.length());
 
-    ASSERT_EQ(10, sequence.at(0).second->nodeId());
-    ASSERT_EQ(20, sequence.at(1).second->nodeId());
+    ASSERT_EQ(10, sequence.at(0).protoContext().nodeId());
+    ASSERT_EQ(20, sequence.at(1).protoContext().nodeId());
 }
 
 TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
@@ -116,7 +116,7 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     // we expect that OpSequence has exactly 2 ops
     ASSERT_EQ(1, sequence.length());
 
-    ASSERT_EQ(10, sequence.at(0).second->nodeId());
+    ASSERT_EQ(10, sequence.at(0).protoContext().nodeId());
 
     // checking second layer now
     auto layer1 = optimized.layer(0);
@@ -127,10 +127,10 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     sequence = layer1[0];
 
     ASSERT_EQ(1, sequence.length());
-    ASSERT_EQ(20, sequence.at(0).second->nodeId());
+    ASSERT_EQ(20, sequence.at(0).protoContext().nodeId());
 
     sequence = layer1[1];
 
     ASSERT_EQ(1, sequence.length());
-    ASSERT_EQ(30, sequence.at(0).second->nodeId());
+    ASSERT_EQ(30, sequence.at(0).protoContext().nodeId());
 }

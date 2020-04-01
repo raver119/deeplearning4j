@@ -31,7 +31,7 @@ namespace sd {
 
         class SD_EXPORT GraphExecutor {
         protected:
-            virtual Context prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const;
+            virtual Context prepareContext(const ContextPrototype &contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const;
 
             /*
              * preprocessor call involves:
@@ -74,7 +74,7 @@ namespace sd {
              * @param contextPrototype
              * @return
              */
-            virtual Nd4jStatus execute(sd::ops::DeclarableOp *op, ContextPrototype *contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const;
+            virtual Nd4jStatus execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const;
         };
     }
 }

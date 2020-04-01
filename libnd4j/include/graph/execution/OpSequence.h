@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <ops/declarable/DeclarableOp.h>
+#include <graph/execution/ExecutionTask.h>
 
 
 namespace sd {
@@ -30,16 +31,16 @@ namespace sd {
     /**
     * This class represents independent and immutable sequence of operations
     */
-    class SD_EXPORT OpSequence : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
+    class SD_EXPORT OpSequence : public std::iterator<std::output_iterator_tag, ExecutionTask> {
         // our internal iterator for OpSequence
         class iterator;
         protected:
             // main thing here. sorted list of operations and their contexts
-            std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> _ops;
+            std::vector<ExecutionTask> _ops;
 
             int _deviceId = 0;
         public:
-            explicit OpSequence(const std::vector<std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> &ops, const int deviceId = 0);
+            explicit OpSequence(const std::vector<ExecutionTask> &ops, const int deviceId = 0);
             OpSequence(const int deviceId = 0);
             ~OpSequence() = default;
 
@@ -73,15 +74,16 @@ namespace sd {
              * @param index
              * @return
              */
-            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> at(uint64_t index) const;
-            std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> operator[](uint64_t index) const;
+            ExecutionTask at(uint64_t index) const;
+            ExecutionTask operator[](uint64_t index) const;
 
             /**
              * This method allows to add DeclarableOp to the end of execution queue
              * @param op - Op to be executed
              * @param ctx - ContextPrototype for this operation with inputs/outputs/args defined
              */
-            void append(sd::ops::DeclarableOp *op, sd::graph::ContextPrototype *ctx);
+            void append(std::shared_ptr<sd::ops::DeclarableOp> op, const sd::graph::ContextPrototype &ctx);
+            void append(sd::ops::DeclarableOp *op, const sd::graph::ContextPrototype &ctx);
 
             /**
              * Iterator functionality for OpSequence
@@ -93,13 +95,13 @@ namespace sd {
 
             // additional private section
         private:
-            class iterator : public std::iterator<std::output_iterator_tag, std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*>> {
+            class iterator : public std::iterator<std::output_iterator_tag, ExecutionTask> {
             private:
                 uint64_t _position = 0;
                 OpSequence & _container;
             public:
                 explicit iterator(OpSequence & container, uint64_t index = 0);
-                std::pair<sd::ops::DeclarableOp*, sd::graph::ContextPrototype*> operator*() const;
+                ExecutionTask operator*() const;
                 iterator & operator++();
                 iterator & operator++(int);
                 bool operator!=(const iterator &) const;

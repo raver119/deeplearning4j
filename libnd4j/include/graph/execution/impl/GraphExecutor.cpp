@@ -23,9 +23,9 @@
 
 namespace sd {
     namespace graph {
-        Context GraphExecutor::prepareContext(ContextPrototype *contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const {
+        Context GraphExecutor::prepareContext(const ContextPrototype &contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const {
             // TODO: maybe we'll want to do something here?
-            return Context(*contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
+            return Context(contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
         }
 
         Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {
@@ -44,7 +44,7 @@ namespace sd {
         }
 
 
-        Nd4jStatus GraphExecutor::execute(sd::ops::DeclarableOp *op, ContextPrototype *contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
+        Nd4jStatus GraphExecutor::execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
             auto ctx = prepareContext(contextPrototype, *graph.originalGraph().getVariableSpace(), graph.memoryManager());
             return op->execute(&ctx);
         }
@@ -55,7 +55,7 @@ namespace sd {
              */
             for (int e = 0; e < sequence.length(); e++) {
                 auto v = sequence[e];
-                auto result = execute(v.first, v.second, sequence, graph, deviceId >= 0 ? deviceId : sequence.deviceId());
+                auto result = execute(v.op(), v.protoContext(), sequence, graph, deviceId >= 0 ? deviceId : sequence.deviceId());
                 if (result != Status::OK())
                     return result;
             }

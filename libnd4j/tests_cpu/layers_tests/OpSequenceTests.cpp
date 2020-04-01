@@ -49,14 +49,14 @@ TEST_F(OpSequenceTests, test_iterator_1) {
     Context ctx1(1);
     Context ctx2(2);
 
-    sequence.append(&op1, &ctx1);
-    sequence.append(&op2, &ctx2);
+    sequence.append(&op1, ctx1);
+    sequence.append(&op2, ctx2);
 
     ASSERT_EQ(2, sequence.length());
 
     int cnt = 1;
     for (const auto &v:sequence) {
-        ASSERT_EQ(cnt++, v.second->nodeId());
+        ASSERT_EQ(cnt++, v.protoContext().nodeId());
     }
 
     ASSERT_EQ(3, cnt);
