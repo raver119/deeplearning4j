@@ -61,12 +61,15 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     auto B = NDArrayFactory::create<int>('c', {3}, {2, 2, 2});
     auto C = NDArrayFactory::create<int>('c', {3}, {3, 3, 3});
 
+    auto exp = NDArrayFactory::create<int>('c', {3}, {5, 5, 5});
+
     graph.addVariable("A", A);
     graph.addVariable("B", B);
     graph.addVariable("C", C);
 
     Node m("mul", sd::ops::multiply());
     Node a("add", sd::ops::add());
+
     graph.addNode(m, {"A", "B"});
     graph.addNode(a, {"mul", "C"});
 
@@ -87,9 +90,15 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     GraphExecutor executor;
     executor.execute(optimizedGraph);
 
+    // checking results by ID
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(m.id()));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(a.id()));
+
+    // checking results by name
     ASSERT_TRUE(graph.variableSpace()->hasVariable("mul"));
     ASSERT_TRUE(graph.variableSpace()->hasVariable("add"));
 
-    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
-    ASSERT_TRUE(graph.variableSpace()->hasVariable(2));
+    // checking if result is valid
+    auto result = graph.variableSpace()->getVariable(a.id())->getNDArray();
+    ASSERT_EQ(exp, *result);
 }

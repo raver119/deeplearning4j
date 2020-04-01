@@ -43,6 +43,7 @@ namespace sd {
             // int ids of the input nodes
             std::vector<std::pair<int, int>> _inputs;
             int _nodeId;
+            std::string _name;
             std::vector<double> _tArgs;
             std::vector<int> _iArgs;
             std::vector<bool> _bArgs;
@@ -127,6 +128,9 @@ namespace sd {
 
             bool isUseMKLDNN()  const { return _useMKLDNN; }
             void setUseMKLDNN(bool useMKLDNN) { _useMKLDNN = useMKLDNN; }
+
+            std::string name() const;
+            void setName(const std::string &name);
 
             /**
              * This method returns number of inputs available in this block

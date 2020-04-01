@@ -62,6 +62,7 @@ namespace sd {
             _hasInternalOutputs = false;
 
             ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
+            block.setName(nodeName);
 
             block.appendI(iArgs);
             block.appendT(tArgs);
@@ -90,6 +91,7 @@ namespace sd {
             _hasInternalOutputs = false;
 
             ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
+            block.setName(nodeName);
 
             block.appendI(iArgs);
             block.appendT(tArgs);

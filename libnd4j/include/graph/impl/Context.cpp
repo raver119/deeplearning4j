@@ -53,6 +53,7 @@ namespace sd {
             this->_opNum = prototype.opNum();
             this->_isInplace = prototype.isInplace();
             this->_nodeId = prototype.nodeId();
+            this->_name = prototype.name();
             this->_useMKLDNN = prototype.isUseMKLDNN();
 
             if (variableSpace != nullptr && variableSpace->launchContext()->getWorkspace() != nullptr)
@@ -320,6 +321,11 @@ namespace sd {
 
             if (!_variableSpace->hasVariable(pair)) {
                 auto var = new Variable(nullptr, nullptr, this->nodeId(), idx);
+                auto name = this->name();
+
+                if (!name.empty())
+                    var->setName(name);
+
                 _variableSpace->putVariable(pair, var);
                 return var;
             } else {

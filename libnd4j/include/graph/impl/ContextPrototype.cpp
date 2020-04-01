@@ -215,6 +215,7 @@ namespace sd {
             _iArgs = other._iArgs;
             _bArgs = other._bArgs;
             _dArgs = other._dArgs;
+            _name = other._name;
 
             _nodeId = other._nodeId;
             _isInplace = other._isInplace;
@@ -236,6 +237,7 @@ namespace sd {
             _iArgs = other._iArgs;
             _bArgs = other._bArgs;
             _dArgs = other._dArgs;
+            _name = other._name;
 
             _nodeId = other._nodeId;
             _isInplace = other._isInplace;
@@ -256,6 +258,7 @@ namespace sd {
             _iArgs = std::move(other._iArgs);
             _bArgs = std::move(other._bArgs);
             _dArgs = std::move(other._dArgs);
+            _name = std::move(other._name);
 
             _nodeId = other._nodeId;
             _isInplace = other._isInplace;
@@ -277,6 +280,7 @@ namespace sd {
             _iArgs = std::move(other._iArgs);
             _bArgs = std::move(other._bArgs);
             _dArgs = std::move(other._dArgs);
+            _name = std::move(other._name);
 
             _nodeId = other._nodeId;
             _isInplace = other._isInplace;
@@ -293,6 +297,14 @@ namespace sd {
 
         void ContextPrototype::setNodeId(int id) {
             _nodeId = id;
+        }
+
+        std::string ContextPrototype::name() const {
+            return _name;
+        }
+
+        void ContextPrototype::setName(const std::string &name) {
+            _name = name;
         }
     }
 }
