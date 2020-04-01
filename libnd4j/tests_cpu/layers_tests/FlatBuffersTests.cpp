@@ -168,7 +168,7 @@ TEST_F(FlatBuffersTest, FlatGraphTest1) {
     ASSERT_EQ(1, graph.rootNodes());
 
 
-    auto vs = graph.getVariableSpace();
+    auto vs = graph.variableSpace();
 
     ASSERT_EQ(OutputMode_IMPLICIT, graph.getExecutorConfiguration()->_outputMode);
 
@@ -359,7 +359,7 @@ TEST_F(FlatBuffersTest, ReadFile3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
-    auto z = graph->getVariableSpace()->getVariable(2)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(2)->getNDArray();
 
     ASSERT_EQ(1, z->lengthOf());
     ASSERT_EQ(8, z->e(0));
@@ -374,9 +374,9 @@ TEST_F(FlatBuffersTest, ReadInception1) {
     Nd4jStatus status = GraphExecutioner<float>::execute(graph);
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(227));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(227));
 
-    auto lastNode = graph->getVariableSpace()->getVariable(227)->getNDArray();
+    auto lastNode = graph->variableSpace()->getVariable(227)->getNDArray();
 
     lastNode->printShapeInfo("Result shape");
 
@@ -403,12 +403,12 @@ TEST_F(FlatBuffersTest, ReadLoops_3argsWhile_1) {
 
     auto expPhi('c', {2, 2});
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(-1));
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(-2));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(-1));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(-2));
 
-    auto phi = graph->getVariableSpace()->getVariable(-2)->getNDArray();
-    auto constA = graph->getVariableSpace()->getVariable(-5)->getNDArray();
-    auto lessY = graph->getVariableSpace()->getVariable(-6)->getNDArray();
+    auto phi = graph->variableSpace()->getVariable(-2)->getNDArray();
+    auto constA = graph->variableSpace()->getVariable(-5)->getNDArray();
+    auto lessY = graph->variableSpace()->getVariable(-6)->getNDArray();
 
     //constA->printBuffer("constA");
     //lessY->printBuffer("lessY");
@@ -421,8 +421,8 @@ TEST_F(FlatBuffersTest, ReadLoops_3argsWhile_1) {
 
     // now, we expect some values
 
-    auto x = graph->getVariableSpace()->getVariable(20);
-    auto y = graph->getVariableSpace()->getVariable(21);
+    auto x = graph->variableSpace()->getVariable(20);
+    auto y = graph->variableSpace()->getVariable(21);
 
     ASSERT_NEAR(110.0f, x->getNDArray()->meanNumber(), 1e-5);
     ASSERT_NEAR(33.0f, y->getNDArray()->meanNumber(), 1e-5);
@@ -444,7 +444,7 @@ TEST_F(FlatBuffersTest, ReadTensorArrayLoop_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
-    auto variableSpace = graph->getVariableSpace();
+    auto variableSpace = graph->variableSpace();
 
     ASSERT_TRUE(variableSpace->hasVariable(23,0));
 
@@ -475,9 +475,9 @@ TEST_F(FlatBuffersTest, ReadLoops_NestedWhile_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
-    auto x = graph->getVariableSpace()->getVariable(28);
-    auto y = graph->getVariableSpace()->getVariable(29);
-    auto z = graph->getVariableSpace()->getVariable(11, 2);
+    auto x = graph->variableSpace()->getVariable(28);
+    auto y = graph->variableSpace()->getVariable(29);
+    auto z = graph->variableSpace()->getVariable(11, 2);
 
     ASSERT_NEAR(110.0f, x->getNDArray()->meanNumber(), 1e-5);
     ASSERT_NEAR(33.0f, y->getNDArray()->meanNumber(), 1e-5);
@@ -503,9 +503,9 @@ TEST_F(FlatBuffersTest, ReadTensorArray_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(14));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(14));
 
-    auto z = graph->getVariableSpace()->getVariable(14)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(14)->getNDArray();
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
@@ -525,9 +525,9 @@ TEST_F(FlatBuffersTest, ReadStridedSlice_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(7));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(7));
 
-    auto z = graph->getVariableSpace()->getVariable(7)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(7)->getNDArray();
 
     ASSERT_NEAR(73.5f, z->e(0), 1e-5);
 
@@ -545,7 +545,7 @@ TEST_F(FlatBuffersTest, ReduceDim_1) {
 
     graph->printOut();
 
-    auto variableSpace = graph->getVariableSpace();
+    auto variableSpace = graph->variableSpace();
 
 
     ASSERT_TRUE(variableSpace->hasVariable(1));
@@ -578,7 +578,7 @@ TEST_F(FlatBuffersTest, ReduceDim_2) {
 
     graph->printOut();
 
-    auto variableSpace = graph->getVariableSpace();
+    auto variableSpace = graph->variableSpace();
 
 
     ASSERT_TRUE(variableSpace->hasVariable(1));
@@ -617,9 +617,9 @@ TEST_F(FlatBuffersTest, Ae_00) {
     auto result = GraphExecutioner::execute(graph);
     ASSERT_EQ(ND4J_STATUS_OK, result);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(18));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(18));
 
-    auto z = graph->getVariableSpace()->getVariable(18)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(18)->getNDArray();
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
@@ -638,9 +638,9 @@ TEST_F(FlatBuffersTest, expand_dims) {
 
     auto result = GraphExecutioner::execute(graph);
     ASSERT_EQ(ND4J_STATUS_OK, result);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(5));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(5));
 
-    auto z = graph->getVariableSpace()->getVariable(5)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(5)->getNDArray();
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
@@ -721,9 +721,9 @@ TEST_F(FlatBuffersTest, Test_TensorDotMisc) {
     auto result = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), result);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(77));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(77));
 
-    auto z = graph->getVariableSpace()->getVariable(77,0)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(77,0)->getNDArray();
 
     ASSERT_EQ(e, *z);
 
@@ -739,9 +739,9 @@ TEST_F(FlatBuffersTest, Test_MNIST_00_1) {
     auto result = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), result);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(6));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
 
-    auto z = graph->getVariableSpace()->getVariable(6,0)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(6,0)->getNDArray();
 
     ASSERT_EQ(e, *z);
 
@@ -774,9 +774,9 @@ TEST_F(FlatBuffersTest, nhwc_conv_0) {
     auto result = GraphExecutioner<float>::execute(graph);
     ASSERT_EQ(ND4J_STATUS_OK, result);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(11));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(11));
 
-    auto z = graph->getVariableSpace()->getVariable(11)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(11)->getNDArray();
 
     //z->printShapeInfo("z buffr");
     //z->printIndexedBuffer("z shape");

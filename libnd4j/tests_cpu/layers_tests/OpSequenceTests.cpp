@@ -39,6 +39,7 @@ public:
 };
 
 TEST_F(OpSequenceTests, test_iterator_1) {
+    Graph graph;
     OpSequence sequence;
 
     ASSERT_EQ(0, sequence.length());
@@ -61,8 +62,7 @@ TEST_F(OpSequenceTests, test_iterator_1) {
 
     ASSERT_EQ(3, cnt);
 
-    GraphMemoryManager mgr;
-    OptimizedGraph optimizedGraph(mgr);
+    OptimizedGraph optimizedGraph(&graph);
     ASSERT_EQ(0, optimizedGraph.layers());
 
     optimizedGraph.append(sequence);

@@ -240,7 +240,7 @@ TEST_F(WorkspaceTests, Test_Arrays_1) {
 #ifdef GRAPH_FILES_OK
 TEST_F(WorkspaceTests, Test_Graph_1) {
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/ae_00.fb");
-    auto workspace = graph->getVariableSpace()->workspace();
+    auto workspace = graph->variableSpace()->workspace();
 
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);

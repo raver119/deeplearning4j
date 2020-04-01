@@ -30,7 +30,7 @@ namespace sd {
             // this op replicates input variable into the frame. basically happens once for single loop.
             // sure, if there's inner loop within outer loop, it'll be called once for outer loop and multiple times for inner loop
 
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             // basically, first non-null variable is our target

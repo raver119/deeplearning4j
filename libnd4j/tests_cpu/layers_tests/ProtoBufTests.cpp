@@ -53,10 +53,10 @@ TEST_F(ProtoBufTests, TestTextLoad2) {
 
     ASSERT_FALSE(graph == nullptr);
 
-    ASSERT_EQ(2, graph->getVariableSpace()->externalEntries());
+    ASSERT_EQ(2, graph->variableSpace()->externalEntries());
 
-    auto var0 = graph->getVariableSpace()->getVariable(new std::string("zeros"));
-    auto var1 = graph->getVariableSpace()->getVariable(new std::string("ones"));
+    auto var0 = graph->variableSpace()->getVariable(new std::string("zeros"));
+    auto var1 = graph->variableSpace()->getVariable(new std::string("ones"));
 
 
     // first we're veryfying variable states
@@ -91,10 +91,10 @@ TEST_F(ProtoBufTests, TestTextLoad3) {
 
     ASSERT_FALSE(graph == nullptr);
 
-    ASSERT_EQ(2, graph->getVariableSpace()->externalEntries());
+    ASSERT_EQ(2, graph->variableSpace()->externalEntries());
 
-    auto var0 = graph->getVariableSpace()->getVariable(new std::string("Placeholder"));
-    auto var1 = graph->getVariableSpace()->getVariable(new std::string("Placeholder_1"));
+    auto var0 = graph->variableSpace()->getVariable(new std::string("Placeholder"));
+    auto var1 = graph->variableSpace()->getVariable(new std::string("Placeholder_1"));
 
     ASSERT_TRUE(var0 != nullptr);
     ASSERT_TRUE(var1 != nullptr);

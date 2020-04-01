@@ -29,7 +29,7 @@ namespace sd {
         Nd4jStatus LogicWhile::processNode(Graph *graph, Node *node) {
             throw std::runtime_error("LogicWhile::processNode - not implemented yet");
             /*
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
 
             nd4j_debug("Starting on WHILE loop: [%i]\n", node->id());
 

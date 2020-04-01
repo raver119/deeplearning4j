@@ -45,7 +45,7 @@ namespace sd {
 
 
         Nd4jStatus GraphExecutor::execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
-            auto ctx = prepareContext(contextPrototype, *graph.originalGraph().getVariableSpace(), graph.memoryManager());
+            auto ctx = prepareContext(contextPrototype, *graph.originalGraph().variableSpace(), graph.memoryManager());
             return op->execute(&ctx);
         }
 

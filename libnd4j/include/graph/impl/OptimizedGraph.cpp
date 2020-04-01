@@ -23,8 +23,9 @@
 
 namespace sd {
     namespace graph {
-        OptimizedGraph::OptimizedGraph(GraphMemoryManager &memoryManager) {
-            _memoryManager = &memoryManager;
+        OptimizedGraph::OptimizedGraph(Graph *original) {
+            _originalGraph = original;
+            _memoryManager = const_cast<GraphMemoryManager*>(&original->memoryManager());
         }
 
         OptimizedGraph::OptimizedGraph(const OptimizedGraph &other) noexcept {

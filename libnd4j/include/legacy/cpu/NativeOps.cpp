@@ -2179,7 +2179,7 @@ int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer flat
 
 static VariablesSet* executeStoredGraphT(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int* inputIndices, int numInputs) {
     auto graph = sd::graph::GraphHolder::getInstance()->cloneGraph(graphId);
-    auto varSpace = graph->getVariableSpace();
+    auto varSpace = graph->variableSpace();
 
     std::vector<sd::NDArray*> handles;
 

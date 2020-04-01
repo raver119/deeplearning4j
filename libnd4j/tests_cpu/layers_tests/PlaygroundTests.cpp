@@ -111,17 +111,17 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
     graph->tagInplaceNodes();
 
-    graph->getVariableSpace()->putVariable(658,0, t);
-    graph->getVariableSpace()->putVariable(659,0, u);
-    graph->getVariableSpace()->putVariable(660,0, v);
+    graph->variableSpace()->putVariable(658,0, t);
+    graph->variableSpace()->putVariable(659,0, u);
+    graph->variableSpace()->putVariable(660,0, v);
 
 /*
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1620));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(1620));
 
-    auto array = graph->getVariableSpace()->getVariable(1620)->getNDArray();
+    auto array = graph->variableSpace()->getVariable(1620)->getNDArray();
     ASSERT_EQ(z, *array);
 
 */
@@ -174,17 +174,17 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
     graph->tagInplaceNodes();
 
-    graph->getVariableSpace()->putVariable(85,0, t);
-    graph->getVariableSpace()->putVariable(86,0, u);
-    graph->getVariableSpace()->putVariable(87,0, v);
+    graph->variableSpace()->putVariable(85,0, t);
+    graph->variableSpace()->putVariable(86,0, u);
+    graph->variableSpace()->putVariable(87,0, v);
 
 /*
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
 
-    auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
+    auto array = graph->variableSpace()->getVariable(198)->getNDArray();
     ASSERT_EQ(z, *array);
 
 */
@@ -236,9 +236,9 @@ TEST_F(PlaygroundTests, test_bert_2) {
     // validating graph now
     auto status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
 
-    auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
+    auto array = graph->variableSpace()->getVariable(198)->getNDArray();
     ASSERT_EQ(z, *array);
 */
 

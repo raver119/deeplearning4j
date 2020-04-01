@@ -27,7 +27,7 @@ namespace sd {
             throw std::runtime_error("LogicMerge::processNode - not implemented yet");
             /*
             // at merge node only one of inputs exist if that's just switch and other node isn't LogicNextItration
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             // merge MUST have 2 inputs

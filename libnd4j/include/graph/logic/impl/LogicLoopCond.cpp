@@ -24,7 +24,7 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicLoopCond::processNode(Graph *graph, Node *node) {
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             Context ctx(node->protoContext(), __variableSpace);

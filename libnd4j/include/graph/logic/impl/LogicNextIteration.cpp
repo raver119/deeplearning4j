@@ -26,7 +26,7 @@ namespace sd {
         Nd4jStatus LogicNextIeration::processNode(Graph *graph, Node *node) {
             throw std::runtime_error("LogicNextIeration::processNode - not implemented yet");
             /*
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             auto inputAddr = node->input()->at(0);

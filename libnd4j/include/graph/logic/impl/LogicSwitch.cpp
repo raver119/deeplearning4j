@@ -27,7 +27,7 @@ namespace sd {
         Nd4jStatus LogicSwitch::processNode(Graph* graph, Node* node) {
             throw std::runtime_error("LogicSwitch::processNode - not implemented yet");
             /*
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             Context ctx(node->getContextPrototype(), __variableSpace);

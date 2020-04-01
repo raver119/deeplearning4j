@@ -30,6 +30,7 @@
 #include <ops/declarable/DeclarableOp.h>
 #include <graph/exceptions/unresolved_output_exception.h>
 #include <graph/exceptions/unresolved_input_exception.h>
+#include <ops/declarable/headers/broadcastable.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -41,11 +42,40 @@ public:
 
 TEST_F(GraphExecutorTests, test_basic_exec_1) {
     GraphMemoryManager memoryManager;
+    Graph graph;
 
-    OptimizedGraph optimizedGraph(memoryManager);
+    OptimizedGraph optimizedGraph(&graph);
     OpSequence sequence;
 
     optimizedGraph.append(sequence);
+
+    GraphExecutor executor;
+    executor.execute(optimizedGraph);
+}
+
+TEST_F(GraphExecutorTests, test_basic_exec_2) {
+    GraphMemoryManager mgr;
+    Graph graph(nullptr, nullptr, mgr);
+
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+
+    Node m("mul", sd::ops::multiply());
+    Node a("add", sd::ops::add());
+    graph.addNode(m, {"A", "B"});
+    graph.addNode(a, {"mul", "C"});
+
+    OptimizedGraph optimizedGraph(&graph);
+    OpSequence sequence;
+
+    sequence.append(m.customOp(), m.protoContext());
+    sequence.append(a.customOp(), a.protoContext());
+
+    optimizedGraph.append(sequence);
+
+    ASSERT_EQ(2, sequence.length());
+    ASSERT_EQ(1, optimizedGraph.layers());
 
     GraphExecutor executor;
     executor.execute(optimizedGraph);

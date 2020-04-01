@@ -48,7 +48,7 @@ namespace sd {
             return _configuration;
         }
 
-        VariableSpace * Graph::getVariableSpace() const {
+        VariableSpace * Graph::variableSpace() const {
             return _variableSpace;
         }
 
@@ -379,7 +379,7 @@ namespace sd {
                 return nullptr;
 
             auto graph = new Graph();
-            auto variableSpace = graph->getVariableSpace();
+            auto variableSpace = graph->variableSpace();
 
             std::map<const std::string, int> variablesMap;
 
@@ -612,7 +612,7 @@ namespace sd {
 
         OptimizedGraph Graph::optimizedGraph() const {
 
-            OptimizedGraph optGraf(const_cast<GraphMemoryManager&>(_memoryMaager));
+            OptimizedGraph optGraf(const_cast<Graph*>(this));
             /*
             OpSequence opSeq;
             std::set<int> nodesMap, startNodes;
@@ -697,6 +697,10 @@ namespace sd {
             _maxId = _maxId;
 
             return *this;
+        }
+
+        const GraphMemoryManager &Graph::memoryManager() const {
+            return _memoryMaager;
         }
     }
 }

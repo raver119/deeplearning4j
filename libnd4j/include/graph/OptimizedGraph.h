@@ -46,7 +46,7 @@ namespace sd {
 
             std::mutex _mutex;
         public:
-            OptimizedGraph(GraphMemoryManager &memoryManager);
+            OptimizedGraph(Graph *original);
             ~OptimizedGraph() = default;
 
             OptimizedGraph(const OptimizedGraph& other) noexcept;

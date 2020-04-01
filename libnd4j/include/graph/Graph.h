@@ -106,7 +106,9 @@ namespace sd {
              * This method returns pointer to thread_local VariableSpace
              * @return
              */
-            VariableSpace *getVariableSpace() const;
+            VariableSpace *variableSpace() const;
+
+            const GraphMemoryManager& memoryManager() const;
 
             /**
              * These methods add given node to the graph

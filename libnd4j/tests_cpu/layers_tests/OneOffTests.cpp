@@ -85,9 +85,9 @@ TEST_F(OneOffTests, test_pad_1D_1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(4));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(4));
 
-    auto z = graph.getVariableSpace()->getVariable(4)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(4)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -109,9 +109,9 @@ TEST_F(OneOffTests, test_scatter_nd_update_1) {
     Nd4jStatus status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
 
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(6));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
 
-    auto z = graph->getVariableSpace()->getVariable(6)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(6)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     z->printIndexedBuffer("z");
@@ -129,9 +129,9 @@ TEST_F(OneOffTests, test_conv2d_nhwc_failed_1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(9));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(9));
 
-    auto z = graph.getVariableSpace()->getVariable(9)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(9)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -144,9 +144,9 @@ TEST_F(OneOffTests, test_tensor_array_1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(5));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(5));
 
-    auto z = graph.getVariableSpace()->getVariable(5)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(5)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -159,9 +159,9 @@ TEST_F(OneOffTests, test_tensor_array_2) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(6));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(6));
 
-    auto z = graph.getVariableSpace()->getVariable(6)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(6)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -174,9 +174,9 @@ TEST_F(OneOffTests, test_tensor_array_3) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(15));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(15));
 
-    auto z = graph.getVariableSpace()->getVariable(15)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(15)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -189,9 +189,9 @@ TEST_F(OneOffTests, test_tensor_array_4) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(11));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(11));
 
-    auto z = graph.getVariableSpace()->getVariable(11)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(11)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -204,9 +204,9 @@ TEST_F(OneOffTests, test_assert_4) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
 
-    auto z = graph.getVariableSpace()->getVariable(1)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(1)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -223,9 +223,9 @@ TEST_F(OneOffTests, test_assert_4) {
 
 //     Nd4jStatus status = GraphExecutioner::execute(graph);
 //     ASSERT_EQ(Status::OK(), status);
-//     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(6));
+//     ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
 
-//     auto z = graph->getVariableSpace()->getVariable(6)->getNDArray();
+//     auto z = graph->variableSpace()->getVariable(6)->getNDArray();
 //     ASSERT_TRUE(z != nullptr);
 
 //     z->printIndexedBuffer("z buffer");
@@ -247,9 +247,9 @@ TEST_F(OneOffTests, test_cond_false_1) {
 
     Nd4jStatus status = GraphExecutioner::execute(graph);
     ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(6));
+    ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
 
-    auto z = graph->getVariableSpace()->getVariable(6)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(6)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     z->printIndexedBuffer("z buffer");
@@ -269,10 +269,10 @@ TEST_F(OneOffTests, test_identity_n_2) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(1));
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(1, 1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1, 1));
 
-    auto z = graph.getVariableSpace()->getVariable(1)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(1)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -285,9 +285,9 @@ TEST_F(OneOffTests, test_non2d_1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(3));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(3));
 
-    auto z = graph.getVariableSpace()->getVariable(3)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(3)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);
@@ -300,12 +300,12 @@ TEST_F(OneOffTests, test_reduce_all_1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(2));
-    auto in = graph.getVariableSpace()->getVariable(2)->getNDArray();
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(2));
+    auto in = graph.variableSpace()->getVariable(2)->getNDArray();
 
-    auto z = graph.getVariableSpace()->getVariable(1)->getNDArray();
+    auto z = graph.variableSpace()->getVariable(1)->getNDArray();
     ASSERT_TRUE(z != nullptr);
 
     ASSERT_EQ(e, *z);

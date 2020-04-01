@@ -50,9 +50,9 @@ TEST_F(GraphTests2, test_placeholder_1) {
 
     graph.addPlaceholder("input", DataType::BFLOAT16, {4, 12, 48});
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable("input"));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable("input"));
 
-    auto variable = graph.getVariableSpace()->getVariable("input");
+    auto variable = graph.variableSpace()->getVariable("input");
 
     ASSERT_NE(nullptr, variable);
     ASSERT_TRUE(variable->isPlaceholder());

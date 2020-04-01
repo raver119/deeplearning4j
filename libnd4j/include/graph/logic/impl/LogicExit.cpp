@@ -27,7 +27,7 @@ namespace sd {
             // this op is basically no-op
             // we just know it exists
 
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
             Context ctx(node->protoContext(), __variableSpace);

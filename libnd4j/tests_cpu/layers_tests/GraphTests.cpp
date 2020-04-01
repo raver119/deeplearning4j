@@ -50,7 +50,7 @@ TEST_F(GraphTests, SingleInput1) {
     auto x = NDArrayFactory::create_<float>('c', {5, 5});
     x->assign(-2.0f);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-1, x);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs);
     Node nodeB(OpType_TRANSFORM_STRICT, transform::Cosine);
@@ -64,9 +64,9 @@ TEST_F(GraphTests, SingleInput1) {
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(3));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(3));
 
-    auto node3 = graph.getVariableSpace()->getVariable(3)->getNDArray();
+    auto node3 = graph.variableSpace()->getVariable(3)->getNDArray();
 
     ASSERT_NEAR(0.4161468, node3->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 }
@@ -82,9 +82,9 @@ TEST_F(GraphTests, DoubleInput1) {
 
     auto z = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, y);
-    graph.getVariableSpace()->putVariable(-3, z);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, y);
+    graph.variableSpace()->putVariable(-3, z);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs);
     Node nodeB(OpType_TRANSFORM_SAME, transform::Abs);
@@ -111,9 +111,9 @@ TEST_F(GraphTests, SingleInput3) {
     auto v0 = NDArrayFactory::create_<float>('c', {5, 5});
     auto v1 = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, v0);
-    graph.getVariableSpace()->putVariable(-3, v1);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, v0);
+    graph.variableSpace()->putVariable(-3, v1);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs);
     Node nodeB(OpType_TRANSFORM_FLOAT, transform::Sqrt);
@@ -140,9 +140,9 @@ TEST_F(GraphTests, SingleInput4) {
     auto v0 = NDArrayFactory::create_<float>('c', {5, 5});
     auto v1 = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, v0);
-    graph.getVariableSpace()->putVariable(-3, v1);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, v0);
+    graph.variableSpace()->putVariable(-3, v1);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs);
     Node nodeB(OpType_TRANSFORM_FLOAT, transform::Sqrt);
@@ -178,10 +178,10 @@ TEST_F(GraphTests, DoubleInput2) {
     auto z0 = NDArrayFactory::create_<float>('c', {5, 5});
     auto z1 = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, y);
-    graph.getVariableSpace()->putVariable(-3, z0);
-    graph.getVariableSpace()->putVariable(-4, z1);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, y);
+    graph.variableSpace()->putVariable(-3, z0);
+    graph.variableSpace()->putVariable(-4, z1);
 
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -223,11 +223,11 @@ TEST_F(GraphTests, DoubleInput3) {
 
     auto w = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, y);
-    graph.getVariableSpace()->putVariable(-3, z0);
-    graph.getVariableSpace()->putVariable(-4, z1);
-    graph.getVariableSpace()->putVariable(-5, w);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, y);
+    graph.variableSpace()->putVariable(-3, z0);
+    graph.variableSpace()->putVariable(-4, z1);
+    graph.variableSpace()->putVariable(-5, w);
 
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -279,11 +279,11 @@ TEST_F(GraphTests, QuadInput1) {
     auto z = NDArrayFactory::create_<float>('c', {5, 5});
     z->assign(119.0);
 
-    graph.getVariableSpace()->putVariable(-1, x0);
-    graph.getVariableSpace()->putVariable(-2, x1);
-    graph.getVariableSpace()->putVariable(-3, x2);
-    graph.getVariableSpace()->putVariable(-4, x3);
-    graph.getVariableSpace()->putVariable(-5, z);
+    graph.variableSpace()->putVariable(-1, x0);
+    graph.variableSpace()->putVariable(-2, x1);
+    graph.variableSpace()->putVariable(-3, x2);
+    graph.variableSpace()->putVariable(-4, x3);
+    graph.variableSpace()->putVariable(-5, z);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {11});
     Node nodeB(OpType_TRANSFORM_SAME, transform::Abs, 2, {-2}, {11});
@@ -318,8 +318,8 @@ TEST_F(GraphTests, InternalBranching1) {
 
     auto z = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, z);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, z);
 
     // 1.0
     Node nodeA(OpType_TRANSFORM_SAME, transform::Ones, 1, {-1}, {11, 21});
@@ -366,8 +366,8 @@ TEST_F(GraphTests, ReductionsTest1) {
 
     auto z = NDArrayFactory::create_<float>('c', {5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, z);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, z);
 
     Node nodeA(OpType_REDUCE_FLOAT, reduce::Mean, 1, {-1}, {2}, {1}, {});
     Node nodeB(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {-2});
@@ -396,9 +396,9 @@ TEST_F(GraphTests, IndexReductionsTest1) {
     auto z = NDArrayFactory::create_<Nd4jLong>('c', {5, 1});
     auto axis = NDArrayFactory::create_<Nd4jLong>('c', {1}, {1});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, z);
-    //graph->getVariableSpace()->putVariable(-3, axis);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, z);
+    //graph->variableSpace()->putVariable(-3, axis);
 
 
     Node nodeA(OpType_INDEX_REDUCE, indexreduce::IndexMin, 1, {-1}, {2}, {1});
@@ -420,7 +420,7 @@ TEST_F(GraphTests, AutoOutput1) {
     auto x = NDArrayFactory::create_<float>('c', {5, 5});
     x->assign(-2.0);
 
-    graph->getVariableSpace()->putVariable(-1, x);
+    graph->variableSpace()->putVariable(-1, x);
 
     auto nodeA = new Node(OpType_TRANSFORM_FLOAT, 0, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, 35, 2, {1}, {});
@@ -433,7 +433,7 @@ TEST_F(GraphTests, AutoOutput1) {
 
     graph->buildGraph();
 
-    ASSERT_TRUE(graph->getVariableSpace()->getVariable(2) != nullptr);
+    ASSERT_TRUE(graph->variableSpace()->getVariable(2) != nullptr);
 
     GraphExecutioner::execute(graph);
 
@@ -455,7 +455,7 @@ TEST_F(GraphTests, AutoOutput2) {
     auto x = NDArrayFactory::create_<float>('c', {5, 5});
     x->assign(-2.0);
 
-    graph->getVariableSpace()->putVariable(-1, x);
+    graph->variableSpace()->putVariable(-1, x);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, 0, 1, {-1}, {2, 3, -1});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, 35, 2, {1}, {});
@@ -470,9 +470,9 @@ TEST_F(GraphTests, AutoOutput2) {
 
     graph->buildGraph();
 
-    ASSERT_TRUE(graph->getVariableSpace()->getVariable(-1) != nullptr);
-    ASSERT_TRUE(graph->getVariableSpace()->getVariable(2) != nullptr);
-    ASSERT_TRUE(graph->getVariableSpace()->getVariable(3) != nullptr);
+    ASSERT_TRUE(graph->variableSpace()->getVariable(-1) != nullptr);
+    ASSERT_TRUE(graph->variableSpace()->getVariable(2) != nullptr);
+    ASSERT_TRUE(graph->variableSpace()->getVariable(3) != nullptr);
 
     GraphExecutioner::execute(graph);
 
@@ -502,9 +502,9 @@ TEST_F(GraphTests, BroadcastTest1) {
 
     auto z = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, y);
-    graph.getVariableSpace()->putVariable(-3, z);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, y);
+    graph.variableSpace()->putVariable(-3, z);
 
     Node nodeA(OpType_BROADCAST, broadcast::Subtract, 1, {-1, -2}, {2}, {1});
     Node nodeB(OpType_TRANSFORM_SAME, transform::Neg, 2, {1}, {-3});
@@ -526,8 +526,8 @@ TEST_F(GraphTests, ScalarTest1) {
 
     auto z = NDArrayFactory::create_<float>('c', {5, 5});
 
-    graph.getVariableSpace()->putVariable(-1, x);
-    graph.getVariableSpace()->putVariable(-2, z);
+    graph.variableSpace()->putVariable(-1, x);
+    graph.variableSpace()->putVariable(-2, z);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     Node nodeB(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -561,8 +561,8 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     vX->setName(a);
     vZ->setName(o);
 
-    graph.getVariableSpace()->putVariable(-1, vX);
-    graph.getVariableSpace()->putVariable(-2, vZ);
+    graph.variableSpace()->putVariable(-1, vX);
+    graph.variableSpace()->putVariable(-2, vZ);
 
     Node nodeA(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     Node nodeB(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {-2});
@@ -577,23 +577,23 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     graph.addNode(nodeB, {1});
 
 
-    auto rX = graph.getVariableSpace()->getVariable(a);
-    auto rZ = graph.getVariableSpace()->getVariable(o);
+    auto rX = graph.variableSpace()->getVariable(a);
+    auto rZ = graph.variableSpace()->getVariable(o);
 
     std::string om("omicron");
 
     ASSERT_TRUE(rX->getNDArray() == vX->getNDArray());
     ASSERT_TRUE(rZ->getNDArray() == vZ->getNDArray());
-    ASSERT_FALSE(graph.getVariableSpace()->hasVariable(om));
+    ASSERT_FALSE(graph.variableSpace()->hasVariable(om));
 
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(1));
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(2));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(2));
 
     graph.execute();
 
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(p));
-    ASSERT_TRUE(graph.getVariableSpace()->hasVariable(t));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(p));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(t));
 
     ASSERT_NEAR(1.4142135, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 }
@@ -605,7 +605,7 @@ TEST_F(GraphTests, Test_Clone_1) {
 
 
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
-    auto variableSpace = graph->getVariableSpace();
+    auto variableSpace = graph->variableSpace();
     //graph->buildGraph();
 
     auto clone = graph->clone();
@@ -643,7 +643,7 @@ TEST_F(GraphTests, Test_Clone_2) {
 
 
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
-    auto variableSpace = graph->getVariableSpace();
+    auto variableSpace = graph->variableSpace();
     graph->buildGraph();
 
     auto clone = graph->clone();
@@ -877,15 +877,15 @@ TEST_F(GraphTests, Test_Inplace_Execution_1) {
     ASSERT_TRUE(graph->nodeById(17)->isInplace());
     ASSERT_TRUE(graph->nodeById(18)->isInplace());
 
-    auto status = GraphExecutioner::execute(graph, graph->getVariableSpace());
+    auto status = GraphExecutioner::execute(graph, graph->variableSpace());
     ASSERT_EQ(Status::OK(), status);
 
-    auto z = graph->getVariableSpace()->getVariable(18)->getNDArray();
+    auto z = graph->variableSpace()->getVariable(18)->getNDArray();
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
 
-    auto z_17 = graph->getVariableSpace()->getVariable(17)->getNDArray();
+    auto z_17 = graph->variableSpace()->getVariable(17)->getNDArray();
     ASSERT_TRUE(z_17 == z);
 
     delete graph;

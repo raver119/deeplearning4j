@@ -26,7 +26,7 @@ namespace sd {
         GraphProfile *GraphProfilingHelper::profile(Graph *graph, int iterations) {
 
             // saving original workspace
-            auto varSpace = graph->getVariableSpace()->clone();
+            auto varSpace = graph->variableSpace()->clone();
 
             // printing out graph structure
             // graph->printOut();

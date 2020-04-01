@@ -28,7 +28,7 @@ namespace sd {
         Nd4jStatus LogicConditional::processNode(Graph *graph, Node *node) {
             throw std::runtime_error("LogicConditional::processNode - not implemented yet");
             /*
-            auto __variableSpace = graph->getVariableSpace();
+            auto __variableSpace = graph->variableSpace();
 
             auto size = node->input()->size();
 
