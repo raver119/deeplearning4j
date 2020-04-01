@@ -73,12 +73,11 @@ namespace sd {
             auto lvalue = array;
             addVariable(name, lvalue);
         }
-/*
-        void Graph::addNode(Node &&node, const std::vector<std::string> &inputs) {
-            auto lvalue = node;
+
+        void Graph::addNode(Node &&node, const std::initializer_list<std::string> &inputs) {
+            auto lvalue = std::move(node);
             addNode(lvalue, inputs);
         }
-        */
 
         void Graph::addNode(Node &node, const std::initializer_list<std::string> &inputs) {
             if (node.id() != 0)

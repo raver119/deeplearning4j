@@ -112,7 +112,7 @@ namespace sd {
              * These methods add given node to the graph
              * @param node
              */
-            //void addNode(Node &&node, const std::vector<std::string> &inputs);
+            void addNode(Node &&node, const std::initializer_list<std::string> &inputs);
 
             void addNode(Node &node, const std::initializer_list<std::string> &inputs);
             void addNode(Node &node, const std::initializer_list<int> &inputs);

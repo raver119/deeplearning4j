@@ -76,10 +76,9 @@ TEST_F(GraphTests2, test_execution_1) {
     // C
     graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
-    Node a("multiply_node", sd::ops::multiply());
     Node b("add_node", sd::ops::add());
 
-    graph.addNode(a, {"A", "B"});
+    graph.addNode(Node("multiply_node", sd::ops::multiply()), {"A", "B"});
     graph.addNode(b, {"multiply_node", "C"});
 
     auto result = graph.execute({}, {"add_node"});
@@ -104,8 +103,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_2) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    Node a("tanh_node", "tanh");
-    graph.addNode(a, {"input"});
+    graph.addNode(Node("tanh_node", sd::ops::tanh()), {"input"});
 
     auto result = graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"tanh_node"});
 
@@ -117,8 +115,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_3) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    Node a("tanh_node", "tanh");
-    graph.addNode(a, {"input"});
+    graph.addNode(Node("tanh_node", sd::ops::tanh()), {"input"});
 
     ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<int>(5)}}, {"tanh_node"}), sd::datatype_exception);
 }
@@ -128,7 +125,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_4) {
 
     graph.addPlaceholder("input", DataType::FLOAT32, {3, 4, 5});
 
-    Node a("tanh_node", "tanh");
+    Node a("tanh_node", sd::ops::tanh());
     graph.addNode(a, {"input"});
 
     ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<float>(0.5f)}}, {"tanh_node"}), sd::shape_mismatch_exception);
