@@ -1864,12 +1864,12 @@ TEST_F(DeclarableOpsTests1, Reshape2) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
-    std::vector<int> arguments = block->getIArguments();
+    block->getIArguments();
 
-    arguments.push_back(-y->ordering());
-    arguments.push_back(3);
-    arguments.push_back(5);
-    arguments.push_back(4);
+    block->appendI(-y->ordering());
+    block->appendI(3);
+    block->appendI(5);
+    block->appendI(4);
 
     sd::ops::reshape reshape;
 
@@ -1993,7 +1993,7 @@ TEST_F(DeclarableOpsTests1, Permute1) {
 
     Nd4jLong shapeX[] = { 3, 5,10,15,  150,15,1,  0,1,99 };
     Nd4jLong shapeExp[] = { 3, 15,5,10,  50,10,1,  0,1,99 };
-    const std::vector<int> perm = { 2, 0, 1 };
+    const std::vector<Nd4jLong> perm = { 2, 0, 1 };
 
     ArrayOptions::setDataType(shapeX, sd::DataType::FLOAT32);
     ArrayOptions::setDataType(shapeExp, sd::DataType::FLOAT32);
@@ -2007,8 +2007,8 @@ TEST_F(DeclarableOpsTests1, Permute1) {
 
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({ -1 });
-    auto arguments = block->getIArguments();
-    arguments = perm;      // set dimensions to be permuted
+
+    block->appendI(perm);  // set dimensions to be permuted
 
     sd::ops::permute permute;
     Nd4jStatus status = permute.execute(block);
@@ -2196,8 +2196,7 @@ TEST_F(DeclarableOpsTests1, Pnormpool2d1) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
-    std::vector<int> argI = block->getIArguments();
-    argI = { kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0 };  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - extraParam0 for pnorm case;
+    block->appendI({ kH,kW, sH,sW, pH,pW, dW,dH, 0, 1, 0 });  // 0,1 - kernel Height/Width; 2,3 - stride Height/Width; 4,5 - pad Height/Width; 6,7 - dilation Height/Width; 8 - same mode; 9 - extraParam0 for pnorm case;
 
     sd::ops::pnormpool2d pooling;
     Nd4jStatus status = pooling.execute(block);
