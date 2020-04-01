@@ -3603,4 +3603,39 @@ public class SameDiffTests extends BaseNd4jTest {
         SDVariable s2 = p2.add("op", w1);
         assertNotEquals(sd1, sd2);
     }
+
+    @Test
+    public void testConv2DWeightsFormat() {
+        int bS=2, iH=4,iW=3,  iC=4,oC=3,  kH=3,kW=2,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
+        int       oH=2,oW=2;
+        SameDiff sd = SameDiff.create();
+
+        int format = 1;
+
+        INDArray inArr = Nd4j.linspace(DataType.FLOAT, 25, -0.5, 96).reshape(new long[]{bS, iC, iH, iW});
+        INDArray weights = Nd4j.createFromArray(new float[]{
+                -3.f, -1.8f, -0.6f, 0.6f, 1.8f, 3.f, -2.7f, -1.5f, -0.3f, 0.9f, 2.1f, 3.3f, -2.4f, -1.2f, 0.f, 1.2f, 2.4f, 3.6f, -2.1f, -0.9f, 0.3f, 1.5f,
+                2.7f, 3.9f, -2.9f, -1.7f, -0.5f, 0.7f, 1.9f, 3.1f, -2.6f, -1.4f, -0.2f, 1.f, 2.2f, 3.4f, -2.3f, -1.1f, 0.1f, 1.3f, 2.5f, 3.7f, -2.f, -0.8f, 0.4f, 1.6f,
+                2.8f, 4.f, -2.8f, -1.6f, -0.4f, 0.8f, 2.f, 3.2f, -2.5f, -1.3f, -0.1f, 1.1f, 2.3f, 3.5f, -2.2f, -1.f, 0.2f, 1.4f, 2.6f, 3.8f, -1.9f, -0.7f, 0.5f, 1.7f, 2.9f, 4.1f}).
+                reshape(new long[]{oC, iC, kH, kW});
+
+        INDArray bias = Nd4j.createFromArray(new float[]{-1, 2, 0.5f});
+
+        SDVariable sdInput = sd.var("in", inArr);
+        SDVariable sdWeights = sd.var("dW", weights);
+        SDVariable sdBias = sd.var("b", bias);
+
+        Conv2DConfig c = Conv2DConfig.builder()
+                    .kH(kH).kW(kW)
+                    .pH(pH).pW(pW)
+                    .sH(sH).sW(sW)
+                    .dH(dH).dW(dW)
+                    .isSameMode(false)
+                    .weightsFormat(format)
+                    .build();
+
+        SDVariable out = sd.cnn().conv2d(sdInput, sdWeights, sdBias, c);
+
+        assertArrayEquals(new long[]{bS, oC, oH, oW}, out.eval().shape());
+    }
 }
