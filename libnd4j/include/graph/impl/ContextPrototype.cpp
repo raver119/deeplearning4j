@@ -106,19 +106,6 @@ namespace sd {
             return getNodeId();
         }
 
-        sd::DataType ContextPrototype::dataType() const {
-            return dataType(0);
-        }
-
-        sd::DataType ContextPrototype::dataType(int index) const {
-            return _dataType;
-        }
-
-        void ContextPrototype::setDataType(int index, sd::DataType type) {
-            // if (_outputs->size() == 0)
-            _dataType = type;
-        }
-
         size_t ContextPrototype::numT() const {
             return (int) _tArgs.size();
         }
@@ -220,6 +207,88 @@ namespace sd {
 
         void ContextPrototype::appendD(DataType value) {
             _dArgs.emplace_back(value);
+        }
+
+        ContextPrototype::ContextPrototype(const ContextPrototype &other) noexcept {
+            _inputs = other._inputs;
+            _tArgs = other._tArgs;
+            _iArgs = other._iArgs;
+            _bArgs = other._bArgs;
+            _dArgs = other._dArgs;
+
+            _nodeId = other._nodeId;
+            _isInplace = other._isInplace;
+            _opNum = other._opNum;
+            _rootSeed = other._rootSeed;
+            _randomGenerator = other._randomGenerator;
+            _opDescriptor = other._opDescriptor;
+            _useMKLDNN = other._useMKLDNN;
+            _engine = other._engine;
+            _execMode = other._execMode;
+        }
+
+        ContextPrototype &ContextPrototype::operator=(const ContextPrototype &other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _inputs = other._inputs;
+            _tArgs = other._tArgs;
+            _iArgs = other._iArgs;
+            _bArgs = other._bArgs;
+            _dArgs = other._dArgs;
+
+            _nodeId = other._nodeId;
+            _isInplace = other._isInplace;
+            _opNum = other._opNum;
+            _rootSeed = other._rootSeed;
+            _randomGenerator = other._randomGenerator;
+            _opDescriptor = other._opDescriptor;
+            _useMKLDNN = other._useMKLDNN;
+            _engine = other._engine;
+            _execMode = other._execMode;
+
+            return *this;
+        }
+
+        ContextPrototype::ContextPrototype(ContextPrototype &&other) noexcept {
+            _inputs = std::move(other._inputs);
+            _tArgs = std::move(other._tArgs);
+            _iArgs = std::move(other._iArgs);
+            _bArgs = std::move(other._bArgs);
+            _dArgs = std::move(other._dArgs);
+
+            _nodeId = other._nodeId;
+            _isInplace = other._isInplace;
+            _opNum = other._opNum;
+            _rootSeed = other._rootSeed;
+            _randomGenerator = other._randomGenerator;
+            _opDescriptor = other._opDescriptor;
+            _useMKLDNN = other._useMKLDNN;
+            _engine = other._engine;
+            _execMode = other._execMode;
+        }
+
+        ContextPrototype &ContextPrototype::operator=(ContextPrototype &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _inputs = std::move(other._inputs);
+            _tArgs = std::move(other._tArgs);
+            _iArgs = std::move(other._iArgs);
+            _bArgs = std::move(other._bArgs);
+            _dArgs = std::move(other._dArgs);
+
+            _nodeId = other._nodeId;
+            _isInplace = other._isInplace;
+            _opNum = other._opNum;
+            _rootSeed = other._rootSeed;
+            _randomGenerator = other._randomGenerator;
+            _opDescriptor = other._opDescriptor;
+            _useMKLDNN = other._useMKLDNN;
+            _engine = other._engine;
+            _execMode = other._execMode;
+
+            return *this;
         }
     }
 }

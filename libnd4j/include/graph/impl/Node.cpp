@@ -262,14 +262,6 @@ namespace sd {
                 _hasInternalOutputs = true;
         }
 
-        int Node::getLayer() {
-            return _layer;
-        }
-
-        void Node::setLayer(int layer) {
-            _layer = layer;
-        }
-
         bool Node::hasExternalOutputs() {
             return _hasExternalOutputs;
         }
@@ -494,8 +486,6 @@ namespace sd {
                     opType == OpType_SCALAR_BOOL ||
                     opType == OpType_SCALAR) {
 
-                this->_isDeductable = true;
-
                 ContextPrototype block(nullptr, this->id(), false);
 
                 for (auto v: dimensions)
@@ -630,8 +620,6 @@ namespace sd {
                     }
 
                     if (node->input() != nullptr && node->input()->size() > 0) {
-                        this->_isDeductable = true;
-
                         ContextPrototype block(nullptr, this->id(), false);
 
 
@@ -663,8 +651,6 @@ namespace sd {
                         this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum));
                         block.setOpDescriptor(this->customOp()->getOpDescriptor());
                     } else if (node->inputPaired() != nullptr && node->inputPaired()->size() > 0) {
-                        this->_isDeductable = true;
-
                         ContextPrototype block(nullptr, this->id(), false);
 
                         for (int e = 0; e < this->input().size(); e++) {
@@ -795,14 +781,12 @@ namespace sd {
             _scope_id = other._scope_id;
             _scope_name = other._scope_name;
             _rewindNode = other._rewindNode;
-            _layer = other._layer;
 
             _hasExternalOutputs = other._hasExternalOutputs;
             _hasExternalInputs = other._hasExternalInputs;
             _hasInternalOutputs = other._hasInternalOutputs;
             _hasInternalInputs = other._hasInternalInputs;
             _isInplace = other._isInplace;
-            _isDeductable = other._isDeductable;
             _active = other._active;
             _removable = other._removable;
 
@@ -831,14 +815,12 @@ namespace sd {
             _scope_id = other._scope_id;
             _scope_name = other._scope_name;
             _rewindNode = other._rewindNode;
-            _layer = other._layer;
 
             _hasExternalOutputs = other._hasExternalOutputs;
             _hasExternalInputs = other._hasExternalInputs;
             _hasInternalOutputs = other._hasInternalOutputs;
             _hasInternalInputs = other._hasInternalInputs;
             _isInplace = other._isInplace;
-            _isDeductable = other._isDeductable;
             _active = other._active;
             _removable = other._removable;
 
@@ -866,14 +848,12 @@ namespace sd {
             _name = std::move(other._name);
             _scope_name = std::move(other._scope_name);
             _rewindNode = other._rewindNode;
-            _layer = other._layer;
 
             _hasExternalOutputs = other._hasExternalOutputs;
             _hasExternalInputs = other._hasExternalInputs;
             _hasInternalOutputs = other._hasInternalOutputs;
             _hasInternalInputs = other._hasInternalInputs;
             _isInplace = other._isInplace;
-            _isDeductable = other._isDeductable;
             _active = other._active;
             _removable = other._removable;
 
@@ -904,14 +884,12 @@ namespace sd {
             _name = std::move(other._name);
             _scope_name = std::move(other._scope_name);
             _rewindNode = other._rewindNode;
-            _layer = other._layer;
 
             _hasExternalOutputs = other._hasExternalOutputs;
             _hasExternalInputs = other._hasExternalInputs;
             _hasInternalOutputs = other._hasInternalOutputs;
             _hasInternalInputs = other._hasInternalInputs;
             _isInplace = other._isInplace;
-            _isDeductable = other._isDeductable;
             _active = other._active;
             _removable = other._removable;
 
@@ -1035,15 +1013,6 @@ namespace sd {
                     throw std::runtime_error("Bad opType passed in");
             }
         }
-
-        bool Node::isDeductable() {
-            return _isDeductable;
-        }
-
-        void Node::setDeductable(bool reallyDeductable) {
-            _isDeductable = reallyDeductable;
-        }
-
 
         Node* Node::clone() {
             if (this->_customOp && this->_opType == OpType_CUSTOM) {

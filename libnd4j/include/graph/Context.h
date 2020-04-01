@@ -90,10 +90,6 @@ namespace sd {
             Nd4jLong getOuterTime();
             Nd4jLong getInnerTime();
 
-            sd::DataType dataType() const override;
-
-            sd::DataType dataType(int index) const override;
-            void setDataType(int index, sd::DataType type) override;
             // these methods are related to Workspace abstraction
             bool hasWorkspaceProvided();
             void attachWorkspace(sd::memory::Workspace* workspace);

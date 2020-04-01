@@ -34,8 +34,8 @@ namespace sd {
             auto x = inputShape->at(0);
             auto y = inputShape->at(1);
             auto outputs = _descriptor->getOutputTypesForOutput(0);
-            sd::DataType dtype = block.dataType(0);
-            if (block.dataType(0) != sd::DataType::BOOL && !(outputs.size() == 1 && outputs[0] == sd::DataType::BOOL)) {
+            sd::DataType dtype;
+            if (!(outputs.size() == 1 && outputs[0] == sd::DataType::BOOL)) {
                 if (Environment::getInstance()->isExperimentalBuild()) {
                     if (shape::length(y) > shape::length(x)) {
                         dtype = DataTypeUtils::pickPairwiseResultType(y, x);

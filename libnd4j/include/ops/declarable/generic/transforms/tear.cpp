@@ -62,7 +62,7 @@ namespace sd {
 
             auto result = SHAPELIST();
             for (Nd4jLong e = 0; e < numTads; e++) {
-                auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(block.dataType(), shape::order(inShape), shape::rank(tadPack.primaryShapeInfo()), shape::shapeOf(tadPack.primaryShapeInfo()));
+                auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(ArrayOptions::dataType(inShape), shape::order(inShape), shape::rank(tadPack.primaryShapeInfo()), shape::shapeOf(tadPack.primaryShapeInfo()));
                 result->push_back(newShape);
             }
 

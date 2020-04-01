@@ -64,8 +64,7 @@ namespace sd {
         DECLARE_SHAPE_FN(confusion_matrix) {
             auto labels = INPUT_VARIABLE(0);
             auto predictions = INPUT_VARIABLE(1);
-            auto dtype = block.dataType();
-            dtype = sd::DataType::INT64; // dtype - should be a param with int argument
+            auto dtype = sd::DataType::INT64; // dtype - should be a param with int argument
             if (block.numI() > 1)
                 dtype = (sd::DataType)INT_ARG(1);
 

@@ -29,7 +29,6 @@ namespace sd {
         Context::Context(const ContextPrototype& prototype, VariableSpace* variableSpace, GraphMemoryManager *memoryManager) {
             _memoryManager = memoryManager;
             _variableSpace = variableSpace;
-            _dataType = prototype.dataType();
 
             for (const auto &v: prototype.inputs()) {
                 this->_inputs.push_back(v);
@@ -58,19 +57,6 @@ namespace sd {
 
             if (variableSpace != nullptr && variableSpace->launchContext()->getWorkspace() != nullptr)
                     this->_workspace = variableSpace->launchContext()->getWorkspace();
-        }
-        sd::DataType Context::dataType(int index) const {
-            return _dataType;
-        }
-
-        sd::DataType Context::dataType() const {
-            return dataType(0);
-        }
-
-        void Context::setDataType(int index, sd::DataType type) {
-            if (this->_dataTypes.size() > (size_t)index)
-                _dataTypes[index] = type;
-            _dataType = type;
         }
 
         Context::Context(int nodeId, VariableSpace *variableSpace) {

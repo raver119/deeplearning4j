@@ -49,16 +49,12 @@ namespace sd {
             std::vector<int> _axis;
             std::vector<sd::DataType> _dArgs;
 
-            // TODO: remove this field
-			sd::DataType _dataType = sd::DataType::FLOAT32;
 			bool _isInplace;
 
             // opNum for legacy XYZ ops
             int _opNum = -1;
             uint64_t _rootSeed;
             RandomGenerator _randomGenerator;
-
-            std::vector<sd::DataType> _dataTypes;
 
             sd::ops::OpDescriptor* _opDescriptor;
             bool _useMKLDNN = sd::Environment::getInstance()->isUseMKLDNN();
@@ -71,6 +67,16 @@ namespace sd {
             explicit ContextPrototype(sd::ops::OpDescriptor* opDescriptor = nullptr, int nodeId = 1, bool inPlace = false);
             ~ContextPrototype() = default;
 
+            ContextPrototype(const ContextPrototype& other) noexcept;
+
+            ContextPrototype& operator=(const ContextPrototype& other) noexcept;
+
+            // move constructor
+            ContextPrototype(ContextPrototype&& other) noexcept;
+
+            // move assignment operator
+            ContextPrototype& operator=(ContextPrototype&& other) noexcept;
+
             int getNodeId() const;
             int nodeId() const;
 
@@ -78,10 +84,6 @@ namespace sd {
             bool hasVariablesFilled() const;
 
             void setOpDescriptor(sd::ops::OpDescriptor* opDescriptor);
-
-            virtual sd::DataType dataType() const;
-            virtual sd::DataType dataType(int index) const ;
-            virtual void setDataType(int index, sd::DataType type);
 
             bool isInplace() const;
             void markInplace(bool reallyInplace);

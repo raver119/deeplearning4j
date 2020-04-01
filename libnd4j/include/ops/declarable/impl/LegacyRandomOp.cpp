@@ -342,7 +342,7 @@ namespace sd {
             } else if (DataTypeUtils::isZ(xType)) {
                 auto zShapeArr = INPUT_VARIABLE(0);
                 auto zShapeVector = zShapeArr->asVectorT<Nd4jLong>();
-                auto dtype = block.dataType();
+                auto dtype = DataType::BFLOAT16;
 
                 newShape = ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', zShapeVector);
                 return SHAPELIST(newShape);

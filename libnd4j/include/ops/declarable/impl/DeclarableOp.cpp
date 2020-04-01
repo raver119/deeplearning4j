@@ -420,11 +420,11 @@ namespace sd {
             Nd4jLong len = shape::length(shape);
             // if that's first run - we probably have nothing here
             if (var->getNDArray() == nullptr) {
-                var->setNDArray(new NDArray(order, shape, block.dataType(), block.launchContext()));
+                var->setNDArray(new NDArray(order, shape, DataType::FLOAT32, block.launchContext()));
             } else if(var->getNDArray()->lengthOf() != len) {
                 // if length not match - lets reallocate array
                 delete var->getNDArray();
-                var->setNDArray(new NDArray(order, shape, block.dataType(), block.launchContext()));
+                var->setNDArray(new NDArray(order, shape, DataType::FLOAT32, block.launchContext()));
             }
 
             return true;
@@ -882,7 +882,6 @@ namespace sd {
             Context block(1, &variableSpace, false);
             block.fillInputs(in);
             block.markInplace(isInplace);
-            block.setDataType(0, type);
 
             // we need this line for tests basically
             //if (rng != nullptr)
@@ -1032,7 +1031,6 @@ namespace sd {
             }
 
             Context block(1, &variableSpace, false);
-            block.setDataType(0, sd::DataType::FLOAT32);
             block.fillInputs(in);
             block.markInplace(isInplace);
             // block.setRNG(ProviderRNG::getInstance().getRNG());

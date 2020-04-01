@@ -51,7 +51,7 @@ DECLARE_SHAPE_FN(tri) {
 	const int rows = INT_ARG(0);
     const int cols = block.numI() > 1 ? INT_ARG(1) : rows;
 
-    return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(block.dataType(), 'c', {rows, cols}));
+    return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(DataType::FLOAT32, 'c', {rows, cols}));
 }
 
 

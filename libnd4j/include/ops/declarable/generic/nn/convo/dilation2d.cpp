@@ -109,7 +109,7 @@ namespace ops {
             rates = r->template asVectorT<int>();
         } else {
             if (block.numI() < 9) {
-                newShape = ConstantShapeHelper::getInstance()->scalarShapeInfo(block.dataType());
+                newShape = ConstantShapeHelper::getInstance()->scalarShapeInfo(ArrayOptions::dataType(input));
                 return SHAPELIST(newShape);
             }
 

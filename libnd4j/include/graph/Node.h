@@ -53,10 +53,6 @@ namespace sd {
 
             std::string _name;
 
-
-            // this variable points to onion layer within graph
-            int _layer = -1;
-
             // many ops require extra parameters to run
             double *_extraParams = nullptr;
 
@@ -67,9 +63,6 @@ namespace sd {
 
             // this field is used to check, if op should be used in-place (so it can/will modify its inputs)
             bool _isInplace = false;
-
-            // this field is used to delete attached customOp
-            bool _isDeductable = false;
 
             OpClass _opClass;
 
@@ -148,9 +141,6 @@ namespace sd {
             bool isRemovable() const;
             void markRemovable(bool reallyRemovable) const;
 
-            int getLayer();
-            void setLayer(int layer);
-
             bool isDivergencePoint();
             void setActive(bool reallyActive);
             bool isActive();
@@ -168,9 +158,6 @@ namespace sd {
             void pickInput(int nodeId, int outputId);
             void pickInput(std::pair<int,int>& id);
             void pickInput(const std::string &id);
-
-            bool isDeductable();
-            void setDeductable(bool reallyDeductable);
 
             void setName(std::string *name);
             void setName(const std::string& name);
@@ -227,8 +214,6 @@ namespace sd {
                 this->markInplace(other->isInplace());
                 this->setActive(other->isActive());
                 this->setScopeInfo(other->scopeId(), other->scopeName()->c_str());
-                this->setLayer(other->getLayer());
-                this->setDeductable(other->isDeductable());
 
                 for (auto &v: other->input())
                     this->_input.emplace_back(v);

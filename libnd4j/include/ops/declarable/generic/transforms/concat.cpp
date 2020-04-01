@@ -43,7 +43,7 @@ CUSTOM_OP_IMPL(concat, -1, 1, false, 0, 0) {
     int index = 0;
     bool allOfSameType = true;
     auto rankOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->rankOf() : 0;
-    auto typeOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : block.dataType();
+    auto typeOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : DataType::FLOAT32;
 
     for(int i = 0; i < numOfInArrs; ++i) {
         auto input = INPUT_VARIABLE(i);
