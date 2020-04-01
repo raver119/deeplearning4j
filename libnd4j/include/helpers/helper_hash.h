@@ -42,7 +42,7 @@ namespace sd {
 
         public:
             static HashHelper* getInstance();
-            Nd4jLong getLongHash(std::string& str);
+            Nd4jLong getLongHash(const std::string& str);
         };
     }
 }

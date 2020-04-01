@@ -110,13 +110,8 @@ namespace sd {
 #ifndef _RELEASE
             _msvc.clear();
 
-            for (auto x : _uniqueD)
-                delete x;
-
             for (auto x: _uniqueH)
                 delete x;
-
-            _uniqueD.clear();
 
             _uniqueH.clear();
 
@@ -130,7 +125,7 @@ namespace sd {
             _locker.lock();
 
             if (!isInit) {
-                for (MAP_IMPL<std::string, sd::ops::DeclarableOp*>::iterator it=_declarablesD.begin(); it!=_declarablesD.end(); ++it) {
+                for (MAP_IMPL<std::string, std::shared_ptr<sd::ops::DeclarableOp>>::iterator it=_declarablesD.begin(); it!=_declarablesD.end(); ++it) {
                     std::string op = it->first + ":"
                                      + local_to_string(it->second->getOpDescriptor()->getHash()) + ":"
                                      + local_to_string(it->second->getOpDescriptor()->getNumberOfInputs()) + ":"
@@ -150,14 +145,20 @@ namespace sd {
             return _opsList.c_str();
         }
 
+        bool OpRegistrator::hasOperation(const std::string &opName) const {
+            return _declarablesD.count(opName) > 1;
+        }
 
-        bool OpRegistrator::registerOperation(const char* name, sd::ops::DeclarableOp* op) {
-            std::string str(name);
-            std::pair<std::string, sd::ops::DeclarableOp*> pair(str, op);
+        bool OpRegistrator::hasOperation(Nd4jLong opName) const {
+            return _declarablesLD.count(opName) > 1;
+        }
+
+        bool OpRegistrator::registerOperation(const std::string &opName, std::shared_ptr<sd::ops::DeclarableOp> op) {
+            std::pair<std::string, std::shared_ptr<sd::ops::DeclarableOp>> pair(opName, op);
             _declarablesD.insert(pair);
 
-            auto hash = sd::ops::HashHelper::getInstance()->getLongHash(str);
-            std::pair<Nd4jLong, sd::ops::DeclarableOp*> pair2(hash, op);
+            auto hash = sd::ops::HashHelper::getInstance()->getLongHash(opName);
+            std::pair<Nd4jLong, std::shared_ptr<sd::ops::DeclarableOp>> pair2(hash, op);
             _declarablesLD.insert(pair2);
             return true;
         }
@@ -167,9 +168,8 @@ namespace sd {
          *
          * @param op
          */
-        bool OpRegistrator::registerOperation(sd::ops::DeclarableOp *op) {
-            _uniqueD.emplace_back(op);
-            return registerOperation(op->getOpName().c_str(), op);
+        bool OpRegistrator::registerOperation(std::shared_ptr<sd::ops::DeclarableOp> op) {
+            return registerOperation(op->getOpName(), op);
         }
 
         void OpRegistrator::registerHelper(sd::ops::platforms::PlatformHelper* op) {
@@ -188,40 +188,33 @@ namespace sd {
             _helpersLH.insert(pair2);
         }
 
-        sd::ops::DeclarableOp* OpRegistrator::getOperation(const char *name) {
-            std::string str(name);
-            return getOperation(str);
-        }
-
         /**
          * This method returns registered Op by name
          *
          * @param name
          * @return
          */
-        sd::ops::DeclarableOp *OpRegistrator::getOperation(Nd4jLong hash) {
+        std::shared_ptr<sd::ops::DeclarableOp> OpRegistrator::getOperation(Nd4jLong hash) {
             if (!_declarablesLD.count(hash)) {
                 if (!_msvc.count(hash)) {
                     nd4j_printf("Unknown D operation requested by hash: [%lld]\n", hash);
                     return nullptr;
                 } else {
-                    _locker.lock();
+                    std::lock_guard<std::mutex> lock(_locker);
 
                     auto str = _msvc.at(hash);
                     auto op = _declarablesD.at(str);
                     auto oHash = op->getOpDescriptor()->getHash();
 
-                    std::pair<Nd4jLong, sd::ops::DeclarableOp*> pair(oHash, op);
+                    std::pair<Nd4jLong, std::shared_ptr<sd::ops::DeclarableOp>> pair(oHash, op);
                     _declarablesLD.insert(pair);
-
-                    _locker.unlock();
                 }
             }
 
             return _declarablesLD.at(hash);
         }
 
-        sd::ops::DeclarableOp *OpRegistrator::getOperation(const std::string& name) {
+        std::shared_ptr<sd::ops::DeclarableOp> OpRegistrator::getOperation(const std::string& name) {
             if (!_declarablesD.count(name)) {
                 nd4j_debug("Unknown operation requested: [%s]\n", name.c_str());
                 return nullptr;

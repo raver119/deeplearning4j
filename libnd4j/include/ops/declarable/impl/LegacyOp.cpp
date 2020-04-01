@@ -31,5 +31,35 @@ namespace sd {
             _opNum = opNum;
             _numInputs = numInputs;
         }
+
+        LegacyOp::LegacyOp(const LegacyOp &other) noexcept {
+            _numInputs = other._numInputs;
+            _opNum = other._opNum;
+        }
+
+        LegacyOp &LegacyOp::operator=(const LegacyOp &other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _numInputs = other._numInputs;
+            _opNum = other._opNum;
+
+            return *this;
+        }
+
+        LegacyOp::LegacyOp(LegacyOp &&other) noexcept {
+            _numInputs = other._numInputs;
+            _opNum = other._opNum;
+        }
+
+        LegacyOp &LegacyOp::operator=(LegacyOp &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _numInputs = other._numInputs;
+            _opNum = other._opNum;
+
+            return *this;
+        }
     }
 }

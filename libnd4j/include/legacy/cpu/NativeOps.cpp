@@ -2015,7 +2015,7 @@ sd::ShapeList* calculateOutputShapes2(Nd4jPointer* extraPointers, Nd4jLong hash,
     try {
         auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
 
-        return _calculateOutputShapes(extraPointers, op, inputBuffers, inputShapes, numInputShapes, tArgs, numTArgs, iArgs, numIArgs, bArgs, numBArgs, dArgs, numDArgs);
+        return _calculateOutputShapes(extraPointers, op.get(), inputBuffers, inputShapes, numInputShapes, tArgs, numTArgs, iArgs, numIArgs, bArgs, numBArgs, dArgs, numDArgs);
     } catch (std::exception &e) {
         sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
         sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
@@ -2046,7 +2046,7 @@ sd::ShapeList* calculateOutputShapes(Nd4jPointer* extraPointers, Nd4jLong hash, 
     try {
         auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
 
-        return _calculateOutputShapes(extraPointers, op, inputShapes, numInputShapes, tArgs, numTArgs, iArgs, numIArgs);
+        return _calculateOutputShapes(extraPointers, op.get(), inputShapes, numInputShapes, tArgs, numTArgs, iArgs, numIArgs);
     } catch (std::exception &e) {
         sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
         sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
@@ -2155,7 +2155,7 @@ Nd4jStatus realExec(sd::ops::DeclarableOp* op, Nd4jPointer* extraPointers, Nd4jL
 int execCustomOp(Nd4jPointer* extraPointers, Nd4jLong hash, Nd4jPointer* inputBuffers, Nd4jPointer* inputShapes, int numInputs, Nd4jPointer* outputBuffers, Nd4jPointer* outputShapes, int numOutputs, double* tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool* bArgs, int numBArgs, bool isInplace) {
     try {
         auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
-        return realExec(op, extraPointers, hash, inputBuffers, inputShapes, numInputs, outputBuffers, outputShapes, numOutputs, tArgs, numTArgs, iArgs, numIArgs, bArgs, numBArgs, isInplace);
+        return realExec(op.get(), extraPointers, hash, inputBuffers, inputShapes, numInputs, outputBuffers, outputShapes, numOutputs, tArgs, numTArgs, iArgs, numIArgs, bArgs, numBArgs, isInplace);
     } catch (std::exception &e) {
         sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
         sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());

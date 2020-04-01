@@ -47,6 +47,16 @@ namespace sd {
             LegacyOp(int numInputs, int opNum);
             ~LegacyOp() = default;
 
+            LegacyOp(const LegacyOp& other) noexcept;
+
+            LegacyOp& operator=(const LegacyOp& other) noexcept;
+
+            // move constructor
+            LegacyOp(LegacyOp&& other) noexcept;
+
+            // move assignment operator
+            LegacyOp& operator=(LegacyOp&& other) noexcept;
+
             // All Op classes provide own specific implementation for this method
             ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override = 0;
             virtual LegacyOp* clone() = 0;

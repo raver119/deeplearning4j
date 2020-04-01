@@ -31,7 +31,7 @@ namespace sd {
             return _INSTANCE;
         }
 
-        Nd4jLong HashHelper::getLongHash(std::string& str) {
+        Nd4jLong HashHelper::getLongHash(const std::string& str) {
             _locker.lock();
             if (!_isInit) {
                 nd4j_verbose("Building HashUtil table\n","");

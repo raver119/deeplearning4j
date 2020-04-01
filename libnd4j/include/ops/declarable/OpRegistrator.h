@@ -82,9 +82,8 @@ namespace sd {
             MAP_IMPL<Nd4jLong, std::string> _msvc;
 
             // pointers to our operations
-            MAP_IMPL<Nd4jLong, sd::ops::DeclarableOp*> _declarablesLD;
-            MAP_IMPL<std::string, sd::ops::DeclarableOp*> _declarablesD;
-            std::vector<sd::ops::DeclarableOp *> _uniqueD;
+            MAP_IMPL<Nd4jLong, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesLD;
+            MAP_IMPL<std::string, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesD;
 
             // pointers to platform-specific helpers
             MAP_IMPL<std::pair<Nd4jLong, samediff::Engine>, sd::ops::platforms::PlatformHelper*> _helpersLH;
@@ -114,16 +113,18 @@ namespace sd {
             *
             * @param op
             */
-            bool registerOperation(const char* name, sd::ops::DeclarableOp* op);
-            bool registerOperation(sd::ops::DeclarableOp *op);
+            bool registerOperation(const std::string &opName, std::shared_ptr<sd::ops::DeclarableOp> op);
+            bool registerOperation(std::shared_ptr<sd::ops::DeclarableOp> op);
 
             void registerHelper(sd::ops::platforms::PlatformHelper* op);
 
             bool hasHelper(Nd4jLong hash, samediff::Engine engine);
 
-            sd::ops::DeclarableOp* getOperation(const char *name);
-            sd::ops::DeclarableOp* getOperation(Nd4jLong hash);
-            sd::ops::DeclarableOp* getOperation(const std::string &name);
+            std::shared_ptr<sd::ops::DeclarableOp> getOperation(Nd4jLong hash);
+            std::shared_ptr<sd::ops::DeclarableOp> getOperation(const std::string &name);
+
+            bool hasOperation(const std::string &opName) const;
+            bool hasOperation(const Nd4jLong opName) const;
 
             sd::ops::platforms::PlatformHelper* getPlatformHelper(Nd4jLong hash, samediff::Engine engine);
 

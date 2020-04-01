@@ -187,15 +187,15 @@ namespace sd {
             _id = id;
         }
 
-        sd::ops::DeclarableOp* Node::customOp() const {
+        std::shared_ptr<sd::ops::DeclarableOp> Node::customOp() const {
             return _customOp;
         }
 
-        void Node::setCustomOp(sd::ops::DeclarableOp *customOp) {
+        void Node::setCustomOp(std::shared_ptr<sd::ops::DeclarableOp> customOp) {
             _customOp = customOp;
 
             // divergent ops (Switch etc) are always inplace, they don't allocate anything
-            if (_customOp != nullptr && customOp->getOpDescriptor()->isDivergent())
+            if (_customOp.get() != nullptr && _customOp->getOpDescriptor()->isDivergent())
                 _isInplace = true;
         }
 
@@ -439,7 +439,12 @@ namespace sd {
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
             this->_dim = nullptr;
-            this->_customOp = customOp;
+
+            // if custom op is a registered one - pull it from cache, otherwise - clone locally
+            if (sd::ops::OpRegistrator::getInstance()->hasOperation(_opNum))
+                this->_customOp = sd::ops::OpRegistrator::getInstance()->getOperation(_opNum);
+            else
+                throw std::runtime_error("Can't create a node with custom operation within");
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
@@ -817,10 +822,6 @@ namespace sd {
 
             if (_dim != nullptr)
                 delete[] _dim;
-
-            if (_isDeductable && _customOp != nullptr) {
-                Node::deleteOpByType(_opType, _customOp);
-            }
         }
 
         int Node::getRewindNode() {
@@ -848,7 +849,38 @@ namespace sd {
         }
 
         Node::Node(const Node &other) noexcept {
+            _dataType = other._dataType;
+            _opType = other._opType;
+            _opClass = other._opClass;
+            _opNum = other._opNum;
+            _customOp = other._customOp;
+            _name = other._name;
+            _scope_id = other._scope_id;
+            _scope_name = other._scope_name;
+            _rewindNode = other._rewindNode;
+            _layer = other._layer;
 
+            _hasExternalOutputs = other._hasExternalOutputs;
+            _hasExternalInputs = other._hasExternalInputs;
+            _hasInternalOutputs = other._hasInternalOutputs;
+            _hasInternalInputs = other._hasInternalInputs;
+            _isInplace = other._isInplace;
+            _isDeductable = other._isDeductable;
+            _active = other._active;
+            _removable = other._removable;
+
+            _graph = other._graph;
+            _customOp = other._customOp;
+            _dim = other._dim;
+            _extraParams = other._extraParams;
+            _protoContext = other._protoContext;
+
+            _input = other._input;
+            _output = other._output;
+            _dimensions = other._dimensions;
+            _rewindLayer = other._rewindLayer;
+            _referencedBy = other._referencedBy;
+            _scalar = other._scalar;
         }
 
         Node &Node::operator=(const Node &other) noexcept {
@@ -892,7 +924,40 @@ namespace sd {
         }
 
         Node::Node(Node &&other) noexcept {
+            _dataType = other._dataType;
+            _opType = other._opType;
+            _opClass = other._opClass;
+            _opNum = other._opNum;
+            _customOp = other._customOp;
+            _scope_id = other._scope_id;
+            _name = std::move(other._name);
+            _scope_name = std::move(other._scope_name);
+            _rewindNode = other._rewindNode;
+            _layer = other._layer;
 
+            _hasExternalOutputs = other._hasExternalOutputs;
+            _hasExternalInputs = other._hasExternalInputs;
+            _hasInternalOutputs = other._hasInternalOutputs;
+            _hasInternalInputs = other._hasInternalInputs;
+            _isInplace = other._isInplace;
+            _isDeductable = other._isDeductable;
+            _active = other._active;
+            _removable = other._removable;
+
+            _graph = other._graph;
+            _customOp = other._customOp;
+            _dim = other._dim;
+            _extraParams = other._extraParams;
+            _protoContext = other._protoContext;
+
+            _input = std::move(other._input);
+            _output = std::move(other._output);
+            _dimensions = std::move(other._dimensions);
+            _rewindLayer = std::move(other._rewindLayer);
+            _referencedBy = std::move(other._referencedBy);
+            _scalar = std::move(other._scalar);
+
+            other._customOp = nullptr;
         }
 
         Node &Node::operator=(Node &&other) noexcept {
@@ -1001,44 +1066,44 @@ namespace sd {
             }
         }
 
-        sd::ops::DeclarableOp* Node::buildOpByType(OpType opType, int numInputs,  int numIArgs, int numTArgs, int opNum, NDArray *scalar) {
+        std::shared_ptr<sd::ops::DeclarableOp> Node::buildOpByType(OpType opType, int numInputs,  int numIArgs, int numTArgs, int opNum, NDArray *scalar) {
             switch (opType) {
                 case OpType_PAIRWISE:
-                    return new sd::ops::LegacyPairwiseTransformOp(opNum);
+                    return std::make_shared<sd::ops::LegacyPairwiseTransformOp>(opNum);
                 case OpType_PAIRWISE_BOOL:
-                    return new sd::ops::LegacyPairwiseTransformBoolOp(opNum);
+                    return std::make_shared<sd::ops::LegacyPairwiseTransformBoolOp>(opNum);
                 case OpType_TRANSFORM_STRICT:
-                    return new sd::ops::LegacyTransformStrictOp(opNum);
+                    return std::make_shared<sd::ops::LegacyTransformStrictOp>(opNum);
                 case OpType_TRANSFORM_SAME:
-                    return new sd::ops::LegacyTransformSameOp(opNum);
+                    return std::make_shared<sd::ops::LegacyTransformSameOp>(opNum);
                 case OpType_TRANSFORM_FLOAT:
-                    return new sd::ops::LegacyTransformFloatOp(opNum);
+                    return std::make_shared<sd::ops::LegacyTransformFloatOp>(opNum);
                 case OpType_TRANSFORM_BOOL:
-                    return new sd::ops::LegacyTransformBoolOp(opNum);
+                    return std::make_shared<sd::ops::LegacyTransformBoolOp>(opNum);
                 case OpType_SCALAR:
-                    return scalar == nullptr ? new sd::ops::LegacyScalarOp(opNum) : new sd::ops::LegacyScalarOp(opNum, *scalar);
+                    return scalar == nullptr ? std::make_shared<sd::ops::LegacyScalarOp>(opNum) : std::make_shared<sd::ops::LegacyScalarOp>(opNum, *scalar);
                 case OpType_SCALAR_BOOL:
-                    return scalar == nullptr ? new sd::ops::LegacyScalarBoolOp(opNum) : new sd::ops::LegacyScalarBoolOp(opNum, *scalar);
+                    return scalar == nullptr ? std::make_shared<sd::ops::LegacyScalarBoolOp>(opNum) : std::make_shared<sd::ops::LegacyScalarBoolOp>(opNum, *scalar);
                 case OpType_REDUCE_3:
-                    return new sd::ops::LegacyReduce3Op(opNum);
+                    return std::make_shared<sd::ops::LegacyReduce3Op>(opNum);
                 case OpType_REDUCE_SAME:
-                    return new sd::ops::LegacyReduceSameOp(opNum);
+                    return std::make_shared<sd::ops::LegacyReduceSameOp>(opNum);
                 case OpType_REDUCE_FLOAT:
-                    return new sd::ops::LegacyReduceFloatOp(opNum);
+                    return std::make_shared<sd::ops::LegacyReduceFloatOp>(opNum);
                 case OpType_REDUCE_LONG:
-                    return new sd::ops::LegacyReduceLongOp(opNum);
+                    return std::make_shared<sd::ops::LegacyReduceLongOp>(opNum);
                 case OpType_REDUCE_BOOL:
-                    return new sd::ops::LegacyReduceBoolOp(opNum);
+                    return std::make_shared<sd::ops::LegacyReduceBoolOp>(opNum);
                 case OpType_INDEX_REDUCE:
-                    return new sd::ops::LegacyIndexReduceOp(opNum);
+                    return std::make_shared<sd::ops::LegacyIndexReduceOp>(opNum);
                 case OpType_SUMMARYSTATS:
-                    return new sd::ops::LegacyStatsOp(opNum);
+                    return std::make_shared<sd::ops::LegacyStatsOp>(opNum);
                 case OpType_RANDOM:
-                    return new sd::ops::LegacyRandomOp(opNum);
+                    return std::make_shared<sd::ops::LegacyRandomOp>(opNum);
                 case OpType_BROADCAST:
-                    return new sd::ops::LegacyBroadcastOp(opNum);
+                    return std::make_shared<sd::ops::LegacyBroadcastOp>(opNum);
                 case OpType_BROADCAST_BOOL:
-                    return new sd::ops::LegacyBroadcastBoolOp(opNum);
+                    return std::make_shared<sd::ops::LegacyBroadcastBoolOp>(opNum);
                 default:
                     throw std::runtime_error("Bad opType passed in");
             }
@@ -1055,7 +1120,8 @@ namespace sd {
 
         Node* Node::clone() {
             if (this->_customOp && this->_opType == OpType_CUSTOM) {
-                auto clone = new Node(this->_customOp, _id);
+                auto clone = new Node(nullptr, _id);
+                clone->_customOp = _customOp;
                 clone->pullValues(this);
                 return clone;
             }
@@ -1065,12 +1131,7 @@ namespace sd {
             clone->pullValues(this);
 
             // op time
-            if (!_isDeductable)
-                clone->_customOp = _customOp;
-            else {
-                auto c = dynamic_cast<sd::ops::LegacyOp*>(_customOp);
-                clone->_customOp = c->clone();
-            }
+            clone->_customOp = _customOp;
 
             return clone;
             }

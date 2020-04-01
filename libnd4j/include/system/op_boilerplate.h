@@ -1268,7 +1268,7 @@
 #define REGISTER_C(NAME)   template <typename OpName>  \
                         struct __registrator_##NAME {\
                             __registrator_##NAME() {\
-                                OpName *ptr = new OpName(); \
+                                auto ptr = std::make_shared<OpName>(); \
                                 OpRegistrator::getInstance()->registerOperation(ptr); \
                             }\
                         };\
@@ -1343,7 +1343,7 @@
 #define DECLARE_SYN(NAME, ORIGINAL) template <typename OpName>  \
                                     struct __registratorSynonym_##NAME {\
                                         __registratorSynonym_##NAME(const char *name, const char *oname) {\
-                                            auto ptr = reinterpret_cast<OpName *>(OpRegistrator::getInstance()->getOperation(oname)); \
+                                            auto ptr = OpRegistrator::getInstance()->getOperation(oname); \
                                             if (ptr == nullptr) { \
                                                 std::string newName(name); \
                                                 std::string oldName(oname); \
