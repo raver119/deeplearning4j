@@ -40,5 +40,13 @@ public:
 };
 
 TEST_F(GraphExecutorTests, test_basic_exec_1) {
+    GraphMemoryManager memoryManager;
+
+    OptimizedGraph optimizedGraph(memoryManager);
+    OpSequence sequence;
+
+    optimizedGraph.append(sequence);
+
     GraphExecutor executor;
+    executor.execute(optimizedGraph);
 }

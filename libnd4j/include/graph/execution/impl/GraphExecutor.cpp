@@ -73,13 +73,13 @@ namespace sd {
             for (uint64_t l = 0; l < graph.layers(); l++) {
                 auto layer = graph.layer(l);
 
-                for (uint64_t o = 0; layer.width(); o++) {
+                for (uint64_t o = 0; o < layer.width(); o++) {
                     execute(layer[o], graph);
                 }
 
                 // optionally block until all sequences in this layer processed
                 if (layer.width() > 0 && numDevices > 1)
-                    for (uint64_t o = 0; layer.width(); o++) {
+                    for (uint64_t o = 0; o < layer.width(); o++) {
                         result = layer[o].wait();
                         if (result != Status::OK())
                             return result;
