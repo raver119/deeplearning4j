@@ -87,7 +87,7 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
     // D
-    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {4, 4, 4}));
+    graph.addVariable("D", NDArrayFactory::create<int>('c', {3}, {4, 4, 4}));
 
     Node a("multiply", sd::ops::multiply());
     Node b("add", sd::ops::add());
