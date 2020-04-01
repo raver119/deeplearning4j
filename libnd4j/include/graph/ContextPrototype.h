@@ -79,6 +79,7 @@ namespace sd {
 
             int getNodeId() const;
             int nodeId() const;
+            void setNodeId(int id);
 
             // this method returns true, if inputs are defined
             bool hasVariablesFilled() const;

@@ -177,6 +177,7 @@ namespace sd {
 
         void Node::setId(int id) {
             _id = id;
+            _protoContext.setNodeId(id);
         }
 
         std::shared_ptr<sd::ops::DeclarableOp> Node::customOp() const {

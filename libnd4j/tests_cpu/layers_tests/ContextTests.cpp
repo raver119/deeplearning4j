@@ -354,3 +354,11 @@ TEST_F(ContextTests, test_short_context_3) {
 
     ASSERT_EQ(exp, *z);
 }
+
+TEST_F(ContextTests, test_copy_1) {
+    ContextPrototype prototype(nullptr, 12);
+
+    auto copy = prototype;
+
+    ASSERT_EQ(prototype.nodeId(), copy.nodeId());
+}

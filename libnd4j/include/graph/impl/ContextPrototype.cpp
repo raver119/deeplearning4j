@@ -290,5 +290,9 @@ namespace sd {
 
             return *this;
         }
+
+        void ContextPrototype::setNodeId(int id) {
+            _nodeId = id;
+        }
     }
 }
