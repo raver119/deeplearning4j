@@ -68,6 +68,8 @@ namespace sd {
             int idByName(const std::string &nodeName) const;
 
             void printOutNode(const Node &node) const;
+
+            std::vector<Variable*> _placeholders;
         public:
             Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 

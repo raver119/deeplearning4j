@@ -31,6 +31,8 @@
 #include <graph/exceptions/unresolved_output_exception.h>
 #include <graph/exceptions/unresolved_input_exception.h>
 #include <ops/declarable/CustomOperations.h>
+#include <exceptions/shape_mismatch_exception.h>
+#include <exceptions/datatype_exception.h>
 
 using namespace sd;
 using namespace sd::graph;
@@ -108,6 +110,28 @@ TEST_F(GraphTests2, test_placeholder_resolution_2) {
     auto result = graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"tanh_node"});
 
     // TODO: add result validation here
+}
+
+TEST_F(GraphTests2, test_placeholder_resolution_3) {
+    Graph graph;
+
+    graph.addPlaceholder("input", DataType::FLOAT32);
+
+    Node a("tanh_node", "tanh");
+    graph.addNode(a, {"input"});
+
+    ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<int>(5)}}, {"tanh_node"}), sd::datatype_exception);
+}
+
+TEST_F(GraphTests2, test_placeholder_resolution_4) {
+    Graph graph;
+
+    graph.addPlaceholder("input", DataType::FLOAT32, {3, 4, 5});
+
+    Node a("tanh_node", "tanh");
+    graph.addNode(a, {"input"});
+
+    ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<float>(0.5f)}}, {"tanh_node"}), sd::shape_mismatch_exception);
 }
 
 TEST_F(GraphTests2, test_output_resolution_1) {

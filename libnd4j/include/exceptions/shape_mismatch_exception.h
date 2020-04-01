@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -15,16 +15,19 @@
  ******************************************************************************/
 
 //
-// Created by raver on 11/26/2018.
+// @author raver119@gmail.com
 //
 
-#ifndef SD_DATATYPE_EXCEPTION_H
-#define SD_DATATYPE_EXCEPTION_H
 
-#include <string>
+#ifndef SD_SHAPE_MISMATCH_EXCEPTION_H
+#define SD_SHAPE_MISMATCH_EXCEPTION_H
+
+#include <system/op_boilerplate.h>
+#include <system/pointercast.h>
 #include <stdexcept>
-#include <array/DataType.h>
+#include <exceptions/graph_exception.h>
 #include <system/dll.h>
+#include <vector>
 
 #if defined(_MSC_VER)
 
@@ -34,17 +37,14 @@
 #endif
 
 namespace sd {
-    class SD_EXPORT datatype_exception : public std::runtime_error {
+    class SD_EXPORT shape_mismatch_exception : public std::runtime_error  {
     public:
-        datatype_exception(const std::string &message);
-        ~datatype_exception() = default;
+        shape_mismatch_exception(const std::string &message);
+        ~shape_mismatch_exception() = default;
 
-
-        static datatype_exception build(const std::string &message, sd::DataType actual);
-        static datatype_exception build(const std::string &message, sd::DataType expected, sd::DataType actual);
-        static datatype_exception build(const std::string &message, sd::DataType expected, sd::DataType actualX, sd::DataType actualY);
+        static shape_mismatch_exception build(const std::string &message, const std::vector<Nd4jLong> &expected, const std::vector<Nd4jLong> &actual);
     };
 }
 
 
-#endif //SD_DATATYPE_EXCEPTION_H
+#endif //SD_SHAPE_MISMATCH_EXCEPTION_H

@@ -31,6 +31,8 @@
 #include <graph/exceptions/unresolved_input_exception.h>
 #include <graph/exceptions/unresolved_output_exception.h>
 #include <helpers/FileUtils.h>
+#include <exceptions/datatype_exception.h>
+#include <exceptions/shape_mismatch_exception.h>
 
 namespace sd {
     namespace graph {
@@ -546,13 +548,39 @@ namespace sd {
             auto var = new Variable(true, dataType, shape);
             var->setName(nodeName);
             _variableSpace->putVariable(id, var);
+
+            _placeholders.emplace_back(var);
         }
 
         std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {
             // first of all we check existence of placeholders in dictionary
+            int placeholdersCount = 0;
             for (const auto &v:dictionary) {
                 if (_symbolicLookupTable.count(v.first) == 0)
                     throw unresolved_input_exception::build("Dictionary entry doesn't exist", v.first);
+
+                // we also check if arrays provided here do match placeholder restrictions of shape and dtype
+                auto var = _variableSpace->getVariable(v.first);
+                if (var->dataType() != DataType::ANY && var->dataType() != v.second.dataType())
+                    throw datatype_exception::build("Placeholder requires another data type", var->dataType(), v.second.dataType());
+
+                auto shape = v.second.getShapeAsVector();
+                if (shape != var->shape())
+                    throw shape_mismatch_exception::build("Placeholder requires specific shape", var->shape(), shape);
+
+                // we must also check if all placeholders were resolved
+                placeholdersCount++;
+            }
+
+            // TODO: it would be nice if we'll print out unresolved placeholders
+            if (placeholdersCount != _placeholders.size())
+                throw std::runtime_error("Some placeholders were not resolved");
+
+
+            // we also must check existence of requested outputs
+            for (const auto &v:outputs) {
+                if (_symbolicLookupTable.count(v) == 0)
+                    throw unresolved_output_exception::build("Requested output doesn't exist", v);
             }
 
             // TODO: implement this method
