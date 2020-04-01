@@ -1289,7 +1289,7 @@ public class MiscOpValidation extends BaseOpValidation {
         SameDiff sd = SameDiff.create();
         SDVariable var = sd.var("in", Nd4j.create(new long[]{1}).assign(5));
 
-        SDVariable merged = sd.math().mergeAvg("merged", var);
+        SDVariable merged = sd.math().mergeAvg("merged", new SDVariable[]{var});
         SDVariable sum = sd.sum(merged);
 
         Map<String,INDArray> m = sd.output(Collections.emptyMap(), "merged");
@@ -2121,5 +2121,27 @@ public class MiscOpValidation extends BaseOpValidation {
         String err = OpValidation.validate(tc);
 
         assertNull(err);
+    }
+
+    @Test
+    public void testSeqMask(){
+        INDArray arr = Nd4j.createFromArray(1,2,3);
+        INDArray maxLen = Nd4j.scalar(4);
+
+        INDArray out = Nd4j.create(DataType.INT32, 3, 4);
+        out.assign(Integer.MAX_VALUE);
+
+        Nd4j.exec(DynamicCustomOp.builder("sequence_mask")
+                .addInputs(arr, maxLen)
+                .addOutputs(out)
+                .build()
+        );
+
+        INDArray exp = Nd4j.createFromArray(new int[][]{
+                {1, 0, 0, 0},
+                {1, 1, 0, 0},
+                {1, 1, 1, 0}});
+
+        assertEquals(exp, out);
     }
 }
