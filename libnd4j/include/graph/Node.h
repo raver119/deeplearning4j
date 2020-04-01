@@ -51,7 +51,6 @@ namespace sd {
 
             std::vector<int> _referencedBy;
 
-            int * _dim = nullptr;
             std::string _name;
 
 
@@ -60,11 +59,6 @@ namespace sd {
 
             // many ops require extra parameters to run
             double *_extraParams = nullptr;
-
-
-            // optional scalar. used in scalar ops and in summary stats
-            // TODO: this field must be removed
-            NDArray _scalar;
 
             bool _hasExternalOutputs;
             bool _hasExternalInputs;
@@ -166,12 +160,6 @@ namespace sd {
             bool hasInternalOutputs();
             bool hasInternalInputs();
 
-            double scalar();
-
-            std::vector<int> * getDimensions();
-            int * getDimensionsPtr();
-
-
             void pickOutputOnce(int outputId);
             void pickOutput(int outputId);
             void pickOutput(int nodeId, int outputId);
@@ -231,7 +219,6 @@ namespace sd {
             FORCEINLINE void pullValues(Node *other) {
                 this->_dataType = other->dataType();
                 this->_protoContext = other->protoContext();
-                this->_scalar =  other->scalar();
                 this->_hasExternalInputs = other->hasExternalInputs();
                 this->_hasExternalOutputs = other->hasExternalOutputs();
                 this->_hasInternalInputs = other->hasInternalInputs();
@@ -248,13 +235,9 @@ namespace sd {
 
                 for (auto &v: other->output())
                     this->_output.emplace_back(v);
-
-                for (auto v: *other->getDimensions())
-                    this->_dimensions.emplace_back(v);
-
             }
 
-            static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum, NDArray *scalar);
+            static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);
             static void deleteOpByType(OpType opType, void *op);
         };
     }

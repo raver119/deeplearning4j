@@ -54,16 +54,12 @@ namespace sd {
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
             this->_customOp = customOp;
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
-
-            // FIXME: get rid of this!!!
-            _scalar = NDArrayFactory::create<int>(0);
 
             ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
@@ -86,16 +82,12 @@ namespace sd {
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
             this->_customOp = customOp;
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
-
-            // FIXME: get rid of this!!!
-            _scalar = NDArrayFactory::create<int>(0);
 
             ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
@@ -219,9 +211,6 @@ namespace sd {
             _name = *name;
         }
 
-        double Node::scalar() {
-            return  _scalar.e<double>(0);
-        };
 
         void Node::pickInput(std::pair<int,int>& pair) {
             _input.push_back(pair);
@@ -271,14 +260,6 @@ namespace sd {
                 _hasExternalOutputs = true;
             else
                 _hasInternalOutputs = true;
-        }
-
-        int * Node::getDimensionsPtr() {
-            return _dim;
-        }
-
-        std::vector<int> * Node::getDimensions() {
-            return &_dimensions;
         }
 
         int Node::getLayer() {
@@ -380,16 +361,12 @@ namespace sd {
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
             this->_customOp = customOp;
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
-
-            // FIXME: get rid of this!!!
-            _scalar = NDArrayFactory::create<int>(0);
 
             for (auto i: inputs)
                 pickInput(i);
@@ -410,16 +387,12 @@ namespace sd {
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
             this->_customOp = customOp;
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
-
-            // FIXME: get rid of this!!!
-            _scalar = NDArrayFactory::create<int>(0);
 
             for (auto i: inputs)
                 pickInput(i);
@@ -438,7 +411,6 @@ namespace sd {
             this->_opNum = customOp->getOpHash();
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
 
             // if custom op is a registered one - pull it from cache, otherwise - clone locally
             if (sd::ops::OpRegistrator::getInstance()->hasOperation(_opNum))
@@ -451,23 +423,11 @@ namespace sd {
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
 
-            // FIXME: get rid of this!!!
-            _scalar = NDArrayFactory::create(scalar);
-
             for (auto i: input)
                 pickInput(i);
 
             for (auto o: output)
                 pickOutput(o);
-
-            if (dimensions.size() > 0) {
-                _dim = new int[dimensions.size()];
-                int cnt = 0;
-                for (auto d: dimensions) {
-                    _dimensions.push_back(d);
-                    _dim[cnt++] = d;
-                }
-            }
 
             ContextPrototype block(this->customOp()->getOpDescriptor(), this->id(), false);
 
@@ -493,29 +453,17 @@ namespace sd {
             this->_opNum = opNum;
             this->_extraParams = nullptr;
             this->_dataType = sd::DataType::FLOAT32; // float as default
-            this->_dim = nullptr;
 
             _hasExternalInputs = false;
             _hasExternalOutputs = false;
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
 
-            _scalar = NDArrayFactory::create(scalar);
-
             for (auto i: input)
                 pickInput(i);
 
             for (auto o: output)
                 pickOutput(o);
-
-            if (dimensions.size() > 0) {
-                _dim = new int[dimensions.size()];
-                int cnt = 0;
-                for (auto d: dimensions) {
-                    _dimensions.push_back(d);
-                    _dim[cnt++] = d;
-                }
-            }
 
             // these ops allow in-place execution by design
             if (opType == OpType_TRANSFORM_SAME || opType == OpType_TRANSFORM_FLOAT || opType == OpType_TRANSFORM_STRICT || opType == OpType_TRANSFORM_BOOL || opType == OpType_SCALAR || opType == OpType_BROADCAST) {
@@ -561,7 +509,7 @@ namespace sd {
 
                 this->setContextPrototype(block);
 
-                this->setCustomOp(Node::buildOpByType(opType, (int) input.size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), opNum, &_scalar));
+                this->setCustomOp(Node::buildOpByType(opType, (int) input.size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), opNum));
                 block.setOpDescriptor(this->customOp()->getOpDescriptor());
             } else if (opType == OpType_CUSTOM) {
                 if (this->customOp()) {
@@ -587,7 +535,7 @@ namespace sd {
             _hasInternalInputs = false;
             _hasInternalOutputs = false;
             _extraParams = nullptr;
-            _dim = nullptr;
+
             _dataType = sd::DataType::FLOAT32; // float as default
             if (node->scope_id() != 0)
                 this->_scope_id = node->scope_id();
@@ -595,11 +543,8 @@ namespace sd {
             if (node->scope_name() != nullptr && node->scope_name()->size() > 0)
                 this->_scope_name = node->scope_name()->str();
 
-            if (node->scalar() != nullptr) {
-                auto scalar = FlatUtils::fromFlatArray(node->scalar());
-                _scalar = *scalar;
-                delete scalar;
-            }
+            if (node->scalar() != nullptr)
+                throw std::runtime_error("FlatNode has scalar defined, it's deprecated");
 
             if (node != nullptr) {
                 this->_id = node->id();
@@ -648,13 +593,8 @@ namespace sd {
                     }
                 }
 
-                if (node->dimensions() != nullptr && node->dimensions()->size() > 0) {
-                    _dim = new int[node->dimensions()->size()];
-                    for (int e = 0; e < (int) node->dimensions()->size(); e++) {
-                        _dimensions.emplace_back(node->dimensions()->Get(e));
-                        _dim[e] = node->dimensions()->Get(e);
-                    }
-                }
+                if (node->dimensions() != nullptr && node->dimensions()->size() > 0)
+                    throw std::runtime_error("FlatNode has dimensions defined. Graph is outdated");
 
                 if (this->opType() == OpType_LOGIC && this->opNum() == 100L) {
                     if (node->extraInteger()->size() < 1) {
@@ -720,7 +660,7 @@ namespace sd {
                         }
 
                         this->setContextPrototype(block);
-                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum, &_scalar));
+                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->input()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum));
                         block.setOpDescriptor(this->customOp()->getOpDescriptor());
                     } else if (node->inputPaired() != nullptr && node->inputPaired()->size() > 0) {
                         this->_isDeductable = true;
@@ -758,7 +698,7 @@ namespace sd {
 
                         this->setContextPrototype(block);
 
-                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->inputPaired()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum, &_scalar));
+                        this->setCustomOp(Node::buildOpByType(_opType, (int) node->inputPaired()->size(), (int) block.getIArguments().size(), (int) block.getTArguments().size(), (int) _opNum));
                         block.setOpDescriptor(this->customOp()->getOpDescriptor());
                     }
                 } else if (this->_opType == OpType_CUSTOM) {
@@ -819,9 +759,6 @@ namespace sd {
         Node::~Node() {
             if (_extraParams != nullptr)
                 delete[] _extraParams;
-
-            if (_dim != nullptr)
-                delete[] _dim;
         }
 
         int Node::getRewindNode() {
@@ -871,7 +808,6 @@ namespace sd {
 
             _graph = other._graph;
             _customOp = other._customOp;
-            _dim = other._dim;
             _extraParams = other._extraParams;
             _protoContext = other._protoContext;
 
@@ -880,7 +816,6 @@ namespace sd {
             _dimensions = other._dimensions;
             _rewindLayer = other._rewindLayer;
             _referencedBy = other._referencedBy;
-            _scalar = other._scalar;
         }
 
         Node &Node::operator=(const Node &other) noexcept {
@@ -909,7 +844,6 @@ namespace sd {
 
             _graph = other._graph;
             _customOp = other._customOp;
-            _dim = other._dim;
             _extraParams = other._extraParams;
             _protoContext = other._protoContext;
 
@@ -918,7 +852,6 @@ namespace sd {
             _dimensions = other._dimensions;
             _rewindLayer = other._rewindLayer;
             _referencedBy = other._referencedBy;
-            _scalar = other._scalar;
 
             return *this;
         }
@@ -945,17 +878,15 @@ namespace sd {
             _removable = other._removable;
 
             _graph = other._graph;
-            _customOp = other._customOp;
-            _dim = other._dim;
             _extraParams = other._extraParams;
             _protoContext = other._protoContext;
 
+            _customOp = std::move(other._customOp);
             _input = std::move(other._input);
             _output = std::move(other._output);
             _dimensions = std::move(other._dimensions);
             _rewindLayer = std::move(other._rewindLayer);
             _referencedBy = std::move(other._referencedBy);
-            _scalar = std::move(other._scalar);
 
             other._customOp = nullptr;
         }
@@ -985,19 +916,15 @@ namespace sd {
             _removable = other._removable;
 
             _graph = other._graph;
-            _customOp = other._customOp;
-            _dim = other._dim;
             _extraParams = other._extraParams;
             _protoContext = other._protoContext;
 
+            _customOp = std::move(other._customOp);
             _input = std::move(other._input);
             _output = std::move(other._output);
             _dimensions = std::move(other._dimensions);
             _rewindLayer = std::move(other._rewindLayer);
             _referencedBy = std::move(other._referencedBy);
-            _scalar = std::move(other._scalar);
-
-            other._customOp = nullptr;
 
             return *this;
         }
@@ -1066,7 +993,7 @@ namespace sd {
             }
         }
 
-        std::shared_ptr<sd::ops::DeclarableOp> Node::buildOpByType(OpType opType, int numInputs,  int numIArgs, int numTArgs, int opNum, NDArray *scalar) {
+        std::shared_ptr<sd::ops::DeclarableOp> Node::buildOpByType(OpType opType, int numInputs,  int numIArgs, int numTArgs, int opNum) {
             switch (opType) {
                 case OpType_PAIRWISE:
                     return std::make_shared<sd::ops::LegacyPairwiseTransformOp>(opNum);
@@ -1081,9 +1008,9 @@ namespace sd {
                 case OpType_TRANSFORM_BOOL:
                     return std::make_shared<sd::ops::LegacyTransformBoolOp>(opNum);
                 case OpType_SCALAR:
-                    return scalar == nullptr ? std::make_shared<sd::ops::LegacyScalarOp>(opNum) : std::make_shared<sd::ops::LegacyScalarOp>(opNum, *scalar);
+                    return std::make_shared<sd::ops::LegacyScalarOp>(opNum);
                 case OpType_SCALAR_BOOL:
-                    return scalar == nullptr ? std::make_shared<sd::ops::LegacyScalarBoolOp>(opNum) : std::make_shared<sd::ops::LegacyScalarBoolOp>(opNum, *scalar);
+                    return std::make_shared<sd::ops::LegacyScalarBoolOp>(opNum);
                 case OpType_REDUCE_3:
                     return std::make_shared<sd::ops::LegacyReduce3Op>(opNum);
                 case OpType_REDUCE_SAME:
