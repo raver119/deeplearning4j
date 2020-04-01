@@ -23,7 +23,7 @@
  */
 
 // @Library('konduit-ci-scripts@bugfix/ios-builds') _
-@Library('konduit-ci-scripts@bugfix/arm64-tests') _
+@Library('konduit-ci-scripts@feature/arm64-tests') _
 
 jenkinsBuilder()
 
