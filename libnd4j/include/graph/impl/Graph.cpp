@@ -298,7 +298,7 @@ namespace sd {
         }
 
 
-        Graph* Graph::fromFlatBuffers(const char* fileName, const GraphMemoryManager &memoryManager) {
+        Graph Graph::fromFlatBuffers(const char* fileName, const GraphMemoryManager &memoryManager) {
             // check if file exists
             if (!FileUtils::fileExists(fileName))
                 throw std::runtime_error("Graph file doesn't exist");
@@ -333,15 +333,15 @@ namespace sd {
             return fromFlatPointer(ptrGraph, memoryManager);
         }
 
-        Graph* Graph::fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager) {
+        Graph Graph::fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager) {
             // get FlatGraph out of it
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
 
             // return Graph from this FlatGraph
-            return new Graph(fg, nullptr, memoryManager);
+            return Graph(fg, nullptr, memoryManager);
         }
 
-        Graph* Graph::importFromTensorFlow(const char *fileName) {
+        Graph Graph::importFromTensorFlow(const char *fileName) {
             throw std::runtime_error("Graph::importFromTensorFlow() not implemented yet");
             /*
             if (fileName == nullptr)
@@ -549,7 +549,7 @@ namespace sd {
             var->setName(nodeName);
             _variableSpace->putVariable(id, var);
 
-            _placeholders.emplace_back(var);
+            _placeholders.emplace_back(nodeName);
         }
 
         std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {
@@ -646,6 +646,59 @@ namespace sd {
             return optGraf;
         }
 
+        Graph::Graph(const Graph &other) : _memoryMaager(other._memoryMaager) {
+            _configuration = other._configuration;
+            _variableSpace = other._variableSpace;
+            _stash = other._stash;
+            _unmapped = other._unmapped;
+            _symbolicLookupTable = other._symbolicLookupTable;
+            _built = false;
+            _maxId = _maxId;
+        }
+
+        Graph &Graph::operator=(const Graph &other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _configuration = other._configuration;
+            _variableSpace = other._variableSpace;
+            _stash = other._stash;
+            _unmapped = other._unmapped;
+            _symbolicLookupTable = other._symbolicLookupTable;
+            _built = false;
+            _maxId = _maxId;
+
+            return *this;
+        }
+
+        Graph::Graph(Graph &&other) : _memoryMaager(other._memoryMaager) {
+            _configuration = other._configuration;
+            _variableSpace = other._variableSpace;
+            _stash = other._stash;
+
+            _unmapped = std::move(other._unmapped);
+            _symbolicLookupTable = std::move(other._symbolicLookupTable);
+
+            _built = false;
+            _maxId = _maxId;
+        }
+
+        Graph &Graph::operator=(Graph &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            _configuration = other._configuration;
+            _variableSpace = other._variableSpace;
+            _stash = other._stash;
+
+            _unmapped = std::move(other._unmapped);
+            _symbolicLookupTable = std::move(other._symbolicLookupTable);
+
+            _built = false;
+            _maxId = _maxId;
+
+            return *this;
+        }
     }
 }
 

@@ -2167,7 +2167,7 @@ int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer flat
     try {
         auto graph = sd::graph::Graph::fromFlatPointer(flatBufferPointer);
 
-        sd::graph::GraphHolder::getInstance()->registerGraph(graphId, graph);
+        //sd::graph::GraphHolder::getInstance()->registerGraph(graphId, graph);
 
         return ND4J_STATUS_OK;
     } catch (std::exception &e) {

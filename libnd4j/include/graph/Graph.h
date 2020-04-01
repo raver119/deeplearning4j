@@ -47,7 +47,7 @@ namespace sd {
         protected:
             ExecutorConfiguration _configuration;
             VariableSpace *_variableSpace;
-            Stash* _stash;
+            Stash _stash;
 
             MAP_IMPL<int, Node> _unmapped;
 
@@ -69,18 +69,28 @@ namespace sd {
 
             void printOutNode(const Node &node) const;
 
-            std::vector<Variable*> _placeholders;
+            std::vector<std::string> _placeholders;
         public:
             Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
             ~Graph();
 
+            Graph(const Graph& other);
+
+            Graph& operator=(const Graph& other) noexcept;
+
+            // move constructor
+            Graph(Graph&& other);
+
+            // move assignment operator
+            Graph& operator=(Graph&& other) noexcept;
+
             /**
              * Methods that allow Graph imports
              */
-            static Graph *importFromTensorFlow(const char *fileName);
-            static Graph* fromFlatBuffers(const char *fileName, const GraphMemoryManager &memoryManager = GraphMemoryManager());
-            static Graph* fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
+            static Graph importFromTensorFlow(const char *fileName);
+            static Graph fromFlatBuffers(const char *fileName, const GraphMemoryManager &memoryManager = GraphMemoryManager());
+            static Graph fromFlatPointer(void *ptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
             // method that'll print out graph
             Nd4jStatus validate();
