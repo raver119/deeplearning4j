@@ -215,6 +215,7 @@ namespace sd {
 
         void Node::pickInput(std::pair<int,int>& pair) {
             _input.push_back(pair);
+            _protoContext.pickInput(pair);
         }
 
         void Node::pickInput(const std::string &id) {

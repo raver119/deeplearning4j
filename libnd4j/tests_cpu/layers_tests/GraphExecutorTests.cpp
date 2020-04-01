@@ -57,9 +57,13 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     GraphMemoryManager mgr;
     Graph graph(nullptr, nullptr, mgr);
 
-    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
-    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
-    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+    auto A = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
+    auto B = NDArrayFactory::create<int>('c', {3}, {2, 2, 2});
+    auto C = NDArrayFactory::create<int>('c', {3}, {3, 3, 3});
+
+    graph.addVariable("A", A);
+    graph.addVariable("B", B);
+    graph.addVariable("C", C);
 
     Node m("mul", sd::ops::multiply());
     Node a("add", sd::ops::add());
@@ -68,6 +72,9 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
 
     OptimizedGraph optimizedGraph(&graph);
     OpSequence sequence;
+
+    ASSERT_EQ(2, m.protoContext().inputs().size());
+    ASSERT_EQ(2, a.protoContext().inputs().size());
 
     sequence.append(m.customOp(), m.protoContext());
     sequence.append(a.customOp(), a.protoContext());
@@ -79,4 +86,10 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
 
     GraphExecutor executor;
     executor.execute(optimizedGraph);
+
+    ASSERT_TRUE(graph.variableSpace()->hasVariable("mul"));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable("add"));
+
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(1));
+    ASSERT_TRUE(graph.variableSpace()->hasVariable(2));
 }
