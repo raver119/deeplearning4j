@@ -55,13 +55,11 @@ public class Conv2D extends DynamicCustomOp {
 
     protected Conv2DConfig config;
     private static final String INVALID_CONFIGURATION = "Invalid Conv2D configuration : sW = %s pH = %s dW = %s ";
-    private int wFormat = 0; // Possible values  - [0, 1, 2]
 
     public Conv2D(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable weights,
                   SDVariable bias, @NonNull Conv2DConfig conv2DConfig) {
         this(sameDiff, wrapFilterNull(input, weights, bias), conv2DConfig);
     }
-
     @Builder(builderMethodName = "sameDiffBuilder")
     public Conv2D(SameDiff sameDiff,
                   SDVariable[] inputFunctions,
@@ -72,7 +70,7 @@ public class Conv2D extends DynamicCustomOp {
     }
 
     public Conv2D(INDArray[] inputs, INDArray[] outputs, Conv2DConfig config){
-        super(inputs, outputs);
+            super(inputs, outputs);
 
         initConfig(config);
     }
@@ -87,7 +85,6 @@ public class Conv2D extends DynamicCustomOp {
 
     public Conv2D(@NonNull INDArray layerInput, @NonNull INDArray weights, INDArray bias, int wFormat, @NonNull Conv2DConfig conv2DConfig) {
         this(layerInput, weights, bias, conv2DConfig);
-        this.wFormat = wFormat;
     }
 
     protected void initConfig(Conv2DConfig config){
@@ -109,8 +106,8 @@ public class Conv2D extends DynamicCustomOp {
                 config.getDH(),
                 config.getDW(),
                 ArrayUtil.fromBoolean(config.isSameMode()),
-                config.getDataFormat().equalsIgnoreCase(Conv2DConfig.NCHW) ? 0 : 1,
-                this.wFormat);
+                config.getDataFormat().equalsIgnoreCase("NCHW") ? 0 : 1,
+                config.getWeightsFormat());
     }
 
     @Override

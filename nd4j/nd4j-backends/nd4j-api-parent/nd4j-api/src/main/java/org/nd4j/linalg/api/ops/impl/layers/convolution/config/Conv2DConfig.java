@@ -50,9 +50,11 @@ public class Conv2DConfig extends BaseConvolutionConfig {
     private boolean isSameMode;
     @Builder.Default
     private String dataFormat = NCHW;
+    @Builder.Default
+    private int weightsFormat = 0;
 
     public Conv2DConfig(long kH, long kW, long sH, long sW, long pH, long pW, long dH, long dW, boolean isSameMode,
-            String dataFormat) {
+            String dataFormat, int weightsFormat) {
 
         this.kH = kH;
         this.kW = kW;
@@ -64,6 +66,7 @@ public class Conv2DConfig extends BaseConvolutionConfig {
         this.dW = dW;
         this.isSameMode = isSameMode;
         this.dataFormat = dataFormat;
+        this.weightsFormat = weightsFormat;
 
         validate();
     }
