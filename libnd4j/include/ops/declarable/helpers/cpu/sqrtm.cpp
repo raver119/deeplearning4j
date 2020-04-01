@@ -496,9 +496,9 @@ template<typename T>
 
     template<typename T>
     void makeHouseholder(NDArray& aThis, NDArray& essential, T& tau, T& beta) {
-        auto size = aThis.lengthOf();
-        auto tail = aThis({1, size, 0, 0});//derived(), 1, size()-1);
-        T tailSqNorm = size == 1 ? T(0.f) : tail.reduceNumber(reduce::Norm2).t<T>(0);
+        auto n = aThis.lengthOf();
+        auto tail = aThis({1, n, 0, 0});//derived(), 1, size()-1);
+        T tailSqNorm = n == 1 ? T(0.f) : tail.reduceNumber(reduce::SquaredNorm).t<T>(0);
         T c0 = aThis.t<T>(0);
         const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
 
@@ -507,8 +507,7 @@ template<typename T>
             beta = c0;
             essential.nullify();
         }
-        else
-        {
+        else {
             beta = math::p_sqrt( c0 * c0 + tailSqNorm);
             if (c0 >= T(0.f))
                 beta = -beta;
@@ -599,7 +598,7 @@ template<typename T>
 /** \internal Perform a Francis QR step involving rows il:iu and columns im:iu. */
     template<typename T>
     inline void performFrancisQRStep(NDArray& ioMatrixT, NDArray& ioMatrixU, Nd4jLong indexLower, Nd4jLong indexMedium, Nd4jLong indexUpper, const ShiftInfo<T>& firstHouseholderVector) {
-        const Nd4jLong size = ioMatrixT.sizeAt(-1);
+        const Nd4jLong n = ioMatrixT.sizeAt(-1);
 
         for (Nd4jLong k = indexMedium; k <= indexUpper - 2; ++k)
         {
@@ -626,12 +625,12 @@ template<typename T>
                     ioMatrixT.t<T>(k, k - 1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-                auto matTKK3 = ioMatrixT({k, k + 3, k, size}); //
+                auto matTKK3 = ioMatrixT({k, k + 3, k, n}); //
                 applyHouseholderOnTheLeft<T>(matTKK3, ess, tau);
                 auto bottomRow = math::nd4j_min(indexUpper, k + 3);
                 auto matTK3 = ioMatrixT({0, bottomRow, k, k + 3});
                 applyHouseholderOnTheRight<T>(matTK3, ess, tau);
-                auto matT3 = ioMatrixU({0, size, k, k + 3});
+                auto matT3 = ioMatrixU({0, n, k, k + 3});
                 applyHouseholderOnTheRight<T>(matT3, ess, tau);
             }
         }
@@ -642,11 +641,11 @@ template<typename T>
         makeHouseholder(v, ess, tau, beta);
         if (beta != T(0)) { // if v is not zero
             ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
-            auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size});
+            auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, n});
             applyHouseholderOnTheLeft(matT1, ess, tau);
             auto matTR1 = ioMatrixT({0, indexUpper + 1, indexUpper - 1, indexUpper + 1});
             applyHouseholderOnTheRight(matTR1, ess, tau);
-            auto matU1 = ioMatrixU({0, size, indexUpper - 1, indexUpper + 1});
+            auto matU1 = ioMatrixU({0, n, indexUpper - 1, indexUpper + 1});
             applyHouseholderOnTheRight(matU1, ess, tau);
         }
 
@@ -700,11 +699,10 @@ template<typename T>
         Nd4jLong totalIter = 0; // iteration count for whole matrix
         T exshift(0.f);   // sum of exceptional shifts
         T norm = computeNormOfT<T>(matrixH);
-        nd4j_printf("Inital norm is %f\n", norm);
         if(norm != T(0.f))  { // check for inversibility
             while (indexUpper >= 0) {
                 auto indexLower = findSmallerSubdiagonalEntry<T>(&m_matT, indexUpper);
-                nd4j_printf("Upper index is %lld and lower is %lld\n", indexUpper, indexLower);
+//                nd4j_printf("Upper index is %lld and lower is %lld\n", indexUpper, indexLower);
                 // Check for convergence
                 if (indexLower == indexUpper) {// One root found
                     m_matT.t<T>(indexUpper, indexUpper) = m_matT.t<T>(indexUpper, indexUpper) + exshift;
