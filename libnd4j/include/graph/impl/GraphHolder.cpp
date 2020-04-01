@@ -49,7 +49,7 @@ namespace sd {
 
             auto graph = _graphF[graphId]->cloneWithProxy();
 
-            return graph;
+            throw std::runtime_error("GraphHolder::cloneGraph - not implemented yet");
         }
 
         Graph* GraphHolder::pullGraph(Nd4jLong graphId) {

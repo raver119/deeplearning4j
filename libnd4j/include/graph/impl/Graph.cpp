@@ -277,12 +277,12 @@ namespace sd {
             _configuration = configuration;
         }
 
-        Graph* Graph::cloneWithProxy() const {
-            auto clone = new Graph();
+        Graph Graph::cloneWithProxy() const {
+            Graph clone;
 
-            clone->replaceState(new VariableProxy(this->_variableSpace), this->_configuration.clone());
+            clone.replaceState(new VariableProxy(this->_variableSpace), this->_configuration);
 
-            throw std::runtime_error("Graph::cloneWithProxy - not implemented yet");
+            return clone;
         }
 
         Graph* Graph::clone() const {
