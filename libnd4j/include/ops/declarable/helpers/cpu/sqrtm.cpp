@@ -282,21 +282,18 @@ namespace helpers {
          T _c, _s;
 
          void rotate(T const p, T const q, T* r = nullptr) {
-            if(q == T(0.f))
-            {
+            if(q == T(0.f)) {
                 _c = math::nd4j_sign<T,T>(p);// < T(0.f) ? Scalar(-1) : Scalar(1);
                 _s = T(0.f);
                 //*r = math::nd4j_abs(p);
             }
-            else if( p == T(0.f))
-            {
+            else if( p == T(0.f)) {
                 _c = p;
                 _s = -math::nd4j_sign<T,T>(q);
                 //*r = math::nd4j_abs(q);
             }
-            else if(math::nd4j_abs(p) > math::nd4j_abs(q))
-            {
-                T t = q/p;
+            else if(math::nd4j_abs(p) > math::nd4j_abs(q)) {
+                T t = q / p;
                 T u = math::p_sqrt(T(1.f) + t * t);
                 if(p < T(0.f))
                     u = -u;
@@ -304,9 +301,8 @@ namespace helpers {
                 _s = -t * _c;
                 //if(r) *r = p * u;
             }
-            else
-            {
-                T t = p/q;
+            else {
+                T t = p / q;
                 T u = math::p_sqrt(T(1.f) + t*t);
                 if(q < T(0.f))
                     u = -u;
@@ -499,7 +495,7 @@ template<typename T>
         auto n = aThis.lengthOf();
         auto tail = aThis({1, n, 0, 0});//derived(), 1, size()-1);
         T tailSqNorm = n == 1 ? T(0.f) : tail.reduceNumber(reduce::SquaredNorm).t<T>(0);
-        T c0 = aThis.t<T>(0);
+        T c0 = aThis.t<T>(0,0);
         const T tol = DataTypeUtils::min<T>(); //(std::numeric_limits<RealScalar>::min)();
 
         if(tailSqNorm <= tol)     {
@@ -813,6 +809,8 @@ template<typename T>
           //primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
           outputT.printIndexedBuffer("Triangular after Schur");
           outputU.printIndexedBuffer("Orthogonal after Schur");
+          MmulHelper::matmul(&outputU, &outputU, output, true, false);
+          output->printIndexedBuffer("Should be identity matrix");
 //        schurDecomposition<T>(context, input, &outputQ, &outputT);
 //        outputQ.printIndexedBuffer("Q matrix");
 //        outputT.printIndexedBuffer("T matrix");
