@@ -519,20 +519,20 @@ template<typename T>
 
 /** \internal Compute index im at which Francis QR step starts and the first Householder vector. */
     template<typename T>
-    inline void initFrancisQRStep(NDArray const& inputMatrix, Nd4jLong initialLowIndex, Nd4jLong initialUpperIndex, const ShiftInfo<T>& shiftInfo, Nd4jLong& initialFrancisIndex, ShiftInfo<T>& firstHouseholderVector) {
-        for (initialFrancisIndex = initialUpperIndex - 2; initialFrancisIndex >= initialLowIndex; --initialFrancisIndex) {
-            const T Tmm = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex);
+    inline void initFrancisQRStep(NDArray const& inputMatrix, Nd4jLong lowerIndex, Nd4jLong upperIndex, const ShiftInfo<T>& shiftInfo, Nd4jLong& francisIndex, ShiftInfo<T>& firstHouseholderVector) {
+        for (francisIndex = upperIndex - 2; francisIndex >= lowerIndex; --francisIndex) {
+            const T Tmm = inputMatrix.t<T>(francisIndex, francisIndex);
             const T r = shiftInfo.x - Tmm;
             const T s = shiftInfo.y - Tmm;
-            firstHouseholderVector.x = (r * s - shiftInfo.z) / inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex) + inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex + 1);
-            firstHouseholderVector.y = inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1) - Tmm - r - s;
-            firstHouseholderVector.z = inputMatrix.t<T>(initialFrancisIndex + 2, initialFrancisIndex + 1);
-            if (initialFrancisIndex == initialLowIndex) {
+            firstHouseholderVector.x = (r * s - shiftInfo.z) / inputMatrix.t<T>(francisIndex + 1, francisIndex) + inputMatrix.t<T>(francisIndex, francisIndex + 1);
+            firstHouseholderVector.y = inputMatrix.t<T>(francisIndex + 1, francisIndex + 1) - Tmm - r - s;
+            firstHouseholderVector.z = inputMatrix.t<T>(francisIndex + 2, francisIndex + 1);
+            if (francisIndex == lowerIndex) {
                 break;
             }
-            const T lhs = inputMatrix.t<T>(initialFrancisIndex, initialFrancisIndex - 1) * (math::nd4j_abs(firstHouseholderVector.y) + math::nd4j_abs(firstHouseholderVector.z));
-            const T rhs = firstHouseholderVector.x * (math::nd4j_abs(inputMatrix.t<T>(initialFrancisIndex - 1, initialFrancisIndex - 1)) + math::nd4j_abs(Tmm) + abs(inputMatrix.t<T>(initialFrancisIndex + 1, initialFrancisIndex + 1)));
-            if (math::nd4j_abs(lhs) < T(1.e-5f * rhs))
+            const T lhs = inputMatrix.t<T>(francisIndex, francisIndex - 1) * (math::nd4j_abs(firstHouseholderVector.y) + math::nd4j_abs(firstHouseholderVector.z));
+            const T rhs = firstHouseholderVector.x * (math::nd4j_abs(inputMatrix.t<T>(francisIndex - 1, francisIndex - 1)) + math::nd4j_abs(Tmm) + abs(inputMatrix.t<T>(francisIndex + 1, francisIndex + 1)));
+            if (math::nd4j_abs(lhs) < T(DataTypeUtils::min<T>() * rhs))
                 break;
         }
     }
@@ -637,11 +637,9 @@ template<typename T>
         }
 
         auto v = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1}).reshape('c', {2,1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
-        v.printIndexedBuffer("V should be 2x1");
         T tau, beta;
         NDArray ess = NDArrayFactory::create<T>(0.f);
         makeHouseholder(v, ess, tau, beta);
-        ess.printIndexedBuffer("ESS should be 1x1");
         if (beta != T(0)) { // if v is not zero
             ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
             auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, size});
@@ -685,60 +683,58 @@ template<typename T>
         return norm;
     }
 
-        template<typename T>
-        void computeFromHessenberg(const NDArray& matrixH, const NDArray& matrixQ, NDArray& m_matT, NDArray& m_matU) {
+    template<typename T>
+    void computeFromHessenberg(const NDArray& matrixH, const NDArray& matrixQ, NDArray& m_matT, NDArray& m_matU) {
 
-            m_matT.assign(matrixH);
-            m_matU.assign(matrixQ);
+        m_matT.assign(matrixH);
+        m_matU.assign(matrixQ);
 
-            Nd4jULong maxIters = m_matT.rows() * 40;// max count of iterations
+        Nd4jULong maxIters = m_matT.rows() * 40;// max count of iterations
 
-            // The matrix m_matT is divided in three parts.
-            // Rows 0,...,il-1 are decoupled from the rest because m_matT(il,il-1) is zero.
-            // Rows il,...,iu is the part we are working on (the active window).
-            // Rows iu+1,...,end are already brought in triangular form.
-            Nd4jLong indexUpper = m_matT.columns() - 1;
-            Nd4jLong iter = 0;      // iteration count for current eigenvalue
-            Nd4jLong totalIter = 0; // iteration count for whole matrix
-            T exshift(0.f);   // sum of exceptional shifts
-            T norm = computeNormOfT<T>(matrixH);
-
-            if(norm != T(0.f)) // check for inversibility
-            {
-                while (indexUpper >= 0)
-                {
-                    Nd4jLong indexLower = findSmallerSubdiagonalEntry<T>(&m_matT, indexUpper);
-
-                    // Check for convergence
-                    if (indexLower == indexUpper) {// One root found
-                        m_matT.t<T>(indexUpper, indexUpper) = m_matT.t<T>(indexUpper, indexUpper) + exshift;
-                        if (indexUpper > 0)
-                            m_matT.t<T>(indexUpper, indexUpper - 1) = T(0.f);
-                        indexUpper--;
-                        iter = 0;
-                    }
-                    else if (indexLower == indexUpper - 1) { // Two roots found - the 2x2 band
-                        splitOffTwoRows<T>(&m_matT, &m_matU, indexUpper, exshift);
-                        indexUpper -= 2;
-                        iter = 0;
-                    }
-                    else { // No convergence yet
-                        // The firstHouseholderVector vector has to be initialized to something to get rid of a silly GCC warning (-O1 -Wall -DNDEBUG )
-                        ShiftInfo<T> firstHouseholderVector = {0}, shiftInfo;
-                        computeShift<T>(m_matT, indexUpper, iter, exshift, shiftInfo);
-                        iter = iter + 1;
-                        totalIter = totalIter + 1;
-                        if (totalIter > maxIters) break;
-                        Nd4jLong indexMedium;
-                        initFrancisQRStep<T>(m_matT, indexLower, indexUpper, shiftInfo, indexMedium, firstHouseholderVector);
-                        performFrancisQRStep<T>(m_matT, m_matU, indexLower, indexMedium, indexUpper, firstHouseholderVector);
-                    }
+        // The matrix m_matT is divided in three parts.
+        // Rows 0,...,il-1 are decoupled from the rest because m_matT(il,il-1) is zero.
+        // Rows il,...,iu is the part we are working on (the active window).
+        // Rows iu+1,...,end are already brought in triangular form.
+        Nd4jLong indexUpper = m_matT.sizeAt(-1) - 1;
+        Nd4jLong iter = 0;      // iteration count for current eigenvalue
+        Nd4jLong totalIter = 0; // iteration count for whole matrix
+        T exshift(0.f);   // sum of exceptional shifts
+        T norm = computeNormOfT<T>(matrixH);
+        nd4j_printf("Inital norm is %f\n", norm);
+        if(norm != T(0.f))  { // check for inversibility
+            while (indexUpper >= 0) {
+                auto indexLower = findSmallerSubdiagonalEntry<T>(&m_matT, indexUpper);
+                nd4j_printf("Upper index is %lld and lower is %lld\n", indexUpper, indexLower);
+                // Check for convergence
+                if (indexLower == indexUpper) {// One root found
+                    m_matT.t<T>(indexUpper, indexUpper) = m_matT.t<T>(indexUpper, indexUpper) + exshift;
+                    if (indexUpper > 0)
+                        m_matT.t<T>(indexUpper, indexUpper - 1) = T(0.f);
+                    indexUpper--;
+                    iter = 0;
+                }
+                else if (indexLower == indexUpper - 1) { // Two roots found - the 2x2 band
+                    splitOffTwoRows<T>(&m_matT, &m_matU, indexUpper, exshift);
+                    indexUpper -= 2;
+                    iter = 0;
+                }
+                else { // No convergence yet
+                    // The firstHouseholderVector vector has to be initialized to something to get rid of a silly GCC warning (-O1 -Wall -DNDEBUG )
+                    ShiftInfo<T> firstHouseholderVector = {0}, shiftInfo;
+                    computeShift<T>(m_matT, indexUpper, iter, exshift, shiftInfo);
+                    iter++;
+                    totalIter++;
+                    if (totalIter > maxIters) break;
+                    Nd4jLong indexMedium;
+                    initFrancisQRStep<T>(m_matT, indexLower, indexUpper, shiftInfo, indexMedium, firstHouseholderVector);
+                    performFrancisQRStep<T>(m_matT, m_matU, indexLower, indexMedium, indexUpper, firstHouseholderVector);
                 }
             }
-
-            if(totalIter > maxIters)
-                throw std::runtime_error("schur decomposition: Input matrix does not convergence");
         }
+
+        if(totalIter > maxIters)
+            throw std::runtime_error("schur decomposition: Input matrix does not convergence");
+    }
 
 
     template <typename T>
