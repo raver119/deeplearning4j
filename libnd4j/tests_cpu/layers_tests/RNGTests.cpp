@@ -574,8 +574,8 @@ TEST_F(RNGTests, Test_Uniform_2) {
 
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngB, &x1, 1.0f, 2.0f);
 
-    auto op = new sd::ops::LegacyRandomOp(0);
-    auto result = op->execute(_rngA, {&input}, {1.0f, 2.0f}, {});
+    sd::ops::LegacyRandomOp op(0);
+    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -583,9 +583,6 @@ TEST_F(RNGTests, Test_Uniform_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-
-    delete op;
-    
 }
 
 TEST_F(RNGTests, Test_Uniform_SGA_3) {
@@ -603,8 +600,8 @@ TEST_F(RNGTests, Test_Gaussian_2) {
 
     RandomLauncher::fillGaussian(LaunchContext::defaultContext(), _rngB, &x1, 1.0f, 2.0f);
 
-    auto op = new sd::ops::LegacyRandomOp(random::GaussianDistribution);
-    auto result = op->execute(_rngA, {&input}, {1.0f, 2.0f}, {});
+    sd::ops::LegacyRandomOp op(random::GaussianDistribution);
+    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -612,9 +609,6 @@ TEST_F(RNGTests, Test_Gaussian_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-
-    delete op;
-    
 }
 
 TEST_F(RNGTests, Test_LogNorm_2) {
@@ -623,8 +617,8 @@ TEST_F(RNGTests, Test_LogNorm_2) {
 
     RandomLauncher::fillLogNormal(LaunchContext::defaultContext(), _rngB, &x1, 1.0f, 2.0f);
 
-    auto op = new sd::ops::LegacyRandomOp(random::LogNormalDistribution);
-    auto result = op->execute(_rngA, {&input}, {1.0f, 2.0f}, {});
+    sd::ops::LegacyRandomOp op(random::LogNormalDistribution);
+    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -632,9 +626,6 @@ TEST_F(RNGTests, Test_LogNorm_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-
-    delete op;
-    
 }
 
 TEST_F(RNGTests, Test_TruncatedNorm_2) {
@@ -643,8 +634,8 @@ TEST_F(RNGTests, Test_TruncatedNorm_2) {
 
     RandomLauncher::fillTruncatedNormal(LaunchContext::defaultContext(), _rngB, &x1, 1.0f, 2.0f);
 
-    auto op = new sd::ops::LegacyRandomOp(random::TruncatedNormalDistribution);
-    auto result = op->execute(_rngA, {&input}, {1.0f, 2.0f}, {});
+    sd::ops::LegacyRandomOp op(random::TruncatedNormalDistribution);
+    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -652,8 +643,6 @@ TEST_F(RNGTests, Test_TruncatedNorm_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-    delete op;
-    
 }
 
 
@@ -663,8 +652,8 @@ TEST_F(RNGTests, Test_Binomial_2) {
 
     RandomLauncher::fillBinomial(LaunchContext::defaultContext(), _rngB, &x1, 3, 0.5f);
 
-    auto op = new sd::ops::LegacyRandomOp(random::BinomialDistributionEx);
-    auto result = op->execute(_rngA, {&input}, {0.5f}, {3});
+    sd::ops::LegacyRandomOp op(random::BinomialDistributionEx);
+    auto result = op.execute(_rngA, {&input}, {0.5f}, {3});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -672,9 +661,6 @@ TEST_F(RNGTests, Test_Binomial_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-
-    delete op;
-    
 }
 
 
@@ -684,8 +670,8 @@ TEST_F(RNGTests, Test_Bernoulli_2) {
 
     RandomLauncher::fillBernoulli(LaunchContext::defaultContext(), _rngB, &x1, 0.5f);
 
-    auto op = new sd::ops::LegacyRandomOp(random::BernoulliDistribution);
-    auto result = op->execute(_rngA, {&input}, {0.5f}, {});
+    sd::ops::LegacyRandomOp op(random::BernoulliDistribution);
+    auto result = op.execute(_rngA, {&input}, {0.5f}, {});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -693,9 +679,6 @@ TEST_F(RNGTests, Test_Bernoulli_2) {
 
     ASSERT_TRUE(x1.isSameShape(z));
     ASSERT_TRUE(x1.equalsTo(z));
-
-    delete op;
-    
 }
 
 TEST_F(RNGTests, Test_GaussianDistribution_1) {
