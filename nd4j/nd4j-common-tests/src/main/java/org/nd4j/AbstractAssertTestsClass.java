@@ -17,11 +17,6 @@ package org.nd4j;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.nd4j.imports.TFGraphs.TFGraphTestAllLibnd4j;
-import org.nd4j.imports.TFGraphs.TFGraphTestAllSameDiff;
-import org.nd4j.imports.TFGraphs.TFGraphTestList;
-import org.nd4j.imports.TFGraphs.TFGraphTestZooModels;
-import org.nd4j.imports.listeners.ImportModelDebugger;
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
@@ -38,20 +33,45 @@ import static org.junit.Assert.assertEquals;
  * Other than a small set of exceptions, all tests must extend this
  *
  * @author Alex Black
+ * @author Alexander Stoyakin 
  */
-
 @Slf4j
-public class AssertTestsExtendBaseClass extends AbstractAssertTestsClass {
+public abstract class AbstractAssertTestsClass extends BaseND4JTest {
+
+    protected abstract Set<Class<?>> getExclusions();
 
     @Override
-    protected Set<Class<?>> getExclusions() {
-	    //Set of classes that are exclusions to the rule (either run manually or have their own logging + timeouts)
-	    return new HashSet<>(Arrays.asList(
-	            TFGraphTestAllSameDiff.class,
-        	    TFGraphTestAllLibnd4j.class,
-	            TFGraphTestList.class,
-        	    TFGraphTestZooModels.class,
-	            ImportModelDebugger.class  //Run manually only, otherwise ignored
-        	    ));
+    public long getTimeoutMilliseconds() {
+        return 240000L;
+    }
+
+    @Test
+    public void checkTestClasses(){
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage("org.nd4j"))
+                .setScanners(new MethodAnnotationsScanner()));
+        Set<Method> methods = reflections.getMethodsAnnotatedWith(Test.class);
+        Set<Class<?>> s = new HashSet<>();
+        for(Method m : methods){
+            s.add(m.getDeclaringClass());
+        }
+
+        List<Class<?>> l = new ArrayList<>(s);
+        l.sort(new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> aClass, Class<?> t1) {
+                return aClass.getName().compareTo(t1.getName());
+            }
+        });
+
+        int count = 0;
+        for(Class<?> c : l){
+            if(!BaseND4JTest.class.isAssignableFrom(c) && !getExclusions().contains(c)){
+                log.error("Test {} does not extend BaseND4JTest (directly or indirectly). All tests must extend this class for proper memory tracking and timeouts", c);
+                count++;
+            }
+        }
+        assertEquals("Number of tests not extending BaseND4JTest", 0, count);
     }
 }
