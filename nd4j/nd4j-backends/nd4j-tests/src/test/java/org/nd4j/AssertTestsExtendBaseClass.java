@@ -16,21 +16,12 @@
 package org.nd4j;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 import org.nd4j.imports.TFGraphs.TFGraphTestAllLibnd4j;
 import org.nd4j.imports.TFGraphs.TFGraphTestAllSameDiff;
 import org.nd4j.imports.TFGraphs.TFGraphTestList;
 import org.nd4j.imports.TFGraphs.TFGraphTestZooModels;
 import org.nd4j.imports.listeners.ImportModelDebugger;
-import org.reflections.Reflections;
-import org.reflections.scanners.MethodAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-
-import java.lang.reflect.Method;
 import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * This class checks that all test classes (i.e., anything with one or more methods annotated with @Test)
@@ -58,5 +49,10 @@ public class AssertTestsExtendBaseClass extends AbstractAssertTestsClass {
     @Override
 	protected String getPackageName() {
     	return "org.nd4j";
+	}
+
+	@Override
+	protected Class<?> getBaseClass() {
+    	return BaseND4JTest.class;
 	}
 }

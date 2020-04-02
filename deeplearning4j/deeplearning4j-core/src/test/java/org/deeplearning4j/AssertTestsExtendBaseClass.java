@@ -41,4 +41,9 @@ public class AssertTestsExtendBaseClass extends AbstractAssertTestsClass {
     protected String getPackageName() {
         return "org.deeplearning4j";
     }
+
+    @Override
+    protected Class<?> getBaseClass() {
+        return BaseDL4JTest.class;
+    }
 }

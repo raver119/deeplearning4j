@@ -42,6 +42,8 @@ public abstract class AbstractAssertTestsClass extends BaseND4JTest {
 
     protected abstract String getPackageName();
 
+    protected abstract Class<?> getBaseClass();
+
     @Override
     public long getTimeoutMilliseconds() {
         return 240000L;
@@ -69,8 +71,9 @@ public abstract class AbstractAssertTestsClass extends BaseND4JTest {
 
         int count = 0;
         for(Class<?> c : l){
-            if(!BaseND4JTest.class.isAssignableFrom(c) && !getExclusions().contains(c)){
-                log.error("Test {} does not extend BaseND4JTest (directly or indirectly). All tests must extend this class for proper memory tracking and timeouts", c);
+            if(!getBaseClass().isAssignableFrom(c) && !getExclusions().contains(c)){
+                log.error("Test {} does not extend {} (directly or indirectly). All tests must extend this class for proper memory tracking and timeouts",
+                        c, getBaseClass());
                 count++;
             }
         }
