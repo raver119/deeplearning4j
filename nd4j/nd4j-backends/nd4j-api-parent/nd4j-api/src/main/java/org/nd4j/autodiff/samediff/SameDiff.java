@@ -182,6 +182,11 @@ public class SameDiff extends SDBaseOps {
     public final SDBitwise bitwise = new SDBitwise(this);
 
     /**
+     * Op creator object for linalg operations
+     */
+    public final SDLinalg linalg = new SDLinalg(this);
+
+    /**
      * Op creator object for math operations
      */
     public SDMath math() {
@@ -235,6 +240,13 @@ public class SameDiff extends SDBaseOps {
      */
     public SDBitwise bitwise(){
         return bitwise;
+    }
+
+    /**
+     * Op creator object for linalg operations
+     */
+    public SDLinalg linalg(){
+        return linalg;
     }
 
     private Map<String, SameDiff> sameDiffFunctionInstances;
@@ -1234,13 +1246,14 @@ public class SameDiff extends SDBaseOps {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         SameDiff sameDiff = (SameDiff) o;
 
-        if (variables != null ? !variables.equals(sameDiff.variables) : sameDiff.variables != null)
-            return false;
-        return sameDiffFunctionInstances != null ? sameDiffFunctionInstances.equals(sameDiff.sameDiffFunctionInstances) : sameDiff.sameDiffFunctionInstances == null;
+        boolean eqVars = variables.equals(sameDiff.variables);
+        boolean eqOps = ops.equals(sameDiff.ops);
+        return eqVars && eqOps;
     }
 
     /**
@@ -3446,6 +3459,12 @@ public class SameDiff extends SDBaseOps {
             if (sd.hasVariable(from)) {
                 sd.renameVariable(from, to);
             }
+        }
+
+        //Check losses:
+        if(lossVariables.contains(from)){
+            int idx = lossVariables.indexOf(from);
+            lossVariables.set(idx, to);
         }
     }
 
@@ -5842,5 +5861,11 @@ public class SameDiff extends SDBaseOps {
         }
 
         return base + "_" + inc;
+    }
+
+
+    @Override
+    public String toString(){
+        return "SameDiff(nVars=" + variables.size() + ",nOps=" + ops.size() + ")";
     }
 }
