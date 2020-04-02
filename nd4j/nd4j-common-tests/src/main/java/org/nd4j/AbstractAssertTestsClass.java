@@ -40,6 +40,8 @@ public abstract class AbstractAssertTestsClass extends BaseND4JTest {
 
     protected abstract Set<Class<?>> getExclusions();
 
+    protected abstract String getPackageName();
+
     @Override
     public long getTimeoutMilliseconds() {
         return 240000L;
@@ -49,7 +51,7 @@ public abstract class AbstractAssertTestsClass extends BaseND4JTest {
     public void checkTestClasses(){
 
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage("org.nd4j"))
+                .setUrls(ClasspathHelper.forPackage(getPackageName()))
                 .setScanners(new MethodAnnotationsScanner()));
         Set<Method> methods = reflections.getMethodsAnnotatedWith(Test.class);
         Set<Class<?>> s = new HashSet<>();

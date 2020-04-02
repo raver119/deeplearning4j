@@ -54,4 +54,9 @@ public class AssertTestsExtendBaseClass extends AbstractAssertTestsClass {
 	            ImportModelDebugger.class  //Run manually only, otherwise ignored
         	    ));
     }
+
+    @Override
+	protected String getPackageName() {
+    	return "org.nd4j";
+	}
 }
