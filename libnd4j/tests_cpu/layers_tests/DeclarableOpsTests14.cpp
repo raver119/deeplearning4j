@@ -2098,11 +2098,10 @@ TEST_F(DeclarableOpsTests14, Reshape2) {
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
-    std::vector<int>* arguments = block->getIArguments();
-    arguments->push_back(-y->ordering());
-    arguments->push_back(3);
-    arguments->push_back(5);
-    arguments->push_back(4);
+    block->appendI(-y->ordering());
+    block->appendI(3);
+    block->appendI(5);
+    block->appendI(4);
 
     sd::ops::reshape reshape;
 

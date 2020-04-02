@@ -39,7 +39,7 @@ namespace sd {
             if (x->isEmpty() || INPUT_VARIABLE(1)->isEmpty() || b->isEmpty())
                 return Status::OK();
 
-            const bool bTranspose = (block.getIArguments()->size() > 0 ? INT_ARG(0) == 1 : false);
+            const bool bTranspose = (block.numI() > 0 ? INT_ARG(0) == 1 : false);
 
             auto w = bTranspose ? new NDArray(INPUT_VARIABLE(1)->transpose()) : INPUT_VARIABLE(1);
 
@@ -66,7 +66,7 @@ namespace sd {
 
             auto weights = INPUT_VARIABLE(1);
 
-            const int nWeightsFormat = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;
+            const int nWeightsFormat = block.numI() > 0 ? INT_ARG(0) : 0;
 
             auto weightsShape = (1 == nWeightsFormat) ? ShapeUtils::evalTranspShapeInfo(*weights, block.getWorkspace()) : inputShape->at(1);
 
@@ -95,7 +95,7 @@ namespace sd {
             if (x->isEmpty() || INPUT_VARIABLE(1)->isEmpty() || b->isEmpty() || dLdz->isEmpty())
                 return Status::OK();
 
-            const bool bTranspose = (block.getIArguments()->size() > 0 ? INT_ARG(0) == 1 : false);
+            const bool bTranspose = (block.numI() > 0 ? INT_ARG(0) == 1 : false);
 
             auto w = bTranspose ? new NDArray(INPUT_VARIABLE(1)->transpose()) : INPUT_VARIABLE(1);
 
