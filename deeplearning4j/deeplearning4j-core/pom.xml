@@ -166,7 +166,7 @@
         </dependency>
 
         <!-- Test scope reflections to ensure all classes extend base test class -->
-        <dependency>
+        <!--dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
@@ -177,7 +177,12 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency-->
+            <dependency>
+                <groupId>org.nd4j</groupId>
+                <artifactId>nd4j-common-tests</artifactId>
+                <version>${nd4j.version}</version>
+            </dependency>
     </dependencies>
 
     <profiles>
