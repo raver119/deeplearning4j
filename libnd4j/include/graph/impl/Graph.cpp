@@ -33,6 +33,7 @@
 #include <helpers/FileUtils.h>
 #include <exceptions/datatype_exception.h>
 #include <exceptions/shape_mismatch_exception.h>
+#include <exceptions/graph_execution_exception.h>
 
 namespace sd {
     namespace graph {
@@ -582,8 +583,24 @@ namespace sd {
                     throw unresolved_output_exception::build("Requested output doesn't exist", v);
             }
 
-            // TODO: implement this method
-            return std::map<std::string, NDArray>();
+            // execute optimized version of this graph
+            auto status = executor.execute(optimizedGraph());
+            if (status != Status::OK())
+                throw graph_execution_exception("Graph execution failed, error code: ", status);
+
+            // fetch outputs from VariableSpace
+            std::map<std::string, NDArray> result;
+            for (const auto &v:outputs) {
+                if (!_variableSpace->hasVariable(v))
+                    throw unresolved_output_exception::build("Requested output doesn't exist after execution", v);
+
+                auto var = _variableSpace->getVariable(v);
+
+                // TODO: we want to make sure ManagedDataBuffer doesn't leak here
+                result[v] = *var->getNDArray();
+            }
+
+            return result;
         }
 
         bool  Graph::topolSearch(const int startNode, const std::set<int>& nodeBranches, const std::unordered_map<int, int>& positions, OpSequence& opSeq) const {

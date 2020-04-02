@@ -38,6 +38,7 @@ namespace sd {
     class SD_EXPORT graph_execution_exception: public graph_exception {
     public:
         explicit graph_execution_exception(Nd4jLong graphId);
+        explicit graph_execution_exception(const std::string &message, Nd4jStatus status);
     };
 }
 

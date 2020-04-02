@@ -25,4 +25,8 @@ namespace sd {
     graph_execution_exception::graph_execution_exception(Nd4jLong graphId) : graph_exception(StringUtils::buildGraphErrorMessage("Caught exception during graph execution", graphId), graphId) {
         _graphId = graphId;
     }
+
+    graph_execution_exception::graph_execution_exception(const std::string &message, Nd4jStatus status) : graph_exception(message, status) {
+        //
+    }
 }
