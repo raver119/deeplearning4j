@@ -87,8 +87,8 @@ namespace sd {
 
         public:
 
-            explicit Node(const std::string &nodeName, const sd::ops::DeclarableOp &op, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
-            explicit Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
+            explicit Node(const sd::ops::DeclarableOp &op, const std::string &nodeName = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
+            explicit Node(const std::string &opName, const std::string &nodeName = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
             explicit Node(const FlatNode *node);
             ~Node();
 

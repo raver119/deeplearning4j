@@ -67,8 +67,8 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     graph.addVariable("B", B);
     graph.addVariable("C", C);
 
-    Node m("mul", sd::ops::multiply());
-    Node a("add", sd::ops::add());
+    Node m(sd::ops::multiply(), "mul");
+    Node a(sd::ops::add(), "add");
 
     graph.addNode(m, {"A", "B"});
     graph.addNode(a, {"mul", "C"});

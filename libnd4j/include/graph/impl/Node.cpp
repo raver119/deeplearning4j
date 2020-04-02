@@ -44,7 +44,7 @@
 
 namespace sd {
     namespace graph {
-        Node::Node(const std::string &nodeName, const ops::DeclarableOp &opName, const std::vector<double> &tArgs,
+        Node::Node(const ops::DeclarableOp &opName, const std::string &nodeName, const std::vector<double> &tArgs,
                    const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs,
                    const std::vector<DataType> &dArgs) {
             auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName.getOpHash());
@@ -72,7 +72,7 @@ namespace sd {
             this->setContextPrototype(block);
         }
 
-        Node::Node(const std::string &nodeName, const std::string &opName, const std::vector<double> &tArgs,
+        Node::Node(const std::string &opName, const std::string &nodeName, const std::vector<double> &tArgs,
                    const std::vector<Nd4jLong> &iArgs, const std::vector<bool> &bArgs,
                    const std::vector<DataType> &dArgs) {
 

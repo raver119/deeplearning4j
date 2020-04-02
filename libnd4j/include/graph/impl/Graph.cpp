@@ -81,23 +81,34 @@ namespace sd {
         }
 
         void Graph::addNode(Node &node, const std::initializer_list<std::string> &inputs) {
+            // temporary check. basically we're okay if Node has id defined
             if (node.id() != 0)
                 throw std::runtime_error("Graph::addNode - Node has id defined");
+
+            if (node.name().empty()) {
+                // if name is empty we'll make up a name based on Op name
+            } else {
+                if (_symbolicLookupTable.count(node.name()) > 0)
+                    throw std::runtime_error("Graph::addNode - Graph alread has Node [" + node.name() + "] defined");
+            }
 
             // node must have numeric id
             node.setId(_maxId++);
             _symbolicLookupTable[node.name()] = node.id();
 
             // converting string ids to numeric ones
-            for (auto &v:inputs)
+            for (auto &v:inputs) {
+                // we don't allow self-references
+                if (v == node.name())
+                    throw unresolved_input_exception::build("Graph::addNode - Node references itself", v);
+
                 node.pickInput(idByName(v), 0);
+            }
 
             _unmapped[node.id()] = node;
         }
 
         void Graph::addNode(Node &node, const std::initializer_list<int> &inputs) {
-            node.markRemovable(false);
-
             throw std::runtime_error("not implemented yet");
         }
 

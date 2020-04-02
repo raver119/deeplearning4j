@@ -76,9 +76,9 @@ TEST_F(GraphTests2, test_execution_1) {
     // C
     graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
-    Node b("add_node", sd::ops::add());
+    Node b(sd::ops::add(), "add_node");
 
-    graph.addNode(Node("multiply_node", sd::ops::multiply()), {"A", "B"});
+    graph.addNode(Node( sd::ops::multiply(), "multiply_node"), {"A", "B"});
     graph.addNode(b, {"multiply_node", "C"});
 
     auto result = graph.execute({}, {"add_node"});
@@ -91,7 +91,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    Node node("tanh_node", sd::ops::tanh());
+    Node node(sd::ops::tanh(), "tanh_node");
     graph.addNode(node, {"input"});
 
     // this test must throw an exception, because input isn't resolved yet
@@ -103,7 +103,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_2) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node("tanh_node", sd::ops::tanh()), {"input"});
+    graph.addNode(Node(sd::ops::tanh(), "tanh_node"), {"input"});
 
     auto result = graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"tanh_node"});
 
@@ -115,7 +115,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_3) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node("tanh_node", sd::ops::tanh()), {"input"});
+    graph.addNode(Node(sd::ops::tanh(), "tanh_node"), {"input"});
 
     ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<int>(5)}}, {"tanh_node"}), sd::datatype_exception);
 }
@@ -125,7 +125,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_4) {
 
     graph.addPlaceholder("input", DataType::FLOAT32, {3, 4, 5});
 
-    Node a("tanh_node", sd::ops::tanh());
+    Node a(sd::ops::tanh(), "tanh_node");
     graph.addNode(a, {"input"});
 
     ASSERT_THROW(graph.execute({{"input", NDArrayFactory::create<float>(0.5f)}}, {"tanh_node"}), sd::shape_mismatch_exception);
@@ -136,7 +136,7 @@ TEST_F(GraphTests2, test_output_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    Node node("tanh_node", sd::ops::tanh());
+    Node node(sd::ops::tanh(), "tanh_node");
     graph.addNode(node, {"input"});
 
     // since we're requesting output of non-existent node - we expect exception
@@ -148,9 +148,28 @@ TEST_F(GraphTests2, test_input_resolution_1) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    Node a("tanh_node", sd::ops::tanh());
+    Node a(sd::ops::tanh(), "tanh_node");
     graph.addNode(a, {"input"});
 
     // since we're trying to resolve non-existent placeholder - we expect exception
     ASSERT_THROW(graph.execute({{"array", NDArrayFactory::create(0.5f)}}, {"tanh_node"}), graph::unresolved_input_exception);
+}
+
+TEST_F(GraphTests2, test_double_name_1) {
+    Graph graph;
+
+    graph.addPlaceholder("input", DataType::FLOAT32);
+
+    graph.addNode(Node(sd::ops::tanh(), "tanh_node"), {"input"});
+    graph.addNode(Node(sd::ops::add(), "add_node"), {"tanh_node"});
+    ASSERT_ANY_THROW(graph.addNode(Node(sd::ops::add(), "add_node"), {"tanh_node"}));
+}
+
+TEST_F(GraphTests2, test_self_reference) {
+    Graph graph;
+
+    graph.addPlaceholder("input", DataType::FLOAT32);
+
+    graph.addNode(Node(sd::ops::tanh(), "tanh_node"), {"input"});
+    ASSERT_ANY_THROW(graph.addNode(Node(sd::ops::add(), "add_node"), {"add_node"}));
 }

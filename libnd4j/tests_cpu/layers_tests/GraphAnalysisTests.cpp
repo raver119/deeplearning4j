@@ -47,8 +47,8 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_1) {
     // C
     graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
 
-    Node a("multiply", sd::ops::multiply());
-    Node b("add", sd::ops::add());
+    Node a(sd::ops::multiply(), "multiply");
+    Node b(sd::ops::add(), "add");
 
     graph.addNode(a, {"A", "B"});
     graph.addNode(b, {"multiply", "C"});
@@ -89,10 +89,9 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     // D
     graph.addVariable("D", NDArrayFactory::create<int>('c', {3}, {4, 4, 4}));
 
-    Node a("multiply", sd::ops::multiply());
-    Node b("add", sd::ops::add());
-    Node c("subtract", sd::ops::subtract());
-
+    Node a(sd::ops::multiply(), "multiply");
+    Node b(sd::ops::add(), "add");
+    Node c(sd::ops::subtract(), "subtract");
 
     graph.addNode(a, {"A", "B"});
     graph.addNode(b, {"multiply", "C"});
