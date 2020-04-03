@@ -388,8 +388,10 @@ namespace helpers {
         T s = rotation._s;
         auto size = xRow.lengthOf();
         for(Nd4jLong i=0; i < size; ++i) {
-            xRow.t<T>(i) = c * xRow.t<T>(i) + s * yRow.t<T>(i);
-            yRow.t<T>(i) = -s * xRow.t<T>(i) + c * yRow.t<T>(i);
+            auto xx = c * xRow.t<T>(i) + s * yRow.t<T>(i);
+            auto yy = -s * xRow.t<T>(i) + c * yRow.t<T>(i);
+            xRow.t<T>(i) = xx;
+            yRow.t<T>(i) = yy;
         }
     }
 
@@ -634,7 +636,9 @@ template<typename T>
         auto v = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 2, indexUpper - 1}).reshape('c', {2,1});//.template block<2,1>(iu-1, iu-2); /// 2x1 block with iu-1 pos
         T tau, beta;
         NDArray ess = NDArrayFactory::create<T>(0.f);
+        v.printIndexedBuffer("V");
         makeHouseholder(v, ess, tau, beta);
+        v.printIndexedBuffer("V after");
         if (beta != T(0)) { // if v is not zero
             ioMatrixT.t<T>(indexUpper - 1, indexUpper - 2) = beta;
             auto matT1 = ioMatrixT({indexUpper - 1, indexUpper + 1, indexUpper - 1, n});
