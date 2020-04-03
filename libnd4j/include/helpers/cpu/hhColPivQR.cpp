@@ -84,13 +84,11 @@ void HHcolPivQR::_evalData() {
 
         if(k != biggestColIndex) {
         
-            auto temp1 = new NDArray(_qr({0,0, k,k+1}, true));
-            auto temp2 = new NDArray(_qr({0,0, biggestColIndex,biggestColIndex+1}, true));
-            auto temp3 = *temp1;
-            temp1->assign(temp2);
-            temp2->assign(temp3);
-            delete temp1;
-            delete temp2;
+            auto temp1 = _qr({0,0, k,k+1}, true);
+            auto temp2 = _qr({0,0, biggestColIndex,biggestColIndex+1}, true);
+            auto temp3 = temp1.dup();
+            temp1.assign(temp2);
+            temp2.assign(temp3);
 
             T e0 = normsUpd.e<T>(k);
             T e1 = normsUpd.e<T>(biggestColIndex);
@@ -108,11 +106,12 @@ void HHcolPivQR::_evalData() {
         }
         
         T normX;
-        NDArray* qrBlock = new NDArray(_qr({k,rows, k,k+1}, true));
-        T c;
-        Householder<T>::evalHHmatrixDataI(*qrBlock, c, normX);
-        _coeffs.p<T>(k, c);
-        delete qrBlock;        
+        {
+            auto qrBlock = _qr({k, rows, k, k + 1}, true);
+            T c;
+            Householder<T>::evalHHmatrixDataI(qrBlock, c, normX);
+            _coeffs.p<T>(k, c);
+        }
 
         _qr.p<T>(k,k, normX);
         
@@ -121,11 +120,9 @@ void HHcolPivQR::_evalData() {
             maxPivot = max;
         
         if(k < rows && (k+1) < cols) {
-            qrBlock   = new NDArray(_qr({k,  rows,  k+1,cols}, true));
-            auto tail = new NDArray(_qr({k+1,rows,  k, k+1},   true));
-            Householder<T>::mulLeft(*qrBlock, *tail, _coeffs.e<T>(k));
-            delete qrBlock;
-            delete tail;
+            auto qrBlock   = _qr({k,  rows,  k+1,cols}, true);
+            auto tail = _qr({k+1,rows,  k, k+1},   true);
+            Householder<T>::mulLeft(qrBlock, tail, _coeffs.e<T>(k));
         }
 
         for (int j = k + 1; j < cols; ++j) {            
@@ -153,13 +150,11 @@ void HHcolPivQR::_evalData() {
     for(int k = 0; k < _diagSize; ++k) {
 
         int idx = transp.e<int>(k);
-        auto temp1 = new NDArray(_permut({0,0, k, k+1},    true));
-        auto temp2 = new NDArray(_permut({0,0, idx,idx+1}, true));
-        auto  temp3 = *temp1;
-        temp1->assign(temp2);
-        temp2->assign(temp3);
-        delete temp1;
-        delete temp2;
+        auto temp1 = _permut({0,0, k, k+1},    true);
+        auto temp2 = _permut({0,0, idx,idx+1}, true);
+        auto  temp3 = temp1.dup();
+        temp1.assign(temp2);
+        temp2.assign(temp3);
     }    
 }
 

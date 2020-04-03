@@ -316,14 +316,14 @@ void SVD<T>::deflation(int col1, int col2, int ind, int row1W, int col1W, int sh
             if (_calcU) {
                 auto temp1 = _u({col1,col1+len+1, col1+i,  col1+i+1}, true);
                 auto temp2 = _u({col1,col1+len+1, col1+jac,col1+jac+1}, true);
-                auto temp3 = temp1;
+                auto temp3 = temp1.dup();
                 temp1.assign(temp2);
                 temp2.assign(temp3);
             }
             else {
                 auto temp1 = _u({0,2, col1+i,   col1+i+1}, true);
                 auto temp2 = _u({0,2, col1+jac, col1+jac+1}, true);
-                auto temp3 = temp1;
+                auto temp3 = temp1.dup();
                 temp1.assign(temp2);
                 temp2.assign(temp3);
             }
@@ -331,7 +331,7 @@ void SVD<T>::deflation(int col1, int col2, int ind, int row1W, int col1W, int sh
             if(_calcV) {
                 auto temp1 = _v({row1W,row1W+len, col1W+i,   col1W+i+1}, true);
                 auto temp2 = _v({row1W,row1W+len, col1W+jac, col1W+jac+1}, true);
-                auto temp3 = temp1;
+                auto temp3 = temp1.dup();
                 temp1.assign(temp2);
                 temp2.assign(temp3);
             }
@@ -643,14 +643,14 @@ void SVD<T>::calcBlockSVD(int col1, int size, NDArray& U, NDArray& singVals, NDA
 
             auto temp1 = U({0,0, i,i+1}, true);
             auto temp2 = U({0,0, i+1,i+2}, true);
-            auto temp3 = temp1;
+            auto temp3 = temp1.dup();
             temp1.assign(temp2);
             temp2.assign(temp3);
 
             if(_calcV) {
                 auto temp1 = V({0,0, i,i+1}, true);
                 auto temp2 = V({0,0, i+1,i+2}, true);
-                auto temp3 = temp1;
+                auto temp3 = temp1.dup();
                 temp1.assign(temp2);
                 temp2.assign(temp3);
             }
@@ -668,7 +668,7 @@ void SVD<T>::calcBlockSVD(int col1, int size, NDArray& U, NDArray& singVals, NDA
     for(int i = 0; i < curSize/2; ++i) {
         auto temp3 = temp2({0,0, i,i+1}, true);
         auto temp4 = temp2({0,0, curSize-1-i,curSize-i}, true);
-        auto temp5 = temp3;
+        auto temp5 = temp3.dup();
         temp3.assign(temp4);
         temp4.assign(temp5);
     }
@@ -678,7 +678,7 @@ void SVD<T>::calcBlockSVD(int col1, int size, NDArray& U, NDArray& singVals, NDA
         for(int i = 0; i < curSize/2; ++i) {
             auto temp3 = temp2({0,0, i,i+1}, true);
             auto temp4 = temp2({0,0, curSize-1-i,curSize-i}, true);
-            auto temp5 = temp3;
+            auto temp5 = temp3.dup();
             temp3.assign(temp4);
             temp4.assign(temp5);
         }
@@ -815,18 +815,18 @@ void SVD<T>::DivideAndConquer(int col1, int col2, int row1W, int col1W, int shif
 
     if(_calcU) {
         auto pTemp = _u({col1, col1+n+1, col1,col1+n+1}, true);
-        auto temp = pTemp;
+        auto temp = pTemp.dup();
         pTemp.assign(mmul(temp, UofSVD));
     }
     else {
         auto pTemp = _u({0,0, col1,col1+n+1}, true);
-        auto temp = pTemp;
+        auto temp = pTemp.dup();
         pTemp.assign(mmul(temp, UofSVD));
     }
 
     if (_calcV) {
         auto pTemp = _v({row1W,row1W+n, row1W,row1W+n}, true);
-        auto temp = pTemp;
+        auto temp = pTemp.dup();
         pTemp.assign(mmul(temp, VofSVD));
     }
 

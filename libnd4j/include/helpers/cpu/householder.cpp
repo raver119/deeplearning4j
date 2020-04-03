@@ -137,8 +137,8 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
     }
     else if(coeff != (T)0.f) {
 
-  		auto bottomPart = new NDArray(matrix({1,matrix.sizeAt(0), 0,0}, true));
-		auto bottomPartCopy = *bottomPart;
+  		auto bottomPart = matrix({1,matrix.sizeAt(0), 0,0}, true);
+		auto bottomPartCopy = bottomPart.dup();
 
 		if(tail.isColumnVector()) {
 
@@ -148,7 +148,7 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
     		auto fistRow = matrix({0,1, 0,0}, true);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
-    		*bottomPart -= mmul(column, resultingRow) * coeff;
+    		bottomPart -= mmul(column, resultingRow) * coeff;
 		}
 		else {
 
@@ -158,9 +158,8 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
     		auto fistRow = matrix({0,1, 0,0}, true);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
-    		*bottomPart -= mmul(column, resultingRow) * coeff;
+    		bottomPart -= mmul(column, resultingRow) * coeff;
 		}
-		delete bottomPart;
 	}
 }
 
@@ -177,30 +176,28 @@ void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail, const T coef
 
   	else if(coeff != (T)0.f) {
 
-  		auto rightPart = new NDArray(matrix({0,0, 1,matrix.sizeAt(1)}, true));
-		auto rightPartCopy = *rightPart;
-		auto fistCol = new NDArray(matrix({0,0, 0,1}, true));
+  		auto rightPart = matrix({0,0, 1,matrix.sizeAt(1)}, true);
+		auto rightPartCopy = rightPart.dup();
+		auto fistCol = matrix({0,0, 0,1}, true);
 
   		if(tail.isColumnVector()) {
 
 			auto column = tail;
 			auto row = tail.transpose();
     		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += *fistCol;
-    		*fistCol -= resultingCol * coeff;
-    		*rightPart -= mmul(resultingCol, row) * coeff;
+    		resultingCol += fistCol;
+    		fistCol -= resultingCol * coeff;
+    		rightPart -= mmul(resultingCol, row) * coeff;
 		}
 		else {
 
 			auto row = tail;
 			auto column = tail.transpose();
     		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += *fistCol;
-    		*fistCol -= resultingCol * coeff;
-    		*rightPart -= mmul(resultingCol, row) * coeff;
+    		resultingCol += fistCol;
+    		fistCol -= resultingCol * coeff;
+    		rightPart -= mmul(resultingCol, row) * coeff;
 		}
-  		delete rightPart;
-  		delete fistCol;
 	}
 }
 

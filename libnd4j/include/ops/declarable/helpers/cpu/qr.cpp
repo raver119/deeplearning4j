@@ -60,7 +60,7 @@ namespace helpers {
         auto resR = fullMatricies?R->ulike():matrix->ulike();
         std::vector<NDArray> q(M);
 
-        NDArray z = *matrix;
+        NDArray z = matrix->dup();
         NDArray e('c', {M}, DataTypeUtils::fromT<T>(), Q->getContext()); // two internal buffers and scalar for squared norm
 
         for (Nd4jLong k = 0; k < N && k < M - 1; k++) { // loop for columns, but not further then row number
@@ -88,7 +88,7 @@ namespace helpers {
         resQ.assign(q[0]); //
 //        MmulHelper::matmul(&q[0], matrix, &resR, false, false);
         for (Nd4jLong i = 1; i < N && i < M - 1; i++) {
-            auto tempResQ = resQ;
+            auto tempResQ = resQ.ulike();
             MmulHelper::matmul(&q[i], &resQ, &tempResQ, false, false); // use mmulMxM?
             resQ = std::move(tempResQ);
         }

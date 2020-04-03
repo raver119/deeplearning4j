@@ -43,26 +43,25 @@ void HHsequence::_mulLeft(NDArray& matrix) {
 	const int cols   = _vectors.sizeAt(1);
 	const int inRows = matrix.sizeAt(0);	
 
-	NDArray* block(nullptr);
+	NDArray block;
 
 	for(int i = _diagSize - 1; i >= 0; --i) {		
     	
     	if(_type == 'u') {
     		
-    		block = new NDArray(matrix({inRows-rows+_shift+ i,inRows,  0,0}, true));
+    		block = matrix({inRows-rows+_shift+ i,inRows,  0,0}, true);
     		T _x = _coeffs.e<T>(i);
-    		Householder<T>::mulLeft(*block, _vectors({i + 1 + _shift, rows, i, i+1}, true), _x);
+    		Householder<T>::mulLeft(block, _vectors({i + 1 + _shift, rows, i, i+1}, true), _x);
     		_coeffs.p<T>(i, _x);
     	}
     	else {
 
-    		block = new NDArray(matrix({inRows-cols+_shift+i,inRows,  0,0}, true));
+    		block = matrix({inRows-cols+_shift+i,inRows,  0,0}, true);
             T _x = _coeffs.e<T>(i);
-    		Householder<T>::mulLeft(*block, _vectors({i, i+1, i + 1 + _shift, cols}, true), _x);
+    		Householder<T>::mulLeft(block, _vectors({i, i+1, i + 1 + _shift, cols}, true), _x);
             _coeffs.p<T>(i, _x);
     	}
 
-    	delete block;
     }
 }
 

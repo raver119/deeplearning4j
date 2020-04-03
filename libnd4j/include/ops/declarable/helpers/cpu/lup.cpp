@@ -143,7 +143,7 @@ namespace helpers {
         const int columnNum = input->columns();
 
         NDArray determinant = NDArrayFactory::create<T>(1.f, context);
-        NDArray compoundMatrix = *input; // copy
+        NDArray compoundMatrix = input->dup(); // copy
         NDArray permutationMatrix(input, false, context); // has same shape as input and contiguous strides
         permutationMatrix.setIdentity();
 
@@ -522,7 +522,7 @@ template <typename T>
             NDArray output = NDArrayFactory::create<T>(0., context);
             if (ND4J_STATUS_OK != determinant(context, &thisMatrix, &output)) return false;
             if (output.e<T>(0) <= T(0)) return 0;
-            NDArray reversedMatrix(thisMatrix);
+            NDArray reversedMatrix = thisMatrix.dup();
             if (ND4J_STATUS_OK != inverse(context, &thisMatrix, &reversedMatrix)) return false;
             if (ND4J_STATUS_OK != determinant(context, &reversedMatrix, &output)) return false;
             if (output.e<T>(0) <= T(0)) return 0;
