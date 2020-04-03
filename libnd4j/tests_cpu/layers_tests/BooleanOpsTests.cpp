@@ -143,6 +143,6 @@ TEST_F(BooleanOpsTests, test_where_1) {
 
     //z->printIndexedBuffer("z");
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 

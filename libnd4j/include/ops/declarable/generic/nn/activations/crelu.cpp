@@ -81,10 +81,10 @@ namespace sd {
 
             // now we do RELU backward pass
             //actv->applyPairwiseTransform(pairwise::RELUDerivativeE, *epsilon, nullptr);
-            helpers::reluDerivative(block.launchContext(), actv, epsilonNext);
+            helpers::reluDerivative(block.launchContext(), &actv, epsilonNext);
             // now we split updated array into 2 chunks along last dimension
             sd::ops::concat_bp opc;
-            auto dec = opc.evaluate({input, input, actv}, {-1});
+            auto dec = opc.evaluate({input, input, &actv}, {-1});
             if (dec.status() != ND4J_STATUS_OK)
                 return dec.status();
 
@@ -92,7 +92,7 @@ namespace sd {
             auto pos = dec.at(0);
             auto neg = dec.at(1);
 
-            pos->applyPairwiseTransform(sd::pairwise::Subtract, *neg, *epsilon);
+            pos.applyPairwiseTransform(sd::pairwise::Subtract, neg, *epsilon);
 
             return ND4J_STATUS_OK;
         }

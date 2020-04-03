@@ -59,19 +59,19 @@ namespace helpers {
             auto maxT = listOfOutTensors.at(idx);
 
             //int pos = 0;
-            maxT->assign(listOfTensors.at(0));
+            maxT.assign(listOfTensors.at(0));
 
             for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
                 if (indices->e<int>(i) == idx) {
 
-                    for (Nd4jLong e = 0; e < maxT->lengthOf(); e++) {
-                       maxT->t<T>(e) = sd::math::nd4j_max(maxT->t<T>(e), listOfTensors.at(i)->t<T>(e));
+                    for (Nd4jLong e = 0; e < maxT.lengthOf(); e++) {
+                       maxT.t<T>(e) = sd::math::nd4j_max(maxT.t<T>(e), listOfTensors.at(i).t<T>(e));
                     }
                 }
                 else {
                     idx = indices->e<Nd4jLong>(i);
                     maxT = listOfOutTensors.at(idx);
-                    maxT->assign(listOfTensors.at(i));
+                    maxT.assign(listOfTensors.at(i));
                 }
 
             }
@@ -110,19 +110,19 @@ namespace helpers {
             auto minT = listOfOutTensors.at(idx);
 
             int pos = 0;
-            minT->assign(listOfTensors.at(0));
+            minT.assign(listOfTensors.at(0));
 
             for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
                 if (indices->e<Nd4jLong>(i) == idx) {
 
-                    for (Nd4jLong e = 0; e < minT->lengthOf(); e++) {
-                       minT->p(e, sd::math::nd4j_min(minT->e<T>(e), listOfTensors.at(i)->e<T>(e)));
+                    for (Nd4jLong e = 0; e < minT.lengthOf(); e++) {
+                       minT.p(e, sd::math::nd4j_min(minT.e<T>(e), listOfTensors.at(i).e<T>(e)));
                     }
                 }
                 else {
                     idx = indices->e<Nd4jLong>(i);
                     minT = listOfOutTensors.at(idx);
-                    minT->assign(listOfTensors.at(i));
+                    minT.assign(listOfTensors.at(i));
                 }
             }
         }
@@ -163,29 +163,29 @@ namespace helpers {
             std::vector<std::pair<NDArray*, int>> outputs(numOfClasses);
             auto meanT = listOfOutTensors.at(idx);
             int count = 1;
-            auto meanV = meanT->dup();
+            auto meanV = meanT.dup();
             meanV.assign(listOfTensors.at(0));
 
             for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
                 if (indices->e<int>(i) == idx) {
                     auto func = PRAGMA_THREADS_FOR {
                         for (auto e = start; e < stop; e++) {
-                            meanV.p<T>(e, meanV.e<T>(e) + listOfTensors.at(i)->e<T>(e));
+                            meanV.p<T>(e, meanV.e<T>(e) + listOfTensors.at(i).e<T>(e));
                         }
                     };
-                    samediff::Threads::parallel_for(func, 0, meanT->lengthOf());
+                    samediff::Threads::parallel_for(func, 0, meanT.lengthOf());
 
                     count++;
                 }
                 else {
                     //meanT->assign(meanV);
-                    meanV.applyScalar(scalar::Divide, count, *meanT);
+                    meanV.applyScalar(scalar::Divide, count, meanT);
                     idx = indices->e<int>(i);
                     meanT = listOfOutTensors.at(idx);
                     meanV.assign(listOfTensors.at(i));
                     count = 1;
                 }
-                meanV.applyScalar(scalar::Divide, count, *meanT);
+                meanV.applyScalar(scalar::Divide, count, meanT);
             }
         }
     }
@@ -224,15 +224,15 @@ namespace helpers {
                 if (indices->e<int>(i) == idx) {
                     auto func = PRAGMA_THREADS_FOR {
                         for (auto e = start; e < stop; e++) {
-                            sumT->p(e, sumT->e<T>(e) + listOfTensors.at(i)->e<T>(e));
+                            sumT.p(e, sumT.e<T>(e) + listOfTensors.at(i).e<T>(e));
                         }
                     };
-                    samediff::Threads::parallel_for(func, 0, sumT->lengthOf());
+                    samediff::Threads::parallel_for(func, 0, sumT.lengthOf());
                 }
                 else {
                     idx = indices->e<int>(i);
                     sumT = listOfOutTensors.at(idx);
-                    sumT->assign(listOfTensors.at(i));
+                    sumT.assign(listOfTensors.at(i));
                 }
             }
         }
@@ -268,20 +268,20 @@ namespace helpers {
 
             int numOfClasses = output->sizeAt(0); // number of classes
             auto sumT = listOfOutTensors.at(idx);
-            sumT->assign(listOfTensors.at(0));
+            sumT.assign(listOfTensors.at(0));
             for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
                 if (indices->e<int>(i)  == idx) {
                     auto func = PRAGMA_THREADS_FOR {
                         for (auto e = start; e < stop; e++) {
-                            sumT->p(e, sumT->e<T>(e) * listOfTensors.at(i)->e<T>(e));
+                            sumT.p(e, sumT.e<T>(e) * listOfTensors.at(i).e<T>(e));
                         }
                     };
-                    samediff::Threads::parallel_for(func, 0, sumT->lengthOf());
+                    samediff::Threads::parallel_for(func, 0, sumT.lengthOf());
                 }
                 else {
                     idx = indices->e<int>(i);
                     sumT = listOfOutTensors.at(idx);
-                    sumT->assign(listOfTensors.at(i));
+                    sumT.assign(listOfTensors.at(i));
                 }
             }
         }
@@ -379,13 +379,13 @@ namespace helpers {
 
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 for (Nd4jLong idx = 1; idx < static_cast<Nd4jLong>(fi->second.size()); ++idx) {
                     auto maxT = listOfTensors.at(fi->second.at(idx));
-                    for (Nd4jLong e = 0; e < outputT->lengthOf(); ++e) {
-                        T val = sd::math::nd4j_max(maxT->e<T>(e), outputT->e<T>(e));
+                    for (Nd4jLong e = 0; e < outputT.lengthOf(); ++e) {
+                        T val = sd::math::nd4j_max(maxT.e<T>(e), outputT.e<T>(e));
 
-                        outputT->p(e, val);
+                        outputT.p(e, val);
                     }
                 }
             }
@@ -431,12 +431,12 @@ namespace helpers {
 
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 for (size_t idx = 1; idx < fi->second.size(); ++idx) {
                     auto minT = listOfTensors.at(fi->second.at(idx));
 
-                    for (Nd4jLong e = 0; e < outputT->lengthOf(); ++e) {
-                        outputT->t<T>(e) = sd::math::nd4j_min(minT->t<T>(e), outputT->t<T>(e));
+                    for (Nd4jLong e = 0; e < outputT.lengthOf(); ++e) {
+                        outputT.t<T>(e) = sd::math::nd4j_min(minT.t<T>(e), outputT.t<T>(e));
                     }
                 }
                 //outputT->assign(maxT);
@@ -481,14 +481,14 @@ namespace helpers {
             // FIXME: parallelism here?
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 Nd4jLong loopSize = fi->second.size();
 
                 for (Nd4jLong idx = 1; idx < loopSize; ++idx) {
                     auto current = listOfTensors.at(fi->second.at(idx));
-                    *outputT += *current;
+                    outputT += current;
                 }
-                (*outputT) /= double(fi->second.size());
+                (outputT) /= double(fi->second.size());
             }
         }
     }
@@ -519,13 +519,13 @@ namespace helpers {
 
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 Nd4jLong loop_size = fi->second.size();
 
                 // FIXME: parallelism here?
                 for (Nd4jLong idx = 1; idx < loop_size; ++idx) {
                     auto current = listOfTensors.at(fi->second.at(idx));
-                    *(outputT) += *current;
+                    outputT += current;
                 }
                 //outputT->assign(maxT);
             }
@@ -559,11 +559,11 @@ namespace helpers {
 
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 for (size_t idx = 1; idx < fi->second.size(); ++idx) {
                     auto current = listOfTensors.at(fi->second.at(idx));
 
-                    *outputT *= *current;
+                    outputT *= current;
                 }
             }
         }
@@ -598,13 +598,13 @@ namespace helpers {
 
             for (auto fi = idxs.begin(); fi != idxs.end(); ++fi) {
                 auto outputT = listOfOutTensors.at(fi->first);
-                outputT->assign(listOfTensors.at(fi->second.at(0)));
+                outputT.assign(listOfTensors.at(fi->second.at(0)));
                 for (size_t idx = 1; idx < fi->second.size(); ++idx) {
                     auto current = listOfTensors.at(fi->second.at(idx));
-                    *outputT += *current;
+                    outputT += current;
                 }
                 //outputT->assign(maxT);
-                (*outputT) /= sd::math::nd4j_sqrt<size_t, double>(fi->second.size());
+                outputT /= sd::math::nd4j_sqrt<size_t, double>(fi->second.size());
             }
         }
     }
@@ -651,9 +651,9 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    for (Nd4jLong e = 0; e < current->lengthOf(); e++) {
-                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum)->e<T>(e) - current->e<T>(e)) <= T(1.e-6))
-                            currentOut->p(e, currentGradOut->e<T>(e));
+                    for (Nd4jLong e = 0; e < current.lengthOf(); e++) {
+                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum).e<T>(e) - current.e<T>(e)) <= T(1.e-6))
+                            currentOut.p(e, currentGradOut.e<T>(e));
                     }
                 }
             };
@@ -703,10 +703,10 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    for (Nd4jLong e = 0; e < current->lengthOf(); e++) {
-                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum)->e<double>(e) - current->e<double>(e)) <
+                    for (Nd4jLong e = 0; e < current.lengthOf(); e++) {
+                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum).e<double>(e) - current.e<double>(e)) <
                             1.e-5)
-                            currentOut->p(e, currentGradOut->e<double>(e));
+                            currentOut.p(e, currentGradOut.e<double>(e));
                     }
                 }
             };
@@ -752,8 +752,8 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    for (Nd4jLong e = 0; e < current->lengthOf(); e++) {
-                        currentOut->p(e, currentGradOut->e<double>(e) / classCount.at(classNum));
+                    for (Nd4jLong e = 0; e < current.lengthOf(); e++) {
+                        currentOut.p(e, currentGradOut.e<double>(e) / classCount.at(classNum));
                     }
                 }
             //};
@@ -787,7 +787,7 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    currentOut->assign(currentGradOut);
+                    currentOut.assign(currentGradOut);
                 }
             //};
 
@@ -824,7 +824,7 @@ namespace helpers {
                     auto currentGradOut = listOfGradOuts.at(classNum);
                     auto currentFFOut = listOfBPTensors.at(classNum);
 
-                    currentOut->assign((*currentFFOut) * (*currentGradOut) / (*current));
+                    currentOut.assign(currentFFOut * currentGradOut / current);
                 }
             //};
 
@@ -862,12 +862,12 @@ namespace helpers {
 
             for (Nd4jLong i = 0; i < indices->lengthOf(); i++) {
                 Nd4jLong classNum = indices->e<Nd4jLong>(i);
-                NDArray* current = listOfTensors.at(i);
-                NDArray* currentOut = listOfOutTensors.at(i);
-                NDArray* currentGradOut = listOfGradOuts.at(classNum);
-                for (int e = 0; e < current->lengthOf(); e++) {
-                    if (sd::math::nd4j_abs(listOfBPTensors.at(classNum)->e<double>(e) - current->e<double>(e)) < 1.e-5)
-                        currentOut->p(e, currentGradOut->e<T>(e));
+                auto current = listOfTensors.at(i);
+                auto currentOut = listOfOutTensors.at(i);
+                auto currentGradOut = listOfGradOuts.at(classNum);
+                for (int e = 0; e < current.lengthOf(); e++) {
+                    if (sd::math::nd4j_abs(listOfBPTensors.at(classNum).e<double>(e) - current.e<double>(e)) < 1.e-5)
+                        currentOut.p(e, currentGradOut.e<T>(e));
                 }
             }
         }
@@ -911,9 +911,9 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    for (Nd4jLong e = 0; e < current->lengthOf(); e++) {
-                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum)->t<T>(e) - current->t<T>(e)) < 1.e-6)
-                            currentOut->t<T>(e) = currentGradOut->t<T>(e);
+                    for (Nd4jLong e = 0; e < current.lengthOf(); e++) {
+                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum).t<T>(e) - current.t<T>(e)) < 1.e-6)
+                            currentOut.t<T>(e) = currentGradOut.t<T>(e);
                     }
                 }
             //};
@@ -957,10 +957,10 @@ namespace helpers {
 
             for (Nd4jLong i = 0; i < indices->lengthOf(); i++) {
                 Nd4jLong classNum = indices->e<Nd4jLong>(i);
-                NDArray* current = listOfTensors.at(i);
-                NDArray* currentOut = listOfOutTensors.at(i);
-                NDArray* currentGradOut = listOfGradOuts.at(classNum);
-                currentOut->assign(*currentGradOut / double(classCount[classNum]));
+                auto current = listOfTensors.at(i);
+                auto currentOut = listOfOutTensors.at(i);
+                auto currentGradOut = listOfGradOuts.at(classNum);
+                currentOut.assign(currentGradOut / double(classCount[classNum]));
             }
         }
         return ND4J_STATUS_OK;
@@ -989,7 +989,7 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    currentOut->assign(currentGradOut);
+                    currentOut.assign(currentGradOut);
                 }
             //};
 
@@ -1028,7 +1028,7 @@ namespace helpers {
                     auto currentGradOut = listOfGradOuts.at(classNum);
                     auto currentFFOut = listOfBPTensors.at(classNum);
 
-                    currentOut->assign((*currentFFOut) * (*currentGradOut) / (*current));
+                    currentOut.assign(currentFFOut * currentGradOut / current);
                 }
             //};
 
@@ -1075,8 +1075,8 @@ namespace helpers {
                     auto currentOut = listOfOutTensors.at(i);
                     auto currentGradOut = listOfGradOuts.at(classNum);
 
-                    for (int e = 0; e < current->lengthOf(); e++) {
-                        currentOut->p<double>(e, currentGradOut->e<double>(e) / sd::math::nd4j_sqrt<double, double>(classCount[classNum]));
+                    for (int e = 0; e < current.lengthOf(); e++) {
+                        currentOut.p<double>(e, currentGradOut.e<double>(e) / sd::math::nd4j_sqrt<double, double>(classCount[classNum]));
                     }
                 }
             //};

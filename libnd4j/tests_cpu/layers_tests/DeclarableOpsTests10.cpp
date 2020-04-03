@@ -64,7 +64,7 @@ TEST_F(DeclarableOpsTests10, Test_ArgMax_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
 
-    auto z = *result.at(0);
+    auto z = result.at(0);
 
     ASSERT_EQ(e, z);
 }
@@ -80,7 +80,7 @@ TEST_F(DeclarableOpsTests10, Test_ArgMax_2) {
     auto result = op.evaluate({&x, &y});
     ASSERT_EQ(Status::OK(), result.status());
 
-    auto z = *result.at(0);
+    auto z = result.at(0);
 
     //z.printIndexedBuffer("z");
     //z.printShapeInfo("z shape");
@@ -97,7 +97,7 @@ TEST_F(DeclarableOpsTests10, Test_And_1) {
     auto result = op.evaluate({&x, &y});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 }
 
 TEST_F(DeclarableOpsTests10, Test_Or_1) {
@@ -109,7 +109,7 @@ TEST_F(DeclarableOpsTests10, Test_Or_1) {
     auto result = op.evaluate({&x, &y});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 }
 
 TEST_F(DeclarableOpsTests10, Test_Not_1) {
@@ -134,7 +134,7 @@ TEST_F(DeclarableOpsTests10, Test_Size_at_1) {
     auto result = op.evaluate({&x}, {1});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
 }
 
@@ -294,7 +294,7 @@ TEST_F(DeclarableOpsTests10, Where_SGO_Test_4) {
     auto res = op.evaluate({&input}, {}, {});
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     auto resA = res.at(0);
-    ASSERT_TRUE(resA->isEmpty());
+    ASSERT_TRUE(resA.isEmpty());
     //resA->printIndexedBuffer("Result A");
     //resA->printShapeInfo("ShapeA");
     //ASSERT_TRUE(exp.equalsTo(resA));
@@ -331,7 +331,7 @@ TEST_F(DeclarableOpsTests10, WhereNP_SGO_Test_4) {
     auto res = op.evaluate({&input}, {}, {});
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     auto resA = res.at(0);
-    ASSERT_TRUE(resA->isEmpty());
+    ASSERT_TRUE(resA.isEmpty());
     //resA->printIndexedBuffer("Result A");
     //resA->printShapeInfo("ShapeA");
     //ASSERT_TRUE(exp.equalsTo(resA));
@@ -859,7 +859,7 @@ TEST_F(DeclarableOpsTests10, histogram_fixed_width_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *out = results.at(0);
+    auto out = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(out));
     // out->printBuffer("5HIST");
@@ -902,7 +902,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -922,7 +922,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -942,7 +942,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -962,7 +962,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -981,7 +981,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_04) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1000,7 +1000,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1020,7 +1020,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
 }
@@ -1038,7 +1038,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_06) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
 }
@@ -1062,7 +1062,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1087,7 +1087,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1107,7 +1107,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1127,7 +1127,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1147,7 +1147,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1165,7 +1165,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1183,7 +1183,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1201,7 +1201,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1219,7 +1219,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1239,7 +1239,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1259,7 +1259,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1279,7 +1279,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -1333,7 +1333,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
     //result.printIndexedBuffer("Resized to 10x10");
     //expected.printIndexedBuffer("Expect for 10x10");
@@ -1355,8 +1355,8 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test_11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
-    ASSERT_NE(*result, ex);
+    auto result = results.at(0);
+    ASSERT_NE(result, ex);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -1372,8 +1372,8 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test_12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
-    ASSERT_NE(*result, ex);
+    auto result = results.at(0);
+    ASSERT_NE(result, ex);
 }
 
 TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test1_1) {
@@ -1414,7 +1414,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test1_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printIndexedBuffer("Resized to 4x5 bilinear with half pixels");
   //expected.printIndexedBuffer("Expect for 10x10");
@@ -1461,7 +1461,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test1_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 4x5");
 //    expected.printBuffer("Expect for 4x5");
@@ -1517,7 +1517,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test01) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
     //result.printIndexedBuffer("Resized to 10x10");
     //expected.printIndexedBuffer("Expect for 10x10");
@@ -1672,7 +1672,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test02) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 9x9");
 //    expected.printBuffer("Expect for 9x9");
@@ -1731,7 +1731,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1859,7 +1859,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1986,7 +1986,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printIndexedBuffer("Resized to 10x10");
 //    expected.printIndexedBuffer("Expected of 10x10");
 //    result.printShapeInfo("Resized to 10x10 shape");
@@ -2050,7 +2050,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeNeighbor_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printIndexedBuffer("Resized to 4x5");
 //    expected.printIndexedBuffer("Expect for 4x5");
@@ -2096,7 +2096,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeNeighbor_Test1_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printIndexedBuffer("Resized to 4x5");
 //    expected.printIndexedBuffer("Expect for 4x5");
@@ -2142,7 +2142,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeNeighbor_Test1_1_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printIndexedBuffer("Resized to 4x5");
 //    expected.printBuffer("Expect for 4x5");
@@ -2187,7 +2187,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeNeighbor_Test01) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
     //result.printIndexedBuffer("Resized to 4x5");
     //expected.printIndexedBuffer("Expect for 4x5");
@@ -2209,7 +2209,7 @@ TEST_F(DeclarableOpsTests10, ReduceLogSumExpTest_1) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
 }
@@ -2229,7 +2229,7 @@ TEST_F(DeclarableOpsTests10, ReduceLogSumExpTest_2) {
     auto result = results.at(0);
 //    result.printIndexedBuffer("REDUCE_LOGSUMEXP");
 //    expected.printIndexedBuffer("LSE EXPECTED");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
 
@@ -2249,7 +2249,7 @@ TEST_F(DeclarableOpsTests10, ReduceLogSumExpTest_3) {
     auto result = results.at(0);
 //    result.printIndexedBuffer("REDUCE_LOGSUMEXP");
 //    expected.printIndexedBuffer("LSE EXPECTED");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 ////////////////////////////////////////////////////////////////////
@@ -2265,10 +2265,10 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
     //result.printIndexedBuffer("OOOOUUUUTTT");
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
 
@@ -2287,9 +2287,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput2");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2307,9 +2307,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_3) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput3");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2328,9 +2328,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_4) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput4");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_5) {
@@ -2348,9 +2348,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_5) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput4");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2369,10 +2369,10 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_6) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput6");
 //    result.printShapeInfo("Ouput6 shape is");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2391,10 +2391,10 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_06) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput06");
 //    result.printShapeInfo("Ouput06 shape is");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2412,10 +2412,10 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_7) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppression OUtput7");
 //    result.printShapeInfo("Ouput6 shape is");
-    ASSERT_TRUE(result->isEmpty());
+    ASSERT_TRUE(result.isEmpty());
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2435,9 +2435,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppressionOverlap1 Output");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2458,9 +2458,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppressionOverlap Output");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2481,9 +2481,9 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("NonMaxSuppressionOverlap Output");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2506,7 +2506,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_1) {
     auto result = results.at(0);
 //    result.printIndexedBuffer("Cropped and Resized");
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2528,7 +2528,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_2) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2550,7 +2550,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_3) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2572,7 +2572,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_4) {
 
     auto result = results.at(0);
     // result.printIndexedBuffer("Cropped and Resized");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2594,7 +2594,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_5) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     //ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2627,10 +2627,10 @@ TEST_F(DeclarableOpsTests10, Image_DrawBoundingBoxes_1) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto result = results.at(0);
-    result->syncToHost();
+    result.syncToHost();
 //    result.printBuffer("Bounded boxes");
 //    expected.printBuffer("Bounded expec");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2661,7 +2661,7 @@ TEST_F(DeclarableOpsTests10, Image_DrawBoundingBoxes_2) {
 //    result.syncToHost();
 //    result.printBuffer("Bounded boxes 2");
 //    expected.printBuffer("Bounded expec 2");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2714,7 +2714,7 @@ TEST_F(DeclarableOpsTests10, Image_DrawBoundingBoxes_3) {
 //    result.syncToHost();
 //    result.printBuffer("Bounded boxes 2");
 //    expected.printBuffer("Bounded expec 2");
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 }
 
@@ -2734,7 +2734,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_1) {
     auto result = results.at(0);
 //    result.printBuffer("Quantized");
 //    exp.printBuffer("Expected");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 ////////////////////////////////////////////////////////////////////
@@ -2752,7 +2752,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_2) {
 
     auto result = results.at(0);
     // result.printIndexedBuffer("Quantized2");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2771,7 +2771,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_3) {
 
     auto result = results.at(0);
     // result.printIndexedBuffer("Quantized2");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2793,7 +2793,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_03) {
 
     auto result = results.at(0);
 //    result.printIndexedBuffer("Quantized03");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2815,7 +2815,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_03_1) {
 
     auto result = results.at(0);
 //    result.printIndexedBuffer("Quantized03_1");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2836,8 +2836,8 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_03_2) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto result = results.at(0);
-    result->printIndexedBuffer("Quantized03_2");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    //result.printIndexedBuffer("Quantized03_2");
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2857,8 +2857,8 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_03_3) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto result = results.at(0);
-    result->printIndexedBuffer("Quantized03_3");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    //result->printIndexedBuffer("Quantized03_3");
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2896,9 +2896,9 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_4) {
     auto result = results.at(0);
 //    result.printBuffer("Quantized per channels 4");
 //    exp.printBuffer("Quantized per channest E");
-//    auto diff = *result - exp;
+//    auto diff = result - exp;
 //    diff.printIndexedBuffer("Difference");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2947,10 +2947,10 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_5) {
     auto result = results.at(0);
 //    result.printBuffer("Quantized per channels 5");
 //    exp.printBuffer("Quantized per channest E");
-//    auto diff = *result - exp;
+//    auto diff = result - exp;
 //    diff.printIndexedBuffer("Difference");
 
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -2979,10 +2979,10 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_6) {
     auto result = results.at(0);
 //    result.printBuffer("Quantized per channels 5");
 //    exp.printBuffer("Quantized per channest E");
-//    auto diff = *result - exp;
+//    auto diff = result - exp;
 //    diff.printIndexedBuffer("Difference");
 
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -3023,7 +3023,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_7) {
     auto result = results.at(0);
 //     result.printBuffer("Quantized7");
 //     exp.printBuffer("Expected 7");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -3047,7 +3047,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_8) {
 //    x.printBuffer("SourInput8");
 //    result.printBuffer("Quantized8");
 //    exp.printBuffer("Expected 8");
-    ASSERT_TRUE(exp.isSameShapeStrict(*result));
+    ASSERT_TRUE(exp.isSameShapeStrict(result));
     ASSERT_TRUE(exp.equalsTo(result));
 }
 
@@ -3108,7 +3108,7 @@ TEST_F(DeclarableOpsTests10, printIndexedTest_1) {
             //        printf("[");
             //    else
             //        printf(" ");
-            lastDims.at(k++)->printBuffer();
+            lastDims.at(k++).printBuffer();
         //if (k == arr.sizeAt(i))
         //    printf("]\n");
         }

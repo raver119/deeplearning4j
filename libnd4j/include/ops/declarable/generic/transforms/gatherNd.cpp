@@ -76,7 +76,7 @@ DECLARE_SHAPE_FN(gather_nd) {
 	int outRank = (rankInd - 1) + (rankIn - lastIndDim);
 
     Nd4jLong* outShapeInfo = nullptr;
-	ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+	ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
 
     outShapeInfo[0] = outRank;
 

@@ -55,7 +55,7 @@ namespace sd {
             // second output is always LONG
             indicesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(shape::length(in), sd::DataType::INT64);
 
-            //COPY_SHAPE_EX(in, indicesShape, block.getWorkspace());
+            //COPY_SHAPE_EX(in, indicesShape, block.workspace());
 
             return SHAPELIST(valuesShape, indicesShape);
 

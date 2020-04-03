@@ -33,15 +33,15 @@ namespace helpers {
         ResultSet listOut = output->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
         ResultSet listDiag = input->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
         for (Nd4jLong e = 0; e < static_cast<Nd4jLong>(listOut.size()); ++e) {
-            NDArray* inputMatrix = listDiag.at(e);
-            NDArray* outputMatrix = listOut.at(e);
-            if (outputMatrix != inputMatrix) // if not inplace
-                outputMatrix->assign(inputMatrix);
+            auto inputMatrix = listDiag.at(e);
+            auto outputMatrix = listOut.at(e);
+            if (outputMatrix.platformBuffer() != inputMatrix.platformBuffer()) // if not inplace
+                outputMatrix.assign(inputMatrix);
             if (lowerBand >= 0) {
-                for (Nd4jLong row = 0; row < inputMatrix->rows(); ++row) {
+                for (Nd4jLong row = 0; row < inputMatrix.rows(); ++row) {
                     for (Nd4jLong col = 0; col < row; ++col) {
                         if ((row - col) > lowerBand)
-                            outputMatrix->p(row, col, 0.);
+                            outputMatrix.p(row, col, 0.);
 //                        else
   //                          (*outputMatrix)(row, col) = (*inputMatrix)(row, col);
                     }
@@ -49,10 +49,10 @@ namespace helpers {
                 }
             }
             if (upperBand >= 0) {
-                for (Nd4jLong col = 0; col < inputMatrix->columns(); ++col) {
+                for (Nd4jLong col = 0; col < inputMatrix.columns(); ++col) {
                     for (Nd4jLong row = 0; row < col; ++row) {
                         if ((col - row) > upperBand)
-                            outputMatrix->p(row, col, 0.);
+                            outputMatrix.p(row, col, 0.);
 //                        else
   //                          (*outputMatrix)(row, col) = (*inputMatrix)(row, col);
                     }

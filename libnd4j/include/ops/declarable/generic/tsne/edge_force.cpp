@@ -58,7 +58,7 @@ namespace ops  {
     DECLARE_SHAPE_FN(barnes_edge_forces) {
         Nd4jLong* bufShape;
         Nd4jLong* outShapeInfo;
-        outShapeInfo = ShapeBuilders::copyShapeInfoAndType(inputShape->at(3), inputShape->at(3), false, block.getWorkspace());
+        outShapeInfo = ShapeBuilders::copyShapeInfoAndType(inputShape->at(3), inputShape->at(3), false, block.workspace());
         return SHAPELIST(CONSTANT(outShapeInfo));
     }
 

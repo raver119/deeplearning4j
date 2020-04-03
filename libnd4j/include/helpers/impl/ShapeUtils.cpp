@@ -623,6 +623,14 @@ Nd4jLong* ShapeUtils::evalTileShapeInfo(const NDArray& arr, const std::vector<Nd
         return result;
     }
 
+    std::string ShapeUtils::shapeAsString(const NDArray& array) {
+        return shapeAsString(&array);
+    }
+
+    std::string ShapeUtils::strideAsString(const NDArray& array) {
+        return strideAsString(&array);
+    }
+
     std::string ShapeUtils::strideAsString(const NDArray* array) {
         std::string result;
 

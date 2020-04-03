@@ -73,9 +73,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -103,7 +103,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -131,9 +131,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -161,7 +161,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
     // dLdw->printIndexedBuffer();
     // dLdw->printShapeInfo();
 
@@ -192,9 +192,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -222,7 +222,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -246,7 +246,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -279,9 +279,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -314,9 +314,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -344,7 +344,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -368,7 +368,7 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -403,9 +403,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -440,9 +440,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -620,7 +620,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test1) {
     auto results = op.evaluate({&input, &size}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 30x30");
 //    expected.printBuffer("Expect for 30x30");
@@ -694,7 +694,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 10x8");
 //    expected.printBuffer("Expect for 10x8");
@@ -730,7 +730,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 6x6");
 //    expected.printBuffer("Expect for 6x6");
@@ -766,7 +766,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 6x8");
 //    expected.printBuffer("Expect for 6x8");
@@ -808,7 +808,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 8x8");
 //    expected.printBuffer("Expect for 8x8");
@@ -936,7 +936,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test6) {
     auto results = op.evaluate({&input, &size}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 30x30");
 //    expected.printBuffer("Expect for 30x30");
@@ -994,7 +994,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 9x9");
 //    expected.printBuffer("Expect for 9x9");
@@ -1046,7 +1046,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Resized to 9x9");
 //    testData.printBuffer("Expect for 9x9");
@@ -1106,7 +1106,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1132,7 +1132,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1159,7 +1159,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1196,7 +1196,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1233,7 +1233,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1270,7 +1270,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1307,7 +1307,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1336,7 +1336,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");
@@ -1362,7 +1362,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 10x10");
     //    expected.printBuffer("Area Expect for 6x6");
@@ -1388,7 +1388,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 10x10");
     //    expected.printBuffer("Area Expect for 6x6");
@@ -1414,7 +1414,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x9");
     //    expected.printBuffer("Area Expect for 6x6");
@@ -1440,7 +1440,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 6x9");
     //    expected.printBuffer("Area Expect for 6x6");
@@ -1466,7 +1466,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result.printBuffer("Area Resized to 8x8");
     //    expected.printBuffer("Area Expect for 6x6");
@@ -1496,7 +1496,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("Area Resized to 8x7");
 //    expected.printBuffer("Area Expect for 8x7");
     ASSERT_TRUE(expected.isSameShape(result));
@@ -1524,7 +1524,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 //    result.printBuffer("Area Resized to 8x7");
 //    expected.printBuffer("Area Expect for 8x7");
     ASSERT_TRUE(expected.isSameShape(result));
@@ -2023,8 +2023,8 @@ TEST_F(DeclarableOpsTests11, Cholesky_Test_2x2x2) {
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
 
-    z->printIndexedBuffer("L matrix is");
-    exp.printIndexedBuffer("L expected is");
+    //z->printIndexedBuffer("L matrix is");
+    //exp.printIndexedBuffer("L expected is");
 
     ASSERT_TRUE(exp.equalsTo(z));
 
@@ -2054,7 +2054,7 @@ TEST_F(DeclarableOpsTests11, Cholesky_Test_2x2x2_2) {
 
 //    z->printIndexedBuffer("L matrix is");
 //    exp.printIndexedBuffer("L expected is");
-    MmulHelper::matmul(z, z, &exp, false, true);
+    MmulHelper::matmul(&z, &z, &exp, false, true);
     ASSERT_TRUE(exp.equalsTo(a));
 }
 
@@ -2087,8 +2087,8 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test1) {
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2110,7 +2110,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2137,16 +2137,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2168,7 +2168,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2196,16 +2196,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2227,7 +2227,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2252,7 +2252,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2284,16 +2284,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2318,16 +2318,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2349,7 +2349,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2374,7 +2374,7 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2406,16 +2406,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2442,16 +2442,16 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2519,8 +2519,8 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test1) {
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -2541,7 +2541,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2568,16 +2568,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2599,7 +2599,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2627,16 +2627,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2658,7 +2658,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2683,7 +2683,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2715,16 +2715,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2749,16 +2749,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2780,7 +2780,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2805,7 +2805,7 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -2837,16 +2837,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2873,16 +2873,16 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
-    ASSERT_TRUE(dLdpExp.isSameShape(-*dLdl));
-    ASSERT_TRUE(dLdpExp.equalsTo(-*dLdl));
+    ASSERT_TRUE(dLdpExp.isSameShape(-dLdl));
+    ASSERT_TRUE(dLdpExp.equalsTo(-dLdl));
 
 }
 
@@ -2902,7 +2902,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_1) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 
 }
 
@@ -2922,7 +2922,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_2) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 
 }
 
@@ -2942,7 +2942,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_3) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -2968,9 +2968,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3003,9 +3003,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3038,9 +3038,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3069,7 +3069,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -3099,9 +3099,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3130,7 +3130,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -3155,7 +3155,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -3188,9 +3188,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3223,9 +3223,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3254,7 +3254,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -3279,7 +3279,7 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdw = results.at(1);
+    auto dLdw = results.at(1);
 
     ASSERT_TRUE(dLdwExp.isSameShape(dLdw));
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
@@ -3313,9 +3313,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3350,9 +3350,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3379,7 +3379,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_4) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -3398,7 +3398,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_5) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 
 }
 
@@ -3418,7 +3418,7 @@ TEST_F(DeclarableOpsTests11, BFloat16_Test_6) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     auto res = results.at(0);
-    ASSERT_TRUE(res->equalsTo(exp));
+    ASSERT_TRUE(res.equalsTo(exp));
 }
 
 /////////////////////////////////////////////////////////////////
@@ -3440,9 +3440,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3469,9 +3469,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3498,9 +3498,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3527,9 +3527,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3557,9 +3557,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3587,9 +3587,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3617,9 +3617,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3658,9 +3658,9 @@ TEST_F(DeclarableOpsTests11, softmax_cross_entropy_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     // dLdp->printIndexedBuffer();
 
@@ -3698,7 +3698,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3721,7 +3721,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3743,7 +3743,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3764,7 +3764,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3785,7 +3785,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3806,7 +3806,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3827,7 +3827,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3848,7 +3848,7 @@ TEST_F(DeclarableOpsTests11, softmaxCrossEntropyWithLogits_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3874,7 +3874,7 @@ TEST_F(DeclarableOpsTests11, Multiply_BP_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdo = results.at(0);
+    auto dLdo = results.at(0);
     ASSERT_TRUE(dLdpExp.isSameShape(dLdo));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdo));
 
@@ -3896,7 +3896,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3919,7 +3919,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3940,7 +3940,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3963,7 +3963,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -3984,7 +3984,7 @@ TEST_F(DeclarableOpsTests11, sparseSoftmaxCrossEntropyWithLogits_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
+    auto dLdp = results.at(0);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));

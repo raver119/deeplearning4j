@@ -58,7 +58,7 @@ DECLARE_SHAPE_FN(parallel_stack) {
 	int rank = inShapeInfo[0];
 
 	Nd4jLong* outShapeInfo = nullptr;
-	ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank+1), Nd4jLong);
+	ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank+1), Nd4jLong);
 
 	outShapeInfo[0] = rank + 1;
 	outShapeInfo[1] = block.width();

@@ -107,7 +107,7 @@ namespace sd {
                     auto tx = xTads.at(e);
                     auto tz = zTads.at(e);
 
-                    prefix_<T>(op, tx->buffer(), tx->shapeInfo(), tz->buffer(), tz->shapeInfo(), exclusive, reverse);
+                    prefix_<T>(op, tx.buffer(), tx.shapeInfo(), tz.buffer(), tz.shapeInfo(), exclusive, reverse);
                 }
             };
 

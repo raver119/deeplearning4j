@@ -72,9 +72,9 @@ namespace sd {
 
                     for (int e = 0; e < tadsX.size(); e++) {
                         if (!cond->e<bool>(e)) {
-                            tadsZ.at(e)->assign(tadsY.at(e));
+                            tadsZ.at(e).assign(tadsY.at(e));
                         } else {
-                            tadsZ.at(e)->assign(tadsX.at(e));
+                            tadsZ.at(e).assign(tadsX.at(e));
                         }
                     }
                 }

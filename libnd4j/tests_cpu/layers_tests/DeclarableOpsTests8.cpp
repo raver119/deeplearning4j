@@ -2473,7 +2473,7 @@ TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test1) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -2495,7 +2495,7 @@ TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test2) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -2517,7 +2517,7 @@ TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test3) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -2627,7 +2627,7 @@ TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test8) {
 
     ASSERT_EQ(Status::OK(), results.status());
 
-    auto *output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -2826,7 +2826,7 @@ TEST_F(DeclarableOpsTests8, clipbynorm_test_tf_119_1) {
     sd::ops::clipbynorm op;
     auto result = op.evaluate({&x}, {0.54}, {});
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
     
 }
@@ -2938,8 +2938,8 @@ TEST_F(DeclarableOpsTests8, zeros_as_test2) {
     ASSERT_EQ(Status::OK(), result.status());
     auto y = result.at(0);
 
-    ASSERT_TRUE(y->isSameShape(exp));
-    ASSERT_TRUE(y->equalsTo(exp));
+    ASSERT_TRUE(y.isSameShape(exp));
+    ASSERT_TRUE(y.equalsTo(exp));
     
 }
 
@@ -2972,8 +2972,8 @@ TEST_F(DeclarableOpsTests8, ones_as_test2) {
     auto results = op.evaluate({&x});
     ASSERT_EQ(Status::OK(), results.status());
     auto y = results.at(0);
-    ASSERT_TRUE(y->isSameShape(exp));
-    ASSERT_TRUE(y->equalsTo(exp));
+    ASSERT_TRUE(y.isSameShape(exp));
+    ASSERT_TRUE(y.equalsTo(exp));
 
     
 }
@@ -2991,8 +2991,8 @@ TEST_F(DeclarableOpsTests8, ones_as_test3) {
     ASSERT_EQ(Status::OK(), results.status());
     auto y = results.at(0);
 
-    ASSERT_TRUE(y->isSameShape(exp));
-    ASSERT_TRUE(y->equalsTo(exp));
+    ASSERT_TRUE(y.isSameShape(exp));
+    ASSERT_TRUE(y.equalsTo(exp));
 
     
 }

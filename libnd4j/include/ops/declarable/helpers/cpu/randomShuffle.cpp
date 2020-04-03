@@ -90,7 +90,7 @@ void randomShuffle_(NDArray& input, NDArray& output, sd::graph::RandomGenerator&
 
                 if(i == r)
                     continue;
-                subArrsListIn.at(i)->swapUnsafe(*subArrsListIn.at(r));
+                subArrsListIn.at(i).swapUnsafe(subArrsListIn.at(r));
             }
         }
         else {
@@ -102,16 +102,16 @@ void randomShuffle_(NDArray& input, NDArray& output, sd::graph::RandomGenerator&
             //PRAGMA_OMP_PARALLEL_FOR_IF((firstDim-1) > Environment::getInstance()->tadThreshold())
             for(int i = firstDim - 1; i > 0; --i) {
                 int r = rng.relativeInt(i) % i;
-                subArrsListOut.at(i)->assign(subArrsListIn.at(indices[r]));
+                subArrsListOut.at(i).assign(subArrsListIn.at(indices[r]));
                 if(r == 0)
                     isZeroShuffled = true;
                 if(i == r)
                     continue;
-                subArrsListOut.at(r)->assign(subArrsListIn.at(indices[i]));
+                subArrsListOut.at(r).assign(subArrsListIn.at(indices[i]));
                 math::nd4j_swap<int>(indices[i], indices[r]);
             }
             if(!isZeroShuffled)
-                subArrsListOut.at(0)->assign(subArrsListIn.at(0));
+                subArrsListOut.at(0).assign(subArrsListIn.at(0));
         }
         rng.rewindH(firstDim-1);
     }

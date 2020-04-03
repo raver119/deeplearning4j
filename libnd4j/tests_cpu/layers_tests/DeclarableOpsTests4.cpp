@@ -337,7 +337,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_11) {
     }
     m /= c;
 
-    ASSERT_EQ(m, *z);
+    ASSERT_EQ(m, z);
 
 
 }
@@ -394,7 +394,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_13) {
     const int oH = (iH - kH - (kH-1)*(dH-1) + 2*pH)/sH + 1;     // output height
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -411,7 +411,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_13) {
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
 
     delete variableSpace;
@@ -436,7 +436,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_14) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -454,7 +454,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_14) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result->printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -478,7 +478,7 @@ TEST_F(DeclarableOpsTests4, Avgpool2d_test15) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -496,7 +496,7 @@ TEST_F(DeclarableOpsTests4, Avgpool2d_test15) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result->printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -600,11 +600,11 @@ TEST_F(DeclarableOpsTests4, biasadd_bp_1) {
     auto gradI = result.at(0);
     auto gradB = result.at(1);
 
-    ASSERT_TRUE(gradI->isSameShape(gradO));
-    ASSERT_TRUE(gradI->equalsTo(gradO));
+    ASSERT_TRUE(gradI.isSameShape(gradO));
+    ASSERT_TRUE(gradI.equalsTo(gradO));
 
-    ASSERT_TRUE(gradB->isSameShape(expGradB));
-    ASSERT_TRUE(gradB->equalsTo(expGradB));
+    ASSERT_TRUE(gradB.isSameShape(expGradB));
+    ASSERT_TRUE(gradB.equalsTo(expGradB));
 
 
 }
@@ -628,11 +628,11 @@ TEST_F(DeclarableOpsTests4, biasadd_bp_2) {
     auto gradI = result.at(0);
     auto gradB = result.at(1);
 
-    ASSERT_TRUE(gradI->isSameShape(gradO));
-    ASSERT_TRUE(gradI->equalsTo(gradO));
+    ASSERT_TRUE(gradI.isSameShape(gradO));
+    ASSERT_TRUE(gradI.equalsTo(gradO));
 
-    ASSERT_TRUE(gradB->isSameShape(expGradB));
-    ASSERT_TRUE(gradB->equalsTo(expGradB));
+    ASSERT_TRUE(gradB.isSameShape(expGradB));
+    ASSERT_TRUE(gradB.equalsTo(expGradB));
 
 
 }
@@ -963,7 +963,7 @@ TEST_F(DeclarableOpsTests4, split_test6) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     for (int i = 0; i < numSplits; ++i)
-        ASSERT_TRUE(results.at(i)->isSameShape(expShape));
+        ASSERT_TRUE(results.at(i).isSameShape(expShape));
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -981,7 +981,7 @@ TEST_F(DeclarableOpsTests4, split_test7) {
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
     for (int i = 0; i < numSplits; ++i)
-        ASSERT_TRUE(results.at(i)->isSameShape(expShape));
+        ASSERT_TRUE(results.at(i).isSameShape(expShape));
 }
 
 
@@ -1182,7 +1182,7 @@ TEST_F(DeclarableOpsTests4, Test_Add_119) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(2, z->rankOf());
+    ASSERT_EQ(2, z.rankOf());
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
@@ -1268,7 +1268,7 @@ TEST_F(DeclarableOpsTests4, Test_StridedSlice_Alex_3) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
 
 
 }
@@ -1287,7 +1287,7 @@ TEST_F(DeclarableOpsTests4, Test_StridedSlice_Alex_4) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->lengthOf() == 1);
+    ASSERT_TRUE(z.lengthOf() == 1);
     ASSERT_TRUE(exp.equalsTo(z));
 
 }
@@ -1749,9 +1749,9 @@ TEST_F(DeclarableOpsTests4, lstm_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *h = results.at(0);
-    auto *c = results.at(1);
-    auto cLast = (*c)({4,5,0,0,0,0},true);
+    auto h = results.at(0);
+    auto c = results.at(1);
+    auto cLast = c({4,5,0,0,0,0},true);
 
     ASSERT_TRUE(expH.isSameShape(h));
     ASSERT_TRUE(expH.equalsTo(h));

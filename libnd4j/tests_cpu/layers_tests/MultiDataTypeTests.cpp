@@ -138,7 +138,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_7) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -63,8 +63,8 @@ namespace sd {
             Nd4jLong* meanShape = nullptr;
             Nd4jLong* varianceShape = nullptr;
 
-            COPY_SHAPE_EX(in, meanShape, block.getWorkspace());
-            COPY_SHAPE_EX(in, varianceShape, block.getWorkspace());
+            COPY_SHAPE_EX(in, meanShape, block.workspace());
+            COPY_SHAPE_EX(in, varianceShape, block.workspace());
 
             auto shapeList = SHAPELIST();
             shapeList->push_back(CONSTANT(meanShape));

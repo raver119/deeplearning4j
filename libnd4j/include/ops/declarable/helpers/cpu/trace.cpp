@@ -34,7 +34,7 @@ static void trace_(const NDArray& input, NDArray& output) {
 
     auto func = PRAGMA_THREADS_FOR {
         for (auto i = start; i < stop; i++)
-            output.p(i, setOfSubArrs.at(i)->getTrace());
+            output.p(i, setOfSubArrs.at(i).getTrace());
     };
     samediff::Threads::parallel_for(func, 0, setOfSubArrs.size());
 }

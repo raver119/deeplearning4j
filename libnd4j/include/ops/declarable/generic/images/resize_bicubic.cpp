@@ -83,7 +83,7 @@ namespace sd {
 
             REQUIRE_TRUE(inRank == 4 || inRank == 3, 0, "resize_bicubic: Source tensor should have rank 4, but %i given.", inRank);
 
-            ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(inRank), Nd4jLong);
+            ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(inRank), Nd4jLong);
             outputShape[0] = inRank;
             if (inRank == 4) {
                 outputShape[1] = in[1];

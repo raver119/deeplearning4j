@@ -50,16 +50,16 @@ TEST_F(GraphTests2, test_placeholder_1) {
 
     graph.addPlaceholder("input", DataType::BFLOAT16, {4, 12, 48});
 
-    ASSERT_TRUE(graph.variableSpace()->hasVariable("input"));
+    ASSERT_TRUE(graph.variableSpace().hasVariable("input"));
 
-    auto variable = graph.variableSpace()->getVariable("input");
+    auto variable = graph.variableSpace().getVariable("input");
 
     ASSERT_NE(nullptr, variable);
     ASSERT_TRUE(variable->isPlaceholder());
     ASSERT_EQ(DataType::BFLOAT16, variable->dataType());
     ASSERT_EQ(std::vector<Nd4jLong>({4, 12, 48}), variable->shape());
 
-    auto placeholders = graph.getPlaceholders();
+    auto placeholders = graph.placeholders();
     ASSERT_EQ(1, placeholders.size());
     ASSERT_EQ(placeholders[0], variable);
 }

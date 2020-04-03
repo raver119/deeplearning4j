@@ -34,7 +34,7 @@ void eye(sd::LaunchContext * context, NDArray& output) {
 
     auto func = PRAGMA_THREADS_FOR {
         for (auto i = start; i < stop; i++)
-            arrs.at(i)->setIdentity();
+            arrs.at(i).setIdentity();
     };
 
     samediff::Threads::parallel_tad(func, 0, arrs.size());

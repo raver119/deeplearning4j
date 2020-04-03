@@ -57,11 +57,11 @@ namespace sd {
         }
 
         void DeclarableListOp::setupResult(NDArray* array, Context& block) {
-            block.pushNDArrayToVariableSpace(block.getNodeId(), 0, array);
+            block.pushNDArrayToVariableSpace(block.getNodeId(), 0, *array);
         }
 
         void DeclarableListOp::setupResultList(NDArrayList* arrayList, Context& block) {
-            block.pushNDArrayListToVariableSpace(block.getNodeId(), 0, arrayList);
+            block.pushNDArrayListToVariableSpace(block.getNodeId(), 0, *arrayList);
         }
 
         ResultSet DeclarableListOp::execute(NDArrayList* list, std::initializer_list<NDArray*> inputs, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs) {
@@ -105,19 +105,22 @@ namespace sd {
                 if (list->id().first == 0)
                     list->id().first = -1;
 
-                auto listVar = new Variable(nullptr, nullptr, -119, 0);
-                listVar->setNDArrayList(list);
-                varSpace.putVariable(-1, listVar);
-                in.push_back(-1);
-                cnt--;
+                auto listVar = std::make_shared<Variable>();
+                listVar->setId(-119, 0);
+                //listVar->setNDArrayList(list);
+                //varSpace.putVariable(-1, listVar);
+                //in.push_back(-1);
+                //cnt--;
+                throw std::runtime_error("DeclarableListOp::execute - Not implemented yet");
             }
 
 
             for (auto v: inputs) {
-                auto var = new Variable(v);
-                var->markRemovable(false);
-                in.push_back(cnt);
-                varSpace.putVariable(cnt--, var);
+                //auto var = new Variable(v);
+                //var->markRemovable(false);
+                //in.push_back(cnt);
+                //varSpace.putVariable(cnt--, var);
+                throw std::runtime_error("DeclarableListOp::execute - Not implemented yet");
             }
 
             Context block(1, &varSpace, false);
@@ -143,10 +146,10 @@ namespace sd {
                         auto arr = var->getNDArray();
                         if (arr->isAttached()) {
                             auto d = arr->detach();
-                            res.push_back(d);
+                            res.push_back(*d);
                         } else {
                             var->markRemovable(false);
-                            res.push_back(arr);
+                            res.push_back(*arr);
                         }
                     }
                 } else

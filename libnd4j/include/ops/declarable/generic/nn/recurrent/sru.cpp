@@ -117,7 +117,7 @@ DECLARE_SHAPE_FN(sru) {
         REQUIRE_TRUE(ShapeUtils::areShapesEqual(maskShapeInfo, c0CorrectShape), 0, "SRU operation: wrong shape of mask array, expected is %s, but got %s instead !", ShapeUtils::shapeAsString(c0CorrectShape).c_str(), ShapeUtils::shapeAsString(maskShapeInfo).c_str());
 
     Nd4jLong* newShapeInfo1 = nullptr;
-    ALLOCATE(newShapeInfo1, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);       // [bS x inSize x time]
+    ALLOCATE(newShapeInfo1, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);       // [bS x inSize x time]
 
     newShapeInfo1[0] = rank;
     newShapeInfo1[1] = bS;
@@ -126,7 +126,7 @@ DECLARE_SHAPE_FN(sru) {
 
     ShapeUtils::updateStridesAndType(newShapeInfo1, xShapeInfo, shape::order(xShapeInfo));
     ShapeDescriptor descriptor(newShapeInfo1);
-    RELEASE(newShapeInfo1, block.getWorkspace());
+    RELEASE(newShapeInfo1, block.workspace());
     auto result = ConstantShapeHelper::getInstance()->createShapeInfo(descriptor);
     return SHAPELIST(result, result);
 }
@@ -660,7 +660,7 @@ DECLARE_SHAPE_FN(sru_bi_bp) {
 //     char order = (char)(inShape[size-1]);
 
 //     Nd4jLong* newShapeInfo1 = nullptr;
-//     ALLOCATE(newShapeInfo1, block.getWorkspace(), size, Nd4jLong);
+//     ALLOCATE(newShapeInfo1, block.workspace(), size, Nd4jLong);
 
 //     newShapeInfo1[0] = rank;
 //     newShapeInfo1[1] = bS;
@@ -762,7 +762,7 @@ DECLARE_SHAPE_FN(sru_bi_bp) {
 //     char order = (char)(inShape[size-1]);
 
 //     Nd4jLong *newShapeInfo1 = nullptr;
-//     ALLOCATE(newShapeInfo1, block.getWorkspace(), size, Nd4jLong);
+//     ALLOCATE(newShapeInfo1, block.workspace(), size, Nd4jLong);
 
 //     newShapeInfo1[0] = rank;
 //     newShapeInfo1[1] = bS;
@@ -772,7 +772,7 @@ DECLARE_SHAPE_FN(sru_bi_bp) {
 //     ShapeUtils::updateStridesAndType(newShapeInfo1, inShape, order);
 
 //     auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(newShapeInfo1));
-//     RELEASE(newShapeInfo1, block.getWorkspace());
+//     RELEASE(newShapeInfo1, block.workspace());
 //     return SHAPELIST(result, result);
 // }
 

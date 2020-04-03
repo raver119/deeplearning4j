@@ -64,7 +64,7 @@ DECLARE_SHAPE_FN(upsampling2d) {
     const int isNCHW  = block.numI() > 2 ? INT_ARG(2) : 0;       // INT_ARG(2): 0-NCHW,  1-NHWC
 
     Nd4jLong *outputShapeInfo = nullptr;
-    ALLOCATE(outputShapeInfo, block.getWorkspace(), shape::shapeInfoLength(inputShapeInfo[0]), Nd4jLong);
+    ALLOCATE(outputShapeInfo, block.workspace(), shape::shapeInfoLength(inputShapeInfo[0]), Nd4jLong);
 
     outputShapeInfo[0] = inputShapeInfo[0];
     outputShapeInfo[1] = inputShapeInfo[1];
@@ -117,7 +117,7 @@ DECLARE_SHAPE_FN(upsampling2d_bp) {
     REQUIRE_TRUE(inputShape->at(0)[0] == 4, 0, "UPSAMPLING2D_BP op: input array must be 4D, but got %i instead!", inputShape->at(0)[0]);
     REQUIRE_TRUE(inputShape->at(1)[0] == 4, 0, "UPSAMPLING2D_BP op: output's gradient array must be 4D, but got %i instead!", inputShape->at(1)[0]);
 
-    auto gradIShapeInfo = ShapeBuilders::copyShapeInfoAndType(inputShape->at(0), inputShape->at(1), false, block.getWorkspace());
+    auto gradIShapeInfo = ShapeBuilders::copyShapeInfoAndType(inputShape->at(0), inputShape->at(1), false, block.workspace());
 
     return SHAPELIST(CONSTANT(gradIShapeInfo));
 }

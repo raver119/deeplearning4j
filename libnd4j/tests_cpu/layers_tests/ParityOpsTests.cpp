@@ -45,8 +45,8 @@ TEST_F(ParityOpsTests, TestZeroAs1) {
 
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->isSameShape(&x));
-    ASSERT_TRUE(z->equalsTo(&exp));
+    ASSERT_TRUE(z.isSameShape(&x));
+    ASSERT_TRUE(z.equalsTo(&exp));
 
 
 }
@@ -93,8 +93,8 @@ TEST_F(ParityOpsTests, TestTear1) {
     auto input = NDArrayFactory::create<float>('c', {10, 5});
     auto tads = input.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
-        ASSERT_EQ(5, tads.at(e)->lengthOf());
-        tads.at(e)->assign((float) e + 1);
+        ASSERT_EQ(5, tads.at(e).lengthOf());
+        tads.at(e).assign((float) e + 1);
     }
 
     sd::ops::tear op;
@@ -104,7 +104,7 @@ TEST_F(ParityOpsTests, TestTear1) {
     ASSERT_EQ(10, result.size());
 
     for (int e = 0; e < result.size(); e++)
-        ASSERT_TRUE(tads.at(e)->equalsTo(result.at(e)));
+        ASSERT_TRUE(tads.at(e).equalsTo(result.at(e)));
 
 
 }
@@ -113,8 +113,8 @@ TEST_F(ParityOpsTests, TestUnstack1) {
     auto input = NDArrayFactory::create<float>('c', {10, 5});
     auto tads = input.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
-        ASSERT_EQ(5, tads.at(e)->lengthOf());
-        tads.at(e)->assign((float) e + 1);
+        ASSERT_EQ(5, tads.at(e).lengthOf());
+        tads.at(e).assign((float) e + 1);
     }
 
     sd::ops::unstack op;
@@ -124,7 +124,7 @@ TEST_F(ParityOpsTests, TestUnstack1) {
     ASSERT_EQ(10, result.size());
 
     for (int e = 0; e < result.size(); e++)
-        ASSERT_TRUE(tads.at(e)->equalsTo(result.at(e)));
+        ASSERT_TRUE(tads.at(e).equalsTo(result.at(e)));
 
 
 }
@@ -135,8 +135,8 @@ TEST_F(ParityOpsTests, TestUnstack2) {
     auto input = NDArrayFactory::create<float>('c', {5,2,6});
     auto tads = input.allTensorsAlongDimension({0,1});
     for (int e = 0; e < tads.size(); e++) {
-        ASSERT_EQ(10, tads.at(e)->lengthOf());
-        tads.at(e)->assign((float) e + 1);
+        ASSERT_EQ(10, tads.at(e).lengthOf());
+        tads.at(e).assign((float) e + 1);
     }
 
     sd::ops::unstack op;
@@ -146,7 +146,7 @@ TEST_F(ParityOpsTests, TestUnstack2) {
     ASSERT_EQ(6, result.size());
 
     for (int e = 0; e < result.size(); e++)
-        ASSERT_TRUE(tads.at(e)->equalsTo(result.at(e)));
+        ASSERT_TRUE(tads.at(e).equalsTo(result.at(e)));
 
 
 }
@@ -340,7 +340,7 @@ TEST_F(ParityOpsTests, TestUnstack13) {
     ASSERT_EQ(3, result.size());
 
     for (int e = 0; e < 3; e++)
-        ASSERT_EQ(1, result.at(e)->rankOf());
+        ASSERT_EQ(1, result.at(e).rankOf());
 
 }
 
@@ -680,7 +680,7 @@ TEST_F(ParityOpsTests, Test_Bias_Add_1) {
 
     auto z = result.at(0);
 
-    auto tads = z->allTensorsAlongDimension({1});
+    auto tads = z.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
         ASSERT_TRUE(bias.equalsTo(tads.at(e)));
     }

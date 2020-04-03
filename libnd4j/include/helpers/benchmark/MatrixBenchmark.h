@@ -36,14 +36,14 @@ namespace sd {
             //
         }
 
-        MatrixBenchmark(float alpha, float beta, std::string testName, NDArray *x, NDArray *y, NDArray *z) : OpBenchmark(testName, x, y, z) {
+        MatrixBenchmark(float alpha, float beta, const std::string &testName, const NDArray &x, const NDArray &y, const NDArray &z) : OpBenchmark(testName, x, y, z) {
             _alpha = alpha;
             _beta = beta;
             _tA = false;
             _tB = false;
         }
 
-        MatrixBenchmark(float alpha, float beta, bool tA, bool tB, std::string name) : OpBenchmark() {
+        MatrixBenchmark(float alpha, float beta, bool tA, bool tB, const std::string &name) : OpBenchmark() {
             _testName = name;
             _alpha = alpha;
             _beta = beta;
@@ -52,26 +52,14 @@ namespace sd {
         }
 
         ~MatrixBenchmark(){
-            if (_x != _y && _x != _z && _y != _z) {
-                delete _x;
-                delete _y;
-                delete _z;
-            } else if (_x == _y && _x == _z) {
-                delete _x;
-            } else if (_x == _z) {
-                delete _x;
-                delete _y;
-            } else if (_y == _z) {
-                delete _x;
-                delete _y;
-            }
+            //
         }
 
         void executeOnce() override {
-            auto xT = (_tA ? _x->transpose() : *_x);
-            auto yT = (_tB ? _y->transpose() : *_y);
+            auto xT = (_tA ? _x.transpose() : _x);
+            auto yT = (_tB ? _y.transpose() : _y);
 
-            MmulHelper::mmul(&xT, &yT, _z, _alpha, _beta);
+            MmulHelper::mmul(&xT, &yT, &_z, _alpha, _beta);
         }
 
         std::string axis() override {
@@ -84,11 +72,11 @@ namespace sd {
 
         std::string orders() override {
             std::string result;
-            result += _x->ordering();
+            result += _x.ordering();
             result += "/";
-            result += _y->ordering();
+            result += _y.ordering();
             result += "/";
-            result += _z == nullptr ? _x->ordering() : _z->ordering();
+            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
             return result;
         }
 
@@ -98,7 +86,7 @@ namespace sd {
             result += "/";
             result += ShapeUtils::strideAsString(_y);
             result += "/";
-            result += _z == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
+            result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
             return result;
         }
 
@@ -108,7 +96,7 @@ namespace sd {
             result += "x";
             result += ShapeUtils::shapeAsString(_y);
             result += "=";
-            result += _z == nullptr ? "" : ShapeUtils::shapeAsString(_z);
+            result += _z.shapeInfo() == nullptr ? "" : ShapeUtils::shapeAsString(_z);
             return result;
         }
 

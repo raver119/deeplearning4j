@@ -66,7 +66,7 @@ CUSTOM_OP_IMPL(reduce_dot_bp, 3, 2, false, 0, 0) {
             REQUIRE_TRUE(item >= -x->rankOf() && item < x->rankOf(), 0, "REDUCE_DOT_BP OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , x->rankOf(), x->rankOf(), item);
 
         if(!keepDims) {
-            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *x, true, false, block.getWorkspace());
+            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *x, true, false, block.workspace());
             auto r = gradO->reshape(gradO->ordering(), ShapeUtils::pullShapeFromShapeInfo(gradOShapeKeepDims));  // for example could be something like [a,b] -> [1,a,1,b]
 
             gradX->assign((*y) * r);

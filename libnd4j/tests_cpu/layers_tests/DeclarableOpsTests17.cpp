@@ -84,7 +84,7 @@ TEST_F(DeclarableOpsTests17, test_compat_string_split_1) {
     ASSERT_TRUE(exp0.isSameShape(z0));
     ASSERT_TRUE(exp1.isSameShape(z1));
 
-    ASSERT_EQ(exp0, *z0);
-    ASSERT_EQ(exp1, *z1);
+    ASSERT_EQ(exp0, z0);
+    ASSERT_EQ(exp1, z1);
 
 }

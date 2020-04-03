@@ -61,9 +61,9 @@ namespace sd {
 
                     for (int e = 0; e < tadsX.size(); e++) {
                         if (!condition->e<bool>(e)) {
-                            tadsZ.at(e)->assign(tadsY.at(e));
+                            tadsZ.at(e).assign(tadsY.at(e));
                         } else {
-                            tadsZ.at(e)->assign(tadsX.at(e));
+                            tadsZ.at(e).assign(tadsX.at(e));
                         }
                     }
                 }
@@ -102,7 +102,7 @@ namespace sd {
                 Nd4jLong *newShape;
 
                 if (numOfTrue > 0) {
-                    ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                    ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
 
                     newShape[0] = 2;
                     newShape[1] = numOfTrue;

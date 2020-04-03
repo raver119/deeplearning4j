@@ -105,7 +105,7 @@ namespace helpers {
                         theShift -= fullLen * (theShift / fullLen - 1);
                 }
                 for (int k = 0; k < fullLen; k++) {
-                    rollFunctorLinear(context, listOfTensors.at(k), listOfOutTensors.at(k), theShift, true);
+                    rollFunctorLinear(context, &listOfTensors.at(k), &listOfOutTensors.at(k), theShift, true);
                 }
             }
             else {
@@ -133,7 +133,7 @@ namespace helpers {
                         for (int e = theShift; e < sizeAt - theShift; ++e) {
                             auto sourceM = listOfTensors.at(dim * sizeAt + e - theShift);
                             auto targetM = listOfOutTensors.at(dim * sizeAt + e);
-                            sourceM->swapUnsafe(*targetM);
+                            sourceM.swapUnsafe(targetM);
                         }
 
                         for (int e = 0; e < theShift; ++e) {
@@ -141,7 +141,7 @@ namespace helpers {
                             auto sourceM = listOfTensors.at(sourceIndex);
                             auto targetM = listOfOutTensors.at(dim * sizeAt + e);
 
-                            sourceM->swapUnsafe(*targetM);
+                            sourceM.swapUnsafe(targetM);
                         }
                     }
                 }

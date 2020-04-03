@@ -99,7 +99,7 @@ namespace sd {
 
             // FIXME: remove memcpy
             Nd4jLong *newShape;
-            ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(inShape), Nd4jLong);
+            ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(inShape), Nd4jLong);
             memcpy(newShape, inShape, shape::shapeInfoByteLength(inShape));
 
             return SHAPELIST(CONSTANT(newShape));

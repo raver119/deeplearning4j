@@ -68,13 +68,12 @@ namespace sd {
                 std::pair<int, int> pair(ctx.nodeId(), e);
 
                 if (!variableSpace->hasVariable(pair))
-                    variableSpace->putVariable(pair, new Variable());
+                    variableSpace->putVariable(pair, std::make_shared<Variable>());
 
                 auto var = ctx.variable(pair);
 
                 if (!var->hasNDArray()) {
-                    var->setNDArray(NDArrayFactory::create_<bool>(false, ctx.launchContext()));
-                    var->markRemovable(true);
+                    var->setNDArray(std::make_shared<NDArray>(NDArrayFactory::create<bool>(false, ctx.launchContext())));
                 }
             }
 
@@ -121,7 +120,7 @@ namespace sd {
             int cnt = -1;
             std::vector<int> in;
             for (auto v: args) {
-                auto var = new Variable(v);
+                auto var = std::make_shared<Variable>(v);
                 var->markRemovable(false);
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);

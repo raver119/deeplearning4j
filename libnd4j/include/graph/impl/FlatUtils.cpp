@@ -36,7 +36,7 @@ namespace sd {
             return std::pair<Nd4jLong, Nd4jLong>(pair->first(), pair->second());
         }
 
-        NDArray* FlatUtils::fromFlatArray(const sd::graph::FlatArray *flatArray) {
+        NDArray FlatUtils::fromFlatArray(const sd::graph::FlatArray *flatArray) {
             auto rank = static_cast<int>(flatArray->shape()->Get(0));
             auto newShape = new Nd4jLong[shape::shapeInfoLength(rank)];
             memcpy(newShape, flatArray->shape()->data(), shape::shapeInfoByteLength(rank));
@@ -47,7 +47,7 @@ namespace sd {
             // empty arrays is special case, nothing to restore here
             if (shape::isEmpty(newShape)) {
                 delete[] newShape;
-                return NDArrayFactory::empty_(dtype, nullptr);
+                return NDArrayFactory::empty(dtype, nullptr);
             }
             // TODO fix UTF16 and UTF32
             if (dtype == UTF8) {
@@ -88,7 +88,7 @@ namespace sd {
                 delete[] offsets;
                 delete[] newShape;
                 // string order always 'c'
-                return NDArrayFactory::string_(shapeVector, substrings);
+                return NDArrayFactory::string(shapeVector, substrings);
             }
 
 
@@ -96,7 +96,7 @@ namespace sd {
 
             BUILD_SINGLE_SELECTOR(dtype, DataTypeConversions, ::convertType(newBuffer, (void *)flatArray->buffer()->data(), dtype, ByteOrderUtils::fromFlatByteOrder(flatArray->byteOrder()),  length), LIBND4J_TYPES);
 
-            auto array = new NDArray(newBuffer, newShape, sd::LaunchContext::defaultContext(), true);
+            NDArray array(newBuffer, newShape, sd::LaunchContext::defaultContext(), true);
 
             delete[] newShape;
             return array;

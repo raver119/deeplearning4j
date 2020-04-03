@@ -195,7 +195,7 @@ TEST_F(IndexingTests, MaskedSlice_0) {
     auto matrix = NDArrayFactory::create<float>('c', {3, 5});
     auto tads = matrix.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
-        tads.at(e)->assign((float) (e+1));
+        tads.at(e).assign((float) (e+1));
     }
 
     auto exp = NDArrayFactory::create<float>('c', {1, 5});
@@ -221,7 +221,7 @@ TEST_F(IndexingTests, MaskedSlice_00) {
     auto matrix = NDArrayFactory::create<float>('c', {3, 5});
     auto tads = matrix.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
-        tads.at(e)->assign((float) (e+1));
+        tads.at(e).assign((float) (e+1));
     }
 
     auto exp = NDArrayFactory::create<float>('c', {1, 2}, {2, 2});
@@ -245,7 +245,7 @@ TEST_F(IndexingTests, MaskedSlice_1) {
     auto matrix = NDArrayFactory::create<float>('c', {3, 5});
     auto tads = matrix.allTensorsAlongDimension({1});
     for (int e = 0; e < tads.size(); e++) {
-        tads.at(e)->assign((float) (e+1));
+        tads.at(e).assign((float) (e+1));
     }
 
     auto exp = NDArrayFactory::create<float>('c', {5});
@@ -281,8 +281,6 @@ TEST_F(IndexingTests, MaskedSlice_2) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -301,8 +299,6 @@ TEST_F(IndexingTests, MaskedSlice_3) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -322,8 +318,6 @@ TEST_F(IndexingTests, MaskedSlice_4) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 TEST_F(IndexingTests, Live_Slice_1) {
@@ -346,8 +340,6 @@ TEST_F(IndexingTests, Live_Slice_1) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -367,8 +359,6 @@ TEST_F(IndexingTests, Test_StridedSlice_1) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 TEST_F(IndexingTests, Test_StridedSlice_2) {
@@ -389,8 +379,6 @@ TEST_F(IndexingTests, Test_StridedSlice_2) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -410,8 +398,6 @@ TEST_F(IndexingTests, Test_StridedSlice_3) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -434,8 +420,6 @@ TEST_F(IndexingTests, Test_StridedSlice_4) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 TEST_F(IndexingTests, Test_Subarray_Strided_1) {
@@ -464,7 +448,5 @@ TEST_F(IndexingTests, MaskedSlice_5) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 */

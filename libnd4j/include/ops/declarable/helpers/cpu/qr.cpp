@@ -115,7 +115,7 @@ namespace helpers {
         auto batching = PRAGMA_THREADS_FOR {
             for (auto batch = start; batch < stop; batch++) {
                 //qr here
-                qrSingle<T>(listInput.at(batch), listOutQ.at(batch), listOutR.at(batch), fullMatricies);
+                qrSingle<T>(&listInput.at(batch), &listOutQ.at(batch), &listOutR.at(batch), fullMatricies);
             }
         };
 

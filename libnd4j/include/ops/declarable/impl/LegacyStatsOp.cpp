@@ -95,7 +95,7 @@ namespace sd {
             Nd4jLong *newShape;
             if (block.numI() == 0 || (block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>())) {
                 // in this case we just return scalar
-                ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                 newShape[0] = 2;
                 newShape[1] = 1;
                 newShape[2] = 1;

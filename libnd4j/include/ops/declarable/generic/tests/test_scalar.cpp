@@ -51,7 +51,7 @@ namespace sd {
             ArrayOptions::setDataType(newShape, ArrayOptions::dataType(inputShape->at(0)));
 
             auto shape = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(newShape));
-            RELEASE(newShape, block.getWorkspace());
+            RELEASE(newShape, block.workspace());
             return SHAPELIST(shape);
         }
 

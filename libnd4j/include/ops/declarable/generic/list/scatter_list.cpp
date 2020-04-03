@@ -43,7 +43,8 @@ namespace sd {
                 array = INPUT_VARIABLE(1);
                 indices = INPUT_VARIABLE(2);
                 list = new NDArrayList(indices->lengthOf(), false);
-                block.trackList(list);
+
+                throw std::runtime_error("scatter_list - Not implemented yet");
             }
 
             REQUIRE_TRUE(indices->isVector() || indices->rankOf() == 1, 0, "ScatterList: Indices for Scatter should be a vector")
@@ -56,7 +57,7 @@ namespace sd {
                 if (idx >= tads.size())
                     return ND4J_STATUS_BAD_ARGUMENTS;
 
-                auto arr = new NDArray(tads.at(e)->dup(array->ordering()));
+                auto arr = new NDArray(tads.at(e).dup(array->ordering()));
                 auto res = list->write(idx, arr);
                 if (res != ND4J_STATUS_OK)
                     return res;

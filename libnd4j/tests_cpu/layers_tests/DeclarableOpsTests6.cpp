@@ -76,7 +76,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(exp, *z);
+    ASSERT_EQ(exp, z);
 
     
 }
@@ -97,7 +97,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_3) {
 
     auto z = result.at(0);
     //z->printShapeInfo("SS OS shape");
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
     //ASSERT_EQ(exp, *z);
 
     
@@ -119,7 +119,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_4) {
 
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
     //ASSERT_EQ(exp, *z);
 
     
@@ -128,9 +128,9 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_4) {
 TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     int z = 0;
     auto matrix = NDArrayFactory::create<double>('c', {1}, {10});
-    auto b = NDArrayFactory::create_<int>('c', {1}, {1});
-    auto e = NDArrayFactory::create_<int>('c', {1}, {z});
-    auto s = NDArrayFactory::create_<int>('c', {1}, {1});
+    auto b = NDArrayFactory::create<int>('c', {1}, {1});
+    auto e = NDArrayFactory::create<int>('c', {1}, {z});
+    auto s = NDArrayFactory::create<int>('c', {1}, {1});
     sd::ops::ones_as opOnes;
     //auto exp = NDArrayFactory::create<double>('c', {2}, {1.0f, 2.0f});
     auto onesRes = opOnes.evaluate({&matrix});
@@ -138,8 +138,8 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     ASSERT_EQ(onesRes.status(), Status::OK());
 
     auto ones = onesRes.at(0);
-    *ones *= 10;
-    auto onesD = new NDArray(ones->dup());
+    ones *= 10;
+    auto onesD = ones.dup();
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, onesD);
@@ -158,8 +158,10 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     block->appendI(0);
     block->appendI(0);
 
-    auto inputShapes = new ShapeList({ones->getShapeInfo(), b->getShapeInfo(), e->getShapeInfo(), s->getShapeInfo()});
+    auto inputShapes = new ShapeList({ones.getShapeInfo(), b.getShapeInfo(), e.getShapeInfo(), s.getShapeInfo()});
+
     sd::ops::strided_slice op;
+
     auto result = op.calculateOutputShape(inputShapes, *block); //execute({ones, &b, &e, &s}, {}, {0, 1, 0, 0, 0});
     ASSERT_EQ(result->size(), 1);
     ASSERT_TRUE(shape::isEmpty(result->at(0)));
@@ -326,7 +328,7 @@ TEST_F(DeclarableOpsTests6, Test_Order_1) {
 
     auto z = result.at(0);
     ASSERT_TRUE(exp.equalsTo(z));
-    ASSERT_NE(x.ordering(), z->ordering());
+    ASSERT_NE(x.ordering(), z.ordering());
 
     
 }
@@ -630,7 +632,7 @@ TEST_F(DeclarableOpsTests6, cumSum_16) {
     // z->printShapeInfo();
     // x.printShapeInfo();
 
-    ASSERT_TRUE(z->ews() == 1);
+    ASSERT_TRUE(z.ews() == 1);
     ASSERT_TRUE(x.ews() == 1);
 
     
@@ -781,10 +783,10 @@ TEST_F(DeclarableOpsTests6, TestMergeMaxIndex_1) {
     auto res = op.evaluate({&x, &y, &z}, {}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-//    res.at(0)->printIndexedBuffer("MergeMaxIndex Result is ");
-//    res.at(0)->printShapeInfo("Shape info for MergeMaxIdex");
+//    res.at(0).printIndexedBuffer("MergeMaxIndex Result is ");
+//    res.at(0).printShapeInfo("Shape info for MergeMaxIdex");
 //    x.printIndexedBuffer("Input is");
-    ASSERT_TRUE(res.at(0)->equalsTo(exp));
+    ASSERT_TRUE(res.at(0).equalsTo(exp));
     
 }
 
@@ -800,10 +802,10 @@ TEST_F(DeclarableOpsTests6, TestMergeMaxIndex_2) {
     auto ress = op.evaluate({&x, &y, &z}, {}, {sd::DataType::INT64});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress.status());
-//    res.at(0)->printIndexedBuffer("MergeMaxIndex2 Result is ");
-//    res.at(0)->printShapeInfo("Shape info for MergeMaxIdex2");
+//    res.at(0).printIndexedBuffer("MergeMaxIndex2 Result is ");
+//    res.at(0).printShapeInfo("Shape info for MergeMaxIdex2");
 //    x.printIndexedBuffer("Input is");
-    ASSERT_TRUE(ress.at(0)->equalsTo(exp));
+    ASSERT_TRUE(ress.at(0).equalsTo(exp));
     
 }
 
@@ -817,7 +819,7 @@ TEST_F(DeclarableOpsTests6, TestDropout_1) {
     auto res = op.evaluate({&x, &shape}, {0.2f}, {113});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-    //res.at(0)->printIndexedBuffer("Result is ");
+    //res.at(0).printIndexedBuffer("Result is ");
     //x.printIndexedBuffer("Input is");
 
     
@@ -833,9 +835,9 @@ TEST_F(DeclarableOpsTests6, TestMod_1) {
     auto res = op.evaluate({&x, &y});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-//    res.at(0)->printIndexedBuffer("MOD Result is ");
+//    res.at(0).printIndexedBuffer("MOD Result is ");
 //    x.printIndexedBuffer("Input is");
-    ASSERT_TRUE(res.at(0)->equalsTo(exp));
+    ASSERT_TRUE(res.at(0).equalsTo(exp));
     
 }
 
@@ -851,10 +853,10 @@ TEST_F(DeclarableOpsTests6, TestMod_BP_1) {
     auto res = op.evaluate({&x, &y, &eps});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-//    res.at(0)->printIndexedBuffer("MOD_BP Result is ");
+//    res.at(0).printIndexedBuffer("MOD_BP Result is ");
 
     //    x.printIndexedBuffer("Input is");
-    ASSERT_TRUE(res.at(0)->equalsTo(exp));
+    ASSERT_TRUE(res.at(0).equalsTo(exp));
     
 }
 
@@ -871,7 +873,7 @@ TEST_F(DeclarableOpsTests6, TestRank_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
 
-    ASSERT_TRUE(res.at(0)->equalsTo(exp));
+    ASSERT_TRUE(res.at(0).equalsTo(exp));
     
 }
 TEST_F(DeclarableOpsTests6, TestDropout_2) {
@@ -945,7 +947,7 @@ TEST_F(DeclarableOpsTests6, SufficientStatistics_1) {
     auto res = op.evaluate({&x, &axis});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-    ASSERT_EQ(res.at(0)->e<double>(0), count);
+    ASSERT_EQ(res.at(0).e<double>(0), count);
     ASSERT_TRUE(sumExp.equalsTo(res.at(1)));
     ASSERT_TRUE(sqrExp.equalsTo(res.at(2)));
 
@@ -977,7 +979,7 @@ TEST_F(DeclarableOpsTests6, SufficientStatistics_2) {
     auto res = op.evaluate({&x, &axis});
 
     ASSERT_EQ(ND4J_STATUS_OK, res.status());
-    ASSERT_EQ(res.at(0)->e<double>(0), count);
+    ASSERT_EQ(res.at(0).e<double>(0), count);
     ASSERT_TRUE(sumExp.equalsTo(res.at(1)));
     ASSERT_TRUE(sqrExp.equalsTo(res.at(2)));
 
@@ -1342,7 +1344,7 @@ TEST_F(DeclarableOpsTests6, ClipByGlobalNorm_3) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.isSameShape(y));
-    ASSERT_TRUE(result.at(2)->isScalar());
+    ASSERT_TRUE(result.at(2).isScalar());
     ASSERT_TRUE(exp.equalsTo(z));
     ASSERT_TRUE(exp.equalsTo(y));
 
@@ -1475,7 +1477,7 @@ TEST_F(DeclarableOpsTests6, MatrixDeterminant_6) {
     //z->printIndexedBuffer("Output ");
     //z->printShapeInfo("Shape");
     //exp.printIndexedBuffer("Expected ");
-    ASSERT_TRUE(z->isScalar());
+    ASSERT_TRUE(z.isScalar());
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
 
@@ -2763,7 +2765,7 @@ TEST_F(DeclarableOpsTests6, Test_Diag_119_1) {
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
     
 }
@@ -2776,7 +2778,7 @@ TEST_F(DeclarableOpsTests6, Test_Diag_119_2) {
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
     
 }
@@ -2789,7 +2791,7 @@ TEST_F(DeclarableOpsTests6, Test_Diag_119_3) {
     auto result = op.evaluate({&x}, {}, {});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
     
 }

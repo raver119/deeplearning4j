@@ -68,7 +68,7 @@ namespace sd {
             auto shapeArray = INPUT_VARIABLE(0);
             const int len = (int) shapeArray->lengthOf();
             Nd4jLong *newShape = nullptr;
-            ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(len), Nd4jLong);            
+            ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(len), Nd4jLong);
 
             newShape[0] = len;
             for (int e = 0; e < shapeArray->lengthOf(); e++){

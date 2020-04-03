@@ -82,7 +82,7 @@ namespace ops {
             auto updShapeInfo = inputShape->at(1);
 
             Nd4jLong *outShapeInfo;
-            ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(shape->lengthOf()), Nd4jLong);
+            ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(shape->lengthOf()), Nd4jLong);
 
             outShapeInfo[0] = shape->lengthOf();
             for (int i = 0; i < outShapeInfo[0]; ++i)

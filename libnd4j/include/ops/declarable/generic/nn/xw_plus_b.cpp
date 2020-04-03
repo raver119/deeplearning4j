@@ -68,10 +68,10 @@ namespace sd {
 
             const int nWeightsFormat = block.numI() > 0 ? INT_ARG(0) : 0;
 
-            auto weightsShape = (1 == nWeightsFormat) ? ShapeUtils::evalTranspShapeInfo(*weights, block.getWorkspace()) : inputShape->at(1);
+            auto weightsShape = (1 == nWeightsFormat) ? ShapeUtils::evalTranspShapeInfo(*weights, block.workspace()) : inputShape->at(1);
 
             auto outputShape = ShapeUtils::matrixProductShape(inputShape->at(0), weightsShape, false, false,
-                ArrayOptions::dataType(inputShape->at(0)), block.getWorkspace());
+                ArrayOptions::dataType(inputShape->at(0)), block.workspace());
 
             return SHAPELIST(CONSTANT(outputShape));
         }

@@ -118,7 +118,7 @@ DECLARE_SHAPE_FN(gather) {
 
     	int outputRank = inputRank + indicesRank - 1;
 
-    	ALLOCATE(outputShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outputRank), Nd4jLong);
+    	ALLOCATE(outputShapeInfo, block.workspace(), shape::shapeInfoLength(outputRank), Nd4jLong);
 
     	// fill output shapeInfo
     	outputShapeInfo[0] = outputRank;
@@ -138,7 +138,7 @@ DECLARE_SHAPE_FN(gather) {
 		int indicesRank = block.numI() == 2 ? 0 : 1;
 
 		int outputRank = inputRank + indicesRank - 1;
-		ALLOCATE(outputShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outputRank), Nd4jLong);
+		ALLOCATE(outputShapeInfo, block.workspace(), shape::shapeInfoLength(outputRank), Nd4jLong);
 
 		// building shape manually
 		outputShapeInfo[0] = outputRank;
@@ -162,7 +162,7 @@ DECLARE_SHAPE_FN(gather) {
 	}
 
 	auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(outputShapeInfo));
-	RELEASE(outputShapeInfo, block.getWorkspace());
+	RELEASE(outputShapeInfo, block.workspace());
     return SHAPELIST(result);
 
 }

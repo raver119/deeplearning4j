@@ -60,13 +60,13 @@ TEST_F(EmptyTests, Test_Create_Empty_2) {
 
 TEST_F(EmptyTests, Test_Concat_1) {
 //    auto empty = NDArrayFactory::empty_<float>();
-    auto empty = new NDArray('c',  {0}, sd::DataType::FLOAT32);//NDArrayFactory::create_<float>('c', {(Nd4jLong)0}};
-    auto vector = NDArrayFactory::create_<float>('c', {1}, {1.0f});
+    auto empty = NDArray('c',  {0}, sd::DataType::FLOAT32);//NDArrayFactory::create_<float>('c', {(Nd4jLong)0}};
+    auto vector = NDArrayFactory::create<float>('c', {1}, {1.0f});
 
-    ASSERT_TRUE(empty->isEmpty());
+    ASSERT_TRUE(empty.isEmpty());
 
     sd::ops::concat op;
-    auto result = op.evaluate({empty, vector}, {}, {0});
+    auto result = op.evaluate({&empty, &vector}, {}, {0});
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
@@ -74,35 +74,25 @@ TEST_F(EmptyTests, Test_Concat_1) {
 //    z->printShapeInfo("z shape");
 //    z->printIndexedBuffer("z buffr");
 
-    ASSERT_EQ(*vector, *z);
-
-    delete empty;
-    delete vector;
+    ASSERT_EQ(vector, z);
 }
 
 
 TEST_F(EmptyTests, Test_Concat_2) {
-    auto empty = new NDArray('c',  {0}, sd::DataType::FLOAT32); //NDArrayFactory::empty_<float>();
-    auto scalar1 =  NDArrayFactory::create_<float>('c', {1}, {1.0f});
-    auto scalar2  = NDArrayFactory::create_<float>('c', {1}, {2.0f});
+    auto empty = NDArray('c',  {0}, sd::DataType::FLOAT32); //NDArrayFactory::empty_<float>();
+    auto scalar1 =  NDArrayFactory::create<float>('c', {1}, {1.0f});
+    auto scalar2  = NDArrayFactory::create<float>('c', {1}, {2.0f});
     auto exp = NDArrayFactory::create<float>('c', {2}, {1.f, 2.f});
 
-    ASSERT_TRUE(empty->isEmpty());
+    ASSERT_TRUE(empty.isEmpty());
 
     sd::ops::concat op;
-    auto result = op.evaluate({empty, scalar1, scalar2}, {}, {0});
+    auto result = op.evaluate({&empty, &scalar1, &scalar2}, {}, {0});
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
 
-//    z->printShapeInfo("z shape");
-//    z->printIndexedBuffer("z buffr");
-
-    ASSERT_EQ(exp, *z);
-
-    delete empty;
-    delete scalar1;
-    delete scalar2;
+    ASSERT_EQ(exp, z);
 }
 
 TEST_F(EmptyTests, Test_Concat_3) {
@@ -119,8 +109,7 @@ TEST_F(EmptyTests, Test_Concat_3) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(exp, *z);
-
+    ASSERT_EQ(exp, z);
 }
 
 TEST_F(EmptyTests, Test_Concat_4) {
@@ -137,17 +126,15 @@ TEST_F(EmptyTests, Test_Concat_4) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(exp, *z);
+    ASSERT_EQ(exp, z);
 }
 
 TEST_F(EmptyTests, Test_dup_1) {
     auto empty = NDArrayFactory::empty<int>();
-    auto dup = new NDArray(empty.dup());
+    auto dup = empty.dup();
 
-    ASSERT_TRUE(dup->isEmpty());
-    ASSERT_EQ(empty, *dup);
-
-    delete dup;
+    ASSERT_TRUE(dup.isEmpty());
+    ASSERT_EQ(empty, dup);
 }
 
 TEST_F(EmptyTests, test_empty_scatter_1) {
@@ -162,7 +149,7 @@ TEST_F(EmptyTests, test_empty_scatter_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(x, *z);
+    ASSERT_EQ(x, z);
 
 }
 
@@ -236,7 +223,7 @@ TEST_F(EmptyTests, test_empty_matmul_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -250,5 +237,5 @@ TEST_F(EmptyTests, test_empty_matmul_2) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }

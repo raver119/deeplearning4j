@@ -45,9 +45,9 @@ TEST_F(DeclarableOpsTests2, gather_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
 
@@ -63,9 +63,9 @@ TEST_F(DeclarableOpsTests2, gather_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
 
@@ -83,9 +83,9 @@ TEST_F(DeclarableOpsTests2, gather_3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
 
@@ -101,9 +101,9 @@ TEST_F(DeclarableOpsTests2, gather_4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
 
@@ -120,9 +120,9 @@ TEST_F(DeclarableOpsTests2, gather_5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
     
@@ -141,9 +141,9 @@ TEST_F(DeclarableOpsTests2, gather_6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -161,9 +161,9 @@ TEST_F(DeclarableOpsTests2, gather_7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
     
 }
@@ -179,11 +179,11 @@ TEST_F(DeclarableOpsTests2, gather_8) {
 
     auto result = op.evaluate({&input, &indices}, {}, {0});
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
-    auto* output = result.at(0);
+    auto output = result.at(0);
     // output->printShapeInfo();
     // output->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -278,9 +278,9 @@ TEST_F(DeclarableOpsTests2, gather_13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto* output = result.at(0);
+    auto output = result.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
     
 }
@@ -539,7 +539,7 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -564,8 +564,8 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
-    // result->printIndexedBuffer("ADL test2");
+    auto result = results.at(0);
+    // result.printIndexedBuffer("ADL test2");
     // expected.printIndexedBuffer("ADL expec");
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -590,7 +590,7 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -615,7 +615,7 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -640,7 +640,7 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -665,7 +665,7 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -688,10 +688,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 60.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 60.f);
 
 }
 
@@ -711,10 +711,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 0.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 0.f);
 
     
 
@@ -736,10 +736,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 60.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 60.);
 
     
 
@@ -761,10 +761,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 60.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 60.f);
 
     
 
@@ -786,10 +786,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 1.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 1.f);
 
     
 
@@ -811,10 +811,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 0.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 0.f);
 
     
 
@@ -836,10 +836,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 1.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 1.f);
 
     
 
@@ -863,10 +863,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 1.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 1.f);
 
     
 
@@ -888,10 +888,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 2.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 2.f);
 
     
 
@@ -917,10 +917,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_16) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 2.01667, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 2.01667, 1e-5);
 
     
 
@@ -950,10 +950,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_17) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<float>(0), 1.93333, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<float>(0), 1.93333, 1e-5);
 
     
 
@@ -983,10 +983,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_18) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<float>(0), 1.93333f, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<float>(0), 1.93333f, 1e-5);
 
     
 
@@ -1009,10 +1009,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_19) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 1.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 1.);
 
     
 
@@ -1034,10 +1034,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_20) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 1.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 1.);
 
     
 
@@ -1059,10 +1059,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_21) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 1.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 1.f);
 
     
 
@@ -1084,10 +1084,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_22) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == 0.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == 0.);
 
     
 
@@ -1121,10 +1121,10 @@ TEST_F(DeclarableOpsTests2, absolute_difference_loss_test_23) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.965517, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.965517, 1e-5);
 
     
 
@@ -1147,7 +1147,7 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1173,7 +1173,7 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1200,7 +1200,7 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1225,7 +1225,7 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1250,10 +1250,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == -71.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == -71.);
 
     
 
@@ -1275,10 +1275,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == -71.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == -71.f);
 
     
 
@@ -1300,10 +1300,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == -69.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == -69.f);
 
     
 
@@ -1325,10 +1325,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<float>(0) == -24.f);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<float>(0) == -24.f);
 
     
 
@@ -1350,10 +1350,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == -24.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == -24.);
 
     
 
@@ -1377,10 +1377,10 @@ TEST_F(DeclarableOpsTests2, cosine_distance_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == -32.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == -32.);
 
     
 
@@ -1402,8 +1402,8 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
-    // result->printBuffer();
+    auto result = results.at(0);
+    // result.printBuffer();
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1427,8 +1427,8 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
-    // result->printBuffer();
+    auto result = results.at(0);
+    // result.printBuffer();
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1452,8 +1452,8 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
-    // result->printBuffer();
+    auto result = results.at(0);
+    // result.printBuffer();
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1477,10 +1477,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 83.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 83.);
 
     
 }
@@ -1501,10 +1501,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 83.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 83.);
 
     
 }
@@ -1525,10 +1525,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 83.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 83.);
 
     
 }
@@ -1549,10 +1549,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 6.91667, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 6.91667, 1e-5);
 
     
 }
@@ -1573,10 +1573,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 6.91667, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 6.91667, 1e-5);
 
     
 }
@@ -1597,10 +1597,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 6.91667, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 6.91667, 1e-5);
 
     
 }
@@ -1621,10 +1621,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 3.45833, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 3.45833, 1e-5);
 
     
 }
@@ -1645,10 +1645,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 3.45833, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 3.45833, 1e-5);
 
     
 }
@@ -1673,10 +1673,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 3.975, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 3.975, 1e-5);
 
     
 }
@@ -1697,10 +1697,10 @@ TEST_F(DeclarableOpsTests2, hinge_loss_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_TRUE(result->e<double>(0) == 0.);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_TRUE(result.e<double>(0) == 0.);
 
     
 }
@@ -1722,7 +1722,7 @@ TEST_F(DeclarableOpsTests2, huber_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1747,7 +1747,7 @@ TEST_F(DeclarableOpsTests2, huber_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1772,7 +1772,7 @@ TEST_F(DeclarableOpsTests2, huber_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -1796,10 +1796,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 13.44, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 13.44, 1e-5);
 
     
 }
@@ -1820,10 +1820,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 13.44, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 13.44, 1e-5);
 
     
 }
@@ -1844,10 +1844,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 1.12, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 1.12, 1e-5);
 
     
 }
@@ -1868,10 +1868,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 1.12, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 1.12, 1e-5);
 
     
 }
@@ -1896,10 +1896,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 1.3, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 1.3, 1e-5);
 
     
 }
@@ -1920,10 +1920,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.56, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.56, 1e-5);
 
     
 }
@@ -1944,10 +1944,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.56, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.56, 1e-5);
 
     
 }
@@ -1972,10 +1972,10 @@ TEST_F(DeclarableOpsTests2, huber_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.65, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.65, 1e-5);
 
     
 }
@@ -1997,7 +1997,7 @@ TEST_F(DeclarableOpsTests2, log_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2022,7 +2022,7 @@ TEST_F(DeclarableOpsTests2, log_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2047,7 +2047,7 @@ TEST_F(DeclarableOpsTests2, log_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2071,10 +2071,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -113.886429, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -113.886429, 1e-5);
 
     
 }
@@ -2095,10 +2095,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -113.886429, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -113.886429, 1e-5);
 
     
 }
@@ -2119,10 +2119,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -113.886429, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -113.886429, 1e-5);
 
     
 }
@@ -2143,10 +2143,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -9.490536, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -9.490536, 1e-5);
 
     
 }
@@ -2167,10 +2167,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -9.490536, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -9.490536, 1e-5);
 
     
 }
@@ -2191,10 +2191,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -9.490536, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -9.490536, 1e-5);
 
     
 }
@@ -2219,10 +2219,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -12.443609, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -12.443609, 1e-5);
 
     
 }
@@ -2243,10 +2243,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -4.745268, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -4.745268, 1e-5);
 
     
 }
@@ -2267,10 +2267,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -4.745268, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -4.745268, 1e-5);
 
     
 }
@@ -2295,10 +2295,10 @@ TEST_F(DeclarableOpsTests2, log_loss_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -6.221805, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -6.221805, 1e-5);
 
     
 }
@@ -2315,7 +2315,7 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2335,7 +2335,7 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2355,7 +2355,7 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2374,10 +2374,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 60.74394998193965, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 60.74394998193965, 1e-5);
 
     
 }
@@ -2393,10 +2393,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 15.189082270182983, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 15.189082270182983, 1e-5);
 
     
 }
@@ -2412,10 +2412,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 13.568564090650312, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 13.568564090650312, 1e-5);
 
     
 }
@@ -2431,10 +2431,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 198.318201904499, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 198.318201904499, 1e-5);
 
     
 }
@@ -2450,10 +2450,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 10.709003499121707, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 10.709003499121707, 1e-5);
 
     
 }
@@ -2469,10 +2469,10 @@ TEST_F(DeclarableOpsTests2, mean_pairwssqerr_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 17.686067864414472, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 17.686067864414472, 1e-5);
 
     
 }
@@ -2493,7 +2493,7 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2518,7 +2518,7 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2543,7 +2543,7 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2572,7 +2572,7 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2596,10 +2596,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 612.5, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 612.5, 1e-5);
 
     
 }
@@ -2620,10 +2620,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 612.5, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 612.5, 1e-5);
 
     
 }
@@ -2644,10 +2644,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 612.5, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 612.5, 1e-5);
 
     
 }
@@ -2672,10 +2672,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 608.75, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 608.75, 1e-5);
 
     
 }
@@ -2696,10 +2696,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 51.041668, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 51.041668, 1e-5);
 
     
 }
@@ -2720,10 +2720,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 51.041668, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 51.041668, 1e-5);
 
     
 }
@@ -2744,10 +2744,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 51.041668, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 51.041668, 1e-5);
 
     
 }
@@ -2771,10 +2771,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 88.541664, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 88.541664, 1e-5);
 
     
 }
@@ -2795,10 +2795,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 25.520834, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 25.520834, 1e-5);
 
     
 }
@@ -2819,10 +2819,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 25.520834, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 25.520834, 1e-5);
 
     
 }
@@ -2843,10 +2843,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 25.520834, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 25.520834, 1e-5);
 
     
 }
@@ -2870,10 +2870,10 @@ TEST_F(DeclarableOpsTests2, mean_sqerr_loss_test16) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 44.270832, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 44.270832, 1e-5);
 
     
 }
@@ -2894,7 +2894,7 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2918,7 +2918,7 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2942,7 +2942,7 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2966,7 +2966,7 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -2989,10 +2989,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 11.2187976837, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 11.2187976837, 1e-5);
 
     
 }
@@ -3012,10 +3012,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 11.2187976837, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 11.2187976837, 1e-5);
 
     
 }
@@ -3035,10 +3035,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 11.2187976837, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 11.2187976837, 1e-5);
 
     
 }
@@ -3058,10 +3058,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 10.2187976837, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 10.2187976837, 1e-5);
 
     
 }
@@ -3085,10 +3085,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 6.06840181351, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 6.06840181351, 1e-5);
 
     
 }
@@ -3108,10 +3108,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.934899806976, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.934899806976, 1e-5);
 
     
 }
@@ -3131,10 +3131,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.934899806976, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.934899806976, 1e-5);
 
     
 }
@@ -3154,10 +3154,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.851566493511, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.851566493511, 1e-5);
 
     
 }
@@ -3180,10 +3180,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 1.01140034199, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 1.01140034199, 1e-5);
 
     
 }
@@ -3203,10 +3203,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.467449903488, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.467449903488, 1e-5);
 
     
 }
@@ -3226,10 +3226,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.467449903488, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.467449903488, 1e-5);
 
     
 }
@@ -3249,10 +3249,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test16) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.425783246756, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.425783246756, 1e-5);
 
     
 }
@@ -3275,10 +3275,10 @@ TEST_F(DeclarableOpsTests2, sigm_cross_entropy_loss_test17) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 0.505700170994, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 0.505700170994, 1e-5);
 
     
 }
@@ -3299,7 +3299,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
@@ -3322,7 +3322,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3346,7 +3346,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3370,7 +3370,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3394,7 +3394,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3417,10 +3417,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), 8.55521392822, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), 8.55521392822, 1e-5);
 
     
 }
@@ -3440,10 +3440,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -6.37014198303, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -6.37014198303, 1e-5);
 
     
 }
@@ -3463,10 +3463,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -6.37014198303, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -6.37014198303, 1e-5);
 
     
 }
@@ -3486,10 +3486,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -6.37014198303, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -6.37014198303, 1e-5);
 
     
 }
@@ -3509,10 +3509,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -2.12338066101, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -2.12338066101, 1e-5);
 
     
 }
@@ -3532,10 +3532,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -1.06169033051, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -1.06169033051, 1e-5);
 
     
 }
@@ -3555,10 +3555,10 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
-    ASSERT_TRUE(result->isScalar());
-    ASSERT_NEAR(result->e<double>(0), -2.18880319595, 1e-5);
+    ASSERT_TRUE(result.isScalar());
+    ASSERT_NEAR(result.e<double>(0), -2.18880319595, 1e-5);
 
     
 }
@@ -3579,7 +3579,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3605,7 +3605,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3629,7 +3629,7 @@ TEST_F(DeclarableOpsTests2, softmax_cross_entropy_loss_test15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
@@ -3671,8 +3671,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3716,8 +3716,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3761,8 +3761,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3806,8 +3806,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3851,8 +3851,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3896,8 +3896,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3941,8 +3941,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -3987,8 +3987,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht,1e-4));
@@ -4032,8 +4032,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht,1e-4));
@@ -4077,8 +4077,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -4122,8 +4122,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));
@@ -4167,8 +4167,8 @@ TEST_F(DeclarableOpsTests2, lstmCell_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *ht = results.at(0);
-    auto *ct = results.at(1);
+    auto ht = results.at(0);
+    auto ct = results.at(1);
 
     ASSERT_TRUE(expHt.isSameShape(ht));
     ASSERT_TRUE(expHt.equalsTo(ht));

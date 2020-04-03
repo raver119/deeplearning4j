@@ -67,7 +67,7 @@ namespace sd {
             width = newImageSize->e<int>(0);
             height = newImageSize->e<int>(1);
             
-            ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(4), Nd4jLong);
+            ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(4), Nd4jLong);
             outputShape[0] = 4;
             outputShape[1] = in[1];
             outputShape[2] = width;

@@ -69,7 +69,7 @@ namespace ops {
         int outRank = shape::rank(in) - shape::rank(idx) + 1;
         for (int e = 0; e < numPartition; e++) {
             Nd4jLong *newShape;
-            ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+            ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
             //shape::shapeVector(partitionSizes[e], newShape);
             newShape[0] = outRank;
             newShape[1] = partitionSizes[e];
@@ -117,13 +117,13 @@ namespace ops {
         ops::dynamic_stitch stichOp;
         std::vector<NDArray*> partitions(numPartition * 2);
         for (size_t i = 0; i < res.size(); i++) {
-            partitions[i] = res.at(i);
+            partitions[i] = &res.at(i);
             partitions[i + numPartition] = gradOutList[i];
         }
 
         auto result = stichOp.evaluate(partitions, {numPartition});
         REQUIRE_TRUE(result.status() == ND4J_STATUS_OK, 0, "dynamic_partition_bp: Error with dynamic partitioning.");
-        result.at(0)->reshapei(outputList[0]->getShapeAsVector());
+        result.at(0).reshapei(outputList[0]->getShapeAsVector());
         outputList[1]->assign(indices);
         outputList[0]->assign(result.at(0));
 

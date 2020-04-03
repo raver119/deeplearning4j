@@ -32,30 +32,28 @@ namespace sd {
     protected:
         int _opNum = 0;
         std::string _testName;
-        NDArray *_x = nullptr;
-        NDArray *_y = nullptr;
-        NDArray *_z = nullptr;
+        NDArray _x;
+        NDArray _y;
+        NDArray _z;
         std::vector<int> _axis;
     public:
         OpBenchmark() = default;
-        OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z);
-        OpBenchmark(std::string name, NDArray *x, NDArray *z);
-        OpBenchmark(std::string name, NDArray *x, NDArray *z, std::initializer_list<int> axis);
-        OpBenchmark(std::string name, NDArray *x, NDArray *z, std::vector<int> axis);
-        OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z, std::initializer_list<int> axis);
-        OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z, std::vector<int> axis);
+        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &y, const NDArray &z);
+        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &z);
+        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &z, const std::vector<int> &axis);
+        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &y, const NDArray &z, const std::vector<int> &axis);
 
         void setOpNum(int opNum);
-        void setTestName(std::string testName);
-        void setX(NDArray *array);
-        void setY(NDArray *array);
-        void setZ(NDArray *array);
+        void setTestName(const std::string &testName);
+        void setX(const NDArray &array);
+        void setY(const NDArray &array);
+        void setZ(const NDArray &array);
         void setAxis(std::vector<int> axis);
         void setAxis(std::initializer_list<int> axis);
 
         NDArray& x();
-        int opNum();
-        std::string testName();
+        int opNum() const;
+        const std::string& testName() const;
         std::vector<int> getAxis();
 
         virtual std::string extra();

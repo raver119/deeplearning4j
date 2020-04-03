@@ -153,7 +153,7 @@ namespace sd {
             if (block.getIArguments()->size() == 0 || (block.getIArguments()->size() == 1 && INT_ARG(0) == MAX_INT) || allAxes) {
                 if (block.getIArguments()->size() > 0 && block.getIArguments()->at(0) == 1) {
                     // in this case we just return legacy scalar
-                    ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                    ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                     newShape[0] = 2;
                     newShape[1] = 1;
                     newShape[2] = 1;
@@ -164,7 +164,7 @@ namespace sd {
                     newShape[7] = 99;
                     //ArrayOptions::setDataType(newShape, block.dataType() == DataType::BOOL?block.dataType():ArrayOptions::dataType(inShape));
                 } else {
-                    ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(0), Nd4jLong);
+                    ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(0), Nd4jLong);
                     newShape[0] = 0;
                     newShape[1] = 0;
                     newShape[2] = 1;
@@ -173,7 +173,7 @@ namespace sd {
                 }
             } else {
                 // in this case we're building proper shape for reduction
-                auto array = new NDArray(nullptr, inShape, block.getWorkspace());
+                auto array = new NDArray(nullptr, inShape, block.workspace());
 
                 newShape = ShapeUtils::evalReduceShapeInfo(shape::order(inShape), *block.getIArguments(), *array, false, false, block.workspace());
 

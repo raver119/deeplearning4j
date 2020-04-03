@@ -26,6 +26,14 @@
 #include<ops/declarable/helpers/stack.h>
 
 namespace sd {
+    NDArrayList::NDArrayList(const NDArrayList &other) {
+
+    }
+
+    NDArrayList::NDArrayList(NDArrayList &&other) {
+
+    }
+
     NDArrayList::NDArrayList(int height, bool expandable) {
         _expandable = expandable;
         _elements.store(0);
@@ -138,8 +146,8 @@ namespace sd {
         auto newAxis = ShapeUtils::evalDimsToExclude(array->rankOf(), args);
         auto result = array->allTensorsAlongDimension(newAxis);
         for (int e = 0; e < result.size(); e++) {
-            auto chunk = result.at(e);//->dup(array->ordering());
-            write(e, new NDArray(chunk->dup(array->ordering())));
+            auto chunk = result.at(e);
+            write(e, new NDArray(chunk.dup(array->ordering())));
         }
     }
 
@@ -229,7 +237,7 @@ namespace sd {
             throw std::runtime_error("Number of TADs should match number of indices");
 
         for (int e = 0; e < indicesSize; e++)
-            tads.at(e)->assign(_chunks[indices[e]]);
+            tads.at(e).assign(_chunks[indices[e]]);
 
         return array;
     }

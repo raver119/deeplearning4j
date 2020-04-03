@@ -176,7 +176,7 @@ namespace sd {
             E.applyScalar(scalar::RELU, 0.0f, E);
             // turn E into gradient mask
 
-            NDArray gradientMask(E.getShapeInfo(), block.getWorkspace());
+            NDArray gradientMask(E.getShapeInfo(), block.workspace());
             E.applyTransform(sd::transform::Sign, gradientMask);
 
             dLdp->assign(-z * gradientMask);
@@ -291,9 +291,9 @@ namespace sd {
 
             DataType outType = DataTypeUtils::pickFloatingType(ArrayOptions::dataType(predictionsShapeInfo));
 
-            Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.getWorkspace());
-            Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.getWorkspace());
-            Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.getWorkspace());
+            Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.workspace());
+            Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.workspace());
+            Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.workspace());
 
             return SHAPELIST(dLdpShapeInfo, dLdwShapeInfo, dLdlShapeInfo);
         }

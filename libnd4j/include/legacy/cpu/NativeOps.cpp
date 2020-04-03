@@ -1990,7 +1990,7 @@ sd::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, sd::ops::Decla
         // we shouldn't copy buffer if that's empty array
         void *buffer_ = sd::ArrayOptions::arrayType(shape_) == ArrayType::EMPTY ? nullptr : inputBuffers[e];
 
-        auto array = new sd::NDArray(buffer_, shape_, varSpace.launchContext(), false);
+        auto array = std::make_shared<NDArray>(buffer_, shape_, LaunchContext::defaultContext(), false);
 
         // block should contain references to proper variable
         varSpace.putVariable(1, e, array);
@@ -2004,9 +2004,6 @@ sd::ShapeList* _calculateOutputShapes(Nd4jPointer* extraPointers, sd::ops::Decla
         throw std::runtime_error("Data types validation failed");
 
     auto shapeList = op->calculateOutputShape(&inShapes, block);
-
-    if (varSpace.launchContext() != nullptr)
-        shapeList->detach();
 
     return shapeList;
 }
@@ -2181,23 +2178,16 @@ static VariablesSet* executeStoredGraphT(Nd4jPointer *extraPointers, Nd4jLong gr
     auto graph = sd::graph::GraphHolder::getInstance()->cloneGraph(graphId);
     auto varSpace = graph->variableSpace();
 
-    std::vector<sd::NDArray*> handles;
-
     for (int e = 0; e < numInputs; e++) {
         auto idx = inputIndices[e];
 
         // we'll delete this array later, together with cloned VariableSpace
-        auto array = new sd::NDArray(inputBuffers[e], reinterpret_cast<Nd4jLong *>(inputShapes[e]));
-        handles.emplace_back(array);
 
-        if (varSpace->hasVariable(idx)) {
-            auto var = varSpace->getVariable(idx);
-            if (var->hasNDArray())
-                delete var->getNDArray();
-
-            var->setNDArray(array);
+        if (varSpace.hasVariable(idx)) {
+            auto var = varSpace.getVariable(idx);
+            var->setNDArray(std::make_shared<sd::NDArray>(inputBuffers[e], reinterpret_cast<Nd4jLong *>(inputShapes[e])));
         } else
-            varSpace->putVariable(idx, array);
+            varSpace.putVariable(idx, sd::NDArray(inputBuffers[e], reinterpret_cast<Nd4jLong *>(inputShapes[e])));
     }
 
     throw std::runtime_error("executeStoredGraphT - not implemented yet");

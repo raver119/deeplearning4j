@@ -69,7 +69,7 @@ namespace sd {
 
             for (int e = 0; e < 2; e++) { // 2 element tuple at output
                 Nd4jLong* aShape;
-                ALLOCATE(aShape, block.getWorkspace(), shape::shapeInfoLength(shapeRank), Nd4jLong);
+                ALLOCATE(aShape, block.workspace(), shape::shapeInfoLength(shapeRank), Nd4jLong);
                 aShape[0] = shapeRank;
                 for (int i = 1 ; i < shapeRank; ++i)
                     aShape[i] = shape::sizeAt(in, i - 1);
@@ -78,7 +78,7 @@ namespace sd {
                 shape::updateStrides(aShape, shape::order(in));
                 shapeList->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(aShape, (e == 0?ArrayOptions::dataType(in):sd::DataType::INT64))));
 
-                RELEASE(aShape, block.getWorkspace());
+                RELEASE(aShape, block.workspace());
             }
             return shapeList;
         }

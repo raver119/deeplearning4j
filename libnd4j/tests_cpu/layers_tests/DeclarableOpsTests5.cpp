@@ -216,7 +216,7 @@ TEST_F(DeclarableOpsTests5, Test_Boolean_diff_1) {
     sd::ops::less op;
     auto result = op.evaluate({&x, &y});
     ASSERT_EQ(Status::OK(), result.status());
-    ASSERT_EQ(result.at(0)->t<bool>(0), true);
+    ASSERT_EQ(result.at(0).t<bool>(0), true);
     
 }
 
@@ -409,7 +409,7 @@ TEST_F(DeclarableOpsTests5, Identity_test2) {
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->equalsTo(eps));
+    ASSERT_TRUE(z.equalsTo(eps));
 
     
 }
@@ -425,7 +425,7 @@ TEST_F(DeclarableOpsTests5, Log1p_test1) {
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->equalsTo(y));
+    ASSERT_TRUE(z.equalsTo(y));
 
     
 }
@@ -462,8 +462,6 @@ TEST_F(DeclarableOpsTests5, Test_SpaceToBatch_2) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-    
 }
 
 
@@ -817,7 +815,7 @@ TEST_F(DeclarableOpsTests5, gatherNd_test8) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
     
 }
@@ -1135,7 +1133,7 @@ TEST_F(DeclarableOpsTests5, reverse_sequense_test14) {
 
     auto z = results.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
     
 }
@@ -1174,7 +1172,7 @@ TEST_F(DeclarableOpsTests5, Test_TopK_0) {
     ASSERT_TRUE(expI.equalsTo(i));
     // repeat res again
     for (int cases = 0; cases < 100; ++cases) {
-        op.execute({&x}, std::vector<NDArray*>{v, i}, {}, {1, 0}, {}); // without sorting
+        op.execute({&x}, {&v, &i}, {}, {1, 0}, {}); // without sorting
     }
     
 }
@@ -1213,7 +1211,7 @@ TEST_F(DeclarableOpsTests5, Test_TopK_1) {
     ASSERT_TRUE(expI.equalsTo(i));
     // repeat res again
     for (int cases = 0; cases < 100; ++cases) {
-        op.execute({&x}, std::vector<NDArray*>{v, i}, {}, {1, 0}, {}); // without sorting
+        op.execute({&x}, {&v, &i}, {}, {1, 0}, {}); // without sorting
     }
     
 }
@@ -1436,9 +1434,9 @@ TEST_F(DeclarableOpsTests5, Test_Moments_1) {
 //    v->printIndexedBuffer("Result is ");
 //    d->printIndexedBuffer("Result is ");
 
-    ASSERT_TRUE(v->isScalar());
-    ASSERT_NEAR(expMean, v->e<double>(0), inf);
-    ASSERT_NEAR(expDeviation, d->e<double>(0), inf);
+    ASSERT_TRUE(v.isScalar());
+    ASSERT_NEAR(expMean, v.e<double>(0), inf);
+    ASSERT_NEAR(expDeviation, d.e<double>(0), inf);
 
     
 }
@@ -1464,11 +1462,11 @@ TEST_F(DeclarableOpsTests5, Test_Moments_2) {
     auto v = result.at(0);
     auto d = result.at(1);
 
-    ASSERT_TRUE(v->isVector());
-    ASSERT_TRUE(d->isVector());
+    ASSERT_TRUE(v.isVector());
+    ASSERT_TRUE(d.isVector());
 
-    ASSERT_TRUE(v->equalsTo(&expV));
-    ASSERT_TRUE(d->equalsTo(&expD));
+    ASSERT_TRUE(v.equalsTo(&expV));
+    ASSERT_TRUE(d.equalsTo(&expD));
 
     
 }
@@ -1498,11 +1496,11 @@ TEST_F(DeclarableOpsTests5, Test_Moments_3) {
     auto v = result.at(0);
     auto d = result.at(1);
 
-    ASSERT_TRUE(v->isMatrix());
-    ASSERT_TRUE(d->isMatrix());
+    ASSERT_TRUE(v.isMatrix());
+    ASSERT_TRUE(d.isMatrix());
 
-    ASSERT_TRUE(v->equalsTo(&expV));
-    ASSERT_TRUE(d->equalsTo(&expD));
+    ASSERT_TRUE(v.equalsTo(&expV));
+    ASSERT_TRUE(d.equalsTo(&expD));
 
     
 }
@@ -1525,8 +1523,8 @@ TEST_F(DeclarableOpsTests5, Test_Moments_4) {
     auto v = result.at(0);
     auto d = result.at(1);
 
-    ASSERT_TRUE(v->isMatrix());
-    ASSERT_TRUE(d->isMatrix());
+    ASSERT_TRUE(v.isMatrix());
+    ASSERT_TRUE(d.isMatrix());
 
     // v->printIndexedBuffer("v");
     // expV.printIndexedBuffer("expV");
@@ -1534,8 +1532,8 @@ TEST_F(DeclarableOpsTests5, Test_Moments_4) {
     // d->printIndexedBuffer("d");
     // expD.printIndexedBuffer("expD");
 
-    ASSERT_TRUE(v->equalsTo(&expV));
-    ASSERT_TRUE(d->equalsTo(&expD));
+    ASSERT_TRUE(v.equalsTo(&expV));
+    ASSERT_TRUE(d.equalsTo(&expD));
 
     
 }
@@ -1644,8 +1642,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test1) {
     auto output = results.at(0);
 
     bool haveZeros = false;
-    for(int i = 0; i < output->lengthOf(); ++i)
-        if(output->e<float>(i) == (float)0.)
+    for(int i = 0; i < output.lengthOf(); ++i)
+        if(output.e<float>(i) == (float)0.)
             haveZeros = true;
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1684,8 +1682,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test3) {
     auto output = results.at(0);
 
     bool haveZeros = false;
-    for(int i = 0; i < output->lengthOf(); ++i)
-        if(output->e<float>(i) == (float)0.)
+    for(int i = 0; i < output.lengthOf(); ++i)
+        if(output.e<float>(i) == (float)0.)
             haveZeros = true;
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1728,8 +1726,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test4) {
     ASSERT_EQ(Status::OK(), results.status());
     auto output = results.at(0);
     bool haveZeros = false;
-    for(int i = 0; i < output->lengthOf(); ++i)
-        if(output->e<float>(i) == (float)0.)
+    for(int i = 0; i < output.lengthOf(); ++i)
+        if(output.e<float>(i) == (float)0.)
             haveZeros = true;
 
     ASSERT_TRUE(input.isSameShape(output));
@@ -1750,8 +1748,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test5) {
     auto output = results.at(0);
 
     bool haveZeros = false;
-    for(int i = 0; i < output->lengthOf(); ++i)
-        if(output->e<float>(i) == (float)0.)
+    for(int i = 0; i < output.lengthOf(); ++i)
+        if(output.e<float>(i) == (float)0.)
             haveZeros = true;
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1773,8 +1771,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test6) {
     auto output = results.at(0);
 
     bool haveZeros = false;
-    for(int i = 0; i < output->lengthOf(); ++i)
-        if(output->e<float>(i) == (float)0.)
+    for(int i = 0; i < output.lengthOf(); ++i)
+        if(output.e<float>(i) == (float)0.)
             haveZeros = true;
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -1826,8 +1824,8 @@ TEST_F(DeclarableOpsTests5, EmbeddingLookup_1) {
     auto result = op.evaluate({&x, &y}, {}, {0});
     auto output = result.at(0);
     // x.printShapeInfo("Input");
-    output->printShapeInfo("Output");
-    exp.printShapeInfo("Expected");
+    //output->printShapeInfo("Output");
+    //exp.printShapeInfo("Expected");
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
     ASSERT_TRUE(exp.isSameShape(output));
     //output->printIndexedBuffer("Output");
@@ -2047,7 +2045,7 @@ TEST_F(DeclarableOpsTests5, DynamicPartition_3) {
 
     for (int e = 0; e < result.size(); e++) {
         auto output = result.at(e);
-        if (output)
+        if (output.shapeInfo())
         {
             // output->printShapeInfo("Output shape> ");
             // exp[e].printShapeInfo("Expected shape> ");
@@ -2397,8 +2395,8 @@ TEST_F(DeclarableOpsTests5, ZeroFraction_1) {
     auto res = op.evaluate({&x}, {}, {});
 
     ASSERT_EQ(Status::OK(), res.status());
-    ASSERT_TRUE(res.at(0)->isScalar());
-    ASSERT_EQ(res.at(0)->e<double>(0), 0.25);
+    ASSERT_TRUE(res.at(0).isScalar());
+    ASSERT_EQ(res.at(0).e<double>(0), 0.25);
 
     
 }
@@ -2412,8 +2410,8 @@ TEST_F(DeclarableOpsTests5, ZeroFraction_2) {
     auto res = op.evaluate({&x}, {}, {});
 
     ASSERT_EQ(Status::OK(), res.status());
-    ASSERT_TRUE(res.at(0)->isScalar());
-    ASSERT_EQ(res.at(0)->e<double>(0), 0.375);
+    ASSERT_TRUE(res.at(0).isScalar());
+    ASSERT_EQ(res.at(0).e<double>(0), 0.375);
 
     
 }
@@ -2427,8 +2425,8 @@ TEST_F(DeclarableOpsTests5, ZeroFraction_3) {
     auto res = op.evaluate({&x}, {}, {});
 
     ASSERT_EQ(Status::OK(), res.status());
-    ASSERT_TRUE(res.at(0)->isScalar());
-    ASSERT_EQ(res.at(0)->e<double>(0), 0.375);
+    ASSERT_TRUE(res.at(0).isScalar());
+    ASSERT_EQ(res.at(0).e<double>(0), 0.375);
 
     
 }
@@ -2867,9 +2865,9 @@ TEST_F(DeclarableOpsTests5, L2_Loss_1) {
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
-    ASSERT_TRUE(output->isScalar());
+    ASSERT_TRUE(output.isScalar());
 
-    ASSERT_EQ(output->e<double>(0), exp);
+    ASSERT_EQ(output.e<double>(0), exp);
 
     
 }
@@ -2884,7 +2882,7 @@ TEST_F(DeclarableOpsTests5, L2_Loss_2) {
 
     auto z = results.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
     
 }

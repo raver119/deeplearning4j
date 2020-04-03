@@ -84,7 +84,7 @@ namespace sd {
 
         /*
         DECLARE_SHAPE_FN(skipgram) {
-            return SHAPELIST(ShapeBuilders::createScalarShapeInfo(DataType::INT8, block.getWorkspace()));
+            return SHAPELIST(ShapeBuilders::createScalarShapeInfo(DataType::INT8, block.workspace()));
         }
         */
     }

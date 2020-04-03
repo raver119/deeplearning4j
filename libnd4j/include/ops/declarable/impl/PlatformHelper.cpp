@@ -45,32 +45,33 @@ namespace sd {
                 if (ctx.isFastPath()) {
                     if (ctx.fastpath_out().size() <= inputId) {
                         if (ctx.isInplace()) {
-                            z = ctx.fastpath_in()[inputId];
+                            z = ctx.fastpath_in()[inputId].get();
                         } else
                             throw std::runtime_error("fastpath_out: unresolved output array");
                     } else {
-                        z = ctx.fastpath_out()[inputId];
+                        z = ctx.fastpath_out()[inputId].get();
                     }
                 } else {
                     std::pair<int, int> pair(ctx.nodeId(), inputId);
 
                     if (ctx.isInplace()) {
-                        z = ctx.variable(inputId)->getNDArray();
+                        auto vz = ctx.variable(inputId)->getNDArray();
+                        z = vz.get();
 
                         // hypothetically it's possible to have no variable. chances are low, but who knows. let's just create it for now
                         if (!ctx.getVariableSpace()->hasVariable(pair)) {
-                            auto var = new graph::Variable();
+                            auto var = std::make_shared<graph::Variable>();
                             ctx.getVariableSpace()->putVariable(pair, var);
                         }
 
                         // now we're saving input array as output array
                         auto var = ctx.getVariableSpace()->getVariable(pair);
                         var->markRemovable(false);
-                        var->setNDArray(z);
+                        var->setNDArray(vz);
                     } else if (!ctx.isInplace()) {
                         auto var = ctx.variable(pair);
                         if (var->getNDArray() != nullptr && var->getNDArray()->nonNull()) {
-                            z = var->getNDArray();
+                            z = var->getNDArray().get();
                         } else {
                             nd4j_printf("Can't get Z variable for node_%i!\n", ctx.nodeId());
                         }

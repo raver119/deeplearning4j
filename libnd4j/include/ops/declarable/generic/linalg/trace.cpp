@@ -51,7 +51,7 @@ DECLARE_SHAPE_FN(trace) {
     const int rank = inShapeInfo[0] - 2;
 
     Nd4jLong* outShapeInfo(nullptr);
-    ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong); 
+    ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
 
     outShapeInfo[0] = rank;
     for(int i=1; i <= rank; ++i)
@@ -59,7 +59,7 @@ DECLARE_SHAPE_FN(trace) {
 
     shape::updateStrides(outShapeInfo, shape::order(inShapeInfo));
     auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(outShapeInfo, ArrayOptions::dataType(inShapeInfo)));
-    RELEASE(outShapeInfo, block.getWorkspace());
+    RELEASE(outShapeInfo, block.workspace());
     return SHAPELIST(result);
 }
 

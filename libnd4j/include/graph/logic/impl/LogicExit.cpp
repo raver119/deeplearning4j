@@ -26,7 +26,8 @@ namespace sd {
         Nd4jStatus LogicExit::processNode(Graph *graph, Node *node) {
             // this op is basically no-op
             // we just know it exists
-
+            throw std::runtime_error("LogicExit::processNode - Not implemented yet");
+/*
             auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
@@ -42,6 +43,7 @@ namespace sd {
             __variableSpace->getVariable(pair0)->markRemovable(false);
 
             return ND4J_STATUS_OK;
+            */
         }
     }
 }

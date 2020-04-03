@@ -24,6 +24,8 @@
 namespace sd {
     namespace graph {
         Nd4jStatus LogicLoopCond::processNode(Graph *graph, Node *node) {
+            throw std::runtime_error("LogicLoopCond::processNode - Not implemented yet");
+            /*
             auto __variableSpace = graph->variableSpace();
             auto __flowPath = __variableSpace->flowPath();
 
@@ -49,6 +51,7 @@ namespace sd {
             }
 
             return ND4J_STATUS_OK;
+            */
         }
     }
 }

@@ -324,7 +324,7 @@ namespace helpers {
 
         auto loop = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
-                luNN_<T, I>(context, outputs.at(i), permutationVectors?permutations.at(i):nullptr, n);
+                luNN_<T, I>(context, &outputs.at(i), permutationVectors ? &permutations.at(i) : nullptr, n);
             }
         };
         samediff::Threads::parallel_for(loop, 0, outputs.size(), 1);
@@ -342,7 +342,7 @@ namespace helpers {
         Nd4jLong n = input->sizeAt(-1);
         Nd4jLong n2 = n * n;
 
-        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.workspace());
 
         for (int e = 0; e < output->lengthOf(); e++) {
             for (int k = e * n2, row = 0; k < (e + 1) * n2; ++k, ++row)
@@ -363,7 +363,7 @@ template <typename T>
         Nd4jLong n = input->sizeAt(-1);
         Nd4jLong n2 = n * n;
 
-        NDArray matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.getWorkspace());
+        NDArray matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.workspace());
         for (int e = 0; e < output->lengthOf(); e++) {
             for (int k = e * n2, row = 0; k < (e + 1) * n2; ++k, ++row) {
                 matrix.p(row, input->e<T>(k));
@@ -388,8 +388,8 @@ template <typename T>
         auto totalCount = output->lengthOf() / n2;
 
         output->assign(0.f); // fill up output tensor with zeros
-        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
+        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
         auto permutation = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
         auto lowerMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
         auto upperMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
@@ -441,8 +441,8 @@ template <typename T>
         auto totalCount = output->lengthOf() / n2;
 
         output->assign(0.f); // fill up output tensor with zeros
-        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
+        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
         auto permutation = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
         auto lowerMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
         auto upperMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
@@ -484,14 +484,14 @@ template <typename T>
         auto n2 = n * n;
 
         output->nullify(); // fill up output tensor with zeros
-//        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
+//        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
 //        auto lowerMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
 //        auto upperMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
         auto inputPart = input->allTensorsAlongDimension({-2, -1});
         auto outputPart = output->allTensorsAlongDimension({-2, -1});
         auto totalCount = outputPart.size(); //lengthOf() / n2;
         for (int e = 0; e < totalCount; e++) {
-            invertUpperMatrix(inputPart.at(e), outputPart.at(e));
+            invertUpperMatrix(&inputPart.at(e), &outputPart.at(e));
         }
         return Status::OK();
     }
@@ -510,20 +510,20 @@ template <typename T>
 
     template <typename T>
     static bool checkCholeskyInput_(sd::LaunchContext * context, NDArray const* input) {
-        //std::unique_ptr<NDArray> matrix(NDArrayFactory::create_('c', {n, n}, input->dataType())); //, block.getWorkspace());
+        //std::unique_ptr<NDArray> matrix(NDArrayFactory::create_('c', {n, n}, input->dataType())); //, block.workspace());
         ResultSet lastMatrixList = input->allTensorsAlongDimension({input->rankOf() - 2, input->rankOf()-1});
         for (size_t i = 0; i < lastMatrixList.size(); i++) {
             auto thisMatrix = lastMatrixList.at(i);
             // check for symmetric
-            for (Nd4jLong r = 0; r < thisMatrix->rows(); r++)
-                for (Nd4jLong c = 0; c < thisMatrix->columns(); c++)
-                    if (sd::math::nd4j_abs(thisMatrix->e<T>(r, c) - lastMatrixList.at(i)->e<T>(c,r)) > DataTypeUtils::min<T>()) return false;
+            for (Nd4jLong r = 0; r < thisMatrix.rows(); r++)
+                for (Nd4jLong c = 0; c < thisMatrix.columns(); c++)
+                    if (sd::math::nd4j_abs(thisMatrix.e<T>(r, c) - lastMatrixList.at(i).e<T>(c,r)) > DataTypeUtils::min<T>()) return false;
 
             NDArray output = NDArrayFactory::create<T>(0., context);
-            if (ND4J_STATUS_OK != determinant(context, thisMatrix, &output)) return false;
+            if (ND4J_STATUS_OK != determinant(context, &thisMatrix, &output)) return false;
             if (output.e<T>(0) <= T(0)) return 0;
-            NDArray reversedMatrix(*thisMatrix);
-            if (ND4J_STATUS_OK != inverse(context, thisMatrix, &reversedMatrix)) return false;
+            NDArray reversedMatrix(thisMatrix);
+            if (ND4J_STATUS_OK != inverse(context, &thisMatrix, &reversedMatrix)) return false;
             if (ND4J_STATUS_OK != determinant(context, &reversedMatrix, &output)) return false;
             if (output.e<T>(0) <= T(0)) return 0;
 
@@ -546,7 +546,7 @@ template <typename T>
         if (!inplace)
              output->assign(0.f); // fill up output tensor with zeros only inplace=false
 
-        std::unique_ptr<NDArray> matrix(NDArrayFactory::create_('c', {n, n}, input->dataType(), context)); //, block.getWorkspace());
+        std::unique_ptr<NDArray> matrix(NDArrayFactory::create_('c', {n, n}, input->dataType(), context)); //, block.workspace());
         std::unique_ptr<NDArray> lowerMatrix(NDArrayFactory::create_('c',{n, n}, input->dataType(), context));
 
         for (int e = 0; e < totalCount; e++) {
@@ -597,7 +597,7 @@ template <typename T>
 
         for (Nd4jLong e = 0; e < totalCount; e++) {
             for (size_t i = 0; i < n; ++i)
-                output->t<T>(e) += sd::math::nd4j_log<T,T>(sd::math::nd4j_pow<T,T,T>(matricies.at(e)->t<T>(i, i), T(2)));
+                output->t<T>(e) += sd::math::nd4j_log<T,T>(sd::math::nd4j_pow<T,T,T>(matricies.at(e).t<T>(i, i), T(2)));
         }
         return ND4J_STATUS_OK;
     }

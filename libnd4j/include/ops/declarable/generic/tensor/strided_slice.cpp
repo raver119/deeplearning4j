@@ -412,7 +412,7 @@ namespace sd {
 //            else {
             if (indices.size()) {
                 Nd4jLong* subArrShapeInfo = nullptr;
-                ALLOCATE(subArrShapeInfo, block.getWorkspace(), shape::shapeInfoLength(x->rankOf()), Nd4jLong);
+                ALLOCATE(subArrShapeInfo, block.workspace(), shape::shapeInfoLength(x->rankOf()), Nd4jLong);
                 Nd4jLong offset;
 
                 shape::calcSubArrShapeInfoAndOffset(indices.data(), x->getShapeInfo(), subArrShapeInfo, offset, true, true);
@@ -428,7 +428,7 @@ namespace sd {
 
                 NDArray::registerSpecialUse({z}, {x});
 
-                RELEASE(subArrShapeInfo,  block.getWorkspace());
+                RELEASE(subArrShapeInfo,  block.workspace());
             }
             else if (!z->isEmpty()){
                 z->assign(x->e(0));

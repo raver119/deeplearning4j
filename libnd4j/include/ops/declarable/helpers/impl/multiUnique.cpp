@@ -36,13 +36,13 @@ namespace helpers {
                 throw std::runtime_error("multiUnique: this op support INT32 data type only.");
 
             reshaped[pos] = array->reshape(array->ordering(), {-1});
-            cContext.setInputArray(pos, &reshaped[pos]);
+            cContext.setInputArray(pos, reshaped[pos]);
 
             length += array->lengthOf();
             pos++;
         }
         NDArray arrayFull('c', {length}, sd::DataType::INT32, inputList[0]->getContext());
-        cContext.setOutputArray(0, &arrayFull);
+        cContext.setOutputArray(0, arrayFull);
         cContext.setIArguments(&axis, 1);
 
         sd::ops::concat opConcat;
@@ -57,7 +57,7 @@ namespace helpers {
 
         auto uniqueVals = uResult.at(0);
 
-        bool res = uniqueVals->lengthOf() == arrayFull.lengthOf();
+        bool res = uniqueVals.lengthOf() == arrayFull.lengthOf();
 
         return res;
     }

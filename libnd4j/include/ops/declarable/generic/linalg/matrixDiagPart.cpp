@@ -49,7 +49,7 @@ namespace sd {
                 outShapeInfo = ConstantShapeHelper::getInstance()->vectorShapeInfo(lastDimension, ArrayOptions::dataType(in));
             }
             else {
-                ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+                ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
                 outShapeInfo[0] = outRank;
                 for(int i = 0; i < outRank - 1; ++i)
                     outShapeInfo[i + 1] = shape::sizeAt(in, i);

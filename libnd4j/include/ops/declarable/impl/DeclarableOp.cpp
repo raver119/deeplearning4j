@@ -111,32 +111,33 @@ namespace sd {
             if (ctx.isFastPath()) {
                 if (ctx.fastpath_out().size() <= inputId) {
                     if (ctx.isInplace()) {
-                        z = ctx.fastpath_in()[inputId];
+                        z = ctx.fastpath_in()[inputId].get();
                     } else
                         throw std::runtime_error("fastpath_out: unresolved output array");
                 } else {
-                    z = ctx.fastpath_out()[inputId];
+                    z = ctx.fastpath_out()[inputId].get();
                 }
             } else {
                 std::pair<int, int> pair(ctx.nodeId(), inputId);
 
                 if (ctx.isInplace()) {
-                    z = ctx.variable(inputId)->getNDArray();
+                    auto vz = ctx.variable(inputId)->getNDArray();
+                    z = vz.get();
 
                     // hypothetically it's possible to have no variable. chances are low, but who knows. let's just create it for now
                     if (!ctx.getVariableSpace()->hasVariable(pair)) {
-                        auto var = new Variable();
+                        auto var = std::make_shared<Variable>();
                         ctx.getVariableSpace()->putVariable(pair, var);
                     }
 
                     // now we're saving input array as output array
                     auto var = ctx.getVariableSpace()->getVariable(pair);
                     var->markRemovable(false);
-                    var->setNDArray(z);
+                    var->setNDArray(vz);
                 } else if (!ctx.isInplace()) {
                     auto var = ctx.variable(pair);
                     if (var->getNDArray() != nullptr && var->getNDArray()->nonNull()) {
-                        z = var->getNDArray();
+                        z = var->getNDArray().get();
                     } else {
                         nd4j_printf("Can't get Z variable for node_%i!\n", ctx.nodeId());
                     }
@@ -149,8 +150,8 @@ namespace sd {
             return z;
         }
 
-        int sd::ops::DeclarableOp::prepareOutputs(Context &ctx) {
-            auto workspace = ctx.getWorkspace();
+        int DeclarableOp::prepareOutputs(Context &ctx) {
+            auto workspace = ctx.workspace();
             GraphProfile *prof = nullptr;
             NodeProfile *node = nullptr;
             std::chrono::time_point<std::chrono::system_clock> inputEnd, inputStart, shapeStart, shapeEnd, arrayStart, arrayEnd;
@@ -159,10 +160,13 @@ namespace sd {
             auto fp = ctx.isFastPath();
 
             if (Environment::getInstance()->isProfiling()) {
+                /*
                 if (ctx.getVariableSpace() != nullptr && ctx.getVariableSpace()->flowPath() != nullptr) {
                     prof = ctx.getVariableSpace()->flowPath()->profile();
                     node = prof->nodeById(ctx.nodeId());
                 }
+                 */
+                throw std::runtime_error("DeclarableOp::prepareOutputs - Not implemented yet");
             }
 
             if (ctx.isInplace()) {
@@ -173,7 +177,7 @@ namespace sd {
                         for (auto p: ctx.inputs()) {
                             auto var = ctx.variable(p);
                             if (var->variableType() == VariableType::NDARRAY) {
-                                NDArray *array = var->getNDArray();
+                                auto array = var->getNDArray().get();
 
                                 node->addInputShape(array->shapeInfo());
                                 node->addOutputShape(array->shapeInfo());
@@ -190,7 +194,7 @@ namespace sd {
                     for (auto p: ctx.inputs()) {
                         auto var = ctx.variable(p);
                         if (var->variableType() == VariableType::NDARRAY) {
-                            NDArray *array = var->getNDArray();
+                            auto array = var->getNDArray();
                             ctx.setInputArray(cnt, array);
                             ctx.setOutputArray(cnt, array);
 
@@ -241,8 +245,8 @@ namespace sd {
                     for (auto p: ctx.inputs()) {
                         auto var = ctx.variable(p);
                         if (var->variableType() == VariableType::NDARRAY) {
-                            NDArray *array = var->getNDArray();
-                            if (array == nullptr)
+                            auto array = var->getNDArray();
+                            if (array.get() == nullptr)
                                 throw unresolved_input_exception::build("Variable wasn't resolved prior shape calculation", p);
 
                             inSha.push_back(array->getShapeInfo());
@@ -303,7 +307,7 @@ namespace sd {
                                 shape::printShapeInfoLinear("Going to create variable with shape", out);
 
                             // we're creating non-initialized array here
-                            auto outArr = new NDArray(out, true, ctx.launchContext(), false);
+                            NDArray outArr(out, true, ctx.launchContext(), false);
 
                             ctx.pushNDArrayToVariableSpace(pair, outArr);
 
@@ -342,8 +346,8 @@ namespace sd {
                         auto idx = cnt++;
                         if (fout.size() <= idx) {
                             // array doesnt exist
-                            auto outArr = new NDArray(out, true, ctx.launchContext());
-                            ctx.setOutputArray(idx, outArr, true);
+                            auto outArr = std::make_shared<NDArray>(out, true, ctx.launchContext());
+                            ctx.setOutputArray(idx, outArr);
                         } else {
                             auto array = fout[idx];
                             // checking out shape equality
@@ -382,13 +386,13 @@ namespace sd {
         }
 
         void sd::ops::DeclarableOp::storeResult(sd::graph::Context &ctx, int outputNumber, NDArray& array) {
-            ctx.pushNDArrayToVariableSpace(ctx.nodeId(), outputNumber, &array, !ctx.isInplace());
+            ctx.pushNDArrayToVariableSpace(ctx.nodeId(), outputNumber, array);
         }
 
         bool sd::ops::DeclarableOp::allocateResult(Context& block, Nd4jLong* shape) {
             auto var = block.variable(block.getNodeId(), 0);
 
-            auto workspace = block.getWorkspace();
+            auto workspace = block.workspace();
 
             Nd4jLong len = shape::length(shape);
             Nd4jLong* __shape;
@@ -400,13 +404,12 @@ namespace sd {
             if (var->getNDArray() == nullptr) {
 
                 std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(len * sizeof(int8_t), ArrayOptions::dataType(__shape), workspace);
-                var->setNDArray(new NDArray(buffer, ShapeDescriptor(__shape), block.launchContext()));
+                var->setNDArray(std::make_shared<NDArray>(buffer, ShapeDescriptor(__shape), block.launchContext()));
             }
             else if(var->getNDArray()->lengthOf() != len) {
                 // if length not match - lets reallocate array
-                delete var->getNDArray();
                 std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(len * sizeof(int8_t), ArrayOptions::dataType(__shape), workspace);
-                var->setNDArray(new NDArray(buffer, ShapeDescriptor(__shape), block.launchContext()));
+                var->setNDArray(std::make_shared<NDArray>(buffer, ShapeDescriptor(__shape), block.launchContext()));
             }
 
             return true;
@@ -415,16 +418,15 @@ namespace sd {
 
         bool sd::ops::DeclarableOp::allocateResult(Context& block, std::initializer_list<Nd4jLong>& shape, char order) {
             auto var = block.variable(block.getNodeId(), 0);
-            auto workspace = block.getWorkspace();
+            auto workspace = block.workspace();
 
             Nd4jLong len = shape::length(shape);
             // if that's first run - we probably have nothing here
             if (var->getNDArray() == nullptr) {
-                var->setNDArray(new NDArray(order, shape, DataType::FLOAT32, block.launchContext()));
+                var->setNDArray(std::make_shared<NDArray>(order, shape, DataType::FLOAT32, block.launchContext()));
             } else if(var->getNDArray()->lengthOf() != len) {
                 // if length not match - lets reallocate array
-                delete var->getNDArray();
-                var->setNDArray(new NDArray(order, shape, DataType::FLOAT32, block.launchContext()));
+                var->setNDArray(std::make_shared<NDArray>(order, shape, DataType::FLOAT32, block.launchContext()));
             }
 
             return true;
@@ -592,7 +594,7 @@ namespace sd {
             return ND4J_STATUS_OK;
         }
 
-        Nd4jStatus sd::ops::DeclarableOp::execute(Context* block) {
+        Nd4jStatus DeclarableOp::execute(Context* block) {
             nd4j_debug("Executing op: [%s]\n", this->getOpName().c_str());
 
             std::chrono::time_point<std::chrono::system_clock> timeEnter, timeStart, timeEnd;
@@ -648,6 +650,7 @@ namespace sd {
             }
 
             if (Environment::getInstance()->isProfiling() && block->getVariableSpace() != nullptr) {
+                /*
                 auto fp = block->getVariableSpace()->flowPath();
                 if (fp != nullptr) {
                     auto p = fp->profile();
@@ -659,6 +662,8 @@ namespace sd {
                         p->nodeById(block->nodeId())->setTotalSize(memoryUsed);
                     }
                 }
+                 */
+                throw std::runtime_error("DeclarableOp::execute - Not implemented yet");
             }
 
 
@@ -685,7 +690,7 @@ namespace sd {
 
                     auto array = block->isFastPath() ? block->isInplace() ? block->fastpath_in()[e] : block->fastpath_out()[e] : vs->getVariable(block->nodeId(), e)->getNDArray();
 
-                    auto shape = ShapeUtils::shapeAsString(array);
+                    auto shape = ShapeUtils::shapeAsString(array.get());
                     auto first = array->isEmpty() ? std::string("Empty NDArray") : array->asString(32);
                     auto type = DataTypeUtils::asString(array->dataType());
 
@@ -770,7 +775,7 @@ namespace sd {
 
             for (auto p: block.inputs()) {
                 auto v = block.variable(p);
-                NDArray *aV = v->getNDArray();
+                NDArray *aV = v->getNDArray().get();
 
                 if (aV == nullptr)
                     return ND4J_STATUS_BAD_INPUT;
@@ -817,11 +822,12 @@ namespace sd {
                 }
 
                 if (v->variableType() == VariableType::NDARRAY) {
-                    NDArray *aV = v->getNDArray();
-
                     // if array is empty intentionally - we're ok with that
-                    if (v->hasNDArray() && v->isEmpty())
+                    if (v->hasNDArray() && v->isEmpty()) {
                         continue;
+                    }
+
+                    NDArray *aV = v->getNDArray().get();
 
                     if (aV == nullptr || !aV->nonNull()) {
                         if (!this->getOpName().empty()) {
@@ -843,10 +849,10 @@ namespace sd {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
-            NDArray *a0 = block.variable(0)->getNDArray();
+            NDArray *a0 = block.variable(0)->getNDArray().get();
             for (auto p: block.inputs()) {
                 auto v = block.variable(p);
-                NDArray *aV = v->getNDArray();
+                NDArray *aV = v->getNDArray().get();
                 if (a0->ordering() != aV->ordering())
                     return ND4J_STATUS_BAD_ORDER;
             }
@@ -857,7 +863,7 @@ namespace sd {
         Nd4jStatus sd::ops::DeclarableOp::execute(sd::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<NDArray*>& outputs, const std::vector<double>& tArgs, const std::vector<Nd4jLong>& iArgs, const std::vector<bool>& bArgs, const std::vector<sd::DataType>& dArgs, bool isInplace, sd::DataType type) {
             VariableSpace variableSpace;
             FlowPath fp;
-            variableSpace.setFlowPath(&fp);
+            //variableSpace.setFlowPath(&fp);
 
             int cnt = -1;
             std::vector<int> in;
@@ -865,7 +871,7 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = new Variable(v);
+                auto var = std::make_shared<Variable>(v);
                 var->markRemovable(false);
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
@@ -873,7 +879,7 @@ namespace sd {
 
             int et = 0;
             for (auto v: outputs) {
-                auto var = new Variable(v);
+                auto var = std::make_shared<Variable>(v);
                 var->markRemovable(false);
                 std::pair<int,int> pair(1, et++);
                 variableSpace.putVariable(pair, var);
@@ -951,11 +957,11 @@ namespace sd {
             Context ctx(1);
 
             for (int e = 0; e < inputs.size(); e++) {
-                ctx.setInputArray(e, inputs[e]);
+                ctx.setInputArray(e, *inputs[e]);
             }
 
             for (int e = 0; e < outputs.size(); e++) {
-                ctx.setOutputArray(e, outputs[e]);
+                ctx.setOutputArray(e, *outputs[e]);
             }
 
 
@@ -1016,7 +1022,7 @@ namespace sd {
             VariableSpace variableSpace;
             //ResultSet arrayList;
             FlowPath fp;
-            variableSpace.setFlowPath(&fp);
+            //variableSpace.setFlowPath(&fp);
 
             int cnt = -1;
             std::vector<int> in;
@@ -1024,7 +1030,7 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = new Variable(v);
+                auto var = std::make_shared<Variable>(v);
                 var->markRemovable(false);
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
@@ -1065,16 +1071,16 @@ namespace sd {
                         if (!arr->isAttached()) {
                             var->markRemovable(false);
                             arr->setContext(sd::LaunchContext::defaultContext());
-                            arrayList.push_back(arr);
+                            arrayList.push_back(*arr.get());
                         } else {
-                            arrayList.push_back(arr->detach());
+                            arrayList.push_back(*arr->detach());
                         }
                     } else
                         break;
                 }
             } else {
                 for (auto v:inputs) {
-                    arrayList.push_back(v);
+                    arrayList.push_back(*v);
                 }
             }
 
@@ -1090,7 +1096,7 @@ namespace sd {
             if (block.width() == 0)
                 return ND4J_STATUS_OK;
 
-            NDArray *a0 = block.array(0);
+            NDArray *a0 = block.array(0).get();
             for (int e = 0; e < block.width(); e++) {
                 auto aV = block.array(e);
                 if (!shape::equalsSoft(a0->getShapeInfo(), aV->getShapeInfo()))
@@ -1128,7 +1134,7 @@ namespace sd {
             // default implementation suits transform, so just returns the same shape
 
             int* newshape;
-            ALLOCATE(newshape, block.getWorkspace(), shape::shapeInfoLength(inputShape), int);
+            ALLOCATE(newshape, block.workspace(), shape::shapeInfoLength(inputShape), int);
             memcpy(newshape, inputShape, shape::shapeInfoByteLength(inputShape));
 
             return newshape;

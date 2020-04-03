@@ -23,53 +23,51 @@
 
 namespace sd {
     namespace graph {
-        InferenceRequest::InferenceRequest(Nd4jLong graphId, ExecutorConfiguration *configuration) {
+        InferenceRequest::InferenceRequest(Nd4jLong graphId, const ExecutorConfiguration &configuration) {
             this->_id = graphId;
             this->_configuration = configuration;
         }
 
         InferenceRequest::~InferenceRequest() {
-            for (auto v : _deletables)
-                delete v;
+            //
         }
 
-        void InferenceRequest::appendVariable(int id, NDArray *array) {
+        void InferenceRequest::appendVariable(int id, const NDArray &array) {
             appendVariable(id, 0, array);
         }
 
-        void InferenceRequest::appendVariable(int id, int index, NDArray *array) {
-            auto v = new Variable(array, nullptr, id, index);
+        void InferenceRequest::appendVariable(int id, int index, const NDArray &array) {
+            auto v = std::make_shared<Variable>(std::make_shared<sd::NDArray>(array), nullptr, id, index);
             insertVariable(v);
         }
 
-        void InferenceRequest::appendVariable(std::string &id, NDArray *array) {
-            auto v = new Variable(array, id.c_str());
+        void InferenceRequest::appendVariable(const std::string &id, const NDArray &array) {
+            auto v = std::make_shared<Variable>(std::make_shared<sd::NDArray>(array), id.c_str());
             insertVariable(v);
         }
 
-        void InferenceRequest::appendVariable(std::string &name, int id, int index, NDArray *array) {
-            auto v = new Variable(array, name.c_str(), id, index);
+        void InferenceRequest::appendVariable(const std::string &name, int id, int index, const NDArray &array) {
+            auto v = std::make_shared<Variable>(std::make_shared<sd::NDArray>(array), name, id, index);
             insertVariable(v);
         }
 
-        void InferenceRequest::insertVariable(Variable *variable) {
+        void InferenceRequest::insertVariable(std::shared_ptr<Variable> variable) {
             variable->markRemovable(false);
             variable->markReadOnly(true);
             _variables.emplace_back(variable);
-            _deletables.emplace_back(variable);
         }
 
-        void InferenceRequest::appendVariable(Variable *variable) {
+        void InferenceRequest::appendVariable(std::shared_ptr<Variable> variable) {
             _variables.emplace_back(variable);
         }
 
         flatbuffers::Offset<FlatInferenceRequest> InferenceRequest::asFlatInferenceRequest(flatbuffers::FlatBufferBuilder &builder) {
             std::vector<flatbuffers::Offset<FlatVariable>> vec;
-            for (Variable* v : _variables) {
+            for (const auto &v : _variables) {
                 vec.emplace_back(v->asFlatVariable(builder));
             }
 
-            auto confOffset = _configuration != nullptr ? _configuration->asFlatConfiguration(builder) : 0;
+            auto confOffset = _configuration.asFlatConfiguration(builder);
 
             auto vecOffset = builder.CreateVector(vec);
 

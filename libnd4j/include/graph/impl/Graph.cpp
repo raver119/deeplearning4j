@@ -37,24 +37,24 @@
 
 namespace sd {
     namespace graph {
-        const std::vector<Variable*>& Graph::getPlaceholders() const {
-            return *_variableSpace->getPlaceholders();
+        const std::vector<std::shared_ptr<Variable>>& Graph::placeholders() const {
+            return _variableSpace.placeholders();
         }
 
         int Graph::numberOfPlaceholders() const {
-            return _variableSpace->numberOfPlaceholders();
+            return _variableSpace.numberOfPlaceholders();
         };
 
         const ExecutorConfiguration& Graph::getExecutorConfiguration() const {
             return _configuration;
         }
 
-        VariableSpace * Graph::variableSpace() const {
-            return _variableSpace;
+        VariableSpace& Graph::variableSpace() const {
+            return const_cast<VariableSpace&>(_variableSpace);
         }
 
         Graph::~Graph() {
-            delete _variableSpace;
+
         }
 
         int Graph::idByName(const std::string &nodeName) const {
@@ -67,7 +67,7 @@ namespace sd {
         void Graph::addVariable(const std::string &name, NDArray &array) {
             int id = _maxId++;
             _symbolicLookupTable[name] = id;
-            _variableSpace->putVariable(id, 0, array);
+            _variableSpace.putVariable(id, 0, array);
         }
 
         void Graph::addVariable(const std::string &name, NDArray &&array) {
@@ -118,8 +118,7 @@ namespace sd {
             throw std::runtime_error("not implemented yet");
         }
 
-        Graph::Graph(const FlatGraph *flatGraph, VariableSpace *variableSpace, const GraphMemoryManager &memoryManager) : _memoryMaager(memoryManager) {
-            this->_variableSpace = variableSpace == nullptr ? new VariableSpace() : variableSpace;
+        Graph::Graph(const FlatGraph *flatGraph, const GraphMemoryManager &memoryManager) : _memoryMaager(memoryManager) {
             bool trusted = flatGraph != nullptr;
 
             // if there was no exec configuration in flatgraph - create default one
@@ -130,8 +129,7 @@ namespace sd {
 
             // if memory reqs were set - initialize workspace
             if (_configuration._footprintForward > 0) {
-                sd::memory::Workspace *workspace = this->_variableSpace->launchContext()->getWorkspace();
-                workspace->expandBy(_configuration._footprintForward);
+                _workspace.expandBy(_configuration._footprintForward);
             }
 
             // parsing variables here
@@ -140,13 +138,13 @@ namespace sd {
                     auto flatVar = flatGraph->variables()->Get(e);
                     std::pair<int, int> pair(flatVar->id()->first(), flatVar->id()->second());
 
-                    auto var = new Variable(flatVar);
+                    auto var = std::make_shared<Variable>(flatVar);
                     if (flatVar->name() != nullptr) {
                         var->setName(flatVar->name()->str());
                         _symbolicLookupTable[var->name()] = pair.first;
                     }
 
-                    _variableSpace->putVariable(pair, var);
+                    _variableSpace.putVariable(pair, var);
                 }
             }
 
@@ -157,7 +155,7 @@ namespace sd {
                     for (unsigned int e = 0; e < flatGraph->outputs()->size(); e++) {
                         auto out = flatGraph->outputs()->Get(e);
                         std::pair<int, int> vp(out->first(), out->second());
-                        if (!_variableSpace->hasVariable(vp)) {
+                        if (!_variableSpace.hasVariable(vp)) {
                             nd4j_verbose("Non-existent variable requested: %i\n", out);
                             throw std::runtime_error("Non-existent variable requested");
                         }
@@ -245,13 +243,13 @@ namespace sd {
 
         void Graph::printOut() {
             // print variables first
-            if (_variableSpace->totalEntries() > 0) {
+            if (_variableSpace.totalEntries() > 0) {
                 nd4j_printf("\nPrinting out Variables...\n", "");
-                auto vars = _variableSpace->getVariables();
+                auto vars = _variableSpace.variables();
 
-                for (Variable* v: vars) {
+                for (auto &v: vars) {
                     if (v->hasNDArray()) {
-                        auto shape = ShapeUtils::shapeAsString(v->getNDArray());
+                        auto shape = ShapeUtils::shapeAsString(v->getNDArray().get());
                         auto values = v->getNDArray()->asString(16);
                         auto dtype = DataTypeUtils::asString(v->getNDArray()->dataType());
 
@@ -277,29 +275,24 @@ namespace sd {
             return ND4J_STATUS_OK;
         }
 
-        void Graph::forgetVariableSpace() {
-            _variableSpace = nullptr;
-        }
-
         void Graph::replaceState(VariableSpace *state, const ExecutorConfiguration &configuration) {
-            delete _variableSpace;
-
-            _variableSpace = state;
+            _variableSpace = *state;
             _configuration = configuration;
         }
 
         Graph Graph::cloneWithProxy() const {
             Graph clone;
 
-            clone.replaceState(new VariableProxy(this->_variableSpace), this->_configuration);
+            //clone.replaceState(new VariableProxy(&this->_variableSpace), this->_configuration);
 
-            return clone;
+            //return clone;
+            throw std::runtime_error("Graph::cloneWithProxy - Not implemented yet");
         }
 
         Graph* Graph::clone() const {
             auto clone = new Graph();
 
-            clone->replaceState(this->_variableSpace->clone(), this->_configuration.clone());
+            //clone->replaceState(&this->_variableSpace, this->_configuration.clone());
 
             throw std::runtime_error("Graph::clone - not implemented yet");
         }
@@ -349,7 +342,7 @@ namespace sd {
             auto fg = GetFlatGraph(reinterpret_cast<uint8_t *>(ptr));
 
             // return Graph from this FlatGraph
-            return Graph(fg, nullptr, memoryManager);
+            return Graph(fg, memoryManager);
         }
 
         Graph Graph::importFromTensorFlow(const char *fileName) {
@@ -556,9 +549,9 @@ namespace sd {
 
             _symbolicLookupTable[nodeName] = id;
 
-            auto var = new Variable(true, dataType, shape);
+            auto var = std::make_shared<Variable>(true, dataType, shape);
             var->setName(nodeName);
-            _variableSpace->putVariable(id, var);
+            _variableSpace.putVariable(id, var);
 
             _placeholders.emplace_back(nodeName);
         }
@@ -571,7 +564,7 @@ namespace sd {
                     throw unresolved_input_exception::build("Dictionary entry doesn't exist", v.first);
 
                 // we also check if arrays provided here do match placeholder restrictions of shape and dtype
-                auto var = _variableSpace->getVariable(v.first);
+                auto var = _variableSpace.getVariable(v.first);
                 if (var->dataType() != DataType::ANY && var->dataType() != v.second.dataType())
                     throw datatype_exception::build("Placeholder requires another data type", var->dataType(), v.second.dataType());
 
@@ -602,10 +595,10 @@ namespace sd {
             // fetch outputs from VariableSpace
             std::map<std::string, NDArray> result;
             for (const auto &v:outputs) {
-                if (!_variableSpace->hasVariable(v))
+                if (!_variableSpace.hasVariable(v))
                     throw unresolved_output_exception::build("Requested output doesn't exist after execution", v);
 
-                auto var = _variableSpace->getVariable(v);
+                auto var = _variableSpace.getVariable(v);
 
                 // TODO: we want to make sure ManagedDataBuffer doesn't leak here
                 result[v] = *var->getNDArray();

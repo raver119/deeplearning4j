@@ -51,7 +51,7 @@ TEST_F(DeclarableOpsTests16, scatter_upd_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 
 TEST_F(DeclarableOpsTests16, scatter_upd_2) {
@@ -69,7 +69,7 @@ TEST_F(DeclarableOpsTests16, scatter_upd_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 
 TEST_F(DeclarableOpsTests16, scatter_upd_3) {
@@ -136,7 +136,7 @@ TEST_F(DeclarableOpsTests16, test_hamming_distance_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 
 TEST_F(DeclarableOpsTests16, test_knn_mindistance_1) {
@@ -162,7 +162,7 @@ TEST_F(DeclarableOpsTests16, test_empty_cast_1) {
     sd::ops::cast op;
     auto result = op.evaluate({&x},  {10});
     ASSERT_EQ(Status::OK(), result.status());
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 }
 
 TEST_F(DeclarableOpsTests16, test_range_1) {
@@ -171,7 +171,7 @@ TEST_F(DeclarableOpsTests16, test_range_1) {
 
     Context ctx(1);
     ctx.setTArguments({ -1.0, 1.0, 0.01 });
-    ctx.setOutputArray(0, &z);
+    ctx.setOutputArray(0, z);
 
     auto status = op.execute(&ctx);
     ASSERT_EQ(Status::OK(), status);
@@ -214,8 +214,8 @@ TEST_F(DeclarableOpsTests16, test_reverse_1) {
             auto listE = exp.allTensorsAlongDimension({ 1 });
 
             for (int e = 0; e < r; e++) {
-                listI.at(e)->assign(rowOriginal);
-                listE.at(e)->assign(rowReversed);
+                listI.at(e).assign(rowOriginal);
+                listE.at(e).assign(rowReversed);
             }
 
             sd::ops::reverse op;
@@ -272,8 +272,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_1) {
     auto actual = NDArrayFactory::create<float>('c', { 5,4,3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
@@ -326,8 +326,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_2) {
     auto actual = NDArrayFactory::create<float>('c', { 5,3,4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 1 });
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
@@ -353,8 +353,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_3) {
     auto actual = NDArrayFactory::create<float>('c', { 4, 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
@@ -380,8 +380,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_4) {
     auto actual = NDArrayFactory::create<float>('c', { 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 0 });
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
@@ -402,8 +402,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_5) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
@@ -439,8 +439,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_6) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &subArrRgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, subArrRgbs);
+    ctx.setOutputArray(0, actual);
     sd::ops::rgb_to_hsv op;
     auto status = op.execute(&ctx);
 
@@ -484,8 +484,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_1) {
     auto actual = NDArrayFactory::create<float>('c', { 5,4,3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &hsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, hsvs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
@@ -527,8 +527,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_2) {
     auto actual = NDArrayFactory::create<float>('c', { 5,3,4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &hsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, hsvs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 1 });
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
@@ -552,8 +552,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_3) {
     auto actual = NDArrayFactory::create<float>('c', { 4,3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &hsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, hsvs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
@@ -578,8 +578,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_4) {
     auto actual = NDArrayFactory::create<float>('c', { 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &hsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, hsvs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 0 });
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
@@ -601,8 +601,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_5) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &hsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, hsvs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
@@ -638,8 +638,8 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_6) {
 #endif 
 
     Context ctx(1);
-    ctx.setInputArray(0, &subArrHsvs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, subArrHsvs);
+    ctx.setOutputArray(0, actual);
     sd::ops::hsv_to_rgb op;
     auto status = op.execute(&ctx);
 
@@ -698,8 +698,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_1) {
     auto actual = NDArrayFactory::create<float>('c', { 5, 4, 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgb);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgb);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
@@ -746,8 +746,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_2) {
     auto actual = NDArrayFactory::create<float>('c', { 5, 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgb);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgb);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 1 });
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
@@ -776,8 +776,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_3) {
     auto actual = NDArrayFactory::create<float>('c', { 4, 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgb);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgb);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
@@ -806,8 +806,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_4) {
     auto actual = NDArrayFactory::create<float>('c', { 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgb);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgb);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 0 });
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
@@ -829,8 +829,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_5) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &rgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, rgbs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
@@ -867,8 +867,8 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_6) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &subArrRgbs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, subArrRgbs);
+    ctx.setOutputArray(0, actual);
     sd::ops::rgb_to_yiq op;
     auto status = op.execute(&ctx);
 
@@ -910,8 +910,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_1) {
     auto actual = NDArrayFactory::create<float>('c', { 5, 4, 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &yiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, yiqs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
@@ -954,8 +954,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_2) {
     auto actual = NDArrayFactory::create<float>('c', { 5, 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &yiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, yiqs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 1 });
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
@@ -980,8 +980,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_3) {
     auto actual = NDArrayFactory::create<float>('c', { 4, 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &yiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, yiqs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
@@ -1006,8 +1006,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_4) {
     auto actual = NDArrayFactory::create<float>('c', { 3, 4 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &yiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, yiqs);
+    ctx.setOutputArray(0, actual);
     ctx.setIArguments({ 0 });
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
@@ -1028,8 +1028,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_5) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &yiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, yiqs);
+    ctx.setOutputArray(0, actual);
 
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
@@ -1066,8 +1066,8 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_6) {
     auto actual = NDArrayFactory::create<float>('c', { 3 });
 
     Context ctx(1);
-    ctx.setInputArray(0, &subArrYiqs);
-    ctx.setOutputArray(0, &actual);
+    ctx.setInputArray(0, subArrYiqs);
+    ctx.setOutputArray(0, actual);
     sd::ops::yiq_to_rgb op;
     auto status = op.execute(&ctx);
 

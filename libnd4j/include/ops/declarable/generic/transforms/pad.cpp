@@ -96,14 +96,14 @@ DECLARE_SHAPE_FN(pad) {
 	REQUIRE_TRUE(expectedPaddingsShape == currentPaddingsShape, 0, "PAD op: wrong shape of paddings array, expected is %s, but got %s instead !", ShapeUtils::shapeAsString(expectedPaddingsShape).c_str(), ShapeUtils::shapeAsString(currentPaddingsShape).c_str());
 
 	Nd4jLong* outShapeInfo = nullptr;
-    ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+    ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
     outShapeInfo[0] = rank;
     for(int i=1; i <= rank; ++i)
     	outShapeInfo[i] = inputShapeInfo[i] + paddings->e<Nd4jLong>(i-1,0) + paddings->e<Nd4jLong>(i-1,1);
 
     ShapeUtils::updateStridesAndType(outShapeInfo, inputShapeInfo, shape::order(inputShapeInfo));
     ShapeDescriptor descriptor(outShapeInfo);
-    RELEASE(outShapeInfo, block.getWorkspace());
+    RELEASE(outShapeInfo, block.workspace());
     return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(descriptor));
 }
 

@@ -131,9 +131,9 @@ TEST_F(DataTypesValidationTests, test_bits_hamming_distance_1) {
     auto z = NDArrayFactory::create<uint64_t>(0);
 
     Context ctx(1);
-    ctx.setInputArray(0, &x);
-    ctx.setInputArray(1, &y);
-    ctx.setOutputArray(0, &z);
+    ctx.setInputArray(0, x);
+    ctx.setInputArray(1, y);
+    ctx.setOutputArray(0, z);
 
     sd::ops::bits_hamming_distance op;
     auto status = op.execute(&ctx);
@@ -146,9 +146,9 @@ TEST_F(DataTypesValidationTests, test_bits_hamming_distance_2) {
     auto z = NDArrayFactory::create<Nd4jLong>(0);
 
     Context ctx(1);
-    ctx.setInputArray(0, &x);
-    ctx.setInputArray(1, &y);
-    ctx.setOutputArray(0, &z);
+    ctx.setInputArray(0, x);
+    ctx.setInputArray(1, y);
+    ctx.setOutputArray(0, z);
 
     sd::ops::bits_hamming_distance op;
     auto status = op.execute(&ctx);

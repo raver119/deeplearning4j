@@ -80,7 +80,7 @@ DECLARE_SHAPE_FN(percentile) {
     }
 
     auto axises = block.getIArguments();
-    Nd4jLong* outputShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(inputShapeInfo), axises, inputShapeInfo, keepDims, false, block.getWorkspace());
+    Nd4jLong* outputShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(inputShapeInfo), axises, inputShapeInfo, keepDims, false, block.workspace());
 
     return SHAPELIST(outputShapeInfo);
 }

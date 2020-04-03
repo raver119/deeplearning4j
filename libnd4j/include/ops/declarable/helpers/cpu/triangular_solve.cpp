@@ -92,9 +92,9 @@ namespace helpers {
         auto batchLoop = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
                 if (lower) {
-                    lowerTriangularSolve<T>(context, leftPart[i], rightPart[i], adjoint, outputPart[i]);
+                    lowerTriangularSolve<T>(context, &leftPart[i], &rightPart[i], adjoint, &outputPart[i]);
                 } else {
-                    upperTriangularSolve<T>(context, leftPart[i], rightPart[i], adjoint, outputPart[i]);
+                    upperTriangularSolve<T>(context, &leftPart[i], &rightPart[i], adjoint, &outputPart[i]);
                 }
             }
         };
@@ -116,13 +116,13 @@ namespace helpers {
                 if (!lower) {
                     for (Nd4jLong r = 0; r < rows; r++) {
                         for (Nd4jLong c = 0; c <= r; c++) {
-                            outputPart[batch]->t<T>(r, c) = inputPart[batch]->t<T>(c, r);
+                            outputPart[batch].t<T>(r, c) = inputPart[batch].t<T>(c, r);
                         }
                     }
                 } else {
                     for (Nd4jLong r = 0; r < rows; r++) {
                         for (Nd4jLong c = r; c < cols; c++) {
-                            outputPart[batch]->t<T>(r, c) = inputPart[batch]->t<T>(c, r);
+                            outputPart[batch].t<T>(r, c) = inputPart[batch].t<T>(c, r);
                         }
                     }
                 }

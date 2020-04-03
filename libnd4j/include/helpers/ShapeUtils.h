@@ -93,10 +93,12 @@ namespace sd {
         // returns shape part of shapeInfo as std::vector
         static std::vector<Nd4jLong> pullShapeFromShapeInfo(Nd4jLong *shapeInfo);
 
+        static std::string shapeAsString(const NDArray &array);
         static std::string shapeAsString(const NDArray* array);
         static std::string shapeAsString(const std::vector<Nd4jLong>& shape);
         static std::string shapeAsString(const Nd4jLong* shapeInfo);
         static std::string shapeAsString(const int rank, const Nd4jLong* shapeInfo);
+        static std::string strideAsString(const NDArray& array);
         static std::string strideAsString(const NDArray* array);
 
         static std::string shapeInfoAsString(const Nd4jLong* shapeInfo);

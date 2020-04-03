@@ -53,7 +53,7 @@ namespace sd {
 
             int numOfClasses = val + 1;
 
-            ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+            ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
 
             outputShape[0] = outRank;
             outputShape[1] = numOfClasses;

@@ -79,7 +79,7 @@ namespace sd {
                         REQUIRE_TRUE(false, 0, "Uniform requires either TArgs or 3 arguments to be present");
                     }
 
-                    auto z = OUTPUT_VARIABLE(0); //NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0); //NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillUniform(block.launchContext(), block.randomGenerator(), z, from, to);
 
@@ -138,7 +138,7 @@ namespace sd {
                     for (int e = 0; e < input->lengthOf(); e++)
                         shape[e] = input->e<Nd4jLong>(e);
 
-                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillGaussian(block.launchContext(), block.randomGenerator(), z, mean, stdev);
 
@@ -166,7 +166,7 @@ namespace sd {
                     for (int e = 0; e < input->lengthOf(); e++)
                         shape[e] = input->e<Nd4jLong>(e);
 
-                    auto z = OUTPUT_VARIABLE(0); // NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0); // NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillBernoulli(block.launchContext(), block.randomGenerator(), z, prob);
 
@@ -199,7 +199,7 @@ namespace sd {
                     for (int e = 0; e < input->lengthOf(); e++)
                         shape[e] = input->e<Nd4jLong>(e);
 
-                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillBinomial(block.launchContext(), block.randomGenerator(), z, trials, prob);
 
@@ -231,7 +231,7 @@ namespace sd {
                     for (int e = 0; e < input->lengthOf(); e++)
                         shape[e] = input->e<Nd4jLong>(e);
 
-                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0);//NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillLogNormal(block.launchContext(), block.randomGenerator(), z, mean, stdev);
 
@@ -263,7 +263,7 @@ namespace sd {
                     for (int e = 0; e < input->lengthOf(); e++)
                         shape[e] = input->e<Nd4jLong>(e);
 
-                    auto z = OUTPUT_VARIABLE(0); // NDArrayFactory::create_<T>('c', shape, block.getWorkspace());
+                    auto z = OUTPUT_VARIABLE(0); // NDArrayFactory::create_<T>('c', shape, block.workspace());
 
                     RandomLauncher::fillTruncatedNormal(block.launchContext(), block.randomGenerator(), z, mean, stdev);
                 }
@@ -375,7 +375,7 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = new Variable(v);
+                auto var = std::make_shared<Variable>(v);
                 var->markRemovable(false);
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
@@ -407,9 +407,9 @@ namespace sd {
                     auto arr = var->getNDArray();
                     if (!arr->isAttached()) {
                         var->markRemovable(false);
-                        arrayList.push_back(arr);
+                        arrayList.push_back(*arr.get());
                     } else {
-                        arrayList.push_back(arr->detach());
+                        arrayList.push_back(*arr->detach());
                     }
                 } else
                     break;

@@ -91,9 +91,9 @@ namespace sd {
 
                     for (int e = 0; e < tadsX.size(); e++) {
                         if (!condition->e<bool>(e))
-                            tadsZ.at(e)->assign(tadsY.at(e));
+                            tadsZ.at(e).assign(tadsY.at(e));
                         else
-                            tadsZ.at(e)->assign(tadsX.at(e));
+                            tadsZ.at(e).assign(tadsX.at(e));
                     }
                 }
             } else {
@@ -106,14 +106,14 @@ namespace sd {
                 sd::ops::Where op;
                 auto res(op.evaluate({condition}));
                 REQUIRE_OK(res.status());
-                NDArray* whereTrue = res.at(0);
+                auto& whereTrue = res.at(0);
 
-                if (whereTrue->isEmpty())
+                if (whereTrue.isEmpty())
                     return ND4J_STATUS_OK;
                 for (Nd4jLong outNext = 0; outNext < width; ++outNext) {
                     auto output = OUTPUT_VARIABLE(outNext);
                     for (Nd4jLong e = 0; e < output->lengthOf(); ++e) {
-                        output->p<Nd4jLong>(e, whereTrue->e<Nd4jLong>(e, outNext));
+                        output->p<Nd4jLong>(e, whereTrue.e<Nd4jLong>(e, outNext));
                     }
                 }
             }

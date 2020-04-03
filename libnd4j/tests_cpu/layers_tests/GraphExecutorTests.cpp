@@ -55,7 +55,7 @@ TEST_F(GraphExecutorTests, test_basic_exec_1) {
 
 TEST_F(GraphExecutorTests, test_basic_exec_2) {
     GraphMemoryManager mgr;
-    Graph graph(nullptr, nullptr, mgr);
+    Graph graph(nullptr, mgr);
 
     auto A = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
     auto B = NDArrayFactory::create<int>('c', {3}, {2, 2, 2});
@@ -91,14 +91,14 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     executor.execute(optimizedGraph);
 
     // checking results by ID
-    ASSERT_TRUE(graph.variableSpace()->hasVariable(m.id()));
-    ASSERT_TRUE(graph.variableSpace()->hasVariable(a.id()));
+    ASSERT_TRUE(graph.variableSpace().hasVariable(m.id()));
+    ASSERT_TRUE(graph.variableSpace().hasVariable(a.id()));
 
     // checking results by name
-    ASSERT_TRUE(graph.variableSpace()->hasVariable("mul"));
-    ASSERT_TRUE(graph.variableSpace()->hasVariable("add"));
+    ASSERT_TRUE(graph.variableSpace().hasVariable("mul"));
+    ASSERT_TRUE(graph.variableSpace().hasVariable("add"));
 
     // checking if result is valid
-    auto result = graph.variableSpace()->getVariable(a.id())->getNDArray();
+    auto result = graph.variableSpace().getVariable(a.id())->getNDArray();
     ASSERT_EQ(exp, *result);
 }

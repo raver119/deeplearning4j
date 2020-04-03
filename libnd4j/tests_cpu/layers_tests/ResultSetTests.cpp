@@ -42,8 +42,8 @@ TEST_F(ResultSetTests, basic_test_1) {
     ASSERT_EQ(3, set.size());
 
     for (int e = 0; e < set.size(); e++)
-        ASSERT_EQ(5, set.at(e)->lengthOf());
+        ASSERT_EQ(5, set.at(e).lengthOf());
 
     for (int e = 0; e < tensors.size(); e++)
-        ASSERT_EQ(5, tensors.at(e)->lengthOf());
+        ASSERT_EQ(5, tensors.at(e).lengthOf());
 }

@@ -630,7 +630,7 @@ namespace helpers {
 //        DataType dtype = input->dataType();
 //        if (dtype != DataType::DOUBLE)
 //            dtype = DataType::FLOAT32;
-        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, DataTypeUtils::fromT<T>(), context); //, block.workspace());
         auto det = NDArrayFactory::create<T>(1, context);
         auto stream = context->getCudaStream();
         NDArray::prepareSpecialUse({output}, {input});
@@ -676,7 +676,7 @@ namespace helpers {
             if (dtype != DataType::DOUBLE)
                 dtype = DataType::FLOAT32;
 
-            auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, dtype, context); //, block.getWorkspace());
+            auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, dtype, context); //, block.workspace());
             auto det = NDArrayFactory::create<T>(1, context);
             auto stream = context->getCudaStream();
             NDArray::prepareSpecialUse({output}, {input});

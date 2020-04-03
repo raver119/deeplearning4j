@@ -38,46 +38,46 @@ namespace sd {
         }
 
         
-        int VariableProxy::numberOfPlaceholders() {
+        int VariableProxy::numberOfPlaceholders() const {
             return _backed->numberOfPlaceholders();
         }
 
         
-        std::vector<Variable*>* VariableProxy::getPlaceholders() {
-            return _backed->getPlaceholders();
+        const std::vector<std::shared_ptr<Variable>>& VariableProxy::placeholders() const {
+            return _backed->placeholders();
         }
 
-        bool VariableProxy::hasExternalVariable(int it) {
+        bool VariableProxy::hasExternalVariable(int it) const {
             return _backed->hasExternalVariable(it);
         }
 
         
-        bool VariableProxy::hasExternalVariable(std::pair<int,int>& pair) {
+        bool VariableProxy::hasExternalVariable(const std::pair<int,int>& pair) const {
             return _backed->hasExternalVariable(pair);
         }
 
         
-        bool VariableProxy::hasExternalVariable(const std::string &symbol) {
+        bool VariableProxy::hasExternalVariable(const std::string &symbol) const {
             return _backed->hasExternalVariable(symbol);
         }
 
         
-        bool VariableProxy::hasVariable(int id) {
+        bool VariableProxy::hasVariable(int id) const {
             return _current->hasVariable(id) || _backed->hasVariable(id);
         }
         
         
-        bool VariableProxy::hasVariable(int id, int idx) {
+        bool VariableProxy::hasVariable(int id, int idx) const {
             return _current->hasVariable(id, idx) || _backed->hasVariable(id, idx);
         }
         
         
-        bool VariableProxy::hasVariable(std::pair<int,int>& pair) {
+        bool VariableProxy::hasVariable(const std::pair<int,int>& pair) const {
             return _current->hasVariable(pair) || _backed->hasVariable(pair);
         }
 
         
-        void VariableProxy::dropVariable(std::pair<int,int> &pair) {
+        void VariableProxy::dropVariable(const std::pair<int,int> &pair) {
             dropVariable(pair.first, pair.second);
         }
 
@@ -89,11 +89,11 @@ namespace sd {
         }
 
         
-        std::vector<Variable*> VariableProxy::getVariables() {
-            std::vector<Variable*> result;
+        std::vector<std::shared_ptr<Variable>> VariableProxy::variables() const {
+            std::vector<std::shared_ptr<Variable>> result;
 
-            auto b = _backed->getVariables();
-            auto c = _current->getVariables();
+            auto b = _backed->variables();
+            auto c = _current->variables();
 
             for (auto v: b)
                 result.emplace_back(v);
@@ -105,60 +105,60 @@ namespace sd {
         }
 
         
-        bool VariableProxy::hasVariable(const std::string &symbol) {
+        bool VariableProxy::hasVariable(const std::string &symbol) const {
             return _current->hasVariable(symbol) || _backed->hasVariable(symbol);
         }
 
         
-        Variable *VariableProxy::getVariable(int id) {
+        std::shared_ptr<Variable> VariableProxy::getVariable(int id) const {
             if (_current->hasVariable(id))
                 return _current->getVariable(id);
             
             if (_backed->hasVariable(id))
                 return _backed->getVariable(id);
 
-            nd4j_printf("Unable to get Variable to proxy: [%i]\n", id);
+            nd4j_printf("Unable to get Variable from proxy: [%i]\n", id);
             throw std::runtime_error("Bad arguments");
         }
 
         
-        Variable *VariableProxy::getVariable(int id, int idx) {
+        std::shared_ptr<Variable> VariableProxy::getVariable(int id, int idx) const {
             if (_current->hasVariable(id, idx))
                 return _current->getVariable(id, idx);
             
             if (_backed->hasVariable(id, idx))
                 return _backed->getVariable(id, idx);
 
-            nd4j_printf("Unable to get Variable to proxy: [%i:%i]\n", id, idx);
+            nd4j_printf("Unable to get Variable from proxy: [%i:%i]\n", id, idx);
             throw std::runtime_error("Bad arguments");
         }
 
         
-        Variable *VariableProxy::getVariable(std::pair<int,int>& pair) {
+        std::shared_ptr<Variable> VariableProxy::getVariable(const std::pair<int,int>& pair) const {
             if (_current->hasVariable(pair))
                 return _current->getVariable(pair);
             
             if (_backed->hasVariable(pair))
                 return _backed->getVariable(pair);
 
-            nd4j_printf("Unable to get Variable to proxy: [%i:%i]\n", pair.first, pair.second);
+            nd4j_printf("Unable to get Variable from proxy: [%i:%i]\n", pair.first, pair.second);
             throw std::runtime_error("Bad arguments");
         }
 
         
-        Variable *VariableProxy::getVariable(const std::string &symbol) {
+        std::shared_ptr<Variable> VariableProxy::getVariable(const std::string &symbol) const {
             if (_current->hasVariable(symbol))
                 return _current->getVariable(symbol);
             
             if (_backed->hasVariable(symbol))
                 return _backed->getVariable(symbol);
 
-            nd4j_printf("Unable to get Variable to proxy: [%s]\n", symbol.c_str());
+            nd4j_printf("Unable to get Variable from proxy: [%s]\n", symbol.c_str());
             throw std::runtime_error("Bad arguments");
         }
 
         
-        void VariableProxy::replaceVariable(Variable *variable) {
+        void VariableProxy::replaceVariable(std::shared_ptr<Variable> variable) {
             if (!variable->getName().empty()) {
                 // if variable has name defined - we should resolve it via backing var space
                 if (_backed->hasVariable(variable->getName())) {
@@ -171,104 +171,74 @@ namespace sd {
                 _current->replaceVariable(variable);
         }
 
-        
-        Variable* VariableProxy::putVariable(std::pair<int,int>& pair, NDArray *array) {
+        std::shared_ptr<Variable>
+        VariableProxy::putVariable(const std::string &name, int id, int idx, const NDArray &array) {
+            return _current->putVariable(name, id, idx, array);
+        }
+
+        void VariableProxy::putOutputVariable(std::shared_ptr<Variable> variable) {
+            _current->putOutputVariable(variable);
+        }
+
+        std::shared_ptr<Variable> VariableProxy::putVariable(const std::pair<int,int>& pair, const NDArray &array) {
             return _current->putVariable(pair, array);
         }
 
         
-        void VariableProxy::putVariable(std::pair<int,int>& pair, Variable *variable) {
+        void VariableProxy::putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
             _current->putVariable(pair, variable);
         }
 
         
-        void VariableProxy::putVariable(int id, Variable *variable) {
+        void VariableProxy::putVariable(int id, std::shared_ptr<Variable> variable) {
             _current->putVariable(id, variable);
         }
 
         
-        void VariableProxy::putVariable(int id, NDArray *array) {
-            _current->putVariable(id, array);
+        std::shared_ptr<Variable> VariableProxy::putVariable(int id, const NDArray &array) {
+            return _current->putVariable(id, array);
         }
 
-        void VariableProxy::putVariable(int id, int idx, const NDArray &array) {
-            _current->putVariable(id, idx, array);
-        }
-        
-        Variable* VariableProxy::putVariable(int id, int idx, NDArray *array) {
+        std::shared_ptr<Variable> VariableProxy::putVariable(int id, int idx, const NDArray &array) {
             return _current->putVariable(id, idx, array);
         }
 
-        
-        void VariableProxy::putVariable(int id, int idx, Variable *array) {
-            _current->putVariable(id, idx, array);
+        void VariableProxy::putVariable(const std::string& name, int id, int idx, std::shared_ptr<Variable> array) {
+            _current->putVariable(name, id, idx, array);
         }
-
         
-        void VariableProxy::trackList(sd::NDArrayList* list) {
-            _current->trackList(list);
+        Stash* VariableProxy::stash() const {
+            return _current->stash();
         }
-
         
-        Stash* VariableProxy::getStash() {
-            return _current->getStash();
-        }
-
-        
-        void VariableProxy::setFlowPath(FlowPath* timers) {
-            _current->setFlowPath(timers);
-        }
-
-        
-        FlowPath* VariableProxy::flowPath() {
-            return _current->flowPath();
-        }
-
-        
-        void VariableProxy::putOutputVariable(Variable *variable) {
-            _current->putOutputVariable(variable);
-        }
-
-        
-        Nd4jLong VariableProxy::externalMemory() {
+        Nd4jLong VariableProxy::externalMemory() const {
             return _backed->externalMemory() + _current->externalMemory();
         }
 
         
-        Nd4jLong VariableProxy::internalMemory() {
+        Nd4jLong VariableProxy::internalMemory() const {
             return _backed->internalMemory() + _current->internalMemory();
         }
 
         
-        Nd4jLong VariableProxy::totalMemory() {
+        Nd4jLong VariableProxy::totalMemory() const {
             return _backed->totalMemory() + _current->totalMemory();
         }
 
         
-        int VariableProxy::externalEntries() {
+        int VariableProxy::externalEntries() const {
             return _backed->externalEntries() + _current->externalEntries();
         }
 
         
-        int VariableProxy::internalEntries() {
+        int VariableProxy::internalEntries() const {
             return _backed->internalEntries() + _current->internalEntries();
         }
 
         
-        int VariableProxy::totalEntries() {
+        int VariableProxy::totalEntries() const {
             return _backed->totalEntries() + _current->totalEntries();
         }
-
-        
-        VariableSpace* VariableProxy::clone() {
-            auto clone = new VariableProxy(_backed);
-
-            delete clone->_current;
-            clone->_current = _current->clone();
-
-            return clone;
-        }
-
         
         VariableSpace& VariableProxy::operator=(const VariableSpace& other) {
             if (this == &other) return *this;
@@ -276,11 +246,6 @@ namespace sd {
             nd4j_printf("VariableProxy = not implemented\n","");
 
             return *this;
-        }  
-
-        
-        sd::memory::Workspace * VariableProxy::workspace() {
-            return _workspace;
         }
     }
 }

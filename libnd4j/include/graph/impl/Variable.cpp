@@ -28,48 +28,18 @@
 
 namespace sd {
     namespace graph {
+        Variable::Variable(const NDArray &array, const std::string &name, int id, int idx) {
+            _ndarray = std::make_shared<NDArray>(array);
 
-        template <typename N>
-        Variable* Variable::asT() const {
-            auto result = new Variable(this->isPlaceholder());
+            if (!name.empty())
+                _name = name;
 
-            result->markExternal(this->_external);
-            result->setId(this->_id);
-            result->markReadOnly(this->_readOnly);
-            result->setName(this->_name);
-            result->setIndex(this->_index);
-
-            if (this->_ndarray != nullptr)
-                result->setNDArray(new NDArray(this->_ndarray->template asT<N>()));
-
-            // FIXME: add support for ArrayList
-            if (this->_list != nullptr) {
-                nd4j_printf("ArrayList not supported yet\n", "");
-                throw std::runtime_error("ArrayList not supported yet for asT");
-            }
-
-            return result;
+            _id = id;
+            _index = idx;
         }
-        BUILD_SINGLE_TEMPLATE(template SD_EXPORT Variable* Variable::asT, () const, LIBND4J_TYPES);
 
-        sd::graph::Variable* sd::graph::Variable::clone() const {
-            auto result = new Variable(this->isPlaceholder());
-            result->_external = this->_external;
-            result->_id = this->_id;
-            result->_readOnly = this->_readOnly;
-            result->_name = this->_name;
-            result->_index = this->_index;
-
-            if (this->_ndarray != nullptr) {
-                result->_ndarray = new NDArray(this->_ndarray->dup(this->_ndarray->ordering()));
-                result->_readOnly = false;
-                result->_removable = true;
-            }
-
-            if (this->_list != nullptr)
-                result->_list = this->_list->clone();
-
-            return result;
+        Variable::Variable() {
+            //
         }
 
         void sd::graph::Variable::setIndex(int index) {
@@ -77,7 +47,7 @@ namespace sd {
         }
 
         bool sd::graph::Variable::hasNDArray() const {
-            return _ndarray != nullptr;
+            return _ndarray.get() != nullptr;
         }
 
         void sd::graph::Variable::setVariableType(VariableType variableType) {
@@ -85,7 +55,7 @@ namespace sd {
         }
 
         bool sd::graph::Variable::hasNDArrayList() const {
-            return _list != nullptr;
+            return _list.get() != nullptr;
         }
 
         bool sd::graph::Variable::isPlaceholder() const {
@@ -147,12 +117,12 @@ namespace sd {
             this->_readOnly = reallyReadOnly;
         }
 
-        sd::NDArray * sd::graph::Variable::getNDArray() const {
+        std::shared_ptr<sd::NDArray> sd::graph::Variable::getNDArray() const {
             if (_variableType != VariableType::NDARRAY) {
                 nd4j_printf("Variable[%i:%i/<%s>] is has [%s] type, but NDArray was requested\n", this->_id, this->_index, this->_name.c_str(), EnumUtils::_VariableTypeToString(_variableType));
             }
 
-            if (this->_ndarray == nullptr) {
+            if (this->_ndarray.get() == nullptr) {
                 if (_name.empty()) {
                     auto nodeId = StringUtils::valueToString<int>(this->id());
                     auto outputIndex = StringUtils::valueToString<int>(this->index());
@@ -166,7 +136,7 @@ namespace sd {
             return this->_ndarray;
         }
 
-        sd::NDArrayList * sd::graph::Variable::getNDArrayList() const {
+        std::shared_ptr<sd::NDArrayList> sd::graph::Variable::getNDArrayList() const {
             if (_variableType != VariableType::ARRAY_LIST) {
                 nd4j_debug("Variable[%i:%i/<%s>] is has [%s] type, but NDArrayList was requested\n", this->_id, this->_index, this->_name.c_str(), EnumUtils::_VariableTypeToString(_variableType));
             }
@@ -179,13 +149,13 @@ namespace sd {
         }
 
 
-        void sd::graph::Variable::setNDArrayList(sd::NDArrayList * list) {
+        void sd::graph::Variable::setNDArrayList(std::shared_ptr<sd::NDArrayList> list) {
             this->_variableType = VariableType::ARRAY_LIST;
             this->_list = list;
         }
 
 
-        void sd::graph::Variable::setNDArray(sd::NDArray * array) {
+        void sd::graph::Variable::setNDArray(std::shared_ptr<sd::NDArray> array) {
             this->_variableType = VariableType::NDARRAY;
             this->_ndarray = array;
         }
@@ -215,7 +185,7 @@ namespace sd {
                         // ?????
                         if (flatVariable->ndarray() != nullptr) {
                             auto ar = flatVariable->ndarray();
-                            _ndarray = sd::graph::FlatUtils::fromFlatArray(ar);
+                            _ndarray = std::make_shared<sd::NDArray>(sd::graph::FlatUtils::fromFlatArray(ar));
                         }
 
                         _variableType = VariableType::NDARRAY;
@@ -227,9 +197,9 @@ namespace sd {
 
                         auto ar = flatVariable->ndarray();
                         if (ar->dtype() == DType_UTF8) {
-                            _ndarray = sd::graph::FlatUtils::fromFlatArray(ar);
+                            _ndarray = std::make_shared<sd::NDArray>(sd::graph::FlatUtils::fromFlatArray(ar));
                         } else {
-                            _ndarray = sd::graph::FlatUtils::fromFlatArray(ar);
+                            _ndarray = std::make_shared<sd::NDArray>(sd::graph::FlatUtils::fromFlatArray(ar));
                         }
 
                         _variableType = VariableType::NDARRAY;
@@ -240,7 +210,7 @@ namespace sd {
                         // ?????
                         if (flatVariable->ndarray() != nullptr) {
                             auto ar = flatVariable->ndarray();
-                            _ndarray = sd::graph::FlatUtils::fromFlatArray(ar);
+                            _ndarray = std::make_shared<sd::NDArray>(sd::graph::FlatUtils::fromFlatArray(ar));
                             // _ndarray->triggerAllocationFlag(true);
                         }
 
@@ -253,7 +223,7 @@ namespace sd {
 
                         if (flatVariable->ndarray() != nullptr) {
                             auto ar = flatVariable->ndarray();
-                            _ndarray = sd::graph::FlatUtils::fromFlatArray(ar);
+                            _ndarray = std::make_shared<sd::NDArray>(sd::graph::FlatUtils::fromFlatArray(ar));
                             // _ndarray->triggerAllocationFlag(true);
 
                             _variableType = VariableType::NDARRAY;
@@ -285,7 +255,7 @@ namespace sd {
         }
 
 
-        sd::graph::Variable::Variable(NDArray *array, const char *name ) {
+        sd::graph::Variable::Variable(std::shared_ptr<NDArray> array, const char *name ) {
             _ndarray = array;
 
             _external = false;
@@ -302,19 +272,14 @@ namespace sd {
             return _dtype;
         }
 
-        sd::graph::Variable::Variable(NDArray *array, const char *name, int id, int idx) : Variable(array, name) {
+        sd::graph::Variable::Variable(std::shared_ptr<NDArray> array, const std::string &name, int id, int idx) : Variable(array, name.c_str()) {
             _id = id;
             _index = idx;
         }
 
 
         sd::graph::Variable::~Variable() {
-            //nd4j_printf("Removing variable [%i:%i]\n", _id, _index);
-            if (_variableType == VariableType::NDARRAY) {
-                nd4j_debug("Removing variable <%i:%i>\n", _id, _index);
-                if (_ndarray != nullptr && _removable && !_readOnly)
-                    delete _ndarray;
-            }
+            //
         }
 
 

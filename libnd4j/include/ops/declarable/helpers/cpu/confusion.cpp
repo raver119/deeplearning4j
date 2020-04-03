@@ -36,7 +36,7 @@ namespace helpers {
                 auto label = labels->e<Nd4jLong>(j);
                 auto pred = predictions->e<Nd4jLong>(j);
                 T value = (weights == nullptr ? (T) 1.0f : weights->e<T>(j));
-                arrs.at(label)->p<T>(pred, value);
+                arrs.at(label).p<T>(pred, value);
             }
         };
 

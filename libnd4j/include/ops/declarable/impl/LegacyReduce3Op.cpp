@@ -100,7 +100,7 @@ namespace sd {
 
             if (shape::equalsSoft(xShape, yShape) && (block.numI() == 0 || (block.numI() == 1 && INT_ARG(0) == sd::DataTypeUtils::max<int>()))) {
                 // reduce3 to scalar case
-                ALLOCATE(zShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                ALLOCATE(zShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                 zShape[0] = 2;
                 zShape[1] = 1;
                 zShape[2] = 1;

@@ -50,13 +50,13 @@ namespace sd {
 
         std::string orders() override {
             if(_context != nullptr && _context->isFastPath()){
-                std::vector<NDArray*>& ins = _context->fastpath_in();
+                auto& ins = _context->fastpath_in();
                 std::string s;
                 for( int i=0; i<ins.size(); i++ ){
                     if(i > 0){
                         s += "/";
                     }
-                    s += ShapeUtils::strideAsString(_context->getNDArray(i));
+                    s += ShapeUtils::strideAsString(_context->getNDArray(i).get());
                 }
                 return s;
             }
@@ -65,13 +65,13 @@ namespace sd {
 
         std::string strides() override {
             if (_context != nullptr && _context->isFastPath()) {
-                std::vector<NDArray*>& ins = _context->fastpath_in();
+                auto& ins = _context->fastpath_in();
                 std::string s("");
                 for( int i=0; i<ins.size(); i++ ){
                     if(i > 0){
                         s += "/";
                     }
-                    s += ShapeUtils::strideAsString(_context->getNDArray(i));
+                    s += ShapeUtils::strideAsString(_context->getNDArray(i).get());
                 }
                 return s;
             } else
@@ -94,13 +94,13 @@ namespace sd {
 
         std::string shape() override {
             if (_context != nullptr && _context->isFastPath()) {
-                std::vector<NDArray*>& ins = _context->fastpath_in();
+                auto& ins = _context->fastpath_in();
                 std::string s;
                 for( int i=0; i<ins.size(); i++ ){
                     if(i > 0){
                         s += "/";
                     }
-                    s += ShapeUtils::shapeAsString(_context->getNDArray(i));
+                    s += ShapeUtils::shapeAsString(_context->getNDArray(i).get());
                 }
                 return s;
             } else
@@ -109,7 +109,7 @@ namespace sd {
 
         std::string dataType() override {
             if (_context != nullptr && _context->isFastPath()){
-                std::vector<NDArray*>& ins = _context->fastpath_in();
+                auto& ins = _context->fastpath_in();
                 std::string s;
                 for( int i=0; i<ins.size(); i++ ){
                     if(i > 0){

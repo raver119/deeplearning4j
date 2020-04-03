@@ -44,8 +44,8 @@ public:
 
 TEST_F(VariableSpaceTest, SettersGettersTest1) {
     auto space1 = new VariableSpace();
-    auto arrayA = NDArrayFactory::create_<float>('c', {5, 5});
-    auto arrayB = NDArrayFactory::create_<float>('c', {3, 3});
+    auto arrayA = NDArrayFactory::create<float>('c', {5, 5});
+    auto arrayB = NDArrayFactory::create<float>('c', {3, 3});
 
     space1->putVariable(1, arrayA);
     space1->putVariable(2, arrayB);
@@ -53,8 +53,8 @@ TEST_F(VariableSpaceTest, SettersGettersTest1) {
     auto arrayRA = space1->getVariable(1);
     auto arrayRB = space1->getVariable(2);
 
-    ASSERT_TRUE(arrayA == arrayRA->getNDArray());
-    ASSERT_TRUE(arrayB == arrayRB->getNDArray());
+    ASSERT_TRUE(arrayA == *arrayRA->getNDArray());
+    ASSERT_TRUE(arrayB == *arrayRB->getNDArray());
 
     // we should survive this call
     delete space1;
@@ -63,16 +63,11 @@ TEST_F(VariableSpaceTest, SettersGettersTest1) {
 
 TEST_F(VariableSpaceTest, SettersGettersTest2) {
     auto space1 = new VariableSpace();
-    auto arrayA = NDArrayFactory::create_<float>('c', {5, 5});
-    auto arrayB = NDArrayFactory::create_<float>('c', {3, 3});
+    auto arrayA = NDArrayFactory::create<float>('c', {5, 5});
+    auto arrayB = NDArrayFactory::create<float>('c', {3, 3});
 
-    auto varA = new Variable(arrayA);
-    auto varB = new Variable(arrayB);
-
-    varA->markExternal(true);
-
-    space1->putVariable(-1, varA);
-    space1->putVariable(2, varB);
+    space1->putVariable(-1, arrayA);
+    space1->putVariable(2, arrayB);
 
     Nd4jLong expExternal = (25 * 4) + (8 * 8);
     Nd4jLong expInternal = (9 * 4) + (8 * 8);
@@ -88,8 +83,8 @@ TEST_F(VariableSpaceTest, EqualityTest1) {
 
     std::string name("myvar");
 
-    auto arrayA = NDArrayFactory::create_<float>('c', {3, 3});
-    auto variableA = new Variable(arrayA, name.c_str());
+    auto arrayA = NDArrayFactory::create<float>('c', {3, 3});
+    auto variableA = std::make_shared<Variable>(arrayA, name, 1);
 
     space.putVariable(1, variableA);
 
@@ -110,7 +105,7 @@ TEST_F(VariableSpaceTest, EqualityTest1) {
 TEST_F(VariableSpaceTest, EqualityTest2) {
     VariableSpace space;
 
-    auto arrayA = NDArrayFactory::create_<float>('c', {3, 3});
+    auto arrayA = NDArrayFactory::create<float>('c', {3, 3});
 
     space.putVariable(1, arrayA);
 
@@ -123,98 +118,4 @@ TEST_F(VariableSpaceTest, EqualityTest2) {
     auto rV2 = space.getVariable(pair);
 
     ASSERT_TRUE(rV1 == rV2);
-}
-
-TEST_F(VariableSpaceTest, CloneTests_1) {
-    VariableSpace spaceA;
-
-    auto arrayA = NDArrayFactory::create_<float>('c', {3, 3});
-    arrayA->assign(1.0);
-
-    spaceA.putVariable(1, arrayA);
-
-    auto spaceB = spaceA.clone();
-
-    std::pair<int,int> pair(1,0);
-
-    ASSERT_TRUE(spaceB->hasVariable(1));
-    ASSERT_TRUE(spaceB->hasVariable(pair));
-
-    auto arrayB = spaceB->getVariable(1)->getNDArray();
-
-    ASSERT_TRUE(arrayA->equalsTo(arrayB));
-
-    arrayB->assign(2.0);
-
-    ASSERT_FALSE(arrayA->equalsTo(arrayB));
-
-    delete spaceB;
-}
-
-TEST_F(VariableSpaceTest, CloneTests_2) {
-    VariableSpace spaceA;
-
-    auto arrayA = NDArrayFactory::create_<float>('c', {3, 3});
-    arrayA->assign(1.0);
-
-    auto variableA = new Variable(arrayA, "alpha");
-
-    std::string str("alpha");
-    std::pair<int, int> pair(2, 3);
-
-    spaceA.putVariable(pair, variableA);
-
-    ASSERT_TRUE(spaceA.hasVariable(str));
-    ASSERT_TRUE(spaceA.hasVariable(pair));
-
-    auto spaceB = spaceA.clone();
-
-    ASSERT_FALSE(spaceB->hasVariable(1));
-    ASSERT_FALSE(spaceB->hasVariable(2));
-    ASSERT_TRUE(spaceB->hasVariable(pair));
-    ASSERT_TRUE(spaceB->hasVariable(str));
-
-    auto arrayB = spaceB->getVariable(pair)->getNDArray();
-
-    ASSERT_TRUE(arrayA->equalsTo(arrayB));
-
-    arrayB->assign(2.0);
-
-    ASSERT_FALSE(arrayA->equalsTo(arrayB));
-
-    delete spaceB;
-
-    ASSERT_TRUE(spaceA.hasVariable(str));
-    ASSERT_TRUE(spaceA.hasVariable(pair));
-}
-
-
-TEST_F(VariableSpaceTest, Test_DType_Conversion_1) {
-    /*
-    VariableSpace spaceA;
-
-    auto arrayA = NDArrayFactory::create_<float>('c', {3, 3});
-    arrayA->assign(1.0);
-
-    auto variableA = new Variable(arrayA, "alpha");
-
-    std::string str("alpha");
-    std::pair<int, int> pair(2, 3);
-
-    spaceA.putVariable(pair, variableA);
-
-
-    auto sd = spaceA.template asT<double>();
-    auto sf = sd->template asT<float>();
-
-    ASSERT_TRUE(sf->hasVariable(pair));
-
-    auto xf = sf->getVariable(pair)->getNDArray();
-
-    ASSERT_TRUE(arrayA->isSameShape(xf));
-    ASSERT_TRUE(arrayA->equalsTo(xf));
-
-    delete sd;
-    delete sf;
-    */
 }

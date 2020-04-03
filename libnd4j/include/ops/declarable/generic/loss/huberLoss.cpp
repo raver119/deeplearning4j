@@ -54,7 +54,7 @@ CUSTOM_OP_IMPL(huber_loss, 3, 1, false, 1, 1) {
 
 	auto error = *predictions - *labels;
 	error.applyTransform(transform::Abs, error);
-	NDArray quadratic(error.getShapeInfo(), block.getWorkspace());
+	NDArray quadratic(error.getShapeInfo(), block.workspace());
 	error.applyScalar(scalar::MinPairwise, delta, quadratic);
 
     NDArray E = quadratic * quadratic * 0.5f + (error - quadratic)*delta;
@@ -306,9 +306,9 @@ DECLARE_SHAPE_FN(huber_loss) {
 
 			DataType outType = DataTypeUtils::pickFloatingType(ArrayOptions::dataType(predictionsShapeInfo));
 
-			Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.getWorkspace());
-			Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.getWorkspace());
-			Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.getWorkspace());
+			Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.workspace());
+			Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.workspace());
+			Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.workspace());
 
 			return SHAPELIST(dLdpShapeInfo, dLdwShapeInfo, dLdlShapeInfo);
 		}

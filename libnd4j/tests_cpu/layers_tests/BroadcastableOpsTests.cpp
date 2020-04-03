@@ -594,7 +594,7 @@ TEST_F(BroadcastableOpsTests, broadcast_empty_3) {
     auto z = result.at(0);
 
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 }
 
 TEST_F(BroadcastableOpsTests, broadcast_empty_4) {
@@ -611,7 +611,7 @@ TEST_F(BroadcastableOpsTests, broadcast_empty_4) {
     auto z = result.at(0);
 
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
 }
 
@@ -629,7 +629,7 @@ TEST_F(BroadcastableOpsTests, broadcast_empty_5) {
     auto z = result.at(0);
 
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
 }
 
@@ -647,7 +647,7 @@ TEST_F(BroadcastableOpsTests, broadcast_empty_6) {
     auto z = result.at(0);
 
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
 }
 
@@ -665,7 +665,7 @@ TEST_F(BroadcastableOpsTests, broadcast_empty_7) {
     auto z = result.at(0);
 
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 }
 
 
@@ -700,7 +700,7 @@ TEST_F(BroadcastableOpsTests, broadcast_bool_empty_2) {
 
     ASSERT_EQ(Status::OK(), result.status());
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 }
 
 TEST_F(BroadcastableOpsTests, broadcast_bool_1) {

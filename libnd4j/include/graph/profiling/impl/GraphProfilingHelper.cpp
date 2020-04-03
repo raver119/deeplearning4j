@@ -24,9 +24,11 @@
 namespace sd {
     namespace graph {
         GraphProfile *GraphProfilingHelper::profile(Graph *graph, int iterations) {
+            if (1 > 0)
+                throw std::runtime_error("GraphProfilingHelper::profile - Not implemented yet");
 
             // saving original workspace
-            auto varSpace = graph->variableSpace()->clone();
+            //auto varSpace = graph->variableSpace();
 
             // printing out graph structure
             // graph->printOut();
@@ -35,19 +37,19 @@ namespace sd {
             for (int e = 0; e < iterations; e++) {
                 FlowPath fp;
 
-                auto _vs = varSpace->clone();
+                //auto _vs = varSpace->clone();
                 //_vs->workspace()->expandTo(100000);
-                _vs->setFlowPath(&fp);
+                //_vs->setFlowPath(&fp);
                 //GraphExecutioner::execute(graph, _vs);
 
-                delete _vs;
+                //delete _vs;
             }
 
 
             auto profile = new GraphProfile();
             for (int e = 0; e < iterations; e++) {
                 FlowPath fp;
-
+/*
                 // we're always starting from "fresh" varspace here
                 auto _vs = varSpace->clone();
                 //_vs->workspace()->expandTo(100000);
@@ -61,9 +63,8 @@ namespace sd {
                     profile->merge(p);
 
                 delete _vs;
+                */
             }
-
-            delete varSpace;
 
             return profile;
         }

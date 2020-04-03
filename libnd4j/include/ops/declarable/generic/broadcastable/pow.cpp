@@ -63,7 +63,7 @@ namespace ops {
            auto dLdy = OUTPUT_VARIABLE(1);
        
            Nd4jLong* dLdzShapeInfo = nullptr;
-           const bool areShapesBroadcastable = ShapeUtils::evalBroadcastShapeInfo(x->getShapeInfo(), y->getShapeInfo(), true, dLdzShapeInfo, block.getWorkspace());
+           const bool areShapesBroadcastable = ShapeUtils::evalBroadcastShapeInfo(x->getShapeInfo(), y->getShapeInfo(), true, dLdzShapeInfo, block.workspace());
            REQUIRE_TRUE(areShapesBroadcastable, 0, "POW_BP OP: the shapes of x %s"
                " and y %s are not suitable for broadcast !", 
                ShapeUtils::shapeAsString(x).c_str(), ShapeUtils::shapeAsString(y).c_str());

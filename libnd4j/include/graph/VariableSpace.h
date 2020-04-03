@@ -40,101 +40,90 @@ namespace sd {
     namespace graph {
         class SD_EXPORT VariableSpace {
         protected:
-            sd::memory::Workspace *_workspace;
-
             // stash is NOT cloned
             Stash _stash;
 
-            MAP_IMPL<std::pair<int, int>, Variable*> _paired;
-            MAP_IMPL<std::string, Variable*> _symbolic;
-            MAP_IMPL<int, Variable*> _variables;
-            std::vector<Variable*> _external;
-            std::vector<Variable*> _internal;
+            // lookup tables: by name, by id, by id:idx
+            MAP_IMPL<std::pair<int, int>, std::shared_ptr<Variable>> _paired;
+            MAP_IMPL<std::string, std::shared_ptr<Variable>> _symbolic;
+            MAP_IMPL<int, std::shared_ptr<Variable>> _variables;
 
-            std::vector<sd::NDArrayList*> _lists;
+            // direct references to external variables and internally-generated variables
+            std::vector<std::shared_ptr<Variable>> _external;
+            std::vector<std::shared_ptr<Variable>> _internal;
 
-            std::vector<Variable*> _placeholders;
+            // meh
+            std::vector<std::shared_ptr<sd::NDArrayList>> _lists;
 
-            void silentPutVariable(std::pair<int,int>& pair, Variable *variable);
+            // placeholders. must be resolved before Graph execution
+            std::vector<std::shared_ptr<Variable>> _placeholders;
+
+            void silentPutVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable);
 
             int _auto_counter = -1;
 
             std::mutex _varmap;
 
-            MAP_IMPL<int, Variable*> _temporary;
-
-            std::vector<Variable*> *_handles;
-
-            FlowPath* _flow = nullptr;
-
         public:
             VariableSpace();
             virtual ~VariableSpace();
 
+            VariableSpace(const sd::graph::VariableSpace &variableSpace);
+            VariableSpace(sd::graph::VariableSpace &&variableSpace);
+
             virtual VariableSpace& operator=(const VariableSpace& other);
+            virtual VariableSpace& operator=(VariableSpace&& other);
 
-            virtual int numberOfPlaceholders();
-            virtual std::vector<Variable*>* getPlaceholders();
-            virtual void setWorkspace(sd::memory::Workspace *workspace);
+            virtual int numberOfPlaceholders() const;
 
-            virtual LaunchContext* launchContext();
+            virtual const std::vector<std::shared_ptr<Variable>>& placeholders() const;
 
-            virtual bool hasExternalVariable(int it);
-            virtual bool hasExternalVariable(std::pair<int,int>& pair);
-            virtual bool hasExternalVariable(const std::string &symbol);
+            virtual bool hasExternalVariable(int it) const;
+            virtual bool hasExternalVariable(const std::pair<int,int>& pair) const;
+            virtual bool hasExternalVariable(const std::string &symbol) const;
 
-            virtual bool hasVariable(int id);
-            virtual bool hasVariable(int id, int idx);
-            virtual bool hasVariable(std::pair<int,int>& pair);
-            virtual bool hasVariable(const std::string &symbol);
+            virtual bool hasVariable(int id) const;
+            virtual bool hasVariable(int id, int idx) const;
+            virtual bool hasVariable(const std::pair<int,int>& pair) const;
+            virtual bool hasVariable(const std::string &symbol) const;
 
-            virtual Variable* getVariable(int id);
-            virtual Variable* getVariable(int id, int idx);
-            virtual Variable* getVariable(std::pair<int,int>& pair);
-            virtual Variable* getVariable(const std::string &symbol);
+            virtual std::shared_ptr<Variable> getVariable(int id) const;
+            virtual std::shared_ptr<Variable> getVariable(int id, int idx) const;
+            virtual std::shared_ptr<Variable> getVariable(const std::pair<int,int>& pair) const;
+            virtual std::shared_ptr<Variable> getVariable(const std::string &symbol) const;
 
-            virtual std::vector<Variable*> getVariables();
+            virtual std::vector<std::shared_ptr<Variable>> variables() const;
 
-            virtual Variable* putVariable(std::pair<int,int>& pair, NDArray *array);
-            virtual void putVariable(std::pair<int,int>& pair, Variable *variable);
-            virtual void putVariable(int id, Variable *variable);
-            virtual void putVariable(int id, NDArray *array);
-            virtual Variable* putVariable(int id, int idx, NDArray *array);
-            virtual void putVariable(int id, int idx, const NDArray &array);
-            virtual void putVariable(int id, int idx, Variable *array);
+            virtual std::shared_ptr<Variable> putVariable(const std::pair<int,int>& pair, const NDArray &array);
+            virtual std::shared_ptr<Variable> putVariable(int id, const NDArray &array);
+            virtual std::shared_ptr<Variable> putVariable(int id, int idx, const std::shared_ptr<NDArray> &array);
+            virtual std::shared_ptr<Variable> putVariable(int id, int idx, const NDArray &array);
+            virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id, int idx, const NDArray &array);
+            virtual void putVariable(const std::string& name, int id, int idx, std::shared_ptr<Variable> variable);
+            virtual void putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable);
+            virtual void putVariable(int id, std::shared_ptr<Variable> variable);
 
-            virtual void dropVariable(std::pair<int,int> &pair);
+            virtual void dropVariable(const std::string &pair);
+            virtual void dropVariable(const std::pair<int,int> &pair);
             virtual void dropVariable(int id, int idx);
 
-            virtual void trackList(sd::NDArrayList *list);
+            virtual void putOutputVariable(std::shared_ptr<Variable> variable);
 
-            virtual void putOutputVariable(Variable *variable);
-
-            virtual void replaceVariable(Variable *variable);
+            virtual void replaceVariable(std::shared_ptr<Variable> variable);
 
             // memory-related statistics
-            virtual Nd4jLong externalMemory();
-            virtual Nd4jLong internalMemory();
-            virtual Nd4jLong totalMemory();
+            virtual Nd4jLong externalMemory() const;
+            virtual Nd4jLong internalMemory() const;
+            virtual Nd4jLong totalMemory() const;
 
-            virtual int externalEntries();
-            virtual int internalEntries();
-            virtual int totalEntries();
+            virtual int externalEntries() const;
+            virtual int internalEntries() const;
+            virtual int totalEntries() const;
 
-            virtual VariableSpace* clone();
+            void injectVariable(const std::pair<int, int> &pair, std::shared_ptr<Variable> variable);
 
-            std::vector<Variable*> *handles();
+            virtual Stash* stash() const;
 
-
-            VariableSpace* asT();
-            void injectVariable(std::pair<int, int> &pair, Variable* variable);
-
-            virtual Stash* getStash();
-
-            virtual std::vector<Variable*> * getExternalVariables();
-
-            virtual void setFlowPath(FlowPath* timers);
-            virtual FlowPath* flowPath();
         };
     }
 }

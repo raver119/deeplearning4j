@@ -83,7 +83,7 @@ namespace sd {
             }
 
             Nd4jLong* subArrShapeInfo = nullptr;
-            ALLOCATE(subArrShapeInfo, block.getWorkspace(), shape::shapeInfoLength(input->rankOf()), Nd4jLong);
+            ALLOCATE(subArrShapeInfo, block.workspace(), shape::shapeInfoLength(input->rankOf()), Nd4jLong);
 
             Nd4jLong offset;
 
@@ -101,7 +101,7 @@ namespace sd {
 
             NDArray::registerSpecialUse({output}, {input});
 
-            RELEASE(subArrShapeInfo,  block.getWorkspace());
+            RELEASE(subArrShapeInfo,  block.workspace());
 
             // auto sub = (*input)(indices, true);
             // output->assign(sub);

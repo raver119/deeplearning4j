@@ -48,7 +48,7 @@ namespace sd {
             Nd4jLong* outputShape = nullptr;
             Nd4jLong numOfClasses = block.width() == 3 ? INPUT_VARIABLE(2)->e<Nd4jLong>(0) : INT_ARG(0);
 
-            ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+            ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
 
             outputShape[0] = outRank;
             outputShape[1] = numOfClasses;

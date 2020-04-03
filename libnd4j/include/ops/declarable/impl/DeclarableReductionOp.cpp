@@ -56,7 +56,7 @@ namespace sd {
                 return SHAPELIST(newShape);
             }
 
-            auto newShape = ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), false, false, block.getWorkspace());
+            auto newShape = ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), false, false, block.workspace());
             return SHAPELIST(newShape);
         }
     }

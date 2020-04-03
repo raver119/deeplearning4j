@@ -1186,7 +1186,7 @@ TEST_F(DeclarableOpsTests18, TestUpdaterAdaDelta3) {
     ASSERT_TRUE(stateMsdx.isSameShape(results.at(2)));
     ASSERT_TRUE(stateMsdx.equalsTo(results.at(2)));
 
-    results = op.evaluate({ &grad, results.at(1), results.at(2) }, { 0.95, 1.0e-6 }, { });
+    results = op.evaluate({ &grad, &results.at(1), &results.at(2) }, { 0.95, 1.0e-6 }, { });
 
     NDArray update1C('c', { 1, 5 }, { 0.0045290622655332,    0.00452909666868751,    0.00452910303972733,    0.00452910526959756,    0.00452910630171004 }, DataType::FLOAT32);
 

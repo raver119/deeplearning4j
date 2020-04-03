@@ -457,9 +457,8 @@ namespace sd {
                 clone->setX(x_);
                 clone->setZ(z_);
 
-                if (y_ != nullptr) {
-                    clone->setAxis(y_->asVectorT<int>());
-                    delete y_;
+                if (y_.shapeInfo() != nullptr) {
+                    clone->setAxis(y_.asVectorT<int>());
                 }
 
                 result.emplace_back(clone);
@@ -500,9 +499,8 @@ namespace sd {
             clone->setX(x_);
             clone->setZ(z_);
 
-            if (y_ != nullptr) {
-                clone->setAxis(y_->asVectorT<int>());
-                delete y_;
+            if (y_.shapeInfo() != nullptr) {
+                clone->setAxis(y_.asVectorT<int>());
             }
             result.emplace_back(clone);
         }

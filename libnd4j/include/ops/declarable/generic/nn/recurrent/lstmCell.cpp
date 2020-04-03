@@ -125,8 +125,8 @@ DECLARE_SHAPE_FN(lstmCell) {
 
     // evaluate output shapeInfos
     Nd4jLong *hShapeInfo(nullptr), *cShapeInfo(nullptr);
-    ALLOCATE(hShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);      // [bS x numProj]
-    ALLOCATE(cShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);      // [bS x numUnits]
+    ALLOCATE(hShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);      // [bS x numProj]
+    ALLOCATE(cShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);      // [bS x numUnits]
 
     hShapeInfo[0] = cShapeInfo[0] = rank;
     hShapeInfo[1] = cShapeInfo[1] = bS;

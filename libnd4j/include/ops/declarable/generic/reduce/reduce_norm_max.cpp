@@ -79,7 +79,7 @@ DECLARE_SHAPE_FN(reduce_norm_max) {
     for(const auto& item : dimensions)
         REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0], 0, "REDUCE_NORM_MAX OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , inputShape->at(0)[0], inputShape->at(0)[0], item);
 
-    return SHAPELIST(ShapeUtils::evalReduceShapeInfo(shape::order(in), dimensions, in, keepDims, false, block.getWorkspace()));
+    return SHAPELIST(ShapeUtils::evalReduceShapeInfo(shape::order(in), dimensions, in, keepDims, false, block.workspace()));
 }
 
 DECLARE_TYPES(reduce_norm_max) {

@@ -30,47 +30,26 @@ namespace sd {
             //
         }
 
-        BroadcastBenchmark(broadcast::Ops op, std::string testName, NDArray *x, NDArray *y, NDArray *z, std::vector<int> axis) : OpBenchmark(testName, x, y, z, axis) {
+        BroadcastBenchmark(broadcast::Ops op, const std::string &testName, const NDArray &x, const NDArray &y, const NDArray &z, const std::vector<int> &axis) : OpBenchmark(testName, x, y, z, axis) {
             _opNum = (int) op;
         }
+        
 
-        BroadcastBenchmark(broadcast::Ops op, std::string testName, NDArray *x, NDArray *y, NDArray *z, std::initializer_list<int> axis) : OpBenchmark(testName, x, y, z, axis) {
-            _opNum = (int) op;
-        }
-
-        BroadcastBenchmark(broadcast::Ops op, std::string name, std::vector<int> axis) : OpBenchmark() {
-            _opNum = (int) op;
-            _testName = name;
-            _axis = axis;
-        }
-
-        BroadcastBenchmark(broadcast::Ops op, std::string name, std::initializer_list<int> axis) : OpBenchmark() {
+        BroadcastBenchmark(broadcast::Ops op, const std::string &name, const std::vector<int> &axis) : OpBenchmark() {
             _opNum = (int) op;
             _testName = name;
             _axis = axis;
         }
 
         ~BroadcastBenchmark(){
-            if (_x != _y && _x != _z && _y != _z) {
-                delete _x;
-                delete _y;
-                delete _z;
-            } else if (_x == _y && _x == _z) {
-                delete _x;
-            } else if (_x == _z) {
-                delete _x;
-                delete _y;
-            } else if (_y == _z) {
-                delete _x;
-                delete _y;
-            }
+            //
         }
 
 void executeOnce() override {
     PointersManager manager(LaunchContext::defaultContext(), "BroadcastBM");
 
-    auto packX = ConstantTadHelper::getInstance()->tadForDimensions(_x->shapeInfo(), _axis);
-    auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(_z->shapeInfo(), _axis);
+    auto packX = ConstantTadHelper::getInstance()->tadForDimensions(_x.shapeInfo(), _axis);
+    auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(_z.shapeInfo(), _axis);
 
     auto tadOnlyShapeInfo = Environment::getInstance()->isCPU() ? packX.primaryShapeInfo() : packX.specialShapeInfo();
     auto tadOffsets = Environment::getInstance()->isCPU() ? packX.primaryOffsets() : packX.specialOffsets();
@@ -78,7 +57,7 @@ void executeOnce() override {
     auto tadOnlyShapeInfoZ = Environment::getInstance()->isCPU() ? packZ.primaryShapeInfo() : packZ.specialShapeInfo();
     auto tadOffsetsZ = Environment::getInstance()->isCPU() ? packZ.primaryOffsets() : packZ.specialOffsets();
 
-    NativeOpExecutioner::execBroadcast(LaunchContext::defaultContext(), _opNum, _x->buffer(), _x->shapeInfo(), _x->specialBuffer(), _x->specialShapeInfo(), _y->buffer(), _y->shapeInfo(), _y->specialBuffer(), _y->specialShapeInfo(), _z->buffer(), _z->shapeInfo(), _z->specialBuffer(), _z->specialShapeInfo(), nullptr, _axis.size(),
+    NativeOpExecutioner::execBroadcast(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _y.buffer(), _y.shapeInfo(), _y.specialBuffer(), _y.specialShapeInfo(), _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), nullptr, _axis.size(),
             /*Nd4jLong **/ tadOnlyShapeInfo, /*Nd4jLong */ tadOffsets, /*Nd4jLong */ tadOnlyShapeInfoZ, /*Nd4jLong */ tadOffsetsZ);
 
     manager.synchronize();
@@ -106,11 +85,11 @@ void executeOnce() override {
 
         std::string orders() override {
             std::string result;
-            result += _x->ordering();
+            result += _x.ordering();
             result += "/";
-            result += _y->ordering();
+            result += _y.ordering();
             result += "/";
-            result += _z == nullptr ? _x->ordering() : _z->ordering();
+            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
             return result;
         }
 
@@ -120,7 +99,7 @@ void executeOnce() override {
             result += "/";
             result += ShapeUtils::strideAsString(_y);
             result += "/";
-            result += _z == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
+            result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
             return result;
         }
 

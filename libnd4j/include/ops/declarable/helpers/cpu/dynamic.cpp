@@ -55,7 +55,7 @@ namespace sd {
                         //PRAGMA_OMP_PARALLEL_FOR_IF(indices->lengthOf() > Environment::getInstance()->elementwiseThreshold())
                         for (Nd4jLong e = 0; e < indices->lengthOf(); ++e)
                             if ((*indices).e<Nd4jLong>(e) == i)
-                                listOutForCurrent.at(outputs[i].second++)->assign(listOfTensors.at(e));
+                                listOutForCurrent.at(outputs[i].second++).assign(listOfTensors.at(e));
                     }
 
                 } else {
@@ -126,7 +126,7 @@ namespace sd {
                                 return ND4J_STATUS_VALIDATION;
                             }
 
-                            listOfOutTensors.at(pos)->assign(listOfTensors.at(i));
+                            listOfOutTensors.at(pos).assign(listOfTensors.at(i));
                         }
                     }
                 }
@@ -160,7 +160,7 @@ namespace sd {
 
                         for (Nd4jLong e = 0; e < indices->lengthOf(); ++e)
                             if (indices->e<Nd4jLong>(e) == i)
-                                listOfTensors.at(e)->assign(listOutForCurrent.at(outputs[i].second++));
+                                listOfTensors.at(e).assign(listOutForCurrent.at(outputs[i].second++));
                     }
                 }
                 else { // one-dimensional case

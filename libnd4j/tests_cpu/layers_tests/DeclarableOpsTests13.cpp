@@ -63,7 +63,7 @@ TEST_F(DeclarableOpsTests13, test_pow_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 }
 
 TEST_F(DeclarableOpsTests13, test_empty_range_1) {
@@ -75,7 +75,7 @@ TEST_F(DeclarableOpsTests13, test_empty_range_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
 
     
 }
@@ -87,7 +87,7 @@ TEST_F(DeclarableOpsTests13, test_empty_range_2) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
 }
 
 TEST_F(DeclarableOpsTests13, test_empty_range_3) {
@@ -97,24 +97,21 @@ TEST_F(DeclarableOpsTests13, test_empty_range_3) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
 }
 
 TEST_F(DeclarableOpsTests13, test_argmax_edge_1) {
-    auto ctx = new Context(1);
-    auto arr = NDArrayFactory::create_<float>('c', {1024,1});
+    auto ctx = Context(1);
+    auto arr = NDArrayFactory::create<float>('c', {1024,1});
 
-    ctx->setInputArray(0, arr, true);
-    ctx->setOutputArray(0, NDArrayFactory::create_<Nd4jLong >('c', {1}), true);
-    ctx->setInputArray(1, NDArrayFactory::create_<Nd4jLong >(0), true);   //Axis 0
+    ctx.setInputArray(0, arr);
+    ctx.setOutputArray(0, NDArrayFactory::create<Nd4jLong >('c', {1}));
+    ctx.setInputArray(1, NDArrayFactory::create<Nd4jLong >(0));   //Axis 0
 
 
     sd::ops::argmax op;
-    auto result = op.execute(ctx);
+    auto result = op.execute(&ctx);
     ASSERT_EQ(Status::OK(), result);
-
-    //nd4j_printf("Done\n","");
-    delete ctx;
 }
 
 TEST_F(DeclarableOpsTests13, test_add_1) {
@@ -162,7 +159,7 @@ TEST_F(DeclarableOpsTests13, test_eval_reduction_shape_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(exp, *z);
+    ASSERT_EQ(exp, z);
 }
 
 TEST_F(DeclarableOpsTests13, test_or_1) {
@@ -415,7 +412,7 @@ TEST_F(DeclarableOpsTests13, CellContains_test_1) {
     sd::ops::cell_contains op;
     auto result = op.evaluate({&corners, &width, &point}, {}, {5});
     ASSERT_EQ(result.status(), Status::OK());
-    ASSERT_TRUE(result.at(0)->e<bool>(0));
+    ASSERT_TRUE(result.at(0).e<bool>(0));
     //result.at(2)->printBuffer("Symmetrized3");
     //exp.printBuffer("EXPect symm3");
     //    ASSERT_TRUE(exp[i]->equalsTo(result.at(i)));
@@ -623,7 +620,7 @@ TEST_F(DeclarableOpsTests13, shift_bits_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -640,7 +637,7 @@ TEST_F(DeclarableOpsTests13, rshift_bits_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -657,7 +654,7 @@ TEST_F(DeclarableOpsTests13, cyclic_shift_bits_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -674,7 +671,7 @@ TEST_F(DeclarableOpsTests13, cyclic_rshift_bits_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -692,7 +689,7 @@ TEST_F(DeclarableOpsTests13, shift_bits_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -710,7 +707,7 @@ TEST_F(DeclarableOpsTests13, rshift_bits_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
     
 }
@@ -729,7 +726,7 @@ TEST_F(DeclarableOpsTests13, cyclic_shift_bits_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -747,7 +744,7 @@ TEST_F(DeclarableOpsTests13, cyclic_rshift_bits_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 TEST_F(DeclarableOpsTests13, shift_bits_3) {
@@ -764,7 +761,7 @@ TEST_F(DeclarableOpsTests13, shift_bits_3) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 }
 
@@ -1167,8 +1164,8 @@ TEST_F(DeclarableOpsTests13, lstmLayer_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *h  = results.at(0);
-    auto *cL = results.at(2);
+    auto h  = results.at(0);
+    auto cL = results.at(2);
 
     ASSERT_TRUE(expH.isSameShape(h));
     ASSERT_TRUE(expH.equalsTo(h));
@@ -1234,8 +1231,8 @@ TEST_F(DeclarableOpsTests13, lstmLayer_2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *h  = results.at(0);
-    auto *cL = results.at(2);
+    auto h  = results.at(0);
+    auto cL = results.at(2);
 
     ASSERT_TRUE(expH.isSameShape(h));
     ASSERT_TRUE(expH.equalsTo(h));
@@ -2088,7 +2085,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_test1) {
     auto output = results.at(0);
     // output->printBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
     
@@ -2121,7 +2118,7 @@ TYPED_TEST(TypedDeclarableOpsTests13, batchnorm_test2) {
     auto output = results.at(0);
     // output->printBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -2148,7 +2145,7 @@ TYPED_TEST(TypedDeclarableOpsTests13, batchnorm_test3) {
 
     auto output = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -2175,7 +2172,7 @@ TYPED_TEST(TypedDeclarableOpsTests13, batchnorm_test4) {
 
     auto output = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -2203,7 +2200,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_test5) {
     auto output = results.at(0);
     // output->printBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -2230,7 +2227,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_test6) {
 
     auto output = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*output));
+    ASSERT_TRUE(expected.isSameShapeStrict(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
     
@@ -2299,7 +2296,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_test8) {
 
     auto output = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShape(*output));
+    ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
 }
@@ -2342,7 +2339,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_test9) {
     auto output = results.at(0);
     // output->printBuffer();
 
-    ASSERT_TRUE(expected.isSameShape(*output));
+    ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
     
@@ -2378,13 +2375,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test1) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
     
@@ -2421,13 +2418,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test2) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }
@@ -2462,13 +2459,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test3) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }
@@ -2500,13 +2497,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test4) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 }
 
@@ -2542,13 +2539,13 @@ return;
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 }
 
@@ -2585,13 +2582,13 @@ return;
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 }
 
@@ -2633,13 +2630,13 @@ return;
 
     // dLdI->printBuffer();
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
     
@@ -2682,13 +2679,13 @@ return;
 
     // dLdI->printBuffer();
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }
@@ -2733,13 +2730,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test9) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI, 1e-4));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }
@@ -2784,13 +2781,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test10) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI, 1e-4));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }
@@ -2847,13 +2844,13 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test11) {
     auto dLdG = results.at(3);
     auto dLdB = results.at(4);
 
-    ASSERT_TRUE(expdLdI.isSameShapeStrict(*dLdI));
+    ASSERT_TRUE(expdLdI.isSameShapeStrict(dLdI));
     ASSERT_TRUE(expdLdI.equalsTo(dLdI, 1e-4));
 
-    ASSERT_TRUE(expdLdG.isSameShapeStrict(*dLdG));
+    ASSERT_TRUE(expdLdG.isSameShapeStrict(dLdG));
     ASSERT_TRUE(expdLdG.equalsTo(dLdG));
 
-    ASSERT_TRUE(expdLdB.isSameShapeStrict(*dLdB));
+    ASSERT_TRUE(expdLdB.isSameShapeStrict(dLdB));
     ASSERT_TRUE(expdLdB.equalsTo(dLdB));
 
 }

@@ -53,7 +53,7 @@ CUSTOM_OP_IMPL(embedding_lookup, 2, 1, false, 0, 1) {
             Nd4jLong thisIndex = (*indeces).e<Nd4jLong>(e);
             input   = INPUT_VARIABLE(thisIndex); // lookup param
 
-            outputView.at(e)->assign(input);
+            outputView.at(e).assign(input);
         }
     }
     else {
@@ -68,7 +68,7 @@ CUSTOM_OP_IMPL(embedding_lookup, 2, 1, false, 0, 1) {
 
         auto result(op.evaluate({input, indeces}, {0}));
         REQUIRE_TRUE(result.status() == Status::OK(), 0, "embedding_lookup: cannot retrieve results from gather op.");
-        REQUIRE_TRUE(result.at(0)->isSameShape(output), 0, "embedding_lookup: wrong shape of return from gather op.");
+        REQUIRE_TRUE(result.at(0).isSameShape(output), 0, "embedding_lookup: wrong shape of return from gather op.");
         output->assign(result.at(0));
     }
     return Status::OK();

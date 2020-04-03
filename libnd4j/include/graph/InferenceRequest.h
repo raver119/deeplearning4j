@@ -31,22 +31,21 @@ namespace sd {
         class SD_EXPORT InferenceRequest {
         private:
             Nd4jLong _id;
-            std::vector<Variable*> _variables;
-            std::vector<Variable*> _deletables;
+            std::vector<std::shared_ptr<Variable>> _variables;
 
-            ExecutorConfiguration *_configuration = nullptr;
+            ExecutorConfiguration _configuration;
 
-            void insertVariable(Variable* variable);
+            void insertVariable(std::shared_ptr<Variable> variable);
         public:
 
-            InferenceRequest(Nd4jLong graphId, ExecutorConfiguration *configuration = nullptr);
+            InferenceRequest(Nd4jLong graphId, const ExecutorConfiguration &configuration);
             ~InferenceRequest();
 
-            void appendVariable(int id, NDArray *array);
-            void appendVariable(int id, int index, NDArray *array);
-            void appendVariable(std::string &name, NDArray *array);
-            void appendVariable(std::string &name, int id, int index, NDArray *array);
-            void appendVariable(Variable *variable);
+            void appendVariable(int id, const NDArray &array);
+            void appendVariable(int id, int index, const NDArray &array);
+            void appendVariable(const std::string &name, const NDArray &array);
+            void appendVariable(const std::string &name, int id, int index, const NDArray &array);
+            void appendVariable(std::shared_ptr<Variable> variable);
 
 #ifndef __JAVACPP_HACK__
             flatbuffers::Offset<FlatInferenceRequest> asFlatInferenceRequest(flatbuffers::FlatBufferBuilder &builder);

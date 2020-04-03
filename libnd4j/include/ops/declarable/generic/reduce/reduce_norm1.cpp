@@ -77,7 +77,7 @@ DECLARE_SHAPE_FN(reduce_norm1) {
     for(const auto& item : dimensions)
         REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0], 0, "REDUCE_NORM1 OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , inputShape->at(0)[0], inputShape->at(0)[0], item);
 
-    return SHAPELIST(ShapeUtils::evalReduceShapeInfo(shape::order(inputShape->at(0)), dimensions, inputShape->at(0), keepDims, false, block.getWorkspace()));
+    return SHAPELIST(ShapeUtils::evalReduceShapeInfo(shape::order(inputShape->at(0)), dimensions, inputShape->at(0), keepDims, false, block.workspace()));
 }
 
 DECLARE_TYPES(reduce_norm1) {
@@ -128,7 +128,7 @@ CUSTOM_OP_IMPL(reduce_norm1_bp, 2, 1, false, 0, 0) {
         // *** calculations *** //
 
         if(!keepDims) {
-            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *input, true, false, block.getWorkspace());
+            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *input, true, false, block.workspace());
             *gradI *= gradO->reshape(gradO->ordering(), ShapeUtils::pullShapeFromShapeInfo(gradOShapeKeepDims));  // for example could be something like [a,b] -> [1,a,1,b]
         } else
             *gradI *= *gradO;

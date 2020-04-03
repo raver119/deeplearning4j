@@ -282,8 +282,8 @@ TEST_F(RNGTests, Test_Gaussian_21) {
     // mean->printIndexedBuffer("Mean");
     // variance->printIndexedBuffer("Variance");
 
-    ASSERT_NEAR(sd::math::nd4j_abs(mean->e<float>(0)), 0.f, 0.2f);
-    ASSERT_NEAR(variance->e<float>(0), 1.0f, 0.2f);
+    ASSERT_NEAR(sd::math::nd4j_abs(mean.e<float>(0)), 0.f, 0.2f);
+    ASSERT_NEAR(variance.e<float>(0), 1.0f, 0.2f);
 
     
 }
@@ -313,8 +313,8 @@ TEST_F(RNGTests, Test_Gaussian_22) {
 
     //mean0->printIndexedBuffer("Mean");
     //variance0->printIndexedBuffer("Variance");
-    ASSERT_NEAR(sd::math::nd4j_abs(mean0->e<float>(0)), 0.f, 1.0e-3f);
-    ASSERT_NEAR(variance0->e<float>(0), 1.0f, 1.e-3f);
+    ASSERT_NEAR(sd::math::nd4j_abs(mean0.e<float>(0)), 0.f, 1.0e-3f);
+    ASSERT_NEAR(variance0.e<float>(0), 1.0f, 1.e-3f);
     
 }
 
@@ -736,9 +736,9 @@ TEST_F(RNGTests, Test_ExponentialDistribution_1) {
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
     //
-    z->printBuffer("\nExponential1");
-    auto mean = z->reduceNumber(reduce::Mean);
-    auto variance = z->varianceNumber(variance::SummaryStatsVariance, false);
+    //z->printBuffer("\nExponential1");
+    auto mean = z.reduceNumber(reduce::Mean);
+    auto variance = z.varianceNumber(variance::SummaryStatsVariance, false);
     mean.printBuffer("Mean for exponential with param 0.25 (4 exp) is");
     variance.printBuffer("Variance for exponential with param 0.25 (16 exp) is");
     ASSERT_FALSE(nexp0->equalsTo(z));
@@ -761,9 +761,9 @@ TEST_F(RNGTests, Test_ExponentialDistribution_1_SGA) {
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
     //
-    z->printBuffer("\nExponential2");
-    auto mean = z->reduceNumber(reduce::Mean);
-    auto variance = z->varianceNumber(variance::SummaryStatsVariance, false);
+    //z->printBuffer("\nExponential2");
+    auto mean = z.reduceNumber(reduce::Mean);
+    auto variance = z.varianceNumber(variance::SummaryStatsVariance, false);
     mean.printBuffer("Mean for exponential with param 1.0 (1 exp) is");
     variance.printBuffer("Variance for exponential with param 1. (1 exp) is");
     ASSERT_FALSE(nexp0->equalsTo(z));
@@ -1150,14 +1150,14 @@ TEST_F(RNGTests, test_multinomial_5) {
     auto outputR = resultR.at(0);
     ASSERT_EQ(Status::OK(), resultR.status());
 
-    deviation = outputR->varianceNumber(variance::SummaryStatsStandardDeviation, false);
-    mean = outputR->meanNumber();
+    deviation = outputR.varianceNumber(variance::SummaryStatsStandardDeviation, false);
+    mean = outputR.meanNumber();
     // printf("Random seed - Var: %f  Mean: %f \n", deviation.e<double>(0), mean.e<double>(0));
     ASSERT_NEAR(0.5, deviation.e<double>(0), 45e-3); // 1000000 35e-3);
     ASSERT_NEAR(0.5, mean.e<double>(0), 45e-3); // 1000000 35e-3);
 
-    for (int i = 0; i < outputR->lengthOf(); i++) {
-        auto value = outputR->e<Nd4jLong>(i);
+    for (int i = 0; i < outputR.lengthOf(); i++) {
+        auto value = outputR.e<Nd4jLong>(i);
         ASSERT_TRUE(value >= 0 && value < ClassValue);
     }
 
@@ -1184,8 +1184,8 @@ TEST_F(RNGTests, test_multinomial_6) {
 
     NDArray countsR('c', { ClassValue }, { 0., 0, 0, 0, 0 }, sd::DataType::DOUBLE);
 
-    for (int i = 0; i < outputR->lengthOf(); i++) {
-        auto value = outputR->e<Nd4jLong>(i);
+    for (int i = 0; i < outputR.lengthOf(); i++) {
+        auto value = outputR.e<Nd4jLong>(i);
         ASSERT_TRUE(value >= 0 && value < ClassValue);
         double* z = countsR.bufferAsT<double>();
         z[value] += 1;
@@ -1198,8 +1198,8 @@ TEST_F(RNGTests, test_multinomial_6) {
         ASSERT_NEAR((c / Samples), p, 45e-3); // 1000000 35e-3);
     }
 
-    auto deviation = outputR->varianceNumber(variance::SummaryStatsStandardDeviation, false);
-    auto mean = outputR->meanNumber();
+    auto deviation = outputR.varianceNumber(variance::SummaryStatsStandardDeviation, false);
+    auto mean = outputR.meanNumber();
     // printf("Var: %f  Mean: %f \n", deviation.e<double>(0), mean.e<double>(0));
     ASSERT_NEAR(1.2175, deviation.e<double>(0), 45e-3); // 1000000 35e-3);
     ASSERT_NEAR(2.906, mean.e<double>(0), 45e-3); // 1000000 35e-3);

@@ -60,18 +60,18 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_1) {
     int bS=1, iH=5,iW=4,  iC=2,oC=3,  kH=2,kW=2,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
     TypeParam _expB[]{664.0, 700.0, 736.0, 344.0, 808.0, 844.0, 880.0, 408.0, 952.0, 988.0, 1024.0, 472.0, 1096.0, 1132.0, 1168.0, 536.0, 466.0, 480.0, 494.0, 220.0, 1528.0, 1628.0, 1728.0, 856.0, 1928.0, 2028.0, 2128.0, 1048.0, 2328.0, 2428.0, 2528.0, 1240.0, 2728.0, 2828.0, 2928.0, 1432.0, 1346.0, 1392.0, 1438.0, 700.0, 2392.0, 2556.0, 2720.0, 1368.0, 3048.0, 3212.0, 3376.0, 1688.0, 3704.0, 3868.0, 4032.0, 2008.0, 4360.0, 4524.0, 4688.0, 2328.0, 2226.0, 2304.0, 2382.0, 1180.0};
     Nd4jLong _expS[]{4, 1, 3, 5, 4, 60, 20, 4, 1, typeid(TypeParam) == typeid(float) ? 8192 : 16384, 1, 99};
-    auto input = NDArrayFactory::create_<TypeParam>('c', {bS, iC, iH, iW});
-    auto weights = NDArrayFactory::create_<TypeParam>('c', {oC, iC, kH, kW});
-    for (int e = 0; e < input->lengthOf(); e++)
-        input->p(e, e + 1);
+    auto input = NDArrayFactory::create<TypeParam>('c', {bS, iC, iH, iW});
+    auto weights = NDArrayFactory::create<TypeParam>('c', {oC, iC, kH, kW});
+    for (int e = 0; e < input.lengthOf(); e++)
+        input.p(e, e + 1);
 
-    for (int e = 0; e < weights->lengthOf(); e++)
-        weights->p(e, e + 1);
-    weights->permutei({2,3,1,0});
+    for (int e = 0; e < weights.lengthOf(); e++)
+        weights.p(e, e + 1);
+    weights.permutei({2,3,1,0});
 
     // weights->printShapeInfo("weights");
 
-    ArrayOptions::setDataType(_expS, input->dataType());
+    ArrayOptions::setDataType(_expS, input.dataType());
     auto exp = new NDArray(_expB, _expS);
 
     auto variableSpace = new VariableSpace();
@@ -264,7 +264,7 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_7) {
 
     sd::ops::conv2d op;
     auto results = op.evaluate({&input, &weights}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -393,14 +393,14 @@ TEST_F(ConvolutionTests1, sconv2d_1) {
     int iX = 10;
     int B = 2;
 
-    auto input = NDArrayFactory::create_<float>('c', {B, iC, iY, iX});
-    for (int e = 0; e < input->lengthOf(); e++)
-        input->p(e, e+1);
+    auto input = NDArrayFactory::create<float>('c', {B, iC, iY, iX});
+    for (int e = 0; e < input.lengthOf(); e++)
+        input.p(e, e+1);
 
-    auto weights = NDArrayFactory::create_<float>('c', {oC, iC, kY, kX});
-    for (int e = 0; e < weights->lengthOf(); e++)
-        weights->p(e, e+1);
-    weights->permutei({2,3,1,0});
+    auto weights = NDArrayFactory::create<float>('c', {oC, iC, kY, kX});
+    for (int e = 0; e < weights.lengthOf(); e++)
+        weights.p(e, e+1);
+    weights.permutei({2,3,1,0});
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, input);
@@ -434,11 +434,11 @@ TEST_F(ConvolutionTests1, sconv2d_1) {
 
     //exp.printShapeInfo("Expected shape");
     //output->printShapeInfo("Result shape");
-    ASSERT_TRUE(exp.isSameShape(output));
+    ASSERT_TRUE(exp.isSameShape(*output));
 
         //exp.printBuffer("Expctd buffer");
     //output->printBuffer("Result buffer");
-    ASSERT_TRUE(exp.equalsTo(output));
+    ASSERT_TRUE(exp.equalsTo(*output));
 
     delete block;
     delete variableSpace;
@@ -482,11 +482,11 @@ TYPED_TEST(TypedConvolutionTests1, sconv2d_2) {
     //z->printShapeInfo("FF shape");
 
 
-    ASSERT_TRUE(z->isSameShape(&expFF));
+    ASSERT_TRUE(z.isSameShape(&expFF));
 
     //expFF.printBuffer("e");
     //z->printBuffer("z");
-    ASSERT_TRUE(z->equalsTo(&expFF, 1e-3));
+    ASSERT_TRUE(z.equalsTo(&expFF, 1e-3));
 }
 
 TYPED_TEST(TypedConvolutionTests1, sconv2d_3) {
@@ -547,7 +547,7 @@ TEST_F(ConvolutionTests1, sconv2d_4) {
 
     sd::ops::sconv2d op;
     auto results = op.evaluate({&input, &weightsD, &weightsP, &biases}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -720,19 +720,19 @@ TYPED_TEST(TypedConvolutionTests1, sconv2d_conv2d_1) {
 
     auto z = resultFF.at(0);
 
-    ASSERT_TRUE(z->isSameShape(&expFF));
-    ASSERT_TRUE(z->equalsTo(&expFF, 1));
+    ASSERT_TRUE(z.isSameShape(&expFF));
+    ASSERT_TRUE(z.equalsTo(&expFF, 1));
 
 
     sd::ops::conv2d op2d;
     // weightsP.printShapeInfo();
-    auto result2D = op2d.evaluate({z, &weightsP}, {}, {1, 1, 1, 1, 0, 0, 1, 1, 0, 0}, {});
+    auto result2D = op2d.evaluate({&z, &weightsP}, {}, {1, 1, 1, 1, 0, 0, 1, 1, 0, 0}, {});
 
     auto z2d = result2D.at(0);
     // z2d->printBuffer();
 
-    ASSERT_TRUE(z2d->isSameShape(&exp2FF));
-    ASSERT_TRUE(z2d->equalsTo(&exp2FF));
+    ASSERT_TRUE(z2d.isSameShape(&exp2FF));
+    ASSERT_TRUE(z2d.equalsTo(&exp2FF));
 }
 
 TEST_F(ConvolutionTests1, deconv2d_bp_1) {
@@ -898,7 +898,7 @@ TYPED_TEST(TypedConvolutionTests1, Test_Conv1D_ff_1) {
 
     sd::ops::conv1d_bp op_bp;
 
-    auto epsilonNxt = new NDArray(z->dup());
+    auto epsilonNxt = new NDArray(z.dup());
     epsilonNxt->linspace(1);
 
     auto result_BP = op_bp.evaluate({&input, &weights, &bias, epsilonNxt}, {}, {2, 1, 0, 1, 0, 0});
@@ -1635,9 +1635,9 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_bp_test3) {
 
     sd::ops::conv3dnew_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* gradI = results.at(0);
-    auto* gradW = results.at(1);
-    auto* gradB = results.at(2);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
+    auto gradB = results.at(2);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -1783,7 +1783,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test1) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expected.isSameShape(output));
@@ -1809,7 +1809,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test2) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expected.isSameShape(output));
@@ -1834,7 +1834,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test3) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expected.isSameShape(output));
@@ -1861,7 +1861,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test4) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights, &bias}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     // output->printIndexedBuffer();
 
@@ -1889,7 +1889,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test5) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights, &bias}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     // output->printIndexedBuffer();
 
@@ -1919,7 +1919,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test6) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights, &bias}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     // output->printIndexedBuffer();
 
@@ -1948,7 +1948,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test7) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expected.isSameShape(output));
@@ -2032,7 +2032,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test10) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2055,10 +2055,10 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test11) {
 
     sd::ops::conv3dnew op;
     auto results = op.evaluate({&input, &weights}, {}, {kD,kH,kW,  sD,sH,sW,  pD,pH,pW,  dD,dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
-    ASSERT_TRUE(output->isSameShape(&expected));
+    ASSERT_TRUE(output.isSameShape(&expected));
 
 }
 
@@ -2154,7 +2154,7 @@ TYPED_TEST(TypedConvolutionTests1, pointwise_conv2d_test1) {
 
     sd::ops::pointwise_conv2d op;
     auto results = op.evaluate({&input, &weights, &bias}, {}, {dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(output));
@@ -2274,7 +2274,7 @@ TEST_F(ConvolutionTests1, upsampling2d_test1) {
 
     sd::ops::upsampling2d op;
     auto results = op.evaluate({&input}, {factorH, factorW, isNCHW});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(output));
@@ -2301,7 +2301,7 @@ TEST_F(ConvolutionTests1, upsampling2d_test2) {
 
     sd::ops::upsampling2d op;
     auto results = op.evaluate({&input}, {factorH, factorW, isNCHW});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2338,7 +2338,7 @@ TEST_F(ConvolutionTests1, upsampling3d_test1) {
 
     sd::ops::upsampling3d op;
     auto results = op.evaluate({&input}, {factorD, factorH, factorW, isNCDHW});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(output));
@@ -2371,7 +2371,7 @@ TEST_F(ConvolutionTests1, upsampling3d_test2) {
 
     sd::ops::upsampling3d op;
     auto results = op.evaluate({&input}, {factorD, factorH, factorW, isNCDHW});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2397,7 +2397,7 @@ TEST_F(ConvolutionTests1, upsampling3d_bp_test1) {
 
     sd::ops::upsampling3d_bp op;
     auto results = op.evaluate({&input, &gradO}, {isNCDHW});
-    auto* gradI = results.at(0);
+    auto gradI = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expGradI.isSameShape(gradI));
@@ -2486,7 +2486,7 @@ TEST_F(ConvolutionTests1, upsampling3d_bp_test3) {
 
     sd::ops::upsampling3d_bp op;
     auto results = op.evaluate({&input, &gradO}, {isNCDHW});
-    auto* gradI = results.at(0);
+    auto gradI = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expGradI.isSameShape(gradI));

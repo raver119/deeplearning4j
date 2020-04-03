@@ -36,7 +36,7 @@ namespace sd {
 
     class SD_EXPORT ResultSet {
     private:
-        std::vector<sd::NDArray *> _content;
+        std::vector<sd::NDArray> _content;
         Nd4jStatus _status = ND4J_STATUS_OK;
         bool _removable = true;
 
@@ -62,9 +62,9 @@ namespace sd {
         ~ResultSet();
 
         int size();
-        sd::NDArray* at(const unsigned long idx) const;
-        sd::NDArray* operator[](const unsigned long idx) const;
-        void push_back(sd::NDArray* array);
+        sd::NDArray& at(const unsigned long idx) const;
+        sd::NDArray& operator[](const unsigned long idx) const;
+        void push_back(const sd::NDArray &array);
 
         Nd4jStatus status();
         void setStatus(Nd4jStatus status);

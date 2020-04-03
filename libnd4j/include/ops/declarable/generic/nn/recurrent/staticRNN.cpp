@@ -126,8 +126,8 @@ DECLARE_SHAPE_FN(static_rnn) {
 
     // evaluate output shapeInfos
     Nd4jLong *hShapeInfo(nullptr), *hPrevShapeInfo(nullptr);
-    ALLOCATE(hShapeInfo,     block.getWorkspace(), shape::shapeInfoLength(inRank), Nd4jLong);
-    ALLOCATE(hPrevShapeInfo, block.getWorkspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
+    ALLOCATE(hShapeInfo,     block.workspace(), shape::shapeInfoLength(inRank), Nd4jLong);
+    ALLOCATE(hPrevShapeInfo, block.workspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
 
     hShapeInfo[0]            = inRank;
     hPrevShapeInfo[0]        = inRank-1;

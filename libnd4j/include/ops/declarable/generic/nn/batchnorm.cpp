@@ -122,7 +122,7 @@ DECLARE_SHAPE_FN(batchnorm) {
     auto inShapeInfo = inputShape->at(0);
     DataType outType = DataTypeUtils::pickFloatingType(ArrayOptions::dataType(inShapeInfo));
 
-    auto outShapeInfo = ShapeBuilders::copyShapeInfoAndType(inShapeInfo, outType, false, block.getWorkspace());    // output shape is identical to input shape
+    auto outShapeInfo = ShapeBuilders::copyShapeInfoAndType(inShapeInfo, outType, false, block.workspace());    // output shape is identical to input shape
 
     return SHAPELIST(CONSTANT(outShapeInfo));
 }

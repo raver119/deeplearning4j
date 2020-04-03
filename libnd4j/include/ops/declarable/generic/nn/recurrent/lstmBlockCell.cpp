@@ -107,7 +107,7 @@ DECLARE_SHAPE_FN(lstmBlockCell) {
     // evaluate output shapeInfos
     const int bS = xt[1];
     Nd4jLong *s(nullptr);
-    ALLOCATE(s, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);      // [bS, numUnits]
+    ALLOCATE(s, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);      // [bS, numUnits]
 
     s[0] = 2;
     s[1] = bS;

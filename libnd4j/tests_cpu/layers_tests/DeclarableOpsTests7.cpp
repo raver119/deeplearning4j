@@ -66,7 +66,7 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_SCALAR_LARGE) {
 
     auto z = result.at(1);
 
-    ASSERT_EQ(148,z->e<double>(0));
+    ASSERT_EQ(148,z.e<double>(0));
     //ASSERT_TRUE(exp.isSameShape(z));
 
     
@@ -88,8 +88,7 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_SCALAR_ZERO) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(1);
-    auto array = *z;
-    ASSERT_EQ(3,array.e<double>(0));
+    ASSERT_EQ(3, z.e<double>(0));
     //ASSERT_TRUE(exp.isSameShape(z));
 
     
@@ -113,7 +112,7 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_SCALAR) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(3, z->lengthOf());
+    ASSERT_EQ(3, z.lengthOf());
     //ASSERT_TRUE(exp.isSameShape(z));
 
     
@@ -137,7 +136,7 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_SCALAR_LEFT) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(3,z->lengthOf());
+    ASSERT_EQ(3,z.lengthOf());
     //ASSERT_TRUE(exp.isSameShape(z));
 
     
@@ -160,7 +159,7 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_ONLY_SCALAR) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(2,z->lengthOf());
+    ASSERT_EQ(2,z.lengthOf());
     //ASSERT_TRUE(exp.isSameShape(z));
 
     
@@ -183,11 +182,8 @@ TEST_F(DeclarableOpsTests7, Test_CHOOSE_ONLY_SCALAR_GTE) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(3,z->lengthOf());
+    ASSERT_EQ(3,z.lengthOf());
     //ASSERT_TRUE(exp.isSameShape(z));
-
-    
-
 }
 
 
@@ -476,7 +472,7 @@ TEST_F(DeclarableOpsTests7, Test_Dynamic_Stitch_Prof_1) {
     auto timeStart = std::chrono::system_clock::now();
 
     for (int i = 0; i < numOfCases; i++) {
-       op.execute({&indices0, &indices1, &indices2, &data0, &data1, &data2}, {res}, {}, {}, {});
+       op.execute({&indices0, &indices1, &indices2, &data0, &data1, &data2}, {&res}, {}, {}, {});
     }
 
     auto timeEnd = std::chrono::system_clock::now();
@@ -572,8 +568,8 @@ TEST_F(DeclarableOpsTests7, Test_Dynamic_Stitch_119_1) {
     ASSERT_EQ(Status::OK(), result.status());
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->isSameShape(exp));
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.isSameShape(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     
 }
@@ -663,8 +659,8 @@ TEST_F(DeclarableOpsTests7, Test_Dynamic_Stitch_119_2) {
     ASSERT_EQ(Status::OK(), result.status());
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->isSameShape(exp));
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.isSameShape(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     
 }
@@ -3975,7 +3971,7 @@ TEST_F(DeclarableOpsTests7, RealDiv_1) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput RealDiv");
     ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -4022,7 +4018,7 @@ TEST_F(DeclarableOpsTests7, ShapesOf_1) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput RealDiv");
 //    ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -4065,7 +4061,7 @@ TEST_F(DeclarableOpsTests7, Size_1) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput SIZE");
 ///    ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -4084,7 +4080,7 @@ TEST_F(DeclarableOpsTests7, Size_2) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput SIZE");
 ///    ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -4102,7 +4098,7 @@ TEST_F(DeclarableOpsTests7, Softplus_1) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput Softplus");
 ///    ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -4142,7 +4138,7 @@ TEST_F(DeclarableOpsTests7, Softsign_1) {
     auto z = result.at(0);
 //    z->printIndexedBuffer("OUtput Softsign");
 ///    ASSERT_TRUE(e.isSameShape(z));
-    ASSERT_TRUE(e.equalsTo(*z));
+    ASSERT_TRUE(e.equalsTo(z));
 
     
 }
@@ -5018,7 +5014,7 @@ TYPED_TEST(TypedDeclarableOpsTests7, Test_Pnorm_Once_Again) {
     auto result = op.evaluate({&input}, {}, {1,1,  1,1,  0,0,  1,1,1,  3,  0});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(exp, *result.at(0));
+    ASSERT_EQ(exp, result.at(0));
 
     
 }
@@ -5972,7 +5968,7 @@ TEST_F(DeclarableOpsTests7, Test_Reduce_Prod_BP_2) {
     sd::ops::reduce_prod op_exp;
     auto res = op_exp.evaluate({&input});
     auto result = op.evaluate({&input, &eps}, {}, {});
-    exp.assign(res.at(0)->e<double>(0));
+    exp.assign(res.at(0).e<double>(0));
     exp /= input;
     exp *= eps.e<double>(0);
     ASSERT_EQ(Status::OK(), result.status());

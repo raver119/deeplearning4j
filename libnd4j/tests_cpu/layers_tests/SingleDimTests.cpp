@@ -146,7 +146,7 @@ TEST_F(SingleDimTests, Test_Squeeze_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(exp.rankOf(), z->rankOf());
+    ASSERT_EQ(exp.rankOf(), z.rankOf());
     ASSERT_TRUE(exp.equalsTo(z));
 
 

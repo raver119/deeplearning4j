@@ -75,14 +75,14 @@ namespace ops {
         switch(size) {
 
             case 2:
-                ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                 outShapeInfo[0] = 2;
                 outShapeInfo[1] = params[1];
                 outShapeInfo[2] = params[1];
                 break;
 
             case 3:
-                ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                 outShapeInfo[0] = 2;
                 outShapeInfo[1] = params[1];
                 outShapeInfo[2] = params[2];
@@ -90,7 +90,7 @@ namespace ops {
 
             default:
                 int rank = size-1;
-                ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+                ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
                 outShapeInfo[0] = rank;
                 outShapeInfo[rank-1] = params[1];
                 outShapeInfo[rank] = params[2];
@@ -101,7 +101,7 @@ namespace ops {
 
         shape::updateStrides(outShapeInfo, static_cast<char>(-params[0]));
         auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(outShapeInfo, dtype));
-        RELEASE(outShapeInfo, block.getWorkspace());
+        RELEASE(outShapeInfo, block.workspace());
         return SHAPELIST(result);
     }
 

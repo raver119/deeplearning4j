@@ -30,7 +30,7 @@ namespace sd {
         for (int e = 0; e < result->variables()->size(); e++) {
             auto var = result->variables()->Get(e);
 
-            NDArray* array;
+            NDArray array;
 
             if (var->ndarray() != nullptr) {
                 array = sd::graph::FlatUtils::fromFlatArray(var->ndarray());
@@ -48,7 +48,7 @@ namespace sd {
                     shape.emplace_back(shapeInfo.at(i + 1));
                 }
 
-                array = new NDArray((char) shapeInfo.at(shapeInfo.size() - 1), shape, DataTypeUtils::fromFlatDataType(var->dtype()));
+                array = NDArray((char) shapeInfo.at(shapeInfo.size() - 1), shape, DataTypeUtils::fromFlatDataType(var->dtype()));
             } else {
                 nd4j_printf("Either shape or NDArray should be defined in FlatResult variable\n","");
                 throw std::runtime_error("Empty variable");
@@ -111,9 +111,7 @@ namespace sd {
     }
 
     void ResultSet::delContent() {
-        if (_removable)
-            for (auto v : _content)
-                delete v;
+        //
     }
 
     ResultSet::~ResultSet() {
@@ -129,15 +127,15 @@ namespace sd {
         return (int) _content.size();
     }
 
-    sd::NDArray* ResultSet::at(const unsigned long idx) const {
-        return _content.at(idx);
+    sd::NDArray& ResultSet::at(const unsigned long idx) const {
+        return const_cast<sd::NDArray&>(_content[idx]);
     }
 
-    sd::NDArray* ResultSet::operator[](const unsigned long idx) const {
-        return _content[idx];
+    sd::NDArray& ResultSet::operator[](const unsigned long idx) const {
+        return const_cast<sd::NDArray&>(_content[idx]);
     }
 
-    void ResultSet::push_back(sd::NDArray *array) {
+    void ResultSet::push_back(const sd::NDArray &array) {
         _content.emplace_back(array);
     }
 

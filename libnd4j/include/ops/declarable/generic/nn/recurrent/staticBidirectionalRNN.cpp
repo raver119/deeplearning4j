@@ -198,9 +198,9 @@ DECLARE_SHAPE_FN(static_bidirectional_rnn) {
 
     // evaluate output shapeInfos
     Nd4jLong *hShapeInfo(nullptr), *hFWFinalPrevShapeInfo(nullptr), *hBWFinalPrevShapeInfo(nullptr);
-    ALLOCATE(hShapeInfo,            block.getWorkspace(), shape::shapeInfoLength(inRank), Nd4jLong);
-    ALLOCATE(hFWFinalPrevShapeInfo, block.getWorkspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
-    ALLOCATE(hBWFinalPrevShapeInfo, block.getWorkspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
+    ALLOCATE(hShapeInfo,            block.workspace(), shape::shapeInfoLength(inRank), Nd4jLong);
+    ALLOCATE(hFWFinalPrevShapeInfo, block.workspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
+    ALLOCATE(hBWFinalPrevShapeInfo, block.workspace(), shape::shapeInfoLength(inRank-1), Nd4jLong);
 
     hShapeInfo[0]     		 = inRank;
     hFWFinalPrevShapeInfo[0] = hBWFinalPrevShapeInfo[0] = inRank-1;

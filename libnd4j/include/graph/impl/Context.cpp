@@ -55,9 +55,6 @@ namespace sd {
             this->_nodeId = prototype.nodeId();
             this->_name = prototype.name();
             this->_useMKLDNN = prototype.isUseMKLDNN();
-
-            if (variableSpace != nullptr && variableSpace->launchContext()->getWorkspace() != nullptr)
-                    this->_workspace = variableSpace->launchContext()->getWorkspace();
         }
 
         Context::Context(int nodeId, VariableSpace *variableSpace) {
@@ -68,9 +65,6 @@ namespace sd {
 
             this->_executionTime.first = 0;
             this->_executionTime.second = 0;
-
-            if (variableSpace != nullptr && variableSpace->launchContext()->getWorkspace() != nullptr)
-                this->_workspace = variableSpace->launchContext()->getWorkspace();
         }
 
         Context::Context(int nodeId, VariableSpace *variableSpace, bool isInplace) : Context(nodeId, variableSpace) {
@@ -84,19 +78,12 @@ namespace sd {
             this->_fastpath_in.clear();
             this->_fastpath_out.clear();
 
-            for (auto v:_handles)
-                delete v;
-
             if (_context != nullptr)
                 delete _context;
         }
 
         void Context::setTargetEngine(samediff::Engine engine) {
             _engine = engine;
-        }
-
-        bool Context::hasWorkspaceProvided() {
-            return this->_workspace != nullptr;
         }
 
         void Context::attachWorkspace(sd::memory::Workspace* workspace) {
@@ -107,19 +94,15 @@ namespace sd {
             this->_variableSpace = variableSpace;
         }
 
-        void Context::forgetWorkspace() {
-            _workspace = nullptr;
-        }
-
-        std::vector<NDArray*>& Context::fastpath_in() {
+        const std::vector<std::shared_ptr<NDArray>>& Context::fastpath_in() const {
             return _fastpath_in;
         }
 
-        std::vector<NDArray*>& Context::fastpath_out() {
+        const std::vector<std::shared_ptr<NDArray>>& Context::fastpath_out() const {
             return _fastpath_out;
         }
 
-        bool Context::isFastPath() {
+        bool Context::isFastPath() const {
             auto ie = _fastpath_in.empty();
             auto io = _fastpath_out.empty();
             // two options here.
@@ -139,65 +122,19 @@ namespace sd {
             return _variableSpace;
         }
 
-        sd::memory::Workspace* Context::getWorkspace() {
+        sd::memory::Workspace* Context::workspace() const {
             return _workspace;
         }
 
-        sd::memory::Workspace* Context::workspace() {
-            return _workspace;
+        Stash* Context::stash() const {
+            return _variableSpace->stash();
         }
 
-        sd::random::RandomBuffer* Context::getRNG() {
-            return _rng;
-        }
-
-        void Context::setRNG(sd::random::RandomBuffer* rng) {
-            _rng = rng;
-        }
-
-        /**
-         * This method returns variableSpace used in this block
-         * @return
-         */
-    /*
-        VariableSpace* Context::getVariableSpace() {
-            return _variableSpace;
-        }
-*/
-
-        Stash* Context::getStash() {
-            return _variableSpace->getStash();
-        }
-
-        void Context::trackList(NDArrayList* list) {
-            _variableSpace->trackList(list);
-        }
-
-/*
-        void Block::updateVariables() {
-            _variables.clear();
-            auto x = _inputs.size();
-            for (auto &v:_inputs) {
-                auto var = _variableSpace->getVariable(v);
-                _variables.emplace_back(var);
-            }
-        }
-*/
-        int Context::getBranch() {
-            return _variableSpace->flowPath()->branch(this->nodeId());
-        }
-
-        void Context::setBranch(int branch) {
-            //_branch = branch;
-            if (_variableSpace->flowPath() != nullptr)
-                _variableSpace->flowPath()->markBranch(this->nodeId(), branch);
-        }
-
-        Nd4jLong sd::graph::Context::getOuterTime(){
+        Nd4jLong sd::graph::Context::outerTime() const {
             return this->_executionTime.first;
         }
 
-        Nd4jLong sd::graph::Context::getInnerTime(){
+        Nd4jLong sd::graph::Context::innerTime() const {
             return this->_executionTime.second;
         }
 
@@ -210,7 +147,7 @@ namespace sd {
         }
 
 
-        Variable* Context::getVariable(int idx) {
+        std::shared_ptr<Variable> Context::getVariable(int idx) const {
             if (idx >= this->_inputs.size()) {
                 nd4j_printf("Node %i; Variable [%i] requested, but only %i inputs available\n", this->_nodeId, idx, this->_inputs.size());
                 throw std::runtime_error("Context: bad Variable index");
@@ -222,7 +159,7 @@ namespace sd {
 
             if (Environment::getInstance()->isDebugAndVerbose() && v != nullptr &&  v->getNDArray() != nullptr) {
                 auto array = v->getNDArray();
-                std::string shape_ = ShapeUtils::shapeAsString(array);
+                std::string shape_ = ShapeUtils::shapeAsString(array.get());
                 auto type = DataTypeUtils::asString(array->dataType());
                 float m = std::numeric_limits<float>::quiet_NaN();
                 if (!array->isEmpty()) {
@@ -237,11 +174,11 @@ namespace sd {
             return v;
         }
 
-        Variable* Context::variable(int idx) {
+        std::shared_ptr<Variable> Context::variable(int idx) const {
             return getVariable(idx);
         }
 
-        Variable* Context::variable(std::initializer_list<int> p) {
+        std::shared_ptr<Variable> Context::variable(std::initializer_list<int> p) const {
             if (p.size() != 2)
                 throw std::runtime_error("Variable address should have size of 2");
 
@@ -251,12 +188,12 @@ namespace sd {
             return variable(pair);
         }
 
-        Variable* Context::variable(int node, int idx) {
+        std::shared_ptr<Variable> Context::variable(int node, int idx) const {
             std::pair<int, int> pair(node, idx);
             return variable(pair);
         }
 
-        Variable* Context::variable(std::pair<int,int>& p) {
+        std::shared_ptr<Variable> Context::variable(const std::pair<int,int>& p) const {
             try {
                 return _variableSpace->getVariable(p);
             } catch (std::exception &e) {
@@ -265,62 +202,51 @@ namespace sd {
             }
         }
 
-        void Context::pushNDArrayToVariableSpace(int nodeId, int index, NDArray *array, bool removable) {
+        void Context::pushNDArrayToVariableSpace(int nodeId, int index, const NDArray &array) {
             std::pair<int,int> pair(nodeId, index);
-            pushNDArrayToVariableSpace(pair, array, removable);
+            pushNDArrayToVariableSpace(pair, array);
         }
 
-        void Context::pushNDArrayToVariableSpace(std::pair<int, int> &pair, NDArray *array, bool removable) {
+        void Context::pushNDArrayToVariableSpace(const std::pair<int, int> &pair, const NDArray &array) {
             if (_variableSpace != nullptr) {
                 if (!_variableSpace->hasVariable(pair)) {
-                    auto var = new Variable(array, nullptr, pair.first, pair.second);
+                    auto var = std::make_shared<Variable>(array, "", pair.first, pair.second);
                     _variableSpace->putVariable(pair, var);
-                    var->markRemovable(removable);
                 } else {
                     auto var = _variableSpace->getVariable(pair);
                     if (var->hasNDArray()) {
-                        if (var->getNDArray() != array) {
-                            if (var->isRemovable() && var->hasNDArray())
-                                delete var->getNDArray();
-
-                            var->setNDArray(array);
-                            var->markRemovable(removable);
-                        }
-                    } else {
-                        var->setNDArray(array);
-                        var->markRemovable(removable);
+                        var->setNDArray(std::make_shared<NDArray>(array));
                     }
                 }
             }
         }
 
-        void Context::pushNDArrayListToVariableSpace(int nodeId, int index, NDArrayList* list, bool track) {
+        void Context::pushNDArrayListToVariableSpace(int nodeId, int index, const NDArrayList &list, bool track) {
             std::pair<int,int> pair(nodeId, index);
             pushNDArrayListToVariableSpace(pair, list, track);
         }
 
-        void Context::pushNDArrayListToVariableSpace(std::pair<int, int>& pair, NDArrayList* list, bool track) {
+        void Context::pushNDArrayListToVariableSpace(const std::pair<int, int>& pair, const NDArrayList &list, bool track) {
             if (!_variableSpace->hasVariable(pair)) {
-                auto var = new Variable(nullptr, nullptr, pair.first, pair.second);
-                var->setNDArrayList(list);
+                auto var = std::make_shared<Variable>();
+                var->setId(pair.first, pair.second);
+                var->setNDArrayList(std::make_shared<NDArrayList>(list));
                 _variableSpace->putVariable(pair, var);
             } else {
                 auto var = _variableSpace->getVariable(pair);
-                var->setNDArrayList(list);
+                var->setNDArrayList(std::make_shared<NDArrayList>(list));
             }
-
-            if (track)
-                _variableSpace->trackList(list);
         }
 
-        Variable* Context::ensureVariable(int idx) {
+        std::shared_ptr<Variable> Context::ensureVariable(int idx) {
             std::pair<int, int> pair(this->nodeId(), idx);
 
             if (_variableSpace == nullptr)
                 throw std::runtime_error("Context::ensureVariable VariableSpace is NULL!");
 
             if (!_variableSpace->hasVariable(pair)) {
-                auto var = new Variable(nullptr, nullptr, this->nodeId(), idx);
+                auto var = std::make_shared<Variable>();
+                var->setId(this->nodeId(), idx);
                 auto name = this->name();
 
                 if (!name.empty())
@@ -333,8 +259,8 @@ namespace sd {
             }
         }
 
-        bool Context::isValueAvailable(int idx) {
-            auto var = ensureVariable(idx);
+        bool Context::isValueAvailable(int idx) const {
+            auto var = const_cast<Context*>(this)->ensureVariable(idx);
 
             if (var->variableType() == VariableType::NDARRAY) {
                 return var->hasNDArray();
@@ -345,11 +271,11 @@ namespace sd {
             return false;
         }
 
-        NDArray* Context::getNDArray(int idx) {
+        std::shared_ptr<NDArray> Context::getNDArray(int idx) const {
             return array(idx);
         }
 
-        NDArray* Context::array(int idx) {
+        std::shared_ptr<NDArray> Context::array(int idx) const {
             // we check for fastpath first
             if (!_fastpath_in.empty() && _fastpath_in.size() > idx) {
                 return _fastpath_in[idx];
@@ -357,18 +283,6 @@ namespace sd {
 
             // if no luck for fastpath - return whatever is available
             return getVariable(idx)->getNDArray();
-        }
-
-        sd::memory::Workspace *Context::fWorkspace() {
-            return workspace();
-        }
-
-        sd::memory::Workspace *Context::tWorkspace() {
-            return nullptr;
-        }
-
-        sd::memory::Workspace *Context::oWorkspace() {
-            return nullptr;
         }
 
         LaunchContext* Context::launchContext() {
@@ -387,46 +301,39 @@ namespace sd {
                 return _inputs.size();
         }
 
-        void Context::setInputArray(int index, NDArray *array, bool removable) {
+        void Context::setInputArray(int index, const NDArray &array) {
             if (_fastpath_in.size() < index + 1)
                 _fastpath_in.resize(index+1);
 
-            _fastpath_in[index] = array;
-            if (removable)
-                _handles.emplace_back(array);
+            _fastpath_in[index] = std::make_shared<NDArray>(array);
         }
 
         void Context::setInputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo) {
-            auto array = new NDArray(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
+            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
 
             if (_fastpath_in.size() < index + 1)
                 _fastpath_in.resize(index+1);
 
             _fastpath_in[index] = array;
-            _handles.emplace_back(array);
 
             if (_context != nullptr)
                 array->setContext(_context);
         }
 
-        void Context::setOutputArray(int index, NDArray *array, bool removable) {
+        void Context::setOutputArray(int index, const NDArray &array) {
             if (_fastpath_out.size() < index + 1)
                 _fastpath_out.resize(index+1);
 
-            _fastpath_out[index] = array;
-
-            if (removable)
-                _handles.emplace_back(array);
+            _fastpath_out[index] = std::make_shared<NDArray>(array);
         }
 
         void Context::setOutputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo) {
             if (_fastpath_out.size() < index + 1)
                 _fastpath_out.resize(index+1);
 
-            auto array = new NDArray(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
+            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
 
             _fastpath_out[index] = array;
-            _handles.emplace_back(array);
 
             if (_context != nullptr)
                 array->setContext(_context);
@@ -438,14 +345,13 @@ namespace sd {
             if (_fastpath_in.size() < index + 1)
                 _fastpath_in.resize(index+1);
 
-            NDArray *array;
+            std::shared_ptr<NDArray> array;
             if (dataBuffer != nullptr)
-                array = new NDArray(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
             else
-                array = new NDArray(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
 
             _fastpath_in[index] = array;
-            _handles.emplace_back(array);
 
             if (_context != nullptr)
                 array->setContext(_context);
@@ -457,14 +363,13 @@ namespace sd {
             if (_fastpath_out.size() < index + 1)
                 _fastpath_out.resize(index+1);
 
-            NDArray *array;
+            std::shared_ptr<NDArray> array;
             if (dataBuffer != nullptr)
-                array = new NDArray(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
             else
-                array = new NDArray(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
 
             _fastpath_out[index] = array;
-            _handles.emplace_back(array);
 
             if (_context != nullptr)
                 array->setContext(_context);
@@ -510,7 +415,7 @@ namespace sd {
             _helpersAllowed = reallyAllow;
         }
 
-        bool Context::helpersAllowed() {
+        bool Context::helpersAllowed() const {
             return _helpersAllowed;
         }
 
@@ -533,11 +438,11 @@ namespace sd {
             _shapeFunctionOverride = reallyOverride;
         }
 
-        bool Context::shapeFunctionOverride() {
+        bool Context::shapeFunctionOverride() const {
             return _shapeFunctionOverride;
         }
 
-        samediff::ExecutionMode Context::executionMode() {
+        samediff::ExecutionMode Context::executionMode() const {
             return _execMode;
         }
 
@@ -545,11 +450,11 @@ namespace sd {
             _execMode = executionMode;
         }
 
-        bool Context::isTraining() {
+        bool Context::isTraining() const {
             return _execMode == samediff::ExecutionMode::MODE_TRAINING;
         }
 
-        bool Context::isInference() {
+        bool Context::isInference() const {
             return _execMode == samediff::ExecutionMode::MODE_INFERENCE;
         }
 
@@ -568,15 +473,18 @@ namespace sd {
         void Context::clearFastPath() {
             _fastpath_in.clear();
             _fastpath_out.clear();
-
-            for (auto v:_handles)
-                delete v;
-
-            _handles.clear();
         }
 
         const GraphMemoryManager &Context::memoryManager() const {
             return *_memoryManager;
+        }
+
+        void Context::setInputArray(int index, const std::shared_ptr<NDArray> &array) {
+            _fastpath_in[index] = array;
+        }
+
+        void Context::setOutputArray(int index, const std::shared_ptr<NDArray> &array) {
+            _fastpath_out[index] = array;
         }
     }
 }

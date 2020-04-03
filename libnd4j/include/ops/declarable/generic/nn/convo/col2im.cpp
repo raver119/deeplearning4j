@@ -64,7 +64,7 @@ namespace sd {
             bool isSameMode = INT_ARG(8) > 0;
 
             Nd4jLong* zShape;
-            ALLOCATE(zShape, block.getWorkspace(), shape::shapeInfoLength(4), Nd4jLong);
+            ALLOCATE(zShape, block.workspace(), shape::shapeInfoLength(4), Nd4jLong);
 
             zShape[0] = 4;
             zShape[1] = bS;

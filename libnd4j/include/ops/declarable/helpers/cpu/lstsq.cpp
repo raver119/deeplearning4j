@@ -40,7 +40,7 @@ namespace helpers {
 
         for (auto x = 0; x < lastDims.size(); x++) {
             for (auto r = 0; r < rows; r++) {
-                 lastDims[x]->t<T>(r,r) = (T)value;
+                 lastDims[x].t<T>(r,r) = (T)value;
             }
         }
 

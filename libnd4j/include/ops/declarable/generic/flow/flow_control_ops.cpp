@@ -37,7 +37,7 @@ namespace sd {
 
             // we'll store signal to both ends
             //STORE_2_RESULTS(*input, *input);
-
+/*
             // but we'll ensure only one node is active, and other is disabled
             if (condition->e<int>(0) == 0) {
                 block.setBranch(0);
@@ -48,6 +48,9 @@ namespace sd {
             }
 
             return Status::OK();
+            */
+
+            throw std::runtime_error("Switch - Not implemented yet");
         }
         DECLARE_SYN(switch, Switch);
         DECLARE_SYN(if, Switch);

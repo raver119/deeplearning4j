@@ -36,7 +36,8 @@ namespace sd {
                     if (!var->hasNDArrayList()) {
                         auto list = inVar->getNDArrayList();
 
-                        block.pushNDArrayListToVariableSpace(block.nodeId(), e, list, false);
+                        //block.pushNDArrayListToVariableSpace(block.nodeId(), e, list);
+                        throw std::runtime_error("Expose - not implemented yet");
                     }
                 }
             }

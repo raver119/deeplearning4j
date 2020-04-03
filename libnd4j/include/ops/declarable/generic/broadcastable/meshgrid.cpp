@@ -65,7 +65,7 @@ DECLARE_SHAPE_FN(meshgrid) {
     
     int rank = block.width();
     Nd4jLong* outShapeInfo = nullptr;
-    ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+    ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
     outShapeInfo[0] = rank;    
     for(int i = 1; i <= rank; ++i)
         outShapeInfo[i] = (Nd4jLong)shape::length(inputShape->at(i - 1));

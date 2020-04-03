@@ -64,7 +64,7 @@ namespace ops  {
 
 			int outRank = inRank/2;
 
-			ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+			ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
 	
 			outShapeInfo[0] = outRank;
 			for(int i = 1; i <= outRank; ++i)

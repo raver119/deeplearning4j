@@ -44,7 +44,7 @@ namespace sd {
             auto shapes = SHAPELIST();
             for (size_t i = 0; i < inputShape->size(); ++i) {
                 Nd4jLong* shape;
-                COPY_SHAPE_EX(inputShape->at(i), shape, block.getWorkspace());
+                COPY_SHAPE_EX(inputShape->at(i), shape, block.workspace());
                 shapes->push_back(CONSTANT(shape));
             }
             return shapes;

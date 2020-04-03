@@ -44,7 +44,7 @@ void crossBatched(sd::LaunchContext * context, NDArray *a, NDArray *b, NDArray *
             auto b_ = tadsB.at(e);
             auto o_ = tadsO.at(e);
 
-            helpers::cross(context, a_, b_, o_);
+            helpers::cross(context, &a_, &b_, &o_);
         }
     };
 

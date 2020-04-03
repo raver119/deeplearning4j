@@ -31,32 +31,22 @@ public:
 
 };
 
-
-TEST_F(SanityTests, VariableSpace_1) {
-    VariableSpace variableSpace;
-    variableSpace.putVariable(1, new Variable());
-    variableSpace.putVariable(1, 1, new Variable());
-
-    std::pair<int, int> pair(1, 2);
-    variableSpace.putVariable(pair, new Variable());
-}
-
 TEST_F(SanityTests, VariableSpace_2) {
     VariableSpace variableSpace;
-    variableSpace.putVariable(1, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
-    variableSpace.putVariable(1, 1, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
+    variableSpace.putVariable(1, NDArrayFactory::create<float>('c', {3, 3}));
+    variableSpace.putVariable({1, 1}, NDArrayFactory::create<float>('c', {3, 3}));
 
     std::pair<int, int> pair(1, 2);
-    variableSpace.putVariable(pair, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
+    variableSpace.putVariable(pair, NDArrayFactory::create<float>('c', {3, 3}));
 }
 
 
 TEST_F(SanityTests, Graph_1) {
     Graph graph;
 
-    graph.variableSpace()->putVariable(1, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
-    graph.variableSpace()->putVariable(1, 1, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
+    graph.variableSpace().putVariable(1, NDArrayFactory::create<float>('c', {3, 3}));
+    graph.variableSpace().putVariable({1, 1}, NDArrayFactory::create<float>('c', {3, 3}));
 
     std::pair<int, int> pair(1, 2);
-    graph.variableSpace()->putVariable(pair, new Variable(NDArrayFactory::create_<float>('c', {3, 3})));
+    graph.variableSpace().putVariable(pair, NDArrayFactory::create<float>('c', {3, 3}));
 }

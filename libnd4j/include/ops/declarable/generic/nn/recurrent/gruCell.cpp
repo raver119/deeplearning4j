@@ -104,7 +104,7 @@ DECLARE_SHAPE_FN(gruCell) {
     REQUIRE_TRUE(shape::rank(bc)==1 && bc[1]==nU, 0, "gruCell: cell biases must be rank 1, size nU");
 
     Nd4jLong *s0(nullptr);
-    ALLOCATE(s0, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);// [bS x nU]
+    ALLOCATE(s0, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);// [bS x nU]
 
     s0[0] = rank;
     s0[1] = bS;

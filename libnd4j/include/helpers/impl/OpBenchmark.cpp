@@ -21,36 +21,30 @@
 #include "../OpBenchmark.h"
 
 namespace sd {
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z) {
+    OpBenchmark::OpBenchmark(const std::string &name, const NDArray &x, const NDArray &y, const NDArray &z) {
         _testName = name;
         _x = x;
         _y = y;
         _z = z;
     }
 
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *z) {
+    OpBenchmark::OpBenchmark(const std::string &name, const NDArray &x, const NDArray &z) {
         _testName = name;
         _x = x;
         _z = z;
     }
 
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *z, std::initializer_list<int> axis) : OpBenchmark(name, x, nullptr, z, axis){ }
-
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z, std::initializer_list<int> axis){
+    OpBenchmark::OpBenchmark(const std::string &name, const NDArray &x, const NDArray &z, const std::vector<int> &axis)  {
         _testName = name;
         _x = x;
-        _y = y;
         _z = z;
-        _axis = std::vector<int>(axis);
+        _axis = axis;
 
         if (_axis.size() > 1)
             std::sort(_axis.begin(), _axis.end());
-
     }
 
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *z, std::vector<int> axis) : OpBenchmark(name, x, nullptr, z, axis) { }
-
-    OpBenchmark::OpBenchmark(std::string name, NDArray *x, NDArray *y, NDArray *z, std::vector<int> axis) {
+    OpBenchmark::OpBenchmark(const std::string &name, const NDArray &x, const NDArray &y, const NDArray &z, const std::vector<int> &axis) {
         _testName = name;
         _x = x;
         _y = y;
@@ -63,13 +57,13 @@ namespace sd {
 
 
     NDArray& OpBenchmark::x() {
-        return *_x;
+        return _x;
     }
 
-    int OpBenchmark::opNum() {
+    int OpBenchmark::opNum() const {
         return _opNum;
     }
-    std::string OpBenchmark::testName(){
+    const std::string& OpBenchmark::testName() const{
         return _testName;
     }
 
@@ -77,19 +71,19 @@ namespace sd {
         _opNum = opNum;
     }
 
-    void OpBenchmark::setTestName(std::string name){
+    void OpBenchmark::setTestName(const std::string &name){
         _testName = name;
     }
 
-    void OpBenchmark::setX(NDArray *array) {
+    void OpBenchmark::setX(const NDArray &array) {
         _x = array;
     }
 
-    void OpBenchmark::setY(NDArray *array) {
+    void OpBenchmark::setY(const NDArray &array) {
         _y = array;
     }
 
-    void OpBenchmark::setZ(NDArray *array) {
+    void OpBenchmark::setZ(const NDArray &array) {
         _z = array;
     }
 
@@ -110,19 +104,19 @@ namespace sd {
     }
 
     std::string OpBenchmark::shape() {
-        if (_x != nullptr)
+        if (_x.shapeInfo() != nullptr)
             return ShapeUtils::shapeAsString(_x);
-        else if (_z != nullptr)
+        else if (_z.shapeInfo() != nullptr)
             return ShapeUtils::shapeAsString(_z);
         else
             return "N/A";
     }
 
     std::string OpBenchmark::dataType() {
-        if (_x != nullptr)
-            return DataTypeUtils::asString(_x->dataType());
-        else if (_z != nullptr)
-            return DataTypeUtils::asString(_z->dataType());
+        if (_x.shapeInfo() != nullptr)
+            return DataTypeUtils::asString(_x.dataType());
+        else if (_z.shapeInfo() != nullptr)
+            return DataTypeUtils::asString(_z.dataType());
         else
             return "N/A";
     }

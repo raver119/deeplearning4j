@@ -75,7 +75,7 @@ namespace sd {
 
             // output is always 6d for im2col
             Nd4jLong* zShape;
-            ALLOCATE(zShape, block.getWorkspace(), shape::shapeInfoLength(6), Nd4jLong);
+            ALLOCATE(zShape, block.workspace(), shape::shapeInfoLength(6), Nd4jLong);
 
             int oY = 0;
             int oX = 0;

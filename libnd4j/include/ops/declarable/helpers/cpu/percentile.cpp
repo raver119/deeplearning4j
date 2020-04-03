@@ -42,9 +42,9 @@ static void _percentile(const NDArray& input, NDArray& output, std::vector<int>&
 
     auto listOfSubArrs = input.allTensorsAlongDimension(axises);
 
-    std::vector<Nd4jLong> shapeOfSubArr(listOfSubArrs.at(0)->rankOf());
+    std::vector<Nd4jLong> shapeOfSubArr(listOfSubArrs.at(0).rankOf());
     for(int i=0; i<shapeOfSubArr.size(); ++i)
-        shapeOfSubArr[i] = listOfSubArrs.at(0)->shapeOf()[i];
+        shapeOfSubArr[i] = listOfSubArrs.at(0).shapeOf()[i];
 
     auto flattenedArr = NDArrayFactory::create('c', shapeOfSubArr, input.dataType(), input.getContext());
     const int len = flattenedArr.lengthOf();

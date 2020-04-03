@@ -53,7 +53,7 @@ namespace ops {
             weightsBroad = new NDArray(weights->tileToShape(log_predictions->getShapeInfo()));
 
 
-        NDArray E(labels->getShapeInfo(), block.getWorkspace());
+        NDArray E(labels->getShapeInfo(), block.workspace());
         if (computeFullLoss)
             labels->applyPairwiseTransform(pairwise::LogPoissonLossFull, *log_predictions, E);
         else
@@ -175,11 +175,11 @@ namespace ops {
             weightsBroad = new NDArray(weights->tileToShape(log_predictions->getShapeInfo()));
 
 
-        NDArray E(labels->getShapeInfo(), block.getWorkspace());
+        NDArray E(labels->getShapeInfo(), block.workspace());
         if (computeFullLoss) {
             labels->applyPairwiseTransform(pairwise::LogPoissonLossFull, *log_predictions, E);
 
-            NDArray rDiv(labels->getShapeInfo(), block.getWorkspace());
+            NDArray rDiv(labels->getShapeInfo(), block.workspace());
             labels->applyScalar(scalar::ReverseDivide, 0.5f, rDiv);
             dLdl->assign(rDiv  + labels->transform(transform::Log) + -(*log_predictions));
         } else {
@@ -299,9 +299,9 @@ namespace ops {
 
         DataType outType = DataTypeUtils::pickFloatingType(ArrayOptions::dataType(predictionsShapeInfo));
 
-        Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.getWorkspace());
-        Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.getWorkspace());
-        Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.getWorkspace());
+        Nd4jLong *dLdpShapeInfo = ShapeBuilders::copyShapeInfoAndType(predictionsShapeInfo, outType, false, block.workspace());
+        Nd4jLong *dLdwShapeInfo = ShapeBuilders::copyShapeInfoAndType(weightsShapeInfo, outType, false, block.workspace());
+        Nd4jLong *dLdlShapeInfo = ShapeBuilders::copyShapeInfoAndType(labelsShapeInfo, outType, false, block.workspace());
 
         return SHAPELIST(dLdpShapeInfo, dLdwShapeInfo, dLdlShapeInfo);
     }

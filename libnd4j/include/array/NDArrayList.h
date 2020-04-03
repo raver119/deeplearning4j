@@ -65,6 +65,9 @@ namespace sd {
         NDArrayList(int height, bool expandable = false);
         ~NDArrayList();
 
+        NDArrayList(const sd::NDArrayList &other);
+        NDArrayList(sd::NDArrayList &&other);
+
         sd::DataType dataType();
 
         NDArray* read(int idx);

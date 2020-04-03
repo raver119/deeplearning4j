@@ -300,8 +300,6 @@ TEST_F(DeclarableOpsTests9, concat_test3) {
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
     auto output = result.at(0);
 
-    output->printBuffer();
-
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
 
@@ -539,11 +537,11 @@ TEST_F(DeclarableOpsTests9, concat_test14) {
 
     auto z = result.at(0);
 
-    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z->getShapeInfo(), {0});
+    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z.getShapeInfo(), {0});
     ASSERT_TRUE(2 == numOfTads);
 
     for (int e = 0; e < numOfTads; ++e) {
-        NDArray tad  = (*z)(e, {0});
+        NDArray tad  = z(e, {0});
         auto mean = tad.meanNumber().e<double>(0);
         ASSERT_NEAR((e+1)*1., mean, 1e-5);
     }
@@ -601,11 +599,11 @@ TEST_F(DeclarableOpsTests9, concat_test17) {
     // z->printShapeInfo();
     // z->printIndexedBuffer();
 
-    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z->getShapeInfo(), {0});
+    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z.getShapeInfo(), {0});
     ASSERT_TRUE(2 == numOfTads);
 
     for (int e = 0; e < numOfTads; ++e) {
-        NDArray tad  = (*z)(e, {0});
+        NDArray tad  = z(e, {0});
         auto mean = tad.meanNumber().e<double>(0);
         ASSERT_NEAR((e+1)*1., mean, 1e-5);
     }
@@ -618,13 +616,13 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 2000; e++) {
-        auto array = NDArrayFactory::create_<int>('c', {1, 300});
-        array->assign(e);
-        context.setInputArray(e, array, true);
+        auto array = NDArrayFactory::create<int>('c', {1, 300});
+        array.assign(e);
+        context.setInputArray(e, array);
     }
 
     auto z = NDArrayFactory::create<int>('c', {2000, 300});
-    context.setOutputArray(0, &z, false);
+    context.setOutputArray(0, z);
     context.setIArguments(&axis, 1);
 
     sd::ops::concat op;
@@ -646,13 +644,13 @@ TEST_F(DeclarableOpsTests9, concat_test19) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 10; e++) {
-        auto array = NDArrayFactory::create_<float>('c', {1, 5, 20});
-        array->assign(e);
-        context.setInputArray(e, array, true);
+        auto array = NDArrayFactory::create<float>('c', {1, 5, 20});
+        array.assign(e);
+        context.setInputArray(e, array);
     }
 
     auto z = NDArrayFactory::create<float>('c', {10, 5, 20});
-    context.setOutputArray(0, &z, false);
+    context.setOutputArray(0, z);
     context.setIArguments(&axis, 1);
 
     sd::ops::concat op;
@@ -680,11 +678,11 @@ TEST_F(DeclarableOpsTests9, concat_test20) {
 
     auto z = result.at(0);
 
-    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z->getShapeInfo(), {0});
+    Nd4jLong numOfTads= ShapeUtils::getNumOfSubArrs(z.getShapeInfo(), {0});
     ASSERT_TRUE(4 == numOfTads);
 
     for (int e = 0; e < numOfTads; e++) {
-        NDArray tad  = (*z)(e, {0});
+        NDArray tad  = z(e, {0});
         auto mean = tad.meanNumber().e<double>(0);
         ASSERT_NEAR((double) e+1, mean, 1e-5);
     }
@@ -793,7 +791,6 @@ TEST_F(DeclarableOpsTests9, concat_test26) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
     auto output = result.at(0);
-    output->printLinearBuffer();
 
     ASSERT_TRUE(exp.isSameShape(output));
     ASSERT_TRUE(exp.equalsTo(output));
@@ -815,7 +812,7 @@ TEST_F(DeclarableOpsTests9, concat_test27) {
 
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->isSameShape(expShape));
+    ASSERT_TRUE(z.isSameShape(expShape));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -989,7 +986,7 @@ TEST_F(DeclarableOpsTests9, TestDropout_BP_1) {
     ASSERT_EQ(ND4J_STATUS_OK, ress.status());
     //ress.at(0)->printIndexedBuffer("Result is ");
     //x.printIndexedBuffer("Input is");
-    ASSERT_FALSE(ress.at(0)->equalsTo(errs));
+    ASSERT_FALSE(ress.at(0).equalsTo(errs));
 
 }
 
@@ -1004,20 +1001,20 @@ TEST_F(DeclarableOpsTests9, TestDropout_1) {
     auto ress = op.evaluate({&x}, {0.2f}, {113});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress.status());
-    NDArray* res = ress.at(0); //->printIndexedBuffer("Result is ");
+    auto res = ress.at(0); //->printIndexedBuffer("Result is ");
     //x.printIndexedBuffer("Input is");
     //res->printIndexedBuffer("Result for Dropout_1");
-    auto countZero = res->reduceNumber(reduce::CountZero);
+    auto countZero = res.reduceNumber(reduce::CountZero);
     ASSERT_NEAR(countZero.e<Nd4jLong>(0), 80, 5);
     auto ress2 = op.evaluate({&x}, {0.2f}, {113});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress2.status());
-    NDArray* res2 = ress2.at(0);
+    auto res2 = ress2.at(0);
 
-    countZero = res->reduceNumber(reduce::CountZero);
+    countZero = res.reduceNumber(reduce::CountZero);
     ASSERT_NEAR(countZero.e<Nd4jLong>(0), 80, 5);
     //res2->printIndexedBuffer("Result for Dropout_2");
-    ASSERT_TRUE(res->equalsTo(res2));
+    ASSERT_TRUE(res.equalsTo(res2));
     //res->printIndexedBuffer("FF dropout");
     //res2->printIndexedBuffer("BP dropout");
 
@@ -1060,7 +1057,7 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
 
     ASSERT_EQ(ND4J_STATUS_OK, ress.status());
     //ress.at(0)->printIndexedBuffer("01Dropout result is ");
-    auto count = ress.at(0)->reduceNumber(reduce::CountNonZero);
+    auto count = ress.at(0).reduceNumber(reduce::CountNonZero);
 //    nd4j_printf("\n01Dropout count %i\n\n", count);
 
     sd::ops::dropout_bp op2;
@@ -1076,9 +1073,9 @@ TEST_F(DeclarableOpsTests9, Test_DropoutInverted_01) {
     //ressY->at(0)->printIndexedBuffer("BP");
     //ress.at(0)->printIndexedBuffer("FF");
     bool ret = true;
-    for (int e = 0; e < ress.at(0)->lengthOf(); e++) {
-        if (ress.at(0)->e<float>(e) == 0.f)
-            if (ressX.at(0)->e<float>(e) != ress.at(0)->e<float>(e)) {
+    for (int e = 0; e < ress.at(0).lengthOf(); e++) {
+        if (ress.at(0).e<float>(e) == 0.f)
+            if (ressX.at(0).e<float>(e) != ress.at(0).e<float>(e)) {
                 ret = false;
                 break;
             }
@@ -1122,16 +1119,16 @@ TEST_F(DeclarableOpsTests9, Test_Dropout_BP_2) {
     //ressY->at(0)->printIndexedBuffer("BP Dropout result is ");
 
 
-    auto countZero = ress.at(0)->reduceNumber(reduce::CountZero);
+    auto countZero = ress.at(0).reduceNumber(reduce::CountZero);
     ASSERT_NEAR(countZero.e<float>(0), 50.f, 10.f);
-    countZero = ressX.at(0)->reduceNumber(reduce::CountZero);
+    countZero = ressX.at(0).reduceNumber(reduce::CountZero);
     //nd4j_printf("X zero count is %f\n", countZero);
     ASSERT_NEAR(countZero.e<float>(0), 50.f, 10.f);
-    countZero = ressY.at(0)->reduceNumber(reduce::CountZero);
+    countZero = ressY.at(0).reduceNumber(reduce::CountZero);
     //nd4j_printf("Y zero count is %f\n", countZero);
     ASSERT_NEAR(countZero.e<float>(0), 50.f, 10.f);
 //    ASSERT_TRUE(exp.equalsTo(ressX->at(0)));
-    ASSERT_TRUE(ressX.at(0)->equalsTo(ressY.at(0)));
+    ASSERT_TRUE(ressX.at(0).equalsTo(ressY.at(0)));
 
 }
 
@@ -1149,15 +1146,15 @@ TEST_F(DeclarableOpsTests9, Test_AlphaDropout_BP_1) {
     auto ress = op.evaluate({&x, &eps}, {0.5f, 0.5f, 1.5f, 1.6f}, {119});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress.status());
-    NDArray* res = ress.at(0);
+    auto res = ress.at(0);
 
     auto ress2 = op.evaluate({&x, &eps}, {0.5f, 0.5f, 1.5f, 1.6f}, {119});
 
     ASSERT_EQ(ND4J_STATUS_OK, ress2.status());
-    NDArray* res2 = ress2.at(0);
+    auto res2 = ress2.at(0);
     //res->printIndexedBuffer("Result1AlphaBP1");
     //res2->printIndexedBuffer("Result1AlphaBP2");
-    ASSERT_TRUE(res2->equalsTo(res));
+    ASSERT_TRUE(res2.equalsTo(res));
 
 }
 
@@ -1171,7 +1168,6 @@ TEST_F(DeclarableOpsTests9, test_range_int_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-
 }
 
 TEST_F(DeclarableOpsTests9, test_range_empty_1) {
@@ -1185,8 +1181,7 @@ TEST_F(DeclarableOpsTests9, test_range_empty_1) {
 
     auto z = result.at(0);
 
-    ASSERT_TRUE(z->isEmpty());
-
+    ASSERT_TRUE(z.isEmpty());
 }
 
 
@@ -1221,7 +1216,6 @@ TEST_F(DeclarableOpsTests9, test_unstack_1) {
     auto result = op.evaluate({&x}, {}, {0});
     ASSERT_EQ(Status::OK(), result.status());
     ASSERT_EQ(5, result.size());
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1239,8 +1233,8 @@ TEST_F(DeclarableOpsTests9, test_unstack_SGO_1) {
     ASSERT_EQ(Status::OK(), result.status());
     ASSERT_EQ(5, result.size());
     for (size_t i = 0; i < result.size(); i++) {
-        ASSERT_TRUE(result.at(i)->isSameShape(z[i]));
-        ASSERT_TRUE(result.at(i)->equalsTo(z[i]));
+        ASSERT_TRUE(result.at(i).isSameShape(z[i]));
+        ASSERT_TRUE(result.at(i).equalsTo(z[i]));
     }
 
 }
@@ -2319,7 +2313,7 @@ TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
 //    printf("How many: %ul\n", res2->size());
 //    res2->at(0)->printBuffer("Ouputput0");
 //    res2->at(1)->printBuffer("Ouputput1");
-    ASSERT_TRUE(res2.at(0)->equalsTo(exp));
+    ASSERT_TRUE(res2.at(0).equalsTo(exp));
 
 }
 //////////////////////////////////////////////////////////////////////

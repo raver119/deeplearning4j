@@ -51,7 +51,7 @@ static void clipByNorm_(NDArray& input, NDArray& output, const std::vector<int>&
                 for (auto i = start; i < stop; i++) {
                     const T iNormActual = norm2.e<T>(i);
                     if (iNormActual > normClip)
-                        *listOfInSubArrs.at(i) *= normClip / iNormActual;
+                        listOfInSubArrs.at(i) *= normClip / iNormActual;
                 }
             };
             samediff::Threads::parallel_tad(func, 0, listOfInSubArrs.size());
@@ -75,12 +75,12 @@ static void clipByNorm_(NDArray& input, NDArray& output, const std::vector<int>&
                 for (auto i = start; i < stop; i++) {
                     auto inputSubArr = listOfInSubArrs.at(i);
                     auto outputSubArr = listOfOutSubArrs.at(i);
-                    outputSubArr->assign(inputSubArr);
+                    outputSubArr.assign(inputSubArr);
 
                     const T iNormActual = norm2.e<T>(i);
 
                     if (iNormActual > clipNorm.e<T>(0))
-                        *outputSubArr *= clipNorm / iNormActual;
+                        outputSubArr *= clipNorm / iNormActual;
                 }
             };
             samediff::Threads::parallel_tad(func, 0, listOfInSubArrs.size());
@@ -178,7 +178,7 @@ static void clipByNormBP_(const NDArray& input, const NDArray& gradO, NDArray& g
 
                 if (N > cn) {
                     auto inputSubArr = inputSubArrs.at(i);
-                    const T sumOfProd = (*inputSubArr * *gradOSubArr).reduceNumber(reduce::Sum).e<T>(0);    // reduce to scalar
+                    const T sumOfProd = (inputSubArr * gradOSubArr).reduceNumber(reduce::Sum).e<T>(0);    // reduce to scalar
                     const T factor1 = static_cast<T>(1.f) / N;
                     const T factor3 = factor1 / (N * N);                                            // 1 / (N*N*N)
 
@@ -186,9 +186,9 @@ static void clipByNormBP_(const NDArray& input, const NDArray& gradO, NDArray& g
                         return cn * (factor1 * elem2 - factor3 * elem1 * sumOfProd);
                     };
 
-                    inputSubArr->applyPairwiseLambda<T>(*gradOSubArr, lambda, *gradISubArr);
+                    inputSubArr.applyPairwiseLambda<T>(gradOSubArr, lambda, gradISubArr);
                 } else
-                    gradISubArr->assign(gradOSubArr);
+                    gradISubArr.assign(gradOSubArr);
             }
         };
         samediff::Threads::parallel_tad(func, 0, gradISubArrs.size());
@@ -228,11 +228,11 @@ static void clipByAveraged_(NDArray& input, NDArray& output, const std::vector<i
         auto tads = output.allTensorsAlongDimension(dimensions);
         // TODO: make this CUDA-compliant somehow
         for (int e = 0; e < tads.size(); e++) {
-            T n2 = norm2.e<T>(e) / tads.at(e)->lengthOf();
+            T n2 = norm2.e<T>(e) / tads.at(e).lengthOf();
             const T factor = cn / n2;
             if (n2 > cn) {
                 auto lambda = LAMBDA_T(_x, factor) {return _x * factor;};
-                tads.at(e)->applyLambda<T>(lambda, output);
+                tads.at(e).applyLambda<T>(lambda, output);
             }
         }
     }

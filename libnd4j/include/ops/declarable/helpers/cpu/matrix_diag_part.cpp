@@ -48,7 +48,7 @@ int _matrixDiagPart(const NDArray* input, NDArray* output) {
     auto func = PRAGMA_THREADS_FOR {
         for (auto i = start; i < stop; i++)
             for (int j = 0; j < lastDimension; ++j)
-                listOut.at(i)->p(j, listDiag.at(i)->e<T>(j, j));
+                listOut.at(i).p(j, listDiag.at(i).e<T>(j, j));
     };
 
     samediff::Threads::parallel_tad(func, 0, lO);

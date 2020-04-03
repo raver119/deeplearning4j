@@ -45,7 +45,7 @@ namespace sd {
             Nd4jLong *newShape;
             if (block.getAxis().size() == 0 && block.width() == 1) {
                 // in this case we just return scalar
-                ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                 newShape[0] = 2;
                 newShape[1] = 1;
                 newShape[2] = 1;
@@ -55,11 +55,11 @@ namespace sd {
                 newShape[7] = 99;
 
                 auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(newShape, DataType::INT64));
-                RELEASE(newShape, block.getWorkspace());
+                RELEASE(newShape, block.workspace());
                 return SHAPELIST(result);
             } else if (block.getAxis().size()){
                 // in this case we're building proper shape for reduction
-                auto array = INPUT_VARIABLE(0); //new NDArray(nullptr, inShape, block.getWorkspace());
+                auto array = INPUT_VARIABLE(0); //new NDArray(nullptr, inShape, block.workspace());
 
                 newShape = ShapeUtils::evalReduceShapeInfo('c', block.getAxis(), *array, DataType::INT64, false, true, block.workspace());
                 return SHAPELIST(newShape);
@@ -79,7 +79,7 @@ namespace sd {
                 }
                 if (allAxes){
                         // in this case we just return scalar
-                        ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(2), Nd4jLong);
+                        ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
                         newShape[0] = 2;
                         newShape[1] = 1;
                         newShape[2] = 1;
@@ -89,11 +89,11 @@ namespace sd {
                         newShape[7] = 99;
 
                         auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(newShape, DataType::INT64));
-                        RELEASE(newShape, block.getWorkspace());
+                        RELEASE(newShape, block.workspace());
                         return SHAPELIST(result);
                 } else {
                     // in this case we're building proper shape for reduction
-                    auto array = INPUT_VARIABLE(0); //new NDArray(nullptr, inShape, block.getWorkspace());
+                    auto array = INPUT_VARIABLE(0); //new NDArray(nullptr, inShape, block.workspace());
                     newShape = ShapeUtils::evalReduceShapeInfo('c', axis, *array, DataType::INT64, false, true, block.workspace());
                     return SHAPELIST(newShape);
                 }

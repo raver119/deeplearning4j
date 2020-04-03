@@ -42,7 +42,9 @@ namespace sd {
                 array = INPUT_VARIABLE(0);
                 sizes = INPUT_VARIABLE(1);
                 list = new NDArrayList(sizes->lengthOf(), false);
-                block.trackList(list);
+                //block.trackList(list);
+
+                throw std::runtime_error("split_list - Not implemented yet");
             }
 
             REQUIRE_TRUE(sizes->isZ(), 0, "split_list: sizes array must have one of integer types");

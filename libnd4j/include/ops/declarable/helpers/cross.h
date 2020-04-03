@@ -73,7 +73,7 @@ void FORCEINLINE cross(sd::LaunchContext * context, NDArray *a, NDArray *b, NDAr
                 auto b_ = tadsB.at(e);
                 auto o_ = tadsO.at(e);
 
-                helpers::cross(context, a_, b_, o_);
+                helpers::cross(context, &a_, &b_, &o_);
             }
         };
 

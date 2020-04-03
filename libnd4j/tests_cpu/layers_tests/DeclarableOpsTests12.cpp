@@ -49,7 +49,7 @@ TEST_F(DeclarableOpsTests12, test_any_validation_1) {
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
-    ASSERT_EQ(x.dataType(), z->dataType());
+    ASSERT_EQ(x.dataType(), z.dataType());
 
     
 }
@@ -74,9 +74,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -106,9 +106,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -116,8 +116,6 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test2) {
     ASSERT_TRUE(dLdwExp.equalsTo(dLdw));
     ASSERT_TRUE(dLdlExp.isSameShape(dLdl));
     ASSERT_TRUE(dLdlExp.equalsTo(dLdl));
-
-    
 }
 
 /////////////////////////////////////////////////////////////////
@@ -140,9 +138,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -174,9 +172,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -209,9 +207,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -243,9 +241,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -279,9 +277,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -315,9 +313,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -351,9 +349,9 @@ TEST_F(DeclarableOpsTests12, cosine_distance_loss_grad_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *dLdp = results.at(0);
-    auto *dLdw = results.at(1);
-    auto *dLdl = results.at(2);
+    auto dLdp = results.at(0);
+    auto dLdw = results.at(1);
+    auto dLdl = results.at(2);
 
     ASSERT_TRUE(dLdpExp.isSameShape(dLdp));
     ASSERT_TRUE(dLdpExp.equalsTo(dLdp));
@@ -917,7 +915,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_1) {
     auto results = op.evaluate({&input, &gradO}, {1., 1., 1}, {5});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -948,7 +946,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_2) {
     auto results = op.evaluate({&input, &gradO}, {1., 1., 1}, {2});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -979,7 +977,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_3) {
     auto results = op.evaluate({&input, &gradO}, {1., 1., 1}, {7});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1010,7 +1008,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_4) {
     auto results = op.evaluate({&input, &gradO}, {1., 1., 1}, {12});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1033,7 +1031,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_5) {
     auto results = op.evaluate({&input, &gradO}, {1., 1., 0.5}, {2});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1052,7 +1050,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_6) {
     auto results = op.evaluate({&input, &gradO}, {1., 2., 0.5}, {10});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1109,7 +1107,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_9) {
     // for (int i = 0; i < exp.lengthOf(); ++i)
     //     printf("%10.5f  %10.5f\n", exp.e<double>(i), gradI->e<double>(i));
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1126,7 +1124,7 @@ TEST_F(DeclarableOpsTests12, lrn_bp_10) {
     auto results = op.evaluate({&input, &gradO}, {1., 2., 0.5}, {1});
     auto gradI = results.at(0);
 
-    ASSERT_EQ(*gradI, exp);
+    ASSERT_EQ(gradI, exp);
 
     
 }
@@ -1147,7 +1145,7 @@ TEST_F(DeclarableOpsTests12, lrn_1) {
     auto results = op.evaluate({&input}, {1., 2., 0.5}, {2});
     auto output = results.at(0);
 
-    ASSERT_EQ(*output, exp);
+    ASSERT_EQ(output, exp);
 
     
 }
@@ -1162,7 +1160,7 @@ TEST_F(DeclarableOpsTests12, lrn_2) {
 
     auto results = op.evaluate({&input}, {0.1, 2., 0.5}, {5});
     auto output = results.at(0);
-    ASSERT_EQ(*output, exp);
+    ASSERT_EQ(output, exp);
 
     
 }
@@ -1177,7 +1175,7 @@ TEST_F(DeclarableOpsTests12, lrn_3) {
 
     auto results = op.evaluate({&input}, {0.1, 2., 0.5}, {5});
     auto output = results.at(0);
-    ASSERT_EQ(*output, exp);
+    ASSERT_EQ(output, exp);
 
     
 }
@@ -1192,7 +1190,7 @@ TEST_F(DeclarableOpsTests12, lrn_4) {
 
     auto results = op.evaluate({&input}, {0.1, 2., 0.5}, {0});
     auto output = results.at(0);
-    ASSERT_EQ(*output, exp);
+    ASSERT_EQ(output, exp);
 
     
 }
@@ -1207,7 +1205,7 @@ TEST_F(DeclarableOpsTests12, lrn_5) {
 
     auto results = op.evaluate({&input}, {0.1, 2., 0.5}, {0});
     auto output = results.at(0);
-    ASSERT_EQ(*output, exp);
+    ASSERT_EQ(output, exp);
 
     
 }
@@ -1249,7 +1247,7 @@ TEST_F(DeclarableOpsTests12, inTopK_2) {
 
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     //res.at(0)->printIndexedBuffer("IN_TOP_K output");
-    ASSERT_TRUE(res.at(0)->equalsTo(&exp));
+    ASSERT_TRUE(res.at(0).equalsTo(&exp));
     
 }
 
@@ -1375,7 +1373,7 @@ TEST_F(DeclarableOpsTests12, pad_tests1) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1402,7 +1400,7 @@ TEST_F(DeclarableOpsTests12, pad_tests2) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1429,7 +1427,7 @@ TEST_F(DeclarableOpsTests12, pad_tests3) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1460,7 +1458,7 @@ TEST_F(DeclarableOpsTests12, pad_tests4) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     // for(int i = 0; i < expected.lengthOf(); ++i) {
@@ -1494,7 +1492,7 @@ TEST_F(DeclarableOpsTests12, pad_tests5) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1521,7 +1519,7 @@ TEST_F(DeclarableOpsTests12, pad_tests6) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1544,10 +1542,10 @@ TEST_F(DeclarableOpsTests12, pad_tests7)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1570,10 +1568,10 @@ TEST_F(DeclarableOpsTests12, pad_tests8)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1596,10 +1594,10 @@ TEST_F(DeclarableOpsTests12, pad_tests9)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1621,7 +1619,7 @@ TEST_F(DeclarableOpsTests12, pad_tests10) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1643,7 +1641,7 @@ TEST_F(DeclarableOpsTests12, pad_tests11) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1672,7 +1670,7 @@ TEST_F(DeclarableOpsTests12, pad_tests12) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1694,7 +1692,7 @@ TEST_F(DeclarableOpsTests12, pad_tests13) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1715,7 +1713,7 @@ TEST_F(DeclarableOpsTests12, pad_tests14) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1736,7 +1734,7 @@ TEST_F(DeclarableOpsTests12, pad_tests15) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1757,7 +1755,7 @@ TEST_F(DeclarableOpsTests12, pad_tests16) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1778,7 +1776,7 @@ TEST_F(DeclarableOpsTests12, pad_tests17) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1799,7 +1797,7 @@ TEST_F(DeclarableOpsTests12, pad_tests18) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1820,7 +1818,7 @@ TEST_F(DeclarableOpsTests12, pad_tests19) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1841,7 +1839,7 @@ TEST_F(DeclarableOpsTests12, pad_tests20) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1864,7 +1862,7 @@ TEST_F(DeclarableOpsTests12, pad_tests21) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1887,7 +1885,7 @@ TEST_F(DeclarableOpsTests12, pad_tests22) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1911,7 +1909,7 @@ TEST_F(DeclarableOpsTests12, pad_tests23) {
     // result->printShapeInfo("r");
     // expected.printShapeInfo("e");
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1933,7 +1931,7 @@ TEST_F(DeclarableOpsTests12, pad_tests24) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1955,7 +1953,7 @@ TEST_F(DeclarableOpsTests12, pad_tests25) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -1977,7 +1975,7 @@ TEST_F(DeclarableOpsTests12, pad_tests26) {
 
     auto result = results.at(0);
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2147,7 +2145,7 @@ TEST_F(DeclarableOpsTests12, Pad_1) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2174,7 +2172,7 @@ TEST_F(DeclarableOpsTests12, Pad_2) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2201,7 +2199,7 @@ TEST_F(DeclarableOpsTests12, Pad_3) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2228,7 +2226,7 @@ TEST_F(DeclarableOpsTests12, Pad_4) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2255,7 +2253,7 @@ TEST_F(DeclarableOpsTests12, Pad_5) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2282,7 +2280,7 @@ TEST_F(DeclarableOpsTests12, Pad_6) {
     auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2305,10 +2303,10 @@ TEST_F(DeclarableOpsTests12, Pad_7)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2331,10 +2329,10 @@ TEST_F(DeclarableOpsTests12, Pad_8)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2357,10 +2355,10 @@ TEST_F(DeclarableOpsTests12, Pad_9)
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto *result = results.at(0);
+    auto result = results.at(0);
     // result->printIndexedBuffer();
 
-    ASSERT_TRUE(expected.isSameShapeStrict(*result));
+    ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
     
@@ -2740,13 +2738,13 @@ TEST_F(DeclarableOpsTests12, QR_Test_1) {
 //    q->printShapeInfo("Q shape");
 //    r->printShapeInfo("R shape");
     sd::ops::matmul opMul;
-    auto res2 = opMul.evaluate({q, r}); //MmulHelper::matmul(q, r, &in, false, false);
+    auto res2 = opMul.evaluate({&q, &r}); //MmulHelper::matmul(q, r, &in, false, false);
     auto exp = res2.at(0);//->printIndexedBuffer("Result as result");
-    ASSERT_TRUE(exp->isSameShape(in));
+    ASSERT_TRUE(exp.isSameShape(in));
 //    ASSERT_TRUE(q->isSameShape(expQ));
 
     //ASSERT_TRUE(expQ.equalsTo(q));
-    ASSERT_TRUE(exp->equalsTo(in));
+    ASSERT_TRUE(exp.equalsTo(in));
     
 
 }
@@ -2786,13 +2784,13 @@ TEST_F(DeclarableOpsTests12, QR_Test_1_1) {
 //    q->printShapeInfo("Q shape");
 //    r->printShapeInfo("R shape");
     sd::ops::matmul opMul;
-    auto res2 = opMul.evaluate({q, r}); //MmulHelper::matmul(q, r, &in, false, false);
+    auto res2 = opMul.evaluate({&q, &r}); //MmulHelper::matmul(q, r, &in, false, false);
     auto exp = res2.at(0);//->printIndexedBuffer("Result as result");
-    ASSERT_TRUE(exp->isSameShape(in));
+    ASSERT_TRUE(exp.isSameShape(in));
 //    ASSERT_TRUE(q->isSameShape(expQ));
 
     //ASSERT_TRUE(expQ.equalsTo(q));
-    ASSERT_TRUE(exp->equalsTo(in));
+    ASSERT_TRUE(exp.equalsTo(in));
     
 
 }
@@ -2810,14 +2808,14 @@ TEST_F(DeclarableOpsTests12, QR_Test_2) {
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto q = res.at(0);
     auto r = res.at(1);
-    ASSERT_TRUE(q->isSameShape(expQ));
-    ASSERT_TRUE(r->isSameShape(expR));
+    ASSERT_TRUE(q.isSameShape(expQ));
+    ASSERT_TRUE(r.isSameShape(expR));
 
     sd::ops::matmul opMul;
-    auto res2 = opMul.evaluate({q, r}); //MmulHelper::matmul(q, r, &in, false, false);
+    auto res2 = opMul.evaluate({&q, &r}); //MmulHelper::matmul(q, r, &in, false, false);
     auto exp = res2.at(0);//->printIndexedBuffer("Result as result");
-    ASSERT_TRUE(exp->isSameShape(in));
-    ASSERT_TRUE(exp->equalsTo(in));
+    ASSERT_TRUE(exp.isSameShape(in));
+    ASSERT_TRUE(exp.equalsTo(in));
     
 }
 
@@ -2999,7 +2997,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_1) {
     auto z = res.at(0);
 
 //    z->printIndexedBuffer("MatrixSolveLS");
-    MmulHelper::matmul(&a, z, &exp, false, false);
+    MmulHelper::matmul(&a, &z, &exp, false, false);
 
     ASSERT_TRUE(exp.equalsTo(b));
     
@@ -3022,7 +3020,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_2) {
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
 
-    MmulHelper::matmul(&a, z, &exp, false, false);
+    MmulHelper::matmul(&a, &z, &exp, false, false);
 
 //    z->printIndexedBuffer("MatrixSolveLS2");
 
@@ -3048,7 +3046,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_3) {
     auto z = res.at(0);
 
 //    z->printIndexedBuffer("MatrixSolveLS3");
-    MmulHelper::matmul(&a, z, &exp, false, false);
+    MmulHelper::matmul(&a, &z, &exp, false, false);
     ASSERT_TRUE(exp.equalsTo(b));
     
 }
@@ -3090,7 +3088,7 @@ TEST_F(DeclarableOpsTests12, SolveLs_Test_5) {
     auto res = op.evaluate({&a, &b}, {false});
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
-    ASSERT_TRUE(z->isEmpty());
+    ASSERT_TRUE(z.isEmpty());
 
     
 }
@@ -3106,9 +3104,7 @@ TEST_F(DeclarableOpsTests12, Solve_Test_6) {
     auto res = op.evaluate({&a, &b}, {true});
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
-    ASSERT_TRUE(z->isEmpty());
-
-    
+    ASSERT_TRUE(z.isEmpty());
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3135,7 +3131,7 @@ TEST_F(DeclarableOpsTests12, TriangularSolve_Test_6) {
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     auto z = res.at(0);
 
-    z->printIndexedBuffer("TriangularSolve with adjoint");
+    //z.printIndexedBuffer("TriangularSolve with adjoint");
 
     ASSERT_TRUE(exp.equalsTo(z));
     

@@ -957,12 +957,12 @@ static void svd_(const NDArray* x, const std::vector<NDArray*>& outArrs, const b
 
         // NDArray<T> matrix(x->ordering(), {listX.at(i)->sizeAt(0), listX.at(i)->sizeAt(1)}, block.getContext());
         // matrix.assign(listX.at(i));
-        helpers::SVD<T> svdObj(*(listX.at(i)), switchNum, calcUV, calcUV, fullUV);
-        listS.at(i)->assign(svdObj._s);
+        helpers::SVD<T> svdObj(listX.at(i), switchNum, calcUV, calcUV, fullUV);
+        listS.at(i).assign(svdObj._s);
 
         if(calcUV) {
-            listU->at(i)->assign(svdObj._u);
-            listV->at(i)->assign(svdObj._v);
+            listU->at(i).assign(svdObj._u);
+            listV->at(i).assign(svdObj._v);
         }
     }
 

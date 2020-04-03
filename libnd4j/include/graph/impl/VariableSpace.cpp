@@ -23,86 +23,43 @@
 
 namespace sd {
     namespace graph {
-        std::vector<Variable *> * VariableSpace::getExternalVariables() {
-            return &_external;
+        Stash* VariableSpace::stash() const {
+            return const_cast<Stash*>(&_stash);
         }
 
-        Stash* VariableSpace::getStash() {
-            return &_stash;
-        }
-
-        VariableSpace* VariableSpace::clone() {
-            auto result = new VariableSpace();
-
-            for (auto const& x : _paired) {
-                std::pair<int, int> pair(x.first.first, x.first.second);
-
-                Variable* clonedVar = x.second->clone();
-
-                result->injectVariable(pair, clonedVar);
-            }
-
-            return result;
-        }
-
-        void VariableSpace::setWorkspace(sd::memory::Workspace *workspace) {
-            //_workspace = *workspace;
-        }
-
-        
-        VariableSpace* VariableSpace::asT() {
-            auto result = new VariableSpace();
-
-            for (auto const& x : _paired) {
-                std::pair<int, int> pair(x.first.first, x.first.second);
-
-                //Variable* clonedVar = x.second->template asT<N>();
-
-                //result->injectVariable(pair, clonedVar);
-            }
-
-            return result;
-        }
-
-        
-        void VariableSpace::injectVariable(std::pair<int, int> &pair, Variable* variable) {
+        void VariableSpace::injectVariable(const std::pair<int, int> &pair, std::shared_ptr<Variable> variable) {
             if (pair.second == 0) {
-                if (pair.first < 0)
-                    this->_variables[pair.first] = variable;
-                else
-                    this->_temporary[pair.first] = variable;
+                this->_variables[pair.first] = variable;
             }
 
             if (!variable->getName().empty())
                 this->_symbolic[variable->getName()] = variable;
 
             this->_paired[pair] = variable;
-
-            this->_handles->push_back(variable);
         }
 
-        std::vector<Variable*> * VariableSpace::getPlaceholders() {
-            return &_placeholders;
+        const std::vector<std::shared_ptr<Variable>>& VariableSpace::placeholders() const {
+            return _placeholders;
         }
 
-        int VariableSpace ::numberOfPlaceholders() {
+        int VariableSpace::numberOfPlaceholders() const {
             return _placeholders.size();
         }
 
-        bool VariableSpace::hasVariable(const std::string &symbol) {
-            return _symbolic.count(symbol) == 1;
+        bool VariableSpace::hasVariable(const std::string &symbol) const {
+            return _symbolic.count(symbol) > 0;
         }
 
-        Variable * VariableSpace::getVariable(const std::string &symbol) {
+        std::shared_ptr<Variable> VariableSpace::getVariable(const std::string &symbol) const {
             return _symbolic.at(symbol);
         }
 
-        bool VariableSpace::hasVariable(int id, int index) {
+        bool VariableSpace::hasVariable(int id, int index) const {
             std::pair<int, int> pair(id, index);
             return hasVariable(pair);
         }
 
-        bool VariableSpace::hasExternalVariable(int id) {
+        bool VariableSpace::hasExternalVariable(int id) const {
             if (!hasVariable(id))
                 return false;
 
@@ -110,7 +67,7 @@ namespace sd {
             return var->isExternal();
         }
 
-        bool VariableSpace::hasExternalVariable(std::pair<int,int>& pair) {
+        bool VariableSpace::hasExternalVariable(const std::pair<int,int>& pair) const {
             if (!hasVariable(pair))
                 return false;
 
@@ -118,7 +75,7 @@ namespace sd {
             return var->isExternal();
         }
 
-        bool VariableSpace::hasExternalVariable(const std::string &symbol) {
+        bool VariableSpace::hasExternalVariable(const std::string &symbol) const {
             if (!hasVariable(symbol))
                 return false;
 
@@ -126,12 +83,12 @@ namespace sd {
             return var->isExternal();
         }
 
-        Variable * VariableSpace::getVariable(int id, int index) {
+        std::shared_ptr<Variable> VariableSpace::getVariable(int id, int index) const {
             std::pair<int, int> pair(id, index);
             return getVariable(pair);
         }
 
-        Variable * VariableSpace::getVariable(std::pair<int, int>& pair) {
+        std::shared_ptr<Variable> VariableSpace::getVariable(const std::pair<int, int>& pair) const {
             if (pair.first < 0)
                 return getVariable(pair.first);
             else
@@ -141,32 +98,32 @@ namespace sd {
             throw std::runtime_error("Unknown variable requested");
         }
 
-        bool VariableSpace::hasVariable(int id) {
-            return _variables.count(id) == 1 || _temporary.count(id) == 1;
+        bool VariableSpace::hasVariable(int id) const {
+            return _variables.count(id) == 1;
         }
 
-        bool VariableSpace::hasVariable(std::pair<int,int>& id) {
+        bool VariableSpace::hasVariable(const std::pair<int,int>& id) const {
             return _paired.count(id) > 0;
         }
 
-        void VariableSpace::putOutputVariable(Variable *variable) {
+        void VariableSpace::putOutputVariable(std::shared_ptr<Variable> variable) {
             //putVariable(_auto_counter--, variable);
             putVariable(variable->id(), variable);
         }
 
-        int VariableSpace::externalEntries() {
+        int VariableSpace::externalEntries() const {
             return _external.size();
         }
 
-        int VariableSpace::internalEntries() {
+        int VariableSpace::internalEntries() const {
             return _internal.size();
         }
 
-        int VariableSpace::totalEntries() {
+        int VariableSpace::totalEntries() const {
             return externalEntries() + internalEntries();
         }
 
-        Nd4jLong VariableSpace::externalMemory() {
+        Nd4jLong VariableSpace::externalMemory() const {
             Nd4jLong size = 0;
             for (auto n: _external) {
                 size += n->getNDArray()->memoryFootprint();
@@ -175,8 +132,8 @@ namespace sd {
             return size;
         }
 
-        std::vector<Variable*> VariableSpace::getVariables() {
-            std::vector<Variable*> result;
+        std::vector<std::shared_ptr<Variable>> VariableSpace::variables() const {
+            std::vector<std::shared_ptr<Variable>> result;
 
             for (auto v: _internal)
                 result.emplace_back(v);
@@ -187,7 +144,7 @@ namespace sd {
             return result;
         }
 
-        Nd4jLong VariableSpace::internalMemory() {
+        Nd4jLong VariableSpace::internalMemory() const {
             Nd4jLong size = 0;
             for (auto n: _internal) {
                 size += n->getNDArray()->memoryFootprint();
@@ -196,36 +153,50 @@ namespace sd {
             return size;
         }
 
-        Nd4jLong VariableSpace::totalMemory() {
+        Nd4jLong VariableSpace::totalMemory() const {
             return externalMemory() + internalMemory();
         }
 
-        Variable* VariableSpace::putVariable(std::pair<int,int>& pair, NDArray *array) {
-            auto variable = new Variable(array, nullptr, pair.first, pair.second);
+        std::shared_ptr<Variable> VariableSpace::putVariable(int id, int idx, const std::shared_ptr<NDArray> &array) {
+            auto variable = std::make_shared<Variable>(array, "", id, idx);
+            this->putVariable({id, idx}, variable);
+            return variable;
+        }
+
+        std::shared_ptr<Variable>
+        VariableSpace::putVariable(const std::string &name, int id, int idx, const NDArray &array) {
+            return std::shared_ptr<Variable>();
+        }
+
+        void VariableSpace::dropVariable(const std::string &pair) {
+            throw std::runtime_error("VariableSpace::dropVariable - not implemented yet");
+        }
+
+
+        std::shared_ptr<Variable> VariableSpace::putVariable(const std::pair<int,int>& pair, const NDArray &array) {
+            auto variable = std::make_shared<Variable>(array, nullptr, pair.first, pair.second);
             this->putVariable(pair, variable);
             return variable;
         }
 
-        Variable* VariableSpace::putVariable(int node, int idx, NDArray *array) {
+        std::shared_ptr<Variable> VariableSpace::putVariable(int node, int idx, const NDArray &array) {
             std::pair<int, int> pair(node, idx);
             return this->putVariable(pair, array);
         }
 
-        void VariableSpace::putVariable(int node, int idx, Variable *variable) {
+        void VariableSpace::putVariable(const std::string& name, int node, int idx, std::shared_ptr<Variable> variable) {
             std::pair<int, int> pair(node, idx);
+            variable->setName(name);
             this->putVariable(pair, variable);
         }
 
-        void VariableSpace::silentPutVariable(std::pair<int,int>& pair, Variable *variable) {
-            _varmap.lock();
+        void VariableSpace::silentPutVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
+            std::lock_guard<std::mutex> lock(_varmap);
 
-            //std::pair<std::pair<int, int>, Variable *> p(pair, variable);
             _paired[pair] = variable;
-
-            _varmap.unlock();
         }
 
-        void VariableSpace::putVariable(std::pair<int,int>& pair, Variable *variable) {
+        void VariableSpace::putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
             silentPutVariable(pair, variable);
 
             if (variable->isPlaceholder())
@@ -238,63 +209,41 @@ namespace sd {
                 if (!variable->getName().empty()) {
                     _symbolic[variable->getName()] = variable;
                 }
-
-                _varmap.lock();
-
-                _handles->push_back(variable);
-
-                _varmap.unlock();
             }
         }
 
-        void VariableSpace::trackList(sd::NDArrayList* list) {
-            _lists.emplace_back(list);
-        }
 
-        void VariableSpace::putVariable(int id, Variable *variable) {
+        void VariableSpace::putVariable(int id, std::shared_ptr<Variable> variable) {
             // we don't want to add variables more then once
-            if (_variables.count(id) > 0 || _temporary.count(id) > 0) {
-                auto local = id < 0 ? _variables.at(id) : _temporary.at(id);
+            if (_variables.count(id) > 0) {
+                throw std::runtime_error("VariableSpace::putVariable - duplicate found");
+            }
 
-                if (!local->hasNDArray() && variable->hasNDArray()) {
-                    local->setNDArray(variable->getNDArray());
+            {
+                std::lock_guard<std::mutex> lock(_varmap);
 
-                    // we're inheriting this from Variable
-                    local->markReadOnly(variable->isReadOnly());
-                    local->markRemovable(variable->isRemovable());
+                if (_auto_counter >= id)
+                    _auto_counter = id - 1;
+
+                variable->setId(id);
+
+                if (!variable->getName().empty()) {
+                    //std::pair<std::string, Variable *> pair(*(variable->getName()), variable);
+                    _symbolic[variable->getName()] = variable;
                 }
 
-                return;
+                // we have special list for external variables to ensure graph completeness
+
+                if (id < 0) {
+                    //if (variable->isExternal())
+                    _external.push_back(variable);
+
+                    _variables[id] = variable;
+                } else {
+                    _internal.push_back(variable);
+                }
             }
 
-            _varmap.lock();
-
-            _handles->emplace_back(variable);
-
-            if (_auto_counter >= id)
-                _auto_counter = id - 1;
-
-            variable->setId(id);
-
-            if (!variable->getName().empty()) {
-                //std::pair<std::string, Variable *> pair(*(variable->getName()), variable);
-                _symbolic[variable->getName()] = variable;
-            }
-
-            // we have special list for external variables to ensure graph completeness
-
-            if (id < 0) {
-                //if (variable->isExternal())
-                _external.push_back(variable);
-
-                _variables[id] = variable;
-            } else {
-                _internal.push_back(variable);
-
-                _temporary[id] = variable;
-            }
-
-            _varmap.unlock();
 
             std::pair<int,int> pair(id, 0);
             if (!hasVariable(pair)) {
@@ -305,91 +254,96 @@ namespace sd {
             }
         }
 
-        void VariableSpace::putVariable(int id, int idx, const NDArray &array) {
-            auto *var = new Variable(const_cast<NDArray*>(&array), "", id, idx);
-            var->markRemovable(false);
-            var->markReadOnly(true);
-
-            // let's see if this op needs
-            bool d = this->hasVariable(id, idx);
-
-            this->putVariable(id, var);
-
-            // if var for this nodeid already exists - we'll just delete variable
-            if (d)
-                delete var;
-        }
-
-        void VariableSpace::putVariable(int id, NDArray *array) {
-            auto *var = new Variable(array);
+        std::shared_ptr<Variable> VariableSpace::putVariable(int id, const NDArray &array) {
+            auto var = std::make_shared<Variable>(array, "", id, 0);
             this->putVariable(id, var);
         }
 
-        Variable * VariableSpace::getVariable(int id) {
-            if (id < 0) {
-                return _variables.at(id);
-            } else {
-                return _temporary.at(id);
-            }
+        std::shared_ptr<Variable> VariableSpace::getVariable(int id) const {
+            return _variables.at(id);
         }
 
-        LaunchContext* VariableSpace::launchContext() {
-            return LaunchContext::defaultContext();
-        }
-
-        std::vector<Variable*>* VariableSpace::handles() {
-            return _handles;
-        }
-
-/*
- * FIXME: this thing have nice chances to become backend-specific!
- */
         VariableSpace::~VariableSpace() {
-            // loop through variables and release them
-            for (auto p: *_handles) {
-                delete p;
-            }
+            //
+        }
 
-            delete _handles;
+        VariableSpace::VariableSpace(const VariableSpace &other) {
+            _stash = other._stash;
 
-            //_internal.clear();
-            //_external.clear();
-            //_temporary.clear();
+            _paired = other._paired;
+            _symbolic = other._symbolic;
+            _variables = other._variables;
 
-            //nd4j_printf("Number of NDArrayLists in this space: [%i]\n", _lists.size())
-            for (auto p: _lists)
-                delete p;
+            _external = other._external;
+            _internal = other._internal;
 
-            _lists.clear();
+            _lists = other._lists;
+            _placeholders = other._placeholders;
+
+
+            _auto_counter = other._auto_counter;
+        }
+
+        VariableSpace::VariableSpace(VariableSpace &&other) {
+            _stash = std::move(other._stash);
+
+            _paired = std::move(other._paired);
+            _symbolic = std::move(other._symbolic);
+            _variables = std::move(other._variables);
+
+            _external = std::move(other._external);
+            _internal = std::move(other._internal);
+
+            _lists = std::move(other._lists);
+            _placeholders = std::move(other._placeholders);
+
+
+            _auto_counter = other._auto_counter;
+        }
+
+        VariableSpace& VariableSpace::operator=(VariableSpace &&other) {
+            if (this == &other) return *this;
+
+            _stash = std::move(other._stash);
+
+            _paired = std::move(other._paired);
+            _symbolic = std::move(other._symbolic);
+            _variables = std::move(other._variables);
+
+            _external = std::move(other._external);
+            _internal = std::move(other._internal);
+
+            _lists = std::move(other._lists);
+            _placeholders = std::move(other._placeholders);
+
+
+            _auto_counter = other._auto_counter;
+
+            return *this;
         }
 
         VariableSpace& VariableSpace::operator=(const VariableSpace& other) {
             if (this == &other) return *this;
 
-            for (auto const& x : other._paired) {
-                std::pair<int, int> pair(x.first.first, x.first.second);
+            _stash = other._stash;
 
-                Variable* clonedVar = x.second->clone();
+            _paired = other._paired;
+            _symbolic = other._symbolic;
+            _variables = other._variables;
 
-                if (pair.second == 0) {
-                    if (pair.first < 0)
-                        this->_variables[pair.first] = clonedVar;
-                    else
-                        this->_temporary[pair.first] = clonedVar;
-                }
+            _external = other._external;
+            _internal = other._internal;
 
-                if (!clonedVar->getName().empty())
-                    this->_symbolic[clonedVar->getName()] = clonedVar;
+            _lists = other._lists;
+            _placeholders = other._placeholders;
 
-                this->_paired[pair] = clonedVar;
 
-                this->_handles->push_back(clonedVar);
-            }
+            _auto_counter = other._auto_counter;
 
             return *this;
         }
 
-        void VariableSpace::replaceVariable(Variable *variable) {
+        void VariableSpace::replaceVariable(std::shared_ptr<Variable> variable) {
             bool replaced = false;
             // trying name first
             if (!variable->getName().empty()) {
@@ -398,7 +352,8 @@ namespace sd {
                     nd4j_printf("Replacing by name: [%s]\n", variable->getName().c_str());
                     auto vs = getVariable(variable->getName());
                     dropVariable(vs->id(), vs->index());
-                    putVariable(vs->id(), vs->index(), variable);
+
+                    putVariable({vs->id(), vs->index()}, variable);
                     //delete vs;
                     replaced = true;
                 }
@@ -408,7 +363,7 @@ namespace sd {
                     nd4j_printf("Replacing by id: [%i:%i]\n", variable->id(), variable->index());
                     auto vs = getVariable(variable->id(), variable->index());
                     dropVariable(variable->id(), variable->index());
-                    putVariable(vs->id(), vs->index(), variable);
+                    putVariable({vs->id(), vs->index()}, variable);
                     //delete vs;
                     replaced = true;
                 }
@@ -416,11 +371,11 @@ namespace sd {
 
             if (!replaced) {
                 nd4j_printf("wasn't able to replace variable, putting\n", "");
-                putVariable(variable->id(), variable->index(), variable);
+                putVariable({variable->id(), variable->index()}, variable);
             }
         }
 
-        void VariableSpace::dropVariable(std::pair<int,int> &pair) {
+        void VariableSpace::dropVariable(const std::pair<int,int> &pair) {
             dropVariable(pair.first, pair.second);
         }
 
@@ -428,17 +383,8 @@ namespace sd {
 
         }
 
-
-        void VariableSpace::setFlowPath(FlowPath* flow) {
-            _flow = flow;
-        }
-
-        FlowPath* VariableSpace::flowPath() {
-            return _flow;
-        }
-
         VariableSpace::VariableSpace() {
-            _handles = new std::vector<Variable *>;
+
         }
     }
 }

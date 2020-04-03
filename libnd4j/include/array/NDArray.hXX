@@ -4706,7 +4706,7 @@ ResultSet NDArray::multipleTensorsAlongDimension(const std::vector<int> &indices
             throw std::runtime_error("Bad index");
         }
 
-        auto array = new NDArray(getDataBuffer(), ShapeDescriptor(pack.primaryShapeInfo()), getContext(), pack.primaryOffsets()[idx] + getBufferOffset());
+        NDArray array(getDataBuffer(), ShapeDescriptor(pack.primaryShapeInfo()), getContext(), pack.primaryOffsets()[idx] + getBufferOffset());
         result.push_back(array);
     }
 
@@ -4820,8 +4820,8 @@ ResultSet NDArray::allTensorsAlongDimension(const std::vector<int> &dimensions) 
     auto numTads = pack.numberOfTads();
 
     for (Nd4jLong idx = 0; idx < numTads; idx++ ) {
-        auto array = new NDArray(_buffer, ShapeDescriptor(pack.primaryShapeInfo()), getContext(), pack.primaryOffsets()[idx] + getBufferOffset());
-        array->_isView = true;
+        NDArray array(_buffer, ShapeDescriptor(pack.primaryShapeInfo()), getContext(), pack.primaryOffsets()[idx] + getBufferOffset());
+        array._isView = true;
         result.push_back(array);
     }
 

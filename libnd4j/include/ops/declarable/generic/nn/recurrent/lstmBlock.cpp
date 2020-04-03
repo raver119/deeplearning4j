@@ -92,7 +92,7 @@ DECLARE_SHAPE_FN(lstmBlock) {
     int nOut = cLast[2];    //rank, bs, nOut, ...]
 
     Nd4jLong *s(nullptr);
-    ALLOCATE(s, block.getWorkspace(), shape::shapeInfoLength(3), Nd4jLong);      // [time, bS, nOut]
+    ALLOCATE(s, block.workspace(), shape::shapeInfoLength(3), Nd4jLong);      // [time, bS, nOut]
     s[0] = 3;
     if(dataFormat == 0){
         //[rank, seqLen, bs, nIn, ...]

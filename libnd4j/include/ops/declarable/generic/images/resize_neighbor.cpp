@@ -93,7 +93,7 @@ namespace sd {
                 height = INT_ARG(1);
             }
 
-            ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(inRank), Nd4jLong);
+            ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(inRank), Nd4jLong);
             outputShape[0] = inRank;
             if (inRank == 4) {
                 outputShape[1] = in[1];

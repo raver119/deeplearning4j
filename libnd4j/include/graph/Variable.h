@@ -60,7 +60,7 @@ namespace sd {
         protected:
             int _id = 0;
             int _index = 0;
-            sd::NDArray *_ndarray = nullptr;
+            std::shared_ptr<sd::NDArray> _ndarray;
             std::string _name;
 
             std::vector<Nd4jLong> _shape;
@@ -71,38 +71,31 @@ namespace sd {
             bool _placeholder = false;
             bool _removable = true;
 
-            // for now we're setting default to numeric
-            // in future we'll be fetching it right from the array, 
-            //InputType _variableType = InputType_UNDEFINED;
-            //DataType _dataType = INHERIT;
-
-            sd::NDArrayList *_list = nullptr;
+            std::shared_ptr<sd::NDArrayList> _list;
 
             VariableType _variableType = VariableType::NDARRAY;
             
         public:
-            Variable(bool placeHolder, DataType dataType = DataType::ANY, const std::vector<Nd4jLong> &shape = {});
-            Variable(sd::NDArray *arrayw, const char *name, int id, int idx = 0);
-            Variable(sd::NDArray *array = nullptr, const char *name = nullptr);
+            explicit Variable(bool placeHolder, DataType dataType = DataType::ANY, const std::vector<Nd4jLong> &shape = {});
+            explicit Variable(const sd::NDArray &array, const std::string &name, int id, int idx = 0);
+            explicit Variable(std::shared_ptr<sd::NDArray> array, const std::string &name, int id, int idx = 0);
+            explicit Variable(std::shared_ptr<sd::NDArray> array, const char *name = nullptr);
+            explicit Variable();
 
 #ifndef __JAVACPP_HACK__
-            Variable(const sd::graph::FlatVariable *flatVariable);
+            explicit Variable(const sd::graph::FlatVariable *flatVariable);
 #endif
 
             ~Variable();
 
-            Variable* clone() const;
-
-            template <typename N>
-            SD_EXPORT Variable* asT() const;
 
             bool hasNDArray() const;
-            sd::NDArray* getNDArray() const;
-            void setNDArray(sd::NDArray *array);
+            std::shared_ptr<sd::NDArray> getNDArray() const;
+            void setNDArray(std::shared_ptr<sd::NDArray> array);
 
             bool hasNDArrayList() const;
-            sd::NDArrayList* getNDArrayList() const;
-            void setNDArrayList(sd::NDArrayList* list);
+            std::shared_ptr<sd::NDArrayList> getNDArrayList() const;
+            void setNDArrayList(std::shared_ptr<sd::NDArrayList> list);
 
             bool isExternal() const;
             bool isReadOnly() const;
@@ -113,13 +106,6 @@ namespace sd {
 
             VariableType variableType() const;
             void setVariableType(VariableType variableType);
-
-            /**
-             * This method returns InputType of this variable  
-             */
-            //InputType variableType() {
-            //    return _variableType;
-            //}
 
             void markExternal(bool reallyExternal);
             void markReadOnly(bool reallyReadOnly);

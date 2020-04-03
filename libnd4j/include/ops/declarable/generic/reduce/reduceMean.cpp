@@ -72,7 +72,7 @@ DECLARE_SHAPE_FN(reduce_mean) {
     for(const auto& item : dimensions)
         REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0], 0, "REDUCE_MEAN OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , inputShape->at(0)[0], inputShape->at(0)[0], item);
 
-    auto outShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(in), dimensions, in, keepDims, false, block.getWorkspace());
+    auto outShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(in), dimensions, in, keepDims, false, block.workspace());
 
     return SHAPELIST(outShapeInfo);
 }
@@ -116,7 +116,7 @@ CUSTOM_OP_IMPL(reduce_mean_bp, 2, 1, false, 0, 0) {
         gradI->assign((gradO->lengthOf() + 0.) / input->lengthOf());
 
         if(!keepDims) {
-            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *input, true, false, block.getWorkspace());
+            auto gradOShapeKeepDims = ShapeUtils::evalReduceShapeInfo(gradO->ordering(), dimensions, *input, true, false, block.workspace());
             *gradI *= gradO->reshape(gradO->ordering(), ShapeUtils::pullShapeFromShapeInfo(gradOShapeKeepDims));  // for example could be something like [a,b] -> [1,a,1,b]
         }
         else

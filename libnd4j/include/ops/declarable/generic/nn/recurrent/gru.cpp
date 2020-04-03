@@ -94,7 +94,7 @@ DECLARE_SHAPE_FN(gru) {
 
     // evaluate output shapeInfo
     Nd4jLong *hShapeInfo(nullptr);
-    ALLOCATE(hShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+    ALLOCATE(hShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
 
     hShapeInfo[0] = rank;
     hShapeInfo[1] = time;

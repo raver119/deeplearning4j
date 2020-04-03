@@ -412,7 +412,7 @@ TEST_F(DeclarableOpsTests15, Test_AdjustContrast_7) {
     auto out = result.at(0);
 //    out->printBuffer("Adjusted Constrast7");
 //    e.printBuffer("Adjusted expected 7");
-    auto diff = e - *out;
+    auto diff = e - out;
 //    diff.printBuffer("Adjusted subtract 7");
     ASSERT_TRUE(e.equalsTo(out));
 
@@ -486,7 +486,7 @@ TEST_F(DeclarableOpsTests15, Test_BitCast_4_1) {
 
     //    e.printIndexedBuffer("Double to int64");
     auto res = result.at(0);
-    ASSERT_EQ(*res, e);
+    ASSERT_EQ(res, e);
 
 }
 
@@ -570,8 +570,8 @@ TEST_F(DeclarableOpsTests15, test_non_decreasing_1) {
 
     sd::ops::is_non_decreasing op;
     Context ctx(1);
-    ctx.setInputArray(0, &x);
-    ctx.setOutputArray(0, &z);
+    ctx.setInputArray(0, x);
+    ctx.setOutputArray(0, z);
 
     auto status = op.execute(&ctx);
     ASSERT_EQ(Status::OK(), status);
@@ -588,7 +588,7 @@ TEST_F(DeclarableOpsTests15, test_check_numeric_1) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(x, *z);
+    ASSERT_EQ(x, z);
 }
 
 TEST_F(DeclarableOpsTests15, test_check_numeric_2) {
@@ -686,8 +686,8 @@ TEST_F(DeclarableOpsTests15, test_hashCode_1) {
 //    resultA0->at(0)->printIndexedBuffer("A0");
 //    resultA1->at(0)->printIndexedBuffer("A1");
 //    resultB0->at(0)->printIndexedBuffer("B0");
-    ASSERT_EQ(*resultA0.at(0), *resultA1.at(0));
-    ASSERT_NE(*resultA0.at(0), *resultB0.at(0));
+    ASSERT_EQ(resultA0.at(0), resultA1.at(0));
+    ASSERT_NE(resultA0.at(0), resultB0.at(0));
 }
 
 TEST_F(DeclarableOpsTests15, test_hashCode_2) {
@@ -706,8 +706,8 @@ TEST_F(DeclarableOpsTests15, test_hashCode_2) {
 //    resultA1->at(0)->printIndexedBuffer("A1");
 //    resultB0->at(0)->printIndexedBuffer("B0");
 
-    ASSERT_EQ(*resultA0.at(0), *resultA1.at(0));
-    ASSERT_NE(*resultA0.at(0), *resultB0.at(0));
+    ASSERT_EQ(resultA0.at(0), resultA1.at(0));
+    ASSERT_NE(resultA0.at(0), resultB0.at(0));
 }
 
 TEST_F(DeclarableOpsTests15, test_rank_1) {
@@ -731,7 +731,7 @@ TEST_F(DeclarableOpsTests15, test_rank_2) {
 
     auto z = result.at(0);
 
-    ASSERT_EQ(e, *z);
+    ASSERT_EQ(e, z);
 
 
 }
@@ -810,8 +810,8 @@ TEST_F(DeclarableOpsTests15, test_empty_increasing_1) {
     auto z = NDArrayFactory::create<bool>(false);
 
     Context ctx(1);
-    ctx.setInputArray(0, &x);
-    ctx.setOutputArray(0, &z);
+    ctx.setInputArray(0, x);
+    ctx.setOutputArray(0, z);
 
     sd::ops::is_strictly_increasing op;
     auto status = op.execute(&ctx);
@@ -825,8 +825,8 @@ TEST_F(DeclarableOpsTests15, test_empty_decreasing_1) {
     auto z = NDArrayFactory::create<bool>(false);
 
     Context ctx(1);
-    ctx.setInputArray(0, &x);
-    ctx.setOutputArray(0, &z);
+    ctx.setInputArray(0, x);
+    ctx.setOutputArray(0, z);
 
     sd::ops::is_non_decreasing op;
     auto status = op.execute(&ctx);
@@ -1197,8 +1197,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdx = results.at(0);
-    auto* dLdy = results.at(1);
+    auto dLdx = results.at(0);
+    auto dLdy = results.at(1);
 
     ASSERT_TRUE(dLdxExp.isSameShape(dLdx));
     ASSERT_TRUE(dLdxExp.equalsTo(dLdx));
@@ -1223,8 +1223,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test2) {
     auto results = op.evaluate({ &x, &y, &dLdz }, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdx = results.at(0);
-    auto* dLdy = results.at(1);
+    auto dLdx = results.at(0);
+    auto dLdy = results.at(1);
 
     ASSERT_TRUE(dLdxExp.isSameShape(dLdx));
     ASSERT_TRUE(dLdxExp.equalsTo(dLdx));
@@ -1252,8 +1252,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsY.status());
 
-    auto* dLdxY = resultsY.at(0);
-    auto* dLdyY = resultsY.at(1);
+    auto dLdxY = resultsY.at(0);
+    auto dLdyY = resultsY.at(1);
 
     ASSERT_TRUE(dLdxExpY.isSameShape(dLdxY));
     ASSERT_TRUE(dLdxExpY.equalsTo(dLdxY));
@@ -1282,8 +1282,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsX.status());
 
-    auto* dLdxX = resultsX.at(0);
-    auto* dLdyX = resultsX.at(1);
+    auto dLdxX = resultsX.at(0);
+    auto dLdyX = resultsX.at(1);
 
     ASSERT_TRUE(dLdxExpX.isSameShape(dLdxX));
     ASSERT_TRUE(dLdxExpX.equalsTo(dLdxX));
@@ -1311,8 +1311,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test5) {
     auto results = op.evaluate({ &xConst, &yConst, &dLdz }, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdx = results.at(0);
-    auto* dLdy = results.at(1);
+    auto dLdx = results.at(0);
+    auto dLdy = results.at(1);
 
     ASSERT_TRUE(dLdxExp.isSameShape(dLdx));
     ASSERT_TRUE(dLdxExp.equalsTo(dLdx));
@@ -1339,8 +1339,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test6) {
     auto resultsXC = op.evaluate({ &xConst, &y, &dLdzC }, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, resultsXC.status());
 
-    auto* dLdxXC = resultsXC.at(0);
-    auto* dLdyXC = resultsXC.at(1);
+    auto dLdxXC = resultsXC.at(0);
+    auto dLdyXC = resultsXC.at(1);
 
     ASSERT_TRUE(dLdxExpXC.isSameShape(dLdxXC));
     ASSERT_TRUE(dLdxExpXC.equalsTo(dLdxXC));
@@ -1367,8 +1367,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test7) {
     auto resultsYs = op.evaluate({ &x, &Y, &dLdzC }, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, resultsYs.status());
 
-    auto* dLdxY = resultsYs.at(0);
-    auto* dLdyY = resultsYs.at(1);
+    auto dLdxY = resultsYs.at(0);
+    auto dLdyY = resultsYs.at(1);
 
     ASSERT_TRUE(dLdxExpYs.isSameShape(dLdxY));
     ASSERT_TRUE(dLdxExpYs.equalsTo(dLdxY));
@@ -1392,8 +1392,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdx = results.at(0);
-    auto* dLdy = results.at(1);
+    auto dLdx = results.at(0);
+    auto dLdy = results.at(1);
 
     ASSERT_TRUE(dLdxExp.isSameShape(dLdx));
     ASSERT_TRUE(dLdxExp.equalsTo(dLdx));
@@ -1420,8 +1420,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test9) {
     auto results = op.evaluate({ &x, &y, &dLdz }, {}, {});
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdx = results.at(0);
-    auto* dLdy = results.at(1);
+    auto dLdx = results.at(0);
+    auto dLdy = results.at(1);
 
     ASSERT_TRUE(dLdxExp.isSameShape(dLdx));
     ASSERT_TRUE(dLdxExp.equalsTo(dLdx));
@@ -1448,8 +1448,8 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsB.status());
 
-    auto* dLdxB = resultsB.at(0);
-    auto* dLdyB = resultsB.at(1);
+    auto dLdxB = resultsB.at(0);
+    auto dLdyB = resultsB.at(1);
 
     ASSERT_TRUE(dLdxExpB.isSameShape(dLdxB));
     ASSERT_TRUE(dLdxExpB.equalsTo(dLdxB));
@@ -1476,19 +1476,19 @@ TEST_F(DeclarableOpsTests15, Pow_BP_Test11) {
     auto resultsB = op.evaluate({ &xB, &yB, &dLdzB }, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsB.status());
-    auto* dLdxB = resultsB.at(0);
-    auto* dLdyB = resultsB.at(1);
+    auto dLdxB = resultsB.at(0);
+    auto dLdyB = resultsB.at(1);
 
     ASSERT_TRUE(dLdxExpB.isSameShape(dLdxB));
-    for (int i = 0; i < dLdxB->lengthOf(); ++i) {
-        if (!sd::math::nd4j_isnan(dLdxB->e<float>(i)) && !sd::math::nd4j_isnan(dLdxExpB.e<float>(i)))
-            ASSERT_NEAR(dLdxB->e<float>(i), dLdxExpB.e<float>(i), 0.00001);
+    for (int i = 0; i < dLdxB.lengthOf(); ++i) {
+        if (!sd::math::nd4j_isnan(dLdxB.e<float>(i)) && !sd::math::nd4j_isnan(dLdxExpB.e<float>(i)))
+            ASSERT_NEAR(dLdxB.e<float>(i), dLdxExpB.e<float>(i), 0.00001);
     }
 
     ASSERT_TRUE(dLdyExpB.isSameShape(dLdyB));
-    for (int i = 0; i < dLdyB->lengthOf(); ++i) {
-        if (!sd::math::nd4j_isnan(dLdyB->e<float>(i)) && !sd::math::nd4j_isnan(dLdyExpB.e<float>(i)))
-            ASSERT_NEAR(dLdyB->e<float>(i), dLdyExpB.e<float>(i), 0.00001);
+    for (int i = 0; i < dLdyB.lengthOf(); ++i) {
+        if (!sd::math::nd4j_isnan(dLdyB.e<float>(i)) && !sd::math::nd4j_isnan(dLdyExpB.e<float>(i)))
+            ASSERT_NEAR(dLdyB.e<float>(i), dLdyExpB.e<float>(i), 0.00001);
     }
 
 
@@ -1509,14 +1509,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dLdA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dLdA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dLdA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dLdA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dLdB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dLdB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dLdB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dLdB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1531,14 +1531,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(B.isSameShape(*dLdAbp));
-    ASSERT_TRUE(B.equalsTo(*dLdAbp));
+    ASSERT_TRUE(B.isSameShape(dLdAbp));
+    ASSERT_TRUE(B.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(A.isSameShape(*dLdBbp));
-    ASSERT_TRUE(A.equalsTo(*dLdBbp));
+    ASSERT_TRUE(A.isSameShape(dLdBbp));
+    ASSERT_TRUE(A.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1557,14 +1557,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1583,14 +1583,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dLdA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dLdA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dLdA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dLdA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dLdB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dLdB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dLdB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dLdB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1609,14 +1609,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dLdA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dLdA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dLdA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dLdA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dLdB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dLdB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dLdB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dLdB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1632,14 +1632,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(B.isSameShape(*dLdAbp));
-    ASSERT_TRUE(B.equalsTo(*dLdAbp));
+    ASSERT_TRUE(B.isSameShape(dLdAbp));
+    ASSERT_TRUE(B.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(A.isSameShape(*dLdBbp));
-    ASSERT_TRUE(A.equalsTo(*dLdBbp));
+    ASSERT_TRUE(A.isSameShape(dLdBbp));
+    ASSERT_TRUE(A.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1657,14 +1657,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP7) {
     auto resultsBP = op_bp.evaluate({ &A, &B, &dLdC }, {}, { 1,1, 1,1 }, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dLdA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dLdA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dLdA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dLdA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dLdB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dLdB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dLdB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dLdB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1683,14 +1683,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dLdA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dLdA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dLdA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dLdA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dLdB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dLdB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dLdB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dLdB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1709,14 +1709,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1736,14 +1736,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1763,14 +1763,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1791,14 +1791,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1819,14 +1819,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP13) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1851,14 +1851,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP14) {
 
     ASSERT_EQ(ND4J_STATUS_OK, resultsBP.status());
 
-    auto* dLdAbp = resultsBP.at(0);
-    auto* dLdBbp = resultsBP.at(1);
+    auto dLdAbp = resultsBP.at(0);
+    auto dLdBbp = resultsBP.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdAbp));
-    ASSERT_TRUE(dA.equalsTo(*dLdAbp));
+    ASSERT_TRUE(dA.isSameShape(dLdAbp));
+    ASSERT_TRUE(dA.equalsTo(dLdAbp));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdBbp));
-    ASSERT_TRUE(dB.equalsTo(*dLdBbp));
+    ASSERT_TRUE(dB.isSameShape(dLdBbp));
+    ASSERT_TRUE(dB.equalsTo(dLdBbp));
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -1877,14 +1877,14 @@ TEST_F(DeclarableOpsTests15, TestTensorMmul_BP15) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* dLdA = results.at(0);
-    auto* dLdB = results.at(1);
+    auto dLdA = results.at(0);
+    auto dLdB = results.at(1);
 
-    ASSERT_TRUE(dA.isSameShape(*dLdA));
-    ASSERT_TRUE(dA.equalsTo(*dLdA));
+    ASSERT_TRUE(dA.isSameShape(dLdA));
+    ASSERT_TRUE(dA.equalsTo(dLdA));
 
-    ASSERT_TRUE(dB.isSameShape(*dLdB));
-    ASSERT_TRUE(dB.equalsTo(*dLdB));
+    ASSERT_TRUE(dB.isSameShape(dLdB));
+    ASSERT_TRUE(dB.equalsTo(dLdB));
 
 }
 //////////////////////////////////////////////////////////////////////

@@ -188,10 +188,10 @@ DECLARE_SHAPE_FN(concat) {
 
     // delete dynamically allocated vectors shapes with length=1
     for(int index : shapesToDelete)
-        RELEASE(arrShapes[index], block.getWorkspace());
+        RELEASE(arrShapes[index], block.workspace());
 
     auto result = ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(outShapeInfo));
-    RELEASE(outShapeInfo, block.getWorkspace());
+    RELEASE(outShapeInfo, block.workspace());
     return SHAPELIST(result);
 }
 
@@ -328,7 +328,7 @@ DECLARE_SHAPE_FN(concat) {
 
         //         // all scalars
         //         if (allScalars) {
-        //             ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(1), Nd4jLong);
+        //             ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(1), Nd4jLong);
 
         //             shape::shapeBuffer(1, &elements, newShape);
         //             return SHAPELIST(newShape);
@@ -336,7 +336,7 @@ DECLARE_SHAPE_FN(concat) {
 
         //         // any scalar
         //         if (hasScalars) {
-        //             ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(1), Nd4jLong);
+        //             ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(1), Nd4jLong);
         //             Nd4jLong length = shape::length(inp);
         //             for (int i = 1; i < block.width(); i++) {
         //                 auto c = INPUT_VARIABLE(i);
@@ -352,7 +352,7 @@ DECLARE_SHAPE_FN(concat) {
         //     }
 
 
-        //     ALLOCATE(newShape, block.getWorkspace(), shape::shapeInfoLength(first->shapeInfo()), Nd4jLong);
+        //     ALLOCATE(newShape, block.workspace(), shape::shapeInfoLength(first->shapeInfo()), Nd4jLong);
 
         //     if (_dimension < 0)
         //         _dimension += first->rankOf();

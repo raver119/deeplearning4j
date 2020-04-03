@@ -35,7 +35,7 @@ namespace sd {
 
             static std::pair<Nd4jLong, Nd4jLong> fromLongPair(LongPair* pair);
 
-            static NDArray* fromFlatArray(const sd::graph::FlatArray* flatArray);
+            static NDArray fromFlatArray(const sd::graph::FlatArray* flatArray);
 
             static flatbuffers::Offset<FlatArray> toFlatArray(flatbuffers::FlatBufferBuilder &builder, NDArray &array);
         };

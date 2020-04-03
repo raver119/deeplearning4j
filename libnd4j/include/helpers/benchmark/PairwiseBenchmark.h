@@ -32,7 +32,7 @@ namespace sd {
             //
         }
 
-        PairwiseBenchmark(pairwise::Ops op, std::string testName, NDArray *x, NDArray *y, NDArray *z) : OpBenchmark(testName, x, y, z) {
+        PairwiseBenchmark(pairwise::Ops op, const std::string &testName, const NDArray &x, const NDArray &y, const NDArray &z) : OpBenchmark(testName, x, y, z) {
             _opNum = (int) op;
         }
 
@@ -42,25 +42,13 @@ namespace sd {
         }
 
         ~PairwiseBenchmark(){
-            if (_x != _y && _x != _z && _y != _z) {
-                delete _x;
-                delete _y;
-                delete _z;
-            } else if (_x == _y && _x == _z) {
-                delete _x;
-            } else if (_x == _z) {
-                delete _x;
-                delete _y;
-            } else if (_y == _z) {
-                delete _x;
-                delete _y;
-            }
+            //
         }
 
         void executeOnce() override {
             PointersManager manager(LaunchContext::defaultContext(), "PairwiseBM");
 
-            NativeOpExecutioner::execPairwiseTransform(LaunchContext::defaultContext(), _opNum, _x->buffer(), _x->shapeInfo(), _x->specialBuffer(), _x->specialShapeInfo(), _y->buffer(), _y->shapeInfo(), _y->specialBuffer(), _y->specialShapeInfo(), _z->buffer(), _z->shapeInfo(), _z->specialBuffer(), _z->specialShapeInfo(), nullptr);
+            NativeOpExecutioner::execPairwiseTransform(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _y.buffer(), _y.shapeInfo(), _y.specialBuffer(), _y.specialShapeInfo(), _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), nullptr);
 
             manager.synchronize();
         }
@@ -71,21 +59,21 @@ namespace sd {
 
         std::string inplace() override {
             std::string result;
-            result += (_x == _y ? "x==y" : "x!=y");
+            result += (_x.platformBuffer() == _y.platformBuffer() ? "x==y" : "x!=y");
             result += "/";
-            result += (_x == _z ? "x==z" : "x!=z");
+            result += (_x.platformBuffer() == _z.platformBuffer() ? "x==z" : "x!=z");
             result += "/";
-            result += (_y == _z ? "y==z" : "y!=z");
+            result += (_y.platformBuffer() == _z.platformBuffer() ? "y==z" : "y!=z");
             return result;
         }
 
         std::string orders() override {
             std::string result;
-            result += _x->ordering();
+            result += _x.ordering();
             result += "/";
-            result += _y->ordering();
+            result += _y.ordering();
             result += "/";
-            result += _z == nullptr ? _x->ordering() : _z->ordering();
+            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
             return result;
         }
 
@@ -95,7 +83,7 @@ namespace sd {
             result += "/";
             result += ShapeUtils::strideAsString(_y);
             result += "/";
-            result += _z == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
+            result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
             return result;
         }
 

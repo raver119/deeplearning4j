@@ -51,7 +51,7 @@ namespace sd {
             int outRank = shape::rank(in) - 1;
             Nd4jLong *outputShape = nullptr;
             if (outRank > 1) {
-                ALLOCATE(outputShape, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+                ALLOCATE(outputShape, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
                 outputShape[0] = outRank;
                 for (Nd4jLong e = 0; e < outRank; e++)
                 outputShape[e + 1] = in[e + 1];

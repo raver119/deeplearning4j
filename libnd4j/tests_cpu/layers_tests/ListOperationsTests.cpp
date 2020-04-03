@@ -58,7 +58,7 @@ TEST_F(ListOperationsTests, BasicTest_Stack_1) {
         auto row = NDArrayFactory::create_<double>('c', {100});
         row->assign((double) e);
         list.write(e, row);
-        tads.at(e)->assign(row);
+        tads.at(e).assign(row);
     }
 
     sd::ops::stack_list op;
@@ -81,11 +81,10 @@ TEST_F(ListOperationsTests, BasicTest_UnStackList_1) {
     auto x = NDArrayFactory::create<double>('c', {10, 100});
     auto tads = x.allTensorsAlongDimension({1});
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create_<double>('c', {100});
-        row->assign((double) e);
+        auto row = NDArrayFactory::create<double>('c', {100});
+        row.assign((double) e);
         //list.write(e, row);
-        tads.at(e)->assign(row);
-        delete row;
+        tads.at(e).assign(row);
     }
 
     sd::ops::unstack_list op;
@@ -182,10 +181,10 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
     }
 
     auto tads = exp.allTensorsAlongDimension({1});
-    tads.at(0)->assign(1.0f);
-    tads.at(1)->assign(1.0f);
-    tads.at(2)->assign(3.0f);
-    tads.at(3)->assign(3.0f);
+    tads.at(0).assign(1.0f);
+    tads.at(1).assign(1.0f);
+    tads.at(2).assign(3.0f);
+    tads.at(3).assign(3.0f);
 
 
     sd::ops::pick_list op;
@@ -268,14 +267,14 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
     for (int e = 0; e < 10; e++) {
         auto row = NDArrayFactory::create_<double>('c', {5});
         row->assign((double) e);
-        tads.at(e)->assign(row);
+        tads.at(e).assign(row);
 
         if (e < 2)
-            tads0.at(cnt0++)->assign(row);
+            tads0.at(cnt0++).assign(row);
         else if (e < 5)
-            tads1.at(cnt1++)->assign(row);
+            tads1.at(cnt1++).assign(row);
         else
-            tads2.at(cnt2++)->assign(row);
+            tads2.at(cnt2++).assign(row);
 
         delete row;
     }
@@ -307,7 +306,7 @@ TEST_F(ListOperationsTests, BasicTest_Scatter_1) {
     for (int e = 0; e < 10; e++) {
         auto row = NDArrayFactory::create_<double>('c', {1, 5});
         row->assign((double) e);
-        tads.at(e)->assign(row);
+        tads.at(e).assign(row);
 
         delete row;
     }
@@ -335,18 +334,18 @@ TEST_F(ListOperationsTests, BasicTest_Clone_1) {
     auto list = new NDArrayList(0, true);
 
     VariableSpace variableSpace;
-    auto var = new Variable(nullptr, nullptr, -1, 0);
-    var->setNDArrayList(list);
+    auto var = new Variable();
+    //var->setNDArrayList(list);
 
-    variableSpace.putVariable(-1, var);
-    variableSpace.trackList(list);
+    //variableSpace.putVariable(-1, var);
+    //variableSpace.trackList(list);
 
     Context block(1, &variableSpace);
     block.pickInput(-1);
 
     sd::ops::clone_list op;
 
-    ASSERT_TRUE(list == block.variable(0)->getNDArrayList());
+    ASSERT_TRUE(list == block.variable(0)->getNDArrayList().get());
 
     auto result = op.execute(&block);
 
@@ -375,7 +374,7 @@ TEST_F(ListOperationsTests, BasicTest_Gather_1) {
     auto tads = exp.allTensorsAlongDimension({1});
     for (int e = 0; e < 10; e++) {
         auto tad = tads.at(9 - e);
-        tad->assign(e);
+        tad.assign(e);
     }
 
     auto indices = NDArrayFactory::create<double>('c', {1, 10});

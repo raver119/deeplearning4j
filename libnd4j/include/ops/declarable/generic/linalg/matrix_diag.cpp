@@ -47,7 +47,7 @@ DECLARE_SHAPE_FN(matrix_diag) {
 
     int outRank = inRank + 1;
 
-    ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(outRank), Nd4jLong);
+    ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(outRank), Nd4jLong);
     outShapeInfo[0] = outRank;
     for(int i = 0; i < inRank; ++i)
         outShapeInfo[i + 1] = shape::sizeAt(in, i);

@@ -52,7 +52,6 @@ namespace sd {
 
             sd::graph::VariableSpace* _variableSpace = nullptr;
             std::pair<Nd4jLong, Nd4jLong> _executionTime;
-            sd::random::RandomBuffer* _rng = nullptr;
 
             sd::DataType _dataType = sd::DataType::FLOAT32;
             // branch for divergent_op
@@ -64,9 +63,8 @@ namespace sd {
             std::vector<sd::DataType> _dataTypes;
 
             // fields for fast execution (out-of-graph ops use)
-            std::vector<NDArray*> _fastpath_in;
-            std::vector<NDArray*> _fastpath_out;
-            std::vector<NDArray*> _handles;
+            std::vector<std::shared_ptr<NDArray>> _fastpath_in;
+            std::vector<std::shared_ptr<NDArray>> _fastpath_out;
 
             bool _helpersAllowed = true;
 
@@ -87,29 +85,17 @@ namespace sd {
             // these methods are for execution timing
             void setOuterTime(Nd4jLong time);
             void setInnerTime(Nd4jLong time);
-            Nd4jLong getOuterTime();
-            Nd4jLong getInnerTime();
+            Nd4jLong outerTime() const;
+            Nd4jLong innerTime() const;
 
             // these methods are related to Workspace abstraction
-            bool hasWorkspaceProvided();
+            bool hasWorkspaceProvided() const;
             void attachWorkspace(sd::memory::Workspace* workspace);
-            void forgetWorkspace();
 
-            // these methods return full-time workspace
-            sd::memory::Workspace* getWorkspace();
-            sd::memory::Workspace* workspace();
-            sd::memory::Workspace* fWorkspace();
+            sd::memory::Workspace* workspace() const;
 
-            // this method returns workspace for temporary allocations
-            sd::memory::Workspace* tWorkspace();
-
-            // this method returns workspace for object allocations
-            sd::memory::Workspace* oWorkspace();
 
             void setVariableSpace(VariableSpace* variableSpace);
-
-            sd::random::RandomBuffer* getRNG();
-            void setRNG(sd::random::RandomBuffer* rng);
 
             void setTargetEngine(samediff::Engine engine);
 
@@ -117,32 +103,19 @@ namespace sd {
 
             LaunchContext* launchContext();
 
-            // these fields define, if we can execute specific node in-place, without generating new array
-
-
-            // these variables are only for Divergent Nodes
-            int getBranch();
-            void setBranch(int branch);
-
             /**
              *
              * @return
              */
-            Stash* getStash();
-
-            /**
-             *
-             */
-            void trackList(NDArrayList* list);
-
+            Stash* stash() const;
 
             /**
              * This method returns variable for a given input index for this block
              * @param idx
              * @return
              */
-            Variable* getVariable(int idx);
-            Variable* variable(int idx);
+            std::shared_ptr<Variable> getVariable(int idx) const;
+            std::shared_ptr<Variable> variable(int idx) const;
 
             /**
              * This method is shortcut to getVariable(int idx);
@@ -150,8 +123,8 @@ namespace sd {
              * + it check fastpath for array availability (preferred)
              * @return
              */
-            NDArray* getNDArray(int idx);
-            NDArray* array(int idx);
+            std::shared_ptr<NDArray> getNDArray(int idx) const;
+            std::shared_ptr<NDArray> array(int idx) const;
 
 
             /**
@@ -159,20 +132,21 @@ namespace sd {
              * @param p
              * @return
              */
-            Variable* variable(int node, int index);
-            Variable* variable(std::pair<int,int>& p);
-            Variable* variable(std::initializer_list<int> p);
+            std::shared_ptr<Variable> variable(int node, int index) const;
+            std::shared_ptr<Variable> variable(const std::pair<int,int>& p) const;
+            std::shared_ptr<Variable> variable(std::initializer_list<int> p) const;
 
 
-            void pushNDArrayToVariableSpace(int nodeId, int index, NDArray* array, bool removable = true);
-            void pushNDArrayToVariableSpace(std::pair<int, int>& pair, NDArray* array, bool removable = true);
+            void pushNDArrayToVariableSpace(int nodeId, int index, const NDArray &array);
+            void pushNDArrayToVariableSpace(const std::pair<int, int>& pair, const NDArray &array);
 
-            void pushNDArrayListToVariableSpace(int nodeId, int index, NDArrayList* list, bool track = true);
-            void pushNDArrayListToVariableSpace(std::pair<int, int>& pair, NDArrayList* list, bool track = true);
+            void pushNDArrayListToVariableSpace(int nodeId, int index, std::shared_ptr<NDArrayList> list);
+            void pushNDArrayListToVariableSpace(int nodeId, int index, const NDArrayList &list, bool track = true);
+            void pushNDArrayListToVariableSpace(const std::pair<int, int>& pair, const NDArrayList &list, bool track = true);
 
-            bool isValueAvailable(int idx = 0);
+            bool isValueAvailable(int idx = 0) const;
 
-            Variable* ensureVariable(int idx = 0);
+            std::shared_ptr<Variable> ensureVariable(int idx = 0);
 
             unsigned long width() const override;
 
@@ -181,7 +155,7 @@ namespace sd {
              * This method checks if Context uses fastpath variable access
              * @return
              */
-            bool isFastPath();
+            bool isFastPath() const;
 
             /**
              * Method allows to forbid FastPath execution
@@ -190,15 +164,17 @@ namespace sd {
             void forbidFastPath(bool reallyForbid);
 
 #ifndef __JAVACPP_HACK__
-            std::vector<NDArray*>& fastpath_in();
-            std::vector<NDArray*>& fastpath_out();
+            const std::vector<std::shared_ptr<NDArray>>& fastpath_in() const;
+            const std::vector<std::shared_ptr<NDArray>>& fastpath_out() const;
 #endif
 
-            void setInputArray(int index, NDArray *array, bool removable = false);
+            void setInputArray(int index, const std::shared_ptr<NDArray> &array);
+            void setInputArray(int index, const NDArray &array);
             void setInputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo);
             void setInputArray(int index, void *databuffer, void *shapeInfo, void *specialShapeInfo);
 
-            void setOutputArray(int index, NDArray *array, bool removable = false);
+            void setOutputArray(int index, const std::shared_ptr<NDArray> &array);
+            void setOutputArray(int index, const NDArray &array);
             void setOutputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo);
             void setOutputArray(int index, void *databuffer, void *shapeInfo, void *specialShapeInfo);
 
@@ -222,16 +198,16 @@ namespace sd {
             void setCudaContext(Nd4jPointer cudaStream, Nd4jPointer reductionPointer, Nd4jPointer allocationPointer);
 
             void allowHelpers(bool reallyAllow);
-            bool helpersAllowed();
+            bool helpersAllowed() const;
 
             void setShapeFunctionOverride(bool reallyOverride);
-            bool shapeFunctionOverride();
+            bool shapeFunctionOverride() const;
 
-            samediff::ExecutionMode executionMode();
+            samediff::ExecutionMode executionMode() const;
             void setExecutionMode(samediff::ExecutionMode executionMode);
 
-            bool isTraining();
-            bool isInference();
+            bool isTraining() const;
+            bool isInference() const;
 
             const GraphMemoryManager& memoryManager() const;
         };

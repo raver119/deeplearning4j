@@ -1511,11 +1511,11 @@
 #define CHECK_STASH(NAME)   block.getStash()->checkStash(block.getNodeId(), NAME);
 #define UNSTASH(NAME)       block.getStash()->extractArray(block.getNodeId(), NAME);
 
-#define INPUT_VARIABLE(INDEX)     block.array(INDEX)
+#define INPUT_VARIABLE(INDEX)     block.array(INDEX).get()
 #define OUTPUT_VARIABLE(INDEX)    reinterpret_cast<sd::NDArray *>(this->getZ(block, INDEX))
 #define OUTPUT_NULLIFIED(INDEX)    reinterpret_cast<sd::NDArray *>(this->getNullifiedZ(block, INDEX))
 
-#define INPUT_LIST(INDEX)     reinterpret_cast<sd::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList())
+#define INPUT_LIST(INDEX)     reinterpret_cast<sd::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList().get())
 
 #define D_ARG(INDEX)     block.getDArguments().at(INDEX)
 #define INT_ARG(INDEX)     block.getIArguments().at(INDEX)
@@ -1524,7 +1524,7 @@
 #define B_ARG(INDEX)     block.getBArguments().at(INDEX)
 
 
-#define COPY_SHAPE(SRC, TGT)    TGT = ShapeBuilders::copyShapeInfo(SRC, true, block.getWorkspace())
+#define COPY_SHAPE(SRC, TGT)    TGT = ShapeBuilders::copyShapeInfo(SRC, true, block.workspace())
 
 #define COPY_SHAPE_EX(SRC, TGT, WORKSPACE)    TGT = ShapeBuilders::copyShapeInfo(SRC, true, WORKSPACE)
 

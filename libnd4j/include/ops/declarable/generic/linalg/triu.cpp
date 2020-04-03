@@ -55,7 +55,7 @@ DECLARE_SHAPE_FN(triu) {
     int rank = (inShapeInfo[0] == 1) ? 2 : inShapeInfo[0];
 
     Nd4jLong *outShapeInfo = nullptr;
-	ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+	ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
     memcpy(outShapeInfo, inShapeInfo, (1 + rank) * sizeof(Nd4jLong));                     // copy rank and dimensions values only
 
     if(inShapeInfo[0] == 1) {
@@ -100,7 +100,7 @@ DECLARE_SHAPE_FN(triu_bp) {
     int rank = gradOShapeInfo[0];
 
     Nd4jLong* outShapeInfo = nullptr;
-    ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+    ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
     memcpy(outShapeInfo, gradOShapeInfo, (1 + rank) * sizeof(Nd4jLong));                     // copy rank and dimensions values only
 
     auto in = inputShape->at(0);

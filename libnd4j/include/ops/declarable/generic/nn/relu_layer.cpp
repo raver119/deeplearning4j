@@ -49,7 +49,7 @@ namespace sd {
         DECLARE_SHAPE_FN(relu_layer) {
             auto inShape = inputShape->at(0);
             auto weightsShape = inputShape->at(1);
-            auto outputShape = ShapeUtils::matrixProductShape(inShape, weightsShape, false, false, ArrayOptions::dataType(inShape), block.getWorkspace());
+            auto outputShape = ShapeUtils::matrixProductShape(inShape, weightsShape, false, false, ArrayOptions::dataType(inShape), block.workspace());
 
             return SHAPELIST(CONSTANT(outputShape));
         }

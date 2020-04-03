@@ -70,14 +70,14 @@ namespace sd {
                 auto row = rows.at(r);
 
                 for (int e = 0; e < numColumns; e += 2) {
-                    int idx = row->e<int>(e);
+                    int idx = row.e<int>(e);
                     if (idx < 0)
                         break;
 
                     int denseIdx = sparse2dense.at(idx);
 
 
-                    float value = row->e<float>(e);
+                    float value = row.e<float>(e);
                     float current = z->e<float>(r, denseIdx);
                     z->p(r, denseIdx, value + current);
                 }

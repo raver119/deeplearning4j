@@ -86,7 +86,7 @@ DECLARE_SHAPE_FN(mirror_pad) {
         outShapeInfo = ConstantShapeHelper::getInstance()->vectorShapeInfo(len, input->dataType());
     }
     else {
-        ALLOCATE(outShapeInfo, block.getWorkspace(), shape::shapeInfoLength(rank), Nd4jLong);
+        ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(rank), Nd4jLong);
         outShapeInfo[0] = rank;
         for(int i = 0; i < rank; ++i)
             outShapeInfo[i+1] = input->sizeAt(i) + paddings->e<Nd4jLong>(i,0) + paddings->e<Nd4jLong>(i,1);

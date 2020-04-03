@@ -141,7 +141,7 @@ TYPED_TEST(TypedConvolutionTests2, Test_DeConv2D_TF_1) {
     auto result = op.evaluate({&input0, &input1, &input2}, {}, {2, 2, 1, 1, 0, 0, 1, 1, 0, 1});
     ASSERT_EQ(Status::OK(), result.status());
 
-    ASSERT_EQ(exp, *result.at(0));
+    ASSERT_EQ(exp, result.at(0));
 
 }
 
@@ -249,22 +249,22 @@ TYPED_TEST(TypedConvolutionTests2, sconv2d_bp_1) {
 
     //_gradWP->printBuffer("gradWP");
 
-    ASSERT_TRUE(_gradWP->isSameShape(&expGWP));
-    ASSERT_TRUE(_gradWP->isSameShape(&weightsP));
+    ASSERT_TRUE(_gradWP.isSameShape(&expGWP));
+    ASSERT_TRUE(_gradWP.isSameShape(&weightsP));
 
-    ASSERT_TRUE(_gradWP->equalsTo(&expGWP));
+    ASSERT_TRUE(_gradWP.equalsTo(&expGWP));
 
     //_gradWD->printShapeInfo("gradWD shape");
 
-    ASSERT_TRUE(_gradWD->isSameShape(&expGWD));
-    ASSERT_TRUE(_gradWD->isSameShape(&weightsD));
+    ASSERT_TRUE(_gradWD.isSameShape(&expGWD));
+    ASSERT_TRUE(_gradWD.isSameShape(&weightsD));
 // _gradWD->printIndexedBuffer();
-    ASSERT_TRUE(_gradWD->equalsTo(&expGWD));
+    ASSERT_TRUE(_gradWD.equalsTo(&expGWD));
 
-    ASSERT_TRUE(_epsilon->isSameShape(&input));
-    ASSERT_TRUE(_epsilon->isSameShape(&expE));
+    ASSERT_TRUE(_epsilon.isSameShape(&input));
+    ASSERT_TRUE(_epsilon.isSameShape(&expE));
 
-    ASSERT_TRUE(_epsilon->equalsTo(&expE));
+    ASSERT_TRUE(_epsilon.equalsTo(&expE));
 
 }
 
@@ -369,8 +369,8 @@ TYPED_TEST(TypedConvolutionTests2, sconv2d_bp_4) {
 
     sd::ops::sconv2d_bp op;
     auto results = op.evaluate({&input, &gradO, &weightsDepth, &bias}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* gradI = results.at(0);
-    auto* gradWD = results.at(1);
+    auto gradI = results.at(0);
+    auto gradWD = results.at(1);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -899,7 +899,7 @@ TEST_F(ConvolutionTests2, deconv3d_bp_test6) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, maxpool2d_1) {
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -917,7 +917,7 @@ TEST_F(ConvolutionTests2, maxpool2d_1) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result.printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -942,7 +942,7 @@ TEST_F(ConvolutionTests2, maxpool2d_2) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -960,7 +960,7 @@ TEST_F(ConvolutionTests2, maxpool2d_2) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result.printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -985,7 +985,7 @@ TEST_F(ConvolutionTests2, maxpool2d_3) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1003,7 +1003,7 @@ TEST_F(ConvolutionTests2, maxpool2d_3) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result.printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -1028,7 +1028,7 @@ TEST_F(ConvolutionTests2, maxpool2d_4) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1046,7 +1046,7 @@ TEST_F(ConvolutionTests2, maxpool2d_4) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result.printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -1071,7 +1071,7 @@ TEST_F(ConvolutionTests2, maxpool2d_5) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1089,7 +1089,7 @@ TEST_F(ConvolutionTests2, maxpool2d_5) {
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
     // result.printShapeInfo();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -1173,7 +1173,7 @@ TYPED_TEST(TypedConvolutionTests2, maxpool2d_9) {
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
-    ASSERT_TRUE(output->isSameShape({bS, iC, oH, oW}));
+    ASSERT_TRUE(output.isSameShape({bS, iC, oH, oW}));
 
 }
 
@@ -1196,7 +1196,7 @@ TYPED_TEST(TypedConvolutionTests2, maxpool2d_10) {
 
     sd::ops::maxpool2d op;
     auto results = op.evaluate({&input}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW,  paddingMode});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -1686,8 +1686,8 @@ TYPED_TEST(TypedConvolutionTests2, maxpool3d_bp_test4) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, maxpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
@@ -1705,7 +1705,7 @@ TEST_F(ConvolutionTests2, maxpool2d_bp_1) {
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -1869,8 +1869,8 @@ TEST_F(ConvolutionTests2, maxpool2d_bp_7) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, avgpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
@@ -1888,7 +1888,7 @@ TEST_F(ConvolutionTests2, avgpool2d_bp_1) {
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -2039,8 +2039,8 @@ TYPED_TEST(TypedConvolutionTests2, avgpool2d_bp_6) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, pnormpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
@@ -2059,7 +2059,7 @@ TEST_F(ConvolutionTests2, pnormpool2d_bp_1) {
     ASSERT_EQ(ND4J_STATUS_OK, status);
 
     auto result = variableSpace->getVariable(block->getNodeId())->getNDArray();
-    ASSERT_TRUE(exp.isSameShape(result));
+    ASSERT_TRUE(exp.isSameShape(*result));
 
     delete variableSpace;
     delete block;
@@ -2146,7 +2146,7 @@ TEST_F(ConvolutionTests2, upsampling2d_bp_1) {
 
     sd::ops::upsampling2d_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {isNCHW});
-    auto* gradI = results.at(0);
+    auto gradI = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expGradI.isSameShape(gradI));
@@ -2170,7 +2170,7 @@ TEST_F(ConvolutionTests2, upsampling2d_bp_2) {
 
     sd::ops::upsampling2d_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {isNCHW});
-    auto* gradI = results.at(0);
+    auto gradI = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expGradI.isSameShape(gradI));
@@ -2200,7 +2200,7 @@ TEST_F(ConvolutionTests2, upsampling2d_bp_3) {
 
     sd::ops::upsampling2d_bp op;
     auto results = op.evaluate({&input, &gradO}, {}, {isNCHW});
-    auto* gradI = results.at(0);
+    auto gradI = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expGradI.isSameShape(gradI));
@@ -2230,7 +2230,7 @@ TYPED_TEST(TypedConvolutionTests2, depthwise_conv2d_1) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2258,7 +2258,7 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_2) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2289,7 +2289,7 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_3) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights, &biases}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2372,7 +2372,7 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_6) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    NDArray* output = results.at(0);
+    auto output = results.at(0);
     // output.printIndexedBuffer();
 
     ASSERT_EQ(Status::OK(), results.status());
@@ -2405,7 +2405,7 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_7) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights, &biases}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2511,7 +2511,7 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_10) {
 
     sd::ops::depthwise_conv2d op;
     auto results = op.evaluate({&input, &weights, &biases}, {}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat, wFormat});
-    auto* output = results.at(0);
+    auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2583,8 +2583,8 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test1) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* gradI = results.at(0);
-    auto* gradW = results.at(1);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2620,8 +2620,8 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test2) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* gradI = results.at(0);
-    auto* gradW = results.at(1);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2686,9 +2686,9 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test4) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    NDArray* gradI = results.at(0);
-    NDArray* gradW = results.at(1);
-    NDArray* gradB = results.at(2);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
+    auto gradB = results.at(2);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2740,9 +2740,9 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test5) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    NDArray* gradI = results.at(0);
-    NDArray* gradW = results.at(1);
-    NDArray* gradB = results.at(2);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
+    auto gradB = results.at(2);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2782,8 +2782,8 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test6) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto* gradI = results.at(0);
-    auto* gradW = results.at(1);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
 
     ASSERT_EQ(Status::OK(), results.status());
 
@@ -2821,8 +2821,8 @@ TEST_F(ConvolutionTests2, depthwise_conv2d_bp_test7) {
 
     sd::ops::depthwise_conv2d_bp op;
     auto results = op.evaluate({&input, &weights, &bias, &gradO}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat, wFormat});
-    auto* gradI = results.at(0);
-    auto* gradW = results.at(1);
+    auto gradI = results.at(0);
+    auto gradW = results.at(1);
 
     ASSERT_EQ(Status::OK(), results.status());
 

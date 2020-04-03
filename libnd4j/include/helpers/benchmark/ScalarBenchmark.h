@@ -32,47 +32,38 @@ namespace sd {
         }
 
         ~ScalarBenchmark(){
-            if (_x != _y && _x != _z && _y != _z) {
-                delete _x;
-                delete _y;
-                delete _z;
-            } else if (_x == _y && _x == _z) {
-                delete _x;
-            } else if (_x == _z) {
-                delete _x;
-                delete _y;
-            }
+
         }
 
         ScalarBenchmark(scalar::Ops op) : OpBenchmark() {
             _opNum = (int) op;
         }
 
-        ScalarBenchmark(scalar::Ops op, std::string testName) : OpBenchmark() {
+        ScalarBenchmark(scalar::Ops op, const std::string &testName) : OpBenchmark() {
             _opNum = (int) op;
             _testName = testName;
         }
 
-        ScalarBenchmark(scalar::Ops op, std::string testName, NDArray *x, NDArray *y, NDArray *z) : OpBenchmark(testName, x, y, z) {
+        ScalarBenchmark(scalar::Ops op, const std::string &testName, const NDArray &x, const NDArray &y, const NDArray &z) : OpBenchmark(testName, x, y, z) {
             _opNum = (int) op;
         }
 
         void executeOnce() override {
             PointersManager manager(LaunchContext::defaultContext(), "ScalarBM");
 
-            if (_z == nullptr)
-                NativeOpExecutioner::execScalar(LaunchContext::defaultContext(), _opNum, _x->buffer(), _x->shapeInfo(), _x->specialBuffer(), _x->specialShapeInfo(), _x->buffer(), _x->shapeInfo(), _x->specialBuffer(), _x->specialShapeInfo(), _y->buffer(), _y->shapeInfo(), _y->specialBuffer(), _y->specialShapeInfo(), nullptr);
+            if (_z.shapeInfo() == nullptr)
+                NativeOpExecutioner::execScalar(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _y.buffer(), _y.shapeInfo(), _y.specialBuffer(), _y.specialShapeInfo(), nullptr);
             else
-                NativeOpExecutioner::execScalar(LaunchContext::defaultContext(), _opNum, _x->buffer(), _x->shapeInfo(), _x->specialBuffer(), _x->specialShapeInfo(), _z->buffer(), _z->shapeInfo(), _z->specialBuffer(), _z->specialShapeInfo(), _y->buffer(), _y->shapeInfo(), _y->specialBuffer(), _y->specialShapeInfo(), nullptr);
+                NativeOpExecutioner::execScalar(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), _y.buffer(), _y.shapeInfo(), _y.specialBuffer(), _y.specialShapeInfo(), nullptr);
 
             manager.synchronize();
         }
 
         std::string orders() override {
             std::string result;
-            result += _x->ordering();
+            result += _x.ordering();
             result += "/";
-            result += _z == nullptr ? _x->ordering() : _z->ordering();
+            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
             return result;
         }
 
@@ -80,7 +71,7 @@ namespace sd {
             std::string result;
             result += ShapeUtils::strideAsString(_x);
             result += "/";
-            result += _z == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
+            result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
             return result;
         }
 
@@ -93,7 +84,7 @@ namespace sd {
         }
 
         OpBenchmark* clone() override  {
-            return new ScalarBenchmark((scalar::Ops) _opNum, _testName, _x == nullptr ? _x : new NDArray(_x->dup()) , _y == nullptr ? _y : new NDArray(_y->dup()), _z == nullptr ? _z : new NDArray(_z->dup()));
+            return new ScalarBenchmark((scalar::Ops) _opNum, _testName, _x.shapeInfo() == nullptr ? _x : NDArray(_x.dup()) , _y.shapeInfo() == nullptr ? _y : NDArray(_y.dup()), _z.shapeInfo() == nullptr ? _z : NDArray(_z.dup()));
         }
     };
 }

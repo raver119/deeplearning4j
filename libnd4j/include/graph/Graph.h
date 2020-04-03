@@ -46,7 +46,8 @@ namespace sd {
         class SD_EXPORT Graph {
         protected:
             ExecutorConfiguration _configuration;
-            VariableSpace *_variableSpace;
+            VariableSpace _variableSpace;
+            memory::Workspace _workspace;
             Stash _stash;
 
             MAP_IMPL<int, Node> _unmapped;
@@ -71,7 +72,7 @@ namespace sd {
 
             std::vector<std::string> _placeholders;
         public:
-            Graph(const FlatGraph *flatGraph = nullptr, VariableSpace *variableSpace = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
+            Graph(const FlatGraph *flatGraph = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
             ~Graph();
 
@@ -100,13 +101,13 @@ namespace sd {
 
             int numberOfPlaceholders() const;
 
-            const std::vector<Variable*>& getPlaceholders() const;
+            const std::vector<std::shared_ptr<Variable>>& placeholders() const;
 
             /**
              * This method returns pointer to thread_local VariableSpace
              * @return
              */
-            VariableSpace *variableSpace() const;
+            VariableSpace& variableSpace() const;
 
             const GraphMemoryManager& memoryManager() const;
 
@@ -151,11 +152,6 @@ namespace sd {
              * This method returns clone of the graph, backed by VariableProxy instead of VariableSpace
              */
             Graph cloneWithProxy() const;
-
-            /**
-             * This method removes reference to VariableSpace from this Graph
-             */
-            void forgetVariableSpace();
 
             /**
              * This method returns hash of given Graph instance

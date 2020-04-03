@@ -43,9 +43,7 @@ TEST_F(FlatUtilsTests, flat_float_serde_1) {
 
     auto restored = FlatUtils::fromFlatArray(pfArray);
 
-    ASSERT_EQ(array, *restored);
-
-    delete restored;
+    ASSERT_EQ(array, restored);
 }
 
 TEST_F(FlatUtilsTests, flat_int_serde_1) {
@@ -60,9 +58,7 @@ TEST_F(FlatUtilsTests, flat_int_serde_1) {
 
     auto restored = FlatUtils::fromFlatArray(pfArray);
 
-    ASSERT_EQ(array, *restored);
-
-    delete restored;
+    ASSERT_EQ(array, restored);
 }
 
 TEST_F(FlatUtilsTests, flat_bool_serde_1) {
@@ -77,9 +73,7 @@ TEST_F(FlatUtilsTests, flat_bool_serde_1) {
 
     auto restored = FlatUtils::fromFlatArray(pfArray);
 
-    ASSERT_EQ(array, *restored);
-
-    delete restored;
+    ASSERT_EQ(array, restored);
 }
 
 TEST_F(FlatUtilsTests, flat_string_serde_1) {
@@ -94,7 +88,5 @@ TEST_F(FlatUtilsTests, flat_string_serde_1) {
 
     auto restored = FlatUtils::fromFlatArray(pfArray);
 
-    ASSERT_EQ(array, *restored);
-
-    delete restored;
+    ASSERT_EQ(array, restored);
 }
