@@ -44,7 +44,6 @@ public class AssertTestsExtendBaseClass extends AbstractAssertTestsClass {
 
     @Override
     protected Class<?> getBaseClass() {
-        return BaseDL4JTest.class
-                ;
+        return BaseDL4JTest.class;
     }
 }
