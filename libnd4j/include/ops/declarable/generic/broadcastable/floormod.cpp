@@ -66,7 +66,7 @@ namespace sd {
             auto gradY = OUTPUT_VARIABLE(1);
             gradX->assign(epsNext);
 
-            NDArray temp(*epsNext);
+            auto temp = epsNext->dup();
             BroadcastHelper::broadcastApply(BROADCAST(FloorMod), x, y, &temp);
 
             if (gradY->rankOf() == gradX->rankOf())

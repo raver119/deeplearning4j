@@ -2064,20 +2064,21 @@ TEST_F(DeclarableOpsTests14, Reshape1) {
     auto y = NDArrayFactory::create<float>('f', yShape);
 
 
-    auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
-    block->fillInputs({ -1, -2 });
+    VariableSpace variableSpace;
+    variableSpace.putVariable(-1, x);
+    variableSpace.putVariable(-2, y);
+
+    Context block(1, &variableSpace, false);
+    block.fillInputs({ -1, -2 });
 
     sd::ops::reshapeas reshape;
 
-    reshape.execute(block);
+    reshape.execute(&block);
 
-    ASSERT_TRUE(x.isSameShape(y));
+    ASSERT_TRUE(variableSpace.hasVariable(1));
+    auto z = variableSpace.getVariable(1)->getNDArray().get();
 
-    delete variableSpace;
-    delete block;
+    ASSERT_TRUE(y.isSameShape(z));
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -3316,9 +3316,8 @@ auto exp = NDArrayFactory::create<double>('c', {2, 2, 4, 2}, {
  });
 // ----------------------------------------------------------------
     sd::ops::roll op;
-    NDArray* y = nullptr;
-    auto result = op.execute({&x}, {y}, {}, {38}, {}, {}, true);
-    ASSERT_EQ(result, Status::OK());
+    auto result = op.evaluate({&x}, {}, {38}, {}, {}, true);
+    ASSERT_EQ(result.status(), Status::OK());
     //x.printIndexedBuffer("Output 4 inplace");
     //exp.printIndexedBuffer("Expect 4 inplace");
 
@@ -3409,8 +3408,8 @@ auto exp = NDArrayFactory::create<double>('c', {2, 3, 2}, {
 // ----------------------------------------------------------------
     sd::ops::roll op;
     NDArray* y = nullptr;
-    auto result = op.execute({&x}, {y}, {}, {1, 2, 1, 0}, {}, {}, true);
-    ASSERT_EQ(result, Status::OK());
+    auto result = op.evaluate({&x}, {}, {1, 2, 1, 0}, {}, {}, true);
+    ASSERT_EQ(result.status(), Status::OK());
 
     //x.printIndexedBuffer("Output");
     //exp.printIndexedBuffer("Expect");
@@ -3431,9 +3430,8 @@ auto exp = NDArrayFactory::create<double>('c', {2, 3, 3}, {
 });
 // ----------------------------------------------------------------
     sd::ops::roll op;
-    NDArray* y = nullptr;
-    auto result = op.execute({&x}, {y}, {}, {1, 1}, {}, {}, true);
-    ASSERT_EQ(result, Status::OK());
+    auto result = op.evaluate({&x}, {}, {1, 1}, {}, {}, true);
+    ASSERT_EQ(result.status(), Status::OK());
 
     ASSERT_TRUE(exp.equalsTo(&x));
 

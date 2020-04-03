@@ -35,19 +35,16 @@ namespace sd {
 
         auto z = OUTPUT_VARIABLE(0);
 
-        if (x->reshapei(y->ordering(), y->getShapeAsVector())) {
+        // FIXME: add validation here?
+        auto tmp = x->reshape(y->ordering(), y->getShapeAsVector());
+        z->assign(tmp);
 
-            z->assign(x);
-            return Status::OK();
-        }
-
-        return ND4J_STATUS_BAD_INPUT;
+        return Status::OK();
     }
     DECLARE_SYN(reshape_as, reshapeas);
 
     DECLARE_SHAPE_FN(reshapeas) {
-
-        return SHAPELIST(ShapeBuilders::copyShapeInfo(INPUT_VARIABLE(1)->getShapeInfo(), false, block.workspace()));
+        return SHAPELIST(CONSTANT(ShapeBuilders::copyShapeInfo(INPUT_VARIABLE(1)->shapeInfo(), false, block.workspace())));
     }
 
         DECLARE_TYPES(reshapeas) {

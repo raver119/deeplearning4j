@@ -2350,7 +2350,7 @@ TEST_F(DeclarableOpsTests9, Floormod_BP_Test_4) {
     eps.assign(1.f);
     sd::ops::floormod_bp op;
 
-    auto result = op.evaluate({&x, &y, &eps}, {}, {});
+    auto result = op.evaluate({&x, &y, &eps});
 
     ASSERT_TRUE(result.size() == 2);
     auto gradX = result.at(0);

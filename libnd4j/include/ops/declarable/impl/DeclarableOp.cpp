@@ -607,6 +607,10 @@ namespace sd {
             if (Environment::getInstance()->isProfiling())
                 timeEnter = std::chrono::system_clock::now();
 
+            // make sure we're not trying to call non-inpace op inplace
+            if (block->isInplace() && !this->getOpDescriptor()->allowsInplace())
+                throw std::runtime_error("DeclarableOp::execute - trying to execute non-inplace op as inplace");
+
             // basic validation: ensure inputs are set
             REQUIRE_OK(this->validateNonEmptyInput(*block));
 
@@ -615,6 +619,8 @@ namespace sd {
 
             // validating data types for inputs and (optionally) outputs
             REQUIRE_OK(this->validateDataTypes(*block));
+
+
 
 
             // this method will allocate output NDArrays for this op
