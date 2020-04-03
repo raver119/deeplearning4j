@@ -151,9 +151,9 @@ namespace sd {
             void pushNDArrayListToVariableSpace(int nodeId, int index, const NDArrayList &list, bool track = true);
             void pushNDArrayListToVariableSpace(const std::pair<int, int>& pair, const NDArrayList &list, bool track = true);
 
-            bool isValueAvailable(int idx = 0) const;
+            bool isValueAvailable(const std::string &name, int id, int idx = 0) const;
 
-            std::shared_ptr<Variable> ensureVariable(int idx = 0);
+            std::shared_ptr<Variable> ensureVariable(const std::string &name, int id, int idx = 0);
 
             unsigned long width() const override;
 

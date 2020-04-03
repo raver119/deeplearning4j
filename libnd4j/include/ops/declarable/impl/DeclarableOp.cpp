@@ -305,7 +305,7 @@ namespace sd {
                         // we need to check, if Z is really needed
                         std::pair<int, int> pair(ctx.nodeId(), cnt++);
 
-                        if (!ctx.isValueAvailable(pair.second)) {
+                        if (!ctx.isValueAvailable(ctx.name(), ctx.nodeId(), pair.second)) {
                             if (Environment::getInstance()->isDebugAndVerbose())
                                 shape::printShapeInfoLinear("Going to create variable with shape", out);
 

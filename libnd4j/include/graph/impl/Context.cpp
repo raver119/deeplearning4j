@@ -236,7 +236,7 @@ namespace sd {
             }
         }
 
-        std::shared_ptr<Variable> Context::ensureVariable(int idx) {
+        std::shared_ptr<Variable> Context::ensureVariable(const std::string &name, int id, int idx) {
             std::pair<int, int> pair(this->nodeId(), idx);
 
             if (_variableSpace == nullptr)
@@ -257,8 +257,8 @@ namespace sd {
             }
         }
 
-        bool Context::isValueAvailable(int idx) const {
-            auto var = const_cast<Context*>(this)->ensureVariable(idx);
+        bool Context::isValueAvailable(const std::string &name, int id, int idx ) const {
+            auto var = const_cast<Context*>(this)->ensureVariable(name, id, idx);
 
             if (var->variableType() == VariableType::NDARRAY) {
                 return var->hasNDArray();

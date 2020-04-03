@@ -99,7 +99,7 @@ namespace sd {
         }
 
         bool VariableSpace::hasVariable(int id) const {
-            return _variables.count(id) == 1;
+            return _variables.count(id) > 0;
         }
 
         bool VariableSpace::hasVariable(const std::pair<int,int>& id) const {
@@ -205,10 +205,10 @@ namespace sd {
             // copying duplicate for compatibility
             if (pair.second == 0 && !this->hasVariable(pair.first)) {
                 this->putVariable(pair.first, variable);
-            } else {
-                if (!variable->getName().empty()) {
-                    _symbolic[variable->getName()] = variable;
-                }
+            }
+
+            if (!variable->getName().empty()) {
+                _symbolic[variable->getName()] = variable;
             }
         }
 
@@ -229,18 +229,17 @@ namespace sd {
 
                 if (!variable->getName().empty()) {
                     //std::pair<std::string, Variable *> pair(*(variable->getName()), variable);
-                    _symbolic[variable->getName()] = variable;
+                    _symbolic[variable->name()] = variable;
                 }
 
                 // we have special list for external variables to ensure graph completeness
-
                 if (id < 0) {
                     _external.emplace_back(variable);
-
-                    _variables[id] = variable;
                 } else {
                     _internal.emplace_back(variable);
                 }
+
+                _variables[id] = variable;
             }
 
 

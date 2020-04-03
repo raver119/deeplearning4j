@@ -149,8 +149,8 @@ TEST_F(ContextTests, Basic_Test_6) {
 
     Context ctx(1, &variableSpace);
 
-    auto v0 = ctx.ensureVariable();
-    auto v1 = ctx.ensureVariable(1);
+    auto v0 = ctx.ensureVariable("", 1, 0);
+    auto v1 = ctx.ensureVariable("", 1, 1);
 
     ASSERT_TRUE(variableSpace.hasVariable(1, 0));
     ASSERT_TRUE(variableSpace.hasVariable(1, 1));
@@ -168,8 +168,8 @@ TEST_F(ContextTests, Basic_Test_7) {
 
     Context ctx(1, &variableSpace);
 
-    auto v0 = ctx.ensureVariable();
-    auto v1 = ctx.ensureVariable(1);
+    auto v0 = ctx.ensureVariable("", 1, 0);
+    auto v1 = ctx.ensureVariable("", 1, 1);
 
     ASSERT_TRUE(variableSpace.hasVariable(1, 0));
     ASSERT_TRUE(variableSpace.hasVariable(1, 1));
@@ -214,8 +214,8 @@ TEST_F(ContextTests, Basic_Test_8) {
     auto z0 = variableSpace.getVariable(1, 0);
     auto z1 = variableSpace.getVariable(1, 1);
 
-    auto v0 = ctx.ensureVariable();
-    auto v1 = ctx.ensureVariable(1);
+    auto v0 = ctx.ensureVariable("", 1, 0);
+    auto v1 = ctx.ensureVariable("", 1, 1);
 
     ASSERT_TRUE(v0 == z0);
     ASSERT_TRUE(v1 == z1);

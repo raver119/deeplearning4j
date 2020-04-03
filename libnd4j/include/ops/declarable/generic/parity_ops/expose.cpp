@@ -32,7 +32,7 @@ namespace sd {
 
                     out->assign(in);
                 } else if (inVar->variableType() == VariableType::ARRAY_LIST) {
-                    auto var = block.ensureVariable(e);
+                    auto var = block.ensureVariable(block.name(), block.nodeId(), e);
                     if (!var->hasNDArrayList()) {
                         auto list = inVar->getNDArrayList();
 
