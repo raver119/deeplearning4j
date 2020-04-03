@@ -20,12 +20,22 @@
 #ifndef __NDARRAY__HPP__
 #define __NDARRAY__HPP__
 
+#include <array/NDArray.h>
 #include <array/ShapeDescriptor.h>
 #include <helpers/ConstantShapeHelper.h>
 #include <helpers/ConstantShapeHelper.h>
 #include <helpers/ConstantTadHelper.h>
 #include <loops/BroadcastPairwiseConverter.h>
 #include <helpers/PointersManager.h>
+#include <helpers/unicode.h>
+#include <helpers/ShapeUtils.h>
+#include <execution/Threads.h>
+#include <array/NDArrayFactory.h>
+#include <helpers/StringUtils.h>
+#include <exceptions/datatype_exception.h>
+#include <helpers/MmulHelper.h>
+#include <helpers/threshold.h>
+#include <memory/MemoryRegistrator.h>
 
 namespace sd {
 
@@ -42,17 +52,25 @@ SD_EXPORT std::u32string NDArray::e(const Nd4jLong i) const;
 // copy constructor
 NDArray::NDArray(const NDArray& other) {
 
-    _context = other._context;
-    _offset  = 0;
-
-    setShapeInfo(ShapeDescriptor(other.dataType(), other.ordering(), other.shapeOf(), other.rankOf()));
-
+    //setShapeInfo(ShapeDescriptor(other.dataType(), other.ordering(), other.shapeOf(), other.rankOf()));
+/*
     if(!isEmpty()) {
         _buffer = std::make_shared<DataBuffer>(other.lengthOf() * other.sizeOfT(), other.dataType(), other.getContext()->getWorkspace());
         this->assign(&other);
     }
     else
         _buffer = std::make_shared<DataBuffer>();
+        */
+    _buffer = other._buffer;
+    _shapeInfo = other._shapeInfo;
+    _shapeInfoD = other._shapeInfoD;
+    _length = other._length;
+    _isAttached = other._isAttached;
+    _isView = other._isView;
+    _context = other._context;
+    _dataType = other._dataType;
+    _deviceId = other._deviceId;
+    _offset = other._offset;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -73,6 +91,14 @@ NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, sd::DataT
     _buffer = std::make_shared<DataBuffer>(lengthOf() * DataTypeUtils::sizeOf(dtype), dtype, getContext()->getWorkspace());
     _buffer->setToZeroBuffers();
 }
+
+    bool NDArray::defined() const {
+        return _shapeInfo != nullptr;
+    }
+
+    bool NDArray::undefined() const {
+        return _shapeInfo == nullptr;
+    }
 
 ////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const char order, const std::vector<Nd4jLong> &shape, const std::vector<double>& data, sd::DataType dtype, sd::LaunchContext * context) {
@@ -860,6 +886,18 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
     if (this == &other || (_shapeInfo == other._shapeInfo && _shapeInfo == nullptr))
         return *this;
 
+        _buffer = other._buffer;
+        _shapeInfo = other._shapeInfo;
+        _shapeInfoD = other._shapeInfoD;
+        _length = other._length;
+        _isAttached = other._isAttached;
+        _isView = other._isView;
+        _context = other._context;
+        _dataType = other._dataType;
+        _deviceId = other._deviceId;
+        _offset = other._offset;
+
+/*
     if (_shapeInfo != nullptr && shape::equalsTypesAndShapesSoft(_shapeInfo, other._shapeInfo)) {
         if(!other.isEmpty())
             this->assign(&other);
@@ -876,6 +914,8 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
         else
             _buffer = std::make_shared<DataBuffer>();
     }
+    */
+
     return *this;
 }
 
@@ -1235,16 +1275,16 @@ template SD_EXPORT void NDArray::assign(const uint64_t& value, bool allowParalle
 template SD_EXPORT void NDArray::assign(const bool& value, bool allowParallelism);
 
 //////////////////////////////////////////////////////////////////////////
-NDArray* NDArray::detach() {
+NDArray NDArray::detach() {
 
     if (!isAttached())
-        return this;
+        return *this;
 
     std::shared_ptr<DataBuffer> newBuffer = std::make_shared<DataBuffer>(lengthOf() * sizeOfT(), dataType());
 
-    auto result = new NDArray(newBuffer, ShapeDescriptor(dataType(), ordering(), shapeOf(), rankOf()));
+    NDArray result(newBuffer, ShapeDescriptor(dataType(), ordering(), shapeOf(), rankOf()));
 
-    result->assign(*this);
+    result.assign(*this);
 
     return result;
 }

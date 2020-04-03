@@ -145,8 +145,7 @@ namespace sd {
                     if (var->hasNDArray()) {
                         auto arr = var->getNDArray();
                         if (arr->isAttached()) {
-                            auto d = arr->detach();
-                            res.push_back(*d);
+                            res.push_back(arr->detach());
                         } else {
                             var->markRemovable(false);
                             res.push_back(*arr);

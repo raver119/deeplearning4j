@@ -73,7 +73,7 @@ namespace ops  {
             *weights /= sqrt((double)keys->sizeAt(-2));
         }
 
-        if(mask != nullptr){
+        if(mask != nullptr && mask->defined()){
             NDArray reshapedMask;
             if(weights->rankOf() == 4){
                 reshapedMask = mask->reshape(mask->ordering(), {mask->sizeAt(0), 1, mask->sizeAt(1), 1});

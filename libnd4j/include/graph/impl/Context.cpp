@@ -214,9 +214,7 @@ namespace sd {
                     _variableSpace->putVariable(pair, var);
                 } else {
                     auto var = _variableSpace->getVariable(pair);
-                    if (var->hasNDArray()) {
-                        var->setNDArray(std::make_shared<NDArray>(array));
-                    }
+                    var->setNDArray(std::make_shared<NDArray>(array));
                 }
             }
         }
@@ -306,6 +304,15 @@ namespace sd {
                 _fastpath_in.resize(index+1);
 
             _fastpath_in[index] = std::make_shared<NDArray>(array);
+        }
+
+        NDArray *Context::arrayForOp(int idx) const {
+            auto ptr = array(idx);
+
+            if (ptr.get() != nullptr && ptr->undefined())
+                return nullptr;
+
+            return ptr.get();
         }
 
         void Context::setInputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo) {

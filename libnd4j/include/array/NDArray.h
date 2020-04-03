@@ -1491,7 +1491,14 @@ namespace sd {
 
         FORCEINLINE bool isAttached();
 
-        NDArray* detach();
+        NDArray detach();
+
+        /**
+         * This method returns true if array is valid array with some shape etc
+         * @return
+         */
+        bool defined() const;
+        bool undefined() const;
 
         FORCEINLINE bool operator==(const NDArray &other) const;
 

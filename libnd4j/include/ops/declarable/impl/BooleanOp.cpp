@@ -120,9 +120,8 @@ namespace sd {
             int cnt = -1;
             std::vector<int> in;
             for (auto v: args) {
-                auto var = std::make_shared<Variable>(v);
-                var->markRemovable(false);
-                in.push_back(cnt);
+                auto var = std::make_shared<Variable>(*v, "", cnt);
+                in.emplace_back(cnt);
                 variableSpace.putVariable(cnt--, var);
             }
 

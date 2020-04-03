@@ -126,6 +126,13 @@ namespace sd {
             std::shared_ptr<NDArray> getNDArray(int idx) const;
             std::shared_ptr<NDArray> array(int idx) const;
 
+            /**
+             * This is special method, used only within Graph
+             * @param idx
+             * @return
+             */
+            NDArray* arrayForOp(int idx) const;
+
 
             /**
              * This method fetches variable from VariableSpace DIRECTLY

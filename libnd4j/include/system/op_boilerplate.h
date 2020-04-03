@@ -1511,7 +1511,7 @@
 #define CHECK_STASH(NAME)   block.getStash()->checkStash(block.getNodeId(), NAME);
 #define UNSTASH(NAME)       block.getStash()->extractArray(block.getNodeId(), NAME);
 
-#define INPUT_VARIABLE(INDEX)     block.array(INDEX).get()
+#define INPUT_VARIABLE(INDEX)     block.arrayForOp(INDEX)
 #define OUTPUT_VARIABLE(INDEX)    reinterpret_cast<sd::NDArray *>(this->getZ(block, INDEX))
 #define OUTPUT_NULLIFIED(INDEX)    reinterpret_cast<sd::NDArray *>(this->getNullifiedZ(block, INDEX))
 

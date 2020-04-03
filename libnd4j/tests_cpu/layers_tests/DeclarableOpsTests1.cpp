@@ -2101,12 +2101,12 @@ TEST_F(DeclarableOpsTests1, IsMax1) {
     exp.p<bool>(2, 2, true);
 
     sd::ops::ismax ismaxOp;
-    auto result = ismaxOp.evaluate({ &x }, {}, { 1 });
+    auto result = ismaxOp.evaluate({ &x }, { 1 });
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
     auto res = result.at(0);
-    //res->printIndexedBuffer("IS_MAX");
+    res.printIndexedBuffer("IS_MAX");
     ASSERT_TRUE(exp.equalsTo(res));
 
 
@@ -3312,6 +3312,9 @@ TEST_F(DeclarableOpsTests1, Test_Expose_1) {
 }
 
 TEST_F(DeclarableOpsTests1, Test_Expose_2) {
+    if (1 > 0)
+        throw std::runtime_error("Not implemented yet");
+
     auto list = new NDArrayList(0, true);
 
     auto var = std::make_shared<Variable>(NDArray(), "arraylist", -1, 0);

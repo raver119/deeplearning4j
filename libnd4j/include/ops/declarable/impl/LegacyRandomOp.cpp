@@ -409,7 +409,7 @@ namespace sd {
                         var->markRemovable(false);
                         arrayList.push_back(*arr.get());
                     } else {
-                        arrayList.push_back(*arr->detach());
+                        arrayList.push_back(arr->detach());
                     }
                 } else
                     break;

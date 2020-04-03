@@ -44,8 +44,6 @@
 #include <exceptions/allocation_exception.h>
 #include <helpers/ConstantTadHelper.h>
 
-#include <array/NDArray.hXX>
-
 
 namespace sd {
 

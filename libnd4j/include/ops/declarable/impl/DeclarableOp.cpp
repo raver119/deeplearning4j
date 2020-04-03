@@ -147,6 +147,9 @@ namespace sd {
                 }
             }
 
+            if (z != nullptr && z->undefined())
+                return nullptr;
+
             return z;
         }
 
@@ -957,11 +960,11 @@ namespace sd {
             Context ctx(1);
 
             for (int e = 0; e < inputs.size(); e++) {
-                ctx.setInputArray(e, *inputs[e]);
+                ctx.setInputArray(e, inputs[e] == nullptr ? NDArray() : *inputs[e]);
             }
 
             for (int e = 0; e < outputs.size(); e++) {
-                ctx.setOutputArray(e, *outputs[e]);
+                ctx.setOutputArray(e, outputs[e] == nullptr ? NDArray() : *outputs[e]);
             }
 
 
@@ -1030,7 +1033,7 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = std::make_shared<Variable>(v);
+                auto var = std::make_shared<Variable>(*v, "", cnt, 0);
                 var->markRemovable(false);
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
@@ -1073,7 +1076,7 @@ namespace sd {
                             arr->setContext(sd::LaunchContext::defaultContext());
                             arrayList.push_back(*arr.get());
                         } else {
-                            arrayList.push_back(*arr->detach());
+                            arrayList.push_back(arr->detach());
                         }
                     } else
                         break;

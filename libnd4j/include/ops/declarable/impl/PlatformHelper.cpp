@@ -33,6 +33,9 @@ namespace sd {
 
             sd::NDArray* PlatformHelper::getNullifiedZ(graph::Context& block, int inputId) {
                 auto result = getZ(block, inputId);
+                if (result != nullptr && result->undefined())
+                    return nullptr;
+
                 if (result != nullptr && !block.isInplace())
                     result->nullify();
 

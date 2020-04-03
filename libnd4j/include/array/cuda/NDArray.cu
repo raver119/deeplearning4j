@@ -44,7 +44,6 @@
 #include <ops/specials_cuda.h>
 #include <loops/special_kernels.h>
 #include <helpers/PointersManager.h>
-#include <array/NDArray.hXX>
 #include <helpers/ConstantShapeHelper.h>
 
 namespace sd {
