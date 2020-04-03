@@ -607,65 +607,6 @@ namespace sd {
             return result;
         }
 
-        bool  Graph::topolSearch(const int startNode, const std::set<int>& nodeBranches, const std::unordered_map<int, int>& positions, OpSequence& opSeq) const {
-/*
-            if (nodeBranches.empty() || _handles.empty())
-                return false;
-
-            for (const auto& itNodes : nodeBranches) {
-
-                auto position = positions.find(itNodes);
-                if (position != positions.end() && startNode != itNodes) {
-                    for (auto in = _handles[position->second]->input()->begin(); in != _handles[position->second]->input()->end(); ++in) {
-                        if (startNode == in->first) {
-                            opSeq.append(_handles[position->second]->getCustomOp(), _handles[position->second]->getContextPrototype());
-                            return topolSearch(itNodes, nodeBranches, positions, opSeq);
-                        }
-                    }
-                }
-            }
-
-            return false;
-            */
-
-            throw std::runtime_error("Graph::topolSearch - not implemented yet");
-        }
-
-        OptimizedGraph Graph::optimizedGraph() const {
-
-            OptimizedGraph optGraf(const_cast<Graph*>(this));
-            /*
-            OpSequence opSeq;
-            std::set<int> nodesMap, startNodes;
-            std::unordered_map<int, int> iDpositions;
-
-            for (int i = 0; i < _handles.size(); ++i) {
-                auto ID = _handles[i]->id();
-                int iNcouts = 0;
-                for (auto in = _handles[i]->input()->begin(); in != _handles[i]->input()->end(); ++in) {
-                    if (in->first < 0) {
-                        iNcouts++;
-                    }
-                }
-
-                if (iNcouts == _handles[i]->input()->size())
-                    startNodes.insert(ID);
-
-                nodesMap.insert(ID);
-                iDpositions[ID] = i;
-            }
-
-            for (const auto& start : startNodes) {
-
-                auto position = iDpositions.find(start);
-                opSeq.append(_handles[position->second]->getCustomOp(), _handles[position->second]->getContextPrototype());
-                topolSearch(start, nodesMap, iDpositions, opSeq);
-            }
-            optGraf.append(opSeq);
-             */
-            return optGraf;
-        }
-
         Graph::Graph(const Graph &other) : _memoryMaager(other._memoryMaager) {
             _configuration = other._configuration;
             _variableSpace = other._variableSpace;
@@ -722,6 +663,12 @@ namespace sd {
 
         const GraphMemoryManager &Graph::memoryManager() const {
             return _memoryMaager;
+        }
+
+        OptimizedGraph Graph::optimizedGraph() const {
+
+            OptimizedGraph optGraph(const_cast<Graph*>(this));
+            return optGraph;
         }
     }
 }

@@ -43,6 +43,7 @@
 namespace sd {
     namespace graph {
 
+        class NodeInfo;
         class SD_EXPORT Graph {
         protected:
             ExecutorConfiguration _configuration;
@@ -108,6 +109,11 @@ namespace sd {
              * @return
              */
             VariableSpace& variableSpace() const;
+            /**
+            * This method returns unmapped nodes
+            * @return
+            */
+            const MAP_IMPL<int, Node>& unmappedNodes() const { return _unmapped; };
 
             const GraphMemoryManager& memoryManager() const;
 
@@ -170,19 +176,7 @@ namespace sd {
              * @return
              */
             std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}, const GraphExecutor &executor = GraphExecutor()) const;
-protected:
-            /*
-            * Topological graph analysis
-            * @param const start node for search
-            * @param const reference to list of nodes without external inputs
-            * @param const node positions in _handler
-            * @param operation gather
-            * @return stop iterating
-            */
-            bool      topolSearch(const int startNode, const std::set<int>& nodeBranches,
-                const std::unordered_map<int, int>& positions, OpSequence& opSeq) const;
         };
-
 
         FORCEINLINE bool Graph::built() {
             return _built.load();
