@@ -108,6 +108,11 @@ namespace sd {
              * @return
              */
             VariableSpace *variableSpace() const;
+            /**
+            * This method returns unmapped nodes
+            * @return
+            */
+            const MAP_IMPL<int, Node>& unmappedNodes() const { return _unmapped; };
 
             const GraphMemoryManager& memoryManager() const;
 
@@ -175,73 +180,7 @@ namespace sd {
              * @return
              */
             std::map<std::string, NDArray> execute(const std::map<std::string, NDArray> &dictionary = {}, const std::vector<std::string> &outputs = {}, const GraphExecutor &executor = GraphExecutor()) const;
-protected:
-            /*
-            * Topological graph analysis
-            * @param const start node for search
-            * @param const reference for nodes infor container
-            * @param operation gather
-            * @return stop iterating
-            */
-            bool      topolSearch(const int startNode, const std::unordered_map<int, NodeInfo>& nodesConnections, std::vector<std::vector<OpSequence>>& opSeq) const;
-            /*
-            * Optimized graph analysis prototyping, gather nodes infor
-            * @param reference to node information collector
-            * @param reference to start nodes
-            * @param reference to input branching nodes (input branching node - atleast 2 internal inputs)
-            * @return stop iterating
-            */
-            bool      opGraphProto(std::unordered_map<int, NodeInfo>& collector, std::set<int>& startNodes, std::set<int>& inBranchingNodes) const;
-            /*
-            * Define layers and sequence positions based on nodes infor
-            * @param reference to node information collector
-            * @param node ID
-            * @param layer ID
-            * @param sequence ID
-            * @return stop iterating
-            */
-            bool      layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID, int layer, int nStartSeq) const;
-            /*
-            * Initialize container with operations and context
-            * @param code reference to node information collector
-            * @param reference to opSequence collector
-            * @return stop iterating
-            */
-            bool      initOpSeqContainer(const std::unordered_map<int, NodeInfo>& collection, std::vector<std::vector< OpSequence >>& vOpSeq) const;
-
         };
-        
-        class NodeInfo{
-            private:
-                std::set<int> sConnections;
-                bool bStart;
-                bool bInBranching;
-                bool bOutBranching;
-                int  nLayer;
-                int  nSequence;
-            public:
-
-                void setStart(bool bValue){ bStart = bValue; }
-                void setInBranching(bool bValue){ bInBranching = bValue; }
-                void setOutBranching(bool bValue){ bOutBranching = bValue; }
-
-                void reset(){ sConnections.clear(); bStart = bInBranching = bOutBranching = false; nLayer = 0; }
-                
-                int getLayer() const { return nLayer; }
-                void setLayer(int layer){ nLayer = layer; }
-
-                int getSequence() const { return nSequence; }
-                void setSequence(int sequence){ nSequence = sequence; }
-
-                void addConnection(int id){ sConnections.emplace(id); }
-                const std::set<int>&  connections() const { return sConnections; }
-
-                bool isStart() const { return bStart; }
-                bool isInBranching() const { return bInBranching; }
-                bool isOutBranching() const { return bOutBranching; }
-
-        };
-
 
         FORCEINLINE bool Graph::built() {
             return _built.load();
