@@ -480,10 +480,16 @@ namespace sd {
         }
 
         void Context::setInputArray(int index, const std::shared_ptr<NDArray> &array) {
+            if (_fastpath_in.size() < index + 1)
+                _fastpath_in.resize(index+1);
+
             _fastpath_in[index] = array;
         }
 
         void Context::setOutputArray(int index, const std::shared_ptr<NDArray> &array) {
+            if (_fastpath_out.size() < index + 1)
+                _fastpath_out.resize(index+1);
+
             _fastpath_out[index] = array;
         }
     }

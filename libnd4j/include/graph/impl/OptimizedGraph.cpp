@@ -107,7 +107,7 @@ namespace sd {
 
                 int inExCounts = 0, inInternalCounts = 0;
                 for (auto in = inputs.begin(); in != inputs.end(); ++in) {
-                    if (originalGraph().variableSpace()->hasVariable(in->first, 0)) {
+                    if (originalGraph().variableSpace().hasVariable(in->first, 0)) {
                         inExCounts++;
                     }
                     else {

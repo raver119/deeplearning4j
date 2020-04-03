@@ -174,7 +174,7 @@ namespace sd {
 
 
         std::shared_ptr<Variable> VariableSpace::putVariable(const std::pair<int,int>& pair, const NDArray &array) {
-            auto variable = std::make_shared<Variable>(array, nullptr, pair.first, pair.second);
+            auto variable = std::make_shared<Variable>(array, "", pair.first, pair.second);
             this->putVariable(pair, variable);
             return variable;
         }
@@ -184,23 +184,23 @@ namespace sd {
             return this->putVariable(pair, array);
         }
 
-        void VariableSpace::putVariable(const std::string& name, int node, int idx, std::shared_ptr<Variable> variable) {
+        void VariableSpace::putVariable(const std::string& name, int node, int idx, const std::shared_ptr<Variable> &variable) {
             std::pair<int, int> pair(node, idx);
             variable->setName(name);
             this->putVariable(pair, variable);
         }
 
-        void VariableSpace::silentPutVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
+        void VariableSpace::silentPutVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable) {
             std::lock_guard<std::mutex> lock(_varmap);
 
             _paired[pair] = variable;
         }
 
-        void VariableSpace::putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
+        void VariableSpace::putVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable) {
             silentPutVariable(pair, variable);
 
             if (variable->isPlaceholder())
-                _placeholders.push_back(variable);
+                _placeholders.emplace_back(variable);
 
             // copying duplicate for compatibility
             if (pair.second == 0 && !this->hasVariable(pair.first)) {
@@ -213,7 +213,7 @@ namespace sd {
         }
 
 
-        void VariableSpace::putVariable(int id, std::shared_ptr<Variable> variable) {
+        void VariableSpace::putVariable(int id, const std::shared_ptr<Variable> &variable) {
             // we don't want to add variables more then once
             if (_variables.count(id) > 0) {
                 throw std::runtime_error("VariableSpace::putVariable - duplicate found");
@@ -235,12 +235,11 @@ namespace sd {
                 // we have special list for external variables to ensure graph completeness
 
                 if (id < 0) {
-                    //if (variable->isExternal())
-                    _external.push_back(variable);
+                    _external.emplace_back(variable);
 
                     _variables[id] = variable;
                 } else {
-                    _internal.push_back(variable);
+                    _internal.emplace_back(variable);
                 }
             }
 
@@ -250,13 +249,14 @@ namespace sd {
                 this->silentPutVariable(pair, variable);
 
                 if (variable->isPlaceholder())
-                    _placeholders.push_back(variable);
+                    _placeholders.emplace_back(variable);
             }
         }
 
         std::shared_ptr<Variable> VariableSpace::putVariable(int id, const NDArray &array) {
             auto var = std::make_shared<Variable>(array, "", id, 0);
             this->putVariable(id, var);
+            return var;
         }
 
         std::shared_ptr<Variable> VariableSpace::getVariable(int id) const {

@@ -58,7 +58,7 @@ namespace sd {
             // placeholders. must be resolved before Graph execution
             std::vector<std::shared_ptr<Variable>> _placeholders;
 
-            void silentPutVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable);
+            void silentPutVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable);
 
             int _auto_counter = -1;
 
@@ -99,9 +99,9 @@ namespace sd {
             virtual std::shared_ptr<Variable> putVariable(int id, int idx, const std::shared_ptr<NDArray> &array);
             virtual std::shared_ptr<Variable> putVariable(int id, int idx, const NDArray &array);
             virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id, int idx, const NDArray &array);
-            virtual void putVariable(const std::string& name, int id, int idx, std::shared_ptr<Variable> variable);
-            virtual void putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable);
-            virtual void putVariable(int id, std::shared_ptr<Variable> variable);
+            virtual void putVariable(const std::string& name, int id, int idx, const std::shared_ptr<Variable> &variable);
+            virtual void putVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable);
+            virtual void putVariable(int id, const std::shared_ptr<Variable> &variable);
 
             virtual void dropVariable(const std::string &pair);
             virtual void dropVariable(const std::pair<int,int> &pair);

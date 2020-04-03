@@ -185,12 +185,12 @@ namespace sd {
         }
 
         
-        void VariableProxy::putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) {
+        void VariableProxy::putVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable) {
             _current->putVariable(pair, variable);
         }
 
         
-        void VariableProxy::putVariable(int id, std::shared_ptr<Variable> variable) {
+        void VariableProxy::putVariable(int id, const std::shared_ptr<Variable> &variable) {
             _current->putVariable(id, variable);
         }
 
@@ -203,7 +203,7 @@ namespace sd {
             return _current->putVariable(id, idx, array);
         }
 
-        void VariableProxy::putVariable(const std::string& name, int id, int idx, std::shared_ptr<Variable> array) {
+        void VariableProxy::putVariable(const std::string& name, int id, int idx, const std::shared_ptr<Variable> &array) {
             _current->putVariable(name, id, idx, array);
         }
         

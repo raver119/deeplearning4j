@@ -55,9 +55,9 @@ namespace sd {
             virtual std::shared_ptr<Variable> putVariable(int id, const NDArray &array) override;
             virtual std::shared_ptr<Variable> putVariable(int id, int idx, const NDArray &array) override;
             virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id, int idx, const NDArray &array) override;
-            virtual void putVariable(const std::string& name, int id, int idx, std::shared_ptr<Variable> variable) override;
-            virtual void putVariable(const std::pair<int,int>& pair, std::shared_ptr<Variable> variable) override;
-            virtual void putVariable(int id, std::shared_ptr<Variable> variable) override;
+            virtual void putVariable(const std::string& name, int id, int idx, const std::shared_ptr<Variable> &variable) override;
+            virtual void putVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable) override;
+            virtual void putVariable(int id, const std::shared_ptr<Variable> &variable) override;
 
             virtual void replaceVariable(std::shared_ptr<Variable> variable) override;
 
