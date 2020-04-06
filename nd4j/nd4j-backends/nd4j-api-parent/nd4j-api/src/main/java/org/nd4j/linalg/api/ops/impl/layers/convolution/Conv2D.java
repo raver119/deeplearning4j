@@ -107,7 +107,7 @@ public class Conv2D extends DynamicCustomOp {
                 config.getDW(),
                 ArrayUtil.fromBoolean(config.isSameMode()),
                 config.getDataFormat().equalsIgnoreCase("NCHW") ? 0 : 1,
-                config.getWeightsFormat());
+                config.getWeightsFormat().ordinal());
     }
 
     @Override

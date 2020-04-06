@@ -27,6 +27,8 @@ import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.nd4j.enums.DataFormat;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.imports.TFGraphs.NodeReader;
 import org.nd4j.linalg.api.blas.BlasBufferUtil;
 import org.nd4j.linalg.api.blas.Level1;
@@ -8273,7 +8275,7 @@ public class Nd4jTestsC extends BaseNd4jTest {
         // 0 - kH, kW, iC, oC
         // 1 - oC, iC, kH, kW
         // 2 - oC, kH, kW, iC
-        int format = 1;
+        WeightsFormat format = WeightsFormat.OIYX;
 
         INDArray inArr = Nd4j.linspace(DataType.FLOAT, 25, -0.5, 96).reshape(new long[]{bS, iC, iH, iW});
         INDArray weights = Nd4j.createFromArray(new float[]{
@@ -8301,7 +8303,7 @@ public class Nd4jTestsC extends BaseNd4jTest {
     public void testConv2DWeightsFormat2() {
         int bS=2, iH=4,iW=3,  iC=4,oC=3,  kH=3,kW=2,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
         int oH=4,oW=3;
-        int format = 2;
+        WeightsFormat format = WeightsFormat.OYXI;
 
         INDArray inArr = Nd4j.linspace(DataType.FLOAT, 25, -0.5, 96).reshape(new long[]{bS, iH, iW, iC});
         INDArray weights = Nd4j.createFromArray(new float[]{
