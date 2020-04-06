@@ -589,7 +589,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable out = sd.cnn().separableConv2d(in, dW, b, c);
-        out = sd.f().tanh(out);
+        out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
         //Expected output size: out = (in - k + 2*p)/s + 1 = (28-2+0)/1+1 = 27
@@ -686,7 +686,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable out = sd.f().deconv2d(vars, deconv);
-        out = sd.f().tanh(out);
+        out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
         //Expected output size: out = (in + k + 2*p)/ s - 1 = (8 + 2+0)/1 - 1 = 9
@@ -734,7 +734,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable out = sd.f().conv2d(vars, c);
-        out = sd.f().tanh(out);
+        out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
         //Expected output size: out = (in - k + 2*p)/s + 1 = (28-2+0)/1+1 = 27
@@ -797,7 +797,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable outPool = sd.cnn().maxPooling2d(in, pooling2DConfig);
-        SDVariable out = sd.f().tanh(/*"out",*/ outPool);
+        SDVariable out = sd.math().tanh(/*"out",*/ outPool);
 
         INDArray outArr = out.eval();
         val outShape = outArr.shape();
@@ -855,7 +855,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable outPool = sd.cnn().avgPooling2d(in, pooling2DConfig);
-        SDVariable out = sd.f().tanh(/*"out",*/ outPool);
+        SDVariable out = sd.math().tanh(/*"out",*/ outPool);
 
         INDArray outArr = out.eval();
         val outShape = outArr.shape();
@@ -906,7 +906,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable out = sd.cnn().avgPooling3d(in, pooling3DConfig);
-        out = sd.f().tanh(/*"loss", */out).shape().rename("out");
+        out = sd.math().tanh(/*"loss", */out).shape().rename("out");
 
         // oH = (iH - (kH + (kH-1)*(dH-1)) + 2*pH)/sH + 1;
         INDArray outArr = Nd4j.createFromArray(mb, nIn, 4, 4, 4L);
@@ -1018,7 +1018,7 @@ public class LayerOpValidation extends BaseOpValidation {
                                     .build();
 
                             SDVariable out = sd.cnn().conv1d(in, w, b, conv1DConfig);
-                            SDVariable loss = sd.f().tanh(out).std(true).rename("loss");
+                            SDVariable loss = sd.math().tanh(out).std(true).rename("loss");
 
                             sd.setLossVariables("loss");
 
