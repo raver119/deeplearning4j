@@ -93,35 +93,43 @@ namespace sd {
 
         bool   OptimizedGraph::opGraphProto(std::unordered_map<int, NodeInfo>& collector, std::set<int>& startNodes, 
                                             std::set<int>& inBranchingNodes) const {
-
+            
+            // double check to avoid unstable behavior
             if (originalGraph().unmappedNodes().empty())
                 return false;
+
             // iterate via original graph nodes to gather node information
             for (const auto& it : originalGraph().unmappedNodes()) {
 
                 const auto& ID = it.first;
                 const auto& inputs = it.second.input();
-
-                if (collector.find(ID) == collector.end())
+                // if node info is not in collecter add it
+                 if (collector.find(ID) == collector.end())
                     collector[ID] = NodeInfo();
 
                 NodeInfo& parentNode = collector[ID];
 
                 int inExCounts = 0, inInternalCounts = 0;
-                for (auto in = inputs.begin(); in != inputs.end(); ++in) {
-                    if (originalGraph().variableSpace().hasVariable(in->first, 0)) {
+                for (const auto& in : inputs) {
+                    if (originalGraph().variableSpace().hasVariable(in.first, 0)) {
+                        // count external inputs, all inputs that are in
+                        // varable space will be treated as external inputs
                         inExCounts++;
                     }
                     else {
+                        // count iternal inputs, all inputs that are not in external variable space 
+                        // will be treated as outputs from other nodes
                         inInternalCounts++;
-                        if (collector.find(in->first) == collector.end())
-                            collector[in->first] = NodeInfo();
-                        collector[in->first].addConnection(ID);
+                        // if node info is not in collector add it
+                        if (collector.find(in.first) == collector.end())
+                            collector[in.first] = NodeInfo();
+                        
+                        collector[in.first].addConnection(ID);
                     }
                 }
                 // if move then 1 internal input this is in-branching node
                 parentNode.setInBranching( inInternalCounts > 1);
-                // gather start and in-branching node for the loop when operations put to OpSequence for opimized graph
+                // gather start and in-branching nodes for the loop when operations are put to OpSequence (topolSearch)
                 if (inExCounts == inputs.size()) {
                     startNodes.emplace(ID);
                 }
@@ -135,13 +143,15 @@ namespace sd {
 
         bool  OptimizedGraph::topolSearch(const int startNode, const std::unordered_map<int, NodeInfo>& collector,
                                            std::vector<std::vector<OpSequence> >& opSeq) const {
-
-            if (originalGraph().unmappedNodes().empty())
+            
+            // double check to avoid unstable behavior
+            if (originalGraph().unmappedNodes().empty() || collector.empty() )
                 return false;
-
+            
+            // skip nodes which are not pre-collected and pre-processed
             auto itParent = collector.find(startNode);
             if (itParent != collector.end()) {
-                // iterate via start nodes connections in depth
+                // iterate via start (in-branching) nodes connections in depth
                 for (const auto& itNodes : itParent->second.connections()) {
 
                     auto itChild = collector.find(itNodes);
@@ -154,6 +164,7 @@ namespace sd {
                         // put operation to OpSequence container
                         const auto it = originalGraph().unmappedNodes().find(itNodes);
                         const auto& child = itChild->second;
+                        // the layer and sequence are pre-defined in layersSeqDefine method
                         opSeq[child.layer()][child.sequence()].append(it->second.customOp(), it->second.contextPrototype());
                         // go to the child node connections
                         topolSearch(itNodes, collector, opSeq);
@@ -164,9 +175,12 @@ namespace sd {
         }
 
         void  OptimizedGraph::createOptimizedGraph() {
-
+             
+            // container to store node infor
             std::unordered_map<int, NodeInfo> collector;
+            // containers to store start and in-branching nodes
             std::set<int> startNodes, inBranching;
+            // container to store max sequences per layer
             std::unordered_map<int, int> layersMaxSeq;
 
             // optimizing graph prototyping
@@ -174,20 +188,22 @@ namespace sd {
             // create connections between nodes
             // select in-branching nodes ( more then one iternal input -> outputs from other nodes)
             if (!opGraphProto(collector, startNodes, inBranching))
-                throw std::runtime_error("OptimizedGraph::optimizedGraph() - not prototyped");
+                throw std::runtime_error("OptimizedGraph::optimizedGraph() - not prototyped!");
             
             // next step set the node layer and it sequence in layer
             // define max layers and max sequence per layer
             int startSeq = 0;
             for (const auto& id : startNodes) {
                 layersMaxSeq[0] = startSeq;
-                layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq);
+                if(!layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq))
+                   throw std::runtime_error("OptimizedGraph::layersSeqDefine() - not all nodes properly prototyped!");
                 startSeq++;
             }
             
             // init container to collect operations per node position (layer:sequence)
             std::vector<std::vector<OpSequence>> vOpSeq;
-            initOpSeqContainer(layersMaxSeq, vOpSeq);
+            if(!initOpSeqContainer(layersMaxSeq, vOpSeq))
+               throw std::runtime_error("OptimizedGraph::initOpSeqContainer() - cannot initialize OpSequence, not all nodes properly prototyped!");
             
             // combine start nodes and in-branching nodes
             startNodes.insert(inBranching.begin(), inBranching.end());
@@ -198,7 +214,8 @@ namespace sd {
                 const auto& nodeInfo = collector[id];
                 vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
                 // search in depth via connections of "start" node
-                topolSearch(id, collector, vOpSeq);
+                if(!topolSearch(id, collector, vOpSeq))
+                    throw std::runtime_error("OptimizedGraph::topolSearch() - cannot run topological search, inputs incorrect!");
             }
             // put results to optimized graph
             for (auto& vSeq : vOpSeq) {
@@ -207,7 +224,8 @@ namespace sd {
         }
 
         bool   OptimizedGraph::initOpSeqContainer(const std::unordered_map<int, int>& layersMaxSeq, std::vector<std::vector< OpSequence >>& vOpSeq) const {
-
+            
+            // double check to avoid unstable behavior
             if (layersMaxSeq.empty())
                 return false;
 
@@ -220,7 +238,8 @@ namespace sd {
 
         bool OptimizedGraph::layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID, int layer, int startSeq, 
                                              std::unordered_map<int, int>& layersMaxSeq) const {
-
+            
+            // double check to avoid unstable behavior
             auto parent = collection.find(ID);
             if (parent == collection.end())
                 return false;
@@ -228,14 +247,18 @@ namespace sd {
             // if node was proceed and the current layer is less of it own return
             if(parent->second.isProcessed() && parent->second.layer() >= layer)
                 return true;
+            
             // put layer and sequence to container that collects layers and max sequence per layer
             auto layerFound = layersMaxSeq.find(layer);
             if(layerFound == layersMaxSeq.end()){
+                // if layer was not treated before, create pair for it
                 layersMaxSeq[layer] = startSeq;
             }
             else{
+                // if node sequence position was not checked use it for max sequence selection
                 layerFound->second = (layerFound->second < startSeq && parent->second.sequence() < 0) ? startSeq : layerFound->second;
             }
+
             // double check if the layer is higher and set node layer
             if(parent->second.layer() < layer)
                parent->second.setLayer(layer);
@@ -250,19 +273,22 @@ namespace sd {
             // if current node is out-branching it childs will be put to next layer
             if (parent->second.isOutBranching())
                 layer++;
-            // for childs sequence position have to start from max defined sequence position
+            
+            // childs sequence position have to start from max defined sequence position in layer
             int seq = layersMaxSeq[layer];
+            // loop via childs (connected nodes)
             for (const auto& id : parent->second.connections()) {
-
+                // double check to avoid unstable behavior
                 auto child = collection.find(id);
                 if(child == collection.end())
                    return false;
+
                 // in case parent was not out-branching node but child is in branching it will be put to next layer
                 if (!parent->second.isOutBranching() && child->second.isInBranching())
                      layer++;
                 // move in depth of connections
                 layersSeqDefine(collection, id, layer, seq, layersMaxSeq);
-
+                // increment sequence as childs are on the one layer
                 seq++;
             }
 
