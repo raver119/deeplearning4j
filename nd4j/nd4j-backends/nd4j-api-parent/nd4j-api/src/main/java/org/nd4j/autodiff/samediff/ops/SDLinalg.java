@@ -23,6 +23,7 @@ import static org.nd4j.autodiff.samediff.ops.SDValidation.isSameType;
 import java.lang.String;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.base.Preconditions;
 
 public class SDLinalg extends SDOps {
   public SDLinalg(SameDiff sameDiff) {
@@ -433,6 +434,32 @@ public class SDLinalg extends SDOps {
   }
 
   /**
+   * Merges input tensors.<br>
+   *
+   * @param inputs Input variables (NUMERIC type)
+   * @return output Merged input tensors (NUMERIC type)
+   */
+  public SDVariable merge(SDVariable[] inputs) {
+    SDValidation.validateNumerical("merge", "inputs", inputs);
+    Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
+    return new org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge(sd,inputs).outputVariable();
+  }
+
+  /**
+   * Merges input tensors.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param inputs Input variables (NUMERIC type)
+   * @return output Merged input tensors (NUMERIC type)
+   */
+  public SDVariable merge(String name, SDVariable[] inputs) {
+    SDValidation.validateNumerical("merge", "inputs", inputs);
+    Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge(sd,inputs).outputVariable();
+    return sd.updateVariableNameAndReference(out, name);
+  }
+
+  /**
    * Matrix multiplication: out = mmul(x,y)<br>
    * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
    *
@@ -556,6 +583,34 @@ public class SDLinalg extends SDOps {
   public SDVariable svd(String name, SDVariable input, boolean fullUV, boolean computeUV) {
     SDValidation.validateNumerical("svd", "input", input);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.Svd(sd,input, fullUV, computeUV, 16).outputVariable();
+    return sd.updateVariableNameAndReference(out, name);
+  }
+
+  /**
+   * Switch op forwards input to one of two outputs based on the value of a predicate.<br>
+   *
+   * @param input  (NUMERIC type)
+   * @param predicate  (NUMERIC type)
+   * @return output Output tensor (NUMERIC type)
+   */
+  public SDVariable switchOp(SDVariable input, SDVariable predicate) {
+    SDValidation.validateNumerical("switchOp", "input", input);
+    SDValidation.validateNumerical("switchOp", "predicate", predicate);
+    return new org.nd4j.linalg.api.ops.impl.controlflow.compat.Switch(sd,input, predicate).outputVariable();
+  }
+
+  /**
+   * Switch op forwards input to one of two outputs based on the value of a predicate.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param input  (NUMERIC type)
+   * @param predicate  (NUMERIC type)
+   * @return output Output tensor (NUMERIC type)
+   */
+  public SDVariable switchOp(String name, SDVariable input, SDVariable predicate) {
+    SDValidation.validateNumerical("switchOp", "input", input);
+    SDValidation.validateNumerical("switchOp", "predicate", predicate);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.controlflow.compat.Switch(sd,input, predicate).outputVariable();
     return sd.updateVariableNameAndReference(out, name);
   }
 }
