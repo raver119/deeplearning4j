@@ -113,7 +113,7 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_2) {
     ASSERT_EQ(1, layer0.width());
     auto sequence = layer0[0];
 
-    // we expect that OpSequence has exactly 2 ops
+    // we expect that OpSequence has exactly 1 ops
     ASSERT_EQ(1, sequence.length());
 
     ASSERT_EQ(5, sequence.at(0).protoContext().nodeId());
@@ -169,7 +169,7 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_3) {
 
     auto optimized = graph.optimizedGraph();
 
-    // we expect that OptimizedGraph has exactly 1 layer
+    // we expect that OptimizedGraph has exactly 3 layer
     ASSERT_EQ(3, optimized.layers());
 
     // checking first layer first
@@ -215,8 +215,8 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_3) {
     ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
 }
 
-// currently does not work correctly
-TEST_F(GraphAnalysisTests, DISABLED_basic_toposort_test_4) {
+
+TEST_F(GraphAnalysisTests, basic_toposort_test_4) {
     Graph graph;
 
     // A
@@ -267,71 +267,185 @@ TEST_F(GraphAnalysisTests, DISABLED_basic_toposort_test_4) {
 
     auto optimized = graph.optimizedGraph();
 
-    // we expect that OptimizedGraph has exactly 1 layer
+    // we expect that OptimizedGraph has exactly 4 layer
     ASSERT_EQ(4, optimized.layers());
 
     // checking first layer first
     auto layer0 = optimized.layer(0);
 
+    // we expect layer has exactly 2 OpSequence
+    ASSERT_EQ(2, layer0.width());
+    auto sequence = layer0[0];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
+    sequence = layer0[1];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
+
+    // checking second layer now
+    auto layer1 = optimized.layer(1);
+
+    // we expect layer has exactly 3 OpSequences
+    ASSERT_EQ(3, layer1.width());
+
+    sequence = layer1[0];
+
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
+
+    sequence = layer1[1];
+
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(10, sequence.at(0).protoContext().nodeId());
+    
+    sequence = layer1[2];
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(11, sequence.at(0).protoContext().nodeId());
+
+    auto layer2 = optimized.layer(2);
+
+    // we expect layer has exactly 2 OpSequence
+    ASSERT_EQ(2, layer2.width());
+    sequence = layer2[0];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(12, sequence.at(0).protoContext().nodeId());
+
+    sequence = layer2[1];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(13, sequence.at(0).protoContext().nodeId());
+
+    // checking last layer
+    auto layer3 = optimized.layer(3);
+
     // we expect layer has exactly 1 OpSequence
+    ASSERT_EQ(1, layer3.width());
+    sequence = layer3[0];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(14, sequence.at(0).protoContext().nodeId());
+}
+
+
+TEST_F(GraphAnalysisTests, basic_toposort_test_5) {
+    Graph graph;
+
+    // A
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+
+    // B
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+
+    // C
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+
+    // D
+    graph.addVariable("D", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+
+    Node a(sd::ops::multiply(), "a");
+    Node b(sd::ops::add(), "b");
+    Node c(sd::ops::subtract(), "c");
+    Node d(sd::ops::add(), "d");
+    Node e(sd::ops::multiply(), "e");
+    Node f(sd::ops::multiply(), "f");
+
+    
+    Node g(sd::ops::multiply(), "g");
+    Node h(sd::ops::multiply(), "h");
+
+    graph.addNode(a, {"A", "B"});
+    graph.addNode(b, {"C", "D"});
+
+    graph.addNode(c, {"a", "b"});
+    graph.addNode(d, {"a", "b"});
+
+    graph.addNode(e, {"c", "d"});
+    graph.addNode(f, {"c", "d"});
+
+    graph.addNode(g, {"c", "e"});
+    graph.addNode(h, {"d", "f"});
+
+
+    // we just check that nodes were really added
+    ASSERT_EQ(8, graph.size());
+
+    auto optimized = graph.optimizedGraph();
+
+    // we expect that OptimizedGraph has exactly 3 layer
+    ASSERT_EQ(4, optimized.layers());
+
+    // checking first layer first
+    auto layer0 = optimized.layer(0);
+
+    // we expect layer has exactly 2 OpSequence
     ASSERT_EQ(2, layer0.width());
     auto sequence = layer0[0];
 
     // we expect that OpSequence has exactly 2 ops
     ASSERT_EQ(1, sequence.length());
 
+    ASSERT_EQ(5, sequence.at(0).protoContext().nodeId());
+    
     sequence = layer0[1];
 
     // we expect that OpSequence has exactly 2 ops
     ASSERT_EQ(1, sequence.length());
-
-    // ASSERT_EQ(5, sequence.at(0).protoContext().nodeId());
-    // ASSERT_EQ(6, sequence.at(1).protoContext().nodeId());
+    ASSERT_EQ(6, sequence.at(0).protoContext().nodeId());
 
     // checking second layer now
     auto layer1 = optimized.layer(1);
 
     // we expect layer has exactly 2 OpSequences
-    ASSERT_EQ(3, layer1.width());
+    ASSERT_EQ(2, layer1.width());
 
     sequence = layer1[0];
 
     ASSERT_EQ(1, sequence.length());
-    // ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
-
+    ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
+    
     sequence = layer1[1];
 
     ASSERT_EQ(1, sequence.length());
-    // ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
-    sequence = layer1[2];
+    ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
 
-    ASSERT_EQ(1, sequence.length());
-
+    // checking before last layer
     auto layer2 = optimized.layer(2);
 
-    // we expect layer has exactly 1 OpSequence
+    // we expect layer has exactly 2 OpSequence
     ASSERT_EQ(2, layer2.width());
     sequence = layer2[0];
 
     // we expect that OpSequence has exactly 1 ops
     ASSERT_EQ(1, sequence.length());
-
-    // ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
-
+    ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
     sequence = layer2[1];
 
     // we expect that OpSequence has exactly 1 ops
     ASSERT_EQ(1, sequence.length());
-    // ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
+    ASSERT_EQ(10, sequence.at(0).protoContext().nodeId());
 
     // checking last layer
     auto layer3 = optimized.layer(3);
 
-    // we expect layer has exactly 1 OpSequence
-    ASSERT_EQ(1, layer2.width());
-    sequence = layer2[0];
+    // we expect layer has exactly 2 OpSequence
+    ASSERT_EQ(2, layer3.width());
+    sequence = layer3[0];
 
     // we expect that OpSequence has exactly 1 ops
     ASSERT_EQ(1, sequence.length());
-    // ASSERT_EQ(9, sequence.at(0).protoContext().nodeId());
+    ASSERT_EQ(11, sequence.at(0).protoContext().nodeId());
+    
+    sequence = layer3[1];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(12, sequence.at(0).protoContext().nodeId());
 }

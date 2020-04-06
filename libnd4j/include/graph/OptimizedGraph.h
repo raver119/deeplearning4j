@@ -16,7 +16,9 @@
 
 //
 // @author raver119@gmail.com
+// @author oleg.semeniv@gmail.com
 //
+
 #ifndef SD_OPTIMIZEDGRAPH_H
 #define SD_OPTIMIZEDGRAPH_H
 
@@ -29,6 +31,7 @@
 
 namespace sd {
     namespace graph {
+
         class Graph;
         class NodeInfo;
         /**
@@ -97,7 +100,7 @@ namespace sd {
             /*
             * optimize original graph
             */
-            void optimizedGraph();
+            void     createOptimizedGraph();
             /*
             * Topological graph analysis
             * @param const start node for search
@@ -120,47 +123,53 @@ namespace sd {
             * @param node ID
             * @param layer ID
             * @param sequence ID
+            * @param map of layers and max sequence
             * @return stop iterating
             */
-            bool      layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID, int layer, int nStartSeq) const;
+            bool      layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID, int layer, int nStartSeq, std::unordered_map<int,int>& layersMaxSeq) const;
             /*
             * Initialize container with operations and context
-            * @param code reference to node information collector
+            * @param const reference to layers and sequence collection
             * @param reference to opSequence collector
             * @return stop iterating
             */
-            bool      initOpSeqContainer(const std::unordered_map<int, NodeInfo>& collection, std::vector<std::vector< OpSequence >>& vOpSeq) const;
+            bool      initOpSeqContainer(const std::unordered_map<int,int>& layersMaxSeq, std::vector<std::vector< OpSequence >>& vOpSeq) const;
 
         };
 
         class NodeInfo {
         private:
             std::set<int> sConnections;
-            bool bStart;
+            
             bool bInBranching;
             bool bOutBranching;
+            bool bProcessed;
+
             int  nLayer;
             int  nSequence;
         public:
+              
+            NodeInfo(){ reset(); }
+            ~NodeInfo(){ reset(); }
 
-            void setStart(bool bValue) { bStart = bValue; }
             void setInBranching(bool bValue) { bInBranching = bValue; }
             void setOutBranching(bool bValue) { bOutBranching = bValue; }
+            void setProcessed() { bProcessed = true; }
 
-            void reset() { sConnections.clear(); bStart = bInBranching = bOutBranching = false; nLayer = 0; }
+            void reset() { sConnections.clear(); bProcessed = bInBranching = bOutBranching = false; nLayer = 0; nSequence = -1; }
 
-            int getLayer() const { return nLayer; }
+            int layer() const { return nLayer; }
             void setLayer(int layer) { nLayer = layer; }
 
-            int getSequence() const { return nSequence; }
+            int sequence() const { return nSequence; }
             void setSequence(int sequence) { nSequence = sequence; }
 
             void addConnection(int id) { sConnections.emplace(id); }
             const std::set<int>& connections() const { return sConnections; }
 
-            bool isStart() const { return bStart; }
             bool isInBranching() const { return bInBranching; }
             bool isOutBranching() const { return bOutBranching; }
+            bool isProcessed() const { return bProcessed; }
 
         };
 
