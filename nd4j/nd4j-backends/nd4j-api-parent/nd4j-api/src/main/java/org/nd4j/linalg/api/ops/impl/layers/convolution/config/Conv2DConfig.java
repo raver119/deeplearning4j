@@ -22,6 +22,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.nd4j.base.Preconditions;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.util.ConvConfigUtil;
 
 @Data
@@ -51,10 +52,10 @@ public class Conv2DConfig extends BaseConvolutionConfig {
     @Builder.Default
     private String dataFormat = NCHW;
     @Builder.Default
-    private int weightsFormat = 0;
+    private WeightsFormat weightsFormat = WeightsFormat.YXIO;
 
     public Conv2DConfig(long kH, long kW, long sH, long sW, long pH, long pW, long dH, long dW, boolean isSameMode,
-            String dataFormat, int weightsFormat) {
+            String dataFormat, WeightsFormat weightsFormat) {
 
         this.kH = kH;
         this.kW = kW;

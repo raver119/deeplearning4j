@@ -42,6 +42,7 @@ import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.api.OutAndGrad;
 import org.nd4j.autodiff.validation.OpValidation;
 import org.nd4j.autodiff.validation.TestCase;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.*;
 import org.nd4j.evaluation.regression.RegressionEvaluation;
@@ -3610,7 +3611,7 @@ public class SameDiffTests extends BaseNd4jTest {
         int       oH=2,oW=2;
         SameDiff sd = SameDiff.create();
 
-        int format = 1;
+        WeightsFormat format = WeightsFormat.OIYX;
 
         INDArray inArr = Nd4j.linspace(DataType.FLOAT, 25, -0.5, 96).reshape(new long[]{bS, iC, iH, iW});
         INDArray weights = Nd4j.createFromArray(new float[]{
@@ -3626,16 +3627,60 @@ public class SameDiffTests extends BaseNd4jTest {
         SDVariable sdBias = sd.var("b", bias);
 
         Conv2DConfig c = Conv2DConfig.builder()
-                    .kH(kH).kW(kW)
-                    .pH(pH).pW(pW)
-                    .sH(sH).sW(sW)
-                    .dH(dH).dW(dW)
-                    .isSameMode(false)
-                    .weightsFormat(format)
-                    .build();
+                .kH(kH).kW(kW)
+                .pH(pH).pW(pW)
+                .sH(sH).sW(sW)
+                .dH(dH).dW(dW)
+                .isSameMode(false)
+                .weightsFormat(format)
+                .build();
 
         SDVariable out = sd.cnn().conv2d(sdInput, sdWeights, sdBias, c);
 
         assertArrayEquals(new long[]{bS, oC, oH, oW}, out.eval().shape());
+    }
+
+    @Test
+    public void testConv2DDifferentWeightsFormat() {
+        int bS=2, iH=4,iW=3,  iC=4,oC=3,  kH=3,kW=2,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
+        int       oH=2,oW=2;
+        SameDiff sd = SameDiff.create();
+
+        INDArray inArr = Nd4j.linspace(DataType.FLOAT, 25, -0.5, 96).reshape(new long[]{bS, iC, iH, iW});
+        INDArray weights = Nd4j.rand(DataType.FLOAT, oC, iC, kH, kW);
+
+        INDArray bias = Nd4j.createFromArray(new float[]{-1, 2, 0.5f});
+
+        SDVariable sdInput = sd.var("in", inArr);
+        SDVariable sdWeights = sd.var("dW", weights);
+        SDVariable sdBias = sd.var("b", bias);
+
+        Conv2DConfig c = Conv2DConfig.builder()
+                .kH(kH).kW(kW)
+                .pH(pH).pW(pW)
+                .sH(sH).sW(sW)
+                .dH(dH).dW(dW)
+                .isSameMode(false)
+                .weightsFormat(WeightsFormat.OIYX)
+                .build();
+
+        SDVariable out = sd.cnn().conv2d(sdInput, sdWeights, sdBias, c);
+
+        assertArrayEquals(new long[]{bS, oC, oH, oW}, out.eval().shape());
+
+        weights = weights.reshape(oC, iC, kH, kW);
+        SDVariable permutedWeights = sd.var("weights2", weights);
+
+        Conv2DConfig c2 = Conv2DConfig.builder()
+                .kH(kH).kW(kW)
+                .pH(pH).pW(pW)
+                .sH(sH).sW(sW)
+                .dH(dH).dW(dW)
+                .isSameMode(false)
+                .weightsFormat(WeightsFormat.OIYX)
+                .build();
+
+        SDVariable out2 = sd.cnn().conv2d(sdInput, permutedWeights, sdBias, c2);
+        assertEquals(out.eval(), out2.eval());
     }
 }
