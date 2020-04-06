@@ -22,7 +22,7 @@
 
 #include <ops/declarable/PlatformHelper.h>
 #include <ops/declarable/OpRegistrator.h>
-#include <platform_boilerplate.h>
+#include <system/platform_boilerplate.h>
 
 #include <helpers/MKLDNNStream.h>
 #include "mkldnnUtils.h"
@@ -31,7 +31,7 @@
 using namespace dnnl;
 using namespace samediff;
 
-namespace nd4j      {
+namespace sd      {
 namespace ops       {
 namespace platforms {
 
@@ -60,7 +60,7 @@ PLATFORM_IMPL(avgpool2d, ENGINE_CPU) {
 
     int bS, iC, iH, iW, oC, oH, oW;                             // batch size, input channels, input height/width, output channels, output height/width;
     int indIOioC, indIiH, indWoC, indWiC, indWkH, indOoH;       // corresponding indexes
-    ConvolutionUtils::getSizesAndIndexesConv2d(isNCHW, *input, *output, bS, iC, iH, iW, oC, oH, oW, indIOioC, indIiH, indWiC, indWoC, indWkH, indOoH);
+    ConvolutionUtils::getSizesAndIndexesConv2d(isNCHW, 0, *input, *output, bS, iC, iH, iW, oC, oH, oW, indIOioC, indIiH, indWiC, indWoC, indWkH, indOoH);
 
     if (paddingMode)
         ConvolutionUtils::calcPadding2D(pH, pW, oH, oW, iH, iW, kH, kW, sH, sW, dH, dW);
@@ -78,7 +78,7 @@ PLATFORM_CHECK(avgpool2d, ENGINE_CPU) {
     auto input = INPUT_VARIABLE(0);
     auto output = OUTPUT_VARIABLE(0);
 
-    return block.isUseMKLDNN() && nd4j::MKLDNNStream::isSupported({input, output});
+    return block.isUseMKLDNN() && sd::MKLDNNStream::isSupported({input, output});
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ PLATFORM_IMPL(avgpool2d_bp, ENGINE_CPU) {
 
     int bS, iC, iH, iW, oC, oH, oW;                             // batch size, input channels, input height/width, output channels, output height/width;
     int indIOioC, indIiH, indWoC, indWiC, indWkH, indOoH;       // corresponding indexes
-    ConvolutionUtils::getSizesAndIndexesConv2d(isNCHW, *input, *gradO, bS, iC, iH, iW, oC, oH, oW, indIOioC, indIiH, indWiC, indWoC, indWkH, indOoH);
+    ConvolutionUtils::getSizesAndIndexesConv2d(isNCHW, 0, *input, *gradO, bS, iC, iH, iW, oC, oH, oW, indIOioC, indIiH, indWiC, indWoC, indWkH, indOoH);
 
     std::vector<Nd4jLong> expectedGradOShape = ShapeUtils::composeShapeUsingDimsAndIdx({bS,iC,oH,oW,  0,indIOioC,indIiH,indIiH+1});
     REQUIRE_TRUE(gradO->isSameShape(expectedGradOShape), 0, "AVGPOOL2D_BP MKLDNN op: wrong shape of output's gradients array (next epsilon), expected is %s, but got %s instead !", ShapeUtils::shapeAsString(expectedGradOShape).c_str(), ShapeUtils::shapeAsString(gradO).c_str());
@@ -125,7 +125,7 @@ PLATFORM_CHECK(avgpool2d_bp, ENGINE_CPU) {
     auto input = INPUT_VARIABLE(0);
     auto output = OUTPUT_VARIABLE(0);
 
-    return block.isUseMKLDNN() && nd4j::MKLDNNStream::isSupported({input, output});
+    return block.isUseMKLDNN() && sd::MKLDNNStream::isSupported({input, output});
 }
 
 

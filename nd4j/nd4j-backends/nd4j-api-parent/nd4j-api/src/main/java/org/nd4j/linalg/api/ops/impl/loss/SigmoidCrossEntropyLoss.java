@@ -24,6 +24,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.Op;
 import org.tensorflow.framework.AttrValue;
@@ -43,6 +44,11 @@ public class SigmoidCrossEntropyLoss extends BaseLoss {
     public static final double DEFAULT_LABEL_SMOOTHING = 0.0;
     private double labelSmoothing = 0.0;
 
+    public SigmoidCrossEntropyLoss(SameDiff sameDiff, SDVariable labels, SDVariable logits, SDVariable weights,
+                                    LossReduce lossReduce, double labelSmoothing) {
+        this(sameDiff, lossReduce, logits, weights, labels, labelSmoothing);
+    }
+
     public SigmoidCrossEntropyLoss(SameDiff sameDiff, LossReduce lossReduce, SDVariable logits, SDVariable weights,
                                    SDVariable labels, double labelSmoothing) {
         super(sameDiff, lossReduce, logits, weights, labels);
@@ -52,6 +58,12 @@ public class SigmoidCrossEntropyLoss extends BaseLoss {
 
     public SigmoidCrossEntropyLoss(SameDiff sameDiff, LossReduce reductionMode, SDVariable logits, SDVariable weights, SDVariable labels) {
         this(sameDiff, reductionMode, logits, weights, labels, 0.0);
+    }
+
+    public SigmoidCrossEntropyLoss(INDArray labels, INDArray predictions, INDArray weights, LossReduce lossReduce, double labelSmoothing){
+        super(lossReduce, predictions, weights, labels);
+        this.labelSmoothing = labelSmoothing;
+        addArgs();
     }
 
     public void addArgs() {

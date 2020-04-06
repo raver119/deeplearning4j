@@ -3394,7 +3394,8 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
     @Override
     public void setParamTable(@NonNull Map<String, INDArray> paramTable) {
-        Preconditions.checkArgument(paramTable.keySet().equals(paramTable().keySet()), "Cannot set param table: parameter set keys are not equal");
+        Map<String,INDArray> m = paramTable();
+        Preconditions.checkArgument(paramTable.keySet().equals(m.keySet()), "Cannot set param table: parameter set keys are not equal");
         Map<String,INDArray> current = paramTable();
         //Check shapes before doing partial assigment to avoid leaving net in incorrect state
         for(String s : current.keySet()){
@@ -4169,6 +4170,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                 INDArray[] featuresMasks = next.getFeaturesMaskArrays();
                 INDArray[] labels = next.getLabels();
                 INDArray[] labelMasks = next.getLabelsMaskArrays();
+                List<Serializable> meta = next.getExampleMetaData();
 
                 try (MemoryWorkspace ws = outputWs.notifyScopeEntered()) {
                     INDArray[] out = outputOfLayersDetached(false, FwdPassType.STANDARD, getOutputLayerIndices(), features, featuresMasks, labelMasks, true, false, ws);
@@ -4187,7 +4189,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
                         try (MemoryWorkspace wsO = Nd4j.getWorkspaceManager().scopeOutOfWorkspaces()) {
                             for (IEvaluation evaluation : evalsThisOutput)
-                                evaluation.eval(currLabel, currOut, next.getLabelsMaskArray(i));
+                                evaluation.eval(currLabel, currOut, next.getLabelsMaskArray(i), meta);
                         }
                     }
                 }

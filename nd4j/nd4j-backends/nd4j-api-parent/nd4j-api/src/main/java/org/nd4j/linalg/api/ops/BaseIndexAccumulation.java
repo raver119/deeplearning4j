@@ -85,6 +85,12 @@ public abstract class BaseIndexAccumulation extends BaseOp implements IndexAccum
         this(x, null, dimensions);
     }
 
+    public BaseIndexAccumulation(INDArray x, boolean keepDims, int[] dimensions) {
+        this(x, null, dimensions);
+        this.keepDims = keepDims;
+        defineDimensions(dimensions);
+    }
+
     public BaseIndexAccumulation(INDArray x, INDArray z, int[] dimensions) {
         super(x, z);
         defineDimensions(dimensions);
@@ -93,6 +99,12 @@ public abstract class BaseIndexAccumulation extends BaseOp implements IndexAccum
 
     @Override
     public List<LongShapeDescriptor> calculateOutputShape() {
+        return calculateOutputShape(null);
+    }
+
+    @Override
+    public List<LongShapeDescriptor> calculateOutputShape(OpContext oc){
+        INDArray x = oc != null ? oc.getInputArray(0) : x();
         if(x == null)
             return Collections.emptyList();
 

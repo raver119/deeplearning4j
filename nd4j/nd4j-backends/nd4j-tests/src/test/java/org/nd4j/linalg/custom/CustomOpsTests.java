@@ -34,11 +34,14 @@ import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
 import org.nd4j.linalg.api.ops.impl.image.ResizeArea;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
+import org.nd4j.linalg.api.ops.impl.reduce.Mmul;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.shape.Create;
 import org.nd4j.linalg.api.ops.impl.shape.OnesLike;
 import org.nd4j.linalg.api.ops.impl.shape.SequenceMask;
+import org.nd4j.linalg.api.ops.impl.transforms.Cholesky;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
+import org.nd4j.linalg.api.ops.impl.transforms.custom.Qr;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.AddOp;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.ModOp;
 import org.nd4j.linalg.api.ops.random.compat.RandomStandardNormal;
@@ -1740,17 +1743,76 @@ public class CustomOpsTests extends BaseNd4jTest {
     }
 
     @Test
+    public void testLstsq() {
+        INDArray a = Nd4j.createFromArray(new float[]{
+                1.f,  2.f,  3.f,
+                4.f,  5.f,  6.f,
+                11.f,  8.f, 21.f
+        }).reshape(3,3);
+
+        INDArray b = Nd4j.createFromArray(new float[]{   1.f, 2.f, 3.f   }).reshape(3,1);
+
+        val op = new Lstsq(a,b);
+        INDArray[] ret = Nd4j.exec(op);
+
+        DynamicCustomOp matmul = DynamicCustomOp.builder("matmul")
+                .addInputs(a, ret[0])
+                .build();
+        INDArray[] matres = Nd4j.exec(matmul);
+        for (int i = 0; i < 3; ++i) {
+            assertEquals(b.getFloat(i, 0), matres[0].getFloat(i, 0), 1e-4);
+        }
+    }
+
+    @Test
     public void testSequenceMask() {
         INDArray arr = Nd4j.createFromArray(new int[]{1, 3, 2});
         // Test with static max len
         int maxlen = 2;
         INDArray expected = Nd4j.createFromArray(new int[]{
-                1,0,0,
-                1,1,1,
-                1,1,0
+                1, 0, 0,
+                1, 1, 1,
+                1, 1, 0
         }).reshape(3, 3);
 
         INDArray[] ret = Nd4j.exec(new SequenceMask(arr, maxlen, DataType.INT32));
         assertEquals(expected, ret[0]);
     }
+
+    @Test
+    public void testCholesky() {
+        INDArray x = Nd4j.createFromArray(new double[] {4,12,-16, 12 ,37,-43, -16, -43, 98}).reshape(3,3);
+        INDArray exp = Nd4j.createFromArray(new double[] {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3.}).reshape(3,3);
+
+        INDArray[] res = Nd4j.exec(new Cholesky(x));
+        assertEquals(res[0], exp);
+    }
+
+    @Test
+    public void testQr() {
+        INDArray in = Nd4j.createFromArray(new double[]{
+                12.,  -51.,    4.,        6.,   167.,  -68.,       -4.,    24.,  -41.,       -1.,     1.,    0.,        2.,     0.,    3.
+        }).reshape(5,3);
+        Qr op = new Qr(in);
+        INDArray[] ret = Nd4j.exec(op);
+        INDArray res = Nd4j.createUninitialized(in.shape());
+        DynamicCustomOp matmul = DynamicCustomOp.builder("matmul")
+                .addInputs(ret[0], ret[1])
+                .build();
+        ret = Nd4j.exec(matmul);
+        assertEquals(ret[0], in);
+    }
+
+    @Test
+    public void testLogdet() {
+        INDArray x = Nd4j.createFromArray(new double[]{
+                4,12,-16,12,37,-43,-16,-43,98, 4,1.2,-1.6,1.2,3.7,-4.3,-1.6,-4.3,9.8
+        }).reshape(2,3,3);
+
+        INDArray expected = Nd4j.createFromArray(new double[]{3.5835189, 4.159008});
+        INDArray[] ret = Nd4j.exec(new Logdet(x));
+        assertEquals(ret[0], expected);
+
+    }
+
 }

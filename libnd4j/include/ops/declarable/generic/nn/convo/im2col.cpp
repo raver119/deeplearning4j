@@ -18,7 +18,7 @@
 // Created by raver119 on 17.10.2017.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_im2col)
 
 #include <ops/declarable/CustomOperations.h>
@@ -26,12 +26,11 @@
 #include <ops/declarable/helpers/im2col.h>
 #include <ops/declarable/helpers/col2im.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(im2col, 1, 1, false, 0, 9) {
             auto x = INPUT_VARIABLE(0);
-            auto z = OUTPUT_VARIABLE(0);
-
+            auto z = OUTPUT_NULLIFIED(0);
 
             REQUIRE_TRUE(x->rankOf() == 4, 0, "im2col input should be 4D, but got %i instead", x->rankOf());
             REQUIRE_TRUE(z->rankOf() == 6, 0, "im2col output should be 6D, but got %i instead", z->rankOf());
@@ -51,9 +50,7 @@ namespace nd4j {
 
             // FIXME: zeropad value is void
             LaunchContext* ctx = block.launchContext();
-            nd4j::ops::helpers::im2col(*ctx, *x, *z, kernelHeight, kernelWidth, strideY, strideX, padHeight, padWidth, dY, dX, NDArrayFactory::create(zeroPadVal, block.launchContext()));
-
-            STORE_RESULT(*z);
+            sd::ops::helpers::im2col(*ctx, *x, *z, kernelHeight, kernelWidth, strideY, strideX, padHeight, padWidth, dY, dX, NDArrayFactory::create(zeroPadVal, block.launchContext()));
 
             return Status::OK();
         }
@@ -107,7 +104,7 @@ namespace nd4j {
 		CUSTOM_OP_IMPL(im2col_bp, 2, 1, false, 0, 9) {
             auto input = INPUT_VARIABLE(0);
 			auto gradAtOutput = INPUT_VARIABLE(1);
-            auto z = OUTPUT_VARIABLE(0);
+            auto z = OUTPUT_NULLIFIED(0);
 
             REQUIRE_TRUE(input->rankOf() == 4, 0, "im2col_bp input should be 4D, but got %i instead", input->rankOf());
 			REQUIRE_TRUE(gradAtOutput->rankOf() == 6, 0, "im2col_bp gradient at output (input idx 1) should be 6D, but got %i instead", gradAtOutput->rankOf());

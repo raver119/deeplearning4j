@@ -56,6 +56,11 @@ public class Conv2D extends DynamicCustomOp {
     protected Conv2DConfig config;
     private static final String INVALID_CONFIGURATION = "Invalid Conv2D configuration : sW = %s pH = %s dW = %s ";
 
+    public Conv2D(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable weights,
+                  SDVariable bias, @NonNull Conv2DConfig conv2DConfig) {
+        this(sameDiff, wrapFilterNull(input, weights, bias), conv2DConfig);
+    }
+
     @Builder(builderMethodName = "sameDiffBuilder")
     public Conv2D(SameDiff sameDiff,
                   SDVariable[] inputFunctions,
@@ -73,6 +78,10 @@ public class Conv2D extends DynamicCustomOp {
 
     public Conv2D(@NonNull INDArray input, @NonNull INDArray weights, INDArray bias, INDArray output, @NonNull Conv2DConfig config){
         this(wrapFilterNull(input, weights, bias), wrapOrNull(output), config);
+    }
+
+    public Conv2D(INDArray layerInput, INDArray weights, INDArray bias, Conv2DConfig config) {
+        this(layerInput, weights, bias, null, config);
     }
 
     protected void initConfig(Conv2DConfig config){

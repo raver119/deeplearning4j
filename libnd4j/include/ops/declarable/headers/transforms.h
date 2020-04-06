@@ -23,7 +23,7 @@
 
 #include <ops/declarable/headers/common.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         #if NOT_EXCLUDED(OP_clipbyvalue)
         DECLARE_CONFIGURABLE_OP(clipbyvalue, 1, 1, true, 2, 0);
@@ -64,6 +64,7 @@ namespace nd4j {
 
         #if NOT_EXCLUDED(OP_mergemax)
         DECLARE_OP(mergemax, -1, 1, false);
+        DECLARE_CUSTOM_OP(mergemax_bp, 2, 1, false, 0, 0);
         #endif
         /*
          * Complete tensor with max indices merged from all input tensors list
@@ -78,10 +79,12 @@ namespace nd4j {
 
         #if NOT_EXCLUDED(OP_mergeadd)
         DECLARE_OP(mergeadd, -1, 1, false);
+        DECLARE_CUSTOM_OP(mergeadd_bp, 2, 1, false, 0, 0);
         #endif
 
         #if NOT_EXCLUDED(OP_mergeavg)
         DECLARE_OP(mergeavg, -1, 1, false);
+        DECLARE_CUSTOM_OP(mergeavg_bp, 2, 1, false, 0, 0);
         #endif
 
         #if NOT_EXCLUDED(OP_scatter_update)

@@ -20,22 +20,22 @@
 // @author raver119@gmail.com
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_firas_sparse)
 
 #ifndef LIBND4J_THIRD_PARTY_H
 #define LIBND4J_THIRD_PARTY_H
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #include <memory>
-#include <shape.h>
+#include <helpers/shape.h>
 #include <loops/random.h>
-#include <NDArray.h>
+#include <array/NDArray.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <ops/declarable/OpRegistrator.h>
 #include <ops/declarable/CustomOperations.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
 
 
@@ -48,7 +48,7 @@ namespace nd4j {
          */
         CUSTOM_OP_IMPL(firas_sparse, 1, 1, false, 0, -1) {
             auto x = INPUT_VARIABLE(0);
-            auto z = OUTPUT_VARIABLE(0);
+            auto z = OUTPUT_NULLIFIED(0);
 
             int batchSize = x->sizeAt(0);
             int numColumns = x->sizeAt(1);
@@ -99,7 +99,7 @@ namespace nd4j {
 
         DECLARE_TYPES(firas_sparse) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setAllowedOutputTypes({ALL_FLOATS});
         }
     }

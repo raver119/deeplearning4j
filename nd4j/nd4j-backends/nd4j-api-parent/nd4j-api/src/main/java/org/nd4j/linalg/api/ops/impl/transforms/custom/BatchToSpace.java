@@ -21,6 +21,7 @@ import lombok.val;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -52,6 +53,14 @@ public class BatchToSpace extends DynamicCustomOp {
     public BatchToSpace() {
     }
 
+    public BatchToSpace(SameDiff sameDiff, SDVariable x, int[] blocks, int[] croppingTop, int... croppingBottom) {
+        this(sameDiff, x, blocks, new int[][]{croppingTop, croppingBottom}, false);
+    }
+
+    public BatchToSpace(SameDiff sameDiff, SDVariable x, int[] blocks, int[][] crops, boolean inPlace) {
+        this(sameDiff, new SDVariable[]{x}, blocks, crops, inPlace);
+    }
+
     public BatchToSpace(SameDiff sameDiff, SDVariable[] args, int[] blocks, int[][] crops, boolean inPlace) {
         super(null, sameDiff, new SDVariable[]{args[0], sameDiff.constant(Nd4j.createFromArray(crops))}, inPlace);
 
@@ -61,6 +70,17 @@ public class BatchToSpace extends DynamicCustomOp {
         for (val b : blocks)
             addIArgument(b);
     }
+
+    public BatchToSpace(INDArray x, int[] blocks, int[] croppingTop, int... croppingBottom) {
+        addInputArgument(x);
+        int[][] crops = new int[][]{croppingTop, croppingBottom};
+        this.blocks = blocks;
+        this.crops = crops;
+
+        for (val b : blocks)
+            addIArgument(b);
+    }
+
 
     @Override
     public String opName() {
@@ -81,7 +101,7 @@ public class BatchToSpace extends DynamicCustomOp {
     public List<SDVariable> doDiff(List<SDVariable> i_v) {
         // Inverse of batch to space is space to batch with same blocks and padding as crops
         SDVariable gradient = sameDiff.setupFunction(i_v.get(0));
-        return Arrays.asList(sameDiff.cnn().spaceToBatch(gradient, blocks, crops));
+        return Arrays.asList(sameDiff.cnn().spaceToBatch(gradient, blocks, crops[0], crops[1]));
     }
 
     @Override

@@ -35,9 +35,9 @@
 #include "config.h"
 #endif
 
-#include <dll.h>
+#include <system/dll.h>
 #include <memory>
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #include <memory/Workspace.h>
 #include <vector>
 #include <mutex>
@@ -46,13 +46,15 @@
 
 
 
-namespace nd4j  {
+namespace sd  {
 
 class ND4J_EXPORT LaunchContext {
 
 	private:
         static std::vector<std::shared_ptr<LaunchContext>> _contexts;
         static std::mutex _mutex;
+
+        static MAP_IMPL<int, std::mutex*> _deviceMutexes;
 
         // used for MKLDNN
         void *_engine = nullptr;
@@ -68,7 +70,7 @@ class ND4J_EXPORT LaunchContext {
 
 		bool _isAllocated = false;
 #endif // CUDA
-	    nd4j::memory::Workspace* _workspace = nullptr;
+	    sd::memory::Workspace* _workspace = nullptr;
         int _deviceID = 0;
 
 	public:
@@ -93,15 +95,14 @@ class ND4J_EXPORT LaunchContext {
 		void setCudaSpecialStream(cudaStream_t* cudaStream);
 		void setCublasHandle(void *handle);
 
-
 #endif // JCPP
 
 #endif // CUDA
 		LaunchContext(Nd4jPointer cudaStream, Nd4jPointer reductionPointer = nullptr, Nd4jPointer scalarPointer = nullptr, Nd4jPointer allocationPointer = nullptr);
     	LaunchContext();
     	~LaunchContext();
-    	nd4j::memory::Workspace* getWorkspace() const { return _workspace; }
-    	void setWorkspace(nd4j::memory::Workspace* theWorkspace) {
+    	sd::memory::Workspace* getWorkspace() const { return _workspace; }
+    	void setWorkspace(sd::memory::Workspace* theWorkspace) {
     	    _workspace = theWorkspace;
     	}
 
@@ -110,6 +111,12 @@ class ND4J_EXPORT LaunchContext {
     	int getDeviceID() const {return _deviceID;}
     	void setDeviceID(int deviceID) { _deviceID = deviceID; }
         sd::ErrorReference* errorReference();
+
+#ifndef __JAVACPP_HACK__
+    	// this method returns mutex shared between all threads that use the same device
+    	static std::mutex* deviceMutex();
+
+#endif
 
     	static bool isInitialized();
     	static void releaseBuffers();

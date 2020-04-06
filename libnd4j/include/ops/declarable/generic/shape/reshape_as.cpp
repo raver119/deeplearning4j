@@ -18,49 +18,41 @@
 // Created by raver119 on 29/10/17.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_reshapeas)
 
 #include <ops/declarable/CustomOperations.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
 
 
     //////////////////////////////////////////////////////////////////////////
     CUSTOM_OP_IMPL(reshapeas, 2, 1, false, 0, 0) {
-    
+
         auto x = INPUT_VARIABLE(0);
         auto y = INPUT_VARIABLE(1);
 
         auto z = OUTPUT_VARIABLE(0);
-        std::vector<Nd4jLong> shapeNew(y->shapeOf(), y->shapeOf() + y->rankOf());
-        char order = y->ordering();
 
-        if (x->reshapei(order, shapeNew)) {
-            *z = *x;
-            STORE_RESULT(*z);
+        if (x->reshapei(y->ordering(), y->getShapeAsVector())) {
+
+            z->assign(x);
             return Status::OK();
         }
 
         return ND4J_STATUS_BAD_INPUT;
     }
     DECLARE_SYN(reshape_as, reshapeas);
-    
-    DECLARE_SHAPE_FN(reshapeas) {
-    
-    auto inputShapeInfo = inputShape->at(1);    
-    int shapeInfoLength = inputShapeInfo[0]*2 + 4;
 
-    Nd4jLong* outputShapeInfo(nullptr);
-    COPY_SHAPE(inputShapeInfo, outputShapeInfo);
-    
-    return SHAPELIST(CONSTANT(outputShapeInfo));
-}
+    DECLARE_SHAPE_FN(reshapeas) {
+
+        return SHAPELIST(ShapeBuilders::copyShapeInfo(INPUT_VARIABLE(1)->getShapeInfo(), false, block.workspace()));
+    }
 
         DECLARE_TYPES(reshapeas) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setSameMode(true);
         }
 }

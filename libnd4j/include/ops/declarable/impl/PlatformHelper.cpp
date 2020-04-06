@@ -21,7 +21,7 @@
 #include "../PlatformHelper.h"
 #include <graph/Variable.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         namespace platforms {
             PlatformHelper::PlatformHelper(const char *name, samediff::Engine engine) {
@@ -31,7 +31,15 @@ namespace nd4j {
                 _engine = engine;
             }
 
-            nd4j::NDArray *PlatformHelper::getZ(graph::Context &ctx, int inputId) {
+            sd::NDArray* PlatformHelper::getNullifiedZ(graph::Context& block, int inputId) {
+                auto result = getZ(block, inputId);
+                if (result != nullptr && !block.isInplace())
+                    result->nullify();
+
+                return result;
+            }
+
+            sd::NDArray* PlatformHelper::getZ(graph::Context &ctx, int inputId) {
                 NDArray *z = nullptr;
 
                 if (ctx.isFastPath()) {

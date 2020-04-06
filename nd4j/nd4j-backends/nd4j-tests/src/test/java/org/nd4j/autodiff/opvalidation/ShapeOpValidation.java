@@ -22,6 +22,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.math3.linear.LUDecomposition;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.OpValidationSuite;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -1406,14 +1407,13 @@ public class ShapeOpValidation extends BaseOpValidation {
             SameDiff sd = SameDiff.create();
 
             SDVariable[] arr = new SDVariable[rank];
-            List<String> names = new ArrayList<>();
+            String[] names = new String[rank];
             for( int i=0; i<rank; i++ ){
                 INDArray in = Nd4j.linspace(1,3+i, 3+i).reshape(3+i).castTo(DataType.DOUBLE);
                 arr[i] = sd.var("in"+i, in);
-                names.add("meshgrid-" + i);
+                names[i] = "meshgrid-" + i;
             }
-
-            SDVariable[] meshgrid = sd.math().meshgrid(names, false, arr);
+            SDVariable[] meshgrid = sd.math().meshgrid(names, arr, false);
 
             TestCase tc = new TestCase(sd);
 
@@ -2050,7 +2050,7 @@ public class ShapeOpValidation extends BaseOpValidation {
         print(out[0]);
          */
 
-        INDArray emptyIn = Nd4j.empty(DataType.FLOAT);
+        INDArray emptyIn = Nd4j.empty(DataType.FLOAT).reshape(0, 4);
         INDArray axis = Nd4j.scalar(1);
 
         DynamicCustomOp op = DynamicCustomOp.builder("split")
@@ -2061,9 +2061,10 @@ public class ShapeOpValidation extends BaseOpValidation {
         List<LongShapeDescriptor> l = op.calculateOutputShape();
         assertEquals(4, l.size());
         for( int i=0; i<4; i++ ){
-            assertArrayEquals(new long[0], l.get(i).getShape());
-            assertTrue(l.get(i).isEmpty());
-            op.addOutputArgument(Nd4j.empty(DataType.FLOAT));
+            val desc = l.get(i);
+            assertArrayEquals(new long[]{0, 1}, desc.getShape());
+            assertTrue(desc.isEmpty());
+            op.addOutputArgument(Nd4j.empty(DataType.FLOAT).reshape(desc.getShape()));
         }
 
         Nd4j.exec(op);
@@ -2497,5 +2498,31 @@ public class ShapeOpValidation extends BaseOpValidation {
         Nd4j.getExecutioner().exec(op);
 
         assertEquals(Nd4j.createFromArray(2, 2), out);
+    }
+
+
+    @Test @Ignore //AB 2020/04/01 - https://github.com/eclipse/deeplearning4j/issues/8592
+    public void testReshapeZeros(){
+        int[][] shapes = new int[][]{{2,0}, {10,0},    {10, 0},  {2,0,0,10}, {10, 0},   {0, 0, 10},  {0,2,10}, {1,2,0}};
+        int[][] reshape = new int[][]{{2,-1}, {2,0,-1}, {5,2,-1}, {2,0,-1},   {-1, 2, 0}, {2, -1, 0}, {2, 0, 0, 0, -1}, {2,0,-1}};
+        int[][] expected = new int[][]{{2,0}, {2,0,5}, {5,2,0}, {2,0,10}, {5,2,0}, {2,5,0}, {2,0,0,0,10}, {2,0,1}};
+
+        for( int i=0; i<shapes.length; i++ ){
+            System.out.println(i);
+            long[] orig = ArrayUtil.toLongArray(shapes[i]);
+            int[] r = reshape[i];
+            long[] exp = ArrayUtil.toLongArray(expected[i]);
+
+            SameDiff sd = SameDiff.create();
+            SDVariable v = sd.placeHolder("orig", DataType.FLOAT, orig);
+            SDVariable rs = v.reshape(r);
+            SDVariable rs2 = v.reshape(sd.constant(Nd4j.createFromArray(r)));
+
+            INDArray out = rs.eval(Collections.singletonMap("orig", Nd4j.create(DataType.FLOAT, orig)));
+            assertArrayEquals(exp, out.shape());
+
+            out = rs2.eval(Collections.singletonMap("orig", Nd4j.create(DataType.FLOAT, orig)));
+            assertArrayEquals(exp, out.shape());
+        }
     }
 }

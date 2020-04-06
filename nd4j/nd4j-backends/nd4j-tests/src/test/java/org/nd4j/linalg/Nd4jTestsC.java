@@ -28,6 +28,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.nd4j.imports.TFGraphs.NodeReader;
+import org.nd4j.linalg.api.blas.BlasBufferUtil;
 import org.nd4j.linalg.api.blas.Level1;
 import org.nd4j.linalg.api.blas.params.GemmParams;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
@@ -106,6 +107,7 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
@@ -8253,11 +8255,11 @@ public class Nd4jTestsC extends BaseNd4jTest {
         INDArray arr0 = Nd4j.create(DataType.FLOAT, 2, 0);
         INDArray arr1 = Nd4j.create(DataType.FLOAT, 0, 1, 2);
 
-        INDArray out0 = Nd4j.exec(new Reshape(arr0, Nd4j.createFromArray(2, 0, -1), Nd4j.create(DataType.FLOAT, 2, 0, 0)))[0];
-        INDArray out1 = Nd4j.exec(new Reshape(arr1, Nd4j.createFromArray(-1, 1), Nd4j.create(DataType.FLOAT, 0, 1)))[0];
-        INDArray out2 = Nd4j.exec(new Reshape(arr1, Nd4j.createFromArray(10, -1), Nd4j.create(DataType.FLOAT, 10, 0)))[0];
+        INDArray out0 = Nd4j.exec(new Reshape(arr0, Nd4j.createFromArray(2, 0, -1)))[0];
+        INDArray out1 = Nd4j.exec(new Reshape(arr1, Nd4j.createFromArray(-1, 1)))[0];
+        INDArray out2 = Nd4j.exec(new Reshape(arr1, Nd4j.createFromArray(10, -1)))[0];
 
-        assertArrayEquals(new long[]{2, 0, 0}, out0.shape());
+        assertArrayEquals(new long[]{2, 0, 1}, out0.shape());
         assertArrayEquals(new long[]{0, 1}, out1.shape());
         assertArrayEquals(new long[]{10, 0}, out2.shape());
     }

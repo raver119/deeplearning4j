@@ -56,6 +56,11 @@ public class DepthwiseConv2D extends DynamicCustomOp {
 
     protected Conv2DConfig config;
 
+    public DepthwiseConv2D(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+                           @NonNull SDVariable weights, SDVariable bias, @NonNull Conv2DConfig conv2DConfig) {
+        this(sameDiff, wrapFilterNull(input, weights, bias), conv2DConfig);
+    }
+
     @Builder(builderMethodName = "sameDiffBuilder")
     public DepthwiseConv2D(SameDiff sameDiff,
                            SDVariable[] inputFunctions,
@@ -75,6 +80,10 @@ public class DepthwiseConv2D extends DynamicCustomOp {
 
     public DepthwiseConv2D(@NonNull INDArray input, @NonNull INDArray weights, INDArray bias, INDArray output, @NonNull Conv2DConfig config){
         this(wrapFilterNull(input, weights, bias), wrapOrNull(output), config);
+    }
+
+    public DepthwiseConv2D(INDArray layerInput, INDArray depthWeights, INDArray bias, Conv2DConfig config) {
+        this(layerInput, depthWeights, bias, null, config);
     }
 
     public DepthwiseConv2D() {

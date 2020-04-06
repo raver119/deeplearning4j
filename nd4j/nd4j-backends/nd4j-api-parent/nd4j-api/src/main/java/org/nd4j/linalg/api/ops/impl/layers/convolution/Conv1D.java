@@ -46,6 +46,10 @@ public class Conv1D extends DynamicCustomOp {
     protected Conv1DConfig config;
     private static final String INVALID_CONFIGURATION = "Invalid Conv1D configuration : s = %s p = %s ";
 
+    public Conv1D(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable weights, SDVariable bias, @NonNull Conv1DConfig conv1DConfig) {
+        this(sameDiff, wrapFilterNull(input, weights, bias), conv1DConfig);
+    }
+
     @Builder(builderMethodName = "sameDiffBuilder")
     public Conv1D(SameDiff sameDiff,
                   SDVariable[] inputFunctions,
@@ -62,6 +66,10 @@ public class Conv1D extends DynamicCustomOp {
 
     public Conv1D(@NonNull INDArray input, @NonNull INDArray weights, INDArray bias, INDArray output, @NonNull Conv1DConfig config){
         this(wrapFilterNull(input, weights, bias), wrapOrNull(output), config);
+    }
+
+    public Conv1D(INDArray input, INDArray weights, INDArray bias, Conv1DConfig config) {
+        this(input, weights, bias, null, config);
     }
 
     private void initConfig(Conv1DConfig config){

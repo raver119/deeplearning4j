@@ -67,9 +67,14 @@ public class SequenceMask extends DynamicCustomOp {
     public SequenceMask(INDArray input, int maxLen, DataType dataType) {
         addInputArgument(input);
         addIArgument(maxLen);
-        //addIArgument(dataType.toInt());
-        addDArgument(dataType);
         this.dataType = dataType;
+        addDArgument(dataType);
+    }
+
+    public SequenceMask(INDArray input, DataType dataType) {
+        addInputArgument(input);
+        this.dataType = dataType;
+        addDArgument(dataType);
     }
 
 

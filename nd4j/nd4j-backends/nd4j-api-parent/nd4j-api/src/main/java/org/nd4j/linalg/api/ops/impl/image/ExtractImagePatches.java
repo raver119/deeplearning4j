@@ -46,6 +46,12 @@ public class ExtractImagePatches extends DynamicCustomOp {
 
     public ExtractImagePatches(){ }
 
+    public ExtractImagePatches(@NonNull SameDiff samediff, @NonNull SDVariable input,
+                               int kH, int kW, int sH, int sW, int rH, int rW,
+                               boolean sameMode) {
+        this(samediff, input, new int[]{kH, kW}, new int[]{sH, sW}, new int[]{rH,rW}, sameMode);
+
+    }
     public ExtractImagePatches(@NonNull SameDiff samediff, @NonNull SDVariable input, @NonNull int[] kSizes,
                                @NonNull int[] strides, @NonNull int[] rates, boolean sameMode){
         super(samediff, input);
@@ -70,6 +76,10 @@ public class ExtractImagePatches extends DynamicCustomOp {
         this.rates = rates;
         this.isSameMode = sameMode;
         addArgs();
+    }
+
+    public ExtractImagePatches(INDArray input, int kH, int kW, int sH, int sW, int rH,  int rW, boolean sameMode) {
+        this(input, new int[]{kH, kW}, new int[]{sH, sW}, new int[]{rH, rW}, sameMode);
     }
 
 

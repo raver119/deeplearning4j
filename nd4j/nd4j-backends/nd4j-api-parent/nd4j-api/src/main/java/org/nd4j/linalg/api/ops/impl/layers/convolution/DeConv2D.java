@@ -52,6 +52,11 @@ public class DeConv2D extends DynamicCustomOp {
 
     protected DeConv2DConfig config;
 
+    public DeConv2D(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable weights,
+                    SDVariable bias, DeConv2DConfig config) {
+        this(sameDiff, wrapFilterNull(input, weights, bias), config);
+    }
+
     @Builder(builderMethodName = "sameDiffBuilder")
     public DeConv2D(SameDiff sameDiff,
                     SDVariable[] inputs,
@@ -71,6 +76,10 @@ public class DeConv2D extends DynamicCustomOp {
 
     public DeConv2D(@NonNull INDArray input, @NonNull INDArray weights, INDArray bias, INDArray output, @NonNull DeConv2DConfig config){
         this(wrapFilterNull(input, weights, bias), wrapOrNull(output), config);
+    }
+
+    public DeConv2D(INDArray layerInput, INDArray weights, INDArray bias,  DeConv2DConfig config) {
+        this(layerInput, weights, bias, null, config);
     }
 
     @Override

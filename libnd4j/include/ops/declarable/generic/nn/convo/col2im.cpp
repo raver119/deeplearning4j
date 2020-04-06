@@ -18,17 +18,17 @@
 // Created by raver119 on 17.10.2017.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_col2im)
 
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/col2im.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(col2im, 1, 1, false, 0, 9) {
             auto x = INPUT_VARIABLE(0);
-            auto z = OUTPUT_VARIABLE(0);
+            auto z = OUTPUT_NULLIFIED(0);
 
             REQUIRE_TRUE(x->rankOf() == 6, 0, "col2im input should be 6D, but got %i instead", x->rankOf());
             REQUIRE_TRUE(z->rankOf() == 4, 0, "col2im output should be 4D, but got %i instead", z->rankOf());
@@ -44,8 +44,6 @@ namespace nd4j {
 
             LaunchContext* ctx = block.launchContext();
             helpers::col2im(*ctx, *x, *z, strideY, strideX, padHeight, padWidth, imgHeight, imgWidth, dY, dX);
-
-            STORE_RESULT(*z);
 
             return ND4J_STATUS_OK;
         }

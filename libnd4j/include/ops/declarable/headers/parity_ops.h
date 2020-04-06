@@ -24,7 +24,7 @@
 
 #include <ops/declarable/headers/common.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         /**
          * This operation returns index of max element in a given NDArray (optionally: along given dimension(s))
@@ -867,9 +867,12 @@ namespace nd4j {
          *   - 2D matrix MxN
          *   - 1D vector with N elements
          * output value - 2D matrix NxN as multiply of matrixes and add vector
+         * Int args:
+         *      0 - optional switcher of weights format, if int arg == 1 - mkldnn, else mmul
          */
         #if NOT_EXCLUDED(OP_xw_plus_b)
-        DECLARE_CUSTOM_OP(xw_plus_b, 3, 1, false, 0, 0);
+                DECLARE_CUSTOM_OP(xw_plus_b, 3, 1, false, 0, 0);
+                DECLARE_CUSTOM_OP(xw_plus_b_bp, 4, 3, false, 0, 0);
         #endif
 
         /**
@@ -1045,6 +1048,48 @@ namespace nd4j {
         #endif
 
         /**
+         * matrix_solve_ls op (lstsq) - solves one or more linear least-squares problems.
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * N) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * float args:
+         *    0 - l2_regularizer (default 0. and only for 0 implemented)
+         *
+         * boolean args:
+         *    0 - fast - default is true (optional) - use Cholesky decomposition instead QR decomposition of matricies.
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * N * K) with solutions
+         *
+         */
+        #if NOT_EXCLUDED(OP_lstsq)
+        DECLARE_CUSTOM_OP(lstsq, 2, 1, false, 0, 0);
+        #endif
+
+        /* solve_ls - analog of lstsq op with another solution approach
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * N) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * float args:
+         *    0 - l2_regularizer (default 0. and only for 0 implemented)
+         *
+         * boolean args:
+         *    0 - fast - default is true (optional) - use Cholesky decomposition instead QR decomposition of matricies.
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * N * K) with solutions
+         *
+         * Note: if fast is false - then l2_regularizer arg is ignored and used lstsq method due QR decomposition
+         * */
+        #if NOT_EXCLUDED(OP_solve_ls)
+                DECLARE_CUSTOM_OP(solve_ls, 2, 1, false, 0, 0);
+        #endif
+
+        /**
          * matrix_inverse op. - make inverse for all 2D square matricies found in the input tensor
          *
          * input params:
@@ -1073,7 +1118,7 @@ namespace nd4j {
          *
          */
         #if NOT_EXCLUDED(OP_triangular_solve)
-        DECLARE_CUSTOM_OP(triangular_solve, 2, 1, true, 0, 0);
+        DECLARE_CUSTOM_OP(triangular_solve, 2, 1, false, 0, 0);
         #endif
 
         /**
