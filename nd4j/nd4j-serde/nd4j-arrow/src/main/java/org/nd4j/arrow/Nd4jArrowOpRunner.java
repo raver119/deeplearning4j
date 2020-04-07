@@ -45,20 +45,22 @@ public class Nd4jArrowOpRunner {
      */
     public static FlatArray[] runOpOn(FlatArray[] array, String opName, Object...args) {
         DynamicCustomOpsBuilder opBuilder =  DynamicCustomOp.builder(opName);
-        for(Object arg : args) {
-            if(arg instanceof Integer || arg instanceof Long) {
-                Number integer = (Number) arg;
-                opBuilder.addIntegerArguments(integer.longValue());
+
+        if (args != null)
+            for(Object arg : args) {
+                if(arg instanceof Integer || arg instanceof Long) {
+                    Number integer = (Number) arg;
+                    opBuilder.addIntegerArguments(integer.longValue());
+                }
+                else if(arg instanceof Float || arg instanceof Double) {
+                    Number floatArg = (Number) arg;
+                    opBuilder.addFloatingPointArguments(floatArg.doubleValue());
+                }
+                else if(arg instanceof Boolean) {
+                    Boolean boolArg = (Boolean) arg;
+                    opBuilder.addBooleanArguments(boolArg);
+                }
             }
-            else if(arg instanceof Float || arg instanceof Double) {
-                Number floatArg = (Number) arg;
-                opBuilder.addFloatingPointArguments(floatArg.doubleValue());
-            }
-            else if(arg instanceof Boolean) {
-                Boolean boolArg = (Boolean) arg;
-                opBuilder.addBooleanArguments(boolArg);
-            }
-        }
 
         INDArray[] inputs = new INDArray[array.length];
         for(int i = 0; i < inputs.length; i++) {
