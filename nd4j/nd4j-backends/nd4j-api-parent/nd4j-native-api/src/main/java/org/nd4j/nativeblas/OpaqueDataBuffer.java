@@ -196,6 +196,22 @@ public class OpaqueDataBuffer extends Pointer {
         NativeOpsHolder.getInstance().getDeviceNativeOps().dbSetSpecialBuffer(this, ptr, numElements);
     }
 
+    public void tickHostWrite() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().dbTickHostWrite(this);
+    }
+
+    public void tickHostRead() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().dbTickHostRead(this);
+    }
+
+    public void tickDeviceWrite() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().dbTickDeviceWrite(this);
+    }
+
+    public void tickDeviceRead() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().dbTickDeviceRead(this);
+    }
+
     /**
      * This method synchronizes device memory
      */

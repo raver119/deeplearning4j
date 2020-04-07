@@ -43,9 +43,6 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
 
     protected Collection<Pointer> references = new ArrayList<>();
 
-    @Getter
-    protected long numWords = 0;
-
     /**
      * Meant for creating another view of a buffer
      *
@@ -67,12 +64,12 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
 
     public CudaUtf8Buffer(long length, boolean initialize) {
         super((length + 1) * 8, 1, initialize);
-        numWords = length;
+        this.length = length;
     }
 
     public CudaUtf8Buffer(long length, boolean initialize, MemoryWorkspace workspace) {
         super((length + 1) * 8, 1, initialize, workspace);
-        numWords = length;
+        this.length = length;
     }
 
     public CudaUtf8Buffer(int[] ints, boolean copy, MemoryWorkspace workspace) {
@@ -83,10 +80,11 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         super(data.length, 1, false);
 
         lazyAllocateHostPointer();
-
-        val bp = (BytePointer) pointer;
+        ptrDataBuffer.syncToPrimary();
+        val bp = new BytePointer(ptrDataBuffer.primaryBuffer());
         bp.put(data);
-        this.numWords = numWords;
+        ptrDataBuffer.tickHostWrite();
+        this.length = numWords;
     }
 
     public CudaUtf8Buffer(double[] data, boolean copy) {
@@ -127,9 +125,9 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
 
     public CudaUtf8Buffer(DataBuffer underlyingBuffer, long length, long offset) {
         super(underlyingBuffer, length, offset);
-        this.numWords = length;
+        this.length = length;
 
-        Preconditions.checkArgument(((CudaUtf8Buffer) underlyingBuffer).numWords == numWords, "String array can't be a view");
+        Preconditions.checkArgument(((CudaUtf8Buffer) underlyingBuffer).length == length, "String array can't be a view");
     }
 
     public CudaUtf8Buffer(@NonNull Collection<String> strings) {
@@ -141,7 +139,7 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         val headerPointer = new LongPointer(this.pointer);
         val dataPointer = new BytePointer(this.pointer);
 
-        numWords = strings.size();
+        length = strings.size();
 
         long cnt = 0;
         long currentLength = 0;
@@ -163,12 +161,25 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         allocationPoint.tickHostWrite();
     }
 
-    public String getString(long index) {
-        if (index > numWords)
-            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + numWords + "]");
+    @Override
+    public long byteLength() {
+        this.ptrDataBuffer.syncToPrimary();
+        val headerPointer = new LongPointer(this.ptrDataBuffer.primaryBuffer());
+        val headerLen = length();
 
-        val headerPointer = new LongPointer(this.pointer);
-        val dataPointer = (BytePointer) (this.pointer);
+        // buffer byteLen is a sum of header (which is long) and data (which is byte)
+        val bytesLast = headerPointer.get(headerLen) + (headerLen + 1 ) * 8;
+        return bytesLast;
+    }
+
+    public String getString(long index) {
+        if (index > length())
+            throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + length() + "]");
+
+        this.ptrDataBuffer.syncToPrimary();
+        val _pointer = this.ptrDataBuffer.primaryBuffer();
+        val headerPointer = new LongPointer(_pointer);
+        val dataPointer = new BytePointer(_pointer);
 
         val start = headerPointer.get(index);
         val end = headerPointer.get(index+1);
@@ -179,7 +190,7 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         val dataLength = (int) (end - start);
         val bytes = new byte[dataLength];
 
-        val headerLength = (numWords + 1) * 8;
+        val headerLength = (length() + 1) * 8;
 
         for (int e = 0; e < dataLength; e++) {
             val idx = headerLength + start + e;
@@ -223,6 +234,16 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         return size;
     }
 
+    @Override
+    public String[] asUtf8() {
+        val result = new String[(int) length()];
+
+        for (int e = 0; e < length; e++)
+            result[e] = getString(e);
+
+        return result;
+    }
+
     public void put(long index, Pointer pointer) {
         throw new UnsupportedOperationException();
         //references.add(pointer);
@@ -238,5 +259,8 @@ public class CudaUtf8Buffer extends BaseCudaDataBuffer {
         type = DataType.UTF8;
     }
 
-
+    @Override
+    public String getUtf8(long i) {
+        return getString(i);
+    }
 }

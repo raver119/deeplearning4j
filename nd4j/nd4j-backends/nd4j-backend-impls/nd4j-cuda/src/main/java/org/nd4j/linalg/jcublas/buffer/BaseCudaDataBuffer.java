@@ -479,14 +479,10 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     }
 
     @Override
-    public String getUtf8(long i) {
-        throw new UnsupportedOperationException();
-    }
+    public abstract String getUtf8(long i);
 
     @Override
-    public String[] asUtf8() {
-        throw new UnsupportedOperationException();
-    }
+    public abstract String[] asUtf8();
 
     @Override
     public void put(long i, String element) {

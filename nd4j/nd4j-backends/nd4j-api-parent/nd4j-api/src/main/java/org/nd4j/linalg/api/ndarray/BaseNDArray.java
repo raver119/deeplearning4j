@@ -5492,7 +5492,7 @@ public abstract class BaseNDArray implements INDArray, Iterable {
 
     @Override
     public boolean isS() {
-        return dataType() == DataType.UTF8;
+        return dataType().isStringType();
     }
 
     @Override

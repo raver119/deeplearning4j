@@ -191,4 +191,14 @@ public class CudaIntDataBuffer extends BaseCudaDataBuffer {
         }
         setData(arr);
     }
+
+    @Override
+    public String getUtf8(long i) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String[] asUtf8() {
+        throw new UnsupportedOperationException();
+    }
 }

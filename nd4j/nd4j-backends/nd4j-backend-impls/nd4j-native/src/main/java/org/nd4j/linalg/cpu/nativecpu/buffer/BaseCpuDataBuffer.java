@@ -66,17 +66,17 @@ public abstract class BaseCpuDataBuffer extends BaseDataBuffer implements Deallo
 
     @Override
     public String[] asUtf8() {
-        return new String[0];
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void put(long i, String element) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long byteLength() {
-        return 0;
+        return length * dataType().width();
     }
 
     @Override

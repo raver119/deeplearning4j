@@ -195,6 +195,14 @@ public class CudaHalfDataBuffer extends BaseCudaDataBuffer {
 
     }
 
+    @Override
+    public String getUtf8(long i) {
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public String[] asUtf8() {
+        throw new UnsupportedOperationException();
+    }
 
 }

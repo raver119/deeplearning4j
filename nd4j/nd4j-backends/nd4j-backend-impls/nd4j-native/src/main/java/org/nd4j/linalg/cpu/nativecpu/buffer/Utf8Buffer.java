@@ -174,6 +174,16 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
         return bytesLast;
     }
 
+    @Override
+    public String[] asUtf8() {
+        val result = new String[(int) length()];
+
+        for (int e = 0; e < length; e++)
+            result[e] = getString(e);
+
+        return result;
+    }
+
     public String getString(long index) {
         if (index > length())
             throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + length() + "]");

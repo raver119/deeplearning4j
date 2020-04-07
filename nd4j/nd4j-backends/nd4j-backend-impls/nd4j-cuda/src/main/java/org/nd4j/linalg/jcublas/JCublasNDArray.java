@@ -747,12 +747,15 @@ public class JCublasNDArray extends BaseNDArray {
 
             val numWords = this.length();
             val ub = (CudaUtf8Buffer) buffer;
+            ub.getOpaqueDataBuffer().syncToPrimary();
+
             // writing length first
             val t = length();
             val ptr = (BytePointer) ub.pointer();
+            val bl = ub.byteLength();
 
             // now write all strings as bytes
-            for (int i = 0; i < ub.length(); i++) {
+            for (int i = 0; i < bl; i++) {
                 dos.writeByte(ptr.get(i));
             }
 
