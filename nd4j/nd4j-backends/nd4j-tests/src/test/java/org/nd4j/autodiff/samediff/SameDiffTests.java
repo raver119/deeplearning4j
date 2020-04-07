@@ -1083,7 +1083,7 @@ public class SameDiffTests extends BaseNd4jTest {
 
         SDVariable out = sd.nn().batchNorm(sdInput, sdMean, sdVar, sdGamma, sdBeta,
                 0.0, 1);
-        out = sd.f().tanh(out);
+        out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
         assertArrayEquals(new long[]{1, 10}, outArr.shape());
@@ -1411,7 +1411,7 @@ public class SameDiffTests extends BaseNd4jTest {
         for (int i = 0; i <= 2; i++) {
             SameDiff sd = SameDiff.create();
             SDVariable in = sd.var("in", Nd4j.create(2, 3));
-            SDVariable expanded = sd.f().expandDims(in, i);
+            SDVariable expanded = sd.expandDims(in, i);
 
             INDArray out = expanded.eval();
             switch (i) {
@@ -1668,7 +1668,7 @@ public class SameDiffTests extends BaseNd4jTest {
 
                 SameDiff sd = SameDiff.create();
                 SDVariable in = sd.var("in", inArr);
-                SDVariable expand = sd.f().expandDims(in, i);
+                SDVariable expand = sd.expandDims(in, i);
 
                 INDArray out = expand.eval();
 
@@ -1709,7 +1709,7 @@ public class SameDiffTests extends BaseNd4jTest {
 
                 SameDiff sd = SameDiff.create();
                 SDVariable in = sd.var("in", inArr);
-                SDVariable squeeze = sd.f().squeeze(in, i);
+                SDVariable squeeze = sd.squeeze(in, i);
 
                 INDArray out = squeeze.eval();
 

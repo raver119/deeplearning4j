@@ -3128,11 +3128,12 @@ public abstract class SDBaseOps {
      *
      * @param name   Name of the output variable
      * @param x   Input variable
-     * @param dimensions    Dimensions to reduce over. If dimensions are not specified, full array reduction is performed
+     * @param dimensions
+     * Dimensions to reduce over. If dimensions are not specified, full array reduction is performed
      * @return Output variable: reduced array of rank (input rank - num dimensions)
      */
     public SDVariable any(String name, SDVariable x, int... dimensions){
-        validateBool("any", x);
+        validateNumerical("any", x);
         SDVariable ret = f().any(x, dimensions);
         return updateVariableNameAndReference(ret, name);
     }
@@ -3155,7 +3156,7 @@ public abstract class SDBaseOps {
      * @return Output variable: reduced array of rank (input rank - num dimensions)
      */
     public SDVariable all(String name, SDVariable x, int... dimensions){
-        validateBool("all", x);
+        validateNumerical("all", x);
         SDVariable ret = f().all(x, dimensions);
         return updateVariableNameAndReference(ret, name);
     }
