@@ -522,7 +522,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable depthToSpace(SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -540,7 +540,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable depthToSpace(String name, SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -967,7 +967,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize  Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable spaceToDepth(SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -985,7 +985,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize  Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable spaceToDepth(String name, SDVariable x, int blockSize, DataFormat dataFormat) {

@@ -590,26 +590,24 @@ public class SDLinalg extends SDOps {
    * Switch op forwards input to one of two outputs based on the value of a predicate.<br>
    *
    * @param input  (NUMERIC type)
-   * @param predicate  (NUMERIC type)
-   * @return output Output tensor (NUMERIC type)
+   * @param predicate  (BOOL type)
    */
   public SDVariable[] switchOp(SDVariable input, SDVariable predicate) {
     SDValidation.validateNumerical("switchOp", "input", input);
-    SDValidation.validateNumerical("switchOp", "predicate", predicate);
+    SDValidation.validateBool("switchOp", "predicate", predicate);
     return new org.nd4j.linalg.api.ops.impl.controlflow.compat.Switch(sd,input, predicate).outputVariables();
   }
 
   /**
    * Switch op forwards input to one of two outputs based on the value of a predicate.<br>
    *
-   * @param names name May be null. Name for the output variable
+   * @param names names May be null. Arrays of names for the output variables.
    * @param input  (NUMERIC type)
-   * @param predicate  (NUMERIC type)
-   * @return output Output tensor (NUMERIC type)
+   * @param predicate  (BOOL type)
    */
   public SDVariable[] switchOp(String[] names, SDVariable input, SDVariable predicate) {
     SDValidation.validateNumerical("switchOp", "input", input);
-    SDValidation.validateNumerical("switchOp", "predicate", predicate);
+    SDValidation.validateBool("switchOp", "predicate", predicate);
     SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.controlflow.compat.Switch(sd,input, predicate).outputVariables();
     return sd.updateVariableNamesAndReferences(out, names);
   }
