@@ -113,11 +113,11 @@ public class MiscOpValidation extends BaseOpValidation {
                         name = "rdiv";
                         break;
                     case 6:
-                        bcOp = sd.f().floorDiv(in3, in2);
+                        bcOp = sd.scalarFloorDiv(in3, in2);
                         name = "floordiv";
                         break;
                     case 7:
-                        bcOp = sd.f().floorMod(in3, in2);
+                        bcOp = sd.scalarFloorMod(in3, in2);
                         name = "floormod";
                         if(OpValidationSuite.IGNORE_FAILING){
                             //https://github.com/deeplearning4j/deeplearning4j/issues/5976
@@ -201,11 +201,11 @@ public class MiscOpValidation extends BaseOpValidation {
                         name = "rdiv";
                         break;
                     case 6:
-                        bcOp = sd.f().floorDiv(in3, in2);
+                        bcOp = sd.scalarFloorDiv(in3, in2);
                         name = "floordiv";
                         break;
                     case 7:
-                        bcOp = sd.f().floorMod(in3, in2);
+                        bcOp = sd.scalarFloorMod(in3, in2);
                         name = "floormod";
                         if(OpValidationSuite.IGNORE_FAILING){
                             //https://github.com/deeplearning4j/deeplearning4j/issues/5976
@@ -300,11 +300,11 @@ public class MiscOpValidation extends BaseOpValidation {
                         name = "rdiv";
                         break;
                     case 6:
-                        bcOp = sd.f().floorDiv(in3, in2);
+                        bcOp = sd.scalarFloorDiv(in3, in2);
                         name = "floordiv";
                         break;
                     case 7:
-                        bcOp = sd.f().floorMod(in3, in2);
+                        bcOp = sd.scalarFloorMod(in3, in2);
                         name = "floormod";
                         if(OpValidationSuite.IGNORE_FAILING){
                             //https://github.com/deeplearning4j/deeplearning4j/issues/5976

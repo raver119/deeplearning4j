@@ -538,9 +538,9 @@ public class SDVariable implements Serializable {
      * @param mMulTranspose Matrix transpose configuration
      * @return Output variable (result of mmul)
      */
-    public SDVariable mmul(String name, SDVariable other, @NonNull MMulTranspose mMulTranspose) {
+    /*public SDVariable mmul(String name, SDVariable other, @NonNull MMulTranspose mMulTranspose) {
         return sameDiff.mmul(name, this, other, mMulTranspose.isTransposeA(), mMulTranspose.isTransposeB(), mMulTranspose.isTransposeResult());
-    }
+    }*/
 
 
     /**
@@ -1431,7 +1431,7 @@ public class SDVariable implements Serializable {
     }
 
     public SDVariable permute(SDVariable dimensions){
-        return sameDiff.permute(null, this, dimensions);
+        return sameDiff.permute( this, dimensions);
     }
 
     /**
