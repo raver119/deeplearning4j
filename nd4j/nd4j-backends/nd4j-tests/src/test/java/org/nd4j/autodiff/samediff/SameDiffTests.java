@@ -2799,6 +2799,27 @@ public class SameDiffTests extends BaseNd4jTest {
     }
 
     @Test
+    public void testNonScalarOutput5() {
+        SameDiff sd = SameDiff.create();
+        SDVariable linspace = sd.linspace(DataType.DOUBLE, 1, 75, 75);
+        SDVariable a = sd.reshape("a", linspace, 15, 5);
+        SDVariable b = sd.var("b", Nd4j.ones(DataType.DOUBLE, 15, 5));
+
+        SDVariable out = a.mul(b);
+        out.markAsLoss();
+        out.eval();
+
+        out.eval();
+        sd.grad("a").eval();
+
+        String err = OpValidation.validate(new TestCase(sd)
+                .testFlatBufferSerialization(TestCase.TestSerialization.BOTH)
+                .gradientCheck(true));
+
+        assertNull(err);
+    }
+
+    @Test
     public void testSameDiffBackprop1() {
         SameDiff sd = SameDiff.create();
         final SDVariable a = sd.var("a", Nd4j.rand(4, 4));
