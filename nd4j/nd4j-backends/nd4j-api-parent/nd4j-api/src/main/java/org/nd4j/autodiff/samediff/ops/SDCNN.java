@@ -522,7 +522,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable depthToSpace(SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -540,7 +540,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable depthToSpace(String name, SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -754,6 +754,33 @@ public class SDCNN extends SDOps {
   }
 
   /**
+   * Max pooling with argmax operation <br>
+   *
+   * @param input the input to max pooling 2d operation - 4d CNN (image) activations in NCHW format
+   *                         (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
+   * @param Pooling2DConfig Configuration Object
+   */
+  public SDVariable[] maxPoolWithArgmax(SDVariable input, Pooling2DConfig Pooling2DConfig) {
+    SDValidation.validateNumerical("maxPoolWithArgmax", "input", input);
+    return new org.nd4j.linalg.api.ops.impl.layers.convolution.MaxPoolWithArgmax(sd,input, Pooling2DConfig).outputVariables();
+  }
+
+  /**
+   * Max pooling with argmax operation <br>
+   *
+   * @param names names May be null. Arrays of names for the output variables.
+   * @param input the input to max pooling 2d operation - 4d CNN (image) activations in NCHW format
+   *                         (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
+   * @param Pooling2DConfig Configuration Object
+   */
+  public SDVariable[] maxPoolWithArgmax(String[] names, SDVariable input,
+      Pooling2DConfig Pooling2DConfig) {
+    SDValidation.validateNumerical("maxPoolWithArgmax", "input", input);
+    SDVariable[] out =  new org.nd4j.linalg.api.ops.impl.layers.convolution.MaxPoolWithArgmax(sd,input, Pooling2DConfig).outputVariables();
+    return sd.updateVariableNamesAndReferences(out, names);
+  }
+
+  /**
    * 2D Convolution layer operation - max pooling 2d <br>
    *
    * @param input the input to max pooling 2d operation - 4d CNN (image) activations in NCHW format
@@ -940,7 +967,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize  Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable spaceToDepth(SDVariable x, int blockSize, DataFormat dataFormat) {
@@ -958,7 +985,7 @@ public class SDCNN extends SDOps {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize  Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public SDVariable spaceToDepth(String name, SDVariable x, int blockSize, DataFormat dataFormat) {
