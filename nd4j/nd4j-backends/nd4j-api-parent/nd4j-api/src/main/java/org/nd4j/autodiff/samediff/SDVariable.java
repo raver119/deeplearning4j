@@ -244,7 +244,7 @@ public class SDVariable implements Serializable {
      * @return new variable
      */
     public SDVariable assign(Number value){
-        return sameDiff.scalarSet(this, value);
+        return sameDiff.scalarSet(this, value.doubleValue());
     }
 
     /**
@@ -537,9 +537,9 @@ public class SDVariable implements Serializable {
      * @param mMulTranspose Matrix transpose configuration
      * @return Output variable (result of mmul)
      */
-    public SDVariable mmul(String name, SDVariable other, @NonNull MMulTranspose mMulTranspose) {
+    /*public SDVariable mmul(String name, SDVariable other, @NonNull MMulTranspose mMulTranspose) {
         return sameDiff.mmul(name, this, other, mMulTranspose);
-    }
+    }*/
 
 
     /**
@@ -1402,18 +1402,6 @@ public class SDVariable implements Serializable {
      * @param newShape New shape for variable
      * @return Output variable
      */
-    public SDVariable reshape(int... newShape){
-        return sameDiff.reshape(this, newShape);
-    }
-
-    /**
-     * Reshape the current variable to the specified shape. The output variable will have the same values as the
-     * input, but with the specified shape.<br>
-     * Note that prod(shape) must match length(input) == prod(input.shape)
-     *
-     * @param newShape New shape for variable
-     * @return Output variable
-     */
     public SDVariable reshape(long... newShape){
         return sameDiff.reshape(this, newShape);
     }
@@ -1430,7 +1418,7 @@ public class SDVariable implements Serializable {
     }
 
     public SDVariable permute(SDVariable dimensions){
-        return sameDiff.permute(null, this, dimensions);
+        return sameDiff.permute( this, dimensions);
     }
 
     /**
