@@ -75,7 +75,7 @@ public class ArrayOptionsTests extends BaseNd4jTest {
     public void testDataTypesToFromLong(){
 
         for(DataType dt : DataType.values()){
-            if(dt == DataType.UNKNOWN)
+            if(dt == DataType.UNKNOWN || dt.isStringType())
                 continue;
             String s = dt.toString();
             long l = 0;

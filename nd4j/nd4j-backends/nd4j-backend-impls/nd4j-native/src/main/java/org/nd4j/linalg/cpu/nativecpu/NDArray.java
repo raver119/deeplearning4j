@@ -511,9 +511,10 @@ public class NDArray extends BaseNDArray {
             // writing length first
             val t = length();
             val ptr = (BytePointer) ub.pointer();
+            val ub_len = ub.byteLength();
 
             // now write all strings as bytes
-            for (int i = 0; i < ub.length(); i++) {
+            for (int i = 0; i < ub_len; i++) {
                 dos.writeByte(ptr.get(i));
             }
 

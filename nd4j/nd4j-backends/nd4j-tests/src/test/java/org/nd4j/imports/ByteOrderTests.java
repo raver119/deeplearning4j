@@ -20,6 +20,7 @@ import com.google.flatbuffers.FlatBufferBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -165,6 +166,7 @@ public class ByteOrderTests  extends BaseNd4jTest {
     }
 
     @Test
+    @Ignore
     public void testStringEncoding_1() {
         val strings = Arrays.asList("alpha", "beta", "gamma");
         val vector = Nd4j.create(strings, 3);

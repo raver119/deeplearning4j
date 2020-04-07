@@ -40,7 +40,7 @@ public class DataTypeTest extends BaseNd4jTest {
     @Test
     public void testDataTypes() throws Exception {
         for (val type : DataType.values()) {
-            if (DataType.UTF8.equals(type) || DataType.UNKNOWN.equals(type) || DataType.COMPRESSED.equals(type))
+            if (type.isStringType() || DataType.UNKNOWN.equals(type) || DataType.COMPRESSED.equals(type))
                 continue;
 
             val in1 = Nd4j.ones(type, 10, 10);

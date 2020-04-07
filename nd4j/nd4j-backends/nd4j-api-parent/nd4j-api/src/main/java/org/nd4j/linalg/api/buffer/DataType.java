@@ -63,6 +63,8 @@ public enum DataType {
 
     BOOL,
     UTF8,
+    UTF16,
+    UTF32,
     COMPRESSED,
     BFLOAT16,
     UINT16,
@@ -93,6 +95,9 @@ public enum DataType {
             case 13: return UINT32;
             case 14: return UINT64;
             case 17: return BFLOAT16;
+            case 50: return UTF8;
+            case 51: return UTF16;
+            case 52: return UTF32;
             default: throw new UnsupportedOperationException("Unknown data type: [" + type + "]");
         }
     }
@@ -113,6 +118,8 @@ public enum DataType {
             case UINT64: return 14;
             case BFLOAT16: return 17;
             case UTF8: return 50;
+            case UTF16: return 51;
+            case UTF32: return 52;
             default: throw new UnsupportedOperationException("Non-covered data type: [" + this + "]");
         }
     }
@@ -131,13 +138,17 @@ public enum DataType {
         return this == LONG || this == INT || this == SHORT || this == UBYTE || this == BYTE || this == UINT16 || this == UINT32 || this == UINT64;
     }
 
+    public boolean isStringType() {
+        return this == UTF8 || this == UTF16 || this == UTF32;
+    }
+
     /**
      * Return true if the value is numerical.<br>
      * Equivalent to {@code this != UTF8 && this != COMPRESSED && this != UNKNOWN}<br>
      * Note: Boolean values are considered numerical (0/1)<br>
      */
     public boolean isNumerical(){
-        return this != UTF8 && this != BOOL && this != COMPRESSED && this != UNKNOWN;
+        return !this.isStringType() && this != BOOL && this != COMPRESSED && this != UNKNOWN;
     }
 
     /**
@@ -220,6 +231,8 @@ public enum DataType {
             case BOOL:
                 return 1;
             case UTF8:
+            case UTF16:
+            case UTF32:
             case COMPRESSED:
             case UNKNOWN:
             default:

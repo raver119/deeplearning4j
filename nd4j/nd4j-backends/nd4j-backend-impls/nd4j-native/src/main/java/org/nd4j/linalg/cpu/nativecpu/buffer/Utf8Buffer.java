@@ -164,12 +164,23 @@ public class Utf8Buffer extends BaseCpuDataBuffer {
         return getString(i);
     }
 
+    @Override
+    public long byteLength() {
+        val headerPointer = new LongPointer(this.ptrDataBuffer.primaryBuffer());
+        val headerLen = length();
+
+        // buffer byteLen is a sum of header (which is long) and data (which is byte)
+        val bytesLast = headerPointer.get(headerLen) + (headerLen + 1 ) * 8;
+        return bytesLast;
+    }
+
     public String getString(long index) {
         if (index > length())
             throw new IllegalArgumentException("Requested index [" + index + "] is above actual number of words stored: [" + length() + "]");
 
-        val headerPointer = new LongPointer(this.pointer);
-        val dataPointer = (BytePointer) (this.pointer);
+        val _pointer = this.ptrDataBuffer.primaryBuffer();
+        val headerPointer = new LongPointer(_pointer);
+        val dataPointer = new BytePointer(_pointer);
 
         val start = headerPointer.get(index);
         val end = headerPointer.get(index + 1);

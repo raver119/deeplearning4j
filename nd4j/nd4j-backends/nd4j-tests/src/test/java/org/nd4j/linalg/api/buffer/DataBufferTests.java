@@ -284,7 +284,7 @@ public class DataBufferTests extends BaseNd4jTest {
 
         for (String sourceType : new String[]{"int", "long", "float", "double", "short", "byte", "boolean"}) {
             for (DataType dt : DataType.values()) {
-                if (dt == DataType.UTF8 || dt == DataType.COMPRESSED || dt == DataType.UNKNOWN) {
+                if (dt.isStringType() || dt == DataType.COMPRESSED || dt == DataType.UNKNOWN) {
                     continue;
                 }
 

@@ -7460,11 +7460,11 @@ public class Nd4jTestsC extends BaseNd4jTest {
     @Test
     public void testEmptyCasting(){
         for(val from : DataType.values()) {
-            if (from == DataType.UTF8 || from == DataType.UNKNOWN || from == DataType.COMPRESSED)
+            if (from.isStringType() || from == DataType.UNKNOWN || from == DataType.COMPRESSED)
                 continue;
 
             for(val to : DataType.values()){
-                if (to == DataType.UTF8 || to == DataType.UNKNOWN || to == DataType.COMPRESSED)
+                if (to.isStringType() || to == DataType.UNKNOWN || to == DataType.COMPRESSED)
                     continue;
 
                 INDArray emptyFrom = Nd4j.empty(from);
