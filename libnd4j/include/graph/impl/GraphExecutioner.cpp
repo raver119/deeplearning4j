@@ -837,7 +837,7 @@ uint8_t* readFlatBuffers(const char * filename) {
     int cnt = 0;
     int b = 0;
     while (cnt < fileLen) {
-        b = fread(data + cnt, 1, 1, in);
+        b = fread(data + cnt, 1, 65536, in);
 
         cnt += b;
     }
