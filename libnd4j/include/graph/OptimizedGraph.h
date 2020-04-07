@@ -108,7 +108,7 @@ namespace sd {
             * @param operation gather
             * @return stop iterating
             */
-            bool      topolSearch(const int startNode, const std::unordered_map<int, NodeInfo>& nodesConnections, std::vector<std::vector<OpSequence>>& opSeq) const;
+            bool      topolSearch(const int startNode, std::unordered_map<int, NodeInfo>& nodesConnections, std::vector<std::vector<OpSequence>>& opSeq) const;
             /*
             * Optimized graph analysis prototyping, gather nodes infor
             * @param reference to node information collector
@@ -154,7 +154,7 @@ namespace sd {
 
             void setInBranching(bool bValue) { bInBranching = bValue; }
             void setOutBranching(bool bValue) { bOutBranching = bValue; }
-            void setProcessed() { bProcessed = true; }
+            void setProcessed(bool bValue = true) { bProcessed = bValue; }
 
             void reset() { sConnections.clear(); bProcessed = bInBranching = bOutBranching = false; nLayer = 0; nSequence = -1; }
 
