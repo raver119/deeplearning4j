@@ -787,10 +787,10 @@ public abstract class SDBaseOps {
      * @param number Number of values to generate
      * @return SDVariable with linearly spaced elements
      */
-    // TODO: fix or remove, currently it is internal recursion
-    /*public SDVariable linspace(DataType dataType, double start, double stop, long number) {
-        return linspace(dataType, start, stop, number);
-    }*/
+    public SDVariable linspace(DataType dataType, double start, double stop, long number) {
+        SDVariable ret = f().linspace(sd().constant(start), sd().constant(stop), sd().constant(number), dataType);
+        return updateVariableNameAndReference(ret, null);
+    }
 
     /**
      * Create a new 1d array with values evenly spaced between values 'start' and 'stop'
