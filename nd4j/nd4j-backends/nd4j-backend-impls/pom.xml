@@ -56,9 +56,7 @@
 
 
     <build>
-        <!--
-        <testSourceDirectory>../nd4j-tests/src/test/java</testSourceDirectory>
-        -->
+
         <plugins>
             <!-- Skip execution of Javadoc since some versions run out of memory -->
             <plugin>
@@ -174,6 +172,17 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>libnd4j-auora</id>
+            <activation>
+                <property>
+                    <name>libnd4j.aurora</name>
+                </property>
+            </activation>
+            <modules>
+                <module>nd4j-aurora</module>
+            </modules>
+        </profile>
         <profile>
             <id>cpu</id>
             <activation>
