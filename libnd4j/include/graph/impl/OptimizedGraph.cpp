@@ -141,7 +141,7 @@ namespace sd {
             return true;
         }
 
-        bool  OptimizedGraph::topolSearch(const int startNode, const std::unordered_map<int, NodeInfo>& collector,
+        bool  OptimizedGraph::topolSearch(const int startNode, std::unordered_map<int, NodeInfo>& collector,
                                            std::vector<std::vector<OpSequence> >& opSeq) const {
             
             // double check to avoid unstable behavior
@@ -158,14 +158,16 @@ namespace sd {
 
                     if (itChild != collector.end()) {
                         // if the child is in-branching node it will be treated as start node
-                        if (itChild->second.isInBranching()) {
+                        // skip processed nodes
+                        if (itChild->second.isInBranching() || itChild->second.isProcessed()) { 
                             continue;
                         }
                         // put operation to OpSequence container
                         const auto it = originalGraph().unmappedNodes().find(itNodes);
-                        const auto& child = itChild->second;
+                        auto& child = itChild->second;
                         // the layer and sequence are pre-defined in layersSeqDefine method
                         opSeq[child.layer()][child.sequence()].append(it->second.customOp(), it->second.contextPrototype());
+                        child.setProcessed();
                         // go to the child node connections
                         topolSearch(itNodes, collector, opSeq);
                     }
@@ -205,14 +207,25 @@ namespace sd {
             if(!initOpSeqContainer(layersMaxSeq, vOpSeq))
                throw std::runtime_error("OptimizedGraph::initOpSeqContainer() - cannot initialize OpSequence, not all nodes properly prototyped!");
             
+            // re-init proceed NodeInfo member to avoid append sequence several times
+            for(auto& it : collector){
+                it.second.setProcessed(false);
+            }  
+
             // combine start nodes and in-branching nodes
             startNodes.insert(inBranching.begin(), inBranching.end());
+            
             // iterate via start and in-branching nodes
             for (const auto& id : startNodes) {
                  
                 const auto it = originalGraph().unmappedNodes().find(id);
-                const auto& nodeInfo = collector[id];
-                vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
+                auto& nodeInfo = collector[id];
+                // check to avoid node processing twice
+                if(!nodeInfo.isProcessed()){
+                   vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
+                   nodeInfo.setProcessed();
+                }
+                
                 // search in depth via connections of "start" node
                 if(!topolSearch(id, collector, vOpSeq))
                     throw std::runtime_error("OptimizedGraph::topolSearch() - cannot run topological search, inputs incorrect!");
@@ -252,10 +265,14 @@ namespace sd {
             auto layerFound = layersMaxSeq.find(layer);
             if(layerFound == layersMaxSeq.end()){
                 // if layer was not treated before, create pair for it
-                layersMaxSeq[layer] = startSeq;
+                layersMaxSeq[layer] = 0;
             }
             else{
                 // if node sequence position was not checked use it for max sequence selection
+                // double check if input sequence do not jump max value twice
+                if(startSeq > (layerFound->second + 1))
+                   startSeq = layerFound->second + 1;
+                   
                 layerFound->second = (layerFound->second < startSeq && parent->second.sequence() < 0) ? startSeq : layerFound->second;
             }
 
@@ -282,13 +299,14 @@ namespace sd {
                 auto child = collection.find(id);
                 if(child == collection.end())
                    return false;
-
+                
                 // in case parent was not out-branching node but child is in branching it will be put to next layer
                 if (!parent->second.isOutBranching() && child->second.isInBranching())
                      layer++;
+                
                 // move in depth of connections
                 layersSeqDefine(collection, id, layer, seq, layersMaxSeq);
-                // increment sequence as childs are on the one layer
+                // increment sequence as childs are on the one layer in case if child was not processed earlier 
                 seq++;
             }
 
