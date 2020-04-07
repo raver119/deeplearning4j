@@ -685,7 +685,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .isSameMode(false)
                 .build();
 
-        SDVariable out = sd.f().deconv2d(vars, deconv);
+        SDVariable out = sd.cnn().deconv2d(in, w, b, deconv);
         out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
@@ -733,7 +733,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .isSameMode(false)
                 .build();
 
-        SDVariable out = sd.f().conv2d(vars, c);
+        SDVariable out = sd.cnn().conv2d(in, w, b, c);
         out = sd.math().tanh(out);
 
         INDArray outArr = out.eval();
@@ -767,7 +767,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .isSameMode(true)
                 .build();
 
-        SDVariable[] results = sd.f().maxPoolWithArgmax(/*new String[]{"out","idx"},*/ in, pooling2DConfig);
+        SDVariable[] results = sd.cnn().maxPoolWithArgmax(in, pooling2DConfig);
         assertArrayEquals(inArr.shape(), results[0].eval().shape());
         assertArrayEquals(inArr.shape(), results[1].eval().shape());
     }
