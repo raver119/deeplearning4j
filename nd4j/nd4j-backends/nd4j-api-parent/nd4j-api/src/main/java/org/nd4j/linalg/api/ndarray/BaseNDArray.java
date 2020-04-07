@@ -3697,9 +3697,6 @@ public abstract class BaseNDArray implements INDArray, Iterable {
     public INDArray reshape(char order, boolean enforceView, long... newShape) {
         Nd4j.getCompressor().autoDecompress(this);
 
-        if(this.elementWiseStride() > 1) {
-            throw new IllegalStateException("Element wise stride is off");
-        }
         // special case for empty reshape
         if (this.length() < 2 && (newShape == null || newShape.length == 0) && this.elementWiseStride() == 1) {
             return Nd4j.create(this.data(), new int[0], new int[0], 0);

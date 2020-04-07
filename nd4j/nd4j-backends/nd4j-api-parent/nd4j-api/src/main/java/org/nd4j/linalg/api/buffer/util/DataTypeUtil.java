@@ -40,17 +40,26 @@ public class DataTypeUtil {
      */
     public static int lengthForDtype(DataType type) {
         switch (type) {
+            case LONG:
+            case UINT64:
             case DOUBLE:
                 return 8;
             case FLOAT:
-                return 4;
             case INT:
+            case UINT32:
                 return 4;
+            case UINT16:
+            case SHORT:
+            case BFLOAT16:
             case HALF:
                 return 2;
-            case LONG:
-                return 8;
+            case BOOL:
+            case UTF8:
+            case BYTE:
+            case UBYTE:
+                return 1;
             case COMPRESSED:
+            case UNKNOWN:
             default:
                 throw new IllegalArgumentException("Illegal opType for length");
 

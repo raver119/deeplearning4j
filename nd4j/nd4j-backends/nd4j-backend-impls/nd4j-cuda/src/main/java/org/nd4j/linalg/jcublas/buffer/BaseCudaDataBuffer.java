@@ -461,11 +461,41 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         long stringByteLength = 0;
         for(int i = 0; i < length(); i++) {
             offsetBuffer.put(i,headerPointer.get(i));
-            stringByteLength += getString(i).length();
+            stringByteLength += getUtf8(i).length();
         }
 
         offsetBuffer.put(length(),stringByteLength);
         return offsetBuffer;
+    }
+
+    @Override
+    public boolean[] asBoolean() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean getBool(long i) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getUtf8(long i) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String[] asUtf8() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void put(long i, String element) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long byteLength() {
+        return length() * DataTypeUtil.lengthForDtype(dataType());
     }
 
     @Override
