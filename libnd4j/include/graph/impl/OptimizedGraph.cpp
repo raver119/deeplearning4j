@@ -158,8 +158,7 @@ namespace sd {
 
                     if (itChild != collector.end()) {
                         // if the child is in-branching node it will be treated as start node
-                        // skip processed nodes
-                        if (itChild->second.isInBranching() || itChild->second.isProcessed()) { 
+                        if (itChild->second.isInBranching() || itChild->second.isProcessed()) { // proceed
                             continue;
                         }
                         // put operation to OpSequence container
@@ -206,26 +205,23 @@ namespace sd {
             std::vector<std::vector<OpSequence>> vOpSeq;
             if(!initOpSeqContainer(layersMaxSeq, vOpSeq))
                throw std::runtime_error("OptimizedGraph::initOpSeqContainer() - cannot initialize OpSequence, not all nodes properly prototyped!");
-            
+
+            // combine start nodes and in-branching nodes
+            startNodes.insert(inBranching.begin(), inBranching.end());
             // re-init proceed NodeInfo member to avoid append sequence several times
             for(auto& it : collector){
                 it.second.setProcessed(false);
             }  
 
-            // combine start nodes and in-branching nodes
-            startNodes.insert(inBranching.begin(), inBranching.end());
-            
             // iterate via start and in-branching nodes
             for (const auto& id : startNodes) {
                  
                 const auto it = originalGraph().unmappedNodes().find(id);
                 auto& nodeInfo = collector[id];
-                // check to avoid node processing twice
                 if(!nodeInfo.isProcessed()){
                    vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
                    nodeInfo.setProcessed();
-                }
-                
+                }                
                 // search in depth via connections of "start" node
                 if(!topolSearch(id, collector, vOpSeq))
                     throw std::runtime_error("OptimizedGraph::topolSearch() - cannot run topological search, inputs incorrect!");
@@ -266,10 +262,11 @@ namespace sd {
             if(layerFound == layersMaxSeq.end()){
                 // if layer was not treated before, create pair for it
                 layersMaxSeq[layer] = 0;
+                // set sequence value to 0, as this is first sequence in layer
+                startSeq = 0;
             }
             else{
                 // if node sequence position was not checked use it for max sequence selection
-                // double check if input sequence do not jump max value twice
                 if(startSeq > (layerFound->second + 1))
                    startSeq = layerFound->second + 1;
                    
@@ -292,7 +289,12 @@ namespace sd {
                 layer++;
             
             // childs sequence position have to start from max defined sequence position in layer
-            int seq = layersMaxSeq[layer];
+            // or if it is first node in layer from 0
+            int seq = (layersMaxSeq.find(layer) == layersMaxSeq.end()) ? 0 : layersMaxSeq[layer];
+            // if parent is out-branching node sequence have to be increment 
+            // on the next stage the sequence value will be double checked with max per layer
+            seq = parent->second.isOutBranching() ? seq + 1 : seq;
+            
             // loop via childs (connected nodes)
             for (const auto& id : parent->second.connections()) {
                 // double check to avoid unstable behavior
