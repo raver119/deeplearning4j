@@ -32,3 +32,4 @@ An example of GPU "CC" or compute capability is 61 for Titan X Pascal.
 We have separate repository with various examples available: https://github.com/eclipse/deeplearning4j-examples
 
 In the examples repo, you'll also find a tutorial series in Zeppelin: https://github.com/eclipse/deeplearning4j-examples/tree/master/tutorials
+
