@@ -1446,7 +1446,7 @@
                                                                                 };\
                                                                                 REGISTER_H(NAME)
 
-#define DECLARE_BROADCASTABLE_BOOL_OP(NAME,TARGS, IARGS)                        class ND4J_EXPORT NAME: public sd::ops::BroadcastableBoolOp { \
+#define DECLARE_BROADCASTABLE_BOOL_OP(NAME,TARGS, IARGS)                        class SD_EXPORT NAME: public sd::ops::BroadcastableBoolOp { \
                                                                                 protected: \
                                                                                     void registerTypes(); \
                                                                                     Nd4jStatus validateAndExecute(Context& block); \
