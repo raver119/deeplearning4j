@@ -942,11 +942,7 @@ static void parallel_batchedGemm3(const NDArray* vA, const NDArray* vB, NDArray*
     Nd4jLong* bStrides = vB->stridesOf();
     const Nd4jLong* cStrides = vC->stridesOf();
 
-    const bool betaPersent = beta;
-
-    const Nd4jLong* aShapeInfo = vA->getShapeInfo();
-    const Nd4jLong* bShapeInfo = vB->getShapeInfo();
-    const Nd4jLong* cShapeInfo = vC->getShapeInfo();
+    const char output_order = vC->ordering();
 
     const int aRank = vA->rankOf();
     const int bRank = vB->rankOf();
