@@ -439,7 +439,7 @@ public class SDLinalg extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Merged input tensors (NUMERIC type)
    */
-  public SDVariable merge(SDVariable[] inputs) {
+  public SDVariable merge(SDVariable... inputs) {
     SDValidation.validateNumerical("merge", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     return new org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge(sd,inputs).outputVariable();
@@ -452,7 +452,7 @@ public class SDLinalg extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Merged input tensors (NUMERIC type)
    */
-  public SDVariable merge(String name, SDVariable[] inputs) {
+  public SDVariable merge(String name, SDVariable... inputs) {
     SDValidation.validateNumerical("merge", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge(sd,inputs).outputVariable();

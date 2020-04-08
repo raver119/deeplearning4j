@@ -37,12 +37,12 @@ public class SDBaseOps {
   /**
    * Boolean and array reduction operation, optionally along specified dimensions<br>
    *
-   * @param x Input variable (BOOL type)
+   * @param x Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public SDVariable all(SDVariable x, int... dimensions) {
-    SDValidation.validateBool("all", "x", x);
+    SDValidation.validateNumerical("all", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return new org.nd4j.linalg.api.ops.impl.reduce.bool.All(sd,x, dimensions).outputVariable();
   }
@@ -51,12 +51,12 @@ public class SDBaseOps {
    * Boolean and array reduction operation, optionally along specified dimensions<br>
    *
    * @param name name May be null. Name for the output variable
-   * @param x Input variable (BOOL type)
+   * @param x Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public SDVariable all(String name, SDVariable x, int... dimensions) {
-    SDValidation.validateBool("all", "x", x);
+    SDValidation.validateNumerical("all", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.reduce.bool.All(sd,x, dimensions).outputVariable();
     return sd.updateVariableNameAndReference(out, name);
@@ -65,12 +65,12 @@ public class SDBaseOps {
   /**
    * Boolean or array reduction operation, optionally along specified dimensions<br>
    *
-   * @param x  Input variable (BOOL type)
+   * @param x  Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public SDVariable any(SDVariable x, int... dimensions) {
-    SDValidation.validateBool("any", "x", x);
+    SDValidation.validateNumerical("any", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return new org.nd4j.linalg.api.ops.impl.reduce.bool.Any(sd,x, dimensions).outputVariable();
   }
@@ -79,12 +79,12 @@ public class SDBaseOps {
    * Boolean or array reduction operation, optionally along specified dimensions<br>
    *
    * @param name name May be null. Name for the output variable
-   * @param x  Input variable (BOOL type)
+   * @param x  Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public SDVariable any(String name, SDVariable x, int... dimensions) {
-    SDValidation.validateBool("any", "x", x);
+    SDValidation.validateNumerical("any", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.reduce.bool.Any(sd,x, dimensions).outputVariable();
     return sd.updateVariableNameAndReference(out, name);
@@ -2864,6 +2864,32 @@ public class SDBaseOps {
     SDValidation.validateNumerical("reverseSequence", "x", x);
     SDValidation.validateInteger("reverseSequence", "seq_lengths", seq_lengths);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(sd,x, seq_lengths, -1, 0).outputVariable();
+    return sd.updateVariableNameAndReference(out, name);
+  }
+
+  /**
+   * Element-wise scalar floor division operation: out = floorDiv(in, value).<br>
+   *
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Output variable (NUMERIC type)
+   */
+  public SDVariable scalarFloorDiv(SDVariable in, double value) {
+    SDValidation.validateNumerical("scalarFloorDiv", "in", in);
+    return new org.nd4j.linalg.api.ops.impl.scalar.ScalarDivision(sd,in, value).outputVariable();
+  }
+
+  /**
+   * Element-wise scalar floor division operation: out = floorDiv(in, value).<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Output variable (NUMERIC type)
+   */
+  public SDVariable scalarFloorDiv(String name, SDVariable in, double value) {
+    SDValidation.validateNumerical("scalarFloorDiv", "in", in);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.scalar.ScalarDivision(sd,in, value).outputVariable();
     return sd.updateVariableNameAndReference(out, name);
   }
 
