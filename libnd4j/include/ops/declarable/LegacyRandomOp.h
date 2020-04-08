@@ -41,8 +41,7 @@ namespace sd {
             template <typename T>
             Nd4jStatus validateAndExecute_(Context &block);
 
-            sd::ResultSet  execute(sd::graph::RandomGenerator& rng, std::initializer_list<NDArray*> inputs, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs, bool isInplace = false);
-            sd::ResultSet  execute(sd::graph::RandomGenerator& rng, std::vector<NDArray*>& inputs, std::vector<double>& tArgs, std::vector<int>& iArgs, bool isInplace = false);
+            sd::ResultSet  execute(sd::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs = {}, const std::vector<int>& iArgs = {}, const std::vector<sd::DataType>& dArgs = {}, bool isInplace = false);
 
             Nd4jStatus execute(Context* block) override;
 

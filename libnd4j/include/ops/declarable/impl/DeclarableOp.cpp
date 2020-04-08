@@ -880,17 +880,17 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = std::make_shared<Variable>(v);
-                var->markRemovable(false);
+                auto var = std::make_shared<Variable>(*v, "", cnt);
+
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
             }
 
             int et = 0;
             for (auto v: outputs) {
-                auto var = std::make_shared<Variable>(v);
-                var->markRemovable(false);
                 std::pair<int,int> pair(1, et++);
+                auto var = std::make_shared<Variable>(*v, "", pair.first, pair.second);
+
                 variableSpace.putVariable(pair, var);
             }
 

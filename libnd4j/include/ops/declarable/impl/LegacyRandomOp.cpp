@@ -342,7 +342,7 @@ namespace sd {
             } else if (DataTypeUtils::isZ(xType)) {
                 auto zShapeArr = INPUT_VARIABLE(0);
                 auto zShapeVector = zShapeArr->asVectorT<Nd4jLong>();
-                auto dtype = DataType::BFLOAT16;
+                auto dtype = block.numD() > 0 ? D_ARG(0) : sd::DataType::FLOAT32;
 
                 newShape = ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', zShapeVector);
                 return SHAPELIST(newShape);
@@ -354,14 +354,8 @@ namespace sd {
             return DeclarableOp::execute(block);
         }
 
-        sd::ResultSet  LegacyRandomOp::execute(sd::graph::RandomGenerator& rng, std::initializer_list<NDArray*> inputs, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs, bool isInplace) {
-            std::vector<NDArray*> ins(inputs);
-            std::vector<double> tas(tArgs);
-            std::vector<int> ias(iArgs);
-            return this->execute(rng, ins, tas, ias, isInplace);
-        }
 
-        sd::ResultSet  LegacyRandomOp::execute(sd::graph::RandomGenerator& rng, std::vector<NDArray*>& inputs, std::vector<double>& tArgs, std::vector<int>& iArgs, bool isInplace) {
+        sd::ResultSet  LegacyRandomOp::execute(sd::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs, const std::vector<int>& iArgs, const std::vector<sd::DataType>& dArgs, bool isInplace) {
             VariableSpace variableSpace;
             ResultSet arrayList;
             //ResultSet arrayList;
@@ -375,8 +369,8 @@ namespace sd {
                 if (v == nullptr)
                     continue;
 
-                auto var = std::make_shared<Variable>(v);
-                var->markRemovable(false);
+                auto var = std::make_shared<Variable>(*v, "", cnt);
+
                 in.push_back(cnt);
                 variableSpace.putVariable(cnt--, var);
             }
@@ -393,6 +387,9 @@ namespace sd {
 
             for (int e = 0; e < iArgs.size(); e++)
                 block.appendI(iArgs.at(e));
+
+            for (int e = 0; e < dArgs.size(); e++)
+                block.appendD(dArgs.at(e));
 
             Nd4jStatus status = this->execute(&block);
             arrayList.setStatus(status);

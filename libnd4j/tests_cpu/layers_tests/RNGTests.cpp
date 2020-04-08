@@ -35,8 +35,6 @@ private:
 
 public:
     long _seed = 119L;
-    //sd::random::RandomBuffer *_rngA;
-    //sd::random::RandomBuffer *_rngB;
     sd::graph::RandomGenerator _rngA;
     sd::graph::RandomGenerator _rngB;
 
@@ -575,7 +573,7 @@ TEST_F(RNGTests, Test_Uniform_2) {
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngB, &x1, 1.0f, 2.0f);
 
     sd::ops::LegacyRandomOp op(0);
-    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {});
+    auto result = op.execute(_rngA, {&input}, {1.0f, 2.0f}, {}, {sd::DataType::FLOAT32});
 
     ASSERT_EQ(Status::OK(), result.status());
 
@@ -1043,14 +1041,15 @@ TEST_F(RNGTests, test_multinomial_1) {
 
     sd::ops::random_multinomial op;
     RandomGenerator rng(1234, 1234);
-    ASSERT_EQ(Status::OK(),  op.execute(rng, { &probs, &samples }, { &output }, {}, { 0, INT64}, {}, {}, false) );
+    ASSERT_EQ(Status::OK(),  op.execute(rng, { &probs, &samples }, { &output }, {}, { 0}, {}, {INT64}, false) );
+
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
     NDArray probsZ('c', { 1, 3 }, { 0.3, 0.3, 0.3 }, sd::DataType::FLOAT32);
     NDArray expectedZ('c', { 3, 3 }, { 0., 0, 0,  0, 0, 0,  0, 0, 0 }, sd::DataType::INT64);
 
-    auto result = op.evaluate({ &probsZ, &samples }, { }, { 1, INT64 });
+    auto result = op.evaluate({ &probsZ, &samples }, { }, { 1 }, {}, {INT64});
     auto outputZ = result.at(0);
 
     ASSERT_EQ(Status::OK(), result.status());
@@ -1068,7 +1067,7 @@ TEST_F(RNGTests, test_multinomial_2) {
 
     sd::ops::random_multinomial op;
     RandomGenerator rng(1234, 1234);
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0 }, {}, {INT64}, false));
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 
@@ -1077,7 +1076,7 @@ TEST_F(RNGTests, test_multinomial_2) {
     NDArray output2('c', { 20, 3 }, sd::DataType::INT64);
 
     rng.setStates(1234, 1234);
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs2, &samples }, { &output2 }, {}, { 1, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs2, &samples }, { &output2 }, {}, { 1 }, {}, {INT64}, false));
     ASSERT_TRUE(expected2.isSameShape(output2));
     ASSERT_TRUE(expected2.equalsTo(output2));
 }
@@ -1092,10 +1091,10 @@ TEST_F(RNGTests, test_multinomial_3) {
 
     sd::ops::random_multinomial op;
 
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &expected }, {}, { 0, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &expected }, {}, { 0 }, {}, {INT64}, false));
 
     rng.setStates(1234, 1234);
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0 }, {}, {INT64}, false));
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
@@ -1109,10 +1108,10 @@ TEST_F(RNGTests, test_multinomial_4) {
 
     RandomGenerator rng(1234, 1234);
     sd::ops::random_multinomial op;
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &expected }, {}, { 1, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &expected }, {}, { 1 }, {}, {INT64}, false));
 
     rng.setStates(1234, 1234);
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 1, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 1 }, {}, {INT64}, false));
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
 }
@@ -1210,7 +1209,7 @@ TEST_F(RNGTests, test_multinomial_6) {
     NDArray probs('c', { batchValue, ClassValue }, { 1., 1.5, 2., 2.5, 3. }, sd::DataType::FLOAT32);
     NDArray  output('c', { batchValue, Samples }, sd::DataType::INT64);
 
-    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0, INT64 }, {}, {}, false));
+    ASSERT_EQ(Status::OK(), op.execute(rng, { &probs, &samples }, { &output }, {}, { 0 }, {}, {INT64}, false));
 
     NDArray counts('c', { ClassValue }, { 0., 0, 0, 0, 0 }, sd::DataType::DOUBLE);
 

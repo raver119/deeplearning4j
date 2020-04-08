@@ -109,7 +109,7 @@ namespace ops {
         }
         outputList[0] = OUTPUT_VARIABLE(0);
         outputList[1] = OUTPUT_VARIABLE(1);
-        NDArray originalIndices(*indices); //->ordering(), indices->shapeInfo(), indices->dataType());
+        auto originalIndices = indices->dup(); //->ordering(), indices->shapeInfo(), indices->dataType());
         originalIndices.linspace(0);
         ops::dynamic_partition op;
         auto res = op.evaluate({&originalIndices, indices}, {numPartition});
