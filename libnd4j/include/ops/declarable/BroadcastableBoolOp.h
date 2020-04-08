@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Konduit K.K.
+ * Copyright (c) 2015-2018 Skymind, Inc.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,24 +14,30 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.rl4j.support;
+//
+// Created by raver on 6/6/2018.
+//
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
-import org.deeplearning4j.rl4j.learning.configuration.IAsyncLearningConfiguration;
+#ifndef SD_BROADCASTABLEBOOLOP_H
+#define SD_BROADCASTABLEBOOLOP_H
 
-@Value
-@AllArgsConstructor
-public class MockAsyncConfiguration implements IAsyncLearningConfiguration {
+#include <graph/Context.h>
+#include "OpDescriptor.h"
+#include "DeclarableOp.h"
+#include "DeclarableCustomOp.h"
 
-    private Long seed;
-    private int maxEpochStep;
-    private int maxStep;
-    private int updateStart;
-    private double rewardFactor;
-    private double gamma;
-    private double errorClamp;
-    private int numThreads;
-    private int nStep;
-    private int learnerUpdateFrequency;
+namespace sd {
+    namespace ops {
+        class ND4J_EXPORT BroadcastableBoolOp : public DeclarableCustomOp{
+        protected:
+            Nd4jStatus validateAndExecute(Context& block) override = 0;
+        public:
+            BroadcastableBoolOp(const char *name, int numTArgs, int numIArgs);
+
+            ShapeList *calculateOutputShape(ShapeList *inputShape, sd::graph::Context& block) override;
+        };
+    }
 }
+
+
+#endif //SD_BROADCASTABLEBOOLOP_H
