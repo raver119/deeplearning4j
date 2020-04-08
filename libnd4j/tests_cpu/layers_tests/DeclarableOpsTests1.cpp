@@ -588,16 +588,16 @@ TEST_F(DeclarableOpsTests1, AddMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    variableSpace->putVariable(1, x);
-
+    
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::add addOp;
 
     addOp.execute(block);
-    
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -617,15 +617,15 @@ TEST_F(DeclarableOpsTests1, AddVectorVector1) {
 
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
 
     block->fillInputs({ -1, -2 });
     sd::ops::add addOp;
     
     addOp.execute(block);
-    
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -644,7 +644,6 @@ TEST_F(DeclarableOpsTests1, AddMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    variableSpace->putVariable(1, x);
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
@@ -652,8 +651,9 @@ TEST_F(DeclarableOpsTests1, AddMatrixScalar1) {
     sd::ops::add addOp;
 
     addOp.execute(block);
-
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -673,7 +673,6 @@ TEST_F(DeclarableOpsTests1, AddScalarScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -703,15 +702,15 @@ TEST_F(DeclarableOpsTests1, SubtractMatrices1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
 
     subOp.execute(block);
-
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -731,7 +730,6 @@ TEST_F(DeclarableOpsTests1, SubtractTest_1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -739,8 +737,9 @@ TEST_F(DeclarableOpsTests1, SubtractTest_1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
-
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -755,7 +754,6 @@ TEST_F(DeclarableOpsTests1, SubtractTest_2) {
     x.assign(3);
     y.assign(1);
     exp.assign(2);
-
 
     sd::ops::subtract subOp;
 
@@ -847,7 +845,6 @@ TEST_F(DeclarableOpsTests1, ClipByValue1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
 
     block->appendT(0.0f);
@@ -859,7 +856,9 @@ TEST_F(DeclarableOpsTests1, ClipByValue1) {
 
     clip.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -883,7 +882,6 @@ TEST_F(DeclarableOpsTests1, MergeAvgTest1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
     variableSpace->putVariable(-3, z);
-    variableSpace->putVariable(1, NDArrayFactory::create<float>('c', { 5, 5 }));
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2, -3 });
 
@@ -914,15 +912,16 @@ TEST_F(DeclarableOpsTests1, SubtractVectorVector1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
 
     subOp.execute(block);
-
-    ASSERT_TRUE(x.equalsTo(&exp));
+    
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -942,7 +941,6 @@ TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -950,7 +948,9 @@ TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -971,7 +971,6 @@ TEST_F(DeclarableOpsTests1, SubtractScalarScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -979,7 +978,9 @@ TEST_F(DeclarableOpsTests1, SubtractScalarScalar1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -999,7 +1000,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrices1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1007,7 +1007,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrices1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1138,7 +1140,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractVectorVector1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1146,7 +1147,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractVectorVector1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1167,7 +1170,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrixScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1175,7 +1177,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrixScalar1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1196,7 +1200,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractScalarScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1204,7 +1207,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractScalarScalar1) {
 
     subOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1224,7 +1229,6 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrices1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1232,7 +1236,9 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrices1) {
 
     mul.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1252,15 +1258,16 @@ TEST_F(DeclarableOpsTests1, MultiplyVectorVector1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::multiply mul;
 
     mul.execute(block);
-
-    ASSERT_TRUE(x.equalsTo(exp));
+    
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1280,7 +1287,6 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrixScalar) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1288,7 +1294,9 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrixScalar) {
 
     mul.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1308,7 +1316,6 @@ TEST_F(DeclarableOpsTests1, MultiplyScalarScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1316,7 +1323,9 @@ TEST_F(DeclarableOpsTests1, MultiplyScalarScalar1) {
 
     mul.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -1479,7 +1488,6 @@ TEST_F(DeclarableOpsTests1, DivideVectorVector1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1487,7 +1495,9 @@ TEST_F(DeclarableOpsTests1, DivideVectorVector1) {
 
     div.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1507,7 +1517,6 @@ TEST_F(DeclarableOpsTests1, DivideMatrixScalar1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1515,7 +1524,9 @@ TEST_F(DeclarableOpsTests1, DivideMatrixScalar1) {
 
     div.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete block;
     delete variableSpace;
@@ -1564,7 +1575,6 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrices1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1572,7 +1582,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrices1) {
 
     div.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1592,7 +1604,6 @@ TEST_F(DeclarableOpsTests1, ReverseDivideVectorVector1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
 
-    variableSpace->putVariable(1, x);
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1600,7 +1611,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideVectorVector1) {
 
     div.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1619,8 +1632,7 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-
-    variableSpace->putVariable(1, x);
+ 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
@@ -1628,7 +1640,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrixScalar1) {
 
     div.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
@@ -1815,8 +1829,7 @@ TEST_F(DeclarableOpsTests1, Transpose1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(1, std::make_shared<Variable>());
-
+    
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({ -1 });
     sd::ops::transpose transpose;
@@ -1850,7 +1863,6 @@ TEST_F(DeclarableOpsTests1, Permute1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(1, std::make_shared<Variable>());
 
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({ -1 });
@@ -1882,7 +1894,6 @@ TEST_F(DeclarableOpsTests1, TestArgumentsValidation1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(1, std::make_shared<Variable>());
 
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({ -1 });
@@ -2037,7 +2048,6 @@ TEST_F(DeclarableOpsTests1, Pnormpool2d1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
@@ -2284,8 +2294,6 @@ TEST_F(DeclarableOpsTests1, sru_bp) {
     ASSERT_TRUE(expGradW.equalsTo(gradW));
     ASSERT_TRUE(expGradB.equalsTo(gradB));
     ASSERT_TRUE(expGradInit.equalsTo(gradInit));
-
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -2393,8 +2401,6 @@ TEST_F(DeclarableOpsTests1, ArgMax1) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 
@@ -2414,7 +2420,6 @@ TEST_F(DeclarableOpsTests1, ArgMax2) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
 
 }
 
@@ -2436,8 +2441,6 @@ TEST_F(DeclarableOpsTests1, ArgMax3) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, ArgMax4) {
@@ -2479,8 +2482,6 @@ TEST_F(DeclarableOpsTests1, ArgMax5) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, ArgMax6) {
@@ -2540,8 +2541,6 @@ TEST_F(DeclarableOpsTests1, SquareTests1) {
     auto z = result.at(0);
 
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_1) {
@@ -2560,8 +2559,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_1) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_2) {
@@ -2579,8 +2576,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_2) {
     ASSERT_TRUE(exp.isSameShape(z));
 
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_3) {
@@ -2618,8 +2613,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_4) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_5) {
@@ -2639,8 +2632,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_5) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_6) {
@@ -2652,8 +2643,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_6) {
     auto z = result.at(0);
 
     ASSERT_EQ(e, z);
-
-
 }
 
 TEST_F(DeclarableOpsTests1, OneHotTests_7) {
@@ -2665,8 +2654,6 @@ TEST_F(DeclarableOpsTests1, OneHotTests_7) {
     auto z = result.at(0);
 
     ASSERT_EQ(e, z);
-
-
 }
 
 TEST_F(DeclarableOpsTests1, FillAs_1) {
@@ -2683,8 +2670,6 @@ TEST_F(DeclarableOpsTests1, FillAs_1) {
     ASSERT_TRUE(x.isSameShape(result.at(0)));
 
     ASSERT_NEAR(scalar, result.at(0).meanNumber().e<float>(0), 1e-5f);
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2709,8 +2694,6 @@ TEST_F(DeclarableOpsTests1, Test_Range_Integer_1) {
     // array->printIndexedBuffer("Range integer 1");
     ASSERT_TRUE(exp.isSameShape(array));
     ASSERT_TRUE(exp.equalsTo(array));
-
-
 }
 
 
@@ -2736,8 +2719,6 @@ TEST_F(DeclarableOpsTests1, Test_Range_Integer_2) {
 
     ASSERT_TRUE(exp.isSameShape(array));
     ASSERT_TRUE(exp.equalsTo(array));
-
-
 }
 
 
@@ -2756,8 +2737,6 @@ TEST_F(DeclarableOpsTests1, Test_Range_Integer_3) {
 
     ASSERT_TRUE(exp.isSameShape(array));
     ASSERT_TRUE(exp.equalsTo(array));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2774,8 +2753,6 @@ TEST_F(DeclarableOpsTests1, softmax_test1) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2790,8 +2767,6 @@ TEST_F(DeclarableOpsTests1, softmax_test2) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2806,8 +2781,6 @@ TEST_F(DeclarableOpsTests1, softmax_test3) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2822,8 +2795,6 @@ TEST_F(DeclarableOpsTests1, softmax_test4) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2838,8 +2809,6 @@ TEST_F(DeclarableOpsTests1, softmax_test5) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2854,8 +2823,6 @@ TEST_F(DeclarableOpsTests1, softmax_test6) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2870,8 +2837,6 @@ TEST_F(DeclarableOpsTests1, softmax_test7) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2886,8 +2851,6 @@ TEST_F(DeclarableOpsTests1, softmax_test8) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2902,8 +2865,6 @@ TEST_F(DeclarableOpsTests1, softmax_test9) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, softmax_test10) {
@@ -2917,8 +2878,6 @@ TEST_F(DeclarableOpsTests1, softmax_test10) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, softmax_test11) {
@@ -2932,8 +2891,6 @@ TEST_F(DeclarableOpsTests1, softmax_test11) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2951,8 +2908,6 @@ TEST_F(DeclarableOpsTests1, softmax_test12) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(expOutput.isSameShape(z));
     ASSERT_TRUE(expOutput.equalsTo(z));
-
-
 }
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, Reverse_1) {
@@ -2975,7 +2930,6 @@ TEST_F(DeclarableOpsTests1, Reverse_1) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3100,8 +3054,6 @@ TEST_F(DeclarableOpsTests1, Reverse_6) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(input));
     ASSERT_TRUE(expected.equalsTo(&input));
-
-
 }
 
 
@@ -3152,8 +3104,6 @@ TEST_F(DeclarableOpsTests1, Reverse_8) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -3177,8 +3127,6 @@ TEST_F(DeclarableOpsTests1, Reverse_9) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, Reverse_10) {
@@ -3193,8 +3141,6 @@ TEST_F(DeclarableOpsTests1, Reverse_10) {
 
     ASSERT_TRUE(e.isSameShape(z));
     ASSERT_TRUE(e.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3216,8 +3162,6 @@ TEST_F(DeclarableOpsTests1, Reverse_11) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3238,8 +3182,6 @@ TEST_F(DeclarableOpsTests1, Reverse_12) {
     //expected.printIndexedBuffer("Expected reverse");
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3260,7 +3202,6 @@ TEST_F(DeclarableOpsTests1, Reverse_13) {
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3280,8 +3221,6 @@ TEST_F(DeclarableOpsTests1, Reverse_14) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, Test_Expose_1) {
@@ -3299,8 +3238,6 @@ TEST_F(DeclarableOpsTests1, Test_Expose_1) {
 
     ASSERT_TRUE(input0.equalsTo(z0));
     ASSERT_TRUE(input1.equalsTo(z1));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, Test_Expose_2) {
