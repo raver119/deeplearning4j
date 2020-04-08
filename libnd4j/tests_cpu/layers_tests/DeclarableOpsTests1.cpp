@@ -277,8 +277,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot2) {
 
     ASSERT_TRUE(exp.isSameShape(out));
     ASSERT_TRUE(exp.equalsTo(out));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, TestTensorDot3) {
@@ -297,8 +295,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot3) {
 
     ASSERT_TRUE(exp.isSameShape(out));
     ASSERT_TRUE(exp.equalsTo(out));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, TestTensorDot4) {
@@ -337,9 +333,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot5) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
-
 }
 
 
@@ -359,9 +352,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot6) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -380,9 +370,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot7) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -401,9 +388,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot8) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -430,8 +414,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot9) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
 
 
@@ -451,8 +433,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot10) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 
 }
 
@@ -474,8 +454,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot11) {
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -494,8 +472,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot12) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 
 }
 
@@ -516,8 +492,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot13) {
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -536,8 +510,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot14) {
 
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 
 }
 
@@ -558,8 +530,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot15) {
     ASSERT_TRUE(expected.isSameShape(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
-
-
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -578,7 +548,6 @@ TEST_F(DeclarableOpsTests1, TestTensorDot16) {
 
     ASSERT_TRUE(exp.isSameShape(result));
     ASSERT_TRUE(exp.equalsTo(result));
-
 
 }
 
@@ -619,13 +588,15 @@ TEST_F(DeclarableOpsTests1, AddMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+    variableSpace->putVariable(1, x);
+
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::add addOp;
 
     addOp.execute(block);
-
+    
     ASSERT_TRUE(x.equalsTo(exp));
 
     delete block;
@@ -643,15 +614,17 @@ TEST_F(DeclarableOpsTests1, AddVectorVector1) {
     exp.assign(3);
 
     auto variableSpace = new VariableSpace();
+
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
+
     block->fillInputs({ -1, -2 });
-
     sd::ops::add addOp;
-
+    
     addOp.execute(block);
-
+    
     ASSERT_TRUE(x.equalsTo(exp));
 
     delete block;
@@ -671,7 +644,9 @@ TEST_F(DeclarableOpsTests1, AddMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+    variableSpace->putVariable(1, x);
+
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::add addOp;
@@ -697,7 +672,9 @@ TEST_F(DeclarableOpsTests1, AddScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::add addOp;
@@ -723,7 +700,9 @@ TEST_F(DeclarableOpsTests1, SubtractMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
@@ -749,7 +728,9 @@ TEST_F(DeclarableOpsTests1, SubtractTest_1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
@@ -781,8 +762,6 @@ TEST_F(DeclarableOpsTests1, SubtractTest_2) {
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
 
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
-
-
 }
 
 TEST_F(DeclarableOpsTests1, TestRng1) {
@@ -866,8 +845,8 @@ TEST_F(DeclarableOpsTests1, ClipByValue1) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(1, std::make_shared<Variable>());
-    auto block = new Context(1, variableSpace, true);
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
 
     block->appendT(0.0f);
     block->appendT(3.0f);
@@ -932,7 +911,9 @@ TEST_F(DeclarableOpsTests1, SubtractVectorVector1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
@@ -943,9 +924,7 @@ TEST_F(DeclarableOpsTests1, SubtractVectorVector1) {
 
     delete block;
     delete variableSpace;
-
 }
-
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
@@ -960,7 +939,9 @@ TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
@@ -987,7 +968,9 @@ TEST_F(DeclarableOpsTests1, SubtractScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::subtract subOp;
@@ -1013,7 +996,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversesubtract subOp;
@@ -1042,8 +1027,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractTest_1) {
 
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1067,8 +1050,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractTest_2) {
 
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1089,8 +1070,6 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractTest_3) {
     auto res = subOp.evaluate({ &x, &y });
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1117,8 +1096,6 @@ TEST_F(DeclarableOpsTests1, ReverseModTest_1) {
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
     ASSERT_TRUE(exp.equalsTo(&z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1143,8 +1120,6 @@ TEST_F(DeclarableOpsTests1, ReverseModTest_2) {
 
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1160,7 +1135,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractVectorVector1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversesubtract subOp;
@@ -1187,7 +1164,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversesubtract subOp;
@@ -1214,7 +1193,9 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversesubtract subOp;
@@ -1240,7 +1221,9 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::multiply mul;
@@ -1266,7 +1249,9 @@ TEST_F(DeclarableOpsTests1, MultiplyVectorVector1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::multiply mul;
@@ -1292,7 +1277,9 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrixScalar) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::multiply mul;
@@ -1318,7 +1305,9 @@ TEST_F(DeclarableOpsTests1, MultiplyScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::multiply mul;
@@ -1389,8 +1378,6 @@ TEST_F(DeclarableOpsTests1, BroadcastDivideTest_1) {
 
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1408,8 +1395,6 @@ TEST_F(DeclarableOpsTests1, BroadcastDivideTest_2) {
 
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1424,8 +1409,6 @@ TEST_F(DeclarableOpsTests1, BroadcastDivideTest_3) {
 
     ASSERT_EQ(res.status(), ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0).equalsTo(exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1450,8 +1433,6 @@ TEST_F(DeclarableOpsTests1, BroadcastReverseDivideTest_1) {
     y.applyTrueBroadcast(BROADCAST(Divide), x, exp, true);
 
     ASSERT_TRUE(z.equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1467,7 +1448,9 @@ TEST_F(DeclarableOpsTests1, DivideMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::divide div;
@@ -1493,7 +1476,9 @@ TEST_F(DeclarableOpsTests1, DivideVectorVector1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::divide div;
@@ -1519,7 +1504,9 @@ TEST_F(DeclarableOpsTests1, DivideMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::divide div;
@@ -1546,7 +1533,9 @@ TEST_F(DeclarableOpsTests1, DivideScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::divide div;
@@ -1572,7 +1561,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrices1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversedivide div;
@@ -1598,7 +1589,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideVectorVector1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversedivide div;
@@ -1624,7 +1617,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrixScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversedivide div;
@@ -1650,7 +1645,9 @@ TEST_F(DeclarableOpsTests1, ReverseDivideScalarScalar1) {
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
-    auto block = new Context(1, variableSpace, true);
+
+    variableSpace->putVariable(1, x);
+    auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2 });
 
     sd::ops::reversedivide div;
@@ -1676,8 +1673,6 @@ TEST_F(DeclarableOpsTests1, Test_Cast_1) {
 
     auto z = result.at(0);
     ASSERT_TRUE(yExp.equalsTo(z));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2979,7 +2974,6 @@ TEST_F(DeclarableOpsTests1, Reverse_1) {
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
 
-
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3132,11 +3126,7 @@ TEST_F(DeclarableOpsTests1, Reverse_7) {
 
     ASSERT_TRUE(expected.isSameShapeStrict(result));
     ASSERT_TRUE(expected.equalsTo(result));
-
-
 }
-
-
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, Reverse_8) {
