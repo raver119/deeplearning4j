@@ -681,7 +681,9 @@ TEST_F(DeclarableOpsTests1, AddScalarScalar1) {
 
     addOp.execute(block);
 
-    ASSERT_TRUE(x.equalsTo(&exp));
+    ASSERT_TRUE(block->getVariableSpace()->hasVariable(1));
+    auto z = block->getVariableSpace()->getVariable(1)->getNDArray().get();
+    ASSERT_TRUE(exp.equalsTo(z));
 
     delete variableSpace;
     delete block;
