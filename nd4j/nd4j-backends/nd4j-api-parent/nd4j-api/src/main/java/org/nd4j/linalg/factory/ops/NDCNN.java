@@ -266,7 +266,7 @@ public class NDCNN {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public INDArray depthToSpace(INDArray x, int blockSize, DataFormat dataFormat) {
@@ -474,7 +474,7 @@ public class NDCNN {
    * @param x the input to depth to space pooling 2d operation - 4d activations in NCHW format
    *                    (shape [minibatch, channels, height, width]) or NHWC format (shape [minibatch, height, width, channels]) (NUMERIC type)
    * @param blockSize  Block size, in the height/width dimension
-   * @param dataFormat Data format: "NCHW" or "NHWC"
+   * @param dataFormat  "NCHW" or "NHWC"
    * @return output Output variable (NUMERIC type)
    */
   public INDArray spaceToDepth(INDArray x, int blockSize, DataFormat dataFormat) {

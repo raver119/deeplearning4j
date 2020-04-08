@@ -20,6 +20,7 @@ package org.nd4j.linalg.factory.ops;
 
 import static org.nd4j.linalg.factory.NDValidation.isSameType;
 
+import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.NDValidation;
 import org.nd4j.linalg.factory.Nd4j;
@@ -214,6 +215,18 @@ public class NDLinalg {
   }
 
   /**
+   * Merges input tensors.<br>
+   *
+   * @param inputs Input variables (NUMERIC type)
+   * @return output Merged input tensors (NUMERIC type)
+   */
+  public INDArray merge(INDArray... inputs) {
+    NDValidation.validateNumerical("merge", "inputs", inputs);
+    Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.controlflow.compat.Merge(inputs))[0];
+  }
+
+  /**
    * Matrix multiplication: out = mmul(x,y)<br>
    * Supports specifying transpose argument to perform operation such as mmul(a^T, b), etc.<br>
    *
@@ -270,5 +283,17 @@ public class NDLinalg {
   public INDArray svd(INDArray input, boolean fullUV, boolean computeUV) {
     NDValidation.validateNumerical("svd", "input", input);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Svd(input, fullUV, computeUV, 16))[0];
+  }
+
+  /**
+   * Switch op forwards input to one of two outputs based on the value of a predicate.<br>
+   *
+   * @param input  (NUMERIC type)
+   * @param predicate  (BOOL type)
+   */
+  public INDArray[] switchOp(INDArray input, INDArray predicate) {
+    NDValidation.validateNumerical("switchOp", "input", input);
+    NDValidation.validateBool("switchOp", "predicate", predicate);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.controlflow.compat.Switch(input, predicate));
   }
 }

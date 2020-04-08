@@ -34,12 +34,12 @@ public class NDBase {
   /**
    * Boolean and array reduction operation, optionally along specified dimensions<br>
    *
-   * @param x Input variable (BOOL type)
+   * @param x Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public INDArray all(INDArray x, int... dimensions) {
-    NDValidation.validateBool("all", "x", x);
+    NDValidation.validateNumerical("all", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.bool.All(x, dimensions));
   }
@@ -47,12 +47,12 @@ public class NDBase {
   /**
    * Boolean or array reduction operation, optionally along specified dimensions<br>
    *
-   * @param x  Input variable (BOOL type)
+   * @param x  Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (BOOL type)
    */
   public INDArray any(INDArray x, int... dimensions) {
-    NDValidation.validateBool("any", "x", x);
+    NDValidation.validateNumerical("any", "x", x);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.bool.Any(x, dimensions));
   }
@@ -1361,6 +1361,18 @@ public class NDBase {
     NDValidation.validateNumerical("reverseSequence", "x", x);
     NDValidation.validateInteger("reverseSequence", "seq_lengths", seq_lengths);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(x, seq_lengths, -1, 0))[0];
+  }
+
+  /**
+   * Element-wise scalar floor division operation: out = floorDiv(in, value).<br>
+   *
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Output variable (NUMERIC type)
+   */
+  public INDArray scalarFloorDiv(INDArray in, double value) {
+    NDValidation.validateNumerical("scalarFloorDiv", "in", in);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.ScalarDivision(in, value));
   }
 
   /**
