@@ -424,25 +424,27 @@ template<typename T>
                 rot.rotate(p + z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
             else
                 rot.rotate(p - z, ioMatrixT->t<T>(initialIndex, initialIndex - 1));
-            auto rightCols = (*ioMatrixT)({0, 0, size-initialIndex + 1, size}); // set of right columns to rotate by givens
-            auto topRows = (*ioMatrixT)({0, initialIndex + 1, 0, 0}); // set of upper rows to rotate by givens
+            auto rightCols = (*ioMatrixT)({0, size, size-initialIndex + 1, size}); // set of right columns to rotate by givens
+            auto topRows = (*ioMatrixT)({0, initialIndex + 1, 0, size}); // set of upper rows to rotate by givens
 
             // rotate rows with shifts
-            auto xRow = rightCols({initialIndex -1, initialIndex, 0, 0});
+            auto xRow = rightCols({initialIndex - 1, initialIndex, 0, 0});
             auto yRow = rightCols({initialIndex, initialIndex + 1, 0, 0});
             applyGivenceRotate(xRow, yRow, rot.adjointRotate());
-
+            xRow.printIndexedBuffer("xRow"); yRow.printIndexedBuffer("yRow");
             // rotate rows without shifts
             xRow = topRows({initialIndex - 1, initialIndex, 0, 0});
             yRow = topRows({initialIndex, initialIndex + 1, 0, 0});
-            applyGivenceRotate(xRow, yRow, rot.adjointRotate());
+            applyGivenceRotate(xRow, yRow, rot);
+            xRow.printIndexedBuffer("xCol"); yRow.printIndexedBuffer("yCol");
 
+            ioMatrixT->printIndexedBuffer("After givens rotation");
             ioMatrixT->t<T>(initialIndex, initialIndex - 1) = T(0.f);
 
             // rotate transformation matrix rows
             xRow = (*ioMatrixQ)({initialIndex - 1, initialIndex, 0, 0});
             yRow = (*ioMatrixQ)({initialIndex, initialIndex + 1, 0, 0});
-            applyGivenceRotate(xRow, yRow, rot.adjointRotate());
+            applyGivenceRotate(xRow, yRow, rot);
         }
 
         if (initialIndex > 1) // for next bands
@@ -625,7 +627,7 @@ template<typename T>
                 // These Householder transformations form the O(n^3) part of the algorithm
                 auto matTKK3 = ioMatrixT({k, k + 3, k, n}); //
                 applyHouseholderOnTheLeft<T>(matTKK3, ess, tau);
-                auto bottomRow = math::nd4j_min(indexUpper, k + 3);
+                auto bottomRow = math::nd4j_min(indexUpper, k + 3) + 1;
                 auto matTK3 = ioMatrixT({0, bottomRow, k, k + 3});
                 applyHouseholderOnTheRight<T>(matTK3, ess, tau);
                 auto matT3 = ioMatrixU({0, n, k, k + 3});
