@@ -235,22 +235,84 @@ namespace helpers {
         output->t<T>(1,0) = r21/(T(2.f)* alpha);
     }
 
+    template <typename T>
+    NDArray createHouseholder(T const x, T const y, T const z) {
+        auto u = NDArrayFactory::create<T>('c', {3, 1}, {x, y, z});
+        auto u1 = u / u.reduceNumber(reduce::Norm2);
+        auto sigma = math::nd4j_sign<T,T>(x);
+        auto e1 = NDArrayFactory::create<T>('c', {3, 1}, {sigma, T(0.f), T(0.f)});
+        auto u2 = u1 - e1;
+        auto w = u2 / u2.reduceNumber(reduce::Norm2);
+        auto P = NDArrayFactory::create<T>('c', {3,3});
+        MmulHelper::matmul(&w, &w, &P, false, true);
+        return P;
+    }
 
     template <typename T>
-    void francisStep(sd::LaunchContext* context, NDArray const* input, NDArray* qMatrix, NDArray* tMatrix) {
-         auto n = input->sizeAt(-1);
+    NDArray createGivens(T const x, T const y) {
+        auto d = math::p_sqrt(math::p_pow(x,T(2.f))+ math::p_pow(y, T(2.f)));
+        auto c = x / d;
+        auto s = y / d;
+        auto G = NDArrayFactory::create<T>('c', {2,2}, {c, -s, s, c});
+        return G;
+    }
+
+    template <typename T>
+    void francisStep(sd::LaunchContext* context, NDArray const* input, NDArray& tMatrix, NDArray& qMatrix) {
+         auto n = tMatrix.sizeAt(-1);
          auto p = n - 1;
+         tMatrix.assign(input);
+         auto iteration = 0;
+         auto eps = T(1.e-5f);
 
          while(p > 1) {
              auto q = p - 1;
-             auto s = input->t<T>(q,q) + input->t<T>(p,p);
-             auto t = input->t<T>(q,q) * input->t<T>(p,p) - input->t<T>(q,p) * input->t<T>(p,q);
-             auto x = input->t<T>(0,0) * input->t<T>(0,0) + input->t<T>(0,1) * input->t<T>(1,0) - s * input->t<T>(0,0) + t;
-             auto y = input->t<T>(1,0) * (input->t<T>(0,0) + input->t<T>(1,1) - s);
-             auto z = input->t<t>(1,0) * input->t<T>(2,1);
+             auto s = tMatrix.t<T>(q,q) + tMatrix.t<T>(p, p);
+             auto t = tMatrix.t<T>(q,q) * tMatrix.t<T>(p, p) - tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
+             auto x = tMatrix.t<T>(0, 0) * tMatrix.t<T>(0, 0) + tMatrix.t<T>(0, 1) * tMatrix.t<T>(1, 0) - s * tMatrix.t<T>(0, 0) + t;
+             auto y = tMatrix.t<T>(1, 0) * (tMatrix.t<T>(0, 0) + tMatrix.t<T>(1, 1) - s);
+             auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
-             for (auto k = 0; k < p-2; k++) {
+             // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
+             for (auto k = 0; k < p - 1; k++) {
+                 auto P = createHouseholder(x,y,z);
+                 auto resRows = tMatrix({k, k + 3, k, n});
+                 auto copyRows(resRows);
+                 MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
+                 auto r = math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
+                 auto resCols = tMatrix({0,r, k, k+3});
+                 auto copyCols(resCols);
+                 MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
+                 x = tMatrix.t<T>(k+1, k);
+                 y = tMatrix.t<T>(k+2, k);
+                 if (k < p - 2) {
+                     z = tMatrix.t<T>(k+3, k);
+                 }
+             }
 
+             // Givens rotation with 2x2 rotator
+             auto G = createGivens(x,y);
+             auto resRows = tMatrix({q, q + 2, p - 2, n});
+             auto copyRows(resRows);
+             MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
+             auto resCols = tMatrix({0, p + 1, p - 1, p + 1});
+             auto copyCols(resCols);
+             MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
+             iteration++;
+             if (math::nd4j_abs(tMatrix.t<T>(p, q)) < eps * (math::nd4j_abs(tMatrix.t<T>(q,q)) + math::nd4j_abs(tMatrix.t<T>(p,p)))) {
+                 // read eigen val found:
+                 tMatrix.t<T>(p,q) = T(0.f);
+                 p--;
+             }
+             else if (math::nd4j_abs(tMatrix.t<T>(q, q-1)) < eps * (math::nd4j_abs(tMatrix.t<T>(q-1,q-1)) + math::nd4j_abs(tMatrix.t<T>(q,q)))) {
+                 tMatrix.t<T>(q, q-1) = T(0.f);
+                 p -= 2;
+             }
+             nd4j_printf("%d: ", iteration);
+             tMatrix.printIndexedBuffer("T matrix on step");
+             if (iteration > 1000) {
+                 nd4j_printf("Too many iterations (%d). Breaking up\n", iteration);
+                 break;
              }
          }
     }
@@ -811,12 +873,14 @@ template<typename T>
 //        MmulHelper::matmul(&outputQ, &outputQ, output, false, true); output->printIndexedBuffer("Should be identity matrix");
           auto outputU = outputQ.ulike(); outputT.nullify();
           outputU.setIdentity();//outputH.setIdentity();
-        computeFromHessenberg<T>(outputH, outputU, outputT, outputU);
+        francisStep<T>(context, &outputH, outputT, outputQ);
+
+        //computeFromHessenberg<T>(outputH, outputU, outputT, outputU);
           //primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
           outputT.printIndexedBuffer("Triangular after Schur");
-          outputU.printIndexedBuffer("Orthogonal after Schur");
-          MmulHelper::matmul(&outputU, &outputU, output, true, false);
-          output->printIndexedBuffer("Should be identity matrix");
+        //  outputU.printIndexedBuffer("Orthogonal after Schur");
+        //  MmulHelper::matmul(&outputU, &outputU, output, true, false);
+        //  output->printIndexedBuffer("Should be identity matrix");
 //        schurDecomposition<T>(context, input, &outputQ, &outputT);
 //        outputQ.printIndexedBuffer("Q matrix");
 //        outputT.printIndexedBuffer("T matrix");
@@ -827,13 +891,14 @@ template<typename T>
             auto outputR = outputT.ulike();
             upperTriangularSqrt<T>(context, &outputT, &outputR);
             // restore to hessenberg reduced
-            MmulHelper::matmul(&outputU, &outputR, &outputT, false, false);
+/* TO DO: restore this when proper matricies were computed
+ *          MmulHelper::matmul(&outputU, &outputR, &outputT, false, false);
             MmulHelper::matmul(&outputT, &outputU, &outputR, false, true);
 
             // restore to initial
             MmulHelper::matmul(&outputQ, &outputR, &outputT, false, false);
             MmulHelper::matmul(&outputT, &outputQ, output, false, true);
-
+*/
             return Status::OK();
         }
         return Status::CODE(ND4J_STATUS_BAD_INPUT, "helpers::sqrtMatrixFunctor::Cannot retrieve sqrt for given matrix due negative real eighenvals appears.");
