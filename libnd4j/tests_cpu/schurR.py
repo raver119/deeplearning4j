@@ -93,11 +93,13 @@ def householderReflector(x,y,z):
     print(x,y,z)
     u = tf.constant((x,y,z), shape=(3,1), dtype = tf.float64)
     u1 = u / tf.norm(u) # normalize 
-    e1 = tf.constant((1., 0., 0.), dtype = tf.float64)
-    e1 *= math.copysign(1, x)
+    e1 = tf.constant((1., 0., 0.), shape=(3,1), dtype = tf.float64)
+    e1 *= math.copysign(1., x)
     us = u1 - e1
     w = us / tf.norm(us)
     P = tf.eye(3, dtype=tf.float64) - 2. * tf.linalg.matmul(w, w, False, True)
+    testP = tf.linalg.matmul(P, u)
+    print("Test P is \n", testP)
     return P.numpy()
 # householderReflector
 
@@ -105,6 +107,7 @@ def givens(x,y):
     c = x / math.sqrt(x**2 + y**2)
     s = y / math.sqrt(x**2 + y**2)
     G = tf.constant((c, -s, s, c), shape=(2,2), dtype=tf.float64)
+
     return G.numpy()
 # givens
 
@@ -114,7 +117,7 @@ def Francis(H):
     hH = H.numpy()
     iter = 0
     eps = 1.e-6
-    while p > 2:
+    while p > 1:
         q = p - 1
         s = hH[q,q] + H[p,p] 
         t = hH[q,q] * hH[p,p]
@@ -142,18 +145,24 @@ def Francis(H):
         hHP2 = hH[0:p+1, p - 1:p+1] # Px2 
         hH[0:p+1, p - 1: p+ 1] = tf.linalg.matmul(hHP2, G)
         if abs(hH[p,q]) < eps * (abs(hH[q,q]) + abs(hH[p,p])):
-             hH[p,q] = 0.; p -= 1
+            print("Convergence has achieved at %d iteration and %d dimension." % (iter, p))
+            hH[p,q] = 0.; p -= 1
+            iter += 1
         elif abs(hH[p-1,q-1]) < eps * (abs(hH[q,q]) + abs(hH[q-1,q-1])):
-             hH[p-1,q-1] = 0.; p -= 2
+            print("Convergence has achieved at %d iteration and %d dimension." % (iter, q))
+            iter+= 1
+            hH[p-1,q-1] = 0.; p -= 2
         else:
             iter += 1
             print("Convergence has not achieved yet. Continue with %d iteration." % iter)
-            if (iter > 100):
+            if (iter > H.shape[-1] *  50):
                print("Result has not achieved with proper density. Breaking on %d iteration" % iter)
                break
         #endif
-        return hH
     # end while             
+    return hH
+# end Francis
+
 if __name__ == '__main__':
      A = tf.constant((17,24,1, 8, 15, 23, 5, 7, 14, 16, 4, 6, 13, 20, 22, 10, 12, 19, 21, 3, 11, 18, 25, 2, 9), shape=(5,5), dtype=tf.float32)
      anA = A.numpy()
@@ -168,5 +177,6 @@ if __name__ == '__main__':
      print("==============================================================================================================")
      H = scipy.linalg.hessenberg(A)
      hH = tf.constant(H, dtype=tf.float64)
+     print(hH)
      tT = Francis(hH)
      print("Francis has", tT) 
