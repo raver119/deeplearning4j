@@ -894,3 +894,11 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_9) {
     ASSERT_EQ(1, sequence.length());
     ASSERT_EQ(17, sequence.at(0).protoContext().nodeId());
 }
+
+TEST_F(GraphAnalysisTests, test_cond_1) {
+    auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
+}
+
+TEST_F(GraphAnalysisTests, test_cond_2) {
+    auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
+}
