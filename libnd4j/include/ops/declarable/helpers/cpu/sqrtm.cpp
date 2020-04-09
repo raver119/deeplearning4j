@@ -116,26 +116,6 @@ namespace helpers {
         }
     }
 
-    template <typename T>
-    static void quasyTriangularCompute(sd::LaunchContext* context, NDArray const* inputR, NDArray* outputT) {
-        auto inputTriangularPart = inputR->allTensorsAlongDimension({-2, -1});
-        auto outputTriangularPart = outputT->allTensorsAlongDimension({-2, -1});
-        auto n = inputR->sizeAt(-1);
-
-        for (auto batch = 0; batch < inputTriangularPart.size(); ++batch) {
-            auto input = inputTriangularPart[batch];
-            auto output = outputTriangularPart[batch];
-            auto outputPlus = output->ulike();
-            auto outputMinus = output->ulike();
-            computeTriangulars<T>(context, *input, outputPlus, outputMinus);
-            auto outputMarkerPlus = NDArrayFactory::create<T>({n});
-            auto outputMarkerMinus = outputMarkerPlus.ulike();
-            computeMarker<T>(context, outputPlus, outputMarkerPlus);
-            computeMarker<T>(context, outputMinus, outputMarkerMinus);
-            fillUpTriangularOutput(context, outputPlus, outputMinus, outputMarkerPlus, outputMarkerMinus, *output);
-        }
-    }
-
     /*
      * Hessenberg reduction|decomposition
      * A = QHQ*, where Q - orthogonal, H - upper hessenberg quasytriangular matrix
@@ -244,7 +224,9 @@ namespace helpers {
         auto u2 = u1 - e1;
         auto w = u2 / u2.reduceNumber(reduce::Norm2);
         auto P = NDArrayFactory::create<T>('c', {3,3});
-        MmulHelper::matmul(&w, &w, &P, false, true);
+        auto W = P.ulike(); P.setIdentity();
+        MmulHelper::matmul(&w, &w, &W, false, true);
+        P -= T(2.) * W;
         return P;
     }
 
@@ -254,17 +236,23 @@ namespace helpers {
         auto c = x / d;
         auto s = y / d;
         auto G = NDArrayFactory::create<T>('c', {2,2}, {c, -s, s, c});
+        // test area
+//        auto u = NDArrayFactory::create<T>('c', {2,1}, {x,y});
+//        auto e1 = u.ulike();
+//        MmulHelper::matmul(&G, &u, &e1, true, false);
+//        e1.printIndexedBuffer("Should be ort-like");
+
         return G;
     }
 
     template <typename T>
-    void francisStep(sd::LaunchContext* context, NDArray const* input, NDArray& tMatrix, NDArray& qMatrix) {
+    void francisQR(sd::LaunchContext* context, NDArray const* input, NDArray& tMatrix, NDArray& qMatrix) {
          auto n = tMatrix.sizeAt(-1);
          auto p = n - 1;
          tMatrix.assign(input);
          auto iteration = 0;
          auto eps = T(1.e-5f);
-
+         input->printIndexedBuffer("Hessenber on Francis QR");
          while(p > 1) {
              auto q = p - 1;
              auto s = tMatrix.t<T>(q,q) + tMatrix.t<T>(p, p);
@@ -274,14 +262,14 @@ namespace helpers {
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
-             for (auto k = 0; k < p - 1; k++) {
+             for (auto k = 0; k < q; k++) {
                  auto P = createHouseholder(x,y,z);
                  auto resRows = tMatrix({k, k + 3, k, n});
-                 auto copyRows(resRows);
+                 NDArray copyRows(resRows);
                  MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
-                 auto r = math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
-                 auto resCols = tMatrix({0,r, k, k+3});
-                 auto copyCols(resCols);
+                // auto r = p + 1; //math::nd4j_min(Nd4jLong(k + 3), Nd4jLong (p + 1));
+                 auto resCols = tMatrix({k, n, k, k + 3});
+                 NDArray copyCols(resCols);
                  MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
                  x = tMatrix.t<T>(k+1, k);
                  y = tMatrix.t<T>(k+2, k);
@@ -289,6 +277,7 @@ namespace helpers {
                      z = tMatrix.t<T>(k+3, k);
                  }
              }
+             tMatrix.printIndexedBuffer("After Housholder transformation");
 
              // Givens rotation with 2x2 rotator
              auto G = createGivens(x,y);
@@ -299,6 +288,8 @@ namespace helpers {
              auto copyCols(resCols);
              MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
              iteration++;
+             tMatrix.printIndexedBuffer("After Givens transformation");
+
              if (math::nd4j_abs(tMatrix.t<T>(p, q)) < eps * (math::nd4j_abs(tMatrix.t<T>(q,q)) + math::nd4j_abs(tMatrix.t<T>(p,p)))) {
                  // read eigen val found:
                  tMatrix.t<T>(p,q) = T(0.f);
@@ -308,8 +299,8 @@ namespace helpers {
                  tMatrix.t<T>(q, q-1) = T(0.f);
                  p -= 2;
              }
-             nd4j_printf("%d: ", iteration);
-             tMatrix.printIndexedBuffer("T matrix on step");
+             nd4j_printf("Step %d: ", iteration);
+             tMatrix.printIndexedBuffer("T matrix is");
              if (iteration > 1000) {
                  nd4j_printf("Too many iterations (%d). Breaking up\n", iteration);
                  break;
@@ -867,13 +858,13 @@ template<typename T>
 //        input->printIndexedBuffer("Input");
         //outputQ.setIdentity();
         hessenbergReduction<T>(*input, outputH, outputQ);
-        MmulHelper::matmul(&outputQ, input, &outputT, true, false); //outputT.printIndexedBuffer("Res");
-        MmulHelper::matmul(&outputT, &outputQ, output, false, false); output->printIndexedBuffer("Hessenberg restored");
-        outputH.assign(output);
+//        MmulHelper::matmul(&outputQ, input, &outputT, true, false); //outputT.printIndexedBuffer("Res");
+//        MmulHelper::matmul(&outputT, &outputQ, output, false, false); output->printIndexedBuffer("Hessenberg restored");
+//        outputH.assign(output);
 //        MmulHelper::matmul(&outputQ, &outputQ, output, false, true); output->printIndexedBuffer("Should be identity matrix");
           auto outputU = outputQ.ulike(); outputT.nullify();
           outputU.setIdentity();//outputH.setIdentity();
-        francisStep<T>(context, &outputH, outputT, outputQ);
+        francisQR<T>(context, &outputH, outputT, outputQ);
 
         //computeFromHessenberg<T>(outputH, outputU, outputT, outputU);
           //primitiveSchurDecomposition<T>(context, &outputH, &outputU, &outputT);
