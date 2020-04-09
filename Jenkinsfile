@@ -22,8 +22,7 @@
     Example: jenkinsBuilder platforms: []
  */
 
-// @Library('konduit-ci-scripts@bugfix/ios-builds') _
-@Library('konduit-ci-scripts@bugfix/linux-cuda') _
+@Library('konduit-ci-scripts@feature/dl4j-sca-dck') _
 
 jenkinsBuilder()
 
