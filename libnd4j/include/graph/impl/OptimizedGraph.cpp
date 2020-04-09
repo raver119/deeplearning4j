@@ -112,10 +112,8 @@ namespace sd {
                 int inExCounts = 0, inInternalCounts = 0;
                 for (const auto& in : inputs) {
 
-                    // todo have to be correctly defined what input is external and what internal
-                    if (originalGraph().variableSpace().hasVariable(in.first, 0)) {
-                        // count external inputs, all inputs that are in
-                        // varable space will be treated as external inputs
+                    if (originalGraph().unmappedNodes().find(in.first) == originalGraph().unmappedNodes().end()) {
+                        // count external inputs, all inputs which id is node in unmapped container will be treaded as external
                         inExCounts++;
                     }
                     else {
