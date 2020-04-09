@@ -895,6 +895,71 @@ TEST_F(GraphAnalysisTests, basic_toposort_test_9) {
     ASSERT_EQ(17, sequence.at(0).protoContext().nodeId());
 }
 
+TEST_F(GraphAnalysisTests, basic_toposort_test_10) {
+    Graph graph;
+
+    // A
+    graph.addVariable("A", NDArrayFactory::create<int>('c', {3}, {1, 1, 1}));
+
+    // B
+    graph.addVariable("B", NDArrayFactory::create<int>('c', {3}, {2, 2, 2}));
+
+    // C
+    graph.addVariable("C", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+
+    // D
+    graph.addVariable("D", NDArrayFactory::create<int>('c', {3}, {3, 3, 3}));
+
+    Node a(sd::ops::multiply(), "a");
+    Node b(sd::ops::add(), "b");
+    Node c(sd::ops::multiply(), "c");
+    Node d(sd::ops::subtract(), "d");
+
+    graph.addNode(a, {"A", "B"});
+    graph.addNode(b, {"a", "C"});
+    graph.addNode(c, {"a", "D"});
+    graph.addNode(d, {"a", "b", "c"});
+
+    // we just check that nodes were really added
+    ASSERT_EQ(4, graph.size());
+
+    auto optimized = graph.optimizedGraph();
+
+    // we expect that OptimizedGraph has exactly 1 layer
+    ASSERT_EQ(3, optimized.layers());
+
+    auto layer = optimized.layer(0);
+
+    // we expect layer has exactly 1 OpSequence
+    ASSERT_EQ(1, layer.width());
+    auto sequence = layer[0];
+
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(5, sequence.at(0).protoContext().nodeId());
+
+    auto layer1 = optimized.layer(1);
+
+    // we expect layer has exactly 2 OpSequence
+    ASSERT_EQ(2, layer1.width());
+    sequence = layer1[0];
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(6, sequence.at(0).protoContext().nodeId());
+    sequence = layer1[1];
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
+
+    auto layer2 = optimized.layer(2);
+    // we expect layer has exactly 1 OpSequence
+    ASSERT_EQ(1, layer2.width());
+    sequence = layer2[0];
+    // we expect that OpSequence has exactly 1 ops
+    ASSERT_EQ(1, sequence.length());
+    ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
+}
+
 TEST_F(GraphAnalysisTests, test_cond_1) {
     auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 }
