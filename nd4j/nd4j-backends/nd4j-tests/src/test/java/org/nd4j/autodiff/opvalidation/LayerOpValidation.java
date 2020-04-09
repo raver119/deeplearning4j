@@ -33,6 +33,7 @@ import org.nd4j.linalg.api.iter.NdIndexIterator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.AvgPooling2D;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.DepthwiseConv2D;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.Pooling2D;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.Pooling2DDerivative;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.*;
@@ -1467,4 +1468,41 @@ public class LayerOpValidation extends BaseOpValidation {
             assertNull(err);
         }
     }
+
+    @Test
+    public void testDepthwiseConv2D(){
+
+        int bS = 10;
+
+        int kernelHeight = 2;
+        int kernelWidth = 2;
+        int strideHeight = 2;
+        int strideWidth = 2;
+        int inChannels = 10;
+        int outChannels = 5;
+        Nd4j.getRandom().setSeed(12345);
+        SameDiff sd = SameDiff.create();
+        SDVariable in = sd.var("in", Nd4j.rand(bS, inChannels, 28,28));
+        SDVariable weights = sd.var("weights", Nd4j.rand(DataType.FLOAT, kernelHeight, kernelWidth, inChannels, outChannels));
+        SDVariable bias = sd.var("bias", Nd4j.rand(DataType.FLOAT, 50));
+        Conv2DConfig config = Conv2DConfig.builder()
+                .kH(kernelHeight)
+                .kW(kernelWidth)
+                .sH(strideHeight)
+                .sW(strideWidth)
+                .dataFormat("NCHW")
+                .build();
+
+        SDVariable out = sd.cnn.depthWiseConv2d(in, weights, bias, config);
+        SDVariable loss = sd.standardDeviation("loss", out, true);
+        loss.markAsLoss();
+
+        OpValidation.validate(new TestCase(sd)
+                .gradientCheck(true)
+        );
+
+
+
+    }
+
 }
