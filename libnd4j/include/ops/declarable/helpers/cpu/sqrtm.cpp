@@ -278,18 +278,18 @@ namespace helpers {
                  }
              }
              tMatrix.printIndexedBuffer("After Housholder transformation");
-
-             // Givens rotation with 2x2 rotator
-             auto G = createGivens(x,y);
-             auto resRows = tMatrix({q, q + 2, p - 2, n});
-             auto copyRows(resRows);
-             MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
-             auto resCols = tMatrix({0, p + 1, p - 1, p + 1});
-             auto copyCols(resCols);
-             MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
-             iteration++;
-             tMatrix.printIndexedBuffer("After Givens transformation");
-
+             if (math::nd4j_abs(y) > eps && math::nd4j_abs(x) > eps) {
+                 // Givens rotation with 2x2 rotator
+                 auto G = createGivens(x, y);
+                 auto resRows = tMatrix({q, q + 2, 0, p + 1});
+                 auto copyRows(resRows);
+                 MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
+                 auto resCols = tMatrix({0, p + 1, q, q + 2});
+                 auto copyCols(resCols);
+                 MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
+                 iteration++;
+                 tMatrix.printIndexedBuffer("After Givens transformation");
+             }
              if (math::nd4j_abs(tMatrix.t<T>(p, q)) < eps * (math::nd4j_abs(tMatrix.t<T>(q,q)) + math::nd4j_abs(tMatrix.t<T>(p,p)))) {
                  // read eigen val found:
                  tMatrix.t<T>(p,q) = T(0.f);
