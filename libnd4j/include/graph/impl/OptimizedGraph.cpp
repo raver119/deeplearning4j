@@ -198,8 +198,18 @@ namespace sd {
             int startSeq = 0;
             for (const auto& id : startNodes) {
                 layersMaxSeq[0] = startSeq;
-                if(!layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq))
-                   throw std::runtime_error("OptimizedGraph::layersSeqDefine() - not all nodes properly prototyped!");
+                // if only start nodes exists they have to be add to connections
+                if (bOnlyStartNodes) {
+                    auto node = NodeInfo();
+                    node.setLayer(0);
+                    node.setProcessed(true);
+                    node.setSequence(startSeq);
+                    collector[id] = node;
+                }
+                else {
+                    if (!layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq))
+                        throw std::runtime_error("OptimizedGraph::layersSeqDefine() - not all nodes properly prototyped!");
+                }
                 startSeq++;
             }
             
