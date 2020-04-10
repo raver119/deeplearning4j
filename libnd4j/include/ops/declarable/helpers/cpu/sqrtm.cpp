@@ -272,18 +272,19 @@ namespace helpers {
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
-             for (auto k = 0; k < q-1; k++) {
+             for (auto k = 0; k < q; k++) {
                  auto P = createHouseholder(x,y,z);
-                 auto resRows = tMatrix({k, k + 3, k, p+1});
+                 auto c = math::nd4j_max(k-1, 0);
+                 auto resRows = tMatrix({k, k + 3, c, p+1});
                  NDArray copyRows(resRows);
                  MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
-                 auto r = p + 1; //math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
+                 auto r = math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
                  auto resCols = tMatrix({k, r, k, k + 3});
                  NDArray copyCols(resCols);
                  MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
                  x = tMatrix.t<T>(k+1, k);
                  y = tMatrix.t<T>(k+2, k);
-                 if (k < q - 2) {
+                 if (k < q - 1) {
                      z = tMatrix.t<T>(k+3, k);
                  }
              }
