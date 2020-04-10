@@ -132,7 +132,7 @@ namespace sd {
             _removable = reallyRemovable;
         }
 
-        OpClass Node::getOpClass() {
+        OpClass Node::getOpClass() const {
             return _opClass;
         }
 

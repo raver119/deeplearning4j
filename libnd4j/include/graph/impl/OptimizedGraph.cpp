@@ -317,8 +317,8 @@ namespace sd {
                 if(child == collection.end())
                    return false;
                 
-                // todo check this do we need to set op type logic for childs
-                if(parent->second.isLogic())
+                // todo check this do we need to set child logic if parent is
+                if(false && parent->second.isLogic())
                    child->second.setType(parent->second.type());
 
                 // in case parent was not out-branching node but child is in branching it will be put to next layer

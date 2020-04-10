@@ -183,7 +183,7 @@ namespace sd {
             void markInplace(bool reallyInplace);
 
 
-            OpClass getOpClass();
+            OpClass getOpClass() const;
 
             // these methods are used for internal profiling
             void setOuterTime(Nd4jLong time);
