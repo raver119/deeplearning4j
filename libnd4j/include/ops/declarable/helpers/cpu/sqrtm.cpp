@@ -232,10 +232,20 @@ namespace helpers {
 
     template <typename T>
     NDArray createGivens(T const x, T const y) {
-        auto d = math::p_sqrt(math::p_pow(x,T(2.f))+ math::p_pow(y, T(2.f)));
+        auto d = math::p_sqrt(x*x + y*y);
         auto c = x / d;
         auto s = y / d;
+
+// Givens rotator via Householder transform
+//        c -= math::nd4j_sign<T,T>(x);
+//        auto d2 = math::p_sqrt(c*c + s*s);
+//        c /= d2; s /= d2;
+//
+//        auto G = NDArrayFactory::create<T>('c', {2,2}, {T(1.f - 2.f * c*c), T(-2.f*s*c), T(-2*c*s), T(1.f -2 * s* s)});
+
+        // Givens rotator itself (via complex mathematics)
         auto G = NDArrayFactory::create<T>('c', {2,2}, {c, -s, s, c});
+
         // test area
 //        auto u = NDArrayFactory::create<T>('c', {2,1}, {x,y});
 //        auto e1 = u.ulike();
@@ -255,33 +265,33 @@ namespace helpers {
          input->printIndexedBuffer("Hessenber on Francis QR");
          while(p > 1) {
              auto q = p - 1;
-             auto s = tMatrix.t<T>(q,q) + tMatrix.t<T>(p, p);
-             auto t = tMatrix.t<T>(q,q) * tMatrix.t<T>(p, p) - tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
+             auto s = tMatrix.t<T>(q, q) + tMatrix.t<T>(p, p);
+             auto t = tMatrix.t<T>(q, q) * tMatrix.t<T>(p, p) - tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
              auto x = tMatrix.t<T>(0, 0) * tMatrix.t<T>(0, 0) + tMatrix.t<T>(0, 1) * tMatrix.t<T>(1, 0) - s * tMatrix.t<T>(0, 0) + t;
              auto y = tMatrix.t<T>(1, 0) * (tMatrix.t<T>(0, 0) + tMatrix.t<T>(1, 1) - s);
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
-             for (auto k = 0; k < q; k++) {
+             for (auto k = 0; k < q-1; k++) {
                  auto P = createHouseholder(x,y,z);
-                 auto resRows = tMatrix({k, k + 3, k, n});
+                 auto resRows = tMatrix({k, k + 3, k, p+1});
                  NDArray copyRows(resRows);
                  MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
-                // auto r = p + 1; //math::nd4j_min(Nd4jLong(k + 3), Nd4jLong (p + 1));
-                 auto resCols = tMatrix({k, n, k, k + 3});
+                 auto r = p + 1; //math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
+                 auto resCols = tMatrix({k, r, k, k + 3});
                  NDArray copyCols(resCols);
                  MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
                  x = tMatrix.t<T>(k+1, k);
                  y = tMatrix.t<T>(k+2, k);
-                 if (k < p - 2) {
+                 if (k < q - 2) {
                      z = tMatrix.t<T>(k+3, k);
                  }
              }
-             tMatrix.printIndexedBuffer("After Housholder transformation");
+             tMatrix.printIndexedBuffer("After Householder transformation");
              if (math::nd4j_abs(y) > eps && math::nd4j_abs(x) > eps) {
                  // Givens rotation with 2x2 rotator
                  auto G = createGivens(x, y);
-                 auto resRows = tMatrix({q, q + 2, 0, p + 1});
+                 auto resRows = tMatrix({q, q + 2, q - 1, p + 1});
                  auto copyRows(resRows);
                  MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
                  auto resCols = tMatrix({0, p + 1, q, q + 2});
