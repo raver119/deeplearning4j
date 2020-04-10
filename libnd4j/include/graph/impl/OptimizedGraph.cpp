@@ -97,9 +97,10 @@ namespace sd {
             // double check to avoid unstable behavior
             if (originalGraph().unmappedNodes().empty())
                 return false;
-
+            
+            const auto& unmappedNodes = originalGraph().unmappedNodes();
             // iterate via original graph nodes to gather node information
-            for (const auto& it : originalGraph().unmappedNodes()) {
+            for (const auto& it : unmappedNodes) {
 
                 const auto& ID = it.first;
                 const auto& inputs = it.second.input();
@@ -112,7 +113,7 @@ namespace sd {
                 int inExCounts = 0, inInternalCounts = 0;
                 for (const auto& in : inputs) {
 
-                    if (originalGraph().unmappedNodes().find(in.first) == originalGraph().unmappedNodes().end()) {
+                    if (unmappedNodes.find(in.first) == unmappedNodes.end() ){
                         // count external inputs, all inputs which id is node in unmapped container will be treaded as external
                         inExCounts++;
                     }
@@ -127,6 +128,8 @@ namespace sd {
                         collector[in.first].addConnection(ID);
                     }
                 }
+                // set operation type
+                parentNode.setType( it.second.opType() );
                 // if move then 1 internal input this is in-branching node
                 parentNode.setInBranching( inInternalCounts > 1);
                 // gather start and in-branching nodes for the loop when operations are put to OpSequence (topolSearch)
@@ -194,19 +197,19 @@ namespace sd {
             // next step set the node layer and it sequence in layer
             // define max layers and max sequence per layer
             int startSeq = 0;
+            bool bOnlyStartNodes = collector.empty();
             for (const auto& id : startNodes) {
                 layersMaxSeq[0] = startSeq;
                 // if only start nodes exists they have to be add to connections
-                if (bOnlyStartNodes) {
+                if(bOnlyStartNodes){
                     auto node = NodeInfo();
                     node.setLayer(0);
                     node.setProcessed(true);
                     node.setSequence(startSeq);
                     collector[id] = node;
                 }
-                else {
-                    if (!layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq))
-                        throw std::runtime_error("OptimizedGraph::layersSeqDefine() - not all nodes properly prototyped!");
+                else{
+                    layersSeqDefine(collector, id, 0, startSeq, layersMaxSeq);
                 }
                 startSeq++;
             }
@@ -215,7 +218,7 @@ namespace sd {
             std::vector<std::vector<OpSequence>> vOpSeq;
             if(!initOpSeqContainer(layersMaxSeq, vOpSeq))
                throw std::runtime_error("OptimizedGraph::initOpSeqContainer() - cannot initialize OpSequence, not all nodes properly prototyped!");
-
+            
             // combine start nodes and in-branching nodes
             startNodes.insert(inBranching.begin(), inBranching.end());
             // re-init proceed NodeInfo member to avoid append sequence several times
@@ -228,11 +231,11 @@ namespace sd {
                  
                 const auto it = originalGraph().unmappedNodes().find(id);
                 auto& nodeInfo = collector[id];
-                // append only not processed nodes
                 if(!nodeInfo.isProcessed()){
                    vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
                    nodeInfo.setProcessed();
-                }                
+                }
+                
                 // search in depth via connections of "start" node
                 if(!topolSearch(id, collector, vOpSeq))
                     throw std::runtime_error("OptimizedGraph::topolSearch() - cannot run topological search, inputs incorrect!");
@@ -294,9 +297,9 @@ namespace sd {
             parent->second.setOutBranching(parent->second.connections().size() > 1);
             // set that node was processed, to avoid it double processing (only for some cases it can be processed several times)
             parent->second.setProcessed();
-            
+             
             // if current node is out-branching it childs will be put to next layer
-            if (parent->second.isOutBranching())
+            if (parent->second.isOutBranching() && !parent->second.isLogic())
                 layer++;
             
             // childs sequence position have to start from max defined sequence position in layer
@@ -304,7 +307,8 @@ namespace sd {
             int seq = (layersMaxSeq.find(layer) == layersMaxSeq.end()) ? 0 : layersMaxSeq[layer];
             // if parent is out-branching node sequence have to be increment 
             // on the next stage the sequence value will be double checked with max per layer
-            seq = parent->second.isOutBranching() ? seq + 1 : seq;
+            // todo check logic part
+            seq = (parent->second.isOutBranching() && !parent->second.isLogic()) ? seq + 1 : seq;
             
             // loop via childs (connected nodes)
             for (const auto& id : parent->second.connections()) {
@@ -313,17 +317,24 @@ namespace sd {
                 if(child == collection.end())
                    return false;
                 
+                // todo check this do we need to set op type logic for childs
+                if(parent->second.isLogic())
+                   child->second.setType(parent->second.type());
+
                 // in case parent was not out-branching node but child is in branching it will be put to next layer
-                if (!parent->second.isOutBranching() && child->second.isInBranching())
+                if (!parent->second.isOutBranching() && child->second.isInBranching() && !child->second.isLogic())
                      layer++;
                 
                 // move in depth of connections
                 layersSeqDefine(collection, id, layer, seq, layersMaxSeq);
-                // increment sequence as childs are on the one layer in case if child was not processed earlier 
-                seq++;
+                // increment sequence as childs are on the one layer in case if child was not processed earlier
+                if(!parent->second.isLogic())
+                   seq++;
             }
 
             return true;
         }
+
+        
     }
 }

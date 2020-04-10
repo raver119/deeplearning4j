@@ -147,6 +147,8 @@ namespace sd {
 
             int  nLayer;
             int  nSequence;
+
+            sd::graph::OpType opType;
         public:
               
             NodeInfo(){ reset(); }
@@ -156,7 +158,7 @@ namespace sd {
             void setOutBranching(bool bValue) { bOutBranching = bValue; }
             void setProcessed(bool bValue = true) { bProcessed = bValue; }
 
-            void reset() { sConnections.clear(); bProcessed = bInBranching = bOutBranching = false; nLayer = 0; nSequence = -1; }
+            void reset() { sConnections.clear(); bProcessed = bInBranching = bOutBranching = false; nLayer = 0; nSequence = -1; opType = OpType_CUSTOM; }
 
             int layer() const { return nLayer; }
             void setLayer(int layer) { nLayer = layer; }
@@ -166,6 +168,10 @@ namespace sd {
 
             void addConnection(int id) { sConnections.emplace(id); }
             const std::set<int>& connections() const { return sConnections; }
+
+            void setType(sd::graph::OpType value){ opType = value; }
+            sd::graph::OpType type() const { return opType; }
+            bool  isLogic(){ return opType == OpType_LOGIC; }
 
             bool isInBranching() const { return bInBranching; }
             bool isOutBranching() const { return bOutBranching; }
