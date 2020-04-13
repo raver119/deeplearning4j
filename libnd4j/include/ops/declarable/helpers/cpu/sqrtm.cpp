@@ -256,6 +256,37 @@ namespace helpers {
     }
 
     template <typename T>
+    void householderTransform(NDArray& tMatrix, T& x, T& y, T& z, Nd4jLong const q, Nd4jLong const p) {
+        for (auto k = 0; k < q; k++) {
+            auto P = createHouseholder(x,y,z);
+            auto c = math::nd4j_max(k-1, 0);
+            auto resRows = tMatrix({k, k + 3, c, p+1});
+            NDArray copyRows = resRows.dup();
+            MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
+            auto r = math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
+            auto resCols = tMatrix({0, r, k, k + 3}); // all rows for columns from k (k+4th and rest row contatins zeros)
+            NDArray copyCols = resCols.dup();
+            MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
+            x = tMatrix.t<T>(k+1, k);
+            y = tMatrix.t<T>(k+2, k);
+            if (k < q - 1) {
+                z = tMatrix.t<T>(k+3, k);
+            }
+        }
+    }
+
+    template <typename T>
+    void givensTransform(NDArray& tMatrix, T const x, T const y, Nd4jLong const q) {
+        auto G = createGivens(x, y);
+        auto resRows = tMatrix({q, q + 2, q - 1, q + 2}); // hessenberg matrix has 0 to q-2 zeros in row
+        auto copyRows(resRows);
+        MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
+        auto resCols = tMatrix({0, q + 2, q, q + 2}); // all rows with two last columns
+        auto copyCols(resCols);
+        MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
+    }
+
+    template <typename T>
     void francisQR(sd::LaunchContext* context, NDArray const* input, NDArray& tMatrix, NDArray& qMatrix) {
          auto n = tMatrix.sizeAt(-1);
          auto p = n - 1;
@@ -272,33 +303,12 @@ namespace helpers {
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
-             for (auto k = 0; k < q; k++) {
-                 auto P = createHouseholder(x,y,z);
-//                 auto c = math::nd4j_max(k-1, 0);
-                 auto resRows = tMatrix({k, k + 3, 0, p+1});
-                 NDArray copyRows(resRows);
-                 MmulHelper::matmul(&P, &copyRows, &resRows, true, false); // P is symmetic, so not a problem
-                 auto r = math::nd4j_min(Nd4jLong(k + 4), Nd4jLong (p + 1));
-                 auto resCols = tMatrix({0, p+1, k, k + 3}); // all rows for columns from k (k+4 row contatins zeros)
-                 NDArray copyCols(resCols);
-                 MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
-                 x = tMatrix.t<T>(k+1, k);
-                 y = tMatrix.t<T>(k+2, k);
-                 if (k < q - 1) {
-                     z = tMatrix.t<T>(k+3, k);
-                 }
-             }
+             householderTransform(tMatrix, x, y, z, q, p);
              tMatrix.printIndexedBuffer("After Householder transformation");
 //             if (math::nd4j_abs(y) > eps && math::nd4j_abs(x) > eps) {
                  // Givens rotation with 2x2 rotator
-                 auto G = createGivens(x, y);
-                 auto resRows = tMatrix({q, q + 2, q - 1, p + 1}); // hessenberg matrix has 0 to q-2 zeros in row
-                 auto copyRows(resRows);
-                 MmulHelper::matmul(&G, &copyRows, &resRows, true, false);
-                 auto resCols = tMatrix({0, p + 1, q, q + 2}); // all rows with two last columns
-                 auto copyCols(resCols);
-                 MmulHelper::matmul(&copyCols, &G, &resCols, false, false);
-                 tMatrix.printIndexedBuffer("After Givens transformation");
+             givensTransform(tMatrix, x, y, q);
+             tMatrix.printIndexedBuffer("After Givens transformation");
 //             }
              iteration++;
              if (math::nd4j_abs(tMatrix.t<T>(p, q)) < eps * (math::nd4j_abs(tMatrix.t<T>(q,q)) + math::nd4j_abs(tMatrix.t<T>(p,p)))) {
