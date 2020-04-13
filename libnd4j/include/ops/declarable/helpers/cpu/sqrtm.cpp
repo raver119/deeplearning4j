@@ -256,8 +256,8 @@ namespace helpers {
     }
 
     template <typename T>
-    void householderTransform(NDArray& tMatrix, T& x, T& y, T& z, Nd4jLong const q, Nd4jLong const p) {
-        for (auto k = 0; k < q; k++) {
+    void householderTransform(NDArray& tMatrix, T& x, T& y, T& z, Nd4jLong const p) {
+        for (auto k = 0; k < p-1; k++) {
             auto P = createHouseholder(x,y,z);
             auto c = math::nd4j_max(k-1, 0);
             auto resRows = tMatrix({k, k + 3, c, p+1});
@@ -267,10 +267,10 @@ namespace helpers {
             auto resCols = tMatrix({0, r, k, k + 3}); // all rows for columns from k (k+4th and rest row contatins zeros)
             NDArray copyCols = resCols.dup();
             MmulHelper::matmul(&copyCols, &P, &resCols, false, false);
-            x = tMatrix.t<T>(k+1, k);
-            y = tMatrix.t<T>(k+2, k);
-            if (k < q - 1) {
-                z = tMatrix.t<T>(k+3, k);
+            x = tMatrix.t<T>(k + 1, k);
+            y = tMatrix.t<T>(k + 2, k);
+            if (k < p - 2) {
+                z = tMatrix.t<T>(k + 3, k);
             }
         }
     }
@@ -292,18 +292,18 @@ namespace helpers {
          auto p = n - 1;
          tMatrix.assign(input);
          auto iteration = 0;
-         auto eps = T(1.e-5f);
+         auto eps = T(1.e-6f);
          input->printIndexedBuffer("Hessenber on Francis QR");
          while(p > 1) {
              auto q = p - 1;
              auto s = tMatrix.t<T>(q, q) + tMatrix.t<T>(p, p);
-             auto t = tMatrix.t<T>(q, q) * tMatrix.t<T>(p, p) - tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
+             auto t = tMatrix.t<T>(q, q) * tMatrix.t<T>(p, p); //- tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
              auto x = tMatrix.t<T>(0, 0) * tMatrix.t<T>(0, 0) + tMatrix.t<T>(0, 1) * tMatrix.t<T>(1, 0) - s * tMatrix.t<T>(0, 0) + t;
              auto y = tMatrix.t<T>(1, 0) * (tMatrix.t<T>(0, 0) + tMatrix.t<T>(1, 1) - s);
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
 
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
-             householderTransform(tMatrix, x, y, z, q, p);
+             householderTransform<T>(tMatrix, x, y, z, p);
              tMatrix.printIndexedBuffer("After Householder transformation");
 //             if (math::nd4j_abs(y) > eps && math::nd4j_abs(x) > eps) {
                  // Givens rotation with 2x2 rotator
