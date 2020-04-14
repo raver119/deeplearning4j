@@ -53,6 +53,11 @@
             <artifactId>${nd4j.backend}</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>pydl4j</artifactId>
+            <version>${dl4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -168,7 +173,7 @@
                             <skip>${jumpy.test.skip}</skip>
                             <arguments>
                                 <argument>-m</argument>
-                                <argument>pytest</argument>
+                                <argument>py.test</argument>
                                 <argument>--pep8</argument>
                                 <argument>-m</argument>
                                 <argument>pep8</argument>
