@@ -408,7 +408,7 @@
         </skipTestResourceEnforcement> <!-- Test resource profile must be enabled unless using -DskipTests etc -->
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <dependency-check-maven.version>5.3.1</dependency-check-maven.version>
-         <sonar.sources>*,src,include</sonar.sources>
+<!--         <sonar.sources>*,src,include</sonar.sources>-->
         <sonar.cxx.includeDirectories>include</sonar.cxx.includeDirectories>
     </properties>
 
