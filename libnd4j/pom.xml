@@ -76,8 +76,6 @@
         <libnd4j.buildthreads></libnd4j.buildthreads>
         <libnd4j.helper></libnd4j.helper>
         <libnd4j.buildprogram>bash</libnd4j.buildprogram>
-        <!-- <sonar.sources>include</sonar.sources> -->
-        <sonar.cxx.includeDirectories>include</sonar.cxx.includeDirectories>
     </properties>
 
     <build>
