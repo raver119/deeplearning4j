@@ -109,12 +109,12 @@ namespace sd {
                     collector[ID] = NodeInfo();
 
                 NodeInfo& parentNode = collector[ID];
-
+                // count external and internal inputs to find out the type of the node (start, in-branching, out-branching)
                 int inExCounts = 0, inInternalCounts = 0;
                 for (const auto& in : inputs) {
-
+                    // find input id in original graph
                     if (unmappedNodes.find(in.first) == unmappedNodes.end() ){
-                        // count external inputs, all inputs which id is node in unmapped container will be treaded as external
+                        // count external inputs, all inputs which id is not in unmapped container will be treaded as external
                         inExCounts++;
                     }
                     else {
@@ -124,12 +124,13 @@ namespace sd {
                         // if node info is not in collector add it
                         if (collector.find(in.first) == collector.end())
                             collector[in.first] = NodeInfo();
-                        
+                        // input node connection with discovered 
                         collector[in.first].addConnection(ID);
                     }
                 }
                 // set operation type
                 parentNode.setType( it.second.opType() );
+                
                 // if move then 1 internal input this is in-branching node
                 parentNode.setInBranching( inInternalCounts > 1);
                 // gather start and in-branching nodes for the loop when operations are put to OpSequence (topolSearch)
@@ -158,10 +159,10 @@ namespace sd {
                 for (const auto& itNodes : itParent->second.connections()) {
 
                     auto itChild = collector.find(itNodes);
-
+                    // double check
                     if (itChild != collector.end()) {
-                        // if the child is in-branching node it will be treated as start node
-                        if (itChild->second.isInBranching() || itChild->second.isProcessed()) { // proceed
+                        // if the child is in-branching node it will be treated as start node or it was proceed 
+                        if (itChild->second.isInBranching() || itChild->second.isProcessed()) { 
                             continue;
                         }
                         // put operation to OpSequence container
@@ -231,6 +232,7 @@ namespace sd {
                  
                 const auto it = originalGraph().unmappedNodes().find(id);
                 auto& nodeInfo = collector[id];
+                // append start/in-branching node operation to sequence
                 if(!nodeInfo.isProcessed()){
                    vOpSeq[nodeInfo.layer()][nodeInfo.sequence()].append(it->second.customOp(), it->second.contextPrototype());
                    nodeInfo.setProcessed();
@@ -251,7 +253,7 @@ namespace sd {
             // double check to avoid unstable behavior
             if (layersMaxSeq.empty())
                 return false;
-
+            // pre-init op-sequence size layers/per-layer sequence
             vOpSeq.resize(layersMaxSeq.size());
             for (const auto& it : layersMaxSeq) {
                 vOpSeq[it.first].resize(it.second + 1);
@@ -281,6 +283,7 @@ namespace sd {
             }
             else{
                 // if node sequence position was not checked use it for max sequence selection
+                // sequence have to be incremented as max + 1, without any jumps 
                 if(startSeq > (layerFound->second + 1))
                    startSeq = layerFound->second + 1;
                    
@@ -307,7 +310,8 @@ namespace sd {
             int seq = (layersMaxSeq.find(layer) == layersMaxSeq.end()) ? 0 : layersMaxSeq[layer];
             // if parent is out-branching node sequence have to be increment 
             // on the next stage the sequence value will be double checked with max per layer
-            // todo check logic part
+            // todo check logic part maybe here have to be check operation class (something likke Switch, If, While etc)
+            // probably for each of them could be other behavior
             seq = (parent->second.isOutBranching() && !parent->second.isLogic()) ? seq + 1 : seq;
             
             // loop via childs (connected nodes)
@@ -316,18 +320,16 @@ namespace sd {
                 auto child = collection.find(id);
                 if(child == collection.end())
                    return false;
-                
-                // todo check this do we need to set child logic if parent is
-                if(false && parent->second.isLogic())
-                   child->second.setType(parent->second.type());
 
                 // in case parent was not out-branching node but child is in branching it will be put to next layer
+                // todo check logic part
                 if (!parent->second.isOutBranching() && child->second.isInBranching() && !child->second.isLogic())
                      layer++;
                 
                 // move in depth of connections
                 layersSeqDefine(collection, id, layer, seq, layersMaxSeq);
                 // increment sequence as childs are on the one layer in case if child was not processed earlier
+                // todo check logic part
                 if(!parent->second.isLogic())
                    seq++;
             }
