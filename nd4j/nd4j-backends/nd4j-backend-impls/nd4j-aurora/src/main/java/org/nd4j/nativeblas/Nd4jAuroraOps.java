@@ -1837,12 +1837,12 @@ public class Nd4jAuroraOps implements NativeOps {
 
     @Override
     public OpaqueDataBuffer allocateDataBuffer(long elements, int dataType, boolean allocateBoth) {
-        return (OpaqueDataBuffer) callPointer("allocateDataBuffer", elements, dataType, allocateBoth);
+        return new OpaqueDataBuffer(callPointer("allocateDataBuffer", elements, dataType, allocateBoth));
     }
 
     @Override
     public OpaqueDataBuffer dbCreateView(OpaqueDataBuffer dataBuffer, long length, long offset) {
-        return (OpaqueDataBuffer) callPointer("dbCreateView", dataBuffer, length, offset);
+        return new OpaqueDataBuffer(callPointer("dbCreateView", dataBuffer, length, offset));
     }
 
     @Override
