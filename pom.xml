@@ -920,49 +920,29 @@
                     </dependency>
                 </dependencies>
             </dependencyManagement>
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.owasp</groupId>-->
-<!--                        <artifactId>dependency-check-maven</artifactId>-->
-<!--                        <version>${dependency-check-maven.version}</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>securitycheck</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>aggregate</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                        <configuration>-->
-<!--                            <formats>-->
-<!--                                <format>XML</format>-->
-<!--                                <format>HTML</format>-->
-<!--                            </formats>-->
-<!--                            <nugetconfAnalyzerEnabled>false</nugetconfAnalyzerEnabled>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-            <reporting>
+            <build>
                 <plugins>
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
                         <version>${dependency-check-maven.version}</version>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>aggregate</report>
-                                </reports>
-                            </reportSet>
-                        </reportSets>
+                        <executions>
+                            <execution>
+                                <id>securitycheck</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                         <configuration>
+                            <format>XML</format>
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                             <nugetconfAnalyzerEnabled>false</nugetconfAnalyzerEnabled>
+                            <skipProvidedScope>true</skipProvidedScope>
                         </configuration>
                     </plugin>
                 </plugins>
-            </reporting>
+            </build>
         </profile>
         <profile>
             <id>codecoverage</id>
