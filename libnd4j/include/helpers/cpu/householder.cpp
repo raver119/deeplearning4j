@@ -34,36 +34,37 @@ NDArray Householder<T>::evalHHmatrix(const NDArray& x) {
 	if(!x.isVector() && !x.isScalar())
 		throw std::runtime_error("ops::helpers::Householder::evalHHmatrix method: input array must be vector or scalar!");
 
-	auto w = NDArrayFactory::create(x.ordering(),  {(int)x.lengthOf(), 1}, x.dataType(), x.getContext());							// column-vector
-	auto wT = NDArrayFactory::create(x.ordering(), {1, (int)x.lengthOf()}, x.dataType(), x.getContext());							// row-vector (transposed w)
+	const auto xLen = (int)x.lengthOf();
+
+	NDArray w(x.ordering(), {xLen, 1}, x.dataType(), x.getContext());							// column-vector
 
 	T coeff;
-	T normX = x.reduceNumber(reduce::Norm2).e<T>(0);
+	T normX = x.reduceNumber(reduce::Norm2).t<T>(0);
 
-	if(normX*normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+	const auto xFirstElem = x.t<T>(0);
 
-		normX = x.e<T>(0);
+	if(normX*normX - xFirstElem * xFirstElem <= DataTypeUtils::min<T>() || xLen == 1) {
+
+		normX = xFirstElem;
 		coeff = 0.f;
 		w = 0.f;
-
 	}
 	else {
 
-		if(x.e<T>(0) >= (T)0.f)
+		if(xFirstElem >= (T)0.f)
 			normX = -normX;									// choose opposite sign to lessen roundoff error
 
-		T u0 = x.e<T>(0) - normX;
+		T u0 = xFirstElem - normX;
 		coeff = -u0 / normX;
 		w.assign(x / u0);
 	}
 
-	w.p(Nd4jLong(0), 1.f);
-	wT.assign(&w);
+	w.t<T>(0) = (T)1;
 
-	NDArray identity = NDArrayFactory::create(x.ordering(), {(int)x.lengthOf(), (int)x.lengthOf()}, x.dataType(), x.getContext());
+	NDArray identity(x.ordering(), {xLen, xLen}, x.dataType(), x.getContext());
 	identity.setIdentity();																			// identity matrix
 
-	return identity - mmul(w, wT) * coeff;
+	return identity - mmul(w, w.transpose()) * coeff;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,20 +78,22 @@ void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
 	if(!x.isScalar() && x.lengthOf() != tail.lengthOf() + 1)
 		throw std::runtime_error("ops::helpers::Householder::evalHHmatrixData method: input tail vector must have length less than unity compared to input x vector!");
 
-	normX = x.reduceNumber(reduce::Norm2, nullptr).e<T>(0);
+	normX = x.reduceNumber(reduce::Norm2).t<T>(0);
 
-	if(normX*normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+	const auto xFirstElem = x.t<T>(0);
 
-		normX = x.e<T>(0);
+	if(normX*normX - xFirstElem * xFirstElem <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+
+		normX = xFirstElem;
 		coeff = (T)0.f;
 		tail = (T)0.f;
 	}
 	else {
 
-		if(x.e<T>(0) >= (T)0.f)
+		if(xFirstElem >= (T)0.f)
 			normX = -normX;									// choose opposite sign to lessen roundoff error
 
-		T u0 = x.e<T>(0) - normX;
+		T u0 = xFirstElem - normX;
 		coeff = -u0 / normX;
 
 		if(x.isRowVector())
@@ -133,30 +136,24 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
     }
     else if(coeff != (T)0.f) {
 
-  		auto bottomPart = new NDArray(matrix({1,matrix.sizeAt(0), 0,0}, true));
-		auto bottomPartCopy = *bottomPart;
+  		NDArray bottomPart = matrix({1,matrix.sizeAt(0), 0,0}, true);
 
 		if(tail.isColumnVector()) {
 
-			auto column = tail;
-			auto row = tail.transpose();
-    		auto resultingRow = mmul(row, bottomPartCopy);
+    		auto resultingRow = mmul(tail.transpose(), bottomPart);
     		auto fistRow = matrix({0,1, 0,0}, true);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
-    		*bottomPart -= mmul(column, resultingRow) * coeff;
+    		bottomPart -= mmul(tail, resultingRow) * coeff;
 		}
 		else {
 
-			auto row = tail;
-			auto column = tail.transpose();
-    		auto resultingRow = mmul(row, bottomPartCopy);
+    		auto resultingRow = mmul(tail, bottomPart);
     		auto fistRow = matrix({0,1, 0,0}, true);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
-    		*bottomPart -= mmul(column, resultingRow) * coeff;
+    		bottomPart -= mmul(tail.transpose(), resultingRow) * coeff;
 		}
-		delete bottomPart;
 	}
 }
 
@@ -173,30 +170,23 @@ void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail, const T coef
 
   	else if(coeff != (T)0.f) {
 
-  		auto rightPart = new NDArray(matrix({0,0, 1,matrix.sizeAt(1)}, true));
-		auto rightPartCopy = *rightPart;
-		auto fistCol = new NDArray(matrix({0,0, 0,1}, true));
+  		NDArray rightPart = matrix({0,0, 1,matrix.sizeAt(1)}, true);
+		NDArray fistCol   = matrix({0,0, 0,1}, true);
 
   		if(tail.isColumnVector()) {
 
-			auto column = tail;
-			auto row = tail.transpose();
-    		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += *fistCol;
-    		*fistCol -= resultingCol * coeff;
-    		*rightPart -= mmul(resultingCol, row) * coeff;
+    		auto resultingCol = mmul(rightPart, tail);
+    		resultingCol += fistCol;
+    		fistCol -= resultingCol * coeff;
+    		rightPart -= mmul(resultingCol, tail.transpose()) * coeff;
 		}
 		else {
 
-			auto row = tail;
-			auto column = tail.transpose();
-    		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += *fistCol;
-    		*fistCol -= resultingCol * coeff;
-    		*rightPart -= mmul(resultingCol, row) * coeff;
+    		auto resultingCol = mmul(rightPart, tail.transpose());
+    		resultingCol += fistCol;
+    		fistCol -= resultingCol * coeff;
+    		rightPart -= mmul(resultingCol, tail) * coeff;
 		}
-  		delete rightPart;
-  		delete fistCol;
 	}
 }
 
