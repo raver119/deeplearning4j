@@ -20,7 +20,6 @@
 
 #include <helpers/hhSequence.h>
 #include <helpers/householder.h>
-#include <array/NDArrayFactory.h>
 
 namespace sd {
 namespace ops {
@@ -84,7 +83,7 @@ void HHsequence::applyTo_(NDArray& dest) {
     int size = _type == 'u' ? _vectors.sizeAt(0) : _vectors.sizeAt(1);
 
     if(dest.rankOf() != 2 || (dest.sizeAt(0) != size && dest.sizeAt(1) != size))
-        dest = NDArrayFactory::create(dest.ordering(), {size, size}, dest.dataType(), dest.getContext());
+        dest = NDArray(dest.ordering(), {size, size}, dest.dataType(), dest.getContext());
     dest.setIdentity();
 
     for(int k = _diagSize - 1; k >= 0; --k) {

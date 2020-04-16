@@ -19,7 +19,6 @@
 //
 
 #include <helpers/householder.h>
-#include <array/NDArrayFactory.h>
 
 namespace sd {
 namespace ops {
