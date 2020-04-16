@@ -3329,5 +3329,48 @@ TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_5) {
 //    delete res;
 }
 
+//-149    -50   -154
+//537    180    546
+//-27     -9    -25
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests12, MatrixSqrt_Test_6) {
+
+    auto a = NDArrayFactory::create<float>('c', {3, 3}, {
+            -149.f,    -50.f,   -154.f,     537.f, 180.f, 546.f,    -27.f, -9.f, -25.f
+    });
+
+//    auto exp = NDArrayFactory::create<float>('c', {5, 5}, {
+//
+//    });
+//
+//    auto triangular = NDArrayFactory::create<float>('c', {5,5}, {
+//    });
+//
+//    auto hessenberg = NDArrayFactory::create<float>('c', {5,5}, {
+//            12.000000f, -19.788715f, -13.257765f,  9.090570f,
+//            -7.681145f,  15.745762f,  12.805375f, -9.160070f,
+//            -0.000000f,   5.475967f,   8.863721f, -6.195451f,
+//            -0.000000f,   0.000000f,   0.313995f,  0.390518f    });
+//
+//    auto orthogonal = NDArrayFactory::create<float>('c', {4,4}, {
+//            -0.7910926f,  0.34244207f,  0.48180673f, -0.15737976f,
+//            -0.47435293f,  0.17957106f,  -0.8141399f,  0.28270072f,
+//            -0.36143053f,  -0.8554431f, -0.10193637f, -0.35664293f,
+//            -0.13612571f, -0.34453574f,  0.30764785f,  0.87642324f
+//    });
+
+    sd::ops::sqrtm op;
+
+    auto res = op.evaluate({&a});
+    ASSERT_EQ(res.status(), ND4J_STATUS_OK);
+    auto z = res.at(0);
+
+    z->printIndexedBuffer("Sqrt");
+//    MmulHelper::matmul(&orthogonal, z, &a, false, false);
+//    MmulHelper::matmul(&a, &orthogonal, z, false, true);
+//    ASSERT_TRUE(exp.equalsTo(z, 1.e-3));
+//    delete res;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

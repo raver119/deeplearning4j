@@ -297,7 +297,7 @@ namespace helpers {
          while(p > 1) {
              auto q = p - 1;
              auto s = tMatrix.t<T>(q, q) + tMatrix.t<T>(p, p);
-             auto t = tMatrix.t<T>(q, q) * tMatrix.t<T>(p, p); //- tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
+             auto t = tMatrix.t<T>(q, q) * tMatrix.t<T>(p, p) - tMatrix.t<T>(q, p) * tMatrix.t<T>(p, q);
              auto x = tMatrix.t<T>(0, 0) * tMatrix.t<T>(0, 0) + tMatrix.t<T>(0, 1) * tMatrix.t<T>(1, 0) - s * tMatrix.t<T>(0, 0) + t;
              auto y = tMatrix.t<T>(1, 0) * (tMatrix.t<T>(0, 0) + tMatrix.t<T>(1, 1) - s);
              auto z = tMatrix.t<T>(1, 0) * tMatrix.t<T>(2, 1);
@@ -305,7 +305,6 @@ namespace helpers {
              // Householder transformation with 3x3 Householder reflector until a procedure matrix is not less then 3x3
              householderTransform<T>(tMatrix, x, y, z, p);
              tMatrix.printIndexedBuffer("After Householder transformation");
-//             if (math::nd4j_abs(y) > eps && math::nd4j_abs(x) > eps) {
                  // Givens rotation with 2x2 rotator
              givensTransform(tMatrix, x, y, q);
              tMatrix.printIndexedBuffer("After Givens transformation");
