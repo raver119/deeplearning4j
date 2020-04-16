@@ -97,9 +97,9 @@ TEST_F(HelpersTests1, evalHHmatrixData_test1) {
     #ifdef __CUDABLAS__
     return;
     #endif
-    auto x = NDArrayFactory::create<double>('c', {1,4}, {14,17,3,1});
-    auto tail = NDArrayFactory::create<double>('c', {1,3});
-    auto expTail = NDArrayFactory::create<double>('c', {1,3}, {0.468984, 0.0827618, 0.0275873});
+    auto x = NDArrayFactory::create<double>('c', {4}, {14,17,3,1});
+    auto tail = NDArrayFactory::create<double>('c', {3});
+    auto expTail = NDArrayFactory::create<double>('c', {3}, {0.468984, 0.0827618, 0.0275873});
     const double normXExpected = -22.2486;
     const double coeffExpected = 1.62925;
 
@@ -1893,7 +1893,7 @@ TEST_F(HelpersTests1, OpArgsHolder_test3) {
     ASSERT_EQ(Status::OK(), results.status());
     ASSERT_TRUE(exp.isSameShape(tiled));
     ASSERT_TRUE(exp.equalsTo(tiled));
-   
+
     OpArgsHolder holderBP = holderFF.createArgsHolderForBP({&gradO}, true);
     sd::ops::tile_bp opBP;
     results = opBP.execute(holderBP);

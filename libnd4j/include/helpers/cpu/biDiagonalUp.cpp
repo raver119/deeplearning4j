@@ -39,7 +39,7 @@ BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory:
 
 	_HHmatrix.assign(&matrix);
 	_HHbidiag.assign(0.);
-	
+
 	evalData();
 
 }
@@ -61,7 +61,7 @@ BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory:
 		for(Nd4jLong i = 0; i < cols-1; ++i ) {
 
 			// evaluate Householder matrix nullifying columns
-			column = new NDArray(_HHmatrix({i,rows,  i,i+1}, true));
+			column = new NDArray(_HHmatrix({i,rows,  i,i+1}));
 
             _x = _HHmatrix.e<T>(i,i);
             _y = _HHbidiag.e<T>(i,i);
@@ -82,7 +82,7 @@ BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory:
 				continue; 										// do not apply right multiplying at last iteration
 
 			// evaluate Householder matrix nullifying rows
-			row  = new NDArray(_HHmatrix({i,i+1,  i+1,cols}, true));
+			row  = new NDArray(_HHmatrix({i,i+1,  i+1,cols}));
 
             _x = _HHmatrix.e<T>(i,i+1);
             _y = _HHbidiag.e<T>(i,i+1);
@@ -101,7 +101,7 @@ BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory:
 			delete row;
 		}
 
-		row  = new NDArray(_HHmatrix({cols-2,cols-1, cols-1,cols}, true));
+		row  = new NDArray(_HHmatrix({cols-2,cols-1, cols-1,cols}));
 
 		_x = _HHmatrix.e<T>(cols-2,cols-1);
 		_y = _HHbidiag.e<T>(cols-2,cols-1);
@@ -113,7 +113,7 @@ BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory:
 
 		delete row;
 
-		column = new NDArray(_HHmatrix({cols-1,rows, cols-1,cols}, true));
+		column = new NDArray(_HHmatrix({cols-1,rows, cols-1,cols}));
 
 		_x = _HHmatrix.e<T>(cols-1,cols-1);
 		_y = _HHbidiag.e<T>(cols-1,cols-1);

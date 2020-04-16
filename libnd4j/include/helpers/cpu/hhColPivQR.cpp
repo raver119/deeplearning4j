@@ -96,7 +96,7 @@ void HHcolPivQR::_evalData() {
         }
 
         T normX;
-        NDArray qrBlock(_qr({k,rows, k,k+1}, true));
+        NDArray qrBlock(_qr({k,rows, k,k+1}));
         T c;
         Householder<T>::evalHHmatrixDataI(qrBlock, c, normX);
         _coeffs.t<T>(k) = c;
