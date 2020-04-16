@@ -61,17 +61,17 @@ void BiDiagonalUp::_evalData() {
 		// evaluate Householder matrix nullifying columns
 		NDArray column1 = _HHmatrix({i,rows,  i,i+1});
 
-        x = _HHmatrix.e<T>(i,i);
-        y = _HHbidiag.e<T>(i,i);
+        x = _HHmatrix.t<T>(i,i);
+        y = _HHbidiag.t<T>(i,i);
 
 		Householder<T>::evalHHmatrixDataI(column1, x, y);
 
-        _HHmatrix.p<T>(i, i, x);
-        _HHbidiag.p<T>(i, i, y);
+        _HHmatrix.t<T>(i, i) = x;
+        _HHbidiag.t<T>(i, i) = y;
 
 		// multiply corresponding matrix block on householder matrix from the left: P * bottomRightCorner
 		NDArray bottomRightCorner1 = _HHmatrix({i,rows,  i+1,cols}, true);	// {i, cols}
-		Householder<T>::mulLeft(bottomRightCorner1, _HHmatrix({i+1,rows, i,i+1}, true), _HHmatrix.e<T>(i,i));
+		Householder<T>::mulLeft(bottomRightCorner1, _HHmatrix({i+1,rows, i,i+1}, true), _HHmatrix.t<T>(i,i));
 
 		if(i == cols-2)
 			continue; 										// do not apply right multiplying at last iteration
@@ -79,39 +79,39 @@ void BiDiagonalUp::_evalData() {
 		// evaluate Householder matrix nullifying rows
 		NDArray row1 = _HHmatrix({i,i+1,  i+1,cols});
 
-        x = _HHmatrix.e<T>(i,i+1);
-        y = _HHbidiag.e<T>(i,i+1);
+        x = _HHmatrix.t<T>(i,i+1);
+        y = _HHbidiag.t<T>(i,i+1);
 
 		Householder<T>::evalHHmatrixDataI(row1, x, y);
 
-        _HHmatrix.p<T>(i, i+1, x);
-        _HHbidiag.p<T>(i, i+1, y);
+        _HHmatrix.t<T>(i, i+1) = x;
+        _HHbidiag.t<T>(i, i+1) = y;
 
 		// multiply corresponding matrix block on householder matrix from the right: bottomRightCorner * P
 		NDArray bottomRightCorner2 = _HHmatrix({i+1,rows,  i+1,cols}, true);  // {i, rows}
 
-		Householder<T>::mulRight(bottomRightCorner2, _HHmatrix({i,i+1, i+2,cols}, true), _HHmatrix.e<T>(i,i+1));
+		Householder<T>::mulRight(bottomRightCorner2, _HHmatrix({i,i+1, i+2,cols}, true), _HHmatrix.t<T>(i,i+1));
 	}
 
 	NDArray row2 =_HHmatrix({cols-2,cols-1, cols-1,cols});
 
-	x = _HHmatrix.e<T>(cols-2,cols-1);
-	y = _HHbidiag.e<T>(cols-2,cols-1);
+	x = _HHmatrix.t<T>(cols-2,cols-1);
+	y = _HHbidiag.t<T>(cols-2,cols-1);
 
 	Householder<T>::evalHHmatrixDataI(row2, x, y);
 
-    _HHmatrix.p<T>(cols-2,cols-1, x);
-    _HHbidiag.p<T>(cols-2,cols-1, y);
+    _HHmatrix.t<T>(cols-2,cols-1) = x;
+    _HHbidiag.t<T>(cols-2,cols-1) = y;
 
 	NDArray column2 = _HHmatrix({cols-1,rows, cols-1,cols});
 
-	x = _HHmatrix.e<T>(cols-1,cols-1);
-	y = _HHbidiag.e<T>(cols-1,cols-1);
+	x = _HHmatrix.t<T>(cols-1,cols-1);
+	y = _HHbidiag.t<T>(cols-1,cols-1);
 
 	Householder<T>::evalHHmatrixDataI(column2, x, y);
 
-	_HHmatrix.p<T>(cols-1, cols-1, x);
-    _HHbidiag.p<T>(cols-1, cols-1, y);
+	_HHmatrix.t<T>(cols-1, cols-1) = x;
+    _HHbidiag.t<T>(cols-1, cols-1) = y;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,10 +130,10 @@ HHsequence BiDiagonalUp::makeHHsequence_(const char type) const {
 
 	if(type == 'u')
 	    for(int i = 0; i < diagSize; ++i)
-	        colOfCoeffs.p(i, _HHmatrix.e<T>(i,i));
+	        colOfCoeffs.t<T>(i) = _HHmatrix.t<T>(i,i);
     else
     	for(int i = 0; i < diagSize; ++i)
-        	colOfCoeffs.p(i, _HHmatrix.e<T>(i,i+1));
+        	colOfCoeffs.t<T>(i) = _HHmatrix.t<T>(i,i+1);
 
     HHsequence result(_HHmatrix, colOfCoeffs, type);
 
