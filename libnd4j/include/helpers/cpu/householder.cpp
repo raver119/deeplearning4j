@@ -94,15 +94,15 @@ void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
 		coeff = -u0 / normX;
 
 		if(x.isRowVector())
-			tail.assign(static_cast<const NDArray&>(x({0,0, 1,-1})) / u0);
+			tail.assign(x({0,0, 1,-1}) / u0);
 		else
-			tail.assign(static_cast<const NDArray&>(x({1,-1, 0,0,})) / u0);
+			tail.assign(x({1,-1, 0,0}) / u0);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void Householder<T>::evalHHmatrixDataI(const NDArray& x, T& coeff, T& normX) {
+void Householder<T>::evalHHmatrixDataI(NDArray& x, T& coeff, T& normX) {
 
 	int rows = (int)x.lengthOf()-1;
 	int num = 1;
@@ -112,17 +112,13 @@ void Householder<T>::evalHHmatrixDataI(const NDArray& x, T& coeff, T& normX) {
 		num = 0;
 	}
 
-	auto tail = NDArrayFactory::create(x.ordering(), {rows, 1}, x.dataType(), x.getContext());
+	NDArray tail(x.ordering(), {rows} /*{rows,1}*/, x.dataType(), x.getContext());
 	evalHHmatrixData(x, tail, coeff, normX);
 
-	if(x.isRowVector()) {
-		auto temp = x({0,0,  num, x.sizeAt(1)}, true);
-		temp.assign(tail);
-	}
-	else {
-		auto temp = x({num,x.sizeAt(0), 0,0}, true);
-		temp.assign(tail);
-	}
+	if(x.isRowVector())
+		x({0,0,  num, x.sizeAt(1)}).assign(tail);
+	else
+		x({num,x.sizeAt(0), 0,0}).assign(tail);
 }
 
 //////////////////////////////////////////////////////////////////////////
