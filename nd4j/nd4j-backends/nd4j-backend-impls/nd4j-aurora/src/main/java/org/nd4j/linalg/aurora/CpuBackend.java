@@ -64,7 +64,7 @@ public class CpuBackend extends Nd4jBackend {
 
     @Override
     public Environment getEnvironment() {
-        return null;
+        return new AuroraEnvironment();
     }
 
     @Override
