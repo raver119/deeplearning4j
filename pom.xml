@@ -407,7 +407,7 @@
         <skipTestResourceEnforcement>false
         </skipTestResourceEnforcement> <!-- Test resource profile must be enabled unless using -DskipTests etc -->
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-        <dependency-check-maven.version>5.3.1</dependency-check-maven.version>
+        <dependency-check-maven.version>5.3.2</dependency-check-maven.version>
 <!--         <sonar.sources>*,src,include</sonar.sources>-->
         <sonar.cxx.includeDirectories>include</sonar.cxx.includeDirectories>
     </properties>
@@ -921,31 +921,49 @@
                     </dependency>
                 </dependencies>
             </dependencyManagement>
-            <build>
+<!--            <build>-->
+<!--                <plugins>-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.owasp</groupId>-->
+<!--                        <artifactId>dependency-check-maven</artifactId>-->
+<!--                        <version>${dependency-check-maven.version}</version>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>securitycheck</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>aggregate</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                        <configuration>-->
+<!--                            <formats>-->
+<!--                                <format>XML</format>-->
+<!--                                <format>HTML</format>-->
+<!--                            </formats>-->
+<!--                            <nugetconfAnalyzerEnabled>false</nugetconfAnalyzerEnabled>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+<!--                </plugins>-->
+<!--            </build>-->
+            <reporting>
                 <plugins>
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
                         <version>${dependency-check-maven.version}</version>
-                        <executions>
-                            <execution>
-                                <id>securitycheck</id>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
                         <configuration>
-                            <formats>
-                                <format>XML</format>
-                                <format>HTML</format>
-                            </formats>
-                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                             <nugetconfAnalyzerEnabled>false</nugetconfAnalyzerEnabled>
                         </configuration>
                     </plugin>
                 </plugins>
-            </build>
+            </reporting>
         </profile>
         <profile>
             <id>codecoverage</id>
