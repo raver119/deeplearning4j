@@ -78,10 +78,10 @@
         <libnd4j.buildprogram>bash</libnd4j.buildprogram>
         <!--Sonar properties-->
 <!--        <sonar.sources>include,minifier,server</sonar.sources>-->
-        <sonar.exlusions>pom.xml</sonar.exlusions>
-        <sonar.tests>tests_cpu/layers_tests</sonar.tests>
-        <sonar.cxx.xunit.reportPath>target/surefire-reports/TEST-*-results.xml</sonar.cxx.xunit.reportPath>
-        <sonar.cfamily.build-wrapper-output>build_wrapper_output_directory</sonar.cfamily.build-wrapper-output>
+<!--        <sonar.exlusions>pom.xml</sonar.exlusions>-->
+<!--        <sonar.tests>tests_cpu/layers_tests</sonar.tests>-->
+<!--        <sonar.cxx.xunit.reportPath>target/surefire-reports/TEST-*-results.xml</sonar.cxx.xunit.reportPath>-->
+<!--        <sonar.cfamily.build-wrapper-output>build_wrapper_output_directory</sonar.cfamily.build-wrapper-output>-->
     </properties>
 
     <build>
