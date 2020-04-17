@@ -36,6 +36,10 @@
 
 namespace sd {
 
+    SD_EXPORT NDArray NDArrayFactory::undefined() {
+        return NDArray();
+    }
+
     ////////////////////////////////////////////////////////////////////////
     template <>
     SD_EXPORT NDArray NDArrayFactory::create<bool>(const char order, const std::vector<Nd4jLong> &shape, const std::vector<bool> &data, sd::LaunchContext * context) {

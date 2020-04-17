@@ -1953,7 +1953,7 @@ TEST_F(DeclarableOpsTests15, gru_1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    auto* h = results.at(0);
+    auto h = results.at(0);
 
     ASSERT_TRUE(expH.isSameShape(h));
     ASSERT_TRUE(expH.equalsTo(h));

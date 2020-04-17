@@ -236,7 +236,7 @@ PLATFORM_IMPL(matmul, ENGINE_CPU) {
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;
 
     // optional use alpha nad beta
-    iSize = (int)block.getTArguments()->size();
+    iSize = (int) block.numT();
     float alpha = iSize > 0 ? T_ARG(0) : 1.0;
     float beta = iSize > 1 ? T_ARG(1) : 0.0;
 

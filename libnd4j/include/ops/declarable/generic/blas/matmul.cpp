@@ -41,7 +41,7 @@ CUSTOM_OP_IMPL(matmul, 2, 1, false, 0, -2) {
     int transY = iSize > 1 ? INT_ARG(1) : 0;
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;
     // optional use alpha nad beta
-    iSize = (int)block.getTArguments()->size();
+    iSize = (int)block.numT();
     double alpha = iSize > 0 ? T_ARG(0) : 1.0;
     double beta = iSize > 1 ? T_ARG(1) : 0.0;
 
@@ -157,7 +157,7 @@ CUSTOM_OP_IMPL(matmul_bp, 3, 2, false, 0, -2) {
     const int transZ = iSize > 2 ? INT_ARG(2) : 0;
 
     // optional use alpha nad beta
-    iSize = (int)block.getTArguments()->size();
+    iSize = (int) block.numT();
 
     double alpha = iSize > 0 ? T_ARG(0) : 1.0;
     double beta = iSize > 1 ? T_ARG(1) : 0.0;

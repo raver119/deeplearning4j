@@ -35,13 +35,13 @@ void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray*
 
 //////////////////////////////////////////////////////////////////////////
 // this auxiliary ff should be running before backprop
-void ND4J_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
+void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                    const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
                    const std::vector<float>& params,
                    NDArray* z, NDArray* a, NDArray* h, NDArray* c);
 
 //////////////////////////////////////////////////////////////////////////
-void ND4J_EXPORT lstmLayerCellBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr, const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
+void SD_EXPORT lstmLayerCellBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr, const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
                      const NDArray* dLdh, const NDArray* dLdhL, const NDArray* dLdcL,
                      const NDArray* z, const NDArray* a, const NDArray* c, const std::vector<float>& params,
                      NDArray* dLdx, NDArray* dLdWx, NDArray* dLdWr, NDArray* dLdhI, NDArray* dLdcI, NDArray* dLdb, NDArray* dLdWp);
@@ -55,7 +55,7 @@ void SD_EXPORT lstmLayerTimeLoop(const NDArray* x, const NDArray* Wx, const NDAr
                         NDArray* h, NDArray* hL, NDArray* cL);
 
 //////////////////////////////////////////////////////////////////////////
-void ND4J_EXPORT lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
+void SD_EXPORT lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                         const NDArray* b, const NDArray* seqLen, NDArray* hI, NDArray* cI, const NDArray* Wp,
                         const NDArray* dLdh, const NDArray* dLdhL, const NDArray* dLdcL,
                         const std::vector<float>& params, const bool forward,

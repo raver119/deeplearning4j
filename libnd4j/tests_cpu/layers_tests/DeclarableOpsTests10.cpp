@@ -2021,7 +2021,7 @@ TEST_F(DeclarableOpsTests10, LinSpace_Test2) {
     auto result = op.evaluate({}, {1, 12}, {23});
     ASSERT_EQ(result.status(), ND4J_STATUS_OK);
     auto res = result.at(0);
-    ASSERT_EQ( res->dataType(), sd::DataType::FLOAT32 );
+    ASSERT_EQ( res.dataType(), sd::DataType::FLOAT32 );
     ASSERT_TRUE(expect.equalsTo(res));
 
 }
@@ -2035,7 +2035,7 @@ TEST_F(DeclarableOpsTests10, LinSpace_Test3) {
     ASSERT_EQ(result.status(), ND4J_STATUS_OK);
     auto res = result.at(0);
     
-    ASSERT_EQ( res->dataType(), expect.dataType());
+    ASSERT_EQ( res.dataType(), expect.dataType());
     ASSERT_TRUE(expect.equalsTo(res));
 
 }

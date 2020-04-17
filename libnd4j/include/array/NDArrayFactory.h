@@ -37,6 +37,8 @@ namespace sd {
         template <typename T>
         static void memcpyFromVector(void *ptr, const std::vector<T> &vector);
     public:
+        static NDArray undefined();
+
         template <typename T>
         static NDArray* empty_(sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 

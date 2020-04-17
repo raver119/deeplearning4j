@@ -169,7 +169,7 @@ void gruTimeLoop(sd::LaunchContext * context, const NDArray* x, const NDArray* h
 
     // time loop
     for (int t = 0; t < sL; ++t)
-        gruCell(context, xSet.at(t), t == 0 ? hI : hSet.at(t-1), Wx, Wh, b, &gates, hSet.at(t));
+        gruCell(context, &xSet.at(t), t == 0 ? hI : &hSet.at(t-1), Wx, Wh, b, &gates, &hSet.at(t));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -528,16 +528,16 @@ void gruTimeLoopBp(sd::LaunchContext * context,
     auto gatesSet = gates.allTensorsAlongDimension({1,2});      // sub-arrays with shape [bS, nOut]
     auto dLdxSet  = dLdx->allTensorsAlongDimension({1,2});      // sub-arrays with shape [bS, nIn]
 
-    hSet.at(0)->assign(hI);
+    hSet.at(0).assign(hI);
 
     // forward time loop
     for (int t = 0; t < sL; ++t)
-        gruCell(context, xSet.at(t), hSet.at(t), Wx, Wh, b, gatesSet.at(t), hSet.at(t+1));
+        gruCell(context, &xSet.at(t), &hSet.at(t), Wx, Wh, b, &gatesSet.at(t), &hSet.at(t+1));
 
     // backward time loop
     for (int t = sL-1; t >= 0; --t)
-        gruCellBp(context, xSet.at(t), hSet.at(t), Wx, Wh, b, dLdhSet.at(t), gatesSet.at(t),
-                  dLdxSet.at(t), dLdhI, dLdWx, dLdWh, dLdb);
+        gruCellBp(context, &xSet.at(t), &hSet.at(t), Wx, Wh, b, &dLdhSet.at(t), &gatesSet.at(t),
+                  &dLdxSet.at(t), dLdhI, dLdWx, dLdWh, dLdb);
 }
 
 
