@@ -410,7 +410,13 @@
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
         <dependency-check-maven.version>5.3.2</dependency-check-maven.version>
 
-        <org.nd4j:libnd4j.sonar.sources>include</org.nd4j:libnd4j.sonar.sources>
+        <!-- Sonar properties -->
+<!--        <org.nd4j:libnd4j.sonar.sources>include</org.nd4j:libnd4j.sonar.sources>-->
+        <sonar.modules>libnd4j,nd4j,datavec,deeplearning4j,arbiter,nd4s,rl4j,scalnet,jumpy,pydatavec,pydl4j</sonar.modules>
+        <libnd4j.sonar.sources>include,minifier,server</libnd4j.sonar.sources>
+        <libnd4j.sonar.tests>tests_cpu/layers_tests</libnd4j.sonar.tests>
+        <libnd4j.sonar.cxx.xuit.reportPath>target/surefire-reports/TEST-*-results.xml</libnd4j.sonar.cxx.xuit.reportPath>
+        <libnd4j.sonar.cfamily.build-wrapper-output>bw-outputs</libnd4j.sonar.cfamily.build-wrapper-output>
     </properties>
 
     <build>
