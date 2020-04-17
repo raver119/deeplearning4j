@@ -16,13 +16,16 @@
 
 package org.nd4j.linalg.api.ops.impl.shape;
 
+import lombok.NonNull;
 import org.apache.commons.lang3.NotImplementedException;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
+import org.nd4j.linalg.factory.Nd4j;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -39,23 +42,45 @@ import java.util.Map;
 public class Linspace extends DynamicCustomOp {
 
     private DataType dataType;
+    private double start;
+    private double stop;
+    private long elements;
 
     public Linspace(SameDiff sameDiff, DataType dataType, double start, double stop, long number) {
-        super(sameDiff, new SDVariable[0]);
-        addTArgument(start,stop);
-        addIArgument(number);
-        addDArgument(dataType);
+        this(sameDiff, sameDiff.constant(start), sameDiff.constant(stop), sameDiff.constant(number), dataType);
     }
 
     public Linspace(SameDiff sameDiff, SDVariable from, SDVariable to, SDVariable length, DataType dataType){
         super(sameDiff, new SDVariable[]{from, to, length});
         this.dataType = dataType;
+        addDArgument(dataType);
     }
 
     public Linspace(DataType dataType, double start, double stop, long number) {
+        this(start, stop, number, dataType);
+    }
+
+    public Linspace(DataType dataType, INDArray start, INDArray stop, INDArray number) {
+        this(start, stop, number, dataType);
+    }
+
+    public Linspace(@NonNull INDArray start, @NonNull INDArray stop, @NonNull INDArray number, @NonNull DataType dataType) {
+        super(new INDArray[]{start, stop, number}, null);
+        this.dataType = dataType;
         addDArgument(dataType);
-        addTArgument(start, stop);
-        addIArgument(number);
+    }
+
+    public Linspace(double start, double stop, long number, @NonNull DataType dataType) {
+        super(new INDArray[]{}, null);
+        this.dataType = dataType;
+        addDArgument(dataType);
+
+        this.start = start;
+        this.stop = stop;
+        this.elements = number;
+
+        addTArgument(this.start, this.stop);
+        addIArgument(elements);
     }
 
     public Linspace(){ }

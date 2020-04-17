@@ -24,12 +24,74 @@ import java.lang.String;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
+import org.nd4j.enums.PartitionMode;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.indexing.conditions.Condition;
 
 public class SDMath extends SDOps {
   public SDMath(SameDiff sameDiff) {
     super(sameDiff);
+  }
+
+  /**
+   * Clips tensor values to a maximum average L2-norm.<br>
+   *
+   * @param x Input variable (NUMERIC type)
+   * @param clipValue Value for clipping
+   * @param dimensions Dimensions to reduce over (Size: AtLeast(min=0))
+   * @return output Output variable (NUMERIC type)
+   */
+  public SDVariable clipByAvgNorm(SDVariable x, double clipValue, int... dimensions) {
+    SDValidation.validateNumerical("ClipByAvgNorm", "x", x);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
+    return new org.nd4j.linalg.api.ops.impl.transforms.clip.ClipByAvgNorm(sd,x, clipValue, dimensions).outputVariable();
+  }
+
+  /**
+   * Clips tensor values to a maximum average L2-norm.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param x Input variable (NUMERIC type)
+   * @param clipValue Value for clipping
+   * @param dimensions Dimensions to reduce over (Size: AtLeast(min=0))
+   * @return output Output variable (NUMERIC type)
+   */
+  public SDVariable clipByAvgNorm(String name, SDVariable x, double clipValue, int... dimensions) {
+    SDValidation.validateNumerical("ClipByAvgNorm", "x", x);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.clip.ClipByAvgNorm(sd,x, clipValue, dimensions).outputVariable();
+    return sd.updateVariableNameAndReference(out, name);
+  }
+
+  /**
+   * Looks up ids in a list of embedding tensors.<br>
+   *
+   * @param x Input tensor (NUMERIC type)
+   * @param indices A Tensor containing the ids to be looked up. (INT type)
+   * @param PartitionMode partition_mode == 0 - i.e. 'mod' , 1 - 'div'
+   * @return output Shifted output (NUMERIC type)
+   */
+  public SDVariable embeddingLookup(SDVariable x, SDVariable indices, PartitionMode PartitionMode) {
+    SDValidation.validateNumerical("EmbeddingLookup", "x", x);
+    SDValidation.validateInteger("EmbeddingLookup", "indices", indices);
+    return new org.nd4j.linalg.api.ops.impl.shape.tensorops.EmbeddingLookup(sd,x, indices, PartitionMode).outputVariable();
+  }
+
+  /**
+   * Looks up ids in a list of embedding tensors.<br>
+   *
+   * @param name name May be null. Name for the output variable
+   * @param x Input tensor (NUMERIC type)
+   * @param indices A Tensor containing the ids to be looked up. (INT type)
+   * @param PartitionMode partition_mode == 0 - i.e. 'mod' , 1 - 'div'
+   * @return output Shifted output (NUMERIC type)
+   */
+  public SDVariable embeddingLookup(String name, SDVariable x, SDVariable indices,
+      PartitionMode PartitionMode) {
+    SDValidation.validateNumerical("EmbeddingLookup", "x", x);
+    SDValidation.validateInteger("EmbeddingLookup", "indices", indices);
+    SDVariable out =  new org.nd4j.linalg.api.ops.impl.shape.tensorops.EmbeddingLookup(sd,x, indices, PartitionMode).outputVariable();
+    return sd.updateVariableNameAndReference(out, name);
   }
 
   /**
@@ -2205,7 +2267,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeAdd(SDVariable[] inputs) {
+  public SDVariable mergeAdd(SDVariable... inputs) {
     SDValidation.validateNumerical("mergeAdd", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     return new org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.MergeAddOp(sd,inputs).outputVariable();
@@ -2219,7 +2281,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeAdd(String name, SDVariable[] inputs) {
+  public SDVariable mergeAdd(String name, SDVariable... inputs) {
     SDValidation.validateNumerical("mergeAdd", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.MergeAddOp(sd,inputs).outputVariable();
@@ -2233,7 +2295,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeAvg(SDVariable[] inputs) {
+  public SDVariable mergeAvg(SDVariable... inputs) {
     SDValidation.validateNumerical("mergeAvg", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     return new org.nd4j.linalg.api.ops.impl.shape.MergeAvg(sd,inputs).outputVariable();
@@ -2247,7 +2309,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeAvg(String name, SDVariable[] inputs) {
+  public SDVariable mergeAvg(String name, SDVariable... inputs) {
     SDValidation.validateNumerical("mergeAvg", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.shape.MergeAvg(sd,inputs).outputVariable();
@@ -2261,7 +2323,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeMax(SDVariable[] inputs) {
+  public SDVariable mergeMax(SDVariable... inputs) {
     SDValidation.validateNumerical("mergeMax", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     return new org.nd4j.linalg.api.ops.impl.shape.MergeMax(sd,inputs).outputVariable();
@@ -2275,7 +2337,7 @@ public class SDMath extends SDOps {
    * @param inputs Input variables (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public SDVariable mergeMax(String name, SDVariable[] inputs) {
+  public SDVariable mergeMax(String name, SDVariable... inputs) {
     SDValidation.validateNumerical("mergeMax", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
     SDVariable out =  new org.nd4j.linalg.api.ops.impl.shape.MergeMax(sd,inputs).outputVariable();

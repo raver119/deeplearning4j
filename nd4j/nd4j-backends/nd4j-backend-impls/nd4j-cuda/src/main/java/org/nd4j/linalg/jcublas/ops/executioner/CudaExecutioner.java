@@ -199,7 +199,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, null, st);
 
         return op.z();
     }
@@ -436,7 +436,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, null, st);
 
         return op.z();
     }
@@ -524,7 +524,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         long st = profilingConfigurableHookIn(op);
         naiveExec(op, dimension);
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, null, st);
 
         return op.z();
     }
@@ -607,7 +607,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, null, st);
 
         return op.z();
     }
@@ -772,7 +772,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         return null;
     }
@@ -863,7 +863,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         return null;
 
@@ -1113,7 +1113,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         Nd4j.getExecutioner().commit();
 
@@ -1200,7 +1200,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, null, st);
 
         return null;
     }
@@ -1296,7 +1296,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         return null;
     }
@@ -1460,7 +1460,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (ret != null)
             ret.elementWiseStride();
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         return null;
     }
@@ -1579,7 +1579,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (nativeOps.lastErrorCode() != 0)
             throw new RuntimeException(nativeOps.lastErrorMessage());
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, oc, st);
 
         return z;
     }
@@ -1947,7 +1947,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
 
         val result = new ArrayList<LongShapeDescriptor>();
         int nIn = opContext != null ? opContext.numInputArguments() : op.numInputArguments();
-        if(nIn == 0 && op.getDescriptor().getNumInputs() != -2) {
+        if(nIn == 0 && op.getDescriptor().getNumInputs() >= 1) {
             if(log.isTraceEnabled()){
                 log.trace("Could not calculate output shape for op {}: number of input args was 0",
                         op.getClass().getName());
@@ -2292,7 +2292,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
 
     @Override
     public INDArray[] exec(CustomOp op, OpContext context) {
-        long st = profilingConfigurableHookIn(op);
+        long st = profilingConfigurableHookIn(op, context);
 
         val ctx = AtomicAllocator.getInstance().getDeviceContext();
         ((CudaOpContext) context).setCudaStream(ctx.getOldStream(), ctx.getBufferReduction(), ctx.getBufferAllocation());
@@ -2304,7 +2304,7 @@ public class CudaExecutioner extends DefaultOpExecutioner {
         if (status != 0)
             throw new RuntimeException("Op [" + op.opName() + "] execution failed");
 
-        profilingConfigurableHookOut(op, st);
+        profilingConfigurableHookOut(op, context, st);
 
         if (context.getOutputArrays().isEmpty())
             return new INDArray[0];

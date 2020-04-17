@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019-2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,27 +14,25 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.deeplearning4j.rl4j.learning.async;
+//================== GENERATED CODE - DO NOT MODIFY THIS FILE ==================
 
-import lombok.AllArgsConstructor;
-import lombok.Value;
-import org.nd4j.linalg.api.ndarray.INDArray;
+package org.nd4j.enums;
 
 /**
- * @author rubenfiszel (ruben.fiszel@epfl.ch) on 8/5/16.
- *
- * Its called a MiniTrans because it is similar to a Transition
- * but without a next observation
- *
- * It is stacked and then processed by AsyncNStepQL or A3C
- * following the paper implementation https://arxiv.org/abs/1602.01783 paper.
- *
- */
-@AllArgsConstructor
-@Value
-public class MiniTrans<A> {
-    INDArray obs;
-    A action;
-    INDArray[] output;
-    double reward;
+ * direction <br>
+ *  FWD: 0 = fwd
+ *  BWD: 1 = bwd
+ *  BIDIR_SUM: 2 = bidirectional sum
+ *  BIDIR_CONCAT: 3 = bidirectional concat
+ *  BIDIR_EXTRA_DIM: 4 = bidirectional extra output dim (in conjunction with format dataFormat = 3) */
+public enum LSTMDirectionMode {
+  FWD,
+
+  BWD,
+
+  BIDIR_SUM,
+
+  BIDIR_CONCAT,
+
+  BIDIR_EXTRA_DIM
 }

@@ -30,6 +30,17 @@ public class NDNN {
   }
 
   /**
+   * Concatenates a ReLU which selects only the positive part of the activation with a ReLU which selects only the negative part of the activation. Note that as a result this non-linearity doubles the depth of the activations.<br>
+   *
+   * @param x Input variable (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
+   */
+  public INDArray cReLU(INDArray x) {
+    NDValidation.validateNumerical("CReLU", "x", x);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.CReLU(x))[0];
+  }
+
+  /**
    * Neural network batch normalization operation.<br>
    * For details, see <a href="https://arxiv.org/abs/1502.03167">https://arxiv.org/abs/1502.03167</a><br>
    *
@@ -237,12 +248,11 @@ public class NDNN {
    * Alpha value is most commonly set to 0.01<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param alpha Cutoff - commonly 0.01 (NUMERIC type)
+   * @param alpha Cutoff - commonly 0.01
    * @return output Output variable (NUMERIC type)
    */
-  public INDArray leakyRelu(INDArray x, INDArray alpha) {
+  public INDArray leakyRelu(INDArray x, double alpha) {
     NDValidation.validateNumerical("leakyRelu", "x", x);
-    NDValidation.validateNumerical("leakyRelu", "alpha", alpha);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.LeakyReLU(x, alpha));
   }
 
@@ -250,12 +260,11 @@ public class NDNN {
    * Leaky ReLU derivative: dOut/dIn given input.<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param alpha Cutoff - commonly 0.01 (NUMERIC type)
+   * @param alpha Cutoff - commonly 0.01
    * @return output Output variable (NUMERIC type)
    */
-  public INDArray leakyReluDerivative(INDArray x, INDArray alpha) {
+  public INDArray leakyReluDerivative(INDArray x, double alpha) {
     NDValidation.validateNumerical("leakyReluDerivative", "x", x);
-    NDValidation.validateNumerical("leakyReluDerivative", "alpha", alpha);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.gradient.LeakyReLUDerivative(x, alpha));
   }
 
@@ -344,6 +353,20 @@ public class NDNN {
     NDValidation.validateNumerical("multiHeadDotProductAttention", "Wo", Wo);
     NDValidation.validateNumerical("multiHeadDotProductAttention", "mask", mask);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.MultiHeadDotProductAttention(queries, keys, values, Wq, Wk, Wv, Wo, mask, scaled, false))[0];
+  }
+
+  /**
+   * Padding operation <br>
+   *
+   * @param input Input tensor (NUMERIC type)
+   * @param padding Padding value (NUMERIC type)
+   * @param constant Padding constant
+   * @return output Padded input (NUMERIC type)
+   */
+  public INDArray pad(INDArray input, INDArray padding, double constant) {
+    NDValidation.validateNumerical("pad", "input", input);
+    NDValidation.validateNumerical("pad", "padding", padding);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.Pad(input, padding, constant))[0];
   }
 
   /**
@@ -462,6 +485,17 @@ public class NDNN {
   }
 
   /**
+   * Softmax activation, along the specified dimension<br>
+   *
+   * @param x Input (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
+   */
+  public INDArray softmax(INDArray x) {
+    NDValidation.validateNumerical("softmax", "x", x);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.SoftMax(x, -1))[0];
+  }
+
+  /**
    * Softmax derivative function<br>
    *
    * @param x Softmax input (NUMERIC type)
@@ -518,5 +552,16 @@ public class NDNN {
   public INDArray swish(INDArray x) {
     NDValidation.validateNumerical("swish", "x", x);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.strict.Swish(x));
+  }
+
+  /**
+   * Elementwise tanh (hyperbolic tangent) operation: out = tanh(x)<br>
+   *
+   * @param x Input variable (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
+   */
+  public INDArray tanh(INDArray x) {
+    NDValidation.validateNumerical("tanh", "x", x);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.strict.Tanh(x));
   }
 }

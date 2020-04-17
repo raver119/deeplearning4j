@@ -5608,6 +5608,13 @@ public class Nd4jTestsC extends BaseNd4jTest {
     }
 
     @Test
+    public void testPercentile5() {
+        val array = Nd4j.createFromArray(new int[]{1, 1982});
+        val perc = array.percentileNumber(75);
+        assertEquals(1982.f, perc.floatValue(), 1e-5f);
+    }
+
+    @Test
     public void testTadPercentile1() {
         INDArray array = Nd4j.linspace(1, 10, 10, DataType.DOUBLE);
         Transforms.reverse(array, false);
@@ -6191,24 +6198,6 @@ public class Nd4jTestsC extends BaseNd4jTest {
 
         assertEquals(exp, output);
     }
-
-    @Test
-    public void testVectorGemv() {
-        val vectorL = Nd4j.create(new float[]{1, 2, 3}, new long[]{3, 1});
-        val vectorN = Nd4j.create(new float[]{1, 2, 3}, new long[]{3});
-        val matrix = Nd4j.create(new float[]{1, 2, 3, 4, 5, 6, 7, 8, 9}, new long[] {3, 3});
-
-//        log.info("vectorN: {}", vectorN);
-//        log.info("vectorL: {}", vectorL);
-
-        val outN = matrix.mmul(vectorN);
-        val outL = matrix.mmul(vectorL);
-
-        assertEquals(outL, outN.reshape(3,1));
-
-        assertEquals(1, outN.rank());
-    }
-
 
     @Test
     public void testMatrixReshape() {
