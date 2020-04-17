@@ -77,6 +77,7 @@
         <libnd4j.helper></libnd4j.helper>
         <libnd4j.buildprogram>bash</libnd4j.buildprogram>
         <!--Sonar properties-->
+        <sonar.language>c++</sonar.language>
         <sonar.sources>include,minifier,server</sonar.sources>
         <sonar.tests>tests_cpu/layers_tests</sonar.tests>
         <sonar.cxx.xunit.reportPath>target/surefire-reports/TEST-*-results.xml</sonar.cxx.xunit.reportPath>
