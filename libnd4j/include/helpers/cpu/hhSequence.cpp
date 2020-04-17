@@ -42,23 +42,17 @@ void HHsequence::mulLeft_(NDArray& matrix) {
 	const int cols   = _vectors.sizeAt(1);
 	const int inRows = matrix.sizeAt(0);
 
-	NDArray* block(nullptr);
-
 	for(int i = _diagSize - 1; i >= 0; --i) {
 
     	if(_type == 'u') {
 
     		NDArray block = matrix({inRows-rows+_shift+ i,inRows,  0,0}, true);
-    		T x = _coeffs.t<T>(i);
-    		Householder<T>::mulLeft(block, _vectors({i + 1 + _shift, rows, i, i+1}, true), x);
-    		_coeffs.t<T>(i) = x;
+    		Householder<T>::mulLeft(block, _vectors({i + 1 + _shift, rows, i, i+1}, true), _coeffs.t<T>(i));
     	}
     	else {
 
     		NDArray block = matrix({inRows-cols+_shift+i,inRows,  0,0}, true);
-            T x = _coeffs.t<T>(i);
-    		Householder<T>::mulLeft(block, _vectors({i, i+1, i + 1 + _shift, cols}, true), x);
-            _coeffs.t<T>(i) = x;
+    		Householder<T>::mulLeft(block, _vectors({i, i+1, i + 1 + _shift, cols}, true), _coeffs.t<T>(i));
     	}
     }
 }
@@ -92,11 +86,8 @@ void HHsequence::applyTo_(NDArray& dest) {
         if(curNum < 1 || (k + 1 + _shift) >= size )
             continue;
         auto block =  dest({dest.sizeAt(0)-curNum,dest.sizeAt(0),  dest.sizeAt(1)-curNum,dest.sizeAt(1)}, true);
-        T x = _coeffs.t<T>(k);
 
-        Householder<T>::mulLeft(block, getTail(k), x);
-
-        _coeffs.t<T>(k) = x;
+        Householder<T>::mulLeft(block, getTail(k), _coeffs.t<T>(k));
     }
 }
 

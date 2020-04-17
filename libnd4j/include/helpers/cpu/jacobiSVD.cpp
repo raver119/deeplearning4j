@@ -275,7 +275,7 @@ void JacobiSVD<T>::evalData(const NDArray& matrix) {
         _m.fillAsTriangular<T>(0., 0, 0, _m, 'l');
         _m.transposei();
 
-        HHsequence  hhSeg(qr._qr, qr._coeffs, 'u');          // type = 'u' is not mistake here !
+        HHsequence hhSeg(qr._qr, qr._coeffs, 'u');          // type = 'u' is not mistake here !
 
         if(_fullUV)
             hhSeg.applyTo(_v);

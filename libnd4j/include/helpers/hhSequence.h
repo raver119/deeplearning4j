@@ -35,12 +35,12 @@ class HHsequence {
     /*
     *  matrix containing the Householder vectors
     */
-    NDArray _vectors;
+    const NDArray& _vectors;
 
     /*
     *  vector containing the Householder coefficients
     */
-    NDArray _coeffs;
+    const NDArray& _coeffs;
 
     /*
     *  shift of the Householder sequence

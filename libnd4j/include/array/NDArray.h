@@ -1162,7 +1162,7 @@ namespace sd {
 
         /**
         * fill target matrix with given value in one or two directions from main diagonal:
-        *   - down from main diagonal starting at subdiagonal number "lower" if direction = 'd' (down) or 'b' (both)
+        *   - down from main diagonal starting at subdiagonal number "lower" if direction = 'l' (down) or 'b' (both)
         *   - up from main diagonal starting at superdiagonal number "upper"if direction = 'u' (up) or 'b' (both)
         * direction - in what direction to fill matrix. There are 3 possible directions:
         *   'u' - fill up, mathematically this corresponds to lower triangular matrix, subdiagonal "lower" unaffected
