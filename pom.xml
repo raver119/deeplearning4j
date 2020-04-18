@@ -415,7 +415,7 @@
 <!--        <sonar.modules>libnd4j,nd4j,datavec,deeplearning4j,arbiter,nd4s,rl4j,scalnet,jumpy,pydatavec,pydl4j</sonar.modules>-->
         <sonar.modules>libnd4j</sonar.modules>
         <libnd4j.sonar.sources>include,minifier,server</libnd4j.sonar.sources>
-        <libnd4j.sonar.projectBaseDir>libdn4j</libnd4j.sonar.projectBaseDir>
+        <libnd4j.sonar.projectBaseDir>.</libnd4j.sonar.projectBaseDir>
         <libnd4j.sonar.tests>test,tests_cpu/layers_tests</libnd4j.sonar.tests>
         <libnd4j.sonar.cxx.xuit.reportPath>target/surefire-reports/TEST-*-results.xml</libnd4j.sonar.cxx.xuit.reportPath>
         <libnd4j.sonar.cfamily.build-wrapper-output>bw-outputs</libnd4j.sonar.cfamily.build-wrapper-output>
