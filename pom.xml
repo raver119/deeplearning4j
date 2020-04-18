@@ -416,7 +416,7 @@
         <sonar.modules>libnd4j</sonar.modules>
         <libnd4j.sonar.sources>include,minifier,server</libnd4j.sonar.sources>
         <libnd4j.sonar.projectBaseDir>.</libnd4j.sonar.projectBaseDir>
-        <libnd4j.sonar.tests>test,tests_cpu/layers_tests</libnd4j.sonar.tests>
+        <libnd4j.sonar.tests>tests_cpu/layers_tests</libnd4j.sonar.tests>
         <libnd4j.sonar.cxx.xuit.reportPath>target/surefire-reports/TEST-*-results.xml</libnd4j.sonar.cxx.xuit.reportPath>
         <libnd4j.sonar.cfamily.build-wrapper-output>bw-outputs</libnd4j.sonar.cfamily.build-wrapper-output>
     </properties>
