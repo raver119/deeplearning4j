@@ -61,6 +61,10 @@ class Schur {
 
         explicit Schur(const NDArray& matrix);
 
+        void splitTwoRows(const int ind, const T shift);
+
+        void calcShift(const int ind, const int iter, T& shift, NDArray& shiftInfo);
+
     private:
 
     	static const int _maxItersPerRow = 40;
@@ -68,7 +72,7 @@ class Schur {
         void evalData(const NDArray& matrix);
 
 	    //////////////////////////////////////////////////////////////////////////
-		FORCEINLINE Nd4jLong getSmallSubdiagEntry(const Nd4jLong& inInd) {
+		FORCEINLINE Nd4jLong getSmallSubdiagEntry(const int inInd) {
 
 			Nd4jLong outInd = inInd;
 			while (outInd > 0) {
