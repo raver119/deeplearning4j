@@ -193,15 +193,57 @@ bool JacobiSVD<T>::createJacobiRotation(const T& x, const T& y, const T& z, NDAr
 
         T sign = t > (T)0. ? 1. : -1.;
 
-        T n = 1. / math::nd4j_sqrt<T,T>(t*t + 1.f);
-        rotation.t<T>(0,0) = rotation.t<T>(1,1) = n;
+        T cos = 1. / math::nd4j_sqrt<T,T>(t*t + 1.f);
+        T sin = -sign * (y / math::nd4j_abs<T>(y)) * math::nd4j_abs<T>(t) * cos;
 
-        rotation.t<T>(0,1) = -sign * (y / math::nd4j_abs<T>(y)) * math::nd4j_abs<T>(t) * n;
-        rotation.t<T>(1,0) = -rotation.t<T>(0,1);
+        rotation.t<T>(0,1) = sin;
+        rotation.t<T>(1,0) = -sin;
+        rotation.t<T>(0,0) = rotation.t<T>(1,1) = cos;
 
         return true;
     }
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+template<typename T>
+void JacobiSVD<T>::createJacobiRotationGivens(const T& p, const T& q, NDArray& rotation) {
+
+    T cos, sin;
+
+    if(q == (T)0) {
+
+        cos = p < (T)0 ? (T)-1 : (T)1;
+        sin = (T)0;
+    }
+    else if(p == (T)0) {
+
+        cos = (T)0;
+        sin = q < (T)0 ? (T)1 : (T)-1;
+    }
+    else if(math::nd4j_abs<T>(p) > math::nd4j_abs<T>(q)) {
+
+        T t = q / p;
+        T u = math::nd4j_sqrt<T,T>((T)1 + t*t);
+        if(p < (T)0)
+            u = -u;
+        cos = (T)1 / u;
+        sin = -t * cos;
+    }
+    else {
+        T t = p / q;
+        T u = math::nd4j_sqrt<T,T>((T)1 + t*t);
+        if( q <(T)0)
+            u = -u;
+        sin = -(T)1 / u;
+        cos = -t * sin;
+    }
+
+    rotation.t<T>(0,1) = sin;
+    rotation.t<T>(1,0) = -sin;
+    rotation.t<T>(0,0) = rotation.t<T>(1,1) = cos;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -384,8 +426,6 @@ void JacobiSVD<T>::evalData(const NDArray& matrix) {
         }
     }
 }
-
-
 
 
 template class ND4J_EXPORT JacobiSVD<float>;

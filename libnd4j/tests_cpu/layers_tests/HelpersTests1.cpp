@@ -1222,6 +1222,42 @@ TEST_F(HelpersTests1, JacobiSVD_test15) {
     ASSERT_TRUE(expS.equalsTo(&jac._s));
 }
 
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test16) {
+
+    #ifdef __CUDABLAS__
+    return;
+    #endif
+
+    NDArray rotation('c', {2,2}, sd::DataType::DOUBLE);
+
+    NDArray exp1('c', {2,2}, {1,0,0,1 }, sd::DataType::DOUBLE);
+    NDArray exp2('c', {2,2}, {0,1,-1,0}, sd::DataType::DOUBLE);
+    NDArray exp3('c', {2,2}, {-1,0,0,-1}, sd::DataType::DOUBLE);
+    NDArray exp4('c', {2,2}, {0.983282, 0.182089, -0.182089, 0.983282}, sd::DataType::DOUBLE);
+    NDArray exp5('c', {2,2}, {0.249041, 0.968493, -0.968493, 0.249041}, sd::DataType::DOUBLE);
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(0, 0, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp1));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp1));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(0, -0.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp2));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp2));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(-0.5, 0, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp3));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp3));
+
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(2.7, -0.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp4));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp4));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(2.7, -10.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp5));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp5));
+}
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test16) {

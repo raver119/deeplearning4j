@@ -27,7 +27,7 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-// this class performs Hessenberg decomposition of square matrix using orthogonal similarity transformation
+// this class implements Hessenberg decomposition of square matrix using orthogonal similarity transformation
 // A = Q H Q^T
 // Q - orthogonal matrix
 // H - Hessenberg matrix
@@ -45,6 +45,42 @@ class Hessenberg {
         void evalData();
 };
 
+
+// this class implements real Schur decomposition of square matrix using orthogonal similarity transformation
+// A = U T U^T
+// U - real orthogonal matrix
+// T - real quasi-upper-triangular matrix - block upper triangular matrix where the blocks on the diagonal are 1×1 or 2×2 with complex eigenvalues
+
+template <typename T>
+class Schur {
+
+    public:
+
+        NDArray _U;
+        NDArray _T;
+
+        explicit Schur(const NDArray& matrix);
+
+    private:
+
+    	static const int _maxItersPerRow = 40;
+
+        void evalData(const NDArray& matrix);
+
+	    //////////////////////////////////////////////////////////////////////////
+		FORCEINLINE Nd4jLong getSmallSubdiagEntry(const Nd4jLong& inInd) {
+
+			Nd4jLong outInd = inInd;
+			while (outInd > 0) {
+		    	T factor = math::nd4j_abs<T>(_T.t<T>(outInd-1, outInd-1)) + math::nd4j_abs<T>(_T.t<T>(outInd, outInd));
+		    	if (math::nd4j_abs<T>(_T.t<T>(outInd, outInd-1)) <= DataTypeUtils::eps<T>() * factor)
+		      		break;
+				outInd--;
+		  	}
+			return outInd;
+		}
+
+};
 
 
 }

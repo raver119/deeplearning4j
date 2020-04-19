@@ -23,8 +23,8 @@
 #include <helpers/hhSequence.h>
 
 
-namespace sd {
-namespace ops {
+namespace sd      {
+namespace ops     {
 namespace helpers {
 
 
@@ -90,38 +90,73 @@ void Hessenberg<T>::evalData() {
     _H.fillAsTriangular<T>(0, -1, 0, _H, 'l');
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+template <typename T>
+Schur<T>::Schur(const NDArray& matrix) {
+
+    if(matrix.rankOf() != 2)
+        throw std::runtime_error("ops::helpers::Schur constructor: input 2D matrix must be 2D matrix !");
+
+    if(matrix.sizeAt(0) != matrix.sizeAt(1))
+        throw std::runtime_error("ops::helpers::Schur constructor: input array must be square 2D matrix !");
+
+    _T = matrix.ulike();
+    _U = matrix.ulike();
+
+    evalData(matrix);
+}
+
+//////////////////////////////////////////////////////////////////////////
+template <typename T>
+void Schur<T>::evalData(const NDArray& matrix) {
+
+    const T scale = matrix.reduceNumber(reduce::AMax).t<T>(0);
+
+    const T almostZero = DataTypeUtils::min<T>();
+
+    if(scale < DataTypeUtils::min<T>()) {
+        _T.nullify();
+        _U.setIdentity();
+        return;
+    }
+
+    Hessenberg<T> hess(matrix / scale);
+
+    // Step 2. Reduce to real Schur form
+    // computeFromHessenberg(m_hess.matrixH(), m_hess.matrixQ(), computeU);
+
+    _T *= scale;
+}
+
 template class ND4J_EXPORT Hessenberg<float>;
 template class ND4J_EXPORT Hessenberg<float16>;
 template class ND4J_EXPORT Hessenberg<bfloat16>;
 template class ND4J_EXPORT Hessenberg<double>;
 
+template class ND4J_EXPORT Schur<float>;
+template class ND4J_EXPORT Schur<float16>;
+template class ND4J_EXPORT Schur<bfloat16>;
+template class ND4J_EXPORT Schur<double>;
 
-
-    // NDArray colOfCoeffs(_HHmatrix.ordering(),  {diagSize, 1}, _HHmatrix.dataType(), _HHmatrix.getContext());
-
-    // if(type == 'u')
-    //     for(int i = 0; i < diagSize; ++i)
-    //         colOfCoeffs.t<T>(i) = _HHmatrix.t<T>(i,i);
-    // else
-    //     for(int i = 0; i < diagSize; ++i)
-    //         colOfCoeffs.t<T>(i) = _HHmatrix.t<T>(i,i+1);
-
-    // HHsequence result(_HHmatrix, colOfCoeffs, type);
-
-// HouseholderSequence(const VectorsType& v, const CoeffsType& h)                                                                                                                                    │
-//             : m_vectors(v), m_coeffs(h), m_trans(false), m_length(v.diagonalSize()),                                                                                                                        │
-//   >           m_shift(0)                                                                                                                                                                                    │
-//           {                                                                                                                                                                                                 │
-//           }
-
-    // HouseholderSequenceType matrixQ() const
-    // {
-    //   eigen_assert(m_isInitialized && "HessenbergDecomposition is not initialized.");
-    //   return HouseholderSequenceType(m_matrix, m_hCoeffs.conjugate())
-    //          .setLength(m_matrix.rows() - 1)
-    //          .setShift(1);
-    // }
 }
 }
 }
-
