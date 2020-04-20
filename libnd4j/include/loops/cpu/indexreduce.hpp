@@ -69,7 +69,7 @@ Nd4jLong IndexReduce<X, Y>::execScalar(void *vx, Nd4jLong *xShapeInfo, void *vex
     for (int e = 0; e < maxThreads; e++)
         intermediatery[e].index = -1;
 
-    if (xEws == 1) {
+    if (xEws == 1 && shape::order(xShapeInfo) == 'c') {
         auto func = PRAGMA_THREADS_FOR {
             intermediatery[thread_id] = OpType::startingIndexValue(x);
 

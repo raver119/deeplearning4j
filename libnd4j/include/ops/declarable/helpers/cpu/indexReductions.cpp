@@ -43,12 +43,12 @@ namespace sd {
 				Nd4jLong coords[MAX_RANK] = {};
 				Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
 				if (outerLoopStart > 0) {
-					if (Last_Index_Faster) {
+				//	if (Last_Index_Faster) {
 						sd::index2coords_C(outerLoopStart, rank-1, bases, ptr_coords);
-					}
+				/*	}
 					else {
 						sd::index2coords_F(outerLoopStart, rank-1, &(bases[1]), ptr_coords);
-					}
+					}*/
 					offset = sd::offset_from_coords(strides, ptr_coords, rank);
 				}
 
@@ -63,7 +63,7 @@ namespace sd {
 					for (Z i = 0; i < outerLoopCount; i++) {
 						const X *inner_buffer = &(buffer[offset]);
 						//typename std::make_signed<Z>::type iArgMax = -1;
-						PRAGMA_OMP_SIMD
+						 
 							for (Z j = 0; j < innerLoopCount; j++) {
 								//nd4j_printf("%f\n", inner_buffer[j]);
 								if (inner_buffer[j] > max) {
@@ -72,7 +72,8 @@ namespace sd {
 								}
 
 							}
-						offset = inc_coords<Last_Index_Faster>(bases, strides, ptr_coords, offset, rank, 1);
+
+						offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
 						//if (iArgMax >= 0) argMax = startIndex + iArgMax;
 						startIndex += innerLoopCount;
 						
@@ -86,7 +87,7 @@ namespace sd {
 						for (Z i = 0; i < outerLoopCount; i++) {
 							const X* inner_buffer = &(buffer[offset]);
 							//typename std::make_signed<Z>::type iArgMax = -1;
-							PRAGMA_OMP_SIMD
+							 
 								for (Z j = 0; j < innerLoopCount; j++) {
 									if (inner_buffer[j * inner_stride] > max) {
 										max = inner_buffer[j * inner_stride];
@@ -94,7 +95,10 @@ namespace sd {
 									}
 
 								}
-							offset = inc_coords<Last_Index_Faster>(bases, strides, ptr_coords, offset, rank, 1);
+
+							offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
+
+							//offset = inc_coords<Last_Index_Faster>(bases, strides, ptr_coords, offset, rank, 1);
 							//if (iArgMax >= 0) argMax = startIndex + iArgMax;
 							startIndex += innerLoopCount;
 						} 
@@ -373,6 +377,8 @@ namespace sd {
 				*outputZ = ptrMaxIndices[arg];
 			}
 
+
+
 			template<typename X, typename Z,bool Last_Index_Faster=true>
 			void argMaxCase2(const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong output_stride, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides,const X* bufferX, Z* outputZ)
 			{ 
@@ -380,7 +386,7 @@ namespace sd {
 				//total
 				const Nd4jLong total         = outer_bases[0];
 				const Nd4jLong outer_stride  = outer_strides[0];
-				const Nd4jLong inner_stride  = Last_Index_Faster ? inner_strides[second_rank - 1] : inner_strides[0];
+				const Nd4jLong inner_stride  = true ? inner_strides[second_rank - 1] : inner_strides[0];
 				auto func = [outer_stride, inner_stride, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
 
 					Nd4jLong loopTotal = stop - start;
@@ -432,11 +438,11 @@ namespace sd {
 						nd4j_printf("___%s_________%d %d+\n", __PRETTY_FUNCTION__, thread_id, 2);
 #endif
 						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<Last_Index_Faster>(inner_bases, second_rank, 1, inner_last);
+						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
 
 						for (Nd4jLong i = 0; i < loopTotal; i++) {
 							Z argMax; X max;
-							argMaxInnerReduction<X, Z, Last_Index_Faster>(second_rank, bufferPtr, inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
+							argMaxInnerReduction<X, Z, true>(second_rank, bufferPtr, inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
 							*outputPtr = argMax;
 							bufferPtr += outer_stride;
 							outputPtr += output_stride;
@@ -458,7 +464,7 @@ namespace sd {
 				
 				//total
 				Nd4jLong total = getLength<Last_Index_Faster>(outer_bases, first_rank);
-                Nd4jLong inner_stride  = Last_Index_Faster ? inner_strides[second_rank - 1]  : inner_strides[0];
+                Nd4jLong inner_stride  = true ? inner_strides[second_rank - 1]  : inner_strides[0];
 
 				auto func = [first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
 #if 1
@@ -492,11 +498,11 @@ namespace sd {
 					}
 					else {
 						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<Last_Index_Faster>(inner_bases, second_rank, 1, inner_last);
+						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
 
 						for (Nd4jLong i = 0; i < loopTotal; i++) {
 							Z argMax; X max;
-							argMaxInnerReduction<X, Z, Last_Index_Faster>(second_rank, &(bufferX[offset]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
+							argMaxInnerReduction<X, Z, true>(second_rank, &(bufferX[offset]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
 							outputPtr[i * output_stride] = argMax;
 							offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
 						}
@@ -513,7 +519,7 @@ namespace sd {
 			void argMaxCase4(const int& first_rank, const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong* output_strides, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, X* bufferX, Z* outputZ)
 			{
 				Nd4jLong total = getLength<Last_Index_Faster>(outer_bases, first_rank);
-				Nd4jLong inner_stride = Last_Index_Faster ? inner_strides[second_rank - 1] : inner_strides[0];
+				Nd4jLong inner_stride = true /*Last_Index_Faster*/? inner_strides[second_rank - 1] : inner_strides[0];
 
 				auto func = [first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
 #if 1
@@ -548,10 +554,10 @@ namespace sd {
 					else {
 						nd4j_printf("___%s_________+%d\n", __PRETTY_FUNCTION__, 1);
 						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<Last_Index_Faster>(inner_bases, second_rank, 1, inner_last);
+						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
 						for (Nd4jLong i = 0; i < loopTotal; i++) {
 							Z argMax; X max;
-							argMaxInnerReduction<X, Z, Last_Index_Faster>(second_rank, &(bufferX[offset.first]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
+							argMaxInnerReduction<X, Z, true>(second_rank, &(bufferX[offset.first]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
 							outputZ[offset.second] = argMax;
 							offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
 						}
@@ -586,7 +592,7 @@ namespace sd {
 				int first_begin, first_end, second_begin, second_end;
 
 				//rePartition into two parts based on the selection
-				rePartition(input_order, dimensions, rank, input_bases, input_strides, new_bases, new_strides, first_begin, first_end, second_begin, second_end, try_squash_outer, true);
+				rePartition(input_order, dimensions, rank, input_bases, input_strides, new_bases, new_strides, first_begin, first_end, second_begin, second_end, try_squash_outer, input_order=='c');
 
 				int first_rank = first_end - first_begin; //the first rank can be 0 for scalar cases
 				int second_rank = second_end - second_begin;
@@ -619,9 +625,16 @@ namespace sd {
 
 				}
 				else {
-					if (first_rank == 0) {
-						argMaxCase1Scalar<X, Z, false>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
+					if (first_rank == 0 ) {
+						if (second_rank == 1) {
+							argMaxCase1Scalar<X, Z, false>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						}
+						else {
+							//we are obliged to find C order index
+							argMaxCase1Scalar<X, Z, true>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
 
+						}
+						
 					}
 					else if (/*try_squash_outer &&*/ first_rank == 1) {
 						argMaxCase2<X, Z, false>( outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
@@ -634,7 +647,7 @@ namespace sd {
 					else if (first_rank == output_rank) {
 						argMaxCase4<X, Z, false>(first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, bufferX, outputZ);
 
-					}
+					 }
 				}
 				
 

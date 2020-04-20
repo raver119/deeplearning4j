@@ -412,15 +412,15 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
 
 TEST_F(PlaygroundTests, FortranArgMaxPerf) {
 #if 1
-    int bases[] = { 3,2,/*  4, 5,*/ 7 };
+    int bases[] = { 3,2,   4, 5,7};
     constexpr int Loop = 1;
 #else
     int bases[] = { 8, 32, 64, 32, 64 };
     constexpr int Loop = 10;
 #endif
-    constexpr int N = 3;// 5;
+    constexpr int N = 5;// 3;// 5;
 
-    auto x = NDArrayFactory::create<float>('f', { bases[0], bases[1], bases[2]/*, bases[3], bases[4]*/ });
+    auto x = NDArrayFactory::create<float>('f', { bases[0], bases[1], bases[2] , bases[3], bases[4] });
     //x.linspace(1);
     fill_random<float>(x);
 #define COMBINATIONS 1
@@ -459,7 +459,8 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
     }
     nd4j_printf("%s", "\n");
 #endif
-#if 1
+#if 0
+    //x.printLinearBuffer();
     x.printIndexedBuffer("X"); 
 #endif
 
@@ -482,7 +483,8 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
 #endif
 
 #if 1
-    x.printIndexedBuffer("X");
+    
+    //x.printIndexedBuffer("X");
     exp.printIndexedBuffer("Expected");
     z->printIndexedBuffer("Z");
 #endif
