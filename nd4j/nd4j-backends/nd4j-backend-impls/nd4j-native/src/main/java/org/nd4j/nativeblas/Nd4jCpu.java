@@ -6,6 +6,7 @@ import java.nio.*;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.*;
 
+import static org.bytedeco.javacpp.presets.javacpp.*;
 import static org.bytedeco.openblas.global.openblas_nolapack.*;
 import static org.bytedeco.openblas.global.openblas.*;
 
@@ -21,7 +22,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     public IntVectorVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef IntVectorVector put(@ByRef IntVectorVector x);
+    public native @Name("operator =") @ByRef IntVectorVector put(@ByRef IntVectorVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -70,7 +71,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     public LongVectorVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef LongVectorVector put(@ByRef LongVectorVector x);
+    public native @Name("operator =") @ByRef LongVectorVector put(@ByRef LongVectorVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -110,7 +111,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     }
 }
 
-@Name("std::vector<const nd4j::NDArray*>") public static class ConstNDArrayVector extends Pointer {
+@Name("std::vector<const sd::NDArray*>") public static class ConstNDArrayVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public ConstNDArrayVector(Pointer p) { super(p); }
@@ -120,7 +121,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     public ConstNDArrayVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef ConstNDArrayVector put(@ByRef ConstNDArrayVector x);
+    public native @Name("operator =") @ByRef ConstNDArrayVector put(@ByRef ConstNDArrayVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -138,9 +139,9 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
         public Iterator(Pointer p) { super(p); }
         public Iterator() { }
 
-        public native @Name("operator++") @ByRef Iterator increment();
-        public native @Name("operator==") boolean equals(@ByRef Iterator it);
-        public native @Name("operator*") @Const NDArray get();
+        public native @Name("operator ++") @ByRef Iterator increment();
+        public native @Name("operator ==") boolean equals(@ByRef Iterator it);
+        public native @Name("operator *") @Const NDArray get();
     }
 
     public NDArray[] get() {
@@ -178,7 +179,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     }
 }
 
-@Name("std::vector<nd4j::NDArray*>") public static class NDArrayVector extends Pointer {
+@Name("std::vector<sd::NDArray*>") public static class NDArrayVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public NDArrayVector(Pointer p) { super(p); }
@@ -188,7 +189,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     public NDArrayVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef NDArrayVector put(@ByRef NDArrayVector x);
+    public native @Name("operator =") @ByRef NDArrayVector put(@ByRef NDArrayVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -206,9 +207,9 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
         public Iterator(Pointer p) { super(p); }
         public Iterator() { }
 
-        public native @Name("operator++") @ByRef Iterator increment();
-        public native @Name("operator==") boolean equals(@ByRef Iterator it);
-        public native @Name("operator*") @Const NDArray get();
+        public native @Name("operator ++") @ByRef Iterator increment();
+        public native @Name("operator ==") boolean equals(@ByRef Iterator it);
+        public native @Name("operator *") @Const NDArray get();
     }
 
     public NDArray[] get() {
@@ -253,7 +254,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     public IntIntPair(int firstValue, int secondValue) { this(); put(firstValue, secondValue); }
     public IntIntPair()       { allocate();  }
     private native void allocate();
-    public native @Name("operator=") @ByRef IntIntPair put(@ByRef IntIntPair x);
+    public native @Name("operator =") @ByRef IntIntPair put(@ByRef IntIntPair x);
 
 
     @MemberGetter public native int first(); public native IntIntPair first(int first);
@@ -274,7 +275,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 
 // #ifndef DEV_TESTS_MEMORYTYPE_H
 // #define DEV_TESTS_MEMORYTYPE_H
-        /** enum nd4j::memory::MemoryType */
+        /** enum sd::memory::MemoryType */
         public static final int
             HOST = 0,
             DEVICE = 10;
@@ -308,7 +309,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 
 // #ifndef ND4J_DATATYPE_H
 // #define ND4J_DATATYPE_H
-    /** enum nd4j::DataType */
+    /** enum sd::DataType */
     public static final int
         INHERIT = 0,
         BOOL = 1,
@@ -364,14 +365,14 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #define DEV_TESTS_DATABUFFER_H
 
 // #include <cstring>
-// #include <op_boilerplate.h>
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <array/DataType.h>
 // #include <memory/Workspace.h>
 // #include <execution/LaunchContext.h>
 
-@Namespace("nd4j") @NoOffset public static class DataBuffer extends Pointer {
+@Namespace("sd") @NoOffset public static class DataBuffer extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public DataBuffer(Pointer p) { super(p); }
@@ -384,46 +385,46 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 
 
         public DataBuffer(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/, @Cast("const bool") boolean isOwnerSpecial/*=false*/,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType, isOwnerPrimary, isOwnerSpecial, workspace); }
         private native void allocate(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/, @Cast("const bool") boolean isOwnerSpecial/*=false*/,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType); }
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType); }
         private native void allocate(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(primary, lenInBytes, dataType, isOwnerPrimary, workspace); }
         private native void allocate(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(primary, lenInBytes, dataType); }
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(primary, lenInBytes, dataType); }
         private native void allocate(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes,
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes, workspace); }
         private native void allocate(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes,
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes); }
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes); }
         private native void allocate(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes);
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes);
 
-        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/) { super((Pointer)null); allocate(lenInBytes, dataType, workspace, allocBoth); }
-        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/);
-        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(lenInBytes, dataType); }
-        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/) { super((Pointer)null); allocate(lenInBytes, dataType, workspace, allocBoth); }
+        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/);
+        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(lenInBytes, dataType); }
+        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(@Const @ByRef DataBuffer other) { super((Pointer)null); allocate(other); }
         private native void allocate(@Const @ByRef DataBuffer other);
@@ -432,8 +433,8 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 
         public native @ByRef @Name("operator =") DataBuffer put(@Const @ByRef DataBuffer other);
 
-        public native @Cast("nd4j::DataType") int getDataType();
-        public native void setDataType(@Cast("nd4j::DataType") int dataType);
+        public native @Cast("sd::DataType") int getDataType();
+        public native void setDataType(@Cast("sd::DataType") int dataType);
         public native @Cast("size_t") long getLenInBytes();
 
         public native Pointer primary();
@@ -514,9 +515,9 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #ifndef LIBND4J_CONSTANTDATABUFFER_H
 // #define LIBND4J_CONSTANTDATABUFFER_H
 
-// #include <dll.h>
-// #include <pointercast.h>
-    @Namespace("nd4j") @NoOffset public static class ConstantDataBuffer extends Pointer {
+// #include <system/dll.h>
+// #include <system/pointercast.h>
+    @Namespace("sd") @NoOffset public static class ConstantDataBuffer extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ConstantDataBuffer(Pointer p) { super(p); }
@@ -575,10 +576,10 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #include <array/DataType.h>
 // #include <unordered_map>
 // #include <vector>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <array/ConstantDataBuffer.h>
-    @Namespace("nd4j") @NoOffset public static class ConstantDescriptor extends Pointer {
+    @Namespace("sd") @NoOffset public static class ConstantDescriptor extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ConstantDescriptor(Pointer p) { super(p); }
@@ -625,6 +626,10 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
     }
 
 
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+
 
 // #endif //DEV_TESTS_CONSTANTDESCRIPTOR_H
 
@@ -655,7 +660,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #define DEV_TESTS_TADPACK_H
 
 // #include "ConstantDataBuffer.h"
-    @Namespace("nd4j") @NoOffset public static class TadPack extends Pointer {
+    @Namespace("sd") @NoOffset public static class TadPack extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public TadPack(Pointer p) { super(p); }
@@ -719,7 +724,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #define DEV_TESTS_ERRORREFERENCE_H
 
 // #include <string>
-// #include <dll.h>
+// #include <system/dll.h>
     @Namespace("sd") @NoOffset public static class ErrorReference extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
@@ -814,7 +819,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #endif //SD_EXECUTIONMODE_H
 
 
-// Parsed from Environment.h
+// Parsed from system/Environment.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -841,12 +846,12 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 
 // #include <atomic>
 // #include <vector>
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <stdexcept>
 // #include <array/DataType.h>
 // #include <types/pair.h>
-// #include <pointercast.h>
-    @Namespace("nd4j") @NoOffset public static class Environment extends Pointer {
+// #include <system/pointercast.h>
+    @Namespace("sd") @NoOffset public static class Environment extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Environment(Pointer p) { super(p); }
@@ -871,6 +876,8 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
         public native void setLeaksDetector(@Cast("bool") boolean reallyDetect);
         public native @Cast("bool") boolean helpersAllowed();
         public native void allowHelpers(@Cast("bool") boolean reallyAllow);
+
+        public native @Cast("bool") boolean blasFallback();
         
         public native int tadThreshold();
         public native void setTadThreshold(int threshold);
@@ -911,8 +918,8 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
         public native @Cast("bool") boolean isUseMKLDNN();
         public native void setUseMKLDNN(@Cast("bool") boolean useMKLDNN);
 
-        public native @Cast("nd4j::DataType") int defaultFloatDataType();
-        public native void setDefaultFloatDataType(@Cast("nd4j::DataType") int dtype);
+        public native @Cast("sd::DataType") int defaultFloatDataType();
+        public native void setDefaultFloatDataType(@Cast("sd::DataType") int dtype);
 
         public native @Cast("bool") boolean precisionBoostAllowed();
         public native void allowPrecisionBoost(@Cast("bool") boolean reallyAllow);
@@ -959,8 +966,8 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #define DEV_TESTS_UTF8STRING_H
 
 // #include <string>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class utf8string extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class utf8string extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public utf8string(Pointer p) { super(p); }
@@ -995,7 +1002,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #endif //DEV_TESTS_UTF8STRING_H
 
 
-// Parsed from NativeOps.h
+// Parsed from legacy/NativeOps.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -1041,9 +1048,9 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 #endif
 */
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <types/float16.h>
-// #include <cnpy.h>
+// #include <cnpy/cnpy.h>
 
 //DO NOT REMOVE: THIS IS AN EDITOR SEMANTICS THING FOR CLION
 //IT DEFINES THE EXPORT MACRO FOR THE EDITOR AND THEN
@@ -1053,7 +1060,7 @@ public class Nd4jCpu extends org.nd4j.nativeblas.Nd4jCpuHelper {
 // #else
 // #define ND4J_EXPORT
 // #endif
-// #include <dll.h>
+// #include <system/dll.h>
 
 /*
 int tad_threshold = 1;
@@ -1074,7 +1081,7 @@ bool verbose = false;
 // #include <graph/GraphState.h>
 // #include <graph/execution/LogicExecutor.h>
 // #include <graph/ResultWrapper.h>
-// #include <DebugInfo.h>
+// #include <helpers/DebugInfo.h>
 // #include <memory/MemoryCounter.h>
 
 /**
@@ -2424,7 +2431,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2437,7 +2444,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2450,7 +2457,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2463,7 +2470,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 
 
 public native void batchExecutor(@Cast("Nd4jPointer*") PointerPointer extraPointers,
@@ -2476,7 +2483,7 @@ public native void batchExecutor(@Cast("Nd4jPointer*") PointerPointer extraPoint
                                int maxIdx,
                                int maxReals,
                                Pointer ptrToArguments,
-                               @Cast("nd4j::DataType") int dtype);
+                               @Cast("sd::DataType") int dtype);
 
 public native void execAggregateBatch(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                               int numAggregates,
@@ -2488,7 +2495,7 @@ public native void execAggregateBatch(@Cast("Nd4jPointer*") PointerPointer extra
                               int maxIdx,
                               int maxReals,
                               Pointer ptrToArguments,
-                              @Cast("nd4j::DataType") int dtype);
+                              @Cast("sd::DataType") int dtype);
 
 /**
  * Random operations
@@ -3069,17 +3076,17 @@ public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointe
 public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointers, @Cast("Nd4jPointer") Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jPointer") Pointer specialBuffer, @Cast("Nd4jLong*") LongBuffer specialShapeInfo, @Cast("Nd4jPointer") Pointer debugInfo);
 public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointers, @Cast("Nd4jPointer") Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jPointer") Pointer specialBuffer, @Cast("Nd4jLong*") long[] specialShapeInfo, @Cast("Nd4jPointer") Pointer debugInfo);
 
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
 
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer data, int length);
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer data, int length);
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, DoublePointer data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, DoubleBuffer data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, double[] data, int length);
-public native OpaqueConstantDataBuffer constantBuffer(@Cast("nd4j::DataType") int dtype, ConstantDescriptor descriptor);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer data, int length);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer data, int length);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, DoublePointer data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, DoubleBuffer data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, double[] data, int length);
+public native OpaqueConstantDataBuffer constantBuffer(@Cast("sd::DataType") int dtype, ConstantDescriptor descriptor);
 
 public native @Cast("Nd4jPointer") Pointer getConstantDataBufferPrimary(OpaqueConstantDataBuffer dbf);
 public native @Cast("Nd4jPointer") Pointer getConstantDataBufferSpecial(OpaqueConstantDataBuffer dbf);
@@ -3093,6 +3100,7 @@ public native OpaqueRandomGenerator getGraphContextRandomGenerator(OpaqueContext
 public native void ctxAllowHelpers(OpaqueContext ptr, @Cast("bool") boolean reallyAllow);
 public native void ctxShapeFunctionOverride(OpaqueContext ptr, @Cast("bool") boolean reallyOverride);
 public native void ctxSetExecutionMode(OpaqueContext ptr, int execMode);
+public native void ctxPurge(OpaqueContext ptr);
 public native void markGraphContextInplace(OpaqueContext ptr, @Cast("bool") boolean reallyInplace);
 public native void setGraphContextCudaContext(OpaqueContext ptr, Pointer stream, Pointer reductionPointer, Pointer allocationPointer);
 public native void setGraphContextInputArray(OpaqueContext ptr, int index, Pointer buffer, Pointer shapeInfo, Pointer specialBuffer, Pointer specialShapeInfo);
@@ -3191,9 +3199,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_EXTERNALWORKSPACE_H
 // #define LIBND4J_EXTERNALWORKSPACE_H
 
-// #include <pointercast.h>
-// #include <dll.h>
-        @Namespace("nd4j::memory") @NoOffset public static class ExternalWorkspace extends Pointer {
+// #include <system/pointercast.h>
+// #include <system/dll.h>
+        @Namespace("sd::memory") @NoOffset public static class ExternalWorkspace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ExternalWorkspace(Pointer p) { super(p); }
@@ -3252,13 +3260,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <atomic>
 // #include <vector>
 // #include <mutex>
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <types/float16.h>
 // #include <memory/ExternalWorkspace.h>
 // #include <memory/MemoryType.h>
 
-        @Namespace("nd4j::memory") @NoOffset public static class Workspace extends Pointer {
+        @Namespace("sd::memory") @NoOffset public static class Workspace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Workspace(Pointer p) { super(p); }
@@ -3296,7 +3304,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 //            bool resizeSupported();
 
             public native Pointer allocateBytes(@Cast("Nd4jLong") long numBytes);
-            public native Pointer allocateBytes(@Cast("nd4j::memory::MemoryType") int type, @Cast("Nd4jLong") long numBytes);
+            public native Pointer allocateBytes(@Cast("sd::memory::MemoryType") int type, @Cast("Nd4jLong") long numBytes);
 
             public native void scopeIn();
             public native void scopeOut();
@@ -3337,10 +3345,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_NDINDEX_H
 // #define LIBND4J_NDINDEX_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class NDIndex extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class NDIndex extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndex(Pointer p) { super(p); }
@@ -3367,7 +3375,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public static native NDIndex interval(@Cast("Nd4jLong") long start, @Cast("Nd4jLong") long end);
     }
 
-    @Namespace("nd4j") public static class NDIndexAll extends NDIndex {
+    @Namespace("sd") public static class NDIndexAll extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexAll(Pointer p) { super(p); }
@@ -3384,7 +3392,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
     }
 
 
-    @Namespace("nd4j") public static class NDIndexPoint extends NDIndex {
+    @Namespace("sd") public static class NDIndexPoint extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexPoint(Pointer p) { super(p); }
@@ -3394,7 +3402,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @Cast("bool") boolean isInterval();
     }
 
-    @Namespace("nd4j") public static class NDIndexInterval extends NDIndex {
+    @Namespace("sd") public static class NDIndexInterval extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexInterval(Pointer p) { super(p); }
@@ -3439,7 +3447,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <initializer_list>
 // #include "NDIndex.h"
-    @Namespace("nd4j") @NoOffset public static class IndicesList extends Pointer {
+    @Namespace("sd") @NoOffset public static class IndicesList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public IndicesList(Pointer p) { super(p); }
@@ -3478,7 +3486,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #ifndef ND4J_VARIABLE_TYPE_H
 // #define ND4J_VARIABLE_TYPE_H
-        /** enum nd4j::graph::VariableType */
+        /** enum sd::graph::VariableType */
         public static final int
             NDARRAY = 0,
             ARRAY_LIST = 1,
@@ -3515,12 +3523,12 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_INPUTLIST_H
 // #define LIBND4J_INPUTLIST_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <types/pair.h>
-    @Namespace("nd4j::graph") @NoOffset public static class ArgumentsList extends Pointer {
+    @Namespace("sd::graph") @NoOffset public static class ArgumentsList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ArgumentsList(Pointer p) { super(p); }
@@ -3580,8 +3588,8 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_PAIR_H
 // #define LIBND4J_PAIR_H
 
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class Pair extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class Pair extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Pair(Pointer p) { super(p); }
@@ -3606,7 +3614,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #endif //LIBND4J_PAIR_H
 
 
-// Parsed from NDArray.h
+// Parsed from array/NDArray.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -3627,11 +3635,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef NDARRAY_H
 // #define NDARRAY_H
 
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <initializer_list>
 // #include <functional>
-// #include <shape.h>
-// #include "NativeOpExecutioner.h"
+// #include <helpers/shape.h>
+// #include "legacy/NativeOpExecutioner.h"
 // #include <indexing/NDIndex.h>
 // #include <indexing/IndicesList.h>
 // #include <graph/Intervals.h>
@@ -3642,13 +3650,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <array/ArrayType.h>
 // #include <array/ResultSet.h>
 // #include <helpers/ShapeBuilders.h>
-// #include <op_enums.h>
+// #include <system/op_enums.h>
 // #include <ops/BroadcastOpsTuple.h>
 // #include <ops/BroadcastBoolOpsTuple.h>
 // #include <ops/BroadcastIntOpsTuple.h>
 // #include <array/ExtraArguments.h>
-// #include <Status.h>
-// #include <ShapeDescriptor.h>
+// #include <graph/Status.h>
+// #include <array/ShapeDescriptor.h>
 // #include <helpers/ConstantShapeHelper.h>
 // #include <array/DataBuffer.h>
 // #include <execution/AffinityManager.h>
@@ -3659,9 +3667,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 
 
-    @Namespace("nd4j") public static native @ByVal NDArray mmul(@Const @ByRef NDArray arg0, @Const @ByRef NDArray arg1);
+    @Namespace("sd") public static native @ByVal NDArray mmul(@Const @ByRef NDArray arg0, @Const @ByRef NDArray arg1);
 
-    @Namespace("nd4j") @NoOffset public static class NDArray extends Pointer {
+    @Namespace("sd") @NoOffset public static class NDArray extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDArray(Pointer p) { super(p); }
@@ -3679,16 +3687,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
         *  do not allocate memory, memory for array is passed from outside
         */
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo);
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo);
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3696,16 +3704,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  do not allocate memory, memory for array is passed from outside
         *  we suppose the content of both (device and host) buffers is identical
         */
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo);
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo);
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3729,16 +3737,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
 		*  constructor creates new NDArray using shape information from "shapeInfo", set all elements in new array to zeros, if copyStrides is true then use stride values from "shapeInfo", else calculate strides independently
         */
-		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo);
-		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3746,67 +3754,66 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  constructor creates new NDArray using shape information from "shapeInfo", set all elements in new array to be zeros, if copyStrides is true then use stride values from "shapeInfo", else calculate strides independently
         *  set dtype as array type
         */
-        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype);
 
         /**
         *  this constructor creates new array using shape information contained in vector argument
         */
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
 
         /**
         * This constructor creates new array with elements copied from data and using shape information stored in shape, elements from data will be casted to dtype
         */
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data);
 
         /**
         *  this constructor creates new array using given buffer (without memory allocation) and shape information stored in shape
         */
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype);
-
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype);
 
         /**
         * This method returns new array with the same shape & data type
@@ -3825,16 +3832,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  this constructor creates new NDArray with shape matching "other" array,
         *  doesn't copy "other" elements into new array !!!
         */
-        public NDArray(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(other, copyStrides, context); }
-        private native void allocate(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(other, copyStrides, context); }
+        private native void allocate(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
 
         /**
         *  this constructor creates scalar(and set its value = 0) or empty array depending on bool argument isScalar
         */
-        public NDArray(@Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/) { super((Pointer)null); allocate(dtype, context, isScalar); }
-        private native void allocate(@Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/);
-        public NDArray(@Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(dtype); }
-        private native void allocate(@Cast("nd4j::DataType") int dtype);
+        public NDArray(@Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/) { super((Pointer)null); allocate(dtype, context, isScalar); }
+        private native void allocate(@Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/);
+        public NDArray(@Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(dtype); }
+        private native void allocate(@Cast("sd::DataType") int dtype);
 
         /**
          * This method blocks until asynchronous operation finishes
@@ -3947,9 +3954,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
         *  cast array elements to given dtype
         */
-        public native @ByVal NDArray cast(@Cast("nd4j::DataType") int dtype);
+        public native @ByVal NDArray cast(@Cast("sd::DataType") int dtype);
 
-        public native void cast(@ByRef NDArray target, @Cast("nd4j::DataType") int dtype);
+        public native void cast(@ByRef NDArray target, @Cast("sd::DataType") int dtype);
 
         /**
         *   returns _context
@@ -4039,6 +4046,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @ByVal NDArray permute(@Const IntPointer dimensions, int rank);
         public native @ByVal NDArray permute(@Const IntBuffer dimensions, int rank);
         public native @ByVal NDArray permute(@Const int[] dimensions, int rank);
+        
+        
+        
 
         public native void permute(@Const IntPointer dimensions, int rank, @ByRef NDArray target);
         public native void permute(@Const IntBuffer dimensions, int rank, @ByRef NDArray target);
@@ -4052,6 +4062,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") LongPointer dimensions, int rank);
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") LongBuffer dimensions, int rank);
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") long[] dimensions, int rank);
+        
+        
+        
 
         public native void permute(@Cast("const Nd4jLong*") LongPointer dimensions, int rank, @ByRef NDArray target);
         public native void permute(@Cast("const Nd4jLong*") LongBuffer dimensions, int rank, @ByRef NDArray target);
@@ -4145,6 +4158,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *   apply transpose operation to the copy of this array, that is this array remains unaffected
         */
         public native @ByVal NDArray transpose();
+        
 
         /**
         *  perform transpose operation and store result in target, this array remains unaffected
@@ -4156,15 +4170,6 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  apply in-place transpose operation to this array, so this array becomes transposed
         */
         public native void transposei();
-
-        /**
-        *  return array pointing on certain range of this array
-        *  index - the number of array to be returned among set of possible arrays
-        *  dimensions - array of dimensions to point on
-        */
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector IntPointer dimensions);
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector IntBuffer dimensions);
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector int[] dimensions);
 
         /**
         *  returns the number of arrays pointing on specified dimension(s)
@@ -4253,14 +4258,20 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  set new order and shape in case of suitable array length (in-place operation)
         *  order - order to set
         *  shape - shape to set
-        *
+        *  copyToNewBuff - if true then old buffer will be copied to new buffer if last one will be allocated after reshaping
         *  if there was permute applied before or there are weird strides, then new buffer is allocated for array
         */
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector long[] shape);
 
         /**
@@ -4270,9 +4281,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *
         * if permute have been applied before or there are weird strides, then new buffer is allocated for new array
         */
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+        
 
         /**
         *  calculate strides and set given order
@@ -4382,6 +4397,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  negative operator, it changes sign of all array elements on opposite
         */
         public native @ByVal @Name("operator -") NDArray subtract();
+        
 
         /**
         *  pairwise multiplication unary operator array *= other
@@ -4461,7 +4477,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef __JAVACPP_HACK__
 // #endif
 
-        public native @ByVal NDArray asT(@Cast("nd4j::DataType") int dtype);
+        public native @ByVal NDArray asT(@Cast("sd::DataType") int dtype);
 
 
         public native void linspace(double start);
@@ -4489,9 +4505,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo);
         public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo);
         public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype);
         public native void setShapeInfo(@Const @ByRef ShapeDescriptor descriptor);
         public native void setShapeInfo(@Const @ByRef ConstantDataBuffer shapeBuffer);
 
@@ -4686,7 +4702,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         * Returns data type of this array
         * @return
         */
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
 
         /**
          * This method returns true if value is from Integer space
@@ -4883,7 +4899,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #if defined(__CUDACC__) //&& defined(BUILD_TESTS)
 // for CUDA we need stil stuff inline
-// #include "cuda/NDArrayLambda.hpp"
+// #include <array/NDArrayLambda.hXX>
 // #endif
 
 
@@ -4921,10 +4937,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <string>
 // #include <atomic>
 // #include <unordered_map>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <memory/Workspace.h>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class NDArrayList extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class NDArrayList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDArrayList(Pointer p) { super(p); }
@@ -4934,7 +4950,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public NDArrayList(int height) { super((Pointer)null); allocate(height); }
         private native void allocate(int height);
 
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
 
         public native NDArray read(int idx);
         public native NDArray readRaw(int idx);
@@ -4951,7 +4967,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
         public native @ByRef IntIntPair id();
         public native @StdString @ByRef @Cast({"char*", "std::string*"}) BytePointer name();
-        //nd4j::memory::Workspace* workspace();
+        //sd::memory::Workspace* workspace();
         public native LaunchContext context();
         public native NDArrayList clone();
 
@@ -4985,11 +5001,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
  ******************************************************************************/
 
 //
-// This class is suited for execution results representation. 
-// 
+// This class is suited for execution results representation.
+//
 // PLESE NOTE: It will delete all stored NDArrays upon destructor call
 //
-// Created by raver119 on 07.09.17.
+// @author raver119@gmail.com
 //
 
 // #ifndef LIBND4J_RESULTSET_H
@@ -4997,10 +5013,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <vector>
 // #include <graph/generated/result_generated.h>
-// #include <pointercast.h>
-// #include <dll.h> // forward declaration of template class NDArray
-    
-    @Namespace("nd4j") @NoOffset public static class ResultSet extends Pointer {
+// #include <system/pointercast.h>
+// #include <system/dll.h> // forward declaration of template class NDArray
+
+    @Namespace("sd") @NoOffset public static class ResultSet extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ResultSet(Pointer p) { super(p); }
@@ -5011,9 +5027,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             return (ResultSet)super.position(position);
         }
     
-        // default constructor
         public ResultSet() { super((Pointer)null); allocate(); }
         private native void allocate();
+
+// #ifndef __JAVACPP_HACK__
+// #endif
 
         public ResultSet(@Const @ByRef ResultSet other) { super((Pointer)null); allocate(other); }
         @NoException private native void allocate(@Const @ByRef ResultSet other);
@@ -5065,9 +5083,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_GRAPH_RNG_H
 
 // #include <types/u64.h>
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
 // #include <chrono>
 // #include <array/DataTypeUtils.h>
 // #include <helpers/logger.h>
@@ -5077,7 +5095,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #endif
 // #ifdef __CUDACC__
 // #else
-        @Namespace("nd4j::graph") @NoOffset public static class RandomGenerator extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class RandomGenerator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public RandomGenerator(Pointer p) { super(p); }
@@ -5161,9 +5179,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         
 
         //////
-        @Namespace("nd4j::graph") public static native @Cast("uint32_t") int rotl(@Cast("const uint32_t") int x, int k);
+        @Namespace("sd::graph") public static native @Cast("uint32_t") int rotl(@Cast("const uint32_t") int x, int k);
 
-        @Namespace("nd4j::graph") public static native @Cast("uint64_t") long rotl(@Cast("const uint64_t") long x, int k);
+        @Namespace("sd::graph") public static native @Cast("uint64_t") long rotl(@Cast("const uint64_t") long x, int k);
 
         
 
@@ -5202,13 +5220,17 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_VARIABLE_H
 
 // #include <string>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <array/NDArrayList.h>
 // #include <graph/VariableType.h>
 // #include <graph/generated/array_generated.h>
 // #include <graph/generated/node_generated.h>
 // #include <graph/generated/graph_generated.h>
-        @Namespace("nd4j::graph") @NoOffset public static class Variable extends Pointer {
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+        @Namespace("sd::graph") @NoOffset public static class Variable extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Variable(Pointer p) { super(p); }
@@ -5236,6 +5258,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public Variable(NDArray array/*=nullptr*/, @Cast("char*") BytePointer name/*=nullptr*/) { super((Pointer)null); allocate(array, name); }
             private native void allocate(NDArray array/*=nullptr*/, @Cast("char*") BytePointer name/*=nullptr*/);
 
+// #ifndef __JAVACPP_HACK__
+// #endif
+
             public native Variable clone();
 
             public native @Cast("bool") boolean hasNDArray();
@@ -5253,8 +5278,8 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native @Cast("bool") boolean isPlaceholder();
 
-            public native @Cast("nd4j::graph::VariableType") int variableType();
-            public native void setVariableType(@Cast("nd4j::graph::VariableType") int variableType);
+            public native @Cast("sd::graph::VariableType") int variableType();
+            public native void setVariableType(@Cast("sd::graph::VariableType") int variableType);
 
             /**
              * This method returns InputType of this variable  
@@ -5315,10 +5340,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <iterator>
 // #include <vector>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <graph/Variable.h>
-        @Namespace("nd4j::graph") @NoOffset public static class VariablesSet extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class VariablesSet extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public VariablesSet(Pointer p) { super(p); }
@@ -5370,13 +5395,15 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_FLOWPATH_H
 // #define LIBND4J_FLOWPATH_H
 
+// #include <system/op_boilerplate.h>
+// #include <unordered_map>
 // #include <map>
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <graph/NodeState.h>
 // #include <graph/FrameState.h>
 // #include <graph/profiling/GraphProfile.h>
-// #include <dll.h>
-        @Namespace("nd4j::graph") @NoOffset public static class FlowPath extends Pointer {
+// #include <system/dll.h>
+        @Namespace("sd::graph") @NoOffset public static class FlowPath extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public FlowPath(Pointer p) { super(p); }
@@ -5457,12 +5484,12 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_INTERVALS_H
 // #define LIBND4J_INTERVALS_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
 // #include <initializer_list>
-// #include <dll.h>
+// #include <system/dll.h>
 
-    @Namespace("nd4j") @NoOffset public static class Intervals extends Pointer {
+    @Namespace("sd") @NoOffset public static class Intervals extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Intervals(Pointer p) { super(p); }
@@ -5522,12 +5549,14 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_STASH_H
 
 //#include <graph/Block.h>
-// #include <NDArray.h>
-// #include <unordered_map>
+// #include <array/NDArray.h>
+// #include <map>
+// #include <vector>
 // #include <string>
 // #include <atomic>
-// #include <pointercast.h>
-        @Namespace("nd4j::graph") @NoOffset public static class KeyPair extends Pointer {
+// #include <functional>
+// #include <system/pointercast.h>
+        @Namespace("sd::graph") @NoOffset public static class KeyPair extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public KeyPair(Pointer p) { super(p); }
@@ -5546,9 +5575,19 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             private native void allocate(int node/*=0*/, @Cast("char*") BytePointer name/*=nullptr*/);
 
             public native @Cast("bool") @Name("operator <") boolean lessThan(@Const @ByRef KeyPair other);
-        }
 
-        @Namespace("nd4j::graph") @NoOffset public static class Stash extends Pointer {
+            public native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef KeyPair other);
+
+            public native int key();
+            public native @StdString BytePointer name();
+        }
+    
+
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+        @Namespace("sd::graph") @NoOffset public static class Stash extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Stash(Pointer p) { super(p); }
@@ -5562,21 +5601,22 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public Stash() { super((Pointer)null); allocate(); }
             private native void allocate();
 
-            //void storeArray(nd4j::graph::Block<T>& block, const char *name, nd4j::NDArray<T> *array);
+            //void storeArray(sd::graph::Block<T>& block, const char *name, sd::NDArray<T> *array);
             public native void storeArray(int nodeId, @Cast("char*") String name, NDArray array);
             public native void storeArray(int nodeId, @Cast("char*") BytePointer name, NDArray array);
 
-            //bool checkStash(nd4j::graph::Block<T>& block, const char *name);
+            //bool checkStash(sd::graph::Block<T>& block, const char *name);
             public native @Cast("bool") boolean checkStash(int nodeId, @Cast("char*") String name);
             public native @Cast("bool") boolean checkStash(int nodeId, @Cast("char*") BytePointer name);
 
-            //nd4j::NDArray<T>* extractArray(nd4j::graph::Block<T>& block, const char *name);
+            //sd::NDArray<T>* extractArray(sd::graph::Block<T>& block, const char *name);
             public native NDArray extractArray(int nodeId, @Cast("char*") String name);
             public native NDArray extractArray(int nodeId, @Cast("char*") BytePointer name);
 
             public native void clear();
         }
     
+
 
 
 
@@ -5610,20 +5650,21 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_GRAPHSTATE_H
 // #define LIBND4J_GRAPHSTATE_H
 
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <unordered_map>
+// #include <map>
 // #include <graph/Scope.h>
-// #include <Status.h>
+// #include <graph/Status.h>
 // #include <graph/VariableSpace.h>
 // #include <ops/declarable/DeclarableOp.h>
 // #include <types/pair.h>
 // #include <graph/ArgumentsList.h>
 // #include <graph/Graph.h>
 
-    @Namespace("nd4j::graph") @NoOffset public static class GraphState extends Pointer {
+    @Namespace("sd::graph") @NoOffset public static class GraphState extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public GraphState(Pointer p) { super(p); }
@@ -5732,13 +5773,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <list>
 // #include <unordered_map>
 // #include <mutex>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <array/NDArrayList.h>
 // #include <graph/Variable.h>
 // #include <memory/Workspace.h>
 // #include <graph/Stash.h>
 // #include <graph/FlowPath.h>
-        @Namespace("nd4j::graph") @NoOffset public static class VariableSpace extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class VariableSpace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public VariableSpace(Pointer p) { super(p); }
@@ -5755,7 +5796,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @ByRef @Name("operator =") VariableSpace put(@Const @ByRef VariableSpace other);
 
             public native int numberOfPlaceholders();
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getPlaceholders();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getPlaceholders();
             public native void setWorkspace(Workspace workspace);
 
             public native LaunchContext launchContext();
@@ -5774,13 +5815,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native Variable getVariable(@ByRef IntIntPair pair);
             public native Variable getVariable(@StdString @Cast({"char*", "std::string*"}) BytePointer symbol);
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getVariables();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getVariables();
 
-            public native void putVariable(@ByRef IntIntPair pair, NDArray array);
+            public native Variable putVariable(@ByRef IntIntPair pair, NDArray array);
             public native void putVariable(@ByRef IntIntPair pair, Variable variable);
             public native void putVariable(int id, Variable variable);
             public native void putVariable(int id, NDArray array);
-            public native void putVariable(int id, int idx, NDArray array);
+            public native Variable putVariable(int id, int idx, NDArray array);
             public native void putVariable(int id, int idx, Variable array);
 
             public native void dropVariable(@ByRef IntIntPair pair);
@@ -5803,7 +5844,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native VariableSpace clone();
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer handles();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer handles();
 
 
             public native VariableSpace asT();
@@ -5811,7 +5852,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native Stash getStash();
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getExternalVariables();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getExternalVariables();
 
             public native void setFlowPath(FlowPath timers);
             public native FlowPath flowPath();
@@ -5848,10 +5889,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_HELPER_GENERATOR_H
 // #define LIBND4J_HELPER_GENERATOR_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
 // #include <array/DataTypeUtils.h>
-// #include <dll.h>
+// #include <system/dll.h>
 
 // #ifdef _MSC_VER
 // include for uint64_t on MSVC
@@ -5876,7 +5917,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #ifdef __CUDACC__
 // #else
-        @Namespace("nd4j::random") @NoOffset public static class RandomBuffer extends Pointer {
+        @Namespace("sd::random") @NoOffset public static class RandomBuffer extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public RandomBuffer(Pointer p) { super(p); }
@@ -6037,7 +6078,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
         }
 
-        @Namespace("nd4j::random") @NoOffset public static class IGenerator extends Pointer {
+        @Namespace("sd::random") @NoOffset public static class IGenerator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public IGenerator(Pointer p) { super(p); }
@@ -6057,7 +6098,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 
 
-        @Namespace("nd4j::random") @NoOffset public static class Xoroshiro128 extends IGenerator {
+        @Namespace("sd::random") @NoOffset public static class Xoroshiro128 extends IGenerator {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Xoroshiro128(Pointer p) { super(p); }
@@ -6098,13 +6139,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define ND4J_GRAPH_PROFILE_H
 
 // #include "NodeProfile.h"
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <string>
 // #include <map>
 // #include <chrono>
-        @Namespace("nd4j::graph") @NoOffset public static class GraphProfile extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class GraphProfile extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public GraphProfile(Pointer p) { super(p); }
@@ -6203,10 +6244,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_NODE_PROFILE_H
 // #define LIBND4J_NODE_PROFILE_H
 
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <string>
-        @Namespace("nd4j::graph") @NoOffset public static class NodeProfile extends Pointer {
+// #include <vector>
+        @Namespace("sd::graph") @NoOffset public static class NodeProfile extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public NodeProfile(Pointer p) { super(p); }
@@ -6238,10 +6280,19 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setObjectsSize(@Cast("Nd4jLong") long bytes);
             public native void setTotalSize(@Cast("Nd4jLong") long bytes);
 
+            public native void addInputShape(@Cast("Nd4jLong*") LongPointer shapeInfo);
+            public native void addInputShape(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+            public native void addInputShape(@Cast("Nd4jLong*") long[] shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") LongPointer shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") long[] shapeInfo);
+
             public native @Cast("Nd4jLong") long getActivationsSize();
             public native @Cast("Nd4jLong") long getTemporarySize();
             public native @Cast("Nd4jLong") long getObjectsSize();
             public native @Cast("Nd4jLong") long getTotalSize();
+
+            public native @Cast("Nd4jLong") long getExecutionTime();
 
             public native @StdString @ByRef @Cast({"char*", "std::string*"}) BytePointer name();
 
@@ -6282,7 +6333,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_CONTEXT_H
 
 // #include <vector>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <graph/Variable.h>
 // #include <graph/VariableSpace.h>
 // #include <graph/ContextPrototype.h>
@@ -6295,7 +6346,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
          * This class defines input desired for any given node/operation within graph
          */
-        @Namespace("nd4j::graph") @NoOffset public static class Context extends ContextPrototype {
+        @Namespace("sd::graph") @NoOffset public static class Context extends ContextPrototype {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Context(Pointer p) { super(p); }
@@ -6318,10 +6369,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @Cast("Nd4jLong") long getOuterTime();
             public native @Cast("Nd4jLong") long getInnerTime();
 
-            public native @Cast("nd4j::DataType") int dataType();
+            public native @Cast("sd::DataType") int dataType();
 
-            public native @Cast("nd4j::DataType") int dataType(int index);
-            public native void setDataType(int index, @Cast("nd4j::DataType") int type);
+            public native @Cast("sd::DataType") int dataType(int index);
+            public native void setDataType(int index, @Cast("sd::DataType") int type);
             // these methods are related to Workspace abstraction
             public native @Cast("bool") boolean hasWorkspaceProvided();
             public native void attachWorkspace(Workspace workspace);
@@ -6415,10 +6466,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             // methods used in java interop
             /**
-             * This method checks, if Context uses fastpath variable access
+             * This method checks if Context uses fastpath variable access
              * @return
              */
             public native @Cast("bool") boolean isFastPath();
+
+            /**
+             * Method allows to forbid FastPath execution
+             * @param reallyForbid
+             */
+            public native void forbidFastPath(@Cast("bool") boolean reallyForbid);
 
 // #ifndef __JAVACPP_HACK__
 // #endif
@@ -6441,9 +6498,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setIArguments(@Cast("Nd4jLong*") long[] arguments, int numberOfArguments);
             public native void setBArguments(@Cast("bool*") BooleanPointer arguments, int numberOfArguments);
             public native void setBArguments(@Cast("bool*") boolean[] arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") IntPointer arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") IntBuffer arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") int[] arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") IntPointer arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") IntBuffer arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") int[] arguments, int numberOfArguments);
 
             public native void setTArguments(@StdVector DoublePointer tArgs);
             public native void setTArguments(@StdVector DoubleBuffer tArgs);
@@ -6453,9 +6510,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setIArguments(@Cast("Nd4jLong*") @StdVector long[] tArgs);
             public native void setBArguments(@Cast("bool*") @StdVector BooleanPointer tArgs);
             public native void setBArguments(@Cast("bool*") @StdVector boolean[] tArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntPointer dArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntBuffer dArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector int[] dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector IntPointer dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector IntBuffer dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector int[] dArgs);
+
+            /**
+             * This method purges fastpath in/out contents and releases all the handles.
+             *
+             * PLEASE NOTE: I/T/B/D args will stay intact
+             */
+            public native void clearFastPath();
 
             public native void setCudaContext(@Cast("Nd4jPointer") Pointer cudaStream, @Cast("Nd4jPointer") Pointer reductionPointer, @Cast("Nd4jPointer") Pointer allocationPointer);
 
@@ -6505,10 +6569,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define ND4J_CONTEXT_PROTOTYPE_H
 
 // #include <vector>
-// #include <Environment.h>
+// #include <system/Environment.h>
 // #include <array/DataType.h>
-// #include <dll.h>
-// #include <RandomGenerator.h>
+// #include <system/dll.h>
+// #include <graph/RandomGenerator.h>
 // #include <ops/declarable/OpDescriptor.h>
 // #include <execution/Engine.h>
 // #include <execution/ExecutionMode.h>
@@ -6517,7 +6581,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <config.h>
 // #endif
 
-        @Namespace("nd4j::graph") @NoOffset public static class ContextPrototype extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class ContextPrototype extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ContextPrototype(Pointer p) { super(p); }
@@ -6541,9 +6605,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native void setOpDescriptor(OpDescriptor opDescriptor);
 
-            public native @Cast("nd4j::DataType") int dataType();
-            public native @Cast("nd4j::DataType") int dataType(int index);
-            public native void setDataType(int index, @Cast("nd4j::DataType") int type);
+            public native @Cast("sd::DataType") int dataType();
+            public native @Cast("sd::DataType") int dataType(int index);
+            public native void setDataType(int index, @Cast("sd::DataType") int type);
 
             public native @Cast("bool") boolean isInplace();
             public native void markInplace(@Cast("bool") boolean reallyInplace);
@@ -6559,7 +6623,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @StdVector DoublePointer getTArguments();
             public native @StdVector IntPointer getIArguments();
             public native @Cast("bool*") @StdVector BooleanPointer getBArguments();
-            public native @Cast("nd4j::DataType*") @StdVector IntPointer getDArguments();
+            public native @Cast("sd::DataType*") @StdVector IntPointer getDArguments();
             public native @StdVector IntPointer getAxis();
 
             public native @Cast("samediff::Engine") int engine();
@@ -6624,10 +6688,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_RESULTWRAPPER_H
 // #define LIBND4J_RESULTWRAPPER_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
-// #include <dll.h>
-        @Namespace("nd4j::graph") @NoOffset public static class ResultWrapper extends org.nd4j.nativeblas.ResultWrapperAbstraction {
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
+        @Namespace("sd::graph") @NoOffset public static class ResultWrapper extends org.nd4j.nativeblas.ResultWrapperAbstraction {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ResultWrapper(Pointer p) { super(p); }
@@ -6676,13 +6740,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <cstring>
 // #include <cstdio>
-// #include "../dll.h"
-// #include "../nd4jmalloc.h"
-// #include "../templatemath.h"
+// #include "system/dll.h"
+// #include "system/nd4jmalloc.h"
+// #include "math/templatemath.h"
 // #include "../helpers/logger.h"
-// #include "../pointercast.h"
+// #include "system/pointercast.h"
 // #include "../cnpy/cnpy.h"
-// #include <op_boilerplate.h>
+// #include <system/op_boilerplate.h>
 
 public static final int MAX_DIMENSION = 0x7fffffff;
 public static final int MAX_NUM_THREADS =  1024;
@@ -6699,7 +6763,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define INLINEDEF inline
 // #endif
 
-// #include "../pairwise_util.h"
+// #include "system/pairwise_util.h"
 // #include <stdint.h>
 // #include <array/ArrayOptions.h>
 
@@ -6814,9 +6878,12 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean haveSameShapeAndStrides(@Cast("const Nd4jLong*") LongBuffer shapeInfo1, @Cast("const Nd4jLong*") LongBuffer shapeInfo2, @Cast("const Nd4jLong*") LongBuffer shapeInfo3);
     @Namespace("shape") public static native @Cast("bool") boolean haveSameShapeAndStrides(@Cast("const Nd4jLong*") long[] shapeInfo1, @Cast("const Nd4jLong*") long[] shapeInfo2, @Cast("const Nd4jLong*") long[] shapeInfo3);
 
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongPointer shape, int dim);
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongBuffer shape, int dim);
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") long[] shape, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongPointer shapeInfo, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongBuffer shapeInfo, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") long[] shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") LongPointer shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") LongBuffer shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") long[] shapeInfo, int dim);
 
     @Namespace("shape") public static native void traceNew(int id);
 
@@ -6831,33 +6898,39 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean canReshape(int oldRank, @Cast("Nd4jLong*") LongBuffer oldShape, int newRank, @Cast("Nd4jLong*") LongBuffer newShape, @Cast("bool") boolean isFOrder);
     @Namespace("shape") public static native @Cast("bool") boolean canReshape(int oldRank, @Cast("Nd4jLong*") long[] oldShape, int newRank, @Cast("Nd4jLong*") long[] newShape, @Cast("bool") boolean isFOrder);
 
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") LongPointer oldShapeInfo, int newRank, @Cast("const Nd4jLong*") LongPointer newShape, @Cast("Nd4jLong*") LongPointer newShapeInfo);
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") LongBuffer oldShapeInfo, int newRank, @Cast("const Nd4jLong*") LongBuffer newShape, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") long[] oldShapeInfo, int newRank, @Cast("const Nd4jLong*") long[] newShape, @Cast("Nd4jLong*") long[] newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongPointer oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") LongPointer newShape, @Cast("Nd4jLong*") LongPointer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongBuffer oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") LongBuffer newShape, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") long[] oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") long[] newShape, @Cast("Nd4jLong*") long[] newShapeInfo);
+    /**
+    * newShapeInfo contains rank, shape and order only, no strides/ews/type
+    */
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongPointer oldShapeInfo, @Cast("Nd4jLong*") LongPointer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongBuffer oldShapeInfo, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") long[] oldShapeInfo, @Cast("Nd4jLong*") long[] newShapeInfo);
 
     /**
     * Get the shape info buffer
     * for the given rank and shape.
     */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
 
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] buffer);
 
     /**
     * Get the shape info buffer
     * for the given rank and shape.
      */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
 
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer output);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer output);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] output);
 
 // #ifdef __CUDACC__
 // #endif
@@ -7141,6 +7214,15 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") LongPointer shapeInfo);
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") LongBuffer shapeInfo);
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") long[] shapeInfo);
+
+    /**
+    * shape - input inShape is shape only, not shapeInfo
+    * returns number of non-unity dimensions in inShape
+    */
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") LongPointer inShape);
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") LongBuffer inShape);
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") long[] inShape);
+
     /**
  * Returns whether the
  * given shape is a vector or not
@@ -7159,9 +7241,9 @@ public static final int PREALLOC_SIZE = 33554432;
  * Returns the shape portion of an information
  * buffer
  */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeOf(@Cast("Nd4jLong*") LongPointer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeOf(@Cast("Nd4jLong*") LongBuffer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeOf(@Cast("Nd4jLong*") long[] buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeOf(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeOf(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeOf(@Cast("Nd4jLong*") long[] shapeInfo);
 
 /**
  * Return a copy of a buffer.
@@ -7241,14 +7323,12 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native int rank(@Const IntBuffer shapeInfo);
     @Namespace("shape") public static native int rank(@Const int[] shapeInfo);
 
-    // returns pointer on elementWiseStride
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer ews(@Cast("Nd4jLong*") LongPointer shapeInfo);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer ews(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] ews(@Cast("Nd4jLong*") long[] shapeInfo);
-
     /**
     *  returns pointer on elementWiseStride
     */
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer ews(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer ews(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] ews(@Cast("Nd4jLong*") long[] shapeInfo);
 
 /**
  * Converts a raw int buffer of the layout:
@@ -7704,18 +7784,18 @@ public static final int PREALLOC_SIZE = 33554432;
 * @return the double at the specified index
 */
 
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] indices);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords);
 
     @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer createShapeInfo(@Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer stride, int rank);
     @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer createShapeInfo(@Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer stride, int rank);
@@ -7741,14 +7821,20 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongPointer shape, IntPointer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongBuffer shape, IntBuffer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") long[] shape, int[] coords);
+
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong*") LongPointer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, IntPointer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, IntBuffer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, int[] coords);
+
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong*") LongPointer coords, int dimsSize, @Const IntPointer tadDims);
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer coords, int dimsSize, @Const IntBuffer tadDims);
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] coords, int dimsSize, @Const int[] tadDims);
-
-
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, IntPointer coords, int dimsSize, @Const IntPointer tadDims);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, IntBuffer coords, int dimsSize, @Const IntBuffer tadDims);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, int[] coords, int dimsSize, @Const int[] tadDims);
 
     /**
     * Convert coordinates to the corresponding linear index (sequence number in other words)
@@ -7760,15 +7846,15 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords);
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords);
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongPointer shape, @Const IntPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongBuffer shape, @Const IntBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") long[] shape, @Const int[] coords);
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords, int dimsSize, @Const IntPointer tadDims);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords, int dimsSize, @Const IntBuffer tadDims);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords, int dimsSize, @Const int[] tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords, int dimsSize, @Const IntPointer tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords, int dimsSize, @Const IntBuffer tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords, int dimsSize, @Const int[] tadDims);
 
    /**
    * increment n-dimensional array by one iteration by changing coord appropriately
@@ -7858,32 +7944,32 @@ public static final int PREALLOC_SIZE = 33554432;
     // function calculates the coordinates of min array (and saves them into minIdxs) given coordinates of max array (already stored in maxIdxs)
     // dimsToExclude - should be sorted in increasing order
     // dimsLen - length of dimsToExclude, if not set (= -1), then it is calculated as maxRank - minRank
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("Nd4jLong*") LongPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("Nd4jLong*") LongPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("Nd4jLong*") LongBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("Nd4jLong*") LongBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("Nd4jLong*") long[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("Nd4jLong*") long[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(IntPointer maxIdxs, IntPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(IntPointer maxIdxs, IntPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(IntBuffer maxIdxs, IntBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(IntBuffer maxIdxs, IntBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(int[] maxIdxs, int[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(int[] maxIdxs, int[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
 
     // calculate indexes of max-array, these output indexes correspond to one minIdx index of min-array which is sub-array of max-array
     // dimsToExclude - should be sorted in increasing order
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(IntPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(IntPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(IntBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(IntBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(int[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(int[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
 
     // calculate offsets of max-array, these offsets correspond to one minIdx index of min-array which is sub-array of max-array
     // maxOffsets - will contain calculated offsets of max-array, buffer for maxOffsets should be allocated beforehand
     // dimsToExclude - should be sorted in increasing order
     // memBuff - auxiliary memory buffer (size = 2 * max_rank) for coordinates and increments storing, should be allocated beforehand
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") LongPointer memBuff, @Const IntPointer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") LongPointer memBuff);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") LongBuffer memBuff, @Const IntBuffer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") LongBuffer memBuff);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") long[] memBuff, @Const int[] dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") long[] memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, IntPointer memBuff, @Const IntPointer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, IntPointer memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, IntBuffer memBuff, @Const IntBuffer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, IntBuffer memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, int[] memBuff, @Const int[] dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, int[] memBuff);
 
     // calculates offsets for entities (elements or sub-arrays), shape in context of sub-array means dimensions excluded from outer array
     // rank is equal to size of shape
@@ -7899,40 +7985,22 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer offsets);
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] offsets, byte order/*='c'*/);
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] offsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, @Cast("const Nd4jLong*") LongPointer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, @Cast("const Nd4jLong*") LongPointer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer zOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, @Cast("const Nd4jLong*") LongBuffer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, @Cast("const Nd4jLong*") LongBuffer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer zOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, @Cast("const Nd4jLong*") long[] zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, @Cast("const Nd4jLong*") long[] zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] zOffsets);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") LongPointer buffer, byte order);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") LongBuffer buffer, byte order);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") long[] buffer, byte order);
-
-    // deduce element-wise stride
-    // if array is scalar or unit length vector then ews = 1
-    // if array is common vector then ews = stride of non-unity dimension
-    // if strides are normal set ews = 1, otherwise ews = 0
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong") long len);
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong") long len);
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong") long len);
+    // ND4J_EXPORT void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const char order = 'c');
+    // ND4J_EXPORT void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const Nd4jLong* zShapeInfo, Nd4jLong*& zOffsets, const char order = 'c');
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") LongPointer buffer, byte order);
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") LongBuffer buffer, byte order);
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") long[] buffer, byte order);
 
     // deduce order and element-wise stride
     // if array is scalar or unit length vector then ews = 1 and order is preserved
     // if array is common vector then ews = stride of non-unity dimension and order is preserved
     // if strides are normal/contiguous then ews = 1 and corresponding order is set, otherwise ews = 0 and order is preserved
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongPointer shapeInfo);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") long[] shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongPointer shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") LongPointer shapeNoUnities, @Cast("const Nd4jLong*") LongPointer stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongBuffer shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") LongBuffer shapeNoUnities, @Cast("const Nd4jLong*") LongBuffer stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") long[] shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") long[] shapeNoUnities, @Cast("const Nd4jLong*") long[] stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") long[] shapeInfo);
 
     /**
     * processes whole set of sub-arrays
@@ -7942,17 +8010,62 @@ public static final int PREALLOC_SIZE = 33554432;
     * numOfSubArrs - number of sub-arrays, size of subArrOffsets is equal to numOfSubArrs
     * dimsSize - size of dimsToExclude, if dimsSize = array rank or dimsSize = 0 it means sub-array is whole array, copy of wholeShapeInfo and one zero offset will be returned
     * dimsToExclude - MUST BE SORTED, dimensions to evaluate sub-array along, i.e. when shape is [2,3,4,5] and dimsToExclude={0,2}, then there will be 8 sub-arrays with shape [3,5]
-    * subArrShapeInfo    - output argument, contains shapeInfo common for all sub-arrays
+    * subArrShapeInfo    - output argument, contains shapeInfo (same for all sub-arrays)
     * subArrOffsets      - output argument, contains successive sub-arrays offsets from original this-buffer
     * keepUnitiesInShape - if false then eliminate unities from sub-array shapeInfo, for example {1,a,1,b} -> {a,b}
     */
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets);
 
+    /**
+    * processes only one sub-array, evaluates shapeInfo of sub-array and its buffer offset from original array
+    * arguments:
+    * idx - input argument, intervals of indexes which define the sub-array to point on,
+    *        when isStrided = false then idx has form {dim0Start,dim0End,  dim1Start,dim1End, ....} and length (2 * maxRank)
+    *        when isStrided = true  then idx has form {dim0Start,dim0End,dim0Stride,  dim1Start,dim1End,dim1Stride, ....} and length (3 * maxRank)
+    *        when (dimStart == dimEnd) then whole range will be used for current dimension
+    * maxShapeInfo - input argument, shapeInfo of original array
+    * minShapeInfo - output argument, shapeInfo of sub-array to be deduced
+    * minOffset - output argument, offset of sub-array buffer offsets from original buffer
+    * keepUnitiesInShape - input argument, if false then eliminate unities from sub-array shapeInfo, for example {1,a,1,b} -> {a,b}
+    * isStrided - input argument, if true then idx has length (3 * this->rankOf()) and contains additional stride numbers which correspond to stride between dimStart and dimEnd,
+    * numOfUntiesInMinShape - input argument, number of occurrences in idx when (dimEnd - dimStart) = 1
+    */
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongPointer idx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongPointer minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongPointer idx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongPointer minOffset);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongBuffer idx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongBuffer minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongBuffer idx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongBuffer minOffset);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") long[] idx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") @ByRef long[] minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") long[] idx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") @ByRef long[] minOffset);
+
+    /**
+    * for example inShapeInfo is {3, 2,1,4, 4,4,1, 16384,1,99}
+    * then output shapeNoUnities will contain {2,4, 4,1} - that is only shape and strides, no rank/type/ews/order
+    * stridesNoUnities will point on strides in shapeNoUnities that is on {4,1}
+    * returns number of non-unity dimensions in inShapeInfo
+    * if there is no unities in inShapeInfo, then no copy procedure will be performed and shapeNoUnities/stridesNoUnities will point on corresponding places in inShapeInfo
+    */
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongPointer inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef LongPointer stridesNoUnities);
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongBuffer inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer stridesNoUnities);
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") long[] inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef long[] stridesNoUnities);
+
+    /**
+    * for example inShapeInfo is {3, 2,1,3,1,4,  12,12,4,4,1, 16384,1,99}, dimsToExclude = {1,3}, dimsSize = 2
+    * then outShapeInfo will contain {3, 2,3,4, 12,4,1, 16384,1,99}
+    */
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongPointer inShapeInfo, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer outShapeInfo);
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongBuffer inShapeInfo, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer outShapeInfo);
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") long[] inShapeInfo, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] outShapeInfo);
+
+    /**
+    * get stride over contiguous axis (contiguous axis must have stride = 1)
+    * for example when inShapeInfo is {4, 2,5,4,3,  60,1,5,20, 16384,0,99} then output is 5 (that is smallest stride in inShapeInfo except those equal to 1)
+    */
+    // INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo);
 
 
 
@@ -8181,6 +8294,8 @@ public static final int PREALLOC_SIZE = 33554432;
  * @param shape the shape of the array
  * @param rank the rank of the shape
  */
+
+//////////////////////////////////////////////////////////////////////
 
 /**
 * Returns whether the
@@ -8722,7 +8837,7 @@ public static final int PREALLOC_SIZE = 33554432;
 //         target[shape::shapeInfoLength(newRank) - 3] = 0;
 //         target[shape::shapeInfoLength(newRank) - 2] = 0;
 //         target[shape::shapeInfoLength(newRank) - 1] = isFOrder ? 102 : 99;
-//         nd4j::ArrayOptions::setDataType(target, nd4j::ArrayOptions::dataType(oldShape));
+//         sd::ArrayOptions::setDataType(target, sd::ArrayOptions::dataType(oldShape));
 
 //         delete[] olddims;
 //         delete[] oldstrides;
@@ -8731,68 +8846,59 @@ public static final int PREALLOC_SIZE = 33554432;
 //         return true;
 //     }
 
-// INLINEDEF _CUDA_H bool reshapeC(const int oldRank, const Nd4jLong* oldShapeInfo, const int newRank, const Nd4jLong* newShape, const bool isFOrder, Nd4jLong* newShapeInfo) {
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_H bool reshapeC(const int oldRank, const Nd4jLong* oldShapeInfo, const int newRank, const Nd4jLong* newShape, Nd4jLong* newShapeInfo) {
 
 //         // PLEASE NOTE !: reshaping not-permuted (ews=1) array in f order (except insertion/elimination of unities) will definitely cause allocation of new buffer for array elements
 //         // also this function takes into account identical shapes automatically, namely in that case oldShapeInfo is completely copied to newShapeInfo
 
-//         const int newOrder = isFOrder ? 102 : 99;
-//         const int oldOrder = oldShapeInfo[2 * oldRank + 3];
-
 //         newShapeInfo[0] = newRank;
 //         memcpy(newShapeInfo + 1, newShape, newRank * sizeof(Nd4jLong));
 
-//         Nd4jLong* newStrides = shape::stride(newShapeInfo);
-//         const Nd4jLong* oldShape = shape::shapeOf(const_cast<Nd4jLong*>(oldShapeInfo));
+//         Nd4jLong* newStrides       = shape::stride(newShapeInfo);
+//         const Nd4jLong* oldShape   = shape::shapeOf(const_cast<Nd4jLong*>(oldShapeInfo));
 //         const Nd4jLong* oldStrides = shape::stride(const_cast<Nd4jLong*>(oldShapeInfo));
-//         int oldStart(0), oldStop(1), newStart(0), newStop(1), newDim, oldDim;
-
+//         Nd4jLong oldStart(0), oldStop(1), newStart(0), newStop(1), newDim, oldDim;
 
 //         while (newStart < newRank && oldStart < oldRank) {
 
 //             newDim = newShape[newStart];
 //             oldDim = oldShape[oldStart];
 
-//             while (newDim != oldDim)
+//             while (newDim != oldDim && newDim > 0 && oldDim > 0)
 //                 if (newDim < oldDim) newDim *= newShape[newStop++];
 //                 else                 oldDim *= oldShape[oldStop++];
 
 //             // ------ Check whether the original axes can be combined ------ //
-//             for (int i = oldStart; i < oldStop - 1; i++) {
-
-//                 if(oldShape[i] == 1) {                         // ignore strides like {...,1,1,...}
-//                     if(oldOrder == 102) ++oldStart;
+//             for (int step = 1, i = oldStart; i < oldStop - 1; ++i) {
+//                 if(oldShape[i] == 1)                // skip unity-dimension and its stride
 //                     continue;
-//                 }
-
-//                 if(oldOrder == 102 && oldStrides[i + 1] != oldShape[i] * oldStrides[i])
-//                     return false;       // not contiguous enough
-//                 if(oldOrder == 99  && oldStrides[i] != oldShape[i + 1] * oldStrides[i + 1])
-//                     return false;       // not contiguous enough
+//                 while((i + step) < oldRank && oldShape[i + step] == 1)
+//                     ++step;                         // skip following unity-dimensions and its strides if such are present
+//                 if((i + step) < oldRank && oldStrides[i] != oldShape[i + step] * oldStrides[i + step])
+//                     return false;                   // not contiguous enough
 //             }
 
-//             // ------ Calculate new strides for all axes currently worked with ------ //
-//             if(isFOrder) {
-//                 newStrides[newStart] = oldStrides[oldStart];
-//                 for (int i = newStart + 1; i < newStop; ++i)
-//                     newStrides[i] = newStrides[i - 1] * newShape[i - 1];
-//             }
-//             else {
-//                 newStrides[newStop - 1] = oldStrides[oldStop - 1];
-//                 for (int i = newStop - 1; i > newStart; --i)
-//                     newStrides[i - 1] = newStrides[i] * newShape[i];
-//             }
+//             newStrides[newStop - 1] = oldStrides[oldStop - 1];
+//             for (int i = newStop - 1; i > newStart; --i)
+//                 newStrides[i - 1] = newStrides[i] * newShape[i];
 
 //             newStart = newStop++;
 //             oldStart = oldStop++;
 //         }
 
-//         newShapeInfo[2 * newRank + 3] = shape::order(oldShapeInfo);    // order
-//         newShapeInfo[2 * newRank + 2] = shape::elementWiseStride(oldShapeInfo);    // ews
-//         newShapeInfo[2 * newRank + 1] = shape::type(oldShapeInfo);    // type
+//         // rest of strides should be unities (if there is remainder in strides space, that is newStart < newRank)
+//         for (int i = newStart; i < newRank; ++i)
+//             newStrides[i] = 1;
+
+//         newShapeInfo[2 * newRank + 3] = shape::order(oldShapeInfo);                 // order
+//         newShapeInfo[2 * newRank + 2] = shape::elementWiseStride(oldShapeInfo);     // ews
+//         newShapeInfo[2 * newRank + 1] = shape::type(oldShapeInfo);                  // type
 
 //         return true;
 //     }
+
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 
@@ -8837,6 +8943,222 @@ public static final int PREALLOC_SIZE = 33554432;
 
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const Nd4jLong* zShapeInfo, Nd4jLong*& zOffsets, const char order) {
+
+//     // we assume all array have same length
+//     const Nd4jLong len = shape::length(xShapeInfo);
+
+//     const Nd4jLong xEws = shape::elementWiseStride(xShapeInfo);
+//     const Nd4jLong yEws = shape::elementWiseStride(yShapeInfo);
+//     const Nd4jLong zEws = shape::elementWiseStride(zShapeInfo);
+
+//     const char xOrder = shape::order(xShapeInfo);
+//     const char yOrder = shape::order(yShapeInfo);
+//     const char zOrder = shape::order(zShapeInfo);
+
+//     const bool shapesSame = shape::shapeEquals(xShapeInfo, yShapeInfo, zShapeInfo);
+
+//     if (xEws == 1 && yEws == 1 && zEws == 1 && xOrder == yOrder && xOrder == zOrder && (xOrder == 'c' || shapesSame)) {
+//         xOffsets = yOffsets = zOffsets = nullptr;
+//     }
+//     else if(xEws == 1 && yEws == 1 && xOrder == yOrder && (xOrder == 'c' || shape::shapeEquals(xShapeInfo, yShapeInfo))) {
+//         xOffsets = yOffsets = nullptr;
+//         zOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(zShapeInfo, zOffsets, xOrder);
+//     }
+//     else if(xEws == 1 && zEws == 1 && xOrder == zOrder && (xOrder == 'c' || shape::shapeEquals(xShapeInfo, zShapeInfo))) {
+//         xOffsets = zOffsets = nullptr;
+//         yOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//     }
+//     else if(yEws == 1 && zEws == 1 && yOrder == zOrder && (yOrder == 'c' || shape::shapeEquals(yShapeInfo, zShapeInfo))) {
+//         yOffsets = zOffsets = nullptr;
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//     }
+//     else if(xEws == 1) {
+//         xOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets, xOrder);
+//             }
+//         }
+//     }
+//     else if(yEws == 1) {
+//         yOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets, yOrder);
+//             }
+//         }
+//     }
+//     else if(zEws == 1) {
+//         zOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets, zOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets, zOrder);
+//             }
+//         }
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo, zShapeInfo)) {
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets);
+//         yOffsets = zOffsets = xOffsets;
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo)) {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets);
+//             }
+//         }
+//         yOffsets = xOffsets;
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, zShapeInfo)) {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//         }
+//         zOffsets = xOffsets;
+//     }
+//     else {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets);
+//             }
+//         }
+//     }
+// }
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const char order) {
+
+//     // we assume all array have same length
+//     const Nd4jLong len = shape::length(xShapeInfo);
+
+//     const Nd4jLong xEws = shape::elementWiseStride(xShapeInfo);
+//     const Nd4jLong yEws = shape::elementWiseStride(yShapeInfo);
+
+//     const char xOrder = shape::order(xShapeInfo);
+//     const char yOrder = shape::order(yShapeInfo);
+
+//     const bool shapesSame = shape::shapeEquals(xShapeInfo, yShapeInfo);
+
+//     if (xEws == 1 && yEws == 1 && xOrder == yOrder && (xOrder == 'c' || shapesSame)) {
+//         xOffsets = yOffsets = nullptr;
+//     }
+//     else if(xEws == 1) {
+//         xOffsets = nullptr;
+//         yOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//     }
+//     else if(yEws == 1) {
+//         yOffsets = nullptr;
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo)) {
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets);
+//         yOffsets = xOffsets;
+//     }
+//     else {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//         }
+//     }
+// }
+
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo) {
+
+//     Nd4jLong result = 9223372036854775807LL;
+
+//     for(uint i = 0; i < shape::rank(inShapeInfo); ++i) {
+
+//         const auto currentStride = shape::stride(inShapeInfo)[i];
+
+//         if(i == axis || shape::shapeOf(inShapeInfo)[i] == 1)
+//             continue;
+
+//         if(result > currentStride)
+//             result = currentStride;
+//     }
+
+//     return result == 9223372036854775807LL ? 1 : result;
+// }
+
 
 
 
@@ -8870,10 +9192,10 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_OPARGSHOLDER_H
 
 
-// #include <NDArray.h>
-// #include <dll.h>
+// #include <array/NDArray.h>
+// #include <system/dll.h>
 
-@Namespace("nd4j") @NoOffset public static class OpArgsHolder extends Pointer {
+@Namespace("sd") @NoOffset public static class OpArgsHolder extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public OpArgsHolder(Pointer p) { super(p); }
@@ -8974,9 +9296,9 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_SHAPELIST_H
 
 // #include <vector>
-// #include <shape.h>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class ShapeList extends Pointer {
+// #include <helpers/shape.h>
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class ShapeList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ShapeList(Pointer p) { super(p); }
@@ -9018,7 +9340,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #endif //LIBND4J_SHAPELIST_H
 
 
-// Parsed from type_boilerplate.h
+// Parsed from system/type_boilerplate.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -9653,8 +9975,8 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define RANDOMTRIPLE(NAME, SIGNATURE, TYPES_X, TYPES_Y, TYPE_Z)  _RANDOMTRIPLE(NAME, SIGNATURE, TYPE_Z, TYPES_X, TYPES_Y)
 
 
-// #define BROADCAST(NAME) nd4j::BroadcastOpsTuple::custom(nd4j::scalar::NAME, nd4j::pairwise::NAME, nd4j::broadcast::NAME)
-// #define BROADCAST_BOOL(NAME) nd4j::BroadcastBoolOpsTuple::custom(nd4j::scalar::NAME, nd4j::pairwise::NAME, nd4j::broadcast::NAME)
+// #define BROADCAST(NAME) sd::BroadcastOpsTuple::custom(sd::scalar::NAME, sd::pairwise::NAME, sd::broadcast::NAME)
+// #define BROADCAST_BOOL(NAME) sd::BroadcastBoolOpsTuple::custom(sd::scalar::NAME, sd::pairwise::NAME, sd::broadcast::NAME)
 
 public static final int ALL_STRINGS =UTF32;
 public static final int ALL_INDICES =INT64;
@@ -9664,7 +9986,7 @@ public static final int ALL_FLOATS =BFLOAT16;
 // #endif //TESTS_CPU_TYPE_BOILERPLATE_H
 
 
-// Parsed from op_boilerplate.h
+// Parsed from system/op_boilerplate.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -9733,8 +10055,8 @@ public static final int ALL_FLOATS =BFLOAT16;
 // #ifndef OP_BOILERPLATE_HH
 // #define OP_BOILERPLATE_HH
 
-// #include <openmp_pragmas.h>
-// #include <type_boilerplate.h>
+// #include <system/openmp_pragmas.h>
+// #include <system/type_boilerplate.h>
 // #include <exceptions/allocation_exception.h>
 // #include <memory/MemoryTracker.h>
 
@@ -9779,8 +10101,8 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define PRINT_FIRST(...)    printf(__VA_ARGS__); fflush(stdout)
 // #endif
 
-// #define DEBUG_CALL(STREAM)      if (nd4j::Environment::getInstance()->isDebug()) { cudaError_t tRes = cudaStreamSynchronize(*STREAM); checkCudaErrors(tRes); if (tRes != 0) { throw std::runtime_error(); }; }
-// #define DEBUG_KERNEL(STREAM, OP_NUM)       if (nd4j::Environment::getInstance()->isDebug()) { cudaError_t tRes = cudaStreamSynchronize(*STREAM); checkCudaErrors(tRes); if (tRes != 0) {std::string tFile(__FILE__); std::string tOp = "Kernel OpNum failed: [" + nd4j::StringUtils::valueToString<int>(OP_NUM) + std::string("]; File: ") + tFile + std::string(":") + nd4j::StringUtils::valueToString<int>(__LINE__); throw std::runtime_error(tOp.c_str()); }; }
+// #define DEBUG_CALL(STREAM)      if (sd::Environment::getInstance()->isDebug()) { cudaError_t tRes = cudaStreamSynchronize(*STREAM); checkCudaErrors(tRes); if (tRes != 0) { throw std::runtime_error(); }; }
+// #define DEBUG_KERNEL(STREAM, OP_NUM)       if (sd::Environment::getInstance()->isDebug()) { cudaError_t tRes = cudaStreamSynchronize(*STREAM); checkCudaErrors(tRes); if (tRes != 0) {std::string tFile(__FILE__); std::string tOp = "Kernel OpNum failed: [" + sd::StringUtils::valueToString<int>(OP_NUM) + std::string("]; File: ") + tFile + std::string(":") + sd::StringUtils::valueToString<int>(__LINE__); throw std::runtime_error(tOp.c_str()); }; }
 
 
 // #define LAUNCH(A, B, C, D) <<<A, B, C, D>>>
@@ -10876,8 +11198,8 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 /** graph definitions */
-// #define REQUIRE_OK(A)  if (nd4j::ops::resultHelper( (A), #A, __FILE__, __LINE__ ) != 0) return ND4J_STATUS_VALIDATION;
-// #define REQUIRE_TRUE(...) if (nd4j::ops::conditionHelper(__FILE__, __LINE__, __VA_ARGS__) != 0) throw std::invalid_argument("Op validation failed");
+// #define REQUIRE_OK(A)  if (sd::ops::resultHelper( (A), #A, __FILE__, __LINE__ ) != 0) return ND4J_STATUS_VALIDATION;
+// #define REQUIRE_TRUE(COND, ...) if (!(COND)) { if (sd::ops::conditionHelper(__FILE__, __LINE__, COND, __VA_ARGS__) != 0) throw std::invalid_argument("Op validation failed");};
 
 // #define DECLARE_ENTRY(NAME, ...)           template struct ND4J_EXPORT __registratorFloat<NAME<float>>;
 //                                       template struct ND4J_EXPORT __registratorHalf<NAME<float16>>;
@@ -10891,13 +11213,13 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define NOT_EXCLUDED(NAME) 1>0
 // #else
 // for now we don't want minifier mechanics working
-//#define NOT_EXCLUDED(NAME) defined(LIBND4J_ALL_OPS) || defined(NAME)
+//#define NOT_EXCLUDED(NAME) defined(SD_ALL_OPS) || defined(NAME)
 // #define NOT_EXCLUDED(NAME) 1>0
 // #endif
 
 // #ifdef __JAVACPP_HACK__
 // #define REGISTER_H(NAME)
-// #elif defined(LIBND4J_ALL_OPS)
+// #elif defined(SD_ALL_OPS)
 // #else
 // #define REGISTER_H(NAME)  template <typename OpName>
 //                         struct __registrator_##NAME {
@@ -10906,68 +11228,68 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                 OpRegistrator::getInstance()->registerOperation(ptr);
 //                             }
 //                         };
-//                         static nd4j::ops::__registrator_##NAME<NAME> zzz_register_opd_##NAME;
+//                         static sd::ops::__registrator_##NAME<NAME> zzz_register_opd_##NAME;
 // #endif
 
 // #ifdef __JAVACPP_HACK__
 // #define REGISTER_C(NAME)
-// #elif defined(LIBND4J_ALL_OPS)
+// #elif defined(SD_ALL_OPS)
 // #else
 // #define REGISTER_C(NAME)
 // #endif
 
-// #define DECLARE_OP(NAME, NIN, NOUT, INPLACEABLE)   class ND4J_EXPORT NAME: public nd4j::ops::DeclarableOp {
+// #define DECLARE_OP(NAME, NIN, NOUT, INPLACEABLE)   class ND4J_EXPORT NAME: public sd::ops::DeclarableOp {
 //                                                 public:
 //                                                     NAME();
-//                                                     nd4j::ShapeList* calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block);
+//                                                     sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block);
 //                                                 protected:
 //                                                     void registerTypes();
-//                                                     Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                                     Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                                 };
 //                                                 REGISTER_H(NAME)
 
-// #define DECLARE_BOOLEAN_OP(NAME, NIN, SCALAR)   class ND4J_EXPORT NAME: public nd4j::ops::BooleanOp {
+// #define DECLARE_BOOLEAN_OP(NAME, NIN, SCALAR)   class ND4J_EXPORT NAME: public sd::ops::BooleanOp {
 //                                                 public:
 //                                                     NAME();
 //                                                 protected:
 //                                                     void registerTypes();
-//                                                     Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                                     Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                                 };
 //                                                 REGISTER_H(NAME)
 
-// #define BOOLEAN_OP_IMPL(NAME, NIN, SCALAR)   NAME::NAME() : nd4j::ops::BooleanOp(#NAME, NIN, SCALAR) { };
+// #define BOOLEAN_OP_IMPL(NAME, NIN, SCALAR)   NAME::NAME() : sd::ops::BooleanOp(#NAME, NIN, SCALAR) { };
 //                                                 REGISTER_C(NAME)
-//                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-// #define DECLARE_LIST_OP(NAME, NIN, NOUT, TARGS, IARGS)      class ND4J_EXPORT  NAME: public nd4j::ops::DeclarableListOp {
+// #define DECLARE_LIST_OP(NAME, NIN, NOUT, TARGS, IARGS)      class ND4J_EXPORT  NAME: public sd::ops::DeclarableListOp {
 //                                                             public:
 //                                                                 NAME();
 //                                                             protected:
-//                                                                 Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                                                 Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                                             };
 //                                                             REGISTER_H(NAME)
 
-// #define LIST_OP_IMPL(NAME, NIN, NOUT, TARGS, IARGS)         NAME::NAME() : nd4j::ops::DeclarableListOp(NIN, NOUT, #NAME, TARGS, IARGS) { };
+// #define LIST_OP_IMPL(NAME, NIN, NOUT, TARGS, IARGS)         NAME::NAME() : sd::ops::DeclarableListOp(NIN, NOUT, #NAME, TARGS, IARGS) { };
 //                                                             REGISTER_C(NAME)
-//                                                             Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                             Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-// #define DECLARE_LOGIC_OP(NAME)      class ND4J_EXPORT NAME: public nd4j::ops::LogicOp {
+// #define DECLARE_LOGIC_OP(NAME)      class ND4J_EXPORT NAME: public sd::ops::LogicOp {
 //                                     public:
 //                                         NAME();
 //                                     protected:
-//                                         Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                         Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                     };
 //                                     REGISTER_H(NAME)
 
-// #define LOGIC_OP_IMPL(NAME)     NAME::NAME() : nd4j::ops::LogicOp(#NAME) { };
+// #define LOGIC_OP_IMPL(NAME)     NAME::NAME() : sd::ops::LogicOp(#NAME) { };
 //                                 REGISTER_C(NAME)
-//                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block) { return nd4j::ops::LogicOp::validateAndExecute(block); };
+//                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block) { return sd::ops::LogicOp::validateAndExecute(block); };
 
 
 
-// #define OP_IMPL(NAME, NIN, NOUT, INPLACEABLE)   NAME::NAME() : nd4j::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE) { };
+// #define OP_IMPL(NAME, NIN, NOUT, INPLACEABLE)   NAME::NAME() : sd::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE) { };
 //                                                 REGISTER_C(NAME)
-//                                                 nd4j::ShapeList* nd4j::ops::NAME::calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block) {
+//                                                 sd::ShapeList* sd::ops::NAME::calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block) {
 //                                                     auto shapeList = SHAPELIST();
 //                                                     auto opLimit = this->getOpDescriptor()->getNumberOfOutputs() < 1 ? block.width() : this->getOpDescriptor()->getNumberOfOutputs();
 //                                                     for (int e = 0; e < opLimit; e++) {
@@ -10976,7 +11298,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                                     }
 //                                                     return shapeList;
 //                                                 }
-//                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
 
 // #define DECLARE_SYN(NAME, ORIGINAL) template <typename OpName>
@@ -10986,26 +11308,26 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                             if (ptr == nullptr) {
 //                                                 std::string newName(name);
 //                                                 std::string oldName(oname);
-//                                                 OpRegistrator::getInstance()->updateMSVC(nd4j::ops::HashHelper::getInstance()->getLongHash(newName), oldName);
+//                                                 OpRegistrator::getInstance()->updateMSVC(sd::ops::HashHelper::getInstance()->getLongHash(newName), oldName);
 //                                                 return;
 //                                             }
 //                                             OpRegistrator::getInstance()->registerOperation(name, ptr);
 //                                             }
 //                                         };
-//                                         static nd4j::ops::__registratorSynonym_##NAME<ORIGINAL> zzz_register_opd_##NAME(#NAME, #ORIGINAL)
+//                                         static sd::ops::__registratorSynonym_##NAME<ORIGINAL> zzz_register_opd_##NAME(#NAME, #ORIGINAL)
 
-// #define DECLARE_DIVERGENT_OP(NAME, NIN, NOUT, INPLACEABLE)  class ND4J_EXPORT NAME: public nd4j::ops::DeclarableOp {
+// #define DECLARE_DIVERGENT_OP(NAME, NIN, NOUT, INPLACEABLE)  class ND4J_EXPORT NAME: public sd::ops::DeclarableOp {
 //                                                             public:
 //                                                                 NAME();
-//                                                                 nd4j::ShapeList* calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block);
+//                                                                 sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block);
 //                                                             protected:
-//                                                                 Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                                                 Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                                             };
 //                                                             REGISTER_H(NAME)
 
-// #define DIVERGENT_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE)     NAME::NAME() : nd4j::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE, true) { };
+// #define DIVERGENT_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE)     NAME::NAME() : sd::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE, true) { };
 //                                                             REGISTER_C(NAME)
-//                                                             nd4j::ShapeList* nd4j::ops::NAME::calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block) {
+//                                                             sd::ShapeList* sd::ops::NAME::calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block) {
 //                                                                 auto shapeList = SHAPELIST();
 //                                                                 auto opLimit = this->getOpDescriptor()->getNumberOfOutputs() < 1 ? block.width() : this->getOpDescriptor()->getNumberOfOutputs();
 //                                                                 for (int e = 0; e < opLimit; e++) {
@@ -11015,21 +11337,21 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                                                 }
 //                                                                 return shapeList;
 //                                                             }
-//                                                             Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                             Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
-// #define DECLARE_CONFIGURABLE_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)     class ND4J_EXPORT NAME: public nd4j::ops::DeclarableOp {
+// #define DECLARE_CONFIGURABLE_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)     class ND4J_EXPORT NAME: public sd::ops::DeclarableOp {
 //                                                                                 public:
 //                                                                                     NAME();
-//                                                                                     nd4j::ShapeList* calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block);
+//                                                                                     sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block);
 //                                                                                 protected:
 //                                                                                     void registerTypes();
-//                                                                                     Nd4jStatus validateAndExecute(nd4j::graph::Context& block);
+//                                                                                     Nd4jStatus validateAndExecute(sd::graph::Context& block);
 //                                                                                 };
 //                                                                                 REGISTER_H(NAME)
 
-// #define CONFIGURABLE_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        NAME::NAME() : nd4j::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
+// #define CONFIGURABLE_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        NAME::NAME() : sd::ops::DeclarableOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
 //                                                                                 REGISTER_C(NAME)
-//                                                                                 nd4j::ShapeList* nd4j::ops::NAME::calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block) {
+//                                                                                 sd::ShapeList* sd::ops::NAME::calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block) {
 //                                                                                     auto shapeList = SHAPELIST();
 //                                                                                     auto opLimit = this->getOpDescriptor()->getNumberOfOutputs() < 1 ? block.width() : this->getOpDescriptor()->getNumberOfOutputs();
 //                                                                                     for (int e = 0; e < opLimit; e++) {
@@ -11038,9 +11360,9 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                                                                     }
 //                                                                                     return shapeList;
 //                                                                                 }
-//                                                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(Context& block)
+//                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(Context& block)
 
-// #define DECLARE_REDUCTION_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        class ND4J_EXPORT NAME: public nd4j::ops::DeclarableReductionOp {
+// #define DECLARE_REDUCTION_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)        class ND4J_EXPORT NAME: public sd::ops::DeclarableReductionOp {
 //                                                                                 public:
 //                                                                                     NAME();
 //                                                                                 protected:
@@ -11049,34 +11371,34 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                                                                 };
 //                                                                                 REGISTER_H(NAME)
 
-// #define REDUCTION_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           NAME::NAME() : nd4j::ops::DeclarableReductionOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
+// #define REDUCTION_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           NAME::NAME() : sd::ops::DeclarableReductionOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
 //                                                                                 REGISTER_C(NAME)
-//                                                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
 
-// #define DECLARE_CUSTOM_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           class ND4J_EXPORT NAME: public nd4j::ops::DeclarableCustomOp {
+// #define DECLARE_CUSTOM_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)           class ND4J_EXPORT NAME: public sd::ops::DeclarableCustomOp {
 //                                                                                 protected:
 //                                                                                     void registerTypes();
 //                                                                                     Nd4jStatus validateAndExecute(Context& block);
 //                                                                                 public:
 //                                                                                     NAME();
-//                                                                                     nd4j::ShapeList* calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block);
+//                                                                                     sd::ShapeList* calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block);
 //                                                                                 };
 //                                                                                 REGISTER_H(NAME)
 
-// #define CUSTOM_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)              NAME::NAME(): nd4j::ops::DeclarableCustomOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
+// #define CUSTOM_OP_IMPL(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)              NAME::NAME(): sd::ops::DeclarableCustomOp(NIN, NOUT, #NAME, INPLACEABLE, TARGS, IARGS) { };
 //                                                                                 REGISTER_C(NAME)
-//                                                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
 // this declaration MUST follow DECLARE_CUSTOM_OP
-// #define DECLARE_SHAPE_FN(NAME)                                                  nd4j::ShapeList* nd4j::ops::NAME::calculateOutputShape(nd4j::ShapeList* inputShape, nd4j::graph::Context& block)
+// #define DECLARE_SHAPE_FN(NAME)                                                  sd::ShapeList* sd::ops::NAME::calculateOutputShape(sd::ShapeList* inputShape, sd::graph::Context& block)
 
 
-// #define DECLARE_SAME_TYPE(NAME)                                                 void nd4j::ops::NAME::registerTypes() {this->getOpDescriptor()->setSameMode(true);}
+// #define DECLARE_SAME_TYPE(NAME)                                                 void sd::ops::NAME::registerTypes() {this->getOpDescriptor()->setSameMode(true);}
 
-// #define DECLARE_TYPES(NAME)                                                     void nd4j::ops::NAME::registerTypes()
+// #define DECLARE_TYPES(NAME)                                                     void sd::ops::NAME::registerTypes()
 
-// #define DECLARE_BROADCASTABLE_OP(NAME,TARGS, IARGS)                             class ND4J_EXPORT NAME: public nd4j::ops::BroadcastableOp {
+// #define DECLARE_BROADCASTABLE_OP(NAME,TARGS, IARGS)                             class ND4J_EXPORT NAME: public sd::ops::BroadcastableOp {
 //                                                                                 protected:
 //                                                                                     void registerTypes();
 //                                                                                     Nd4jStatus validateAndExecute(Context& block);
@@ -11085,17 +11407,31 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //                                                                                 };
 //                                                                                 REGISTER_H(NAME)
 
-// #define BROADCASTABLE_OP_IMPL(NAME, TARGS, IARGS)                               NAME::NAME(): nd4j::ops::BroadcastableOp(#NAME, TARGS, IARGS) { };
+// #define DECLARE_BROADCASTABLE_BOOL_OP(NAME,TARGS, IARGS)                        class ND4J_EXPORT NAME: public sd::ops::BroadcastableBoolOp {
+//                                                                                 protected:
+//                                                                                     void registerTypes();
+//                                                                                     Nd4jStatus validateAndExecute(Context& block);
+//                                                                                 public:
+//                                                                                     NAME();
+//                                                                                 };
+//                                                                                 REGISTER_H(NAME)
+
+
+// #define BROADCASTABLE_OP_IMPL(NAME, TARGS, IARGS)                               NAME::NAME(): sd::ops::BroadcastableOp(#NAME, TARGS, IARGS) { };
 //                                                                                 REGISTER_C(NAME)
-//                                                                                 Nd4jStatus nd4j::ops::NAME::validateAndExecute(nd4j::graph::Context& block)
+//                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
+
+// #define BROADCASTABLE_BOOL_OP_IMPL(NAME, TARGS, IARGS)                          NAME::NAME(): sd::ops::BroadcastableBoolOp(#NAME, TARGS, IARGS) { };
+//                                                                                 REGISTER_C(NAME)
+//                                                                                 Nd4jStatus sd::ops::NAME::validateAndExecute(sd::graph::Context& block)
 
 
 // #define DECLARE_DEVICE_OP(NAME, NIN, NOUT, INPLACEABLE, TARGS, IARGS)
 
 // #define REPLICATE_SHAPE(SRC, TGT)   if (shape::order(SRC) == 'c')
-//                                         shape::shapeBuffer(shape::rank(SRC), nd4j::ArrayOptions::dataType(SRC), shape::shapeOf(SRC), TGT);
+//                                         shape::shapeBuffer(shape::rank(SRC), sd::ArrayOptions::dataType(SRC), shape::shapeOf(SRC), TGT);
 //                                     else
-//                                         shape::shapeBufferFortran(shape::rank(SRC),  nd4j::ArrayOptions::dataType(SRC), shape::shapeOf(SRC), TGT);
+//                                         shape::shapeBufferFortran(shape::rank(SRC),  sd::ArrayOptions::dataType(SRC), shape::shapeOf(SRC), TGT);
 
 
 // #ifdef __CUDABLAS__
@@ -11114,8 +11450,8 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #else
 
-// #define ALLOCATE(VARIABLE, WORKSPACE, LENGTH, TT)   if (WORKSPACE == nullptr) {VARIABLE = new TT[LENGTH]; nd4j::memory::MemoryTracker::getInstance()->countIn(nd4j::memory::MemoryType::HOST, VARIABLE, LENGTH * sizeof(TT)); } else {VARIABLE = reinterpret_cast<TT *>(WORKSPACE->allocateBytes(LENGTH * sizeof(TT))); }; memset(VARIABLE, 0, LENGTH * sizeof(TT));
-// #define RELEASE(VARIABLE, WORKSPACE)    if (WORKSPACE == nullptr) { nd4j::memory::MemoryTracker::getInstance()->countOut(VARIABLE); delete[] VARIABLE;};
+// #define ALLOCATE(VARIABLE, WORKSPACE, LENGTH, TT)   if (WORKSPACE == nullptr) {VARIABLE = new TT[LENGTH]; sd::memory::MemoryTracker::getInstance()->countIn(sd::memory::MemoryType::HOST, VARIABLE, LENGTH * sizeof(TT)); } else {VARIABLE = reinterpret_cast<TT *>(WORKSPACE->allocateBytes(LENGTH * sizeof(TT))); }; memset(VARIABLE, 0, LENGTH * sizeof(TT));
+// #define RELEASE(VARIABLE, WORKSPACE)    if (WORKSPACE == nullptr) { sd::memory::MemoryTracker::getInstance()->countOut(VARIABLE); delete[] VARIABLE;};
 
 // #endif
 
@@ -11137,9 +11473,10 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define UNSTASH(NAME)       block.getStash()->extractArray(block.getNodeId(), NAME);
 
 // #define INPUT_VARIABLE(INDEX)     block.array(INDEX)
-// #define OUTPUT_VARIABLE(INDEX)    reinterpret_cast<nd4j::NDArray *>(this->getZ(block, INDEX))
+// #define OUTPUT_VARIABLE(INDEX)    reinterpret_cast<sd::NDArray *>(this->getZ(block, INDEX))
+// #define OUTPUT_NULLIFIED(INDEX)    reinterpret_cast<sd::NDArray *>(this->getNullifiedZ(block, INDEX))
 
-// #define INPUT_LIST(INDEX)     reinterpret_cast<nd4j::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList())
+// #define INPUT_LIST(INDEX)     reinterpret_cast<sd::NDArrayList *>(block.getVariable(INDEX)->getNDArrayList())
 
 // #define D_ARG(INDEX)     block.getDArguments()->at(INDEX)
 // #define INT_ARG(INDEX)     block.getIArguments()->at(INDEX)
@@ -11178,7 +11515,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #endif // CUDACC
 
-// #define CHECK_ALLOC(PTR, MSG, BYTES) if (PTR == nullptr) { throw nd4j::allocation_exception::build(MSG, BYTES); };
+// #define CHECK_ALLOC(PTR, MSG, BYTES) if (PTR == nullptr) { throw sd::allocation_exception::build(MSG, BYTES); };
 
 
 
@@ -11252,7 +11589,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #ifndef ND4J_INPUTTYPE_H
 // #define ND4J_INPUTTYPE_H
-        /** enum nd4j::ops::InputType */
+        /** enum sd::ops::InputType */
         public static final int
             InputType_BOOLEAN = 0,
             InputType_NUMERIC = 1,
@@ -11291,7 +11628,6 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <string>
 // #include <vector>
-// #include <map>
 // #include <initializer_list>
 // #include <helpers/helper_hash.h>
 // #include <ops/InputType.h>
@@ -11302,7 +11638,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *   This class is very basic info holder for ops. bean/pojo pretty much.
         *
         */
-        @Namespace("nd4j::ops") @NoOffset public static class OpDescriptor extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class OpDescriptor extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public OpDescriptor(Pointer p) { super(p); }
@@ -11375,6 +11711,9 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
             // returns TRUE if this op allows in-place execution
             public native @Cast("bool") boolean allowsInplace();
 
+            // this method allows you to enable/disable inplace call for a given op
+            public native void allowInplace(@Cast("bool") boolean reallyAllow);
+
             // this method returns opNum (applicable for legacy XYZ ops only)
             public native int getOpNum();
 
@@ -11383,30 +11722,30 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
             public native void setHash(@Cast("Nd4jLong") long hash);
 
-            public native @Cast("nd4j::ops::InputType") int inputType();
+            public native @Cast("sd::ops::InputType") int inputType();
 
 
 
-            public native OpDescriptor setInputType(@Cast("nd4j::ops::InputType") int type);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntPointer dtype);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntBuffer dtype);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector int[] dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntPointer dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntBuffer dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector int[] dtype);
-            public native OpDescriptor setAllowedInputTypes(int index,  @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedInputTypes(@Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedOutputTypes(@Cast("nd4j::DataType") int dtype);
+            public native OpDescriptor setInputType(@Cast("sd::ops::InputType") int type);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector IntPointer dtype);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector IntBuffer dtype);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector int[] dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector IntPointer dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector IntBuffer dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector int[] dtype);
+            public native OpDescriptor setAllowedInputTypes(int index,  @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedInputTypes(@Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedOutputTypes(@Cast("sd::DataType") int dtype);
             public native OpDescriptor allowOverride(@Cast("bool") boolean reallyAllow);
             public native OpDescriptor setSameMode(@Cast("bool") boolean reallySame);
-            public native OpDescriptor setInputType(int idx, @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setOutputType(int idx, @Cast("nd4j::DataType") int dtype);
+            public native OpDescriptor setInputType(int idx, @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setOutputType(int idx, @Cast("sd::DataType") int dtype);
 
-            public native @Cast("nd4j::DataType*") @StdVector IntPointer getOutputTypesForOutput(int index);
+            public native @Cast("sd::DataType*") @StdVector IntPointer getOutputTypesForOutput(int index);
 
-            public native @Cast("bool") boolean checkInputMatch(int index, @Cast("nd4j::DataType") int dataType);
-            public native @Cast("bool") boolean checkOutputMatch(int index, @Cast("nd4j::DataType") int dataType);
+            public native @Cast("bool") boolean checkInputMatch(int index, @Cast("sd::DataType") int dataType);
+            public native @Cast("bool") boolean checkOutputMatch(int index, @Cast("sd::DataType") int dataType);
             public native @Cast("bool") boolean isSameMode();
 
             public native @Cast("bool") boolean isInherit(int index);
@@ -11442,16 +11781,16 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #ifndef SD_PLATFORMHELPER_H
 // #define SD_PLATFORMHELPER_H
 
-// #include <ShapeUtils.h>
+// #include <helpers/ShapeUtils.h>
 // #include <execution/Engine.h>
 // #include <graph/Context.h>
 // #include <string>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
             /**
              * This abstract class defines methods used by platform-specific helpers implementations
              */
-            @Namespace("nd4j::ops::platforms") @NoOffset public static class PlatformHelper extends Pointer {
+            @Namespace("sd::ops::platforms") @NoOffset public static class PlatformHelper extends Pointer {
                 static { Loader.load(); }
                 /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                 public PlatformHelper(Pointer p) { super(p); }
@@ -11486,6 +11825,14 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                  * @return
                  */
                 public native NDArray getZ(@ByRef Context ctx, int inputId);
+
+                /**
+                 * Helper method, needed for compatibility with DeclarableOp macros
+                 * @param ctx
+                 * @param inputId
+                 * @return
+                 */
+                public native NDArray getNullifiedZ(@ByRef Context ctx, int inputId);
             }
         
     
@@ -11524,7 +11871,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include "OpDescriptor.h"
 // #include "DeclarableOp.h"
 // #include "DeclarableCustomOp.h"
-        @Namespace("nd4j::ops") public static class BroadcastableOp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class BroadcastableOp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public BroadcastableOp(Pointer p) { super(p); }
@@ -11537,6 +11884,50 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 // #endif //LIBND4J_BROADCASTABLEOP_H
+
+
+// Parsed from ops/declarable/BroadcastableBoolOp.h
+
+/*******************************************************************************
+ * Copyright (c) 2015-2018 Skymind, Inc.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
+
+//
+// Created by raver on 6/6/2018.
+//
+
+// #ifndef SD_BROADCASTABLEBOOLOP_H
+// #define SD_BROADCASTABLEBOOLOP_H
+
+// #include <graph/Context.h>
+// #include "OpDescriptor.h"
+// #include "DeclarableOp.h"
+// #include "DeclarableCustomOp.h"
+        @Namespace("sd::ops") public static class BroadcastableBoolOp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public BroadcastableBoolOp(Pointer p) { super(p); }
+        
+
+            public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+        }
+    
+
+
+
+// #endif //SD_BROADCASTABLEBOOLOP_H
 
 
 // Parsed from ops/declarable/DeclarableOp.h
@@ -11566,15 +11957,15 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <sstream>
 // #include <types/float16.h>
-// #include <pointercast.h>
-// #include <NDArray.h>
+// #include <system/pointercast.h>
+// #include <array/NDArray.h>
 // #include <graph/Context.h>
 // #include "OpDescriptor.h"
 // #include <helpers/helper_hash.h>
 // #include <array/ShapeList.h>
 // #include <array/ResultSet.h>
 // #include <helpers/OpArgsHolder.h>
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <ops/declarable/EmptyHandling.h>
 //#include <ops/declarable/declarable_ops.h>
 
@@ -11582,14 +11973,14 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include <ctime>
 // #include <mutex>
 
-        @Namespace("nd4j::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") String file, int line, int condition, int argNumber, @Cast("char*") String format);
-        @Namespace("nd4j::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") BytePointer file, int line, int condition, int argNumber, @Cast("char*") BytePointer format);
+        @Namespace("sd::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") String file, int line, int condition, int argNumber, @Cast("char*") String format);
+        @Namespace("sd::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") BytePointer file, int line, int condition, int argNumber, @Cast("char*") BytePointer format);
 
         /**
          * This class is the basic building block of Graph Operations. Any CustomOp out there is built on top of this "abstract" class.
          *
          */
-        @Namespace("nd4j::ops") @NoOffset public static class DeclarableOp extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class DeclarableOp extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableOp(Pointer p) { super(p); }
@@ -11644,44 +12035,44 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs);
 
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
 
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs);
 
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
 
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
 
-            public native ResultSet execute(@Const @ByRef OpArgsHolder holder, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet execute(@Const @ByRef OpArgsHolder holder);
+            public native @ByVal ResultSet execute(@Const @ByRef OpArgsHolder holder, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet execute(@Const @ByRef OpArgsHolder holder);
+
 
             // There methods provide various validation options
             public native @Cast("Nd4jStatus") int validateNonEmptyInput(@ByRef Context block);
@@ -11745,7 +12136,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include <graph/Context.h>
 // #include <ops/declarable/OpRegistrator.h>
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableListOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableListOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableListOp(Pointer p) { super(p); }
@@ -11753,9 +12144,9 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
             
             public native @Cast("Nd4jStatus") int execute(Context block);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @StdVector IntPointer iArgs);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @StdVector IntBuffer iArgs);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @StdVector int[] iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @StdVector IntPointer iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @StdVector IntBuffer iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @StdVector int[] iArgs);
 
             public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
         }
@@ -11790,7 +12181,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define LIBND4J_DECLARABLE_REDUCTION_OP_H
 
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableReductionOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableReductionOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableReductionOp(Pointer p) { super(p); }
@@ -11830,7 +12221,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define LIBND4J_DECLARABLECUSTOMOP_H
 
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableCustomOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableCustomOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableCustomOp(Pointer p) { super(p); }
@@ -11872,7 +12263,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include <graph/Context.h>
 // #include "OpDescriptor.h"
 // #include "DeclarableOp.h"
-        @Namespace("nd4j::ops") @NoOffset public static class BooleanOp extends DeclarableOp {
+        @Namespace("sd::ops") @NoOffset public static class BooleanOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public BooleanOp(Pointer p) { super(p); }
@@ -11925,7 +12316,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Their code is the part of GraphExecutioner logic. But we still want them to be expressed via Graph
          * \tparam T
          */
-        @Namespace("nd4j::ops") public static class LogicOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class LogicOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public LogicOp(Pointer p) { super(p); }
@@ -11969,7 +12360,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #ifndef LIBND4J_OPREGISTRATOR_H
 // #define LIBND4J_OPREGISTRATOR_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
 // #include <unordered_map>
 // #include <mutex>
@@ -11980,6 +12371,10 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // handlers part
 // #include <cstdlib>
 // #include <csignal>
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
         /**
         *   This class provides runtime ops lookup, based on opName or opHash.
         *   To build lookup directory we use *_OP_IMPL macro, which puts static structs at compile time in .cpp files,
@@ -11987,7 +12382,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *   available at runtime via this singleton.
         *
         */
-        @Namespace("nd4j::ops") @NoOffset public static class OpRegistrator extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class OpRegistrator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public OpRegistrator(Pointer p) { super(p); }
@@ -12086,17 +12481,18 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include <ops/declarable/headers/util.h>
 // #include <ops/declarable/headers/BarnesHutTsne.h>
 // #include <ops/declarable/headers/images.h>
-// #include <dll.h>
+// #include <ops/declarable/headers/updaters.h>
+// #include <system/dll.h>
 // #include <helpers/shape.h>
 // #include <helpers/TAD.h>
-// #include <Status.h>
+// #include <graph/Status.h>
 // #include <helpers/ArrayUtils.h>
 // #include <helpers/ShapeBuilders.h>
-// #include <NDArrayFactory.h>
+// #include <array/NDArrayFactory.h>
 // #include <helpers/OpTracker.h>
-// #include <ConstantShapeHelper.h>
-// #include <ConstantTadHelper.h>
-    @Namespace("nd4j") public static class _loader extends Pointer {
+// #include <helpers/ConstantShapeHelper.h>
+// #include <helpers/ConstantTadHelper.h>
+    @Namespace("sd") public static class _loader extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public _loader(Pointer p) { super(p); }
@@ -12112,7 +12508,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
     }
 
         // logic ops 
-        @Namespace("nd4j::ops") public static class Switch extends DeclarableOp {
+        @Namespace("sd::ops") public static class Switch extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Switch(Pointer p) { super(p); }
@@ -12127,7 +12523,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                 private native void allocate();
                                                                 public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                             }
-        @Namespace("nd4j::ops") public static class While extends LogicOp {
+        @Namespace("sd::ops") public static class While extends LogicOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public While(Pointer p) { super(p); }
@@ -12141,7 +12537,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                         public While() { super((Pointer)null); allocate(); }
                                         private native void allocate();
                                     }
-        @Namespace("nd4j::ops") public static class Scope extends LogicOp {
+        @Namespace("sd::ops") public static class Scope extends LogicOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Scope(Pointer p) { super(p); }
@@ -12155,7 +12551,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                         public Scope() { super((Pointer)null); allocate(); }
                                         private native void allocate();
                                     }
-        @Namespace("nd4j::ops") public static class Conditional extends LogicOp {
+        @Namespace("sd::ops") public static class Conditional extends LogicOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Conditional(Pointer p) { super(p); }
@@ -12169,7 +12565,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                         public Conditional() { super((Pointer)null); allocate(); }
                                         private native void allocate();
                                     }
-        @Namespace("nd4j::ops") public static class Return extends LogicOp {
+        @Namespace("sd::ops") public static class Return extends LogicOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Return(Pointer p) { super(p); }
@@ -12191,7 +12587,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          * PLEASE NOTE: This operation is internal graph operation, and shouldn't be used directly usually.
          */
-        @Namespace("nd4j::ops") public static class expose extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class expose extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public expose(Pointer p) { super(p); }
@@ -12244,7 +12640,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: 1 / 1 + exp(-x)
          */
 //         #if NOT_EXCLUDED(OP_sigmoid)
-        @Namespace("nd4j::ops") public static class sigmoid extends DeclarableOp {
+        @Namespace("sd::ops") public static class sigmoid extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sigmoid(Pointer p) { super(p); }
@@ -12259,7 +12655,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class sigmoid_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class sigmoid_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sigmoid_bp(Pointer p) { super(p); }
@@ -12281,7 +12677,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: x / 1 + abs(x)
          */
 //         #if NOT_EXCLUDED(OP_softsign)
-        @Namespace("nd4j::ops") public static class softsign extends DeclarableOp {
+        @Namespace("sd::ops") public static class softsign extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softsign(Pointer p) { super(p); }
@@ -12296,7 +12692,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class softsign_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class softsign_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softsign_bp(Pointer p) { super(p); }
@@ -12317,7 +12713,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is Tanh activation function implementation
          */
 //         #if NOT_EXCLUDED(OP_tanh)
-        @Namespace("nd4j::ops") public static class tanh extends DeclarableOp {
+        @Namespace("sd::ops") public static class tanh extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tanh(Pointer p) { super(p); }
@@ -12332,7 +12728,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class tanh_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class tanh_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tanh_bp(Pointer p) { super(p); }
@@ -12354,7 +12750,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: log(1 + exp(x))
          */
 //         #if NOT_EXCLUDED(OP_softplus)
-        @Namespace("nd4j::ops") public static class softplus extends DeclarableOp {
+        @Namespace("sd::ops") public static class softplus extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softplus(Pointer p) { super(p); }
@@ -12369,7 +12765,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class softplus_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class softplus_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softplus_bp(Pointer p) { super(p); }
@@ -12390,7 +12786,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is RELU activation function implementation
          */
 //         #if NOT_EXCLUDED(OP_relu)
-        @Namespace("nd4j::ops") public static class relu extends DeclarableOp {
+        @Namespace("sd::ops") public static class relu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public relu(Pointer p) { super(p); }
@@ -12405,7 +12801,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class relu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class relu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public relu_bp(Pointer p) { super(p); }
@@ -12426,7 +12822,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is SELU activation function implementation
          */
 //         #if NOT_EXCLUDED(OP_selu)
-        @Namespace("nd4j::ops") public static class selu extends DeclarableOp {
+        @Namespace("sd::ops") public static class selu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public selu(Pointer p) { super(p); }
@@ -12441,7 +12837,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class selu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class selu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public selu_bp(Pointer p) { super(p); }
@@ -12463,7 +12859,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: x < 0 ?  alpha * x : x;
          */
 //         #if NOT_EXCLUDED(OP_lrelu)
-        @Namespace("nd4j::ops") public static class lrelu extends DeclarableOp {
+        @Namespace("sd::ops") public static class lrelu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lrelu(Pointer p) { super(p); }
@@ -12478,7 +12874,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class lrelu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class lrelu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lrelu_bp(Pointer p) { super(p); }
@@ -12500,7 +12896,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: x >= 0 ? x : exp(x) - 1;
          */
 //         #if NOT_EXCLUDED(OP_elu)
-        @Namespace("nd4j::ops") public static class elu extends DeclarableOp {
+        @Namespace("sd::ops") public static class elu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public elu(Pointer p) { super(p); }
@@ -12515,7 +12911,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class elu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class elu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public elu_bp(Pointer p) { super(p); }
@@ -12537,7 +12933,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: x^3
          */
 //         #if NOT_EXCLUDED(OP_cube)
-        @Namespace("nd4j::ops") public static class cube extends DeclarableOp {
+        @Namespace("sd::ops") public static class cube extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cube(Pointer p) { super(p); }
@@ -12552,7 +12948,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class cube_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class cube_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cube_bp(Pointer p) { super(p); }
@@ -12574,7 +12970,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: max(0, tanh(x))
          */
 //         #if NOT_EXCLUDED(OP_rectifiedtanh)
-        @Namespace("nd4j::ops") public static class rectifiedtanh extends DeclarableOp {
+        @Namespace("sd::ops") public static class rectifiedtanh extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rectifiedtanh(Pointer p) { super(p); }
@@ -12589,7 +12985,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class rectifiedtanh_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class rectifiedtanh_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rectifiedtanh_bp(Pointer p) { super(p); }
@@ -12610,7 +13006,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is RationalTanh activation function.
          */
 //         #if NOT_EXCLUDED(OP_rationaltanh)
-        @Namespace("nd4j::ops") public static class rationaltanh extends DeclarableOp {
+        @Namespace("sd::ops") public static class rationaltanh extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rationaltanh(Pointer p) { super(p); }
@@ -12625,7 +13021,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class rationaltanh_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class rationaltanh_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rationaltanh_bp(Pointer p) { super(p); }
@@ -12647,7 +13043,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: x < -1.0 ? -1.0 : x > 1.0 ? 1.0 : x;
          */
 //         #if NOT_EXCLUDED(OP_hardtanh)
-        @Namespace("nd4j::ops") public static class hardtanh extends DeclarableOp {
+        @Namespace("sd::ops") public static class hardtanh extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hardtanh(Pointer p) { super(p); }
@@ -12662,7 +13058,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class hardtanh_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class hardtanh_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hardtanh_bp(Pointer p) { super(p); }
@@ -12684,7 +13080,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: min(1, max(0, 0.2 * x + 0.5))
          */
 //         #if NOT_EXCLUDED(OP_hardsigmoid)
-        @Namespace("nd4j::ops") public static class hardsigmoid extends DeclarableOp {
+        @Namespace("sd::ops") public static class hardsigmoid extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hardsigmoid(Pointer p) { super(p); }
@@ -12699,7 +13095,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class hardsigmoid_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class hardsigmoid_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hardsigmoid_bp(Pointer p) { super(p); }
@@ -12720,7 +13116,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is Indentity operation. It passes signal umodified in both directions.
          */
 //         #if NOT_EXCLUDED(OP_identity)
-        @Namespace("nd4j::ops") public static class identity extends DeclarableOp {
+        @Namespace("sd::ops") public static class identity extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public identity(Pointer p) { super(p); }
@@ -12735,7 +13131,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                     private native void allocate();
                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                 }
-        @Namespace("nd4j::ops") public static class identity_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class identity_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public identity_bp(Pointer p) { super(p); }
@@ -12756,7 +13152,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is Indentity operation. It passes signal umodified in both directions.
          */
 //         #if NOT_EXCLUDED(OP_identity_n)
-        @Namespace("nd4j::ops") public static class identity_n extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class identity_n extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public identity_n(Pointer p) { super(p); }
@@ -12780,7 +13176,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: Concatenation will double amount of features available in input
          */
 //         #if NOT_EXCLUDED(OP_crelu)
-        @Namespace("nd4j::ops") public static class crelu extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class crelu extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public crelu(Pointer p) { super(p); }
@@ -12795,7 +13191,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class crelu_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class crelu_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public crelu_bp(Pointer p) { super(p); }
@@ -12816,7 +13212,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This is RELU6 activation function implementation
          */
 //         #if NOT_EXCLUDED(OP_relu6)
-        @Namespace("nd4j::ops") public static class relu6 extends DeclarableOp {
+        @Namespace("sd::ops") public static class relu6 extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public relu6(Pointer p) { super(p); }
@@ -12831,7 +13227,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class relu6_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class relu6_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public relu6_bp(Pointer p) { super(p); }
@@ -12854,7 +13250,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * f(x) = alpha * x for x < 0, f(x) = x for x >= 0
          */
 //         #if NOT_EXCLUDED(OP_prelu)
-        @Namespace("nd4j::ops") public static class prelu extends DeclarableOp {
+        @Namespace("sd::ops") public static class prelu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public prelu(Pointer p) { super(p); }
@@ -12869,7 +13265,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class prelu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class prelu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public prelu_bp(Pointer p) { super(p); }
@@ -12892,7 +13288,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * theta must be >= 0
          */
 //         #if NOT_EXCLUDED(OP_thresholdedrelu)
-        @Namespace("nd4j::ops") public static class thresholdedrelu extends DeclarableOp {
+        @Namespace("sd::ops") public static class thresholdedrelu extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public thresholdedrelu(Pointer p) { super(p); }
@@ -12907,7 +13303,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class thresholdedrelu_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class thresholdedrelu_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public thresholdedrelu_bp(Pointer p) { super(p); }
@@ -12964,7 +13360,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if x < y
          */
 //         #if NOT_EXCLUDED(OP_lt_scalar)
-        @Namespace("nd4j::ops") public static class lt_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class lt_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lt_scalar(Pointer p) { super(p); }
@@ -12987,7 +13383,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if x > y
          */
 //         #if NOT_EXCLUDED(OP_gt_scalar)
-        @Namespace("nd4j::ops") public static class gt_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class gt_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gt_scalar(Pointer p) { super(p); }
@@ -13010,7 +13406,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if x <= y
          */
 //         #if NOT_EXCLUDED(OP_lte_scalar)
-        @Namespace("nd4j::ops") public static class lte_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class lte_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lte_scalar(Pointer p) { super(p); }
@@ -13033,7 +13429,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if x >= y
          */
 //         #if NOT_EXCLUDED(OP_gte_scalar)
-        @Namespace("nd4j::ops") public static class gte_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class gte_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gte_scalar(Pointer p) { super(p); }
@@ -13056,7 +13452,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if both operands are equal.
          */
 //         #if NOT_EXCLUDED(OP_eq_scalar)
-        @Namespace("nd4j::ops") public static class eq_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class eq_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public eq_scalar(Pointer p) { super(p); }
@@ -13079,7 +13475,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns true if x != y
          */
 //         #if NOT_EXCLUDED(OP_neq_scalar)
-        @Namespace("nd4j::ops") public static class neq_scalar extends BooleanOp {
+        @Namespace("sd::ops") public static class neq_scalar extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public neq_scalar(Pointer p) { super(p); }
@@ -13100,7 +13496,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * array of the same shape, with elements, either from x or y, depending on the condition.
          */
 //         #if NOT_EXCLUDED(OP_where)
-        @Namespace("nd4j::ops") public static class Where extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class Where extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Where(Pointer p) { super(p); }
@@ -13118,7 +13514,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_where_np)
-        @Namespace("nd4j::ops") public static class where_np extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class where_np extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public where_np(Pointer p) { super(p); }
@@ -13140,7 +13536,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * array of the same shape, with elements, either from x or y, depending on the condition.
          */
 //         #if NOT_EXCLUDED(OP_select)
-        @Namespace("nd4j::ops") public static class select extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class select extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public select(Pointer p) { super(p); }
@@ -13171,7 +13567,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_choose)
-        @Namespace("nd4j::ops") public static class choose extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class choose extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public choose(Pointer p) { super(p); }
@@ -13192,7 +13588,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * This op takes 1 n-dimensional array as input, and returns true if for every adjacent pair we have x[i] <= x[i+1].
          */
 //         #if NOT_EXCLUDED(OP_is_non_decreasing)
-        @Namespace("nd4j::ops") public static class is_non_decreasing extends BooleanOp {
+        @Namespace("sd::ops") public static class is_non_decreasing extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public is_non_decreasing(Pointer p) { super(p); }
@@ -13212,7 +13608,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This op takes 1 n-dimensional array as input, and returns true if for every adjacent pair we have x[i] < x[i+1].
          */
 //         #if NOT_EXCLUDED(OP_is_strictly_increasing)
-        @Namespace("nd4j::ops") public static class is_strictly_increasing extends BooleanOp {
+        @Namespace("sd::ops") public static class is_strictly_increasing extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public is_strictly_increasing(Pointer p) { super(p); }
@@ -13232,7 +13628,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This op takes 1 n-dimensional array as input, and returns true if input is a numeric array.
          */
 //         #if NOT_EXCLUDED(OP_is_numeric_tensor)
-        @Namespace("nd4j::ops") public static class is_numeric_tensor extends BooleanOp {
+        @Namespace("sd::ops") public static class is_numeric_tensor extends BooleanOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public is_numeric_tensor(Pointer p) { super(p); }
@@ -13252,7 +13648,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_boolean_not)
-        @Namespace("nd4j::ops") public static class boolean_not extends DeclarableOp {
+        @Namespace("sd::ops") public static class boolean_not extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public boolean_not(Pointer p) { super(p); }
@@ -13299,6 +13695,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define LIBND4J_HEADERS_BROADCASTABLE_H
 
 // #include <ops/declarable/BroadcastableOp.h>
+// #include <ops/declarable/BroadcastableBoolOp.h>
 // #include <ops/declarable/headers/common.h>
 // #include <ops/declarable/generic/helpers/BroadcastHelper.h>
         // TODO: make broadcastables separate class
@@ -13313,7 +13710,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Max(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_maximum)
-        @Namespace("nd4j::ops") public static class maximum extends BroadcastableOp {
+        @Namespace("sd::ops") public static class maximum extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maximum(Pointer p) { super(p); }
@@ -13327,7 +13724,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public maximum() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class maximum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class maximum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maximum_bp(Pointer p) { super(p); }
@@ -13354,7 +13751,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Min(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_minimum)
-        @Namespace("nd4j::ops") public static class minimum extends BroadcastableOp {
+        @Namespace("sd::ops") public static class minimum extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public minimum(Pointer p) { super(p); }
@@ -13368,7 +13765,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public minimum() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class minimum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class minimum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public minimum_bp(Pointer p) { super(p); }
@@ -13395,7 +13792,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Add(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_add)
-        @Namespace("nd4j::ops") public static class add extends BroadcastableOp {
+        @Namespace("sd::ops") public static class add extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public add(Pointer p) { super(p); }
@@ -13409,7 +13806,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public add() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class add_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class add_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public add_bp(Pointer p) { super(p); }
@@ -13436,7 +13833,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Subtract(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_subtract)
-        @Namespace("nd4j::ops") public static class subtract extends BroadcastableOp {
+        @Namespace("sd::ops") public static class subtract extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public subtract(Pointer p) { super(p); }
@@ -13450,7 +13847,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public subtract() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class subtract_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class subtract_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public subtract_bp(Pointer p) { super(p); }
@@ -13477,7 +13874,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Subtract(Y, X)
          */
 //         #if NOT_EXCLUDED(OP_reversesubtract)
-        @Namespace("nd4j::ops") public static class reversesubtract extends BroadcastableOp {
+        @Namespace("sd::ops") public static class reversesubtract extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversesubtract(Pointer p) { super(p); }
@@ -13491,7 +13888,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public reversesubtract() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class reversesubtract_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reversesubtract_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversesubtract_bp(Pointer p) { super(p); }
@@ -13518,7 +13915,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = ReverseMod(X, Y) == Mod(Y, X)
          */
 //         #if NOT_EXCLUDED(OP_reversemod)
-        @Namespace("nd4j::ops") public static class reversemod extends BroadcastableOp {
+        @Namespace("sd::ops") public static class reversemod extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversemod(Pointer p) { super(p); }
@@ -13532,7 +13929,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public reversemod() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class reversemod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reversemod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversemod_bp(Pointer p) { super(p); }
@@ -13560,7 +13957,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Subtract(X, Y) * Subtract(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_squaredsubtract)
-        @Namespace("nd4j::ops") public static class squaredsubtract extends BroadcastableOp {
+        @Namespace("sd::ops") public static class squaredsubtract extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public squaredsubtract(Pointer p) { super(p); }
@@ -13574,7 +13971,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public squaredsubtract() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-                                                                                @Namespace("nd4j::ops") public static class squaredsubtract_bp extends DeclarableCustomOp {
+                                                                                @Namespace("sd::ops") public static class squaredsubtract_bp extends DeclarableCustomOp {
                                                                                     static { Loader.load(); }
                                                                                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                                                                                     public squaredsubtract_bp(Pointer p) { super(p); }
@@ -13601,7 +13998,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Multiply(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_multiply)
-        @Namespace("nd4j::ops") public static class multiply extends BroadcastableOp {
+        @Namespace("sd::ops") public static class multiply extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public multiply(Pointer p) { super(p); }
@@ -13615,7 +14012,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public multiply() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class multiply_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class multiply_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public multiply_bp(Pointer p) { super(p); }
@@ -13642,7 +14039,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Divide(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_divide)
-        @Namespace("nd4j::ops") public static class divide extends BroadcastableOp {
+        @Namespace("sd::ops") public static class divide extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public divide(Pointer p) { super(p); }
@@ -13656,7 +14053,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public divide() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class divide_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class divide_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public divide_bp(Pointer p) { super(p); }
@@ -13683,7 +14080,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Divide(X, Y) with exception, 0 if Y = 0
          */
 //         #if NOT_EXCLUDED(OP_divide_no_nan)
-        @Namespace("nd4j::ops") public static class divide_no_nan extends BroadcastableOp {
+        @Namespace("sd::ops") public static class divide_no_nan extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public divide_no_nan(Pointer p) { super(p); }
@@ -13708,7 +14105,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Divide(Y, x)
          */
 //         #if NOT_EXCLUDED(OP_reversedivide)
-        @Namespace("nd4j::ops") public static class reversedivide extends BroadcastableOp {
+        @Namespace("sd::ops") public static class reversedivide extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversedivide(Pointer p) { super(p); }
@@ -13722,7 +14119,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public reversedivide() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class reversedivide_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reversedivide_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reversedivide_bp(Pointer p) { super(p); }
@@ -13749,7 +14146,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = FloorMod(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_floormod)
-        @Namespace("nd4j::ops") public static class floormod extends BroadcastableOp {
+        @Namespace("sd::ops") public static class floormod extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public floormod(Pointer p) { super(p); }
@@ -13763,7 +14160,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public floormod() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class floormod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class floormod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public floormod_bp(Pointer p) { super(p); }
@@ -13781,7 +14178,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_mod)
-        @Namespace("nd4j::ops") public static class mod extends BroadcastableOp {
+        @Namespace("sd::ops") public static class mod extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mod(Pointer p) { super(p); }
@@ -13795,7 +14192,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public mod() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class mod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mod_bp(Pointer p) { super(p); }
@@ -13822,7 +14219,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = FloorDiv(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_floordiv)
-        @Namespace("nd4j::ops") public static class floordiv extends BroadcastableOp {
+        @Namespace("sd::ops") public static class floordiv extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public floordiv(Pointer p) { super(p); }
@@ -13836,7 +14233,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public floordiv() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-                                                                                @Namespace("nd4j::ops") public static class floordiv_bp extends DeclarableCustomOp {
+                                                                                @Namespace("sd::ops") public static class floordiv_bp extends DeclarableCustomOp {
                                                                                     static { Loader.load(); }
                                                                                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                                                                                     public floordiv_bp(Pointer p) { super(p); }
@@ -13863,7 +14260,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Divide(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_realdiv)
-        @Namespace("nd4j::ops") public static class realdiv extends BroadcastableOp {
+        @Namespace("sd::ops") public static class realdiv extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public realdiv(Pointer p) { super(p); }
@@ -13877,7 +14274,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public realdiv() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class realdiv_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class realdiv_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public realdiv_bp(Pointer p) { super(p); }
@@ -13900,7 +14297,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          * \tparam T
          */
-        @Namespace("nd4j::ops") public static class truncatediv extends BroadcastableOp {
+        @Namespace("sd::ops") public static class truncatediv extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public truncatediv(Pointer p) { super(p); }
@@ -13925,7 +14322,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns Z = Assign(X, Y)
          */
 //         #if NOT_EXCLUDED(OP_assign)
-        @Namespace("nd4j::ops") public static class assign extends BroadcastableOp {
+        @Namespace("sd::ops") public static class assign extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public assign(Pointer p) { super(p); }
@@ -13939,7 +14336,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public assign() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class assign_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class assign_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public assign_bp(Pointer p) { super(p); }
@@ -13957,7 +14354,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_meshgrid)
-        @Namespace("nd4j::ops") public static class meshgrid extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class meshgrid extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public meshgrid(Pointer p) { super(p); }
@@ -13980,7 +14377,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_equals)
-        @Namespace("nd4j::ops") public static class equals extends BroadcastableOp {
+        @Namespace("sd::ops") public static class equals extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public equals(Pointer p) { super(p); }
@@ -14001,7 +14398,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: _x != _y ? (T) 1.0f : (T) 0.0f;
          */
 //         #if NOT_EXCLUDED(OP_not_equals)
-        @Namespace("nd4j::ops") public static class not_equals extends BroadcastableOp {
+        @Namespace("sd::ops") public static class not_equals extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public not_equals(Pointer p) { super(p); }
@@ -14022,7 +14419,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: _x <= _y ? (T) 1.0f : (T) 0.0f;
          */
 //         #if NOT_EXCLUDED(OP_less_equal)
-        @Namespace("nd4j::ops") public static class less_equal extends BroadcastableOp {
+        @Namespace("sd::ops") public static class less_equal extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public less_equal(Pointer p) { super(p); }
@@ -14043,7 +14440,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: _x >= _y ? (T) 1.0f : (T) 0.0f;
          */
 //         #if NOT_EXCLUDED(OP_greater_equal)
-        @Namespace("nd4j::ops") public static class greater_equal extends BroadcastableOp {
+        @Namespace("sd::ops") public static class greater_equal extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public greater_equal(Pointer p) { super(p); }
@@ -14064,7 +14461,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: _x < _y ? (T) 1.0f : (T) 0.0f;
          */
 //         #if NOT_EXCLUDED(OP_less)
-        @Namespace("nd4j::ops") public static class less extends BroadcastableOp {
+        @Namespace("sd::ops") public static class less extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public less(Pointer p) { super(p); }
@@ -14085,7 +14482,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: _x > _y ? (T) 1.0f : (T) 0.0f;
          */
 //         #if NOT_EXCLUDED(OP_greater)
-        @Namespace("nd4j::ops") public static class greater extends BroadcastableOp {
+        @Namespace("sd::ops") public static class greater extends BroadcastableBoolOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public greater(Pointer p) { super(p); }
@@ -14105,7 +14502,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_boolean_and)
-        @Namespace("nd4j::ops") public static class boolean_and extends BroadcastableOp {
+        @Namespace("sd::ops") public static class boolean_and extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public boolean_and(Pointer p) { super(p); }
@@ -14125,7 +14522,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_boolean_or)
-        @Namespace("nd4j::ops") public static class boolean_or extends BroadcastableOp {
+        @Namespace("sd::ops") public static class boolean_or extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public boolean_or(Pointer p) { super(p); }
@@ -14145,7 +14542,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_boolean_xor)
-        @Namespace("nd4j::ops") public static class boolean_xor extends BroadcastableOp {
+        @Namespace("sd::ops") public static class boolean_xor extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public boolean_xor(Pointer p) { super(p); }
@@ -14174,7 +14571,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 
          */
 //         #if NOT_EXCLUDED(OP_percentile)
-        @Namespace("nd4j::ops") public static class percentile extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class percentile extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public percentile(Pointer p) { super(p); }
@@ -14197,7 +14594,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_tf_atan2)
-        @Namespace("nd4j::ops") public static class tf_atan2 extends BroadcastableOp {
+        @Namespace("sd::ops") public static class tf_atan2 extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tf_atan2(Pointer p) { super(p); }
@@ -14218,7 +14615,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_Pow)
-        @Namespace("nd4j::ops") public static class Pow extends BroadcastableOp {
+        @Namespace("sd::ops") public static class Pow extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Pow(Pointer p) { super(p); }
@@ -14232,7 +14629,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public Pow() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                 }
-        @Namespace("nd4j::ops") public static class Pow_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class Pow_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Pow_bp(Pointer p) { super(p); }
@@ -14258,7 +14655,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_igamma)
-                @Namespace("nd4j::ops") public static class igamma extends BroadcastableOp {
+                @Namespace("sd::ops") public static class igamma extends BroadcastableOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public igamma(Pointer p) { super(p); }
@@ -14281,7 +14678,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_igammac)
-                @Namespace("nd4j::ops") public static class igammac extends BroadcastableOp {
+                @Namespace("sd::ops") public static class igammac extends BroadcastableOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public igammac(Pointer p) { super(p); }
@@ -14341,7 +14738,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 2: padding
          */
 //         #if NOT_EXCLUDED(OP_conv1d)
-        @Namespace("nd4j::ops") public static class conv1d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv1d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv1d(Pointer p) { super(p); }
@@ -14356,7 +14753,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class conv1d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv1d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv1d_bp(Pointer p) { super(p); }
@@ -14393,7 +14790,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 9: data format: 1 NHWC, 0 NCHW
          */
 //         #if NOT_EXCLUDED(OP_conv2d)
-        @Namespace("nd4j::ops") public static class conv2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv2d(Pointer p) { super(p); }
@@ -14408,7 +14805,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class conv2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv2d_bp(Pointer p) { super(p); }
@@ -14423,7 +14820,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class conv2d_input_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv2d_input_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv2d_input_bp(Pointer p) { super(p); }
@@ -14449,7 +14846,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * bias: optional, vector
          */
 //         #if NOT_EXCLUDED(OP_sconv2d)
-        @Namespace("nd4j::ops") public static class sconv2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sconv2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sconv2d(Pointer p) { super(p); }
@@ -14464,7 +14861,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class sconv2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sconv2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sconv2d_bp(Pointer p) { super(p); }
@@ -14496,7 +14893,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 8: same mode: 0 false, 1 true
          */
 //         #if NOT_EXCLUDED(OP_deconv2d)
-        @Namespace("nd4j::ops") public static class deconv2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class deconv2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public deconv2d(Pointer p) { super(p); }
@@ -14511,7 +14908,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class deconv2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class deconv2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public deconv2d_bp(Pointer p) { super(p); }
@@ -14549,7 +14946,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          */
 
 //         #if NOT_EXCLUDED(OP_deconv3d)
-        @Namespace("nd4j::ops") public static class deconv3d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class deconv3d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public deconv3d(Pointer p) { super(p); }
@@ -14564,7 +14961,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class deconv3d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class deconv3d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public deconv3d_bp(Pointer p) { super(p); }
@@ -14598,7 +14995,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 8: same mode: 0 false, 1 true
          */
 //         #if NOT_EXCLUDED(OP_maxpool2d)
-        @Namespace("nd4j::ops") public static class maxpool2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class maxpool2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maxpool2d(Pointer p) { super(p); }
@@ -14613,7 +15010,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class maxpool2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class maxpool2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maxpool2d_bp(Pointer p) { super(p); }
@@ -14646,7 +15043,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 8: same mode: 0 false, 1 true
          */
 //         #if NOT_EXCLUDED(OP_avgpool2d)
-        @Namespace("nd4j::ops") public static class avgpool2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class avgpool2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public avgpool2d(Pointer p) { super(p); }
@@ -14661,7 +15058,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class avgpool2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class avgpool2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public avgpool2d_bp(Pointer p) { super(p); }
@@ -14695,7 +15092,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 9: p for p-norm
          */
 //         #if NOT_EXCLUDED(OP_pnormpool2d)
-        @Namespace("nd4j::ops") public static class pnormpool2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class pnormpool2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public pnormpool2d(Pointer p) { super(p); }
@@ -14710,7 +15107,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class pnormpool2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class pnormpool2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public pnormpool2d_bp(Pointer p) { super(p); }
@@ -14743,7 +15140,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 8: isSameMode
          */
 //         #if NOT_EXCLUDED(OP_im2col)
-        @Namespace("nd4j::ops") public static class im2col extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class im2col extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public im2col(Pointer p) { super(p); }
@@ -14758,7 +15155,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-		@Namespace("nd4j::ops") public static class im2col_bp extends DeclarableCustomOp {
+		@Namespace("sd::ops") public static class im2col_bp extends DeclarableCustomOp {
 		    static { Loader.load(); }
 		    /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
 		    public im2col_bp(Pointer p) { super(p); }
@@ -14790,7 +15187,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 7: dilation width
          */
 //         #if NOT_EXCLUDED(OP_col2im)
-        @Namespace("nd4j::ops") public static class col2im extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class col2im extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public col2im(Pointer p) { super(p); }
@@ -14816,7 +15213,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 2: data format: 0 NHWC (default), 1 NCHW
          */
 //         #if NOT_EXCLUDED(OP_upsampling2d)
-        @Namespace("nd4j::ops") public static class upsampling2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class upsampling2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public upsampling2d(Pointer p) { super(p); }
@@ -14831,7 +15228,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class upsampling2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class upsampling2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public upsampling2d_bp(Pointer p) { super(p); }
@@ -14858,7 +15255,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 3: data format: 0 NDHWC (default), 1 NCDHW
          */
 //         #if NOT_EXCLUDED(OP_upsampling3d)
-        @Namespace("nd4j::ops") public static class upsampling3d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class upsampling3d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public upsampling3d(Pointer p) { super(p); }
@@ -14873,7 +15270,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class upsampling3d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class upsampling3d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public upsampling3d_bp(Pointer p) { super(p); }
@@ -14898,7 +15295,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: axis
          */
 //         #if NOT_EXCLUDED(OP_ismax)
-        @Namespace("nd4j::ops") public static class ismax extends DeclarableOp {
+        @Namespace("sd::ops") public static class ismax extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ismax(Pointer p) { super(p); }
@@ -14922,7 +15319,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: isSameMode
          */
 //         #if NOT_EXCLUDED(OP_dilation2d)
-        @Namespace("nd4j::ops") public static class dilation2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dilation2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dilation2d(Pointer p) { super(p); }
@@ -14940,7 +15337,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_conv3dnew)
-        @Namespace("nd4j::ops") public static class conv3dnew extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv3dnew extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv3dnew(Pointer p) { super(p); }
@@ -14955,7 +15352,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class conv3dnew_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class conv3dnew_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public conv3dnew_bp(Pointer p) { super(p); }
@@ -14973,7 +15370,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_avgpool3dnew)
-        @Namespace("nd4j::ops") public static class avgpool3dnew extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class avgpool3dnew extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public avgpool3dnew(Pointer p) { super(p); }
@@ -14988,7 +15385,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class avgpool3dnew_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class avgpool3dnew_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public avgpool3dnew_bp(Pointer p) { super(p); }
@@ -15006,7 +15403,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_maxpool3dnew)
-        @Namespace("nd4j::ops") public static class maxpool3dnew extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class maxpool3dnew extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maxpool3dnew(Pointer p) { super(p); }
@@ -15021,7 +15418,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class maxpool3dnew_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class maxpool3dnew_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public maxpool3dnew_bp(Pointer p) { super(p); }
@@ -15050,7 +15447,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *   9 int with 2x4 vectors and 1 bool value
          */
 //         #if NOT_EXCLUDED(OP_max_pool_woth_argmax)
-        @Namespace("nd4j::ops") public static class max_pool_with_argmax extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class max_pool_with_argmax extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public max_pool_with_argmax(Pointer p) { super(p); }
@@ -15069,7 +15466,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 //         #if NOT_EXCLUDED(OP_depthwise_conv2d)
-        @Namespace("nd4j::ops") public static class depthwise_conv2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class depthwise_conv2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public depthwise_conv2d(Pointer p) { super(p); }
@@ -15084,7 +15481,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class depthwise_conv2d_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class depthwise_conv2d_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public depthwise_conv2d_bp(Pointer p) { super(p); }
@@ -15111,7 +15508,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * IntArgs:
          * 0: data format: 1 NHWC, 0 NCHW (optional, by default = NHWC)
          */
-        @Namespace("nd4j::ops") public static class pointwise_conv2d extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class pointwise_conv2d extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public pointwise_conv2d(Pointer p) { super(p); }
@@ -15127,7 +15524,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
 
-        @Namespace("nd4j::ops") public static class deconv2d_tf extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class deconv2d_tf extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public deconv2d_tf(Pointer p) { super(p); }
@@ -15182,7 +15579,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * If no NDArrayList was provided - new one will be created
          */
 //         #if NOT_EXCLUDED(OP_write_list)
-        @Namespace("nd4j::ops") public static class write_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class write_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public write_list(Pointer p) { super(p); }
@@ -15202,7 +15599,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation concatenates given NDArrayList, and returns NDArray as result
          */
 //         #if NOT_EXCLUDED(OP_stack_list)
-        @Namespace("nd4j::ops") public static class stack_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class stack_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public stack_list(Pointer p) { super(p); }
@@ -15228,7 +15625,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * optional, index
          */
 //         #if NOT_EXCLUDED(OP_read_list)
-        @Namespace("nd4j::ops") public static class read_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class read_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public read_list(Pointer p) { super(p); }
@@ -15254,7 +15651,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * optional, indices
          */
 //         #if NOT_EXCLUDED(OP_pick_list)
-        @Namespace("nd4j::ops") public static class pick_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class pick_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public pick_list(Pointer p) { super(p); }
@@ -15276,7 +15673,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * x: list
          */
 //         #if NOT_EXCLUDED(OP_size_list)
-        @Namespace("nd4j::ops") public static class size_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class size_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public size_list(Pointer p) { super(p); }
@@ -15296,7 +15693,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation creates new empty NDArrayList
          */
 //         #if NOT_EXCLUDED(OP_create_list)
-        @Namespace("nd4j::ops") public static class create_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class create_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public create_list(Pointer p) { super(p); }
@@ -15316,7 +15713,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation unpacks given NDArray into specified NDArrayList wrt specified indices
          */
 //         #if NOT_EXCLUDED(OP_scatter_list)
-        @Namespace("nd4j::ops") public static class scatter_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class scatter_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_list(Pointer p) { super(p); }
@@ -15340,7 +15737,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * sizes: vector with sizes for each chunk
          */
 //         #if NOT_EXCLUDED(OP_split_list)
-        @Namespace("nd4j::ops") public static class split_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class split_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public split_list(Pointer p) { super(p); }
@@ -15363,7 +15760,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * indices: vector with indices for gather operation
          */
 //         #if NOT_EXCLUDED(OP_gather_list)
-        @Namespace("nd4j::ops") public static class gather_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class gather_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gather_list(Pointer p) { super(p); }
@@ -15383,7 +15780,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation clones given NDArrayList
          */
 //         #if NOT_EXCLUDED(OP_clone_list)
-        @Namespace("nd4j::ops") public static class clone_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class clone_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clone_list(Pointer p) { super(p); }
@@ -15403,7 +15800,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation unstacks given NDArray into NDArrayList by the first dimension
          */
 //         #if NOT_EXCLUDED(OP_unstack_list)
-        @Namespace("nd4j::ops") public static class unstack_list extends DeclarableListOp {
+        @Namespace("sd::ops") public static class unstack_list extends DeclarableListOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unstack_list(Pointer p) { super(p); }
@@ -15466,7 +15863,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: 3d tensor of cell state [bS x K x N]
        */
 //         #if NOT_EXCLUDED(OP_sru)
-        @Namespace("nd4j::ops") public static class sru extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sru extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sru(Pointer p) { super(p); }
@@ -15499,7 +15896,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: 3d tensor of cell state [N x bS x 2K]
        */
 //         #if NOT_EXCLUDED(OP_sru_bi)
-        @Namespace("nd4j::ops") public static class sru_bi extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sru_bi extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sru_bi(Pointer p) { super(p); }
@@ -15538,7 +15935,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    3: 2d, tensor of state gradients [bS x K]
        */
 //         #if NOT_EXCLUDED(OP_sru)
-        @Namespace("nd4j::ops") public static class sru_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sru_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sru_bp(Pointer p) { super(p); }
@@ -15576,7 +15973,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    3: 2d, tensor of state gradients [bS x 2K]
        */
 //         #if NOT_EXCLUDED(OP_sru_bi)
-        @Namespace("nd4j::ops") public static class sru_bi_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sru_bi_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sru_bi_bp(Pointer p) { super(p); }
@@ -15626,7 +16023,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: current cell state  [batchSize x numUnits], that is at current time step t
        */
 //         #if NOT_EXCLUDED(OP_lstmCell)
-        @Namespace("nd4j::ops") public static class lstmCell extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lstmCell extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lstmCell(Pointer p) { super(p); }
@@ -15680,7 +16077,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    6: y (h)  - Current cell output [bS, numUnits], time t
        */
 //         #if NOT_EXCLUDED(OP_lstmBlockCell)
-        @Namespace("nd4j::ops") public static class lstmBlockCell extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lstmBlockCell extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lstmBlockCell(Pointer p) { super(p); }
@@ -15736,7 +16133,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    6: y (h)  - Current cell output, rank 3, shape as per dataFormat
        */
 //         #if NOT_EXCLUDED(OP_lstmBlock)
-        @Namespace("nd4j::ops") public static class lstmBlock extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lstmBlock extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lstmBlock(Pointer p) { super(p); }
@@ -15755,7 +16152,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
         //////////////////////////////////////////////////////////////////////////
 //         #if NOT_EXCLUDED(OP_lstmLayer)
-        @Namespace("nd4j::ops") public static class lstmLayer extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lstmLayer extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lstmLayer(Pointer p) { super(p); }
@@ -15788,7 +16185,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: current cell state  [batchSize x inSize], that is at current time step t
        */
 //         #if NOT_EXCLUDED(OP_sruCell)
-        @Namespace("nd4j::ops") public static class sruCell extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sruCell extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sruCell(Pointer p) { super(p); }
@@ -15827,7 +16224,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    3: Current cell output [bS, numUnits]
        */
 //         #if NOT_EXCLUDED(OP_gruCell)
-        @Namespace("nd4j::ops") public static class gruCell extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class gruCell extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gruCell(Pointer p) { super(p); }
@@ -15845,7 +16242,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_gruCell)
-        @Namespace("nd4j::ops") public static class gruCell_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class gruCell_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gruCell_bp(Pointer p) { super(p); }
@@ -15890,7 +16287,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: cell states  [time x batchSize x numUnits], that is per each time step
        */
 //         #if NOT_EXCLUDED(OP_lstm)
-        @Namespace("nd4j::ops") public static class lstm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lstm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lstm(Pointer p) { super(p); }
@@ -15922,7 +16319,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: cell outputs [time x batchSize x numUnits], that is per each time step
        */
 //         #if NOT_EXCLUDED(OP_gru)
-        @Namespace("nd4j::ops") public static class gru extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class gru extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gru(Pointer p) { super(p); }
@@ -15955,7 +16352,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: cell outputs [time x batchSize x numUnits]
        *    1: cell final non-zero output [batchSize x numUnits]
        */
-        @Namespace("nd4j::ops") public static class static_rnn extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class static_rnn extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public static_rnn(Pointer p) { super(p); }
@@ -15990,7 +16387,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: cell outputs [time x batchSize x numUnits] or [batchSize x time x numUnits]
        *    1: cell final non-zero output [batchSize x numUnits]
        */
-        @Namespace("nd4j::ops") public static class dynamic_rnn extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dynamic_rnn extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dynamic_rnn(Pointer p) { super(p); }
@@ -16027,7 +16424,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    1: cell final non-zero output for forward RNN  [batchSize x numUnitsFW]
        *    2: cell final non-zero output for backward RNN [batchSize x numUnitsBW]
        */
-        @Namespace("nd4j::ops") public static class static_bidirectional_rnn extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class static_bidirectional_rnn extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public static_bidirectional_rnn(Pointer p) { super(p); }
@@ -16068,7 +16465,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    2: cell final non-zero output for forward  RNN [batchSize x numUnitsFW]
        *    3: cell final non-zero output for backward RNN [batchSize x numUnitsBW]
        */
-        @Namespace("nd4j::ops") public static class dynamic_bidirectional_rnn extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dynamic_bidirectional_rnn extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dynamic_bidirectional_rnn(Pointer p) { super(p); }
@@ -16115,7 +16512,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <ops/declarable/headers/common.h>
 //         #if NOT_EXCLUDED(OP_clipbyvalue)
-        @Namespace("nd4j::ops") public static class clipbyvalue extends DeclarableOp {
+        @Namespace("sd::ops") public static class clipbyvalue extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clipbyvalue(Pointer p) { super(p); }
@@ -16133,7 +16530,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_clipbynorm)
-        @Namespace("nd4j::ops") public static class clipbynorm extends DeclarableOp {
+        @Namespace("sd::ops") public static class clipbynorm extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clipbynorm(Pointer p) { super(p); }
@@ -16148,7 +16545,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class clipbynorm_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class clipbynorm_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clipbynorm_bp(Pointer p) { super(p); }
@@ -16166,7 +16563,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_clipbyavgnorm)
-        @Namespace("nd4j::ops") public static class clipbyavgnorm extends DeclarableOp {
+        @Namespace("sd::ops") public static class clipbyavgnorm extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clipbyavgnorm(Pointer p) { super(p); }
@@ -16184,7 +16581,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_cumsum)
-        @Namespace("nd4j::ops") public static class cumsum extends DeclarableOp {
+        @Namespace("sd::ops") public static class cumsum extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cumsum(Pointer p) { super(p); }
@@ -16202,7 +16599,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_cumprod)
-        @Namespace("nd4j::ops") public static class cumprod extends DeclarableOp {
+        @Namespace("sd::ops") public static class cumprod extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cumprod(Pointer p) { super(p); }
@@ -16220,7 +16617,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_tile)
-        @Namespace("nd4j::ops") public static class tile extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tile extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tile(Pointer p) { super(p); }
@@ -16235,7 +16632,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class tile_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tile_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tile_bp(Pointer p) { super(p); }
@@ -16253,7 +16650,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_repeat)
-        @Namespace("nd4j::ops") public static class repeat extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class repeat extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public repeat(Pointer p) { super(p); }
@@ -16271,7 +16668,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_invert_permutation)
-        @Namespace("nd4j::ops") public static class invert_permutation extends DeclarableOp {
+        @Namespace("sd::ops") public static class invert_permutation extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public invert_permutation(Pointer p) { super(p); }
@@ -16288,7 +16685,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 
-        @Namespace("nd4j::ops") public static class concat extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class concat extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public concat(Pointer p) { super(p); }
@@ -16303,7 +16700,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class concat_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class concat_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public concat_bp(Pointer p) { super(p); }
@@ -16320,7 +16717,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 
 //         #if NOT_EXCLUDED(OP_mergemax)
-        @Namespace("nd4j::ops") public static class mergemax extends DeclarableOp {
+        @Namespace("sd::ops") public static class mergemax extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mergemax(Pointer p) { super(p); }
@@ -16335,6 +16732,21 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                     private native void allocate();
                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                 }
+        @Namespace("sd::ops") public static class mergemax_bp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public mergemax_bp(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public mergemax_bp(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public mergemax_bp position(long position) {
+                return (mergemax_bp)super.position(position);
+            }
+        
+                                                                                    public mergemax_bp() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
 //         #endif
         /*
          * Complete tensor with max indices merged from all input tensors list
@@ -16344,7 +16756,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * INT_ARG: result type (one of int), INT32 by default
          */
 //         #if NOT_EXCLUDED(OP_mergemaxindex)
-        @Namespace("nd4j::ops") public static class mergemaxindex extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mergemaxindex extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mergemaxindex(Pointer p) { super(p); }
@@ -16362,7 +16774,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_mergeadd)
-        @Namespace("nd4j::ops") public static class mergeadd extends DeclarableOp {
+        @Namespace("sd::ops") public static class mergeadd extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mergeadd(Pointer p) { super(p); }
@@ -16377,10 +16789,25 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                     private native void allocate();
                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                 }
+        @Namespace("sd::ops") public static class mergeadd_bp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public mergeadd_bp(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public mergeadd_bp(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public mergeadd_bp position(long position) {
+                return (mergeadd_bp)super.position(position);
+            }
+        
+                                                                                    public mergeadd_bp() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_mergeavg)
-        @Namespace("nd4j::ops") public static class mergeavg extends DeclarableOp {
+        @Namespace("sd::ops") public static class mergeavg extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mergeavg(Pointer p) { super(p); }
@@ -16395,10 +16822,25 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                     private native void allocate();
                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                 }
+        @Namespace("sd::ops") public static class mergeavg_bp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public mergeavg_bp(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public mergeavg_bp(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public mergeavg_bp position(long position) {
+                return (mergeavg_bp)super.position(position);
+            }
+        
+                                                                                    public mergeavg_bp() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_scatter_update)
-        @Namespace("nd4j::ops") public static class scatter_update extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_update extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_update(Pointer p) { super(p); }
@@ -16416,7 +16858,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_Floor)
-        @Namespace("nd4j::ops") public static class Floor extends DeclarableOp {
+        @Namespace("sd::ops") public static class Floor extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Floor(Pointer p) { super(p); }
@@ -16434,7 +16876,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_Log1p)
-        @Namespace("nd4j::ops") public static class Log1p extends DeclarableOp {
+        @Namespace("sd::ops") public static class Log1p extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Log1p(Pointer p) { super(p); }
@@ -16452,7 +16894,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reverse)
-        @Namespace("nd4j::ops") public static class reverse extends DeclarableOp {
+        @Namespace("sd::ops") public static class reverse extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reverse(Pointer p) { super(p); }
@@ -16467,7 +16909,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class reverse_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reverse_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reverse_bp(Pointer p) { super(p); }
@@ -16485,7 +16927,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_gather)
-        @Namespace("nd4j::ops") public static class gather extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class gather extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gather(Pointer p) { super(p); }
@@ -16503,7 +16945,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_pad)
-        @Namespace("nd4j::ops") public static class pad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class pad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public pad(Pointer p) { super(p); }
@@ -16536,7 +16978,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * IArgs[3,4,...] - optional, shape of batch, output matrix will have leading batch dimensions of this shape
          */
 //         #if NOT_EXCLUDED(OP_eye)
-        @Namespace("nd4j::ops") public static class eye extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class eye extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public eye(Pointer p) { super(p); }
@@ -16554,7 +16996,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_gather_nd)
-        @Namespace("nd4j::ops") public static class gather_nd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class gather_nd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public gather_nd(Pointer p) { super(p); }
@@ -16572,7 +17014,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reverse_sequence)
-        @Namespace("nd4j::ops") public static class reverse_sequence extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reverse_sequence extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reverse_sequence(Pointer p) { super(p); }
@@ -16590,7 +17032,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_trace)
-        @Namespace("nd4j::ops") public static class trace extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class trace extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public trace(Pointer p) { super(p); }
@@ -16608,7 +17050,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_random_shuffle)
-        @Namespace("nd4j::ops") public static class random_shuffle extends DeclarableOp {
+        @Namespace("sd::ops") public static class random_shuffle extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_shuffle(Pointer p) { super(p); }
@@ -16638,7 +17080,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  and global_norm as scalar tensor at the end
          */
 //         #if NOT_EXCLUDED(OP_clip_by_global_norm)
-        @Namespace("nd4j::ops") public static class clip_by_global_norm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class clip_by_global_norm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public clip_by_global_norm(Pointer p) { super(p); }
@@ -16655,7 +17097,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 
-        @Namespace("nd4j::ops") public static class tri extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tri extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tri(Pointer p) { super(p); }
@@ -16671,7 +17113,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
 
-        @Namespace("nd4j::ops") public static class triu extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class triu extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public triu(Pointer p) { super(p); }
@@ -16687,7 +17129,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
 
-        @Namespace("nd4j::ops") public static class triu_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class triu_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public triu_bp(Pointer p) { super(p); }
@@ -16704,7 +17146,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 
 //         #if NOT_EXCLUDED(OP_mirror_pad)
-        @Namespace("nd4j::ops") public static class mirror_pad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mirror_pad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mirror_pad(Pointer p) { super(p); }
@@ -16722,7 +17164,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_cumsum)
-        @Namespace("nd4j::ops") public static class cumsum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class cumsum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cumsum_bp(Pointer p) { super(p); }
@@ -16740,7 +17182,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_cumprod)
-        @Namespace("nd4j::ops") public static class cumprod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class cumprod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cumprod_bp(Pointer p) { super(p); }
@@ -16759,7 +17201,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 //         #if NOT_EXCLUDED(OP_flatten)
-        @Namespace("nd4j::ops") public static class flatten extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class flatten extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public flatten(Pointer p) { super(p); }
@@ -16788,7 +17230,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    nbins (optional) - number of histogram bins, default value is 100
          */
 //         #if NOT_EXCLUDED(OP_histogram_fixed_width)
-        @Namespace("nd4j::ops") public static class histogram_fixed_width extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class histogram_fixed_width extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public histogram_fixed_width(Pointer p) { super(p); }
@@ -16812,7 +17254,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_standardize)
-                @Namespace("nd4j::ops") public static class standardize extends DeclarableOp {
+                @Namespace("sd::ops") public static class standardize extends DeclarableOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public standardize(Pointer p) { super(p); }
@@ -16827,7 +17269,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-                @Namespace("nd4j::ops") public static class standardize_bp extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class standardize_bp extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public standardize_bp(Pointer p) { super(p); }
@@ -16848,7 +17290,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation calculates hash code, optionally along dimension
          */
 //         #if NOT_EXCLUDED(OP_hashcode)
-            @Namespace("nd4j::ops") public static class hashcode extends DeclarableCustomOp {
+            @Namespace("sd::ops") public static class hashcode extends DeclarableCustomOp {
                 static { Loader.load(); }
                 /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                 public hashcode(Pointer p) { super(p); }
@@ -16869,7 +17311,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation calculates number of entries per bin
          */
 //         #if NOT_EXCLUDED(OP_histogram)
-        @Namespace("nd4j::ops") public static class histogram extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class histogram extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public histogram(Pointer p) { super(p); }
@@ -16927,7 +17369,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: optional axis
          */
 //         #if NOT_EXCLUDED(OP_argmax)
-        @Namespace("nd4j::ops") public static class argmax extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class argmax extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public argmax(Pointer p) { super(p); }
@@ -16954,7 +17396,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: optional axis
          */
 //         #if NOT_EXCLUDED(OP_argmin)
-        @Namespace("nd4j::ops") public static class argmin extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class argmin extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public argmin(Pointer p) { super(p); }
@@ -16992,7 +17434,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: p for p-norm
          */
 //         #if NOT_EXCLUDED(OP_norm)
-        @Namespace("nd4j::ops") public static class norm extends DeclarableReductionOp {
+        @Namespace("sd::ops") public static class norm extends DeclarableReductionOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public norm(Pointer p) { super(p); }
@@ -17024,7 +17466,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *  0: has the same shape as input, corresponding diagonal elements are substituted
         */
 //         #if NOT_EXCLUDED(OP_matrix_set_diag)
-        @Namespace("nd4j::ops") public static class matrix_set_diag extends DeclarableOp {
+        @Namespace("sd::ops") public static class matrix_set_diag extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_set_diag(Pointer p) { super(p); }
@@ -17052,7 +17494,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * Output array:
         *   0: is considered as batch of matrices, if for example diagonal array has shape [A,B,C] then output array has shape [A,B,C,C]
         */
-        @Namespace("nd4j::ops") public static class matrix_diag extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class matrix_diag extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_diag(Pointer p) { super(p); }
@@ -17085,7 +17527,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * Three input and one output arrays must have the same shape
         */
 //         #if NOT_EXCLUDED(OP_betainc)
-        @Namespace("nd4j::ops") public static class betainc extends DeclarableOp {
+        @Namespace("sd::ops") public static class betainc extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public betainc(Pointer p) { super(p); }
@@ -17110,7 +17552,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: bias vector
          */
 //         #if NOT_EXCLUDED(OP_biasadd)
-        @Namespace("nd4j::ops") public static class biasadd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class biasadd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public biasadd(Pointer p) { super(p); }
@@ -17125,7 +17567,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class biasadd_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class biasadd_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public biasadd_bp(Pointer p) { super(p); }
@@ -17146,7 +17588,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns a diagonal tensor with a given diagonal values. Given a diagonal, this operation returns a tensor with the diagonal and everything else padded with zeros.
          */
 //         #if NOT_EXCLUDED(OP_diag)
-        @Namespace("nd4j::ops") public static class diag extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class diag extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public diag(Pointer p) { super(p); }
@@ -17167,7 +17609,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Returns a diagonal tensor with a given diagonal values. Given a diagonal, this operation returns a tensor with the diagonal and everything else padded with zeros.
          */
 //         #if NOT_EXCLUDED(OP_diag_part)
-        @Namespace("nd4j::ops") public static class diag_part extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class diag_part extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public diag_part(Pointer p) { super(p); }
@@ -17193,7 +17635,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Output: tensor with rank lesser by 1 from input
          */
 //         #if NOT_EXCLUDED(OP_matrix_diag_part)
-        @Namespace("nd4j::ops") public static class matrix_diag_part extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class matrix_diag_part extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_diag_part(Pointer p) { super(p); }
@@ -17222,7 +17664,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    1 - float tensor with shape {.,..,...,NxN} - batch of upper triangular matricies {Rs}
          */
 //         #if NOT_EXCLUDED(OP_qr)
-        @Namespace("nd4j::ops") public static class qr extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class qr extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public qr(Pointer p) { super(p); }
@@ -17246,7 +17688,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: vector with values to exclude
          */
 //         #if NOT_EXCLUDED(OP_listdiff)
-        @Namespace("nd4j::ops") public static class listdiff extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class listdiff extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public listdiff(Pointer p) { super(p); }
@@ -17271,7 +17713,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_add)
-        @Namespace("nd4j::ops") public static class scatter_add extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_add extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_add(Pointer p) { super(p); }
@@ -17296,7 +17738,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_sub)
-        @Namespace("nd4j::ops") public static class scatter_sub extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_sub extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_sub(Pointer p) { super(p); }
@@ -17321,7 +17763,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_mul)
-        @Namespace("nd4j::ops") public static class scatter_mul extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_mul extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_mul(Pointer p) { super(p); }
@@ -17346,7 +17788,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_div)
-        @Namespace("nd4j::ops") public static class scatter_div extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_div extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_div(Pointer p) { super(p); }
@@ -17371,7 +17813,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_upd)
-        @Namespace("nd4j::ops") public static class scatter_upd extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_upd extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_upd(Pointer p) { super(p); }
@@ -17396,7 +17838,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_max)
-        @Namespace("nd4j::ops") public static class scatter_max extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_max extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_max(Pointer p) { super(p); }
@@ -17421,7 +17863,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_min)
-        @Namespace("nd4j::ops") public static class scatter_min extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_min extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_min(Pointer p) { super(p); }
@@ -17446,7 +17888,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * shape: contains shape of output array
          */
 //         #if NOT_EXCLUDED(OP_scatter_nd)
-        @Namespace("nd4j::ops") public static class scatter_nd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class scatter_nd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_nd(Pointer p) { super(p); }
@@ -17471,7 +17913,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be inserted into input array
          */
 //         #if NOT_EXCLUDED(OP_scatter_nd_update)
-        @Namespace("nd4j::ops") public static class scatter_nd_update extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_nd_update extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_nd_update(Pointer p) { super(p); }
@@ -17496,7 +17938,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_add)
-        @Namespace("nd4j::ops") public static class scatter_nd_add extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_nd_add extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_nd_add(Pointer p) { super(p); }
@@ -17521,7 +17963,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * updates: array containing elements to be interfered with input
          */
 //         #if NOT_EXCLUDED(OP_scatter_sub)
-        @Namespace("nd4j::ops") public static class scatter_nd_sub extends DeclarableOp {
+        @Namespace("sd::ops") public static class scatter_nd_sub extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public scatter_nd_sub(Pointer p) { super(p); }
@@ -17547,7 +17989,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: scalar value, used to fill NDArray
          */
 //         #if NOT_EXCLUDED(OP_fill_as)
-        @Namespace("nd4j::ops") public static class fill_as extends DeclarableOp {
+        @Namespace("sd::ops") public static class fill_as extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public fill_as(Pointer p) { super(p); }
@@ -17568,7 +18010,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation applies element-wise rint (round to integral value) operation
          */
 //         #if NOT_EXCLUDED(OP_rint)
-        @Namespace("nd4j::ops") public static class rint extends DeclarableOp {
+        @Namespace("sd::ops") public static class rint extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rint(Pointer p) { super(p); }
@@ -17591,7 +18033,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * input: N-dimensional array
          */
 //         #if NOT_EXCLUDED(OP_unique)
-        @Namespace("nd4j::ops") public static class unique extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unique extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unique(Pointer p) { super(p); }
@@ -17619,7 +18061,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *     2 - 1D array with counts for values in array above
          */
 //         #if NOT_EXCLUDED(OP_unique_with_counts)
-        @Namespace("nd4j::ops") public static class unique_with_counts extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unique_with_counts extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unique_with_counts(Pointer p) { super(p); }
@@ -17645,7 +18087,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0..: TAD axis
          */
 //         #if NOT_EXCLUDED(OP_tear)
-        @Namespace("nd4j::ops") public static class tear extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tear extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tear(Pointer p) { super(p); }
@@ -17667,7 +18109,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_unstack)
-        @Namespace("nd4j::ops") public static class unstack extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unstack extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unstack(Pointer p) { super(p); }
@@ -17688,7 +18130,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation extracts a strided (optionally) slice from a tensor,
          */
 //         #if NOT_EXCLUDED(OP_strided_slice)
-        @Namespace("nd4j::ops") public static class strided_slice extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class strided_slice extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public strided_slice(Pointer p) { super(p); }
@@ -17703,7 +18145,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 } // TODO: new op type needed. that returns VIEW
-        @Namespace("nd4j::ops") public static class strided_slice_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class strided_slice_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public strided_slice_bp(Pointer p) { super(p); }
@@ -17725,7 +18167,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_slice)
-        @Namespace("nd4j::ops") public static class slice extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class slice extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public slice(Pointer p) { super(p); }
@@ -17740,7 +18182,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class slice_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class slice_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public slice_bp(Pointer p) { super(p); }
@@ -17775,7 +18217,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: optional scalar witn step value
          */
 //         #if NOT_EXCLUDED(OP_range)
-        @Namespace("nd4j::ops") public static class range extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class range extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public range(Pointer p) { super(p); }
@@ -17806,7 +18248,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: axis
          */
 //         #if NOT_EXCLUDED(OP_onehot)
-        @Namespace("nd4j::ops") public static class onehot extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class onehot extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public onehot(Pointer p) { super(p); }
@@ -17837,7 +18279,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_confusion_matrix)
-        @Namespace("nd4j::ops") public static class confusion_matrix extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class confusion_matrix extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public confusion_matrix(Pointer p) { super(p); }
@@ -17861,7 +18303,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 		 *
 		 */
 //         #if NOT_EXCLUDED(OP_stack)
-        @Namespace("nd4j::ops") public static class stack extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class stack extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public stack(Pointer p) { super(p); }
@@ -17886,7 +18328,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * TODO: make this operation reduction, to allow TAD -> size
          */
 //         #if NOT_EXCLUDED(OP_size)
-        @Namespace("nd4j::ops") public static class size extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class size extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public size(Pointer p) { super(p); }
@@ -17908,7 +18350,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This operation returns rank of input array as scalar value.
          */
 //         #if NOT_EXCLUDED(OP_rank)
-        @Namespace("nd4j::ops") public static class rank extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class rank extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rank(Pointer p) { super(p); }
@@ -17927,7 +18369,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 //         #if NOT_EXCLUDED(OP_broadcastgradientargs)
-        @Namespace("nd4j::ops") public static class broadcastgradientargs extends DeclarableOp {
+        @Namespace("sd::ops") public static class broadcastgradientargs extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public broadcastgradientargs(Pointer p) { super(p); }
@@ -17951,7 +18393,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_zeros_as)
-        @Namespace("nd4j::ops") public static class zeros_as extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class zeros_as extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public zeros_as(Pointer p) { super(p); }
@@ -17975,7 +18417,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_ones_as)
-        @Namespace("nd4j::ops") public static class ones_as extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class ones_as extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ones_as(Pointer p) { super(p); }
@@ -17998,7 +18440,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * input: N-Dimensional array
          */
 //         #if NOT_EXCLUDED(OP_square)
-        @Namespace("nd4j::ops") public static class square extends DeclarableOp {
+        @Namespace("sd::ops") public static class square extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public square(Pointer p) { super(p); }
@@ -18029,7 +18471,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * Two input and one output arrays must have the same shape
         */
 //         #if NOT_EXCLUDED(OP_zeta)
-        @Namespace("nd4j::ops") public static class zeta extends DeclarableOp {
+        @Namespace("sd::ops") public static class zeta extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public zeta(Pointer p) { super(p); }
@@ -18060,7 +18502,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * Two input and one output arrays have the same shape
         */
 //         #if NOT_EXCLUDED(OP_polygamma)
-        @Namespace("nd4j::ops") public static class polygamma extends DeclarableOp {
+        @Namespace("sd::ops") public static class polygamma extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public polygamma(Pointer p) { super(p); }
@@ -18088,7 +18530,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *
         */
 //         #if NOT_EXCLUDED(OP_lgamma)
-        @Namespace("nd4j::ops") public static class lgamma extends DeclarableOp {
+        @Namespace("sd::ops") public static class lgamma extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lgamma(Pointer p) { super(p); }
@@ -18116,7 +18558,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *
         */
 //         #if NOT_EXCLUDED(OP_digamma)
-        @Namespace("nd4j::ops") public static class digamma extends DeclarableOp {
+        @Namespace("sd::ops") public static class digamma extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public digamma(Pointer p) { super(p); }
@@ -18144,7 +18586,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_fill)
-        @Namespace("nd4j::ops") public static class fill extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class fill extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public fill(Pointer p) { super(p); }
@@ -18173,7 +18615,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_split_v)
-        @Namespace("nd4j::ops") public static class split_v extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class split_v extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public split_v(Pointer p) { super(p); }
@@ -18200,7 +18642,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1 - optional axis
          */
 //         #if NOT_EXCLUDED(OP_split)
-        @Namespace("nd4j::ops") public static class split extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class split extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public split(Pointer p) { super(p); }
@@ -18231,7 +18673,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0 - optional argument, corresponds to dimension with 3 channels
          */
 //         #if NOT_EXCLUDED(OP_adjust_hue)
-        @Namespace("nd4j::ops") public static class adjust_hue extends DeclarableOp {
+        @Namespace("sd::ops") public static class adjust_hue extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public adjust_hue(Pointer p) { super(p); }
@@ -18261,7 +18703,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0 - optional argument, corresponds to dimension with 3 channels
          */
 //         #if NOT_EXCLUDED(OP_adjust_saturation)
-        @Namespace("nd4j::ops") public static class adjust_saturation extends DeclarableOp {
+        @Namespace("sd::ops") public static class adjust_saturation extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public adjust_saturation(Pointer p) { super(p); }
@@ -18289,7 +18731,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_adjust_contrast)
-        @Namespace("nd4j::ops") public static class adjust_contrast extends DeclarableOp {
+        @Namespace("sd::ops") public static class adjust_contrast extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public adjust_contrast(Pointer p) { super(p); }
@@ -18304,7 +18746,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class adjust_contrast_v2 extends DeclarableOp {
+        @Namespace("sd::ops") public static class adjust_contrast_v2 extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public adjust_contrast_v2(Pointer p) { super(p); }
@@ -18342,7 +18784,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *                             optional (default 0)
          */
 //         #if NOT_EXCLUDED(OP_depth_to_space)
-        @Namespace("nd4j::ops") public static class depth_to_space extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class depth_to_space extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public depth_to_space(Pointer p) { super(p); }
@@ -18378,7 +18820,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_space_to_depth)
-        @Namespace("nd4j::ops") public static class space_to_depth extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class space_to_depth extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public space_to_depth(Pointer p) { super(p); }
@@ -18402,7 +18844,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1 - vector or tensor B
          */
 //         #if NOT_EXCLUDED(OP_cross)
-        @Namespace("nd4j::ops") public static class cross extends DeclarableOp {
+        @Namespace("sd::ops") public static class cross extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cross(Pointer p) { super(p); }
@@ -18437,7 +18879,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_space_to_batch)
-        @Namespace("nd4j::ops") public static class space_to_batch extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class space_to_batch extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public space_to_batch(Pointer p) { super(p); }
@@ -18471,7 +18913,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          * */
 //         #if NOT_EXCLUDED(OP_space_to_batch_nd)
-        @Namespace("nd4j::ops") public static class space_to_batch_nd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class space_to_batch_nd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public space_to_batch_nd(Pointer p) { super(p); }
@@ -18493,7 +18935,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_batch_to_space)
-        @Namespace("nd4j::ops") public static class batch_to_space extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class batch_to_space extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public batch_to_space(Pointer p) { super(p); }
@@ -18510,7 +18952,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_batch_to_space_nd)
-        @Namespace("nd4j::ops") public static class batch_to_space_nd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class batch_to_space_nd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public batch_to_space_nd(Pointer p) { super(p); }
@@ -18537,7 +18979,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  The third is boolean value(default is true) (0 - as is, 1 - sorted by value) optional
          */
 //         #if NOT_EXCLUDED(OP_top_k)
-        @Namespace("nd4j::ops") public static class top_k extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class top_k extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public top_k(Pointer p) { super(p); }
@@ -18562,7 +19004,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  The third is k
          */
 //         #if NOT_EXCLUDED(OP_in_top_k)
-        @Namespace("nd4j::ops") public static class in_top_k extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class in_top_k extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public in_top_k(Pointer p) { super(p); }
@@ -18589,7 +19031,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * the optional flag "keep_dims" can be set as T param
          */
 //         #if NOT_EXCLUDED(OP_moments)
-        @Namespace("nd4j::ops") public static class moments extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class moments extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public moments(Pointer p) { super(p); }
@@ -18611,7 +19053,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * accordingly to index array given.
          */
 //         #if NOT_EXCLUDED(OP_embedding_lookup)
-        @Namespace("nd4j::ops") public static class embedding_lookup extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class embedding_lookup extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public embedding_lookup(Pointer p) { super(p); }
@@ -18639,7 +19081,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * returns a num of NDArrays as output
          */
 //         #if NOT_EXCLUDED(OP_dynamic_partition)
-        @Namespace("nd4j::ops") public static class dynamic_partition extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dynamic_partition extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dynamic_partition(Pointer p) { super(p); }
@@ -18657,7 +19099,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_dynamic_partition_bp)
-        @Namespace("nd4j::ops") public static class dynamic_partition_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dynamic_partition_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dynamic_partition_bp(Pointer p) { super(p); }
@@ -18686,7 +19128,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * the operation is inversion od dynamic_partition
          */
 //         #if NOT_EXCLUDED(OP_dynamic_stitch)
-        @Namespace("nd4j::ops") public static class dynamic_stitch extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class dynamic_stitch extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dynamic_stitch(Pointer p) { super(p); }
@@ -18711,7 +19153,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * output value - a real number with given type (e.g. float or double)
          */
 //         #if NOT_EXCLUDED(OP_zero_fraction)
-        @Namespace("nd4j::ops") public static class zero_fraction extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class zero_fraction extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public zero_fraction(Pointer p) { super(p); }
@@ -18737,20 +19179,37 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *   - 2D matrix MxN
          *   - 1D vector with N elements
          * output value - 2D matrix NxN as multiply of matrixes and add vector
+         * Int args:
+         *      0 - optional switcher of weights format, if int arg == 1 - mkldnn, else mmul
          */
 //         #if NOT_EXCLUDED(OP_xw_plus_b)
-        @Namespace("nd4j::ops") public static class xw_plus_b extends DeclarableCustomOp {
-            static { Loader.load(); }
-            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
-            public xw_plus_b(Pointer p) { super(p); }
-            /** Native array allocator. Access with {@link Pointer#position(long)}. */
-            public xw_plus_b(long size) { super((Pointer)null); allocateArray(size); }
-            private native void allocateArray(long size);
-            @Override public xw_plus_b position(long position) {
-                return (xw_plus_b)super.position(position);
-            }
-        
+                @Namespace("sd::ops") public static class xw_plus_b extends DeclarableCustomOp {
+                    static { Loader.load(); }
+                    /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+                    public xw_plus_b(Pointer p) { super(p); }
+                    /** Native array allocator. Access with {@link Pointer#position(long)}. */
+                    public xw_plus_b(long size) { super((Pointer)null); allocateArray(size); }
+                    private native void allocateArray(long size);
+                    @Override public xw_plus_b position(long position) {
+                        return (xw_plus_b)super.position(position);
+                    }
+                
                                                                                     public xw_plus_b() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+                @Namespace("sd::ops") public static class xw_plus_b_bp extends DeclarableCustomOp {
+                    static { Loader.load(); }
+                    /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+                    public xw_plus_b_bp(Pointer p) { super(p); }
+                    /** Native array allocator. Access with {@link Pointer#position(long)}. */
+                    public xw_plus_b_bp(long size) { super((Pointer)null); allocateArray(size); }
+                    private native void allocateArray(long size);
+                    @Override public xw_plus_b_bp position(long position) {
+                        return (xw_plus_b_bp)super.position(position);
+                    }
+                
+                                                                                    public xw_plus_b_bp() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
@@ -18762,7 +19221,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Input - NDArray, output - NDArray with the same shape.
          */
 //         #if NOT_EXCLUDED(OP_stop_gradient)
-        @Namespace("nd4j::ops") public static class stop_gradient extends DeclarableOp {
+        @Namespace("sd::ops") public static class stop_gradient extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public stop_gradient(Pointer p) { super(p); }
@@ -18780,7 +19239,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_parallel_stack)
-        @Namespace("nd4j::ops") public static class parallel_stack extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class parallel_stack extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public parallel_stack(Pointer p) { super(p); }
@@ -18810,7 +19269,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  returns a normalized pair mean and variance with the same shapes as input
          */
 //         #if NOT_EXCLUDED(OP_normalize_moments)
-        @Namespace("nd4j::ops") public static class normalize_moments extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class normalize_moments extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public normalize_moments(Pointer p) { super(p); }
@@ -18846,7 +19305,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *     - shift (if was given by input floating param)
          */
 //         #if NOT_EXCLUDED(OP_sufficient_statistics)
-        @Namespace("nd4j::ops") public static class sufficient_statistics extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sufficient_statistics extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sufficient_statistics(Pointer p) { super(p); }
@@ -18873,7 +19332,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  return value - a tensor with the same shape as target or input
          */
 //         #if NOT_EXCLUDED(OP_weighted_cross_entropy_with_logits)
-        @Namespace("nd4j::ops") public static class weighted_cross_entropy_with_logits extends DeclarableOp {
+        @Namespace("sd::ops") public static class weighted_cross_entropy_with_logits extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public weighted_cross_entropy_with_logits(Pointer p) { super(p); }
@@ -18901,7 +19360,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  return value - a tensor with the same shape as target or input
          */
 //         #if NOT_EXCLUDED(OP_dropout)
-        @Namespace("nd4j::ops") public static class dropout extends DeclarableOp {
+        @Namespace("sd::ops") public static class dropout extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dropout(Pointer p) { super(p); }
@@ -18918,7 +19377,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_dropout_bp)
-        @Namespace("nd4j::ops") public static class dropout_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class dropout_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public dropout_bp(Pointer p) { super(p); }
@@ -18943,7 +19402,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                 3 - beta value
          */
 //         #if NOT_EXCLUDED(OP_alpha_dropout_bp)
-        @Namespace("nd4j::ops") public static class alpha_dropout_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class alpha_dropout_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public alpha_dropout_bp(Pointer p) { super(p); }
@@ -18979,7 +19438,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_bincount)
-        @Namespace("nd4j::ops") public static class bincount extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class bincount extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public bincount(Pointer p) { super(p); }
@@ -19007,7 +19466,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    vector with broadcasted shape
          */
 //         #if NOT_EXCLUDED(OP_broadcast_dynamic_shape)
-        @Namespace("nd4j::ops") public static class broadcast_dynamic_shape extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class broadcast_dynamic_shape extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public broadcast_dynamic_shape(Pointer p) { super(p); }
@@ -19035,7 +19494,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * M x M matricies
          */
 //         #if NOT_EXCLUDED(OP_matrix_determinant)
-        @Namespace("nd4j::ops") public static class matrix_determinant extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class matrix_determinant extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_determinant(Pointer p) { super(p); }
@@ -19064,7 +19523,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          */
 
 //         #if NOT_EXCLUDED(OP_log_matrix_determinant)
-        @Namespace("nd4j::ops") public static class log_matrix_determinant extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class log_matrix_determinant extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_matrix_determinant(Pointer p) { super(p); }
@@ -19093,7 +19552,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          */
 
 //         #if NOT_EXCLUDED(OP_logdet)
-        @Namespace("nd4j::ops") public static class logdet extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class logdet extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public logdet(Pointer p) { super(p); }
@@ -19111,6 +19570,76 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
         /**
+         * matrix_solve_ls op (lstsq) - solves one or more linear least-squares problems.
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * N) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * float args:
+         *    0 - l2_regularizer (default 0. and only for 0 implemented)
+         *
+         * boolean args:
+         *    0 - fast - default is true (optional) - use Cholesky decomposition instead QR decomposition of matricies.
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * N * K) with solutions
+         *
+         */
+//         #if NOT_EXCLUDED(OP_lstsq)
+        @Namespace("sd::ops") public static class lstsq extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public lstsq(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public lstsq(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public lstsq position(long position) {
+                return (lstsq)super.position(position);
+            }
+        
+                                                                                    public lstsq() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
+
+        /* solve_ls - analog of lstsq op with another solution approach
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * N) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * float args:
+         *    0 - l2_regularizer (default 0. and only for 0 implemented)
+         *
+         * boolean args:
+         *    0 - fast - default is true (optional) - use Cholesky decomposition instead QR decomposition of matricies.
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * N * K) with solutions
+         *
+         * Note: if fast is false - then l2_regularizer arg is ignored and used lstsq method due QR decomposition
+         * */
+//         #if NOT_EXCLUDED(OP_solve_ls)
+                @Namespace("sd::ops") public static class solve_ls extends DeclarableCustomOp {
+                    static { Loader.load(); }
+                    /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+                    public solve_ls(Pointer p) { super(p); }
+                    /** Native array allocator. Access with {@link Pointer#position(long)}. */
+                    public solve_ls(long size) { super((Pointer)null); allocateArray(size); }
+                    private native void allocateArray(long size);
+                    @Override public solve_ls position(long position) {
+                        return (solve_ls)super.position(position);
+                    }
+                
+                                                                                    public solve_ls() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
+
+        /**
          * matrix_inverse op. - make inverse for all 2D square matricies found in the input tensor
          *
          * input params:
@@ -19120,7 +19649,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with dimension (x * y * z * ::: * M * M) with inverse M x M matricies in it
          */
 //         #if NOT_EXCLUDED(OP_matrix_inverse)
-        @Namespace("nd4j::ops") public static class matrix_inverse extends DeclarableOp {
+        @Namespace("sd::ops") public static class matrix_inverse extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_inverse(Pointer p) { super(p); }
@@ -19153,7 +19682,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          */
 //         #if NOT_EXCLUDED(OP_triangular_solve)
-        @Namespace("nd4j::ops") public static class triangular_solve extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class triangular_solve extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public triangular_solve(Pointer p) { super(p); }
@@ -19165,6 +19694,38 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
             }
         
                                                                                     public triangular_solve() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
+//         #endif
+
+        /**
+         * solve op. - solve systems of linear equations - general method.
+         *
+         * input params:
+         *    0 - the tensor with dimension (x * y * z * ::: * M * M) - left parts of equations
+         *    1 - the tensor with dimension (x * y * z * ::: * M * K) - right parts of equations
+         *
+         * boolean args:
+         *    0 - adjoint - default is false (optional) - indicate input matrix or its adjoint (hermitian addition) should be used
+         *
+         * return value:
+         *    tensor with dimension (x * y * z * ::: * M * K) with solutions
+         *
+         */
+//         #if NOT_EXCLUDED(OP_solve)
+        @Namespace("sd::ops") public static class solve extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public solve(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public solve(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public solve position(long position) {
+                return (solve)super.position(position);
+            }
+        
+                                                                                    public solve() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
@@ -19185,7 +19746,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          */
 
 //         #if NOT_EXCLUDED(OP_matrix_inverse)
-        @Namespace("nd4j::ops") public static class lu extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lu extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lu(Pointer p) { super(p); }
@@ -19213,7 +19774,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    (N+1)D tensor filled by 0 and 1 accordingly the mask
          */
 //         #if NOT_EXCLUDED(OP_sequence_mask)
-        @Namespace("nd4j::ops") public static class sequence_mask extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sequence_mask extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sequence_mask(Pointer p) { super(p); }
@@ -19241,7 +19802,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          */
 
 //         #if NOT_EXCLUDED(OP_segment_max)
-        @Namespace("nd4j::ops") public static class segment_max extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_max extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_max(Pointer p) { super(p); }
@@ -19258,7 +19819,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_segment_max_bp)
-        @Namespace("nd4j::ops") public static class segment_max_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_max_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_max_bp(Pointer p) { super(p); }
@@ -19286,7 +19847,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with min values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_segment_min)
-        @Namespace("nd4j::ops") public static class segment_min extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_min extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_min(Pointer p) { super(p); }
@@ -19303,7 +19864,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_segment_min_bp)
-        @Namespace("nd4j::ops") public static class segment_min_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_min_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_min_bp(Pointer p) { super(p); }
@@ -19331,7 +19892,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with sum of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_segment_sum)
-        @Namespace("nd4j::ops") public static class segment_sum extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_sum extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_sum(Pointer p) { super(p); }
@@ -19348,7 +19909,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_segment_sum_bp)
-        @Namespace("nd4j::ops") public static class segment_sum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_sum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_sum_bp(Pointer p) { super(p); }
@@ -19376,7 +19937,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with product of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_segment_prod)
-        @Namespace("nd4j::ops") public static class segment_prod extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_prod extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_prod(Pointer p) { super(p); }
@@ -19393,7 +19954,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_segment_prod_bp)
-        @Namespace("nd4j::ops") public static class segment_prod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_prod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_prod_bp(Pointer p) { super(p); }
@@ -19420,7 +19981,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with average of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_segment_mean)
-        @Namespace("nd4j::ops") public static class segment_mean extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_mean extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_mean(Pointer p) { super(p); }
@@ -19437,7 +19998,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_segment_mean_bp)
-        @Namespace("nd4j::ops") public static class segment_mean_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class segment_mean_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public segment_mean_bp(Pointer p) { super(p); }
@@ -19465,7 +20026,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with max values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_max)
-        @Namespace("nd4j::ops") public static class unsorted_segment_max extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_max extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_max(Pointer p) { super(p); }
@@ -19482,7 +20043,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_max_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_max_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_max_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_max_bp(Pointer p) { super(p); }
@@ -19513,7 +20074,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with min values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_min_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_min extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_min extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_min(Pointer p) { super(p); }
@@ -19530,7 +20091,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_min_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_min_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_min_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_min_bp(Pointer p) { super(p); }
@@ -19561,7 +20122,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with sum of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_sum)
-        @Namespace("nd4j::ops") public static class unsorted_segment_sum extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_sum extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_sum(Pointer p) { super(p); }
@@ -19578,7 +20139,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_sum_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_sum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_sum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_sum_bp(Pointer p) { super(p); }
@@ -19609,7 +20170,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with product of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_prod)
-        @Namespace("nd4j::ops") public static class unsorted_segment_prod extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_prod extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_prod(Pointer p) { super(p); }
@@ -19626,7 +20187,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_prod_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_prod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_prod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_prod_bp(Pointer p) { super(p); }
@@ -19657,7 +20218,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with average of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_mean)
-        @Namespace("nd4j::ops") public static class unsorted_segment_mean extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_mean extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_mean(Pointer p) { super(p); }
@@ -19674,7 +20235,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_mean_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_mean_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_mean_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_mean_bp(Pointer p) { super(p); }
@@ -19705,7 +20266,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    tensor with average of values according to indices sets.
          */
 //         #if NOT_EXCLUDED(OP_unsorted_segment_sqrt)
-        @Namespace("nd4j::ops") public static class unsorted_segment_sqrt_n extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_sqrt_n extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_sqrt_n(Pointer p) { super(p); }
@@ -19722,7 +20283,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_unsorted_segment_sqrt_n_bp)
-        @Namespace("nd4j::ops") public static class unsorted_segment_sqrt_n_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class unsorted_segment_sqrt_n_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public unsorted_segment_sqrt_n_bp(Pointer p) { super(p); }
@@ -19755,7 +20316,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    6 - padding_type - 0 - equiv 'VALID', 1 - 'SAME'
          */
 //         #if NOT_EXCLUDED(OP_extract_image_patches)
-        @Namespace("nd4j::ops") public static class extract_image_patches extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class extract_image_patches extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public extract_image_patches(Pointer p) { super(p); }
@@ -19786,7 +20347,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - 4D tensor with same shape as images (input 0)
          */
 //         #if NOT_EXCLUDED(OP_draw_bounding_boxes)
-        @Namespace("nd4j::ops") public static class draw_bounding_boxes extends DeclarableOp {
+        @Namespace("sd::ops") public static class draw_bounding_boxes extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public draw_bounding_boxes(Pointer p) { super(p); }
@@ -19822,7 +20383,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with the same shape as input.
          */
 //         #if NOT_EXCLUDED(OP_roll)
-        @Namespace("nd4j::ops") public static class roll extends DeclarableOp {
+        @Namespace("sd::ops") public static class roll extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public roll(Pointer p) { super(p); }
@@ -19851,7 +20412,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - 1D NDArray with the same type as input and length as given with numOfElements param.
          */
 //         #if NOT_EXCLUDED(OP_lin_space)
-        @Namespace("nd4j::ops") public static class lin_space extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class lin_space extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lin_space(Pointer p) { super(p); }
@@ -19889,7 +20450,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with reduces shape accordingly to axes (the scalar in default case).
          */
 //         #if NOT_EXCLUDED(OP_reduce_sum)
-        @Namespace("nd4j::ops") public static class reduce_sum extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_sum extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_sum(Pointer p) { super(p); }
@@ -19907,7 +20468,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reduce_sum_bp)
-        @Namespace("nd4j::ops") public static class reduce_sum_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_sum_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_sum_bp(Pointer p) { super(p); }
@@ -19945,7 +20506,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with reduces shape accordingly to axes (the scalar in default case).
          */
 //         #if NOT_EXCLUDED(OP_reduce_prod)
-        @Namespace("nd4j::ops") public static class reduce_prod extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_prod extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_prod(Pointer p) { super(p); }
@@ -19963,7 +20524,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reduce_prod_bp)
-        @Namespace("nd4j::ops") public static class reduce_prod_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_prod_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_prod_bp(Pointer p) { super(p); }
@@ -19996,7 +20557,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated mins
         */
 //         #if NOT_EXCLUDED(OP_reduce_min)
-        @Namespace("nd4j::ops") public static class reduce_min extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_min extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_min(Pointer p) { super(p); }
@@ -20013,7 +20574,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_min_bp)
-        @Namespace("nd4j::ops") public static class reduce_min_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_min_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_min_bp(Pointer p) { super(p); }
@@ -20046,7 +20607,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated maxes
         */
 //         #if NOT_EXCLUDED(OP_reduce_max)
-        @Namespace("nd4j::ops") public static class reduce_max extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_max extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_max(Pointer p) { super(p); }
@@ -20063,7 +20624,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_max_bp)
-        @Namespace("nd4j::ops") public static class reduce_max_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_max_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_max_bp(Pointer p) { super(p); }
@@ -20096,7 +20657,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated norm1
         */
 //         #if NOT_EXCLUDED(OP_reduce_norm1)
-        @Namespace("nd4j::ops") public static class reduce_norm1 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm1 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm1(Pointer p) { super(p); }
@@ -20113,7 +20674,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_norm1_bp)
-        @Namespace("nd4j::ops") public static class reduce_norm1_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm1_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm1_bp(Pointer p) { super(p); }
@@ -20146,7 +20707,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated norm2
         */
 //         #if NOT_EXCLUDED(OP_reduce_norm2)
-        @Namespace("nd4j::ops") public static class reduce_norm2 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm2 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm2(Pointer p) { super(p); }
@@ -20163,7 +20724,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_norm2_bp)
-        @Namespace("nd4j::ops") public static class reduce_norm2_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm2_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm2_bp(Pointer p) { super(p); }
@@ -20197,7 +20758,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated norm
         */
 //         #if NOT_EXCLUDED(OP_reduce_sqnorm)
-        @Namespace("nd4j::ops") public static class reduce_sqnorm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_sqnorm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_sqnorm(Pointer p) { super(p); }
@@ -20214,7 +20775,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_sqnorm_bp)
-        @Namespace("nd4j::ops") public static class reduce_sqnorm_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_sqnorm_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_sqnorm_bp(Pointer p) { super(p); }
@@ -20247,7 +20808,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated norm
         */
 //         #if NOT_EXCLUDED(OP_reduce_norm_max)
-        @Namespace("nd4j::ops") public static class reduce_norm_max extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm_max extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm_max(Pointer p) { super(p); }
@@ -20264,7 +20825,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_reduce_norm_max_bp)
-        @Namespace("nd4j::ops") public static class reduce_norm_max_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_norm_max_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_norm_max_bp(Pointer p) { super(p); }
@@ -20297,7 +20858,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *    reduced tensor with calculated means
         */
 //         #if NOT_EXCLUDED(OP_reduce_mean)
-        @Namespace("nd4j::ops") public static class reduce_mean extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_mean extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_mean(Pointer p) { super(p); }
@@ -20315,7 +20876,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reduce_mean_bp)
-        @Namespace("nd4j::ops") public static class reduce_mean_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_mean_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_mean_bp(Pointer p) { super(p); }
@@ -20347,7 +20908,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * output array:
         *    reduced tensor with calculated means
         */
-        @Namespace("nd4j::ops") public static class reduce_variance extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_variance extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_variance(Pointer p) { super(p); }
@@ -20362,7 +20923,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class reduce_variance_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_variance_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_variance_bp(Pointer p) { super(p); }
@@ -20393,7 +20954,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * output array:
         *    reduced tensor with calculated means
         */
-        @Namespace("nd4j::ops") public static class reduce_stdev extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_stdev extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_stdev(Pointer p) { super(p); }
@@ -20408,7 +20969,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class reduce_stdev_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_stdev_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_stdev_bp(Pointer p) { super(p); }
@@ -20442,7 +21003,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         */
 
 //         #if NOT_EXCLUDED(OP_reduce_dot_bp)
-        @Namespace("nd4j::ops") public static class reduce_dot_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_dot_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_dot_bp(Pointer p) { super(p); }
@@ -20481,7 +21042,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with reduces shape accordingly to axes (the scalar in default case).
          */
 //         #if NOT_EXCLUDED(OP_reduce_logsumexp)
-        @Namespace("nd4j::ops") public static class reduce_logsumexp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reduce_logsumexp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reduce_logsumexp(Pointer p) { super(p); }
@@ -20517,7 +21078,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *   the 4D-Tensor with resized to crop_size images given - float type
         */
 //         #if NOT_EXCLUDED(OP_crop_and_resize)
-        @Namespace("nd4j::ops") public static class crop_and_resize extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class crop_and_resize extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public crop_and_resize(Pointer p) { super(p); }
@@ -20552,7 +21113,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         */
 
 //         #if NOT_EXCLUDED(OP_resize_bilinear)
-        @Namespace("nd4j::ops") public static class resize_bilinear extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class resize_bilinear extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public resize_bilinear(Pointer p) { super(p); }
@@ -20587,7 +21148,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         */
 
 //         #if NOT_EXCLUDED(OP_resize_nearest_neighbor)
-        @Namespace("nd4j::ops") public static class resize_nearest_neighbor extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class resize_nearest_neighbor extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public resize_nearest_neighbor(Pointer p) { super(p); }
@@ -20616,7 +21177,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *
         */
 //         #if NOT_EXCLUDED(OP_resize_bicubic)
-        @Namespace("nd4j::ops") public static class resize_bicubic extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class resize_bicubic extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public resize_bicubic(Pointer p) { super(p); }
@@ -20651,7 +21212,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         *
         */
 //         #if NOT_EXCLUDED(OP_resize_area)
-        @Namespace("nd4j::ops") public static class resize_area extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class resize_area extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public resize_area(Pointer p) { super(p); }
@@ -20689,7 +21250,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         */
 
 //         #if NOT_EXCLUDED(OP_image_resize)
-        @Namespace("nd4j::ops") public static class image_resize extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class image_resize extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public image_resize(Pointer p) { super(p); }
@@ -20722,7 +21283,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         */
 
 //         #if NOT_EXCLUDED(OP_matrix_band_part)
-        @Namespace("nd4j::ops") public static class matrix_band_part extends DeclarableOp {
+        @Namespace("sd::ops") public static class matrix_band_part extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matrix_band_part(Pointer p) { super(p); }
@@ -20741,7 +21302,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 //         #if NOT_EXCLUDED(OP_Assert)
-        @Namespace("nd4j::ops") public static class Assert extends DeclarableOp {
+        @Namespace("sd::ops") public static class Assert extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Assert(Pointer p) { super(p); }
@@ -20775,7 +21336,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *
          * */
 //         #if NOT_EXCLUDED(OP_image_non_max_suppression)
-        @Namespace("nd4j::ops") public static class non_max_suppression extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class non_max_suppression extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public non_max_suppression(Pointer p) { super(p); }
@@ -20792,7 +21353,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                 }
 //         #endif
 //         #if NOT_EXCLUDED(OP_image_non_max_suppression_v3)
-                @Namespace("nd4j::ops") public static class non_max_suppression_v3 extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class non_max_suppression_v3 extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public non_max_suppression_v3(Pointer p) { super(p); }
@@ -20825,7 +21386,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *     0 - 1D integer tensor with shape [M], epresenting the selected indices from the overlaps tensor, where M <= max_output_size
          * */
 //         #if NOT_EXCLUDED(OP_image_non_max_suppression_overlaps)
-        @Namespace("nd4j::ops") public static class non_max_suppression_overlaps extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class non_max_suppression_overlaps extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public non_max_suppression_overlaps(Pointer p) { super(p); }
@@ -20850,7 +21411,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * output - lower triangular matrix (matricies when rank > 2) with the same shape as input.
          * */
 //         #if NOT_EXCLUDED(OP_cholesky)
-        @Namespace("nd4j::ops") public static class cholesky extends DeclarableOp {
+        @Namespace("sd::ops") public static class cholesky extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cholesky(Pointer p) { super(p); }
@@ -20876,7 +21437,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with the same shape as input
          */
 //         #if NOT_EXCLUDED(OP_nth_element)
-        @Namespace("nd4j::ops") public static class nth_element extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class nth_element extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public nth_element(Pointer p) { super(p); }
@@ -20897,7 +21458,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * This op checks for Inf/NaN values within input array, and throws exception if there's at least one
          */
 //         #if NOT_EXCLUDED(OP_check_numerics)
-        @Namespace("nd4j::ops") public static class check_numerics extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class check_numerics extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public check_numerics(Pointer p) { super(p); }
@@ -20929,7 +21490,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with the same shape as input
          */
 //         #if NOT_EXCLUDED(OP_fake_quant_with_min_max_vars)
-        @Namespace("nd4j::ops") public static class fake_quant_with_min_max_vars extends DeclarableOp {
+        @Namespace("sd::ops") public static class fake_quant_with_min_max_vars extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public fake_quant_with_min_max_vars(Pointer p) { super(p); }
@@ -20962,7 +21523,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with the same shape as input
          */
 //         #if NOT_EXCLUDED(OP_fake_quant_with_min_max_vars_per_channel)
-                @Namespace("nd4j::ops") public static class fake_quant_with_min_max_vars_per_channel extends DeclarableOp {
+                @Namespace("sd::ops") public static class fake_quant_with_min_max_vars_per_channel extends DeclarableOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public fake_quant_with_min_max_vars_per_channel(Pointer p) { super(p); }
@@ -20991,7 +21552,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - NDArray with the same shape as input and type uint8
          */
 //         #if NOT_EXCLUDED(OP_compare_and_bitpack)
-        @Namespace("nd4j::ops") public static class compare_and_bitpack extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class compare_and_bitpack extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public compare_and_bitpack(Pointer p) { super(p); }
@@ -21040,7 +21601,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <ops/declarable/headers/common.h>
 //         #if NOT_EXCLUDED(OP_permute)
-        @Namespace("nd4j::ops") public static class permute extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class permute extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public permute(Pointer p) { super(p); }
@@ -21054,11 +21615,11 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public permute() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
-                                                                                }   
+                                                                                }
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reshapeas)
-        @Namespace("nd4j::ops") public static class reshapeas extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reshapeas extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reshapeas(Pointer p) { super(p); }
@@ -21072,11 +21633,11 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public reshapeas() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
-                                                                                }      
+                                                                                }
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_transpose)
-        @Namespace("nd4j::ops") public static class transpose extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class transpose extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public transpose(Pointer p) { super(p); }
@@ -21094,7 +21655,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_shape_of)
-        @Namespace("nd4j::ops") public static class shape_of extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class shape_of extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public shape_of(Pointer p) { super(p); }
@@ -21112,7 +21673,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_shapes_of)
-        @Namespace("nd4j::ops") public static class shapes_of extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class shapes_of extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public shapes_of(Pointer p) { super(p); }
@@ -21130,7 +21691,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_squeeze)
-        @Namespace("nd4j::ops") public static class squeeze extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class squeeze extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public squeeze(Pointer p) { super(p); }
@@ -21148,7 +21709,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_expand_dims)
-        @Namespace("nd4j::ops") public static class expand_dims extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class expand_dims extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public expand_dims(Pointer p) { super(p); }
@@ -21166,7 +21727,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_reshape)
-        @Namespace("nd4j::ops") public static class reshape extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class reshape extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public reshape(Pointer p) { super(p); }
@@ -21184,7 +21745,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_size_at)
-        @Namespace("nd4j::ops") public static class size_at extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class size_at extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public size_at(Pointer p) { super(p); }
@@ -21211,7 +21772,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_order)
-        @Namespace("nd4j::ops") public static class order extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class order extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public order(Pointer p) { super(p); }
@@ -21234,7 +21795,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_tile_to_shape)
-        @Namespace("nd4j::ops") public static class tile_to_shape extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tile_to_shape extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tile_to_shape(Pointer p) { super(p); }
@@ -21249,7 +21810,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class tile_to_shape_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tile_to_shape_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tile_to_shape_bp(Pointer p) { super(p); }
@@ -21274,7 +21835,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *  shape array - array containing shape be broadcasted to
          */
 //         #if NOT_EXCLUDED(OP_broadcast_to)
-        @Namespace("nd4j::ops") public static class broadcast_to extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class broadcast_to extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public broadcast_to(Pointer p) { super(p); }
@@ -21293,7 +21854,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 
 //         #if NOT_EXCLUDED(OP_evaluate_reduction_shape)
-        @Namespace("nd4j::ops") public static class evaluate_reduction_shape extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class evaluate_reduction_shape extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public evaluate_reduction_shape(Pointer p) { super(p); }
@@ -21323,7 +21884,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    initialization option
          */
 //         #if NOT_EXCLUDED(OP_create)
-        @Namespace("nd4j::ops") public static class create extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class create extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public create(Pointer p) { super(p); }
@@ -21372,7 +21933,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <ops/declarable/headers/common.h>
 //         #if NOT_EXCLUDED(OP_set_seed)
-        @Namespace("nd4j::ops") public static class set_seed extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class set_seed extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public set_seed(Pointer p) { super(p); }
@@ -21390,7 +21951,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_get_seed)
-        @Namespace("nd4j::ops") public static class get_seed extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class get_seed extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public get_seed(Pointer p) { super(p); }
@@ -21420,7 +21981,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - uniformly distributed values of given type (between min and max)
          */
 //         #if NOT_EXCLUDED(OP_randomuniform)
-        @Namespace("nd4j::ops") public static class randomuniform extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class randomuniform extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public randomuniform(Pointer p) { super(p); }
@@ -21450,7 +22011,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *    0 - 2D ndarray with the drawn samples of shape [batch_size, num_samples]
          */
 //         #if NOT_EXCLUDED(OP_random_multinomial)
-        @Namespace("nd4j::ops") public static class random_multinomial extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_multinomial extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_multinomial(Pointer p) { super(p); }
@@ -21468,7 +22029,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_random_normal)
-        @Namespace("nd4j::ops") public static class random_normal extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_normal extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_normal(Pointer p) { super(p); }
@@ -21486,7 +22047,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_random_bernoulli)
-        @Namespace("nd4j::ops") public static class random_bernoulli extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_bernoulli extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_bernoulli(Pointer p) { super(p); }
@@ -21504,7 +22065,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_random_exponential)
-        @Namespace("nd4j::ops") public static class random_exponential extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_exponential extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_exponential(Pointer p) { super(p); }
@@ -21522,7 +22083,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_random_crop)
-        @Namespace("nd4j::ops") public static class random_crop extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_crop extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_crop(Pointer p) { super(p); }
@@ -21543,7 +22104,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * random_gamma op.
          */
 //         #if NOT_EXCLUDED(OP_random_gamma)
-        @Namespace("nd4j::ops") public static class random_gamma extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_gamma extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_gamma(Pointer p) { super(p); }
@@ -21564,7 +22125,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * random_poisson op.
          */
 //         #if NOT_EXCLUDED(OP_random_poisson)
-        @Namespace("nd4j::ops") public static class random_poisson extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class random_poisson extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public random_poisson(Pointer p) { super(p); }
@@ -21614,7 +22175,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include <ops/declarable/headers/common.h>
 
 //         #if NOT_EXCLUDED(OP_softmax)
-        @Namespace("nd4j::ops") public static class softmax extends DeclarableOp {
+        @Namespace("sd::ops") public static class softmax extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax(Pointer p) { super(p); }
@@ -21629,7 +22190,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class softmax_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class softmax_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax_bp(Pointer p) { super(p); }
@@ -21661,7 +22222,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * output - 4D array
          */
 //         #if NOT_EXCLUDED(OP_lrn)
-        @Namespace("nd4j::ops") public static class lrn extends DeclarableOp {
+        @Namespace("sd::ops") public static class lrn extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lrn(Pointer p) { super(p); }
@@ -21695,7 +22256,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * output - next approximation as 4D array
          */
 //         #if NOT_EXCLUDED(OP_lrn)
-        @Namespace("nd4j::ops") public static class lrn_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class lrn_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public lrn_bp(Pointer p) { super(p); }
@@ -21732,7 +22293,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * 0: epsilon
         */
 //         #if NOT_EXCLUDED(OP_batchnorm)
-        @Namespace("nd4j::ops") public static class batchnorm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class batchnorm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public batchnorm(Pointer p) { super(p); }
@@ -21775,7 +22336,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         * dL/dBeta, optional
         */
 //         #if NOT_EXCLUDED(OP_batchnorm)
-        @Namespace("nd4j::ops") public static class batchnorm_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class batchnorm_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public batchnorm_bp(Pointer p) { super(p); }
@@ -21804,7 +22365,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: optional, learning rate
          */
 //         #if NOT_EXCLUDED(OP_apply_sgd)
-        @Namespace("nd4j::ops") public static class apply_sgd extends DeclarableOp {
+        @Namespace("sd::ops") public static class apply_sgd extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public apply_sgd(Pointer p) { super(p); }
@@ -21842,7 +22403,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: isTraining, may have two values: zero -> inference, unity -> training
          */
 //         #if NOT_EXCLUDED(OP_fused_batch_norm)
-        @Namespace("nd4j::ops") public static class fused_batch_norm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class fused_batch_norm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public fused_batch_norm(Pointer p) { super(p); }
@@ -21860,7 +22421,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_log_softmax)
-        @Namespace("nd4j::ops") public static class log_softmax extends DeclarableOp {
+        @Namespace("sd::ops") public static class log_softmax extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_softmax(Pointer p) { super(p); }
@@ -21875,7 +22436,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class log_softmax_bp extends DeclarableOp {
+        @Namespace("sd::ops") public static class log_softmax_bp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_softmax_bp(Pointer p) { super(p); }
@@ -21896,7 +22457,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         /**
          * relu_layer = relu(x*w + b)
          */
-        @Namespace("nd4j::ops") public static class relu_layer extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class relu_layer extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public relu_layer(Pointer p) { super(p); }
@@ -21916,11 +22477,11 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * applies layer normalization to input
          * y = g * standardize(x) + b
          *
-         * see nd4j::ops::standardize
+         * see sd::ops::standardize
          *
          */
 //         #if NOT_EXCLUDED(OP_layer_norm)
-                @Namespace("nd4j::ops") public static class layer_norm extends DeclarableOp {
+                @Namespace("sd::ops") public static class layer_norm extends DeclarableOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public layer_norm(Pointer p) { super(p); }
@@ -21935,7 +22496,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-                @Namespace("nd4j::ops") public static class layer_norm_bp extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class layer_norm_bp extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public layer_norm_bp(Pointer p) { super(p); }
@@ -21984,7 +22545,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: OPTIONAL; Attention weights of shape [batchSize, timesteps, queryCount] or [batchSize, numHeads, timesteps, queryCount]
          */
 //         #if NOT_EXCLUDED(OP_dot_product_attention)
-                @Namespace("nd4j::ops") public static class dot_product_attention extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class dot_product_attention extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public dot_product_attention(Pointer p) { super(p); }
@@ -21999,7 +22560,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-                @Namespace("nd4j::ops") public static class dot_product_attention_bp extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class dot_product_attention_bp extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public dot_product_attention_bp(Pointer p) { super(p); }
@@ -22047,7 +22608,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: OPTIONAL; Attention weights of shape [batchSize, numHeads, timesteps, queryCount]
          */
 //         #if NOT_EXCLUDED(OP_multi_head_dot_product_attention)
-                @Namespace("nd4j::ops") public static class multi_head_dot_product_attention extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class multi_head_dot_product_attention extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public multi_head_dot_product_attention(Pointer p) { super(p); }
@@ -22062,7 +22623,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-                @Namespace("nd4j::ops") public static class multi_head_dot_product_attention_bp extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class multi_head_dot_product_attention_bp extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public multi_head_dot_product_attention_bp(Pointer p) { super(p); }
@@ -22126,7 +22687,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 1: transB (where applicable)
          */
 //         #if NOT_EXCLUDED(OP_matmul)
-        @Namespace("nd4j::ops") public static class matmul extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class matmul extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matmul(Pointer p) { super(p); }
@@ -22141,7 +22702,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class matmul_bp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class matmul_bp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public matmul_bp(Pointer p) { super(p); }
@@ -22169,7 +22730,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * IArgs[1]... axes values for second array
          */
 //         #if NOT_EXCLUDED(OP_tensormmul)
-        @Namespace("nd4j::ops") public static class tensormmul extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class tensormmul extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public tensormmul(Pointer p) { super(p); }
@@ -22183,7 +22744,22 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     public tensormmul() { super((Pointer)null); allocate(); }
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
-                                                                                }   
+                                                                                }
+        @Namespace("sd::ops") public static class tensormmul_bp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public tensormmul_bp(Pointer p) { super(p); }
+            /** Native array allocator. Access with {@link Pointer#position(long)}. */
+            public tensormmul_bp(long size) { super((Pointer)null); allocateArray(size); }
+            private native void allocateArray(long size);
+            @Override public tensormmul_bp position(long position) {
+                return (tensormmul_bp)super.position(position);
+            }
+        
+                                                                                    public tensormmul_bp() { super((Pointer)null); allocate(); }
+                                                                                    private native void allocate();
+                                                                                    public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+                                                                                }
 //         #endif
 
         /**
@@ -22191,7 +22767,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * Math is: y += a * x;
          */
 //         #if NOT_EXCLUDED(OP_axpy)
-        @Namespace("nd4j::ops") public static class axpy extends DeclarableOp {
+        @Namespace("sd::ops") public static class axpy extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public axpy(Pointer p) { super(p); }
@@ -22222,7 +22798,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: M, N, K, ldA, ldB, ldC should be equal for all matrices within batch.
          */
 //         #if NOT_EXCLUDED(OP_batched_gemm)
-        @Namespace("nd4j::ops") public static class batched_gemm extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class batched_gemm extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public batched_gemm(Pointer p) { super(p); }
@@ -22259,7 +22835,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *            Recommended value is 16. 
          */
 //         #if NOT_EXCLUDED(OP_svd)
-        @Namespace("nd4j::ops") public static class svd extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class svd extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public svd(Pointer p) { super(p); }
@@ -22303,7 +22879,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //
 // #include <ops/declarable/headers/common.h>
 //         #if NOT_EXCLUDED(OP_test_output_reshape)
-        @Namespace("nd4j::ops") public static class test_output_reshape extends DeclarableOp {
+        @Namespace("sd::ops") public static class test_output_reshape extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public test_output_reshape(Pointer p) { super(p); }
@@ -22321,7 +22897,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_test_scalar)
-        @Namespace("nd4j::ops") public static class test_scalar extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class test_scalar extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public test_scalar(Pointer p) { super(p); }
@@ -22339,7 +22915,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_testreduction)
-        @Namespace("nd4j::ops") public static class testreduction extends DeclarableReductionOp {
+        @Namespace("sd::ops") public static class testreduction extends DeclarableReductionOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public testreduction(Pointer p) { super(p); }
@@ -22356,7 +22932,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_noop)
-        @Namespace("nd4j::ops") public static class noop extends DeclarableOp {
+        @Namespace("sd::ops") public static class noop extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public noop(Pointer p) { super(p); }
@@ -22374,7 +22950,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_testop2i2o)
-        @Namespace("nd4j::ops") public static class testop2i2o extends DeclarableOp {
+        @Namespace("sd::ops") public static class testop2i2o extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public testop2i2o(Pointer p) { super(p); }
@@ -22392,7 +22968,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 //         #endif
 
 //         #if NOT_EXCLUDED(OP_testcustom)
-        @Namespace("nd4j::ops") public static class testcustom extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class testcustom extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public testcustom(Pointer p) { super(p); }
@@ -22445,7 +23021,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_toggle_bits)
-        @Namespace("nd4j::ops") public static class toggle_bits extends DeclarableOp {
+        @Namespace("sd::ops") public static class toggle_bits extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public toggle_bits(Pointer p) { super(p); }
@@ -22471,7 +23047,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_shift_bits)
-        @Namespace("nd4j::ops") public static class shift_bits extends BroadcastableOp {
+        @Namespace("sd::ops") public static class shift_bits extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public shift_bits(Pointer p) { super(p); }
@@ -22495,7 +23071,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_rshift_bits)
-        @Namespace("nd4j::ops") public static class rshift_bits extends BroadcastableOp {
+        @Namespace("sd::ops") public static class rshift_bits extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public rshift_bits(Pointer p) { super(p); }
@@ -22519,7 +23095,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_cyclic_shift_bits)
-        @Namespace("nd4j::ops") public static class cyclic_shift_bits extends BroadcastableOp {
+        @Namespace("sd::ops") public static class cyclic_shift_bits extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cyclic_shift_bits(Pointer p) { super(p); }
@@ -22543,7 +23119,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_cyclic_rshift_bits)
-        @Namespace("nd4j::ops") public static class cyclic_rshift_bits extends BroadcastableOp {
+        @Namespace("sd::ops") public static class cyclic_rshift_bits extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cyclic_rshift_bits(Pointer p) { super(p); }
@@ -22567,7 +23143,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_bitwise_and)
-        @Namespace("nd4j::ops") public static class bitwise_and extends BroadcastableOp {
+        @Namespace("sd::ops") public static class bitwise_and extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public bitwise_and(Pointer p) { super(p); }
@@ -22591,7 +23167,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_bitwise_or)
-        @Namespace("nd4j::ops") public static class bitwise_or extends BroadcastableOp {
+        @Namespace("sd::ops") public static class bitwise_or extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public bitwise_or(Pointer p) { super(p); }
@@ -22615,7 +23191,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_bitwise_xor)
-        @Namespace("nd4j::ops") public static class bitwise_xor extends BroadcastableOp {
+        @Namespace("sd::ops") public static class bitwise_xor extends BroadcastableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public bitwise_xor(Pointer p) { super(p); }
@@ -22639,7 +23215,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * \tparam T
          */
 //         #if NOT_EXCLUDED(OP_bits_hamming_distance)
-        @Namespace("nd4j::ops") public static class bits_hamming_distance extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class bits_hamming_distance extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public bits_hamming_distance(Pointer p) { super(p); }
@@ -22710,7 +23286,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as logits or just single scalar, depending on reduction mode (see input integer argument)
        */               
 //         #if NOT_EXCLUDED(OP_hinge_loss)
-        @Namespace("nd4j::ops") public static class hinge_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class hinge_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hinge_loss(Pointer p) { super(p); }
@@ -22725,7 +23301,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class hinge_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class hinge_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public hinge_loss_grad(Pointer p) { super(p); }
@@ -22771,7 +23347,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as predictions or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_huber_loss)
-        @Namespace("nd4j::ops") public static class huber_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class huber_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public huber_loss(Pointer p) { super(p); }
@@ -22786,7 +23362,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class huber_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class huber_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public huber_loss_grad(Pointer p) { super(p); }
@@ -22830,7 +23406,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as predictions or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_log_loss)
-        @Namespace("nd4j::ops") public static class log_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class log_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_loss(Pointer p) { super(p); }
@@ -22845,7 +23421,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class log_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class log_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_loss_grad(Pointer p) { super(p); }
@@ -22870,7 +23446,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * output value - a real number with given type (e.g. float or double)
          */
 //         #if NOT_EXCLUDED(OP_l2_loss)
-        @Namespace("nd4j::ops") public static class l2_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class l2_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public l2_loss(Pointer p) { super(p); }
@@ -22910,7 +23486,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          *       Can be an array with the same shape as log_predictions or just single scalar, depending on reduction mode (see input integer argument)
          */
 //         #if NOT_EXCLUDED(OP_log_poisson_loss)
-        @Namespace("nd4j::ops") public static class log_poisson_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class log_poisson_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_poisson_loss(Pointer p) { super(p); }
@@ -22925,7 +23501,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class log_poisson_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class log_poisson_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public log_poisson_loss_grad(Pointer p) { super(p); }
@@ -22957,7 +23533,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: loss value, it is just single scalar, type float.
        */     
 //         #if NOT_EXCLUDED(OP_mean_pairwssqerr_loss)
-        @Namespace("nd4j::ops") public static class mean_pairwssqerr_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mean_pairwssqerr_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mean_pairwssqerr_loss(Pointer p) { super(p); }
@@ -22972,7 +23548,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class mean_pairwssqerr_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mean_pairwssqerr_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mean_pairwssqerr_loss_grad(Pointer p) { super(p); }
@@ -23013,7 +23589,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as predictions or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_mean_sqerr_loss)
-        @Namespace("nd4j::ops") public static class mean_sqerr_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mean_sqerr_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mean_sqerr_loss(Pointer p) { super(p); }
@@ -23028,7 +23604,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class mean_sqerr_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class mean_sqerr_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public mean_sqerr_loss_grad(Pointer p) { super(p); }
@@ -23072,7 +23648,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as logits or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_sigm_cross_entropy_loss)
-        @Namespace("nd4j::ops") public static class sigm_cross_entropy_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sigm_cross_entropy_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sigm_cross_entropy_loss(Pointer p) { super(p); }
@@ -23087,7 +23663,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class sigm_cross_entropy_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sigm_cross_entropy_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sigm_cross_entropy_loss_grad(Pointer p) { super(p); }
@@ -23131,7 +23707,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with shape as in logits except last dimension is equal to unity or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_softmax_cross_entropy_loss)
-        @Namespace("nd4j::ops") public static class softmax_cross_entropy_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class softmax_cross_entropy_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax_cross_entropy_loss(Pointer p) { super(p); }
@@ -23146,7 +23722,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }  
-        @Namespace("nd4j::ops") public static class softmax_cross_entropy_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class softmax_cross_entropy_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax_cross_entropy_loss_grad(Pointer p) { super(p); }
@@ -23187,7 +23763,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as predictions or just single scalar, depending on reduction mode (see input integer argument)
        */      
 //         #if NOT_EXCLUDED(OP_absolute_difference_loss)
-        @Namespace("nd4j::ops") public static class absolute_difference_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class absolute_difference_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public absolute_difference_loss(Pointer p) { super(p); }
@@ -23202,7 +23778,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class absolute_difference_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class absolute_difference_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public absolute_difference_loss_grad(Pointer p) { super(p); }
@@ -23244,7 +23820,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *       Can be an array with the same shape as predictions or just single scalar, depending on reduction mode (see input integer argument)
        */         
 //         #if NOT_EXCLUDED(OP_cosine_distance_loss)
-        @Namespace("nd4j::ops") public static class cosine_distance_loss extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class cosine_distance_loss extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cosine_distance_loss(Pointer p) { super(p); }
@@ -23259,7 +23835,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class cosine_distance_loss_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class cosine_distance_loss_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cosine_distance_loss_grad(Pointer p) { super(p); }
@@ -23292,7 +23868,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: loss values, type float. An array with shape resulting from reducing of logits shape along dimension with classes
        */      
 //         #if NOT_EXCLUDED(OP_softmax_cross_entropy_loss_with_logits)
-        @Namespace("nd4j::ops") public static class softmax_cross_entropy_loss_with_logits extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class softmax_cross_entropy_loss_with_logits extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax_cross_entropy_loss_with_logits(Pointer p) { super(p); }
@@ -23307,7 +23883,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class softmax_cross_entropy_loss_with_logits_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class softmax_cross_entropy_loss_with_logits_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public softmax_cross_entropy_loss_with_logits_grad(Pointer p) { super(p); }
@@ -23337,7 +23913,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        *    0: loss values, type float. Has the same shape as labels
        */      
 //         #if NOT_EXCLUDED(OP_sparse_softmax_cross_entropy_loss_with_logits)
-        @Namespace("nd4j::ops") public static class sparse_softmax_cross_entropy_loss_with_logits extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sparse_softmax_cross_entropy_loss_with_logits extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sparse_softmax_cross_entropy_loss_with_logits(Pointer p) { super(p); }
@@ -23352,7 +23928,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
                                                                                     private native void allocate();
                                                                                     public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
                                                                                 }
-        @Namespace("nd4j::ops") public static class sparse_softmax_cross_entropy_loss_with_logits_grad extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class sparse_softmax_cross_entropy_loss_with_logits_grad extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public sparse_softmax_cross_entropy_loss_with_logits_grad(Pointer p) { super(p); }
@@ -23406,7 +23982,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_double)
-        @Namespace("nd4j::ops") public static class to_double extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_double extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_double(Pointer p) { super(p); }
@@ -23429,7 +24005,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_float16)
-        @Namespace("nd4j::ops") public static class to_float16 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_float16 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_float16(Pointer p) { super(p); }
@@ -23452,7 +24028,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_float32)
-        @Namespace("nd4j::ops") public static class to_float32 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_float32 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_float32(Pointer p) { super(p); }
@@ -23475,7 +24051,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_int32)
-        @Namespace("nd4j::ops") public static class to_int32 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_int32 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_int32(Pointer p) { super(p); }
@@ -23498,7 +24074,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_int64)
-        @Namespace("nd4j::ops") public static class to_int64 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_int64 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_int64(Pointer p) { super(p); }
@@ -23521,7 +24097,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_uint32)
-        @Namespace("nd4j::ops") public static class to_uint32 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_uint32 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_uint32(Pointer p) { super(p); }
@@ -23544,7 +24120,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * PLEASE NOTE: This op is disabled atm, and reserved for future releases.
          */
 //         #if NOT_EXCLUDED(OP_to_uint64)
-        @Namespace("nd4j::ops") public static class to_uint64 extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class to_uint64 extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public to_uint64(Pointer p) { super(p); }
@@ -23571,7 +24147,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * 0: target DataType
          */
 //         #if NOT_EXCLUDED(OP_cast)
-        @Namespace("nd4j::ops") public static class cast extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class cast extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public cast(Pointer p) { super(p); }
@@ -23593,7 +24169,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
          * all as above op
          * */
 //         #if NOT_EXCLUDED(OP_bitcast)
-                @Namespace("nd4j::ops") public static class bitcast extends DeclarableCustomOp {
+                @Namespace("sd::ops") public static class bitcast extends DeclarableCustomOp {
                     static { Loader.load(); }
                     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                     public bitcast(Pointer p) { super(p); }
@@ -23639,10 +24215,10 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #ifndef LIBND4J_CONTEXTBUFFERS_H
 // #define LIBND4J_CONTEXTBUFFERS_H
 
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <execution/ErrorReference.h>
-    @Namespace("nd4j") @NoOffset public static class ContextBuffers extends Pointer {
+    @Namespace("sd") @NoOffset public static class ContextBuffers extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ContextBuffers(Pointer p) { super(p); }
@@ -23725,16 +24301,16 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #include "config.h"
 // #endif
 
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <memory>
-// #include <op_boilerplate.h>
+// #include <system/op_boilerplate.h>
 // #include <memory/Workspace.h>
 // #include <vector>
 // #include <mutex>
 // #include <execution/ContextBuffers.h>
 // #include <execution/ErrorReference.h>
 
-@Namespace("nd4j") @NoOffset public static class LaunchContext extends Pointer {
+@Namespace("sd") @NoOffset public static class LaunchContext extends Pointer {
     static { Loader.load(); }
     /** Native array allocator. Access with {@link Pointer#position(long)}. */
     public LaunchContext(long size) { super((Pointer)null); allocateArray(size); }
@@ -23760,6 +24336,10 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
     	public native int getDeviceID();
     	public native void setDeviceID(int deviceID);
         public native ErrorReference errorReference();
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
 
     	public static native @Cast("bool") boolean isInitialized();
     	public static native void releaseBuffers();
@@ -23805,12 +24385,12 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <unordered_map>
 // #include <vector>
-// #include <dll.h>
-// #include <pointercast.h>
-// #include <DataType.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
+// #include <array/DataType.h>
 // #include <initializer_list>
 
-@Namespace("nd4j") @NoOffset public static class ShapeDescriptor extends Pointer {
+@Namespace("sd") @NoOffset public static class ShapeDescriptor extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public ShapeDescriptor(Pointer p) { super(p); }
@@ -23835,12 +24415,12 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("bool") boolean inheritDtype/*=true*/);
         public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
         private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer dtypeOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
@@ -23853,38 +24433,38 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer dtypeOverride, @Cast("const Nd4jLong*") LongBuffer orderOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] dtypeOverride, @Cast("const Nd4jLong*") long[] orderOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride, orderOverride); }
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] dtypeOverride, @Cast("const Nd4jLong*") long[] orderOverride);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, @Cast("const Nd4jLong") long length) { super((Pointer)null); allocate(type, length); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, @Cast("const Nd4jLong") long length);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, @Cast("const Nd4jLong") long length) { super((Pointer)null); allocate(type, length); }
+        private native void allocate(@Cast("const sd::DataType") int type, @Cast("const Nd4jLong") long length);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews);
         public ShapeDescriptor() { super((Pointer)null); allocate(); }
         private native void allocate();
 
@@ -23892,7 +24472,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         public native @Cast("Nd4jLong") long ews();
         public native @Cast("Nd4jLong") long arrLength();
         public native char order();
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
         public native @Cast("bool") boolean isEmpty();
         public native @Cast("Nd4jLong*") @StdVector LongPointer shape();
         public native @Cast("Nd4jLong*") @StdVector LongPointer strides();
@@ -23911,13 +24491,15 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
         public native @Cast("Nd4jLong*") LongPointer toShapeInfo();
 
 
-        public static native @ByVal ShapeDescriptor emptyDescriptor(@Cast("const nd4j::DataType") int type);
-        public static native @ByVal ShapeDescriptor scalarDescriptor(@Cast("const nd4j::DataType") int type);
-        public static native @ByVal ShapeDescriptor vectorDescriptor(@Cast("const Nd4jLong") long length, @Cast("const nd4j::DataType") int type);
+        public static native @ByVal ShapeDescriptor emptyDescriptor(@Cast("const sd::DataType") int type);
+        public static native @ByVal ShapeDescriptor scalarDescriptor(@Cast("const sd::DataType") int type);
+        public static native @ByVal ShapeDescriptor vectorDescriptor(@Cast("const Nd4jLong") long length, @Cast("const sd::DataType") int type);
     }
 
 
+// #ifndef __JAVACPP_HACK__
 
+// #endif
 
 
 // #endif //DEV_TESTS_SHAPEDESCRIPTOR_H
@@ -23949,8 +24531,8 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #define DEV_TESTS_TADDESCRIPTOR_H
 
 // #include "ShapeDescriptor.h"
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class TadDescriptor extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class TadDescriptor extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public TadDescriptor(Pointer p) { super(p); }
@@ -23995,9 +24577,14 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
         public native @StdVector IntPointer axis();
         public native @ByRef ShapeDescriptor originalShape();
+        public native @Const @ByRef ShapeDescriptor originalShapeConst();
         public native @Cast("bool") boolean areUnitiesinShape();
     }
 
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
 
 
 // #endif //DEV_TESTS_TADDESCRIPTOR_H
@@ -24028,18 +24615,18 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 // #ifndef LIBND4J__DEBUG_INFO_HELPER__H
 // #define LIBND4J__DEBUG_INFO_HELPER__H
 
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <Environment.h>
-// #include <StringUtils.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/Environment.h>
+// #include <helpers/StringUtils.h>
 // #include <string>
-// #include <dll.h>
-// #include <templatemath.h>
+// #include <system/dll.h>
+// #include <math/templatemath.h>
 
 // #ifdef __CUDACC__
 
 // #endif
-    @Namespace("nd4j") public static class DebugInfo extends Pointer {
+    @Namespace("sd") public static class DebugInfo extends Pointer {
         static { Loader.load(); }
         /** Default native constructor. */
         public DebugInfo() { super((Pointer)null); allocate(); }
@@ -24064,7 +24651,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
        public native @Cast("Nd4jLong") long _nanCount(); public native DebugInfo _nanCount(long setter);
     }
 
-    @Namespace("nd4j") public static native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef DebugInfo first, @Const @ByRef DebugInfo second);
+    @Namespace("sd") public static native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef DebugInfo first, @Const @ByRef DebugInfo second);
 
 
 
@@ -24099,7 +24686,7 @@ public static final int TAD_THRESHOLD = TAD_THRESHOLD();
 
 // #include <ops/declarable/headers/common.h>
 //         #if NOT_EXCLUDED(OP_firas_sparse)
-        @Namespace("nd4j::ops") public static class firas_sparse extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class firas_sparse extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public firas_sparse(Pointer p) { super(p); }

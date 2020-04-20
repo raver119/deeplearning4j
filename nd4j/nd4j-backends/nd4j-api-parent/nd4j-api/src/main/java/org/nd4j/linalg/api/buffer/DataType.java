@@ -16,26 +16,48 @@
 
 package org.nd4j.linalg.api.buffer;
 
+/**
+ * Enum lists supported data types.
+ *
+ */
 public enum DataType {
 
     DOUBLE,
     FLOAT,
 
+    /**
+     * @deprecated Replaced by {@link DataType#FLOAT16}, use that instead
+     */
     @Deprecated
     HALF,
 
+    /**
+     * @deprecated Replaced by {@link DataType#INT64}, use that instead
+     */
     @Deprecated
     LONG,
 
+    /**
+     * @deprecated Replaced by {@link DataType#INT32}, use that instead
+     */
     @Deprecated
     INT,
 
+    /**
+     * @deprecated Replaced by {@link DataType#INT16}, use that instead
+     */
     @Deprecated
     SHORT,
 
+    /**
+     * @deprecated Replaced by {@link DataType#UINT8}, use that instead
+     */
     @Deprecated
     UBYTE,
 
+    /**
+     * @deprecated Replaced by {@link DataType#INT8}, use that instead
+     */
     @Deprecated
     BYTE,
 
@@ -208,13 +230,14 @@ public enum DataType {
     public static DataType fromNumpy(String numpyDtypeName){
         switch (numpyDtypeName.toLowerCase()){
             case "bool": return BOOL;
-            case "byte": return BYTE;
-            case "int8": return BYTE;
-            case "int16": return SHORT;
-            case "int32": return INT;
-            case "int64": return LONG;
-            case "uint8": return UBYTE;
-            case "float16": return HALF;
+            case "byte":
+            case "int8":
+                return INT8;
+            case "int16": return INT16;
+            case "int32": return INT32;
+            case "int64": return INT64;
+            case "uint8": return UINT8;
+            case "float16": return FLOAT16;
             case "float32": return FLOAT;
             case "float64": return DOUBLE;
             case "uint16": return UINT16;

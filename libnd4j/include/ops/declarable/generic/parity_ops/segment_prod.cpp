@@ -21,7 +21,7 @@
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/segment.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(segment_prod, 2, 1, false, 0, 0) {
             auto input = INPUT_VARIABLE(0);
@@ -67,8 +67,8 @@ namespace nd4j {
             auto input = INPUT_VARIABLE(0);
             auto indices = INPUT_VARIABLE(1);
             auto gradOut = INPUT_VARIABLE(2);
-            auto output = OUTPUT_VARIABLE(0);
-            auto outIndices = OUTPUT_VARIABLE(1);
+            auto output = OUTPUT_NULLIFIED(0);
+            auto outIndices = OUTPUT_NULLIFIED(1);
             outIndices->assign(indices);
             helpers::segmentProdFunctorBP(block.launchContext(), input, indices, gradOut, output);
 
@@ -97,7 +97,7 @@ namespace nd4j {
 
         DECLARE_TYPES(segment_prod_bp) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setAllowedOutputTypes(0, {ALL_FLOATS})
 					->setAllowedOutputTypes(1, {ALL_INTS})
                     ->setSameMode(false);

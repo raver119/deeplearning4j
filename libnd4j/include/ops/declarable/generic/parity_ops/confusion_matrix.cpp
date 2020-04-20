@@ -18,17 +18,17 @@
 // @author @cpuheater
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_confusion_matrix)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/ShapeUtils.h>
-#include <NDArray.h>
+#include <array/NDArray.h>
 #include <array/NDArrayList.h>
 #include <array>
 #include <ops/declarable/helpers/confusion.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         DECLARE_TYPES(confusion_matrix) {
             getOpDescriptor()
@@ -45,8 +45,8 @@ namespace nd4j {
                 weights = INPUT_VARIABLE(2);
                 REQUIRE_TRUE(weights->isSameShape(predictions),0, "CONFUSION_MATRIX: Weights and predictions should have equal shape");
             }
-            auto output = OUTPUT_VARIABLE(0);
-            output->assign(0.);
+            auto output = OUTPUT_NULLIFIED(0);
+
             int minPrediction = predictions->reduceNumber(reduce::Min).e<int>(0);
             int minLabel = labels->reduceNumber(reduce::Min).e<int>(0);
 
@@ -64,11 +64,7 @@ namespace nd4j {
         DECLARE_SHAPE_FN(confusion_matrix) {
             auto labels = INPUT_VARIABLE(0);
             auto predictions = INPUT_VARIABLE(1);
-            auto dtype = block.dataType();
-            dtype = nd4j::DataType::INT64; // dtype - should be a param with int argument
-            if (block.numI() > 1)
-                dtype = (nd4j::DataType)INT_ARG(1);
-
+            auto dtype = block.numD() ? D_ARG(0) : sd::DataType::INT64;
             int numClasses = 0;
 
             if (block.getIArguments()->size() > 0) {

@@ -19,18 +19,19 @@
 //
 
 #include <execution/LaunchContext.h>
-#include <logger.h>
+#include <helpers/logger.h>
 #include <exceptions/cuda_exception.h>
 #include <helpers/cublasHelper.h>
 #include <thread>
 #include <execution/AffinityManager.h>
 
-thread_local nd4j::ContextBuffers contextBuffers = nd4j::ContextBuffers();
+thread_local sd::ContextBuffers contextBuffers = sd::ContextBuffers();
 
-namespace nd4j {
+namespace sd {
 
     std::vector<std::shared_ptr<LaunchContext>> LaunchContext::_contexts = std::vector<std::shared_ptr<LaunchContext>>();
     std::mutex LaunchContext::_mutex;
+    MAP_IMPL<int, std::mutex*> LaunchContext::_deviceMutexes;
 
 ////////////////////////////////////////////////////////////////////////
 LaunchContext::LaunchContext(cudaStream_t *cudaStream, cudaStream_t& specialCudaStream, void* reductionPointer, void* scalarPointer, int* allocationPointer)  {
@@ -43,6 +44,11 @@ LaunchContext::LaunchContext(cudaStream_t *cudaStream, cudaStream_t& specialCuda
 	_workspace = nullptr;
 	_isAllocated = false;
 }
+
+    std::mutex* LaunchContext::deviceMutex() {
+        auto deviceId = AffinityManager::currentDeviceId();
+        return _deviceMutexes[deviceId];
+    }
 
 LaunchContext::~LaunchContext() {
     if (_isAllocated) {
@@ -85,6 +91,8 @@ LaunchContext::LaunchContext() {
 
             _contexts.resize(numDevices);
             for (int e = 0; e < numDevices; e++) {
+                _deviceMutexes[e] = new std::mutex();
+
                 AffinityManager::setCurrentNativeDevice(e);
 
                 LaunchContext::_contexts[e] = std::make_shared<LaunchContext>();

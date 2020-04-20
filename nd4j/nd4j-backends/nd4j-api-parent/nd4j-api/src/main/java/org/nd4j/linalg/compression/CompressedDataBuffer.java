@@ -210,4 +210,34 @@ public class CompressedDataBuffer extends BaseDataBuffer {
     public DataBuffer reallocate(long length) {
         throw new UnsupportedOperationException("This method isn't supported by CompressedDataBuffer");
     }
+
+    @Override
+    public void syncToPrimary() {
+        //No-op
+    }
+
+    @Override
+    public void syncToSpecial() {
+        //No-op
+    }
+
+    @Override
+    protected double getDoubleUnsynced(long index) {
+        return super.getDouble(index);
+    }
+
+    @Override
+    protected float getFloatUnsynced(long index) {
+        return super.getFloat(index);
+    }
+
+    @Override
+    protected long getLongUnsynced(long index) {
+        return super.getLong(index);
+    }
+
+    @Override
+    protected int getIntUnsynced(long index) {
+        return super.getInt(index);
+    }
 }

@@ -22,6 +22,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.Op;
 import org.tensorflow.framework.AttrValue;
@@ -44,6 +45,11 @@ public class SoftmaxCrossEntropyLoss extends BaseLoss {
 
     private double labelSmoothing = 0.0;
 
+    public SoftmaxCrossEntropyLoss(SameDiff sameDiff, SDVariable labels, SDVariable logits,
+                                   SDVariable weights, LossReduce lossReduce, double labelSmoothing) {
+        this(sameDiff, lossReduce, logits, weights,  labels, labelSmoothing);
+    }
+
     public SoftmaxCrossEntropyLoss(SameDiff sameDiff, LossReduce lossReduce, SDVariable logits, SDVariable weights, SDVariable labels,
                                    double labelSmoothing) {
         super(sameDiff, lossReduce, logits, weights, labels);
@@ -56,6 +62,11 @@ public class SoftmaxCrossEntropyLoss extends BaseLoss {
         this(sameDiff, lossReduce, logits, weights, labels, 0.0);
     }
 
+    public SoftmaxCrossEntropyLoss(INDArray labels, INDArray predictions, INDArray weights, LossReduce lossReduce, double labelSmoothing){
+        super(lossReduce, predictions, weights, labels);
+        this.labelSmoothing = labelSmoothing;
+        addArgs();
+    }
 
     public void addArgs() {
         super.addArgs();

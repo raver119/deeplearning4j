@@ -16,10 +16,12 @@
 
 package org.nd4j.linalg.api.ops.impl.transforms.segment;
 
+import lombok.NoArgsConstructor;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.List;
  *
  * @author Alex Black
  */
+@NoArgsConstructor
 public class UnsortedSegmentProd extends DynamicCustomOp {
 
     private int numSegments;
@@ -41,7 +44,10 @@ public class UnsortedSegmentProd extends DynamicCustomOp {
         addIArgument(numSegments);
     }
 
-    public UnsortedSegmentProd(){ }
+    public UnsortedSegmentProd(INDArray data, INDArray segmentIds, int numSegments) {
+        addInputArgument(data, segmentIds);
+        addIArgument(numSegments);
+    }
 
     @Override
     public String opName(){
@@ -60,7 +66,8 @@ public class UnsortedSegmentProd extends DynamicCustomOp {
 
     @Override
     public List<DataType> calculateOutputDataTypes(List<DataType> inputDataTypes){
-        Preconditions.checkState(inputDataTypes != null && inputDataTypes.size() == 3, "Expected exactly 2 input data types for %s, got %s", getClass(), inputDataTypes);
+        Preconditions.checkState(inputDataTypes != null && (inputDataTypes.size() == 2 || inputDataTypes.size() == 3),
+                "Expected exactly 2 input data types for %s, got %s", getClass(), inputDataTypes);
         return Collections.singletonList(inputDataTypes.get(0));
     }
 }

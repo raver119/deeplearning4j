@@ -18,12 +18,12 @@
 // @author Yurii Shyrma (iuriish@yahoo.com), created on 23.11.2017
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_huber_loss)
 
 #include <ops/declarable/CustomOperations.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops  {
 
 
@@ -73,6 +73,7 @@ CUSTOM_OP_IMPL(huber_loss, 3, 1, false, 1, 1) {
 		}
 		case 2: {											// 2 - "weighted_mean", output is scalar and equal to sum of all elements of E array divided by sum of all elements of weightsBroad array
 			NDArray sum;
+			sum.setContext(block.launchContext());
 			if (weights->isScalar())
 				sum = *weights * E.lengthOf();
 			else
@@ -111,7 +112,7 @@ CUSTOM_OP_IMPL(huber_loss, 3, 1, false, 1, 1) {
 //////////////////////////////////////////////////////////////////////////
 DECLARE_TYPES(huber_loss) {
 
-	getOpDescriptor()->setAllowedInputTypes(nd4j::DataType::ANY)->setAllowedOutputTypes({ALL_FLOATS});
+	getOpDescriptor()->setAllowedInputTypes(sd::DataType::ANY)->setAllowedOutputTypes({ALL_FLOATS});
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -216,6 +217,7 @@ DECLARE_SHAPE_FN(huber_loss) {
 				case 2: {											// 2 - "weighted_mean", output is scalar and equal to sum of all elements of E array divided by sum of all elements of weightsBroad array
 
 					NDArray sum;
+					sum.setContext(block.launchContext());
 					if (weights->isScalar())
 						sum = (*weights) * E.lengthOf();
 					else
@@ -286,7 +288,7 @@ DECLARE_SHAPE_FN(huber_loss) {
 
 		DECLARE_TYPES(huber_loss_grad) {
 
-			getOpDescriptor()->setAllowedInputTypes(nd4j::DataType::ANY)->setAllowedOutputTypes({ALL_FLOATS});
+			getOpDescriptor()->setAllowedInputTypes(sd::DataType::ANY)->setAllowedOutputTypes({ALL_FLOATS});
 		}
 
 		DECLARE_SHAPE_FN(huber_loss_grad) {

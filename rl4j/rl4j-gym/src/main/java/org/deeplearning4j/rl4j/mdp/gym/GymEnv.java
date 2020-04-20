@@ -62,7 +62,7 @@ public class GymEnv<O, A, AS extends ActionSpace<A>> implements MDP<O, A, AS> {
     private static PyObject globals;
     static {
         try {
-            Py_SetPath(org.bytedeco.gym.presets.gym.cachePackages());
+            Py_AddPath(org.bytedeco.gym.presets.gym.cachePackages());
             program = Py_DecodeLocale(GymEnv.class.getSimpleName(), null);
             Py_SetProgramName(program);
             Py_Initialize();
@@ -93,6 +93,9 @@ public class GymEnv<O, A, AS extends ActionSpace<A>> implements MDP<O, A, AS> {
     private boolean done = false;
 
     public GymEnv(String envId, boolean render, boolean monitor) {
+        this(envId, render, monitor, (Integer)null);
+    }
+    public GymEnv(String envId, boolean render, boolean monitor, Integer seed) {
         this.envId = envId;
         this.render = render;
         this.monitor = monitor;
@@ -105,6 +108,10 @@ public class GymEnv<O, A, AS extends ActionSpace<A>> implements MDP<O, A, AS> {
             checkPythonError();
             if (monitor) {
                 Py_DecRef(PyRun_StringFlags("env = gym.wrappers.Monitor(env, '" + GYM_MONITOR_DIR + "')", Py_single_input, globals, locals, null));
+                checkPythonError();
+            }
+            if (seed != null) {
+                Py_DecRef(PyRun_StringFlags("env.seed(" + seed + ")", Py_single_input, globals, locals, null));
                 checkPythonError();
             }
             PyObject shapeTuple = PyRun_StringFlags("env.observation_space.shape", Py_eval_input, globals, locals, null);
@@ -125,7 +132,10 @@ public class GymEnv<O, A, AS extends ActionSpace<A>> implements MDP<O, A, AS> {
     }
 
     public GymEnv(String envId, boolean render, boolean monitor, int[] actions) {
-        this(envId, render, monitor);
+        this(envId, render, monitor, null, actions);
+    }
+    public GymEnv(String envId, boolean render, boolean monitor, Integer seed, int[] actions) {
+        this(envId, render, monitor, seed);
         actionTransformer = new ActionTransformer((HighLowDiscrete) getActionSpace(), actions);
     }
 

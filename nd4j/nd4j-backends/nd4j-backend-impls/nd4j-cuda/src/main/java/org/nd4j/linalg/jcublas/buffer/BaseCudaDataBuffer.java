@@ -121,29 +121,22 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         // allocating interop buffer
         this.ptrDataBuffer = OpaqueDataBuffer.allocateDataBuffer(length, type, false);
 
+        // passing existing pointer to native holder
+        this.ptrDataBuffer.setPrimaryBuffer(pointer, length);
+
         //cuda specific bits
         this.allocationPoint = new AllocationPoint(ptrDataBuffer, length * elementSize);
         Nd4j.getDeallocatorService().pickObject(this);
 
-        // now we're
+        // now we're getting context and copying our stuff to device
         val context = AtomicAllocator.getInstance().getDeviceContext();
 
         val perfD = PerformanceTracker.getInstance().helperStartTransaction();
 
-        if (allocationPoint.getHostPointer() != null) {
-            NativeOpsHolder.getInstance().getDeviceNativeOps().memcpyAsync(allocationPoint.getHostPointer(), pointer, length * getElementSize(), CudaConstants.cudaMemcpyHostToHost, context.getSpecialStream());
-            NativeOpsHolder.getInstance().getDeviceNativeOps().memcpyAsync(allocationPoint.getDevicePointer(), allocationPoint.getHostPointer(), length * getElementSize(), CudaConstants.cudaMemcpyHostToHost, context.getSpecialStream());
-        } else {
-            NativeOpsHolder.getInstance().getDeviceNativeOps().memcpyAsync(allocationPoint.getDevicePointer(), pointer, length * getElementSize(), CudaConstants.cudaMemcpyHostToDevice, context.getSpecialStream());
-        }
-
-        context.getSpecialStream().synchronize();
-
-        if (allocationPoint.getHostPointer() != null)
-            PerformanceTracker.getInstance().helperRegisterTransaction(allocationPoint.getDeviceId(), perfD / 2, allocationPoint.getNumberOfBytes(), MemcpyDirection.HOST_TO_HOST);
+        NativeOpsHolder.getInstance().getDeviceNativeOps().memcpyAsync(allocationPoint.getDevicePointer(), pointer, length * getElementSize(), CudaConstants.cudaMemcpyHostToDevice, context.getSpecialStream());
 
         PerformanceTracker.getInstance().helperRegisterTransaction(allocationPoint.getDeviceId(), perfD / 2, allocationPoint.getNumberOfBytes(), MemcpyDirection.HOST_TO_DEVICE);
-
+        context.getSpecialStream().synchronize();
     }
 
     public BaseCudaDataBuffer(float[] data, boolean copy) {
@@ -307,7 +300,6 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         if (allocationPoint.getHostPointer() == null) {
             val location = allocationPoint.getAllocationStatus();
             if (parentWorkspace == null) {
-                //log.info("dbAllocate step");
                 // let cpp allocate primary buffer
                 NativeOpsHolder.getInstance().getDeviceNativeOps().dbAllocatePrimaryBuffer(ptrDataBuffer);
             } else {
@@ -1050,21 +1042,33 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
 
     @Override
     public void setData(int[] data) {
+        if (data.length == 0)
+            return;
+
         set(data, data.length, 0, 0);
     }
 
     @Override
     public void setData(long[] data) {
+        if (data.length == 0)
+            return;
+
         set(data, data.length, 0, 0);
     }
 
     @Override
     public void setData(float[] data) {
+        if (data.length == 0)
+            return;
+
         set(data, data.length, 0, 0);
     }
 
     @Override
     public void setData(double[] data) {
+        if (data.length == 0)
+            return;
+
         set(data, data.length, 0, 0);
     }
 
@@ -1275,6 +1279,26 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
 
     @Override
     public void destroy() {}
+
+    @Override
+    protected double getDoubleUnsynced(long index) {
+        return super.getDouble(index);
+    }
+
+    @Override
+    protected float getFloatUnsynced(long index) {
+        return super.getFloat(index);
+    }
+
+    @Override
+    protected long getLongUnsynced(long index) {
+        return super.getLong(index);
+    }
+
+    @Override
+    protected int getIntUnsynced(long index) {
+        return super.getInt(index);
+    }
 
     @Override
     public void write(DataOutputStream out) throws IOException {
@@ -1497,6 +1521,13 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
         lazyAllocateHostPointer();
         allocator.synchronizeHostData(this);
         return super.asInt();
+    }
+
+    @Override
+    public long[] asLong() {
+        lazyAllocateHostPointer();
+        allocator.synchronizeHostData(this);
+        return super.asLong();
     }
 
     @Override
@@ -1761,11 +1792,11 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     @Override
     protected void release() {
         if (!released) {
-            //AtomicAllocator.getInstance().freeMemory(allocationPoint);n
-            NativeOpsHolder.getInstance().getDeviceNativeOps().dbClose(allocationPoint.getPtrDataBuffer());
+            ptrDataBuffer.closeBuffer();
             allocationPoint.setReleased(true);
         }
-        released = true;
+
+        super.release();
     }
 
     /*
@@ -1813,5 +1844,15 @@ public abstract class BaseCudaDataBuffer extends BaseDataBuffer implements JCuda
     @Override
     public int targetDevice() {
         return AtomicAllocator.getInstance().getAllocationPoint(this).getDeviceId();
+    }
+
+    @Override
+    public void syncToPrimary(){
+        ptrDataBuffer.syncToPrimary();
+    }
+
+    @Override
+    public void syncToSpecial(){
+        ptrDataBuffer.syncToSpecial();
     }
 }

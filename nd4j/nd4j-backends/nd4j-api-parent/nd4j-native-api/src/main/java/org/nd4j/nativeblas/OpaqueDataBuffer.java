@@ -51,7 +51,6 @@ public class OpaqueDataBuffer extends Pointer {
             try {
                 // try to allocate data buffer
                 buffer = NativeOpsHolder.getInstance().getDeviceNativeOps().allocateDataBuffer(numElements, dataType.toInt(), allocateBoth);
-
                 // check error code
                 ec = NativeOpsHolder.getInstance().getDeviceNativeOps().lastErrorCode();
                 if (ec != 0) {
@@ -209,5 +208,12 @@ public class OpaqueDataBuffer extends Pointer {
      */
     public void syncToPrimary() {
         NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToPrimary(this);
+    }
+
+    /**
+     * This method releases underlying buffer
+     */
+    public void closeBuffer() {
+        NativeOpsHolder.getInstance().getDeviceNativeOps().dbClose(this);
     }
 }

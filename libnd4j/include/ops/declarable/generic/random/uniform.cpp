@@ -19,14 +19,14 @@
 // Created by raver119 on 29/10/17.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_randomuniform)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/RandomLauncher.h>
 #include <ops/declarable/helpers/random.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         ///////////////////////
         /**
@@ -49,8 +49,8 @@ namespace nd4j {
             bool disposable = false;
 
             if (min == nullptr && max == nullptr && block.numT() >= 2) {
-                min = NDArrayFactory::create_(dtype);
-                max = NDArrayFactory::create_(dtype);
+                min = NDArrayFactory::create_(dtype, block.launchContext());
+                max = NDArrayFactory::create_(dtype, block.launchContext());
                 min->p(0, T_ARG(0));
                 max->p(0, T_ARG(1));
                 disposable = true;

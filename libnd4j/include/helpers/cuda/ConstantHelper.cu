@@ -20,12 +20,12 @@
 //
 
 #include <exceptions/cuda_exception.h>
-#include <ConstantHelper.h>
-#include <DataTypeUtils.h>
-#include <shape.h>
+#include <helpers/ConstantHelper.h>
+#include <array/DataTypeUtils.h>
+#include <helpers/shape.h>
 #include <execution/LaunchContext.h>
-#include <specials.h>
-#include <logger.h>
+#include <ops/specials.h>
+#include <helpers/logger.h>
 #include <cuda_runtime.h>
 #include <cuda.h>
 #include <execution/AffinityManager.h>
@@ -34,7 +34,7 @@
 
 __constant__ char deviceConstantMemory[CONSTANT_LIMIT];
 
-namespace nd4j {
+namespace sd {
     static void* getConstantSpace() {
         Nd4jPointer dConstAddr;
         auto dZ = cudaGetSymbolAddress(reinterpret_cast<void **>(&dConstAddr), deviceConstantMemory);
@@ -70,7 +70,7 @@ namespace nd4j {
                 throw cuda_exception::build("cudaSetDevice failed", res);
              auto constant = getConstantSpace();
 
-            std::map<ConstantDescriptor, ConstantHolder*> devCache;
+            MAP_IMPL<ConstantDescriptor, ConstantHolder*> devCache;
 
             _devicePointers[e] = constant;
             _deviceOffsets[e] = 0;
@@ -86,13 +86,13 @@ namespace nd4j {
 
     ConstantHelper* ConstantHelper::getInstance() {
         if (!_INSTANCE)
-            _INSTANCE = new nd4j::ConstantHelper();
+            _INSTANCE = new sd::ConstantHelper();
 
         return _INSTANCE;
     }
 
     void* ConstantHelper::replicatePointer(void *src, size_t numBytes, memory::Workspace *workspace) {
-        _mutex.lock();
+        std::lock_guard<std::mutex> lock(_mutex);
 
         auto deviceId = getCurrentDevice();
         Nd4jPointer constantPtr = nullptr;
@@ -116,7 +116,6 @@ namespace nd4j {
             if (res != 0)
                 throw cuda_exception::build("cudaMemcpy failed", res);
 
-            _mutex.unlock();
             return ptr;
         } else {
             auto originalBytes = numBytes;
@@ -130,12 +129,11 @@ namespace nd4j {
             if (res != 0)
                 throw cuda_exception::build("cudaMemcpyToSymbol failed", res);
 
-            _mutex.unlock();
             return reinterpret_cast<int8_t *>(constantPtr) + constantOffset;
         }
     }
 
-    ConstantDataBuffer* ConstantHelper::constantBuffer(const ConstantDescriptor &descriptor, nd4j::DataType dataType) {
+    ConstantDataBuffer* ConstantHelper::constantBuffer(const ConstantDescriptor &descriptor, sd::DataType dataType) {
         const auto deviceId = getCurrentDevice();
 
         // all cache modifications are synchronous
@@ -152,7 +150,7 @@ namespace nd4j {
         ConstantDataBuffer* result;
 
         // access to this holder instance is synchronous
-        holder->mutex()->lock();
+        std::lock_guard<std::mutex> lock(*holder->mutex());
 
         if (holder->hasBuffer(dataType)) {
              result = holder->getConstantDataBuffer(dataType);
@@ -163,9 +161,9 @@ namespace nd4j {
 
             // create buffer with this dtype
             if (descriptor.isFloat()) {
-                BUILD_DOUBLE_SELECTOR(nd4j::DataType::DOUBLE, dataType, nd4j::SpecialTypeConverter::convertGeneric, (nullptr, const_cast<double *>(descriptor.floatValues().data()), descriptor.length(), cbuff), (nd4j::DataType::DOUBLE, double), LIBND4J_TYPES);
+                BUILD_DOUBLE_SELECTOR(sd::DataType::DOUBLE, dataType, sd::SpecialTypeConverter::convertGeneric, (nullptr, const_cast<double *>(descriptor.floatValues().data()), descriptor.length(), cbuff), (sd::DataType::DOUBLE, double), LIBND4J_TYPES);
             } else if (descriptor.isInteger()) {
-                BUILD_DOUBLE_SELECTOR(nd4j::DataType::INT64, dataType, nd4j::SpecialTypeConverter::convertGeneric, (nullptr, const_cast<Nd4jLong *>(descriptor.integerValues().data()), descriptor.length(), cbuff), (nd4j::DataType::INT64, Nd4jLong), LIBND4J_TYPES);
+                BUILD_DOUBLE_SELECTOR(sd::DataType::INT64, dataType, sd::SpecialTypeConverter::convertGeneric, (nullptr, const_cast<Nd4jLong *>(descriptor.integerValues().data()), descriptor.length(), cbuff), (sd::DataType::INT64, Nd4jLong), LIBND4J_TYPES);
             }
 
             auto dbuff = replicatePointer(cbuff, descriptor.length() * DataTypeUtils::sizeOf(dataType));
@@ -175,8 +173,6 @@ namespace nd4j {
             holder->addBuffer(dataBuffer, dataType);
             result = holder->getConstantDataBuffer(dataType);
         }
-        // release holder lock
-        holder->mutex()->unlock();
 
         return result;
     }
@@ -189,5 +185,5 @@ namespace nd4j {
             return _counters[deviceId];
     }
 
-    nd4j::ConstantHelper* nd4j::ConstantHelper::_INSTANCE = 0;
+    sd::ConstantHelper* sd::ConstantHelper::_INSTANCE = 0;
 }

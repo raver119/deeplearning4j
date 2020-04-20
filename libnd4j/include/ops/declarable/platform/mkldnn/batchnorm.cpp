@@ -23,34 +23,32 @@
 
 #include <ops/declarable/PlatformHelper.h>
 #include <ops/declarable/OpRegistrator.h>
-#include <platform_boilerplate.h>
+#include <system/platform_boilerplate.h>
 
 #include <helpers/MKLDNNStream.h>
 #include "mkldnnUtils.h"
 #include <ops/declarable/helpers/convolutions.h>
-#include <NDArrayFactory.h>
+#include <array/NDArrayFactory.h>
 
 
-namespace nd4j      {
+namespace sd      {
 namespace ops       {
 namespace platforms {
 
 
 //////////////////////////////////////////////////////////////////////////
-static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray* variance, const NDArray* weights, const float epsilon, NDArray* z) {
+static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray* variance, const NDArray* weights, NDArray* z,
+                            const float epsilon, const bool isNCHW) {
 
-    // unfortunately mkl dnn doesn't support any format (dnnl::memory::format_tag::any)
-    // also it gives wrong results for formats nhwc and ndhwc
+    // unfortunately mkl dnn doesn't support any format (dnnl::memory::format_tag::any) for x
 
-    // x -> 2D:nc, 4D:nchw, 5D:ncdhw
+    // x -> 2D:nc, 4D:nchw/nhwc, 5D:ncdhw/ndhwc
     // mean -> 1D [c]
     // variance -> 1D [c]
     // weights 2D [2, c], weights({0,1, 0,0}) contains gamma and weights({1,2, 0,0}) contains beta
     // z(output) - same shape as x
 
     const int xRank = x->rankOf();
-
-    auto engine = mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
 
     // input type
     dnnl::memory::data_type type = dnnl::memory::data_type::f32;
@@ -63,17 +61,28 @@ static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray
     dnnl::memory::dims dims;
     dnnl::memory::format_tag format;
 
+    const int indHW = isNCHW ? 2 : 1;
+    const int bS = x->sizeAt(0);
+    const int iC = isNCHW ? x->sizeAt(1) : x->sizeAt(-1);
+
+    int iD, iH, iW;
+
     if(xRank == 2) {
-        dims = {x->sizeAt(0), x->sizeAt(1)};
+        dims = {bS, iC};
         format = dnnl::memory::format_tag::nc;
     }
     else if(xRank == 4) {
-        dims = {x->sizeAt(0), x->sizeAt(1), x->sizeAt(2), x->sizeAt(3)};
-        format = dnnl::memory::format_tag::nchw;
+        iH = x->sizeAt(indHW);
+        iW = x->sizeAt(indHW + 1);
+        dims = {bS, iC, iH, iW};
+        format = isNCHW ? dnnl::memory::format_tag::nchw : dnnl::memory::format_tag::nhwc;
     }
     else {  // xRank = 5
-        dims = {x->sizeAt(0), x->sizeAt(1), x->sizeAt(2), x->sizeAt(3), x->sizeAt(4)};
-        format = dnnl::memory::format_tag::ncdhw;
+        iD =  x->sizeAt(indHW);
+        iH =  x->sizeAt(indHW + 1);
+        iW =  x->sizeAt(indHW + 2);
+        dims = {bS, iC, iD, iH, iW};
+        format = isNCHW ? dnnl::memory::format_tag::ncdhw : dnnl::memory::format_tag::ndhwc;
     }
 
     // memory descriptors for arrays
@@ -81,29 +90,15 @@ static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray
     // x
     dnnl::memory::desc x_mkl_md  = dnnl::memory::desc(dims, type, format);
     dnnl::memory::desc x_user_md = dnnl::memory::desc(dims, type, format);
-    x_user_md.data.format_kind = dnnl_blocked;    // overrides format
-    x_user_md.data.format_desc.blocking.strides[0] = x->stridesOf()[0];
-    x_user_md.data.format_desc.blocking.strides[1] = x->stridesOf()[1];
-    if(xRank > 2) {
-        x_user_md.data.format_desc.blocking.strides[2] = x->stridesOf()[2];
-        x_user_md.data.format_desc.blocking.strides[3] = x->stridesOf()[3];
-    }
-    if(xRank > 4)
-        x_user_md.data.format_desc.blocking.strides[4] = x->stridesOf()[4];
 
+    mkldnnUtils::setBlockStrides(x, x_user_md);
     // z, output
-    dnnl::memory::desc z_mkl_md  = dnnl::memory::desc(dims, type, format);
+    dnnl::memory::desc z_mkl_md  = dnnl::memory::desc(dims, type, dnnl::memory::format_tag::any);
     dnnl::memory::desc z_user_md = dnnl::memory::desc(dims, type, format);
-    z_user_md.data.format_kind = dnnl_blocked;    // overrides format
-    z_user_md.data.format_desc.blocking.strides[0] = z->stridesOf()[0];
-    z_user_md.data.format_desc.blocking.strides[1] = z->stridesOf()[1];
-    if(xRank > 2) {
-        z_user_md.data.format_desc.blocking.strides[2] = z->stridesOf()[2];
-        z_user_md.data.format_desc.blocking.strides[3] = z->stridesOf()[3];
-    }
-    if(xRank > 4)
-        z_user_md.data.format_desc.blocking.strides[4] = z->stridesOf()[4];
 
+    mkldnnUtils::setBlockStrides(z, z_user_md);
+
+    auto engine = mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
 
     // batchnorm forward description
     dnnl::batch_normalization_forward::desc op_ff_desc(dnnl::prop_kind::forward_inference, x_mkl_md, epsilon, flags);
@@ -117,12 +112,7 @@ static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray
     // provide memory and check whether reorder is required
 
     // x
-    auto x_user_mem = dnnl::memory(x_user_md, engine, x->getBuffer());
-    const bool xReorder = op_ff_prim_desc.src_desc() != x_user_mem.get_desc();
-    auto x_mkl_mem = xReorder ? dnnl::memory(op_ff_prim_desc.src_desc(), engine) : x_user_mem;
-    if (xReorder)
-        dnnl::reorder(x_user_mem, x_mkl_mem).execute(stream, x_user_mem, x_mkl_mem);
-    args[DNNL_ARG_SRC] = x_mkl_mem;
+    mkldnnUtils::loadDataToMklStream(x, engine, stream, x_user_md, op_ff_prim_desc.src_desc(), args[DNNL_ARG_SRC]);
 
     // z
     auto z_user_mem = dnnl::memory(z_user_md, engine, z->getBuffer());
@@ -162,12 +152,11 @@ static void batchnormMKLDNN(const NDArray* x, const NDArray* mean, const NDArray
 
 //////////////////////////////////////////////////////////////////////////
 static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const NDArray* variance, const NDArray* dLdO, const NDArray* weights,
-                                    const float epsilon, NDArray* dLdI, NDArray* dLdW) {
+                                    NDArray* dLdI, NDArray* dLdW, const float epsilon, const bool isNCHW) {
 
-    // unfortunately mkl dnn doesn't support any format (dnnl::memory::format_tag::any)
-    // also it gives wrong results for formats nhwc and ndhwc
+    // unfortunately mkl dnn doesn't support any format (dnnl::memory::format_tag::any) for x
 
-    // x -> 2D:nc, 4D:nchw, 5D:ncdhw
+    // x -> 2D:nc, 4D:nchw/nhwc, 5D:ncdhw/ndhwc
     // mean -> 1D [c]
     // variance -> 1D [c]
     // dLdO - same shape as x
@@ -176,8 +165,6 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     // dLdW - same shape as weights, dLdW({0,1, 0,0}) contains grad_gamma and dLdW({1,2, 0,0}) contains grad_beta
 
     const int xRank = x->rankOf();
-
-    auto engine = mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
 
     // input type
     dnnl::memory::data_type type = dnnl::memory::data_type::f32;
@@ -190,17 +177,28 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     dnnl::memory::dims dims;
     dnnl::memory::format_tag format;
 
+    const int indHW = isNCHW ? 2 : 1;
+    const int bS = x->sizeAt(0);
+    const int iC = isNCHW ? x->sizeAt(1) : x->sizeAt(-1);
+
+    int iD, iH, iW;
+
     if(xRank == 2) {
-        dims = {x->sizeAt(0), x->sizeAt(1)};
+        dims = {bS, iC};
         format = dnnl::memory::format_tag::nc;
     }
     else if(xRank == 4) {
-        dims = {x->sizeAt(0), x->sizeAt(1), x->sizeAt(2), x->sizeAt(3)};
-        format = dnnl::memory::format_tag::nchw;
+        iH = x->sizeAt(indHW);
+        iW = x->sizeAt(indHW + 1);
+        dims = {bS, iC, iH, iW};
+        format = isNCHW ? dnnl::memory::format_tag::nchw : dnnl::memory::format_tag::nhwc;
     }
     else {  // xRank = 5
-        dims = {x->sizeAt(0), x->sizeAt(1), x->sizeAt(2), x->sizeAt(3), x->sizeAt(4)};
-        format = dnnl::memory::format_tag::ncdhw;
+        iD =  x->sizeAt(indHW);
+        iH =  x->sizeAt(indHW + 1);
+        iW =  x->sizeAt(indHW + 2);
+        dims = {bS, iC, iD, iH, iW};
+        format = isNCHW ? dnnl::memory::format_tag::ncdhw : dnnl::memory::format_tag::ndhwc;
     }
 
     // memory descriptors for arrays
@@ -208,41 +206,22 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     // x
     dnnl::memory::desc x_mkl_md  = dnnl::memory::desc(dims, type, format);
     dnnl::memory::desc x_user_md = dnnl::memory::desc(dims, type, format);
-    x_user_md.data.format_kind = dnnl_blocked;    // overrides format
-    x_user_md.data.format_desc.blocking.strides[0] = x->stridesOf()[0];
-    x_user_md.data.format_desc.blocking.strides[1] = x->stridesOf()[1];
-    if(xRank > 2) {
-        x_user_md.data.format_desc.blocking.strides[2] = x->stridesOf()[2];
-        x_user_md.data.format_desc.blocking.strides[3] = x->stridesOf()[3];
-    }
-    if(xRank > 4)
-        x_user_md.data.format_desc.blocking.strides[4] = x->stridesOf()[4];
+
+    mkldnnUtils::setBlockStrides(x, x_user_md);
 
     // dLdO
-    dnnl::memory::desc dLdO_mkl_md  = dnnl::memory::desc(dims, type, format);
+    dnnl::memory::desc dLdO_mkl_md  = dnnl::memory::desc(dims, type, dnnl::memory::format_tag::any);
     dnnl::memory::desc dLdO_user_md = dnnl::memory::desc(dims, type, format);
-    dLdO_user_md.data.format_kind = dnnl_blocked;    // overrides format
-    dLdO_user_md.data.format_desc.blocking.strides[0] = dLdO->stridesOf()[0];
-    dLdO_user_md.data.format_desc.blocking.strides[1] = dLdO->stridesOf()[1];
-    if(xRank > 2) {
-        dLdO_user_md.data.format_desc.blocking.strides[2] = dLdO->stridesOf()[2];
-        dLdO_user_md.data.format_desc.blocking.strides[3] = dLdO->stridesOf()[3];
-    }
-    if(xRank > 4)
-        dLdO_user_md.data.format_desc.blocking.strides[4] = dLdO->stridesOf()[4];
+
+    mkldnnUtils::setBlockStrides(dLdO, dLdO_user_md);
 
     // dLdI
-    dnnl::memory::desc dLdI_mkl_md  = dnnl::memory::desc(dims, type, format);
+    dnnl::memory::desc dLdI_mkl_md  = dnnl::memory::desc(dims, type, dnnl::memory::format_tag::any);
     dnnl::memory::desc dLdI_user_md = dnnl::memory::desc(dims, type, format);
-    dLdI_user_md.data.format_kind = dnnl_blocked;    // overrides format
-    dLdI_user_md.data.format_desc.blocking.strides[0] = dLdI->stridesOf()[0];
-    dLdI_user_md.data.format_desc.blocking.strides[1] = dLdI->stridesOf()[1];
-    if(xRank > 2) {
-        dLdI_user_md.data.format_desc.blocking.strides[2] = dLdI->stridesOf()[2];
-        dLdI_user_md.data.format_desc.blocking.strides[3] = dLdI->stridesOf()[3];
-    }
-    if(xRank > 4)
-        dLdI_user_md.data.format_desc.blocking.strides[4] = dLdI->stridesOf()[4];
+
+    mkldnnUtils::setBlockStrides(dLdI, dLdI_user_md);
+
+    auto engine = mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
 
     // batchnorm forward description
     dnnl::batch_normalization_forward::desc op_ff_desc(dnnl::prop_kind::forward_inference, x_mkl_md, epsilon, flags);
@@ -260,20 +239,10 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     // provide memory and check whether reorder is required
 
     // x
-    auto x_user_mem = dnnl::memory(x_user_md, engine, x->getBuffer());
-    const bool xReorder = op_bp_prim_desc.src_desc() != x_user_mem.get_desc();
-    auto x_mkl_mem = xReorder ? dnnl::memory(op_bp_prim_desc.src_desc(), engine) : x_user_mem;
-    if (xReorder)
-        dnnl::reorder(x_user_mem, x_mkl_mem).execute(stream, x_user_mem, x_mkl_mem);
-    args[DNNL_ARG_SRC] = x_mkl_mem;
+    mkldnnUtils::loadDataToMklStream(x, engine, stream, x_user_md, op_bp_prim_desc.src_desc(), args[DNNL_ARG_SRC]);
 
     // dLdO
-    auto dLdO_user_mem = dnnl::memory(dLdO_user_md, engine, dLdO->getBuffer());
-    const bool dLdOReorder = op_bp_prim_desc.diff_dst_desc() != dLdO_user_mem.get_desc();
-    auto dLdO_mkl_mem = dLdOReorder ? dnnl::memory(op_bp_prim_desc.diff_dst_desc(), engine) : dLdO_user_mem;
-    if (dLdOReorder)
-        dnnl::reorder(dLdO_user_mem, dLdO_mkl_mem).execute(stream, dLdO_user_mem, dLdO_mkl_mem);
-    args[DNNL_ARG_DIFF_DST] = dLdO_mkl_mem;
+    mkldnnUtils::loadDataToMklStream(dLdO, engine, stream, dLdO_user_md, op_bp_prim_desc.diff_dst_desc(), args[DNNL_ARG_DIFF_DST]);
 
     // mean
     auto mean_mkl_mem = dnnl::memory(op_bp_prim_desc.mean_desc(), engine, mean->getBuffer());
@@ -331,7 +300,7 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     // dLdI = dfdm / N + (2/N) * dfdv * (dvdm/2  + (x - m))
     // dLdI = gamma * (  stdInv * -g_sum/N + (2/N) * dfdv * (dvdm/2  + (x - m))  )
 
-    std::vector<int> axes = {1};
+    std::vector<int> axes = isNCHW ? std::vector<int>{1} : std::vector<int>{xRank - 1};
     const auto excludedAxes = ShapeUtils::evalDimsToExclude(x->rankOf(), axes);
 
     // inversed batch size 1 / N
@@ -339,7 +308,7 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
 
     // x - mean
     NDArray xMinusMean(x); // empty array with same shape as x
-    const_cast<NDArray*>(x)->applyBroadcast(nd4j::broadcast::Subtract, axes, *mean, xMinusMean);
+    const_cast<NDArray*>(x)->applyBroadcast(sd::broadcast::Subtract, axes, *mean, xMinusMean);
 
     // stdInv
     NDArray stdInv = *variance + epsilon;
@@ -347,37 +316,37 @@ static void batchnormBackPropMKLDNN(const NDArray* x, const NDArray* mean, const
     stdInv.applyTransform(transform::Sqrt, stdInv);                                 // 1 / (variance + epsilon)^0.5
 
     // dfdm / N
-    auto dfdm = dLdO->reduceAlongDimension(nd4j::reduce::Sum, excludedAxes);
+    auto dfdm = dLdO->reduceAlongDimension(sd::reduce::Sum, excludedAxes);
     dfdm *= stdInv;
     dfdm *= -Ninv;
 
     // dvdm / 2
     NDArray dvdm(mean);                 // empty array with same shape as mean
-    xMinusMean.reduceAlongDimension(nd4j::reduce::Sum, dvdm, excludedAxes);
+    xMinusMean.reduceAlongDimension(sd::reduce::Sum, dvdm, excludedAxes);
     dvdm *= -Ninv;
 
     // (2/N)*dfdv
     NDArray dfdv(variance);                 // empty array with same shape as variance
-    (xMinusMean * *dLdO).reduceAlongDimension(nd4j::reduce::Sum, dfdv, excludedAxes);
+    (xMinusMean * *dLdO).reduceAlongDimension(sd::reduce::Sum, dfdv, excludedAxes);
     dfdv *= stdInv*stdInv*stdInv;
     dfdv *= -Ninv;
 
     // dvdm/2  + (x - m)
-    xMinusMean.applyBroadcast(nd4j::broadcast::Add, axes, dvdm, xMinusMean);
+    xMinusMean.applyBroadcast(sd::broadcast::Add, axes, dvdm, xMinusMean);
     // dfdv * (dvdm/2  + (x - m))
-    xMinusMean.applyBroadcast(nd4j::broadcast::Multiply, axes, dfdv, xMinusMean);
+    xMinusMean.applyBroadcast(sd::broadcast::Multiply, axes, dfdv, xMinusMean);
     // add dfdm / N
-    xMinusMean.applyBroadcast(nd4j::broadcast::Add, axes, dfdm, xMinusMean);
+    xMinusMean.applyBroadcast(sd::broadcast::Add, axes, dfdm, xMinusMean);
     // * gamma
     auto gamma = (*weights)({0,1, 0,0});
-    xMinusMean.applyBroadcast(nd4j::broadcast::Multiply, axes, gamma, xMinusMean);
+    xMinusMean.applyBroadcast(sd::broadcast::Multiply, axes, gamma, xMinusMean);
 
     *dLdI += xMinusMean;
 }
 
 PLATFORM_IMPL(batchnorm, ENGINE_CPU) {
 
-    auto input    = INPUT_VARIABLE(0);  // 2D:nc, 4D:nchw, 5D:ncdhw
+    auto input    = INPUT_VARIABLE(0);  // 2D:nc, 4D:nchw/nhwc, 5D:ncdhw/ndhwc
     auto mean     = INPUT_VARIABLE(1);  // [c]
     auto variance = INPUT_VARIABLE(2);  // [c]
     NDArray* gamma    = nullptr;        // [c]
@@ -436,31 +405,19 @@ PLATFORM_IMPL(batchnorm, ENGINE_CPU) {
             (*weights)({1,2, 0,0}).assign(0);
     }
 
-    if(axes[0] == inRank - 1 && inRank > 2) {   // if nhwc or ndhwc
-        std::vector<int> permut = inRank == 4 ? std::vector<int>({0,3,1,2}) : std::vector<int>({0,4,1,2,3});
-        input = new NDArray(input->permute(permut));
-        output = new NDArray(output->permute(permut));
-    }
+    const bool isNCHW = !(axes[0] == inRank - 1 && inRank > 2);
 
-    batchnormMKLDNN(input, mean, variance, weights, epsilon, output);
+    batchnormMKLDNN(input, mean, variance, weights, output, epsilon, isNCHW);
 
     delete weights;
-
-    if(axes[0] == inRank - 1 && inRank > 2) {
-        delete input;
-        delete output;
-    }
 
     return Status::OK();
 }
 
 //////////////////////////////////////////////////////////////////////////
 PLATFORM_CHECK(batchnorm, ENGINE_CPU) {
-    // we don't want to use mkldnn if cpu doesn't support avx/avx2
-    // if (::optimalLevel() < 2)
-    //     return false;
 
-    auto input    = INPUT_VARIABLE(0);  // 2D:nc, 4D:nchw, 5D:ncdhw
+    auto input    = INPUT_VARIABLE(0);  // 2D:nc, 4D:nchw/nhwc, 5D:ncdhw/ndhwc
     auto mean     = INPUT_VARIABLE(1);  // [c]
     auto variance = INPUT_VARIABLE(2);  // [c]
     NDArray* gamma    = nullptr;        // [c]
@@ -626,7 +583,7 @@ PLATFORM_CHECK(batchnorm, ENGINE_CPU) {
 //         axes.push_back(input->rankOf() - 1);
 
 //     return block.isUseMKLDNN() &&
-//            nd4j::MKLDNNStream::isSupported({input, mean, variance, gamma, beta, output}) &&
+//            sd::MKLDNNStream::isSupported({input, mean, variance, gamma, beta, output}) &&
 //            axes.size() == 1;
 // }
 
@@ -634,7 +591,7 @@ PLATFORM_CHECK(batchnorm, ENGINE_CPU) {
 //////////////////////////////////////////////////////////////////////////
 PLATFORM_IMPL(batchnorm_bp, ENGINE_CPU) {
 
-    NDArray* input    = INPUT_VARIABLE(0);                  // 2D:nc, 4D:nchw, 5D:ncdhw
+    NDArray* input    = INPUT_VARIABLE(0);                  // 2D:nc, 4D:nchw/nhwc, 5D:ncdhw/ndhwc
     NDArray* mean     = INPUT_VARIABLE(1);                  // [c]
     NDArray* variance = INPUT_VARIABLE(2);                  // [c]
     NDArray* gamma    = nullptr;                            // [c]
@@ -702,15 +659,9 @@ PLATFORM_IMPL(batchnorm_bp, ENGINE_CPU) {
             (*weights)({1,2, 0,0}).assign(0);
     }
 
+    const bool isNCHW = !(axes[0] == inRank - 1 && inRank > 2);
 
-    if(axes[0] == inRank - 1 && inRank > 2) {   // if nhwc or ndhwc
-        std::vector<int> permut = inRank == 4 ? std::vector<int>({0,3,1,2}) : std::vector<int>({0,4,1,2,3});
-        input = new NDArray(input->permute(permut));
-        dLdO = new NDArray(dLdO->permute(permut));
-        dLdI = new NDArray(dLdI->permute(permut));
-    }
-
-    batchnormBackPropMKLDNN(input, mean, variance, dLdO, weights, epsilon, dLdI, dLdW);
+    batchnormBackPropMKLDNN(input, mean, variance, dLdO, weights, dLdI, dLdW, epsilon, isNCHW);
 
     *dLdM = 0;
     *dLdV = 0;
@@ -725,17 +676,12 @@ PLATFORM_IMPL(batchnorm_bp, ENGINE_CPU) {
         delete dLdW;
     }
 
-    if(axes[0] == inRank - 1 && inRank > 2) {
-        delete input;
-        delete dLdO;
-        delete dLdI;
-    }
-
     return Status::OK();
 }
 
 //////////////////////////////////////////////////////////////////////////
 PLATFORM_CHECK(batchnorm_bp, ENGINE_CPU) {
+
     NDArray* input    = INPUT_VARIABLE(0);      // 2D:nc, 4D:nchw, 5D:ncdhw
     NDArray* mean     = INPUT_VARIABLE(1);      // [c]
     NDArray* variance = INPUT_VARIABLE(2);      // [c]

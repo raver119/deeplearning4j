@@ -21,7 +21,9 @@ import lombok.val;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,17 +54,25 @@ public class SpaceToBatch extends DynamicCustomOp {
     public SpaceToBatch() {
     }
 
+    public SpaceToBatch(SameDiff sameDiff, SDVariable x, int[] blocks, int[] paddingTop, int... paddingBottom) {
+        this(sameDiff, new SDVariable[]{x}, blocks, new int[][]{paddingBottom, paddingBottom}, false);
+    }
+
     public SpaceToBatch(SameDiff sameDiff, SDVariable[] args, int[] blocks, int[][] padding, boolean inPlace) {
-        super(null, sameDiff, args, inPlace);
+        super(null, sameDiff, new SDVariable[]{args[0], sameDiff.constant(Nd4j.createFromArray(padding))}, inPlace);
 
         this.blocks = blocks;
         this.padding = padding;
 
-        for (val b : blocks)
-            addIArgument(b);
+        addIArgument(blocks[0]);
+    }
 
-        for (int e = 0; e < padding.length; e++)
-            addIArgument(padding[e][0], padding[e][1]);
+    public SpaceToBatch(INDArray x, int[] blocks, int[] paddingTop, int... paddingBottom) {
+        addInputArgument(x);
+        this.blocks = blocks;
+        this.padding = padding;
+
+        addIArgument(blocks[0]);
     }
 
     @Override
@@ -84,7 +94,7 @@ public class SpaceToBatch extends DynamicCustomOp {
     public List<SDVariable> doDiff(List<SDVariable> i_v) {
         // Inverse of space to batch is batch to space with same blocks and crops as padding
         SDVariable gradient = sameDiff.setupFunction(i_v.get(0));
-        return Arrays.asList(sameDiff.cnn().batchToSpace(gradient, blocks, padding));
+        return Arrays.asList(sameDiff.cnn().batchToSpace(gradient, blocks, padding[0], padding[1]));
     }
 
     @Override

@@ -22,7 +22,7 @@
 
 #include <ops/declarable/headers/common.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         
         /**
@@ -57,7 +57,8 @@ namespace nd4j {
          * IArgs[1]... axes values for second array
          */
         #if NOT_EXCLUDED(OP_tensormmul)
-        DECLARE_CUSTOM_OP(tensormmul, 2, 1, false, 0, -1);   
+        DECLARE_CUSTOM_OP(tensormmul, 2, 1, false, 0, -1);
+        DECLARE_CUSTOM_OP(tensormmul_bp, 3, 2, false, 0, -1);
         #endif
 
         /**

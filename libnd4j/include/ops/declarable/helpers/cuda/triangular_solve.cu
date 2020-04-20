@@ -18,13 +18,13 @@
 //  @author GS <sgazeos@gmail.com>
 //
 
-#include <op_boilerplate.h>
-#include <NDArray.h>
+#include <system/op_boilerplate.h>
+#include <array/NDArray.h>
 #include <execution/Threads.h>
-#include <ConstantTadHelper.h>
+#include <helpers/ConstantTadHelper.h>
 #include "../triangular_solve.h"
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         namespace helpers {
             /*
@@ -44,24 +44,26 @@ namespace nd4j {
             static __device__ void lowerTriangularSolve(T const* leftInput, Nd4jLong const* leftInputShape,
                                                         T const* rightInput, Nd4jLong const* rightInputShape,
                                                         bool const adjoint, T* output, Nd4jLong* outputShape,
-                                                        Nd4jLong rows) {
+                                                        Nd4jLong rows, Nd4jLong cols) {
 
                 for (auto r = 0; r < rows; r++) {
-                    Nd4jLong posY[] = {r, 0};
-                    Nd4jLong posX[] = {r, r};
-                    auto xIndex = shape::getOffset(leftInputShape, posX, 0);
-                    auto yIndex = shape::getOffset(rightInputShape, posY, 0);
-                    auto zIndex = shape::getOffset(outputShape, posY, 0);
+                    for (auto j = 0; j < cols; j++) {
+                        Nd4jLong posY[] = {r, j};
+                        Nd4jLong posX[] = {r, r};
+                        auto xIndex = shape::getOffset(leftInputShape, posX, 0);
+                        auto yIndex = shape::getOffset(rightInputShape, posY, 0);
+                        auto zIndex = shape::getOffset(outputShape, posY, 0);
 
-                    auto sum = rightInput[yIndex];
-                    for (auto c = 0; c < r; c++) {
-                        Nd4jLong posZ[] = {c, 0};
-                        Nd4jLong pos[] = {r, c};
-                        auto xcIndex = shape::getOffset(leftInputShape, pos, 0);
-                        auto zcIndex = shape::getOffset(outputShape, posZ, 0);
-                        sum -= leftInput[xcIndex] * output[zcIndex];
+                        auto sum = rightInput[yIndex];
+                        for (auto c = 0; c < r; c++) {
+                            Nd4jLong posZ[] = {c, j};
+                            Nd4jLong pos[] = {r, c};
+                            auto xcIndex = shape::getOffset(leftInputShape, pos, 0);
+                            auto zcIndex = shape::getOffset(outputShape, posZ, 0);
+                            sum -= leftInput[xcIndex] * output[zcIndex];
+                        }
+                        output[zIndex] = sum / leftInput[xIndex];
                     }
-                    output[zIndex] = sum / leftInput[xIndex];
                 }
             }
 
@@ -82,23 +84,25 @@ namespace nd4j {
             template <typename T>
             static __device__ void upperTriangularSolve(T const* leftInput, Nd4jLong const* leftInputShape,
                     T const* rightInput, Nd4jLong const* rightInputShape, bool const adjoint, T* output,
-                    Nd4jLong* outputShape, Nd4jLong rows) {
+                    Nd4jLong* outputShape, Nd4jLong rows, Nd4jLong cols) {
 
                 for (auto r = rows; r > 0; r--) {
-                    Nd4jLong posY[] = {r - 1, 0};
-                    Nd4jLong posX[] = {r - 1, r - 1};
-                    auto xIndex = shape::getOffset(leftInputShape, posX, 0);
-                    auto yIndex = shape::getOffset(rightInputShape, posY, 0);
-                    auto zIndex = shape::getOffset(outputShape, posY, 0);
-                    auto sum = rightInput[yIndex];
-                    for (auto c = r; c < rows; c++) {
-                        Nd4jLong posZ[] = {c, 0};
-                        Nd4jLong pos[] = {r - 1, c};
-                        auto zcIndex = shape::getOffset(outputShape, posZ, 0);
-                        auto xcIndex = shape::getOffset(leftInputShape, pos, 0);
-                        sum -= leftInput[xcIndex] * output[zcIndex];
+                    for (auto j = 0; j < cols; j++) {
+                        Nd4jLong posY[] = {r - 1, j};
+                        Nd4jLong posX[] = {r - 1, r - 1};
+                        auto xIndex = shape::getOffset(leftInputShape, posX, 0);
+                        auto yIndex = shape::getOffset(rightInputShape, posY, 0);
+                        auto zIndex = shape::getOffset(outputShape, posY, 0);
+                        auto sum = rightInput[yIndex];
+                        for (auto c = r; c < rows; c++) {
+                            Nd4jLong posZ[] = {c, j};
+                            Nd4jLong pos[] = {r - 1, c};
+                            auto zcIndex = shape::getOffset(outputShape, posZ, 0);
+                            auto xcIndex = shape::getOffset(leftInputShape, pos, 0);
+                            sum -= leftInput[xcIndex] * output[zcIndex];
+                        }
+                        output[zIndex] = sum / leftInput[xIndex];
                     }
-                    output[zIndex] = sum / leftInput[xIndex];
                 }
             }
 
@@ -109,8 +113,11 @@ namespace nd4j {
                     Nd4jLong* tadRightOffset, Nd4jLong* tadOutputShape, Nd4jLong* tadOutputOffset, Nd4jLong batchNum) {
 
                 __shared__ Nd4jLong rows;
+                __shared__ Nd4jLong cols;
+
                 if (threadIdx.x == 0) {
                     rows = shape::sizeAt(leftPartShape, -2);
+                    cols = shape::sizeAt(rightPartShape, -1);
                 }
                 __syncthreads();
 
@@ -123,15 +130,15 @@ namespace nd4j {
                     auto pRightPart = rightInput + tadRightOffset[i];
                     auto pOutputPart = output + tadOutputOffset[i];
                     if (lower) {
-                        lowerTriangularSolve<T>(pLeftPart, tadLeftShape, pRightPart, tadRightShape, adjoint, pOutputPart, tadOutputShape, rows);
+                        lowerTriangularSolve<T>(pLeftPart, tadLeftShape, pRightPart, tadRightShape, adjoint, pOutputPart, tadOutputShape, rows, cols);
                     } else {
-                        upperTriangularSolve<T>(pLeftPart, tadLeftShape, pRightPart, tadRightShape, adjoint, pOutputPart, tadOutputShape, rows);
+                        upperTriangularSolve<T>(pLeftPart, tadLeftShape, pRightPart, tadRightShape, adjoint, pOutputPart, tadOutputShape, rows, cols);
                     }
                 }
             }
 
             template <typename T>
-            static int triangularSolveFunctor_(nd4j::LaunchContext * context, NDArray* leftInput, NDArray* rightInput,
+            static int triangularSolveFunctor_(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput,
                     bool lower, bool adjoint, NDArray* output) {
                 NDArray::prepareSpecialUse({output}, {leftInput, rightInput});
                 auto leftTads = ConstantTadHelper::getInstance()->tadForDimensions(leftInput->getShapeInfo(), {-2, -1});
@@ -154,7 +161,7 @@ namespace nd4j {
 
             }
 
-            int triangularSolveFunctor(nd4j::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output) {
+            int triangularSolveFunctor(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output) {
                 BUILD_SINGLE_SELECTOR(leftInput->dataType(), return triangularSolveFunctor_, (context, leftInput, rightInput, lower, adjoint, output), FLOAT_NATIVE);
             }
 
@@ -200,7 +207,7 @@ namespace nd4j {
             }
 
             template <typename T>
-            static void adjointTriangularMatrix_(nd4j::LaunchContext* context, NDArray const* input, bool const lower,
+            static void adjointTriangularMatrix_(sd::LaunchContext* context, NDArray const* input, bool const lower,
                     NDArray* output) {
 
                 auto inputTads = ConstantTadHelper::getInstance()->tadForDimensions(input->getShapeInfo(), {-2, -1});
@@ -218,7 +225,7 @@ namespace nd4j {
                 }
             }
 
-            void adjointMatrix(nd4j::LaunchContext* context, NDArray const* input, bool const lower, NDArray* output) {
+            void adjointMatrix(sd::LaunchContext* context, NDArray const* input, bool const lower, NDArray* output) {
                 BUILD_SINGLE_SELECTOR(input->dataType(), adjointTriangularMatrix_, (context, input, lower, output), FLOAT_NATIVE);
             }
 

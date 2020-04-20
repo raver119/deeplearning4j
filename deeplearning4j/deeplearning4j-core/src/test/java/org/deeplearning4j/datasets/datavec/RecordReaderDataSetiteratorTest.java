@@ -1006,9 +1006,9 @@ public class RecordReaderDataSetiteratorTest extends BaseDL4JTest {
             for (RecordMetaData m : meta) {
                 Record r = csv.loadFromMetaData(m);
                 INDArray row = ds.getFeatures().getRow(i);
-                if(i <= 3) {
-                    System.out.println(m.getLocation() + "\t" + r.getRecord() + "\t" + row);
-                }
+//                if(i <= 3) {
+//                    System.out.println(m.getLocation() + "\t" + r.getRecord() + "\t" + row);
+//                }
 
                 for (int j = 0; j < 4; j++) {
                     double exp = r.getRecord().get(j).toDouble();
@@ -1017,7 +1017,7 @@ public class RecordReaderDataSetiteratorTest extends BaseDL4JTest {
                 }
                 i++;
             }
-            System.out.println();
+//            System.out.println();
 
             DataSet fromMeta = rrdsi.loadFromMetaData(meta);
             assertEquals(ds, fromMeta);
@@ -1380,5 +1380,18 @@ public class RecordReaderDataSetiteratorTest extends BaseDL4JTest {
         DataSet ds = iter.next();
         assertNotNull(ds.getFeatures());
         assertNull(ds.getLabels());
+    }
+
+
+    @Test
+    public void testCollectMetaData(){
+        RecordReaderDataSetIterator trainIter = new RecordReaderDataSetIterator.Builder(new CollectionRecordReader(Collections.<List<Writable>>emptyList()), 1)
+                .collectMetaData(true)
+                .build();
+        assertTrue(trainIter.isCollectMetaData());
+        trainIter.setCollectMetaData(false);
+        assertFalse(trainIter.isCollectMetaData());
+        trainIter.setCollectMetaData(true);
+        assertTrue(trainIter.isCollectMetaData());
     }
 }

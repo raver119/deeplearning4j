@@ -61,7 +61,9 @@ public class SparkWord2VecTest extends BaseDL4JTest {
             sentences.add("one another sentence");
         }
 
-        SparkConf sparkConf = new SparkConf().setMaster("local[8]").setAppName("SeqVecTests");
+        SparkConf sparkConf = new SparkConf().setMaster("local[8]")
+                .set("spark.driver.host", "localhost")
+                .setAppName("SeqVecTests");
         sc = new JavaSparkContext(sparkConf);
     }
 
@@ -102,7 +104,7 @@ public class SparkWord2VecTest extends BaseDL4JTest {
         public void call(ExportContainer<VocabWord> v) throws Exception {
             assertNotNull(v.getElement());
             assertNotNull(v.getArray());
-            System.out.println(v.getElement() + " - " + v.getArray());
+//            System.out.println(v.getElement() + " - " + v.getArray());
         }
     }
 }

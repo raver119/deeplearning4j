@@ -19,9 +19,9 @@
 //
 
 #include <graph/profiling/GraphProfilingHelper.h>
-#include <GraphExecutioner.h>
+#include <graph/GraphExecutioner.h>
 
-namespace nd4j {
+namespace sd {
     namespace graph {
         GraphProfile *GraphProfilingHelper::profile(Graph *graph, int iterations) {
 
@@ -32,7 +32,7 @@ namespace nd4j {
             // graph->printOut();
 
             // warm up
-            for (int e = 0; e < 1000; e++) {
+            for (int e = 0; e < iterations; e++) {
                 FlowPath fp;
 
                 auto _vs = varSpace->clone();

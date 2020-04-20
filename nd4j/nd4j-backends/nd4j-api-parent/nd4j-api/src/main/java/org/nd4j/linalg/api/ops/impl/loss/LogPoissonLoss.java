@@ -19,6 +19,7 @@ package org.nd4j.linalg.api.ops.impl.loss;
 import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,8 +38,19 @@ public class LogPoissonLoss extends BaseLoss {
         this(sameDiff, lossReduce, predictions, weights, labels, false);
     }
 
+    public LogPoissonLoss(SameDiff sameDiff, SDVariable labels, SDVariable predictions, SDVariable weights,
+                        LossReduce lossReduce, boolean full) {
+        this(sameDiff, lossReduce, predictions, weights, labels, full);
+    }
+
     public LogPoissonLoss(SameDiff sameDiff, LossReduce lossReduce, SDVariable predictions, SDVariable weights, SDVariable labels, boolean full){
         super(sameDiff, lossReduce, predictions, weights, labels);
+        this.full = full;
+        addArgs();
+    }
+
+    public LogPoissonLoss(INDArray labels, INDArray predictions, INDArray weights, LossReduce lossReduce, boolean full){
+        super(lossReduce, predictions, weights, labels);
         this.full = full;
         addArgs();
     }

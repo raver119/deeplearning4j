@@ -21,9 +21,9 @@
 #include <ops/declarable/generic/helpers/BroadcastHelper.h>
 #include <ops/declarable/headers/broadcastable.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
-        BROADCASTABLE_OP_IMPL(greater, 0, 0) {
+        BROADCASTABLE_BOOL_OP_IMPL(greater, 0, 0) {
             auto x = INPUT_VARIABLE(0);
             auto y = INPUT_VARIABLE(1);
             auto z = OUTPUT_VARIABLE(0);

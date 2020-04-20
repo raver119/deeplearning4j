@@ -18,10 +18,10 @@
 // @author raver119@gmail.com
 //
 
-#include <Environment.h>
+#include <system/Environment.h>
 #include <loops/transform_float.h>
 #include <types/types.h>
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 
 #include <loops/legacy_ops.h>
 #include <helpers/DebugHelper.h>
@@ -97,7 +97,7 @@ namespace functions {
 	    	    auto tid = blockIdx.x * blockDim.x + threadIdx.x;
 				int totalThreads = gridDim.x * blockDim.x;
 
-		        if(xEws > 0 && zEws > 0 && xOrder == zOrder) {
+		        if(xEws > 0 && zEws > 0 && xOrder == zOrder && xOrder == 'c') {
 
 					for (Nd4jLong i = tid; i < length; i += totalThreads)
                         z[i * zEws] = OpType::op(x[i * xEws], params);
@@ -139,7 +139,7 @@ namespace functions {
 		template <typename OpType>
 		_CUDA_H void TransformFloat<X,Z>::intermediateShaped(dim3 launchDims, cudaStream_t *stream, void *x, Nd4jLong *xShape, int xRank, void *extraParams, void *z, Nd4jLong *zShape, int zRank, int *allocationPointer, void *reductionPointer,  Nd4jLong *tadShapeInfo, Nd4jLong *tadOffsets) {
 			transformFloatSimple<X, Z, OpType><<<launchDims.x, launchDims.y, launchDims.z, *stream>>>(x, xShape, xRank, extraParams, z, zShape, zRank, allocationPointer, reductionPointer, tadShapeInfo, tadOffsets);
-            nd4j::DebugHelper::checkErrorCode(stream, "transformFloat(...) failed");
+            sd::DebugHelper::checkErrorCode(stream, "transformFloat(...) failed");
 		}
 
 		BUILD_DOUBLE_TEMPLATE(template class ND4J_EXPORT TransformFloat, , LIBND4J_TYPES, FLOAT_TYPES);

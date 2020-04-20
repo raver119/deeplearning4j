@@ -49,6 +49,13 @@ public class TruncatedNormalDistribution extends BaseRandomOp {
         this.extraArgs = new Object[] {this.mean, this.stddev};
     }
 
+    public TruncatedNormalDistribution(SameDiff sd, double mean, double stddev, DataType dataType, long[] shape) {
+        super(sd, shape);
+        this.mean = mean;
+        this.stddev = stddev;
+        this.extraArgs = new Object[] {this.mean, this.stddev};
+    }
+
     public TruncatedNormalDistribution(double mean, double stddev, DataType datatype, long... shape){
         this(Nd4j.createUninitialized(datatype, shape), mean, stddev);
     }
@@ -135,5 +142,10 @@ public class TruncatedNormalDistribution extends BaseRandomOp {
         //Input data type specifies the shape; output data type should be any float
         //TODO MAKE CONFIGUREABLE - https://github.com/deeplearning4j/deeplearning4j/issues/6854
         return Collections.singletonList(DataType.DOUBLE);
+    }
+
+    @Override
+    public boolean isTripleArgRngOp() {
+        return true;
     }
 }

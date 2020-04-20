@@ -58,6 +58,7 @@ import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.evaluation.classification.ROC;
 import org.nd4j.evaluation.classification.ROCMultiClass;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.MultiDataSet;
@@ -93,7 +94,23 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();
 
-    @Test(timeout = 120000L)
+
+    @Override
+    public long getTimeoutMilliseconds() {
+        return 120000L;
+    }
+
+    @Override
+    public DataType getDefaultFPDataType() {
+        return DataType.FLOAT;
+    }
+
+    @Override
+    public DataType getDataType() {
+        return DataType.FLOAT;
+    }
+
+    @Test
     public void testFromSvmLightBackprop() throws Exception {
         JavaRDD<LabeledPoint> data = MLUtils
                         .loadLibSVMFile(sc.sc(),
@@ -125,7 +142,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testFromSvmLight() throws Exception {
         JavaRDD<LabeledPoint> data = MLUtils
                         .loadLibSVMFile(sc.sc(),
@@ -155,7 +172,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         master.fitLabeledPoint(data);
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testRunIteration() {
 
         DataSet dataSet = new IrisDataSetIterator(5, 5).next();
@@ -175,7 +192,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         assertEquals(expectedParams.size(1), actualParams.size(1));
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testUpdaters() {
         SparkDl4jMultiLayer sparkNet = getBasicNetwork();
         MultiLayerNetwork netCopy = sparkNet.getNetwork().clone();
@@ -197,7 +214,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testEvaluation() {
 
         SparkDl4jMultiLayer sparkNet = getBasicNetwork();
@@ -228,7 +245,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         }
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testSmallAmountOfData() {
         //Idea: Test spark training where some executors don't get any data
         //in this case: by having fewer examples (2 DataSets) than executors (local[*])
@@ -255,7 +272,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
 
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testDistributedScoring() {
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder().l1(0.1).l2(0.1)
@@ -333,7 +350,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
 
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testParameterAveragingMultipleExamplesPerDataSet() throws Exception {
         int dataSetObjSize = 5;
         int batchSizePerExecutor = 25;
@@ -372,7 +389,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         List<EventStats> workerFitStats = stats.getValue("ParameterAveragingWorkerFitTimesMs");
         for (EventStats e : workerFitStats) {
             ExampleCountEventStats eces = (ExampleCountEventStats) e;
-            System.out.println(eces.getTotalExampleCount());
+//            System.out.println(eces.getTotalExampleCount());
         }
 
         for (EventStats e : workerFitStats) {
@@ -382,7 +399,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testFitViaStringPaths() throws Exception {
 
         Path tempDir = testDir.newFolder("DL4J-testFitViaStringPaths").toPath();
@@ -440,12 +457,13 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         assertNotEquals(paramsBefore, paramsAfter);
 
         SparkTrainingStats stats = sparkNet.getSparkTrainingStats();
-        System.out.println(stats.statsAsString());
+//        System.out.println(stats.statsAsString());
+        stats.statsAsString();
 
         sparkNet.getTrainingMaster().deleteTempFiles(sc);
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testFitViaStringPathsSize1() throws Exception {
 
         Path tempDir = testDir.newFolder("DL4J-testFitViaStringPathsSize1").toPath();
@@ -466,7 +484,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
             i++;
         }
 
-        System.out.println("Saved to: " + tempDirF.getAbsolutePath());
+//        System.out.println("Saved to: " + tempDirF.getAbsolutePath());
 
 
 
@@ -510,7 +528,8 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         SparkTrainingStats stats = sparkNet.getSparkTrainingStats();
 
         //Expect
-        System.out.println(stats.statsAsString());
+//        System.out.println(stats.statsAsString());
+        stats.statsAsString();
         assertEquals(numSplits, stats.getValue("ParameterAveragingMasterRepartitionTimesMs").size());
 
         List<EventStats> list = stats.getValue("ParameterAveragingWorkerFitTimesMs");
@@ -525,7 +544,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testFitViaStringPathsCompGraph() throws Exception {
 
         Path tempDir = testDir.newFolder("DL4J-testFitViaStringPathsCG").toPath();
@@ -549,8 +568,8 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
             i++;
         }
 
-        System.out.println("Saved to: " + tempDirF.getAbsolutePath());
-        System.out.println("Saved to: " + tempDirF2.getAbsolutePath());
+//        System.out.println("Saved to: " + tempDirF.getAbsolutePath());
+//        System.out.println("Saved to: " + tempDirF2.getAbsolutePath());
 
 
 
@@ -593,7 +612,8 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         assertNotEquals(paramsBefore, paramsAfter);
 
         SparkTrainingStats stats = sparkNet.getSparkTrainingStats();
-        System.out.println(stats.statsAsString());
+//        System.out.println(stats.statsAsString());
+        stats.statsAsString();
 
         //Same thing, buf for MultiDataSet objects:
         config = new Configuration();
@@ -614,11 +634,12 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         assertNotEquals(paramsBefore, paramsAfter);
 
         stats = sparkNet.getSparkTrainingStats();
-        System.out.println(stats.statsAsString());
+//        System.out.println(stats.statsAsString());
+        stats.statsAsString();
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     @Ignore("AB 2019/05/23 - Failing on CI only - passing locally. Possible precision or threading issue")
     public void testSeedRepeatability() throws Exception {
 
@@ -691,7 +712,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testIterationCounts() throws Exception {
         int dataSetObjSize = 5;
         int batchSizePerExecutor = 25;
@@ -713,13 +734,13 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
                         .build();
 
         for (int avgFreq : new int[] {1, 5, 10}) {
-            System.out.println("--- Avg freq " + avgFreq + " ---");
+//            System.out.println("--- Avg freq " + avgFreq + " ---");
             SparkDl4jMultiLayer sparkNet = new SparkDl4jMultiLayer(sc, conf.clone(),
                             new ParameterAveragingTrainingMaster.Builder(numExecutors(), dataSetObjSize)
                                             .batchSizePerWorker(batchSizePerExecutor).averagingFrequency(avgFreq)
                                             .repartionData(Repartition.Always).build());
 
-            sparkNet.setListeners(new ScoreIterationListener(1));
+            sparkNet.setListeners(new ScoreIterationListener(5));
 
 
 
@@ -737,7 +758,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         }
     }
 
-    @Test(timeout = 120000L)
+    @Test
     public void testIterationCountsGraph() throws Exception {
         int dataSetObjSize = 5;
         int batchSizePerExecutor = 25;
@@ -761,13 +782,13 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
                         .setOutputs("1").build();
 
         for (int avgFreq : new int[] {1, 5, 10}) {
-            System.out.println("--- Avg freq " + avgFreq + " ---");
+//            System.out.println("--- Avg freq " + avgFreq + " ---");
             SparkComputationGraph sparkNet = new SparkComputationGraph(sc, conf.clone(),
                             new ParameterAveragingTrainingMaster.Builder(numExecutors(), dataSetObjSize)
                                             .batchSizePerWorker(batchSizePerExecutor).averagingFrequency(avgFreq)
                                             .repartionData(Repartition.Always).build());
 
-            sparkNet.setListeners(new ScoreIterationListener(1));
+            sparkNet.setListeners(new ScoreIterationListener(5));
 
             JavaRDD<DataSet> rdd = sc.parallelize(list);
 
@@ -783,7 +804,8 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L) @Ignore   //Ignored 2019/04/09 - low priority: https://github.com/deeplearning4j/deeplearning4j/issues/6656
+    @Test
+    @Ignore   //Ignored 2019/04/09 - low priority: https://github.com/deeplearning4j/deeplearning4j/issues/6656
     public void testVaePretrainSimple() {
         //Simple sanity check on pretraining
         int nIn = 8;
@@ -818,7 +840,8 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
         sparkNet.fit(data);
     }
 
-    @Test(timeout = 120000L) @Ignore    //Ignored 2019/04/09 - low priority: https://github.com/deeplearning4j/deeplearning4j/issues/6656
+    @Test
+    @Ignore    //Ignored 2019/04/09 - low priority: https://github.com/deeplearning4j/deeplearning4j/issues/6656
     public void testVaePretrainSimpleCG() {
         //Simple sanity check on pretraining
         int nIn = 8;
@@ -854,7 +877,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testROC() {
 
         int nArrays = 100;
@@ -909,7 +932,7 @@ public class TestSparkMultiLayerParameterAveraging extends BaseSparkTest {
     }
 
 
-    @Test(timeout = 120000L)
+    @Test
     public void testROCMultiClass() {
 
         int nArrays = 100;

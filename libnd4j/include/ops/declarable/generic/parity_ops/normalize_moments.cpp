@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-//
-// Created by george@skymind.io on 26.01.2018.
-//
+ //
+ // Created by george@skymind.io on 26.01.2018.
+ //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_normalize_moments)
 
 #include <ops/declarable/CustomOperations.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(normalize_moments, 3, 2, false, 1, 0) {
             auto counts = INPUT_VARIABLE(0);
@@ -34,7 +34,7 @@ namespace nd4j {
             auto resVariances = OUTPUT_VARIABLE(1);
 
             // FIXME: double?
-            NDArray shift = NDArrayFactory::create<double>(0.);
+            NDArray shift = NDArrayFactory::create<double>(0., block.launchContext());
 
             if (block.getTArguments()->size() > 0) {
                 shift.assign(T_ARG(0));
@@ -47,7 +47,7 @@ namespace nd4j {
 
             squareMeans.applyTransform(transform::Square, squareMeans, nullptr);
             variances->applyScalarArr(scalar::Divide, *counts, tempVariances);
-//            tempVariances.printIndexedBuffer("varianced divided by count");
+            //            tempVariances.printIndexedBuffer("varianced divided by count");
             tempVariances.applyPairwiseTransform(pairwise::Subtract, squareMeans, *resVariances);
 
             if (shift.e<double>(0) != 0) {
@@ -75,8 +75,8 @@ namespace nd4j {
 
         DECLARE_TYPES(normalize_moments) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
-                    ->setAllowedOutputTypes({ALL_FLOATS});
+                ->setAllowedInputTypes(sd::DataType::ANY)
+                ->setAllowedOutputTypes({ ALL_FLOATS });
         }
     }
 

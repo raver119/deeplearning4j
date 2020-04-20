@@ -43,6 +43,15 @@ public class ImportClassMapping {
     private static final List<Class<?>> fnClasses = Arrays.<Class<?>>asList(
             org.nd4j.linalg.api.ops.DynamicCustomOp.class,
             org.nd4j.linalg.api.ops.NoOp.class,
+            org.nd4j.linalg.api.ops.impl.updaters.SgdUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.RmsPropUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.NesterovsUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.NadamUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.AmsGradUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.AdamUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.AdaMaxUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.AdaGradUpdater.class,
+            org.nd4j.linalg.api.ops.impl.updaters.AdaDeltaUpdater.class,
             org.nd4j.linalg.api.ops.custom.BarnesEdgeForces.class,
             org.nd4j.linalg.api.ops.custom.BarnesHutGains.class,
             org.nd4j.linalg.api.ops.custom.BarnesHutSymmetrize.class,
@@ -200,7 +209,6 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.impl.reduce.custom.BatchMmul.class,
             org.nd4j.linalg.api.ops.impl.reduce.custom.LogSumExp.class,
             org.nd4j.linalg.api.ops.impl.reduce.floating.AMean.class,
-            org.nd4j.linalg.api.ops.impl.reduce.floating.Bias.class,
             org.nd4j.linalg.api.ops.impl.reduce.floating.Entropy.class,
             org.nd4j.linalg.api.ops.impl.reduce.floating.LogEntropy.class,
             org.nd4j.linalg.api.ops.impl.reduce.floating.Mean.class,
@@ -623,7 +631,11 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.custom.Igammac.class,
             org.nd4j.linalg.api.ops.custom.Digamma.class,
             org.nd4j.linalg.api.ops.custom.Lu.class,
-            org.nd4j.linalg.api.ops.custom.TriangularSolve.class
+            org.nd4j.linalg.api.ops.custom.TriangularSolve.class,
+            org.nd4j.linalg.api.ops.custom.LinearSolve.class,
+            org.nd4j.linalg.api.ops.custom.Lstsq.class,
+            org.nd4j.linalg.api.ops.impl.transforms.custom.Qr.class,
+            org.nd4j.linalg.api.ops.custom.Logdet.class
     );
 
     static {

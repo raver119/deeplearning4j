@@ -21,6 +21,33 @@ set -eu
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
+setwindows_msys() {
+  if [[ $KERNEL == *"windows"* ]]; then
+  export CMAKE_COMMAND="$CMAKE_COMMAND -G \"MSYS Makefiles\""
+  fi
+}
+
+setandroid_defaults() {
+  if [[ -z ${ANDROID_NDK:-} ]]; then
+    export ANDROID_NDK=$HOME/Android/android-ndk/
+    echo "No ANDROID_NDK variable set. Setting to default of $ANDROID_NDK"
+    else
+        echo "USING ANDROID NDK $ANDROID_NDK"
+fi
+
+  if [[ -z ${ANDROID_VERSION:-} ]]; then
+    export ANDROID_VERSION=21
+    echo "No ANDROID_VERSION variable set. Setting to default of $ANDROID_VERSION"
+    else
+       echo "USING ANDROID VERSION $ANDROID_VERSION"
+    # android needs static linking
+
+fi
+
+
+}
+
+
 export CMAKE_COMMAND="cmake"
 if which cmake3 &> /dev/null; then
     export CMAKE_COMMAND="cmake3"
@@ -57,7 +84,7 @@ VERBOSE_ARG="VERBOSE=1"
 HELPER=
 CHECK_VECTORIZATION="OFF"
 NAME=
-while [[ $# > 0 ]]
+while [[ $# -gt 0 ]]
 do
 key="$1"
 value="${2:-}"
@@ -141,7 +168,7 @@ case $key in
             # unknown option
     ;;
 esac
-if [[ $# > 0 ]]; then
+if [[ $# -gt 0 ]]; then
     shift # past argument or value
 fi
 done
@@ -173,7 +200,7 @@ fi
 case "$OS" in
     linux-armhf)
       export RPI_BIN=$RPI_HOME/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin/arm-linux-gnueabihf
-      export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/rpi.cmake"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -D CMAKE_TOOLCHAIN_FILE=cmake/rpi.cmake -DSD_ARM_BUILD=true"
       if [ -z "$ARCH" ]; then
         ARCH="armv7-r"
       fi
@@ -183,50 +210,72 @@ case "$OS" in
       if [ -z "$ARCH" ]; then
         ARCH="armv8-a"
       fi
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DSD_ARM_BUILD=true"
     ;;
 
     android-arm)
       if [ -z "$ARCH" ]; then
         ARCH="armv7-a"
       fi
-      export ANDROID_BIN="$ANDROID_NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$KERNEL/"
+
+      setandroid_defaults
+
+      # Note here for android 32 bit prefix on the binutils is different
+      # See https://developer.android.com/ndk/guides/other_build_systems
+      export ANDROID_BIN="$ANDROID_NDK/toolchains/arm-linux-androideabi/prebuilt/$KERNEL/"
       export ANDROID_CPP="$ANDROID_NDK/sources/cxx-stl/llvm-libc++/"
       export ANDROID_CC="$ANDROID_NDK/toolchains/llvm/prebuilt/$KERNEL/bin/clang"
-      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-21/arch-arm/"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-arm.cmake -DANDROID_BUILD=true"
+      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-$ANDROID_VERSION/arch-arm/"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-arm.cmake -DSD_ANDROID_BUILD=true"
+      setwindows_msys
     ;;
 
     android-arm64)
       if [ -z "$ARCH" ]; then
         ARCH="armv8-a"
       fi
+
+      setandroid_defaults
+
+      echo "BUILDING ANDROID ARM with KERNEL $KERNEL"
       export ANDROID_BIN="$ANDROID_NDK/toolchains/aarch64-linux-android-4.9/prebuilt/$KERNEL/"
       export ANDROID_CPP="$ANDROID_NDK/sources/cxx-stl/llvm-libc++/"
       export ANDROID_CC="$ANDROID_NDK/toolchains/llvm/prebuilt/$KERNEL/bin/clang"
-      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-21/arch-arm64/"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-arm64.cmake -DANDROID_BUILD=true"
+      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-$ANDROID_VERSION/arch-arm64/"
+      export CMAKE_COMMAND="$CMAKE_COMMAND  -DCMAKE_TOOLCHAIN_FILE=cmake/android-arm64.cmake -DSD_ANDROID_BUILD=true"
+      setwindows_msys
     ;;
 
     android-x86)
       if [ -z "$ARCH" ]; then
         ARCH="i686"
       fi
-      export ANDROID_BIN="$ANDROID_NDK/toolchains/x86-4.9/prebuilt/$KERNEL/"
+
+      setandroid_defaults
+      export ANDROID_BIN="$ANDROID_NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$KERNEL/"
       export ANDROID_CPP="$ANDROID_NDK/sources/cxx-stl/llvm-libc++/"
       export ANDROID_CC="$ANDROID_NDK/toolchains/llvm/prebuilt/$KERNEL/bin/clang"
-      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-21/arch-x86/"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-x86.cmake -DANDROID_BUILD=true"
+      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-$ANDROID_VERSION/arch-x86/"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-x86.cmake -DSD_ANDROID_BUILD=true"
+      setwindows_msys
     ;;
 
     android-x86_64)
+
       if [ -z "$ARCH" ]; then
         ARCH="x86-64"
       fi
-      export ANDROID_BIN="$ANDROID_NDK/toolchains/x86_64-4.9/prebuilt/$KERNEL/"
+      echo "BUILDING ANDROID x86_64"
+
+      setandroid_defaults
+
+
+      export ANDROID_BIN="$ANDROID_NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$KERNEL/"
       export ANDROID_CPP="$ANDROID_NDK/sources/cxx-stl/llvm-libc++/"
       export ANDROID_CC="$ANDROID_NDK/toolchains/llvm/prebuilt/$KERNEL/bin/clang"
-      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-21/arch-x86_64/"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-x86_64.cmake -DANDROID_BUILD=true"
+      export ANDROID_ROOT="$ANDROID_NDK/platforms/android-$ANDROID_VERSION/arch-x86_64/"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/android-x86_64.cmake -DSD_ANDROID_BUILD=true"
+      setwindows_msys
     ;;
 
     ios-x86_64)
@@ -239,7 +288,7 @@ case "$OS" in
       fi
       XCODE_PATH="$(xcode-select --print-path)"
       export IOS_SDK="$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$IOS_VERSION.sdk"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-x86_64.cmake --debug-trycompile -DIOS_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-x86_64.cmake --debug-trycompile -DSD_IOS_BUILD=true"
     ;;
 
     ios-x86)
@@ -252,7 +301,7 @@ case "$OS" in
       fi
       XCODE_PATH="$(xcode-select --print-path)"
       export IOS_SDK="$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$IOS_VERSION.sdk"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-x86.cmake --debug-trycompile -DIOS_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-x86.cmake --debug-trycompile -DSD_IOS_BUILD=true"
     ;;
 
     ios-arm64)
@@ -265,7 +314,7 @@ case "$OS" in
       fi
       XCODE_PATH="$(xcode-select --print-path)"
       export IOS_SDK="$XCODE_PATH/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$IOS_VERSION.sdk"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-arm64.cmake --debug-trycompile -DIOS_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-arm64.cmake --debug-trycompile -DSD_IOS_BUILD=true"
     ;;
 
     ios-arm)
@@ -278,7 +327,7 @@ case "$OS" in
       fi
       XCODE_PATH="$(xcode-select --print-path)"
       export IOS_SDK="$XCODE_PATH/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$IOS_VERSION.sdk"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-arm.cmake --debug-trycompile -DIOS_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-arm.cmake --debug-trycompile -DSD_IOS_BUILD=true"
     ;;
 
     ios-armv7)
@@ -288,7 +337,7 @@ case "$OS" in
       LIBTYPE="static"
       ARCH="armv7"
       export IOS_SDK="/Applications/Xcode.app/Contents/Developer/Platforms/${iPhoneOS}.platform/Developer/SDKs/${iPhoneOS}${IOS_VERSION}.sdk"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-armv7.cmake --debug-trycompile -DIOS_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_TOOLCHAIN_FILE=cmake/ios-armv7.cmake --debug-trycompile -DSD_IOS_BUILD=true"
     ;;
 
     linux*)
@@ -298,7 +347,7 @@ case "$OS" in
       export CC=clang
       export CXX=clang++
       PARALLEL="true"
-      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_MACOSX_RPATH=ON -DAPPLE_BUILD=true"
+      export CMAKE_COMMAND="$CMAKE_COMMAND -DCMAKE_MACOSX_RPATH=ON -DSD_APPLE_BUILD=true"
     ;;
 
     windows*)
@@ -375,7 +424,7 @@ fi
 OPERATIONS_ARG=
 
 if [ -z "$OPERATIONS" ]; then
- OPERATIONS_ARG="-DLIBND4J_ALL_OPS=true"
+ OPERATIONS_ARG="-DSD_ALL_OPS=true"
 else
  OPERATIONS_ARG=$OPERATIONS
 fi
@@ -385,9 +434,9 @@ if [ -z "$EXPERIMENTAL" ]; then
 fi
 
 if [ "$CHIP" == "cpu" ]; then
-    BLAS_ARG="-DCPU_BLAS=true -DBLAS=TRUE"
+    BLAS_ARG="-DSD_CPU=true -DBLAS=TRUE"
 else
-    BLAS_ARG="-DCUDA_BLAS=true -DBLAS=TRUE"
+    BLAS_ARG="-DSD_CUDA=true -DBLAS=TRUE"
 fi
 
 if [ -z "$NAME" ]; then
@@ -399,9 +448,9 @@ if [ -z "$NAME" ]; then
 fi
 
 if [ "$LIBTYPE" == "dynamic" ]; then
-     SHARED_LIBS_ARG="-DBUILD_SHARED_LIBS=OFF"
+     SHARED_LIBS_ARG="-DSD_SHARED_LIB=ON -DSD_STATIC_LIB=OFF"
      else
-         SHARED_LIBS_ARG="-DBUILD_SHARED_LIBS=ON"
+         SHARED_LIBS_ARG="-DSD_SHARED_LIB=OFF -DSD_STATIC_LIB=ON"
 fi
 
 if [ "$BUILD" == "release" ]; then
@@ -428,24 +477,24 @@ if [ "$PACKAGING" == "msi" ]; then
 fi
 
 EXPERIMENTAL_ARG="";
-MINIFIER_ARG="-DLIBND4J_BUILD_MINIFIER=false"
-TESTS_ARG="-DBUILD_TESTS=OFF"
-NAME_ARG="-DLIBND4J_NAME=$NAME"
+MINIFIER_ARG="-DSD_BUILD_MINIFIER=false"
+TESTS_ARG="-DSD_BUILD_TESTS=OFF"
+NAME_ARG="-DSD_LIBRARY_NAME=$NAME"
 
 if [ "$EXPERIMENTAL" == "yes" ]; then
-    EXPERIMENTAL_ARG="-DEXPERIMENTAL=yes"
+    EXPERIMENTAL_ARG="-DSD_EXPERIMENTAL=yes"
 fi
 
 if [ "$MINIFIER" == "true" ]; then
-    MINIFIER_ARG="-DLIBND4J_BUILD_MINIFIER=true"
+    MINIFIER_ARG="-DSD_BUILD_MINIFIER=true"
 fi
 
 if [ "$TESTS" == "true" ]; then
-    MINIFIER_ARG="-DLIBND4J_BUILD_MINIFIER=true"
-    TESTS_ARG="-DBUILD_TESTS=ON"
+    MINIFIER_ARG="-DSD_BUILD_MINIFIER=true"
+    TESTS_ARG="-DSD_BUILD_TESTS=ON"
 fi
 
-ARCH_ARG="-DARCH=$ARCH -DEXTENSION=$CHIP_EXTENSION"
+ARCH_ARG="-DSD_ARCH=$ARCH -DSD_EXTENSION=$CHIP_EXTENSION"
 
 CUDA_COMPUTE="-DCOMPUTE=$COMPUTE"
 
@@ -463,7 +512,9 @@ if [ "$CHIP" == "cuda" ] && [ -n "$CHIP_VERSION" ]; then
     esac
 fi
 
+
 [[ -z ${OPENBLAS_PATH:-} ]] && OPENBLAS_PATH=""
+OPENBLAS_PATH="${OPENBLAS_PATH//\\//}"
 
 if [[ -n "${BUILD_PATH:-}" ]]; then
     PREVIFS="$IFS"
@@ -536,7 +587,7 @@ echo CHECK_VECTORIZATION = "$CHECK_VECTORIZATION"
 echo HELPERS = "$HELPERS"
 mkbuilddir
 pwd
-eval $CMAKE_COMMAND  "$BLAS_ARG" "$ARCH_ARG" "$NAME_ARG" -DCHECK_VECTORIZATION="${CHECK_VECTORIZATION}"  $HELPERS "$SHARED_LIBS_ARG" "$MINIFIER_ARG" "$OPERATIONS_ARG" "$BUILD_TYPE" "$PACKAGING_ARG" "$EXPERIMENTAL_ARG" "$TESTS_ARG" "$CUDA_COMPUTE" -DOPENBLAS_PATH="$OPENBLAS_PATH" -DDEV=FALSE -DCMAKE_NEED_RESPONSE=YES -DMKL_MULTI_THREADED=TRUE ../..
+eval "$CMAKE_COMMAND"  "$BLAS_ARG" "$ARCH_ARG" "$NAME_ARG" -DSD_CHECK_VECTORIZATION="${CHECK_VECTORIZATION}"  "$HELPERS" "$SHARED_LIBS_ARG" "$MINIFIER_ARG" "$OPERATIONS_ARG" "$BUILD_TYPE" "$PACKAGING_ARG" "$EXPERIMENTAL_ARG" "$TESTS_ARG" "$CUDA_COMPUTE" -DOPENBLAS_PATH="$OPENBLAS_PATH" -DDEV=FALSE -DCMAKE_NEED_RESPONSE=YES -DMKL_MULTI_THREADED=TRUE ../..
 
 if [ "$PARALLEL" == "true" ]; then
     MAKE_ARGUMENTS="$MAKE_ARGUMENTS -j $MAKEJ"
@@ -550,9 +601,10 @@ if [ "$CHECK_VECTORIZATION" == "ON" ]; then
 if [ "$MAKE_COMMAND" == "make" ]; then
     MAKE_ARGUMENTS="$MAKE_ARGUMENTS --output-sync=target"
 fi
-exec 3>&1 
-eval $MAKE_COMMAND $MAKE_ARGUMENTS 2>&1 >&3 3>&-  | python3 ../../auto_vectorization/auto_vect.py   && cd ../../..
+
+exec 3>&1
+eval "$MAKE_COMMAND" "$MAKE_ARGUMENTS" 2>&1 >&3 3>&-  | python3 ../../auto_vectorization/auto_vect.py   && cd ../../..
 exec 3>&- 
 else
-eval $MAKE_COMMAND $MAKE_ARGUMENTS  && cd ../../..
+eval "$MAKE_COMMAND" "$MAKE_ARGUMENTS"  && cd ../../..
 fi

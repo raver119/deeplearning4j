@@ -45,6 +45,10 @@ public class BinomialDistribution extends BaseRandomOp {
         this.extraArgs = new Object[] {(double) this.trials, this.probability};
     }
 
+    public BinomialDistribution(SameDiff sd, int trials, double probability, DataType dataType, long[] shape){
+        this(sd, trials, probability, shape);
+    }
+
     public BinomialDistribution(int trials, double probability, DataType dt, long[] shape){
         this(Nd4j.createUninitialized(dt, shape), trials, probability);
     }
@@ -138,5 +142,10 @@ public class BinomialDistribution extends BaseRandomOp {
         //Input data type specifies the shape; output data type should be any float
         //TODO MAKE CONFIGUREABLE - https://github.com/deeplearning4j/deeplearning4j/issues/6854
         return Collections.singletonList(DataType.DOUBLE);
+    }
+
+    @Override
+    public boolean isTripleArgRngOp() {
+        return true;
     }
 }

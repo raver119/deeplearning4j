@@ -3,23 +3,27 @@ package org.deeplearning4j.rl4j.learning.async;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
+import org.deeplearning4j.rl4j.learning.configuration.IAsyncLearningConfiguration;
 import org.deeplearning4j.rl4j.learning.listener.TrainingListenerList;
 import org.deeplearning4j.rl4j.mdp.MDP;
-import org.deeplearning4j.rl4j.network.NeuralNet;
 import org.deeplearning4j.rl4j.observation.Observation;
 import org.deeplearning4j.rl4j.policy.Policy;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
-import org.deeplearning4j.rl4j.space.Encodable;
-import org.deeplearning4j.rl4j.support.*;
+import org.deeplearning4j.rl4j.support.MockAsyncConfiguration;
+import org.deeplearning4j.rl4j.support.MockAsyncGlobal;
+import org.deeplearning4j.rl4j.support.MockEncodable;
+import org.deeplearning4j.rl4j.support.MockHistoryProcessor;
+import org.deeplearning4j.rl4j.support.MockMDP;
+import org.deeplearning4j.rl4j.support.MockNeuralNet;
+import org.deeplearning4j.rl4j.support.MockObservationSpace;
+import org.deeplearning4j.rl4j.support.MockTrainingListener;
 import org.deeplearning4j.rl4j.util.IDataManager;
 import org.junit.Test;
-import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class AsyncThreadTest {
 
@@ -91,7 +95,7 @@ public class AsyncThreadTest {
 
         // Assert
         assertEquals(numberOfEpochs, context.listener.statEntries.size());
-        int[] expectedStepCounter = new int[] { 2, 4, 6, 8, 10 };
+        int[] expectedStepCounter = new int[] { 10, 20, 30, 40, 50 };
         double expectedReward = (1.0 + 2.0 + 3.0 + 4.0 + 5.0 + 6.0 + 7.0 + 8.0) // reward from init
             + 1.0; // Reward from trainSubEpoch()
         for(int i = 0; i < numberOfEpochs; ++i) {
@@ -114,7 +118,7 @@ public class AsyncThreadTest {
         // Assert
         assertEquals(numberOfEpochs, context.sut.trainSubEpochParams.size());
         double[] expectedObservation = new double[] { 0.0, 2.0, 4.0, 6.0, 8.0 };
-        for(int i = 0; i < context.sut.getEpochCounter(); ++i) {
+        for(int i = 0; i < context.sut.trainSubEpochParams.size(); ++i) {
             MockAsyncThread.TrainSubEpochParams params = context.sut.trainSubEpochParams.get(i);
             assertEquals(2, params.nstep);
             assertEquals(expectedObservation.length, params.obs.getData().shape()[1]);
@@ -129,7 +133,7 @@ public class AsyncThreadTest {
         public final MockNeuralNet neuralNet = new MockNeuralNet();
         public final MockObservationSpace observationSpace = new MockObservationSpace();
         public final MockMDP mdp = new MockMDP(observationSpace);
-        public final MockAsyncConfiguration config = new MockAsyncConfiguration(5, 10, 0, 0, 10, 0, 0, 0, 0, 0);
+        public final MockAsyncConfiguration config = new MockAsyncConfiguration(5L, 10, 0, 0, 0, 0, 0, 0, 10, 0);
         public final TrainingListenerList listeners = new TrainingListenerList();
         public final MockTrainingListener listener = new MockTrainingListener();
         public final IHistoryProcessor.Configuration hpConf = new IHistoryProcessor.Configuration(5, 4, 4, 4, 4, 0, 0, 2);
@@ -141,6 +145,7 @@ public class AsyncThreadTest {
             asyncGlobal.setMaxLoops(numEpochs);
             listeners.add(listener);
             sut.setHistoryProcessor(historyProcessor);
+            sut.getLegacyMDPWrapper().setTransformProcess(MockMDP.buildTransformProcess(observationSpace.getShape(), hpConf.getSkipFrame(), hpConf.getHistoryLength()));
         }
     }
 
@@ -151,11 +156,11 @@ public class AsyncThreadTest {
 
         private final MockAsyncGlobal asyncGlobal;
         private final MockNeuralNet neuralNet;
-        private final AsyncConfiguration conf;
+        private final IAsyncLearningConfiguration conf;
 
         private final List<TrainSubEpochParams> trainSubEpochParams = new ArrayList<TrainSubEpochParams>();
 
-        public MockAsyncThread(MockAsyncGlobal asyncGlobal, int threadNumber, MockNeuralNet neuralNet, MDP mdp, AsyncConfiguration conf, TrainingListenerList listeners) {
+        public MockAsyncThread(MockAsyncGlobal asyncGlobal, int threadNumber, MockNeuralNet neuralNet, MDP mdp, IAsyncLearningConfiguration conf, TrainingListenerList listeners) {
             super(asyncGlobal, mdp, listeners, threadNumber, 0);
 
             this.asyncGlobal = asyncGlobal;
@@ -186,7 +191,7 @@ public class AsyncThreadTest {
         }
 
         @Override
-        protected AsyncConfiguration getConf() {
+        protected IAsyncLearningConfiguration getConf() {
             return conf;
         }
 
@@ -199,7 +204,9 @@ public class AsyncThreadTest {
         protected SubEpochReturn trainSubEpoch(Observation obs, int nstep) {
             asyncGlobal.increaseCurrentLoop();
             trainSubEpochParams.add(new TrainSubEpochParams(obs, nstep));
-            setStepCounter(getStepCounter() + nstep);
+            for(int i = 0; i < nstep; ++i) {
+                incrementStep();
+            }
             return new SubEpochReturn(nstep, null, 1.0, 1.0);
         }
 
@@ -210,7 +217,4 @@ public class AsyncThreadTest {
             int nstep;
         }
     }
-
-
-
 }

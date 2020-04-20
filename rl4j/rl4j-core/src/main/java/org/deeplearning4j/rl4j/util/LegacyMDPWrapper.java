@@ -1,17 +1,34 @@
 package org.deeplearning4j.rl4j.util;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
+import org.datavec.image.transform.ColorConversionTransform;
+import org.datavec.image.transform.CropImageTransform;
+import org.datavec.image.transform.MultiImageTransform;
+import org.datavec.image.transform.ResizeImageTransform;
 import org.deeplearning4j.gym.StepReply;
+import org.deeplearning4j.rl4j.learning.EpochStepCounter;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
-import org.deeplearning4j.rl4j.learning.ILearning;
-import org.deeplearning4j.rl4j.learning.StepCountable;
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.observation.Observation;
+import org.deeplearning4j.rl4j.observation.transform.TransformProcess;
+import org.deeplearning4j.rl4j.observation.transform.filter.UniformSkippingFilter;
+import org.deeplearning4j.rl4j.observation.transform.legacy.EncodableToINDArrayTransform;
+import org.deeplearning4j.rl4j.observation.transform.legacy.EncodableToImageWritableTransform;
+import org.deeplearning4j.rl4j.observation.transform.legacy.ImageWritableToINDArrayTransform;
+import org.deeplearning4j.rl4j.observation.transform.operation.HistoryMergeTransform;
+import org.deeplearning4j.rl4j.observation.transform.operation.SimpleNormalizationTransform;
 import org.deeplearning4j.rl4j.space.ActionSpace;
 import org.deeplearning4j.rl4j.space.Encodable;
 import org.deeplearning4j.rl4j.space.ObservationSpace;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.bytedeco.opencv.global.opencv_imgproc.COLOR_BGR2GRAY;
 
 public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Observation, A, AS> {
 
@@ -19,50 +36,62 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
     private final MDP<O, A, AS> wrappedMDP;
     @Getter
     private final WrapperObservationSpace observationSpace;
-    private final ILearning learning;
+    private final int[] shape;
+
+    @Setter
+    private TransformProcess transformProcess;
+
+    @Getter(AccessLevel.PRIVATE)
     private IHistoryProcessor historyProcessor;
-    private final StepCountable stepCountable;
-    private int skipFrame;
 
-    private int step = 0;
+    private final EpochStepCounter epochStepCounter;
 
-    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, ILearning learning) {
-        this(wrappedMDP, learning, null, null);
-    }
+    private int skipFrame = 1;
 
-    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, IHistoryProcessor historyProcessor, StepCountable stepCountable) {
-        this(wrappedMDP, null, historyProcessor, stepCountable);
-    }
-
-    private LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, ILearning learning, IHistoryProcessor historyProcessor, StepCountable stepCountable) {
+    public LegacyMDPWrapper(MDP<O, A, AS> wrappedMDP, IHistoryProcessor historyProcessor, EpochStepCounter epochStepCounter) {
         this.wrappedMDP = wrappedMDP;
-        this.observationSpace = new WrapperObservationSpace(wrappedMDP.getObservationSpace().getShape());
-        this.learning = learning;
+        this.shape = wrappedMDP.getObservationSpace().getShape();
+        this.observationSpace = new WrapperObservationSpace(shape);
         this.historyProcessor = historyProcessor;
-        this.stepCountable = stepCountable;
-    }
+        this.epochStepCounter = epochStepCounter;
 
-    private IHistoryProcessor getHistoryProcessor() {
-        if(historyProcessor != null) {
-            return historyProcessor;
-        }
-
-        if (learning != null) {
-            return learning.getHistoryProcessor();
-        }
-        return null;
+        setHistoryProcessor(historyProcessor);
     }
 
     public void setHistoryProcessor(IHistoryProcessor historyProcessor) {
         this.historyProcessor = historyProcessor;
+        createTransformProcess();
     }
 
-    private int getStep() {
-        if(stepCountable != null) {
-            return stepCountable.getStepCounter();
-        }
+    private void createTransformProcess() {
+        IHistoryProcessor historyProcessor = getHistoryProcessor();
 
-        return learning.getStepCounter();
+        if(historyProcessor != null && shape.length == 3) {
+            int skipFrame = historyProcessor.getConf().getSkipFrame();
+
+            int finalHeight = historyProcessor.getConf().getCroppingHeight();
+            int finalWidth = historyProcessor.getConf().getCroppingWidth();
+
+            transformProcess = TransformProcess.builder()
+                    .filter(new UniformSkippingFilter(skipFrame))
+                    .transform("data", new EncodableToImageWritableTransform(shape[0], shape[1], shape[2]))
+                    .transform("data", new MultiImageTransform(
+                            new ResizeImageTransform(historyProcessor.getConf().getRescaledWidth(), historyProcessor.getConf().getRescaledHeight()),
+                            new ColorConversionTransform(COLOR_BGR2GRAY),
+                            new CropImageTransform(historyProcessor.getConf().getOffsetY(), historyProcessor.getConf().getOffsetX(), finalHeight, finalWidth)
+                    ))
+                    .transform("data", new ImageWritableToINDArrayTransform(finalHeight, finalWidth))
+                    .transform("data", new SimpleNormalizationTransform(0.0, 255.0))
+                    .transform("data", HistoryMergeTransform.builder()
+                            .isFirstDimenstionBatch(true)
+                            .build())
+                    .build("data");
+        }
+        else {
+            transformProcess = TransformProcess.builder()
+                    .transform("data", new EncodableToINDArrayTransform(shape))
+                    .build("data");
+        }
     }
 
     @Override
@@ -72,22 +101,17 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
 
     @Override
     public Observation reset() {
-        INDArray rawObservation = getInput(wrappedMDP.reset());
+        transformProcess.reset();
 
-        IHistoryProcessor historyProcessor = getHistoryProcessor();
-        if(historyProcessor != null) {
-            historyProcessor.record(rawObservation);
-        }
-
-        Observation observation = new Observation(new INDArray[] { rawObservation }, false);
+        O rawResetResponse = wrappedMDP.reset();
+        record(rawResetResponse);
 
         if(historyProcessor != null) {
             skipFrame = historyProcessor.getConf().getSkipFrame();
-            historyProcessor.add(rawObservation);
         }
-        step = 0;
 
-        return observation;
+        Map<String, Object> channelsData = buildChannelsData(rawResetResponse);
+        return transformProcess.transform(channelsData, 0, false);
     }
 
     @Override
@@ -97,29 +121,30 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
         StepReply<O> rawStepReply = wrappedMDP.step(a);
         INDArray rawObservation = getInput(rawStepReply.getObservation());
 
-        ++step;
-
-        int requiredFrame = 0;
         if(historyProcessor != null) {
             historyProcessor.record(rawObservation);
-
-            requiredFrame = skipFrame * (historyProcessor.getConf().getHistoryLength() - 1);
-            if ((getStep() % skipFrame == 0 && step >= requiredFrame)
-            || (step % skipFrame == 0 && step < requiredFrame )){
-                historyProcessor.add(rawObservation);
-            }
         }
 
-        Observation observation;
-        if(historyProcessor != null && step >= requiredFrame) {
-            observation = new Observation(historyProcessor.getHistory(), true);
-            observation.getData().muli(1.0 / historyProcessor.getScale());
-        }
-        else {
-            observation = new Observation(new INDArray[] { rawObservation }, false);
-        }
+        int stepOfObservation = epochStepCounter.getCurrentEpochStep() + 1;
 
+        Map<String, Object> channelsData = buildChannelsData(rawStepReply.getObservation());
+        Observation observation =  transformProcess.transform(channelsData, stepOfObservation, rawStepReply.isDone());
         return new StepReply<Observation>(observation, rawStepReply.getReward(), rawStepReply.isDone(), rawStepReply.getInfo());
+    }
+
+    private void record(O obs) {
+        INDArray rawObservation = getInput(obs);
+
+        IHistoryProcessor historyProcessor = getHistoryProcessor();
+        if(historyProcessor != null) {
+            historyProcessor.record(rawObservation);
+        }
+    }
+
+    private Map<String, Object> buildChannelsData(final O obs) {
+        return new HashMap<String, Object>() {{
+            put("data", obs);
+        }};
     }
 
     @Override
@@ -134,7 +159,7 @@ public class LegacyMDPWrapper<O, A, AS extends ActionSpace<A>> implements MDP<Ob
 
     @Override
     public MDP<Observation, A, AS> newInstance() {
-        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), learning);
+        return new LegacyMDPWrapper<O, A, AS>(wrappedMDP.newInstance(), historyProcessor, epochStepCounter);
     }
 
     private INDArray getInput(O obs) {

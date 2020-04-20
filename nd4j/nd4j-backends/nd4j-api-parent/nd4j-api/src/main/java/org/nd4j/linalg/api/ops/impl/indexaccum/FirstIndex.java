@@ -16,6 +16,8 @@
 
 package org.nd4j.linalg.api.ops.impl.indexaccum;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.nd4j.autodiff.functions.DifferentialFunction;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -35,6 +37,8 @@ import java.util.List;
  *
  * @author raver119@gmail.com
  */
+@Data
+@NoArgsConstructor
 public class FirstIndex extends BaseIndexAccumulation {
     protected Condition condition;
     protected double compare;
@@ -50,11 +54,16 @@ public class FirstIndex extends BaseIndexAccumulation {
         this.extraArgs = new Object[] {compare, eps, (double) mode};
     }
 
-    public FirstIndex() {}
-
+    public FirstIndex(SameDiff sameDiff, SDVariable i_v, boolean keepDims, Condition condition, int... dimensions) {
+        this(sameDiff, i_v, condition, keepDims, dimensions);
+    }
 
     public FirstIndex(INDArray x, @NonNull Condition condition, int... dimension) {
         this(x, condition, false, dimension);
+    }
+
+    public FirstIndex(INDArray x, boolean keepDims, @NonNull Condition condition, int... dimension) {
+        this(x,condition,keepDims,dimension);
     }
 
     public FirstIndex(INDArray x, @NonNull Condition condition, boolean keepDims, int... dimension) {
@@ -70,7 +79,6 @@ public class FirstIndex extends BaseIndexAccumulation {
         this.eps = eps;
         this.extraArgs = new Object[] {compare, eps, (double) mode};
     }
-
 
     @Override
     public int opNum() {

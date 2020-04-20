@@ -14,23 +14,23 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-//
-//  @author raver119@gmail.com
-//
+ //
+ //  @author raver119@gmail.com
+ //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_split_string)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/StringUtils.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         CUSTOM_OP_IMPL(compat_string_split, 2, 2, false, 0, 0) {
             auto input = INPUT_VARIABLE(0);
             auto delim = INPUT_VARIABLE(1);
 
-            auto indices = OUTPUT_VARIABLE(0);
+            auto indices = OUTPUT_NULLIFIED(0);
             auto values = OUTPUT_VARIABLE(1);
 
             auto d = delim->e<std::string>(0);
@@ -39,8 +39,7 @@ namespace nd4j {
             delim->syncToHost();
 
             // output rank N+1 wrt input rank
-            std::vector<Nd4jLong> ocoords(input->rankOf() + 1);
-            std::vector<Nd4jLong> icoords(input->rankOf());
+            std::vector<int> icoords(input->rankOf());
 
             // getting buffer lengths
             // FIXME: it'll be bigger, since it'll include delimiters,
@@ -54,14 +53,14 @@ namespace nd4j {
                 auto s = input->e<std::string>(e);
 
                 // getting base index
-                shape::index2coords(e, input->shapeInfo(), icoords.data());
+                shape::index2coordsCPU(0, e, input->shapeInfo(), icoords.data());
 
                 // getting number of substrings
                 auto cnt = StringUtils::countSubarrays(s.c_str(), s.length(), d.c_str(), d.length()) + 1;
 
                 // filling output indices
                 for (uint64_t f = 0; f < cnt; f++) {
-                    for (auto v: icoords)
+                    for (auto v : icoords)
                         indices->p(ic++, v);
 
                     // last index
@@ -76,12 +75,12 @@ namespace nd4j {
             for (auto e = 0L; e < input->lengthOf(); e++) {
                 auto split = StringUtils::split(input->e<std::string>(e), d);
 
-                for (const auto &s:split)
+                for (const auto& s : split)
                     strings.emplace_back(s);
             }
 
             // now once we have all strings in single vector time to fill
-            auto tmp = NDArrayFactory::string({(Nd4jLong) strings.size()}, strings);
+            auto tmp = NDArrayFactory::string({ (Nd4jLong)strings.size() }, strings, input->dataType(), block.launchContext());
             auto blen = StringUtils::byteLength(tmp) + ShapeUtils::stringBufferHeaderRequirements(strings.size());
 
             // for CUDA mostly
@@ -122,17 +121,17 @@ namespace nd4j {
             // values tensor is going to be vector always
             // indices tensor is going to be vector with length equal to values.length * output rank
 
-            auto valuesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(cnt, nd4j::DataType::UTF8);
-            auto indicesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(cnt * (input->rankOf() + 1), nd4j::DataType::INT64);
+            auto valuesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(cnt, sd::DataType::UTF8);
+            auto indicesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(cnt * (input->rankOf() + 1), sd::DataType::INT64);
 
             return SHAPELIST(indicesShape, valuesShape);
         }
 
         DECLARE_TYPES(compat_string_split) {
             getOpDescriptor()
-                    ->setAllowedInputTypes({ALL_STRINGS})
-                    ->setAllowedOutputTypes(0, {ALL_INDICES})
-                    ->setAllowedOutputTypes(1, {ALL_STRINGS});
+                ->setAllowedInputTypes({ ALL_STRINGS })
+                ->setAllowedOutputTypes(0, { ALL_INDICES })
+                ->setAllowedOutputTypes(1, { ALL_STRINGS });
         }
     }
 }

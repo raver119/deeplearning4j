@@ -1,5 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2015-2019 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -23,15 +24,20 @@ import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
-import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
-import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteTest;
-import org.deeplearning4j.rl4j.mdp.MDP;
+import org.deeplearning4j.rl4j.learning.Learning;
+import org.deeplearning4j.rl4j.learning.configuration.QLearningConfiguration;
 import org.deeplearning4j.rl4j.network.NeuralNet;
 import org.deeplearning4j.rl4j.network.ac.IActorCritic;
 import org.deeplearning4j.rl4j.observation.Observation;
-import org.deeplearning4j.rl4j.space.DiscreteSpace;
-import org.deeplearning4j.rl4j.space.Encodable;
-import org.deeplearning4j.rl4j.support.*;
+import org.deeplearning4j.rl4j.space.ActionSpace;
+import org.deeplearning4j.rl4j.support.MockDQN;
+import org.deeplearning4j.rl4j.support.MockEncodable;
+import org.deeplearning4j.rl4j.support.MockHistoryProcessor;
+import org.deeplearning4j.rl4j.support.MockMDP;
+import org.deeplearning4j.rl4j.support.MockNeuralNet;
+import org.deeplearning4j.rl4j.support.MockObservationSpace;
+import org.deeplearning4j.rl4j.support.MockRandom;
+import org.deeplearning4j.rl4j.util.LegacyMDPWrapper;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -40,8 +46,6 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -158,7 +162,7 @@ public class PolicyTest {
         for (int i = 0; i < 100; i++) {
             count[policy.nextAction(input)]++;
         }
-        System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
+//        System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
         assertTrue(count[0] < 20);
         assertTrue(count[1] < 30);
         assertTrue(count[2] < 40);
@@ -183,11 +187,25 @@ public class PolicyTest {
             new int[] { 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4 });
         MockMDP mdp = new MockMDP(observationSpace, 30, random);
 
-        QLearning.QLConfiguration conf = new QLearning.QLConfiguration(0, 0, 0, 5, 1, 0,
-                0, 1.0, 0, 0, 0, 0, true);
+        QLearningConfiguration conf = QLearningConfiguration.builder()
+                .seed(0L)
+                .maxEpochStep(0)
+                .maxStep(0)
+                .expRepMaxSize(5)
+                .batchSize(1)
+                .targetDqnUpdateFreq(0)
+                .updateStart(0)
+                .rewardFactor(1.0)
+                .gamma(0)
+                .errorClamp(0)
+                .minEpsilon(0)
+                .epsilonNbStep(0)
+                .doubleDQN(true)
+                .build();
+
         MockNeuralNet nnMock = new MockNeuralNet();
-        MockRefacPolicy sut = new MockRefacPolicy(nnMock);
         IHistoryProcessor.Configuration hpConf = new IHistoryProcessor.Configuration(5, 4, 4, 4, 4, 0, 0, 2);
+        MockRefacPolicy sut = new MockRefacPolicy(nnMock, observationSpace.getShape(), hpConf.getSkipFrame(), hpConf.getHistoryLength());
         MockHistoryProcessor hp = new MockHistoryProcessor(hpConf);
 
         // Act
@@ -196,13 +214,6 @@ public class PolicyTest {
         // Assert
         assertEquals(1, nnMock.resetCallCount);
         assertEquals(465.0, totalReward, 0.0001);
-
-        // HistoryProcessor
-        assertEquals(27, hp.addCalls.size());
-        assertEquals(31, hp.recordCalls.size());
-        for(int i=0; i <= 30; ++i) {
-            assertEquals((double)i, hp.recordCalls.get(i).getDouble(0), 0.0001);
-        }
 
         // MDP
         assertEquals(1, mdp.resetCount);
@@ -219,10 +230,15 @@ public class PolicyTest {
     public static class MockRefacPolicy extends Policy<MockEncodable, Integer> {
 
         private NeuralNet neuralNet;
+        private final int[] shape;
+        private final int skipFrame;
+        private final int historyLength;
 
-        public MockRefacPolicy(NeuralNet neuralNet) {
-
+        public MockRefacPolicy(NeuralNet neuralNet, int[] shape, int skipFrame, int historyLength) {
             this.neuralNet = neuralNet;
+            this.shape = shape;
+            this.skipFrame = skipFrame;
+            this.historyLength = historyLength;
         }
 
         @Override
@@ -238,6 +254,12 @@ public class PolicyTest {
         @Override
         public Integer nextAction(INDArray input) {
             return (int)input.getDouble(0);
+        }
+
+        @Override
+        protected <AS extends ActionSpace<Integer>> Learning.InitMdp<Observation> refacInitMdp(LegacyMDPWrapper<MockEncodable, Integer, AS> mdpWrapper, IHistoryProcessor hp, RefacEpochStepCounter epochStepCounter) {
+            mdpWrapper.setTransformProcess(MockMDP.buildTransformProcess(shape, skipFrame, historyLength));
+            return super.refacInitMdp(mdpWrapper, hp, epochStepCounter);
         }
     }
 }

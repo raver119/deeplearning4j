@@ -21,13 +21,13 @@
 #include <ops/declarable/LegacyOp.h>
 
 
-namespace nd4j {
+namespace sd {
     namespace ops {
-        LegacyOp::LegacyOp(int numInputs) : DeclarableOp::DeclarableOp(numInputs , 1, "LegacyOp", true) {
+        LegacyOp::LegacyOp(int numInputs) : DeclarableOp::DeclarableOp(numInputs , 1, "LegacyOp", false) {
             _numInputs = numInputs;
         }
 
-        LegacyOp::LegacyOp(int numInputs, int opNum) : DeclarableOp::DeclarableOp(numInputs , 1, "LegacyOp", true) {
+        LegacyOp::LegacyOp(int numInputs, int opNum) : DeclarableOp::DeclarableOp(numInputs , 1, "LegacyOp", false) {
             _opNum = opNum;
             _numInputs = numInputs;
         }

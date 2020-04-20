@@ -27,7 +27,7 @@
 #include <flatbuffers/util.h>
 
 
-namespace nd4j {
+namespace sd {
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shape for array resulting from tensorDot operation, also evaluate shapes and dimensions permutations for transposition of two input arrays
@@ -75,10 +75,23 @@ std::vector<Nd4jLong> ShapeUtils::evalShapeForTensorDot(const Nd4jLong* aShapeIn
     permutBt = axesB;
     permutBt.insert(permutBt.end(), list_B.begin(), list_B.end());
 
+    // if permut contains something like {0,1,2,..rank-1}, then there is no need to make permutation and we return empty vector in this case
+    uint i1, i2;
+    for(i1 = 0; i1 < aRank; ++i1)
+        if(permutAt[i1] != i1)
+            break;
+    if(i1 == aRank)
+        permutAt = {};
+    for(i2 = 0; i2 < bRank; ++i2)
+        if(permutBt[i2] != i2)
+            break;
+    if(i2 == bRank)
+        permutBt = {};
+
     Nd4jLong n2 = 1;
     for (int i = 0; i < axeAsize; i++)
         n2 *= aShapeInfo[axesA[i] + 1];
-    shapeAt = {-1, n2};
+    shapeAt = {shape::length(aShapeInfo) / n2, n2};
 
     std::vector<Nd4jLong> oldShapeA;
     oldShapeA.resize(list_A.size());
@@ -89,7 +102,7 @@ std::vector<Nd4jLong> ShapeUtils::evalShapeForTensorDot(const Nd4jLong* aShapeIn
     Nd4jLong n3 = 1;
     for (int i = 0; i < axeBsize; i++)
         n3 *= bShapeInfo[axesB[i] + 1];
-    shapeBt = {n3, -1};
+    shapeBt = {n3, shape::length(bShapeInfo) / n3};
 
     std::vector<Nd4jLong> oldShapeB;
     oldShapeB.resize(list_B.size());
@@ -111,7 +124,7 @@ std::vector<Nd4jLong> ShapeUtils::evalShapeForTensorDot(const NDArray* a,   cons
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate output shape for reduce operation when input shape is empty
-Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const nd4j::DataType dataType, const bool keepDims, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, sd::memory::Workspace* workspace) {
 
     if (dimsToExclude.size() == 0) {   // return copy of input shape
         Nd4jLong* outShapeInfo = ShapeBuilders::copyShapeInfoAndType(shapeInfo, dataType, true, workspace);
@@ -158,22 +171,22 @@ Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(const char order, std::vector<int
     return ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor).primaryAsT<Nd4jLong>();
 }
 
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const bool keepDims, const bool supportOldShapes, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, arr, arr.dataType(), keepDims, supportOldShapes, workspace);
 }
 
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong* shapeInfo, const bool keepDims, const bool supportOldShapes, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong* shapeInfo, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, shapeInfo, ArrayOptions::dataType(shapeInfo), keepDims, supportOldShapes, workspace);
 }
 
 //////////////////////////////////////////////////////////////////////////
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const nd4j::DataType dataType, const bool keepDims, const bool supportOldShapes, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const NDArray& arr, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
     return evalReduceShapeInfo(order, dimsToExclude, arr.getShapeInfo(), dataType, keepDims, supportOldShapes, workspace);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shape resulting from reduce operation
-Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const nd4j::DataType dataType, const bool keepDims, const bool supportOldShapes, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalReduceShapeInfo(const char order, std::vector<int>& dimsToExclude, const Nd4jLong *shapeInfo, const sd::DataType dataType, const bool keepDims, const bool supportOldShapes, sd::memory::Workspace* workspace) {
 
     if(ArrayOptions::arrayType(shapeInfo) == ArrayType::EMPTY)
         return ShapeUtils::evalReduceShapeInfoEmpty(order, dimsToExclude, shapeInfo, dataType, keepDims, workspace);
@@ -293,43 +306,47 @@ std::vector<Nd4jLong> ShapeUtils::evalRepeatShape(int axis, const std::vector<in
 
     if(repeats.size() == 1)
         outShape[axis] *= repeats[0];
-
     else
         outShape[axis] = std::accumulate(repeats.begin(), repeats.end(), 0);
 
     return outShape;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo of permuted array
-    Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions, const int rank, const NDArray& arr, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions, const int rank, const NDArray& arr, sd::memory::Workspace* workspace, const bool setContigStrides) {
 
-        if (!arr.nonNull())
-            throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments in pn/termute method: either array is nullptr!");
+    if (!arr.nonNull())
+        throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments: array is nullptr!");
 
-        if (rank != arr.rankOf())
-            throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments in pn/termute method: rank is not suitable!");
+    if (rank != arr.rankOf())
+        throw std::runtime_error("ShapeUtils::evalPermShapeInfo static method: wrong arguments: rank is not suitable!");
 
-        auto shapeInfoLength = shape::shapeInfoLength(rank);
-        // allocate memory for new array - shapeInfo
+    auto shapeInfoLength = shape::shapeInfoLength(rank);
 
-        Nd4jLong *shapeInfoNew = nullptr;
-        ALLOCATE(shapeInfoNew, workspace, shapeInfoLength, Nd4jLong);
-        // copy arr _shapeInfo into new array
-        memcpy(shapeInfoNew, arr.getShapeInfo(), shape::shapeInfoByteLength(rank));
-        // perform buffer permutation
-        shape::doPermuteShapeInfo(shapeInfoNew, dimensions);
+    // allocate memory for new array - shapeInfo
+    Nd4jLong *shapeInfoNew = nullptr;
+    ALLOCATE(shapeInfoNew, workspace, shapeInfoLength, Nd4jLong);
 
-        ShapeDescriptor descriptor(shapeInfoNew);
-        RELEASE(shapeInfoNew, workspace);
-        return ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor).primaryAsT<Nd4jLong>();
-    }
+    // copy arr _shapeInfo into new array
+    memcpy(shapeInfoNew, arr.getShapeInfo(), shape::shapeInfoByteLength(rank));
 
+    // perform buffer permutation
+    shape::doPermuteShapeInfo(shapeInfoNew, dimensions, arr.lengthOf());
+
+    if(setContigStrides)
+        shape::updateStrides(shapeInfoNew, arr.ordering());
+
+    ShapeDescriptor descriptor(shapeInfoNew);
+
+    RELEASE(shapeInfoNew, workspace);
+
+    return ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor).primaryAsT<Nd4jLong>();
+}
 
     //////////////////////////////////////////////////////////////////////////
     // evaluate shapeInfo of permuted array
-    Nd4jLong* ShapeUtils::evalPermShapeInfo(const Nd4jLong *dimensions, const int rank, const NDArray& arr, nd4j::memory::Workspace* workspace) {
+    Nd4jLong* ShapeUtils::evalPermShapeInfo(const Nd4jLong *dimensions, const int rank, const NDArray& arr, sd::memory::Workspace* workspace) {
 
         std::vector<int> dims(dimensions, dimensions + rank);
         return evalPermShapeInfo(dims.data(), rank, arr, workspace);
@@ -337,14 +354,14 @@ std::vector<Nd4jLong> ShapeUtils::evalRepeatShape(int axis, const std::vector<in
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo of transposed array
-    Nd4jLong* ShapeUtils::evalTranspShapeInfo(const NDArray& arr, nd4j::memory::Workspace* workspace) {
+    Nd4jLong* ShapeUtils::evalTranspShapeInfo(const NDArray& arr, sd::memory::Workspace* workspace, const bool setContigStrides) {
 
         int rank = arr.rankOf();
         std::vector<int> dimensions(rank);
         for (int i = 0; i < rank; ++i)
             dimensions[i] = rank - 1 - i;
 
-        return evalPermShapeInfo(dimensions.data(), dimensions.size(), arr, workspace);
+        return evalPermShapeInfo(dimensions.data(), dimensions.size(), arr, workspace, setContigStrides);
     }
 
 //////////////////////////////////////////////////////////////////////////
@@ -426,11 +443,11 @@ bool ShapeUtils::areShapesBroadcastable(const std::vector<Nd4jLong>& shape1, con
 //////////////////////////////////////////////////////////////////////////
 // check the possibility of broadcast operation, if true then return shapeInfo of resulting array
 // if evalMinMax == false the array with larger rank has to be passed as first argument
-bool ShapeUtils::evalBroadcastShapeInfo(const NDArray &max, const NDArray &min, const bool evalMinMax, Nd4jLong*& resultShapeInfo, nd4j::memory::Workspace* workspace) {
+bool ShapeUtils::evalBroadcastShapeInfo(const NDArray &max, const NDArray &min, const bool evalMinMax, Nd4jLong*& resultShapeInfo, sd::memory::Workspace* workspace) {
     return evalBroadcastShapeInfo(max.getShapeInfo(), min.getShapeInfo(), evalMinMax, resultShapeInfo, workspace);
 }
 
-bool ShapeUtils::evalBroadcastShapeInfo(Nd4jLong *max, Nd4jLong *min, const bool evalMinMax, Nd4jLong*& resultShapeInfo, nd4j::memory::Workspace* workspace) {
+bool ShapeUtils::evalBroadcastShapeInfo(Nd4jLong *max, Nd4jLong *min, const bool evalMinMax, Nd4jLong*& resultShapeInfo, sd::memory::Workspace* workspace) {
 
     // check whether broadcast operation is possible for input arrays
     if(!areShapesBroadcastable(max, min))
@@ -543,7 +560,7 @@ std::vector<int> ShapeUtils::getDimsWithSameShape(const NDArray& arr1, const NDA
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo for resulting array from tile operation
-Nd4jLong* ShapeUtils::evalTileShapeInfo(const NDArray& arr, const std::vector<Nd4jLong>& reps, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::evalTileShapeInfo(const NDArray& arr, const std::vector<Nd4jLong>& reps, sd::memory::Workspace* workspace) {
     // check whether reps contains at least one zero (then throw exception) or whether all elements in reps are unities (then simply reshape or do nothing)
     int repsSize = reps.size();
     Nd4jLong product = 1;
@@ -653,6 +670,26 @@ Nd4jLong* ShapeUtils::evalTileShapeInfo(const NDArray& arr, const std::vector<Nd
         return result;
     }
 
+    std::string ShapeUtils::shapeInfoAsString(const Nd4jLong* shapeInfo) {
+
+        if(!shapeInfo)
+            throw std::runtime_error("ShapeUtils::shapeAsString method: input shapeInfo must not be nullptr !");
+
+        std::string result;
+
+        int len = shape::shapeInfoLength(shapeInfo[0]);
+
+        result.append("[");
+        for (int e = 0; e < len; e++) {
+            result += flatbuffers::NumToString(shapeInfo[e]);
+            if (e < len - 1)
+                result.append(", ");
+        }
+        result.append("]");
+
+        return result;
+    }
+
 
     std::string ShapeUtils::shapeAsString(const int rank, const Nd4jLong* shapeInfo) {
         if(!shapeInfo)
@@ -687,7 +724,7 @@ std::vector<Nd4jLong> ShapeUtils::shapeAsVector(const Nd4jLong* shapeInfo) {
 
 //////////////////////////////////////////////////////////////////////////
 // evaluate shapeInfo for diagonal array which is made using input arr elements as diagonal
-Nd4jLong* ShapeUtils::evalDiagShapeInfo(const Nd4jLong* shapeInfoConst, nd4j::memory::Workspace* workspace){
+Nd4jLong* ShapeUtils::evalDiagShapeInfo(const Nd4jLong* shapeInfoConst, sd::memory::Workspace* workspace){
     auto shapeInfo = const_cast<Nd4jLong*>(shapeInfoConst);
 
     const auto rank = shape::rank(shapeInfo);
@@ -728,7 +765,7 @@ std::vector<int> ShapeUtils::evalBroadcastBackwardAxis(const Nd4jLong *operandSh
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Nd4jLong* ShapeUtils::matrixProductShape(Nd4jLong* theFirstShape, Nd4jLong* theSecondShape, bool shouldTranspondFirst, bool shouldTranspondSecond, nd4j::DataType  dtype, nd4j::memory::Workspace* workspace) {
+Nd4jLong* ShapeUtils::matrixProductShape(Nd4jLong* theFirstShape, Nd4jLong* theSecondShape, bool shouldTranspondFirst, bool shouldTranspondSecond, sd::DataType  dtype, sd::memory::Workspace* workspace) {
 
     auto inA = theFirstShape;
     auto inB = theSecondShape;
@@ -785,7 +822,7 @@ Nd4jLong* ShapeUtils::matrixProductShape(Nd4jLong* theFirstShape, Nd4jLong* theS
         (shape::isScalar(tmpA) && shape::isVector(tmpB))) {
         // element-wise
         shape[0] = 1;
-        shape[1] = (int) nd4j::math::nd4j_max<Nd4jLong>(shape::length(tmpA), shape::length(tmpB));
+        shape[1] = (int) sd::math::nd4j_max<Nd4jLong>(shape::length(tmpA), shape::length(tmpB));
     } else if (shape::isRowVector(tmpA) && shape::isRowVector(tmpB)) {
         // dot case
         shape[0] = 1;
@@ -937,35 +974,6 @@ Nd4jLong ShapeUtils::getNumOfSubArrs(const Nd4jLong* shapeInfo, const std::vecto
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ShapeUtils::evalIdxRangesForSubArr(const Nd4jLong subArrIdx,  const Nd4jLong* shapeInfo, const std::vector<int>& dimsToExclude, Nd4jLong* idxRanges) {
-
-    const auto rank = shape::rank(shapeInfo);
-    const auto subArrRank = static_cast<int>(dimsToExclude.size());
-
-    if(subArrRank > rank)
-        throw std::invalid_argument("ShapeUtils::evalIdxRangesForSubArr static method: dimsToExclude is empty or has size > rank of array !");
-
-    if(subArrRank == 0) { // means whole array
-        memset(idxRanges, 0, 2 * rank * sizeof(Nd4jLong));
-        return;
-    }
-
-    std::vector<Nd4jLong> shapeOfSubArr(subArrRank), indexes(subArrRank);
-    for(int i = 0; i < subArrRank; ++i)
-        shapeOfSubArr[i] = shapeInfo[dimsToExclude[i] + 1];
-
-    shape::index2coords(subArrIdx, subArrRank, shapeOfSubArr.data(), indexes.data());
-
-    memset(idxRanges, 0, 2 * rank * sizeof(Nd4jLong));
-
-    for(int i = 0; i < subArrRank; ++i) {
-        int currIdx = 2 * dimsToExclude[i];
-        idxRanges[currIdx]     = indexes[i];
-        idxRanges[currIdx + 1] = indexes[i] + 1;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 std::vector<Nd4jLong> ShapeUtils::evalDimsWithoutUnities(const Nd4jLong* shapeInfo) {
 
     std::vector<Nd4jLong> result;
@@ -1017,6 +1025,42 @@ std::vector<int> ShapeUtils::tadAxesForSimpleBroadcast(const NDArray& max, const
     }
 
     return numOfMinTads == 1 ? maxTadDims : std::vector<int>();
+}
+
+void ShapeUtils::copyCertainStridesFromShapeInfo(const Nd4jLong* inShapeInfo, const int nRank, const int dimsSize, const int* dims, Nd4jLong* outStrides) {
+
+    int yRank = shape::rank(inShapeInfo);
+    auto  yOrigStride = shape::stride(inShapeInfo);
+
+    if (yRank == nRank) {
+        for (int i = 0; i < yRank; ++i) {
+            // x[2,3,4] * y[2,1,4] = z[2,3,4]
+            outStrides[i] = (1 == shape::sizeAt(inShapeInfo, i)) ? 0 : yOrigStride[i];
+        }
+    }
+    else {
+
+        auto dimEx = sd::ShapeUtils::evalDimsToExclude(nRank, dimsSize, dims);
+
+        for (int i = 0, it = 0; i < nRank; ++i) {
+            auto nCount = std::count(dimEx.cbegin(), dimEx.cend(), i);
+            outStrides[i] = (0 == nCount) ? yOrigStride[it++] : 0;
+            if (it == yRank)
+                break;
+        }
+    }
+}
+
+bool ShapeUtils::areShapesEqual(const Nd4jLong* shapeInfo, const std::vector<Nd4jLong>& shapeOnly) {
+
+    if(shape::rank(shapeInfo) != shapeOnly.size())
+        return false;
+
+    for(uint i = 0; i < shape::rank(shapeInfo); ++i)
+        if(shape::shapeOf(shapeInfo)[i] != shapeOnly[i])
+            return false;
+
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

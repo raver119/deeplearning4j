@@ -18,20 +18,20 @@
 // @author Yurii Shyrma (iuriish@yahoo.com), created on 04.05.2018
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_upsampling3d)
 
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/convolutions.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops  {
 
 
 //////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(upsampling3d, 1, 1, false, 0, 3) {
     auto input  = INPUT_VARIABLE(0);             // [bS, iC, iD, iH, iW] (NCDHW) or [bS, iD, iH, iW, iC] (NDHWC)
-    auto output = OUTPUT_VARIABLE(0);            // [bS, iC, factorD*iD, factorH*iH, factorW*iW ] (NCDHW) or [bS, factorD*iD, factorH*iH, factorW*iW, iC] (NDHWC)
+    auto output = OUTPUT_NULLIFIED(0);            // [bS, iC, factorD*iD, factorH*iH, factorW*iW ] (NCDHW) or [bS, factorD*iD, factorH*iH, factorW*iW, iC] (NDHWC)
             
     const int factorD = INT_ARG(0);
     const int factorH = INT_ARG(1);
@@ -48,7 +48,7 @@ CUSTOM_OP_IMPL(upsampling3d, 1, 1, false, 0, 3) {
 
         DECLARE_TYPES(upsampling3d) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setAllowedOutputTypes({ALL_FLOATS});
         }
         
@@ -89,7 +89,7 @@ DECLARE_SHAPE_FN(upsampling3d) {
 
         DECLARE_TYPES(upsampling3d_bp) {
             getOpDescriptor()
-                    ->setAllowedInputTypes(nd4j::DataType::ANY)
+                    ->setAllowedInputTypes(sd::DataType::ANY)
                     ->setAllowedOutputTypes({ALL_FLOATS});
         }
 
@@ -97,7 +97,7 @@ DECLARE_SHAPE_FN(upsampling3d) {
 CUSTOM_OP_IMPL(upsampling3d_bp, 2, 1, false, 0, 0) {
     // NDArray<T>* input = INPUT_VARIABLE(0);             // [bS, iC, iD, iH, iW] (NCDHW) or [bS, iD, iH, iW, iC] (NDHWC)
     auto gradO = INPUT_VARIABLE(1);             // [bS, iC, factorD*iD, factorH*iH, factorW*iW ] (NCDHW) or [bS, factorD*iD, factorH*iH, factorW*iW, iC] (NDHWC)
-    auto gradI = OUTPUT_VARIABLE(0);            // [bS, iC, iD, iH, iW] (NCDHW) or [bS, iD, iH, iW, iC] (NDHWC)
+    auto gradI = OUTPUT_NULLIFIED(0);            // [bS, iC, iD, iH, iW] (NCDHW) or [bS, iD, iH, iW, iC] (NDHWC)
                 
     const int isNCDHW  = block.getIArguments()->size() > 0 ? INT_ARG(0) : 0;       // INT_ARG(0): 0-NCHW,  1-NHWC
 

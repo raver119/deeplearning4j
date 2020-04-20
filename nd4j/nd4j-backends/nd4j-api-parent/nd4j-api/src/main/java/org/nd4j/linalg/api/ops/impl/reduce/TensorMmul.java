@@ -77,6 +77,18 @@ public class TensorMmul extends DynamicCustomOp {
         addIArgument(dimensions[1]);
     }
 
+    public TensorMmul(SameDiff sameDiff, SDVariable x, SDVariable y, int[] dimensionsX,
+                      int[] dimensionsY, boolean transposeX, boolean transposeY, boolean transposeZ) {
+        super(null, sameDiff, new SDVariable[]{x,y});
+        this.sameDiff = sameDiff;
+        this.axes = new int[][]{dimensionsX, dimensionsY};
+        addIArgument(dimensionsX.length);
+        addIArgument(dimensionsX[0]);
+        addIArgument(dimensionsY.length);
+        addIArgument(dimensionsY[0]);
+        addBArgument(transposeX, transposeY, transposeZ);
+    }
+
     @Override
     public List<LongShapeDescriptor> calculateOutputShape() {
         List<LongShapeDescriptor> ret = new ArrayList<>(1);
@@ -111,7 +123,7 @@ public class TensorMmul extends DynamicCustomOp {
         int[][] deletedAxes = new int[][]{
                 removeIndex(aAxes, sumAxes[0]),
                 removeIndex(bAxes, sumAxes[1])};
-        int[] gAxes = range(0, i_v1.get(0).getShape().length);
+        int[] gAxes = range(0, i_v1.get(0).eval().shape().length);
         int[][] firstAxes = new int[][]{
                 Arrays.copyOfRange(gAxes, deletedAxes[0].length, gAxes.length),
                 deletedAxes[1]
@@ -144,18 +156,20 @@ public class TensorMmul extends DynamicCustomOp {
                                     int[][] axes) {
 
         int validationLength = Math.min(axes[0].length, axes[1].length);
+        INDArray aArray = a.eval();
+        INDArray bArray = b.eval();
         for (int i = 0; i < validationLength; i++) {
-            if (a.getShape()[axes[0][i]] != b.getShape()[axes[1][i]])
+            if (aArray.shape()[axes[0][i]] != bArray.shape()[axes[1][i]])
                 throw new IllegalArgumentException("Size of the given axes at each dimension must be the same size.");
             if (axes[0][i] < 0)
-                axes[0][i] += a.getShape().length;
+                axes[0][i] += aArray.shape().length;
             if (axes[1][i] < 0)
-                axes[1][i] += b.getShape().length;
+                axes[1][i] += bArray.shape().length;
 
         }
 
         List<Integer> listA = new ArrayList<>();
-        for (int i = 0; i < a.getShape().length; i++) {
+        for (int i = 0; i < aArray.shape().length; i++) {
             if (!Ints.contains(axes[0], i))
                 listA.add(i);
         }
@@ -164,7 +178,7 @@ public class TensorMmul extends DynamicCustomOp {
 
 
         List<Integer> listB = new ArrayList<>();
-        for (int i = 0; i < b.getShape().length; i++) {
+        for (int i = 0; i < bArray.shape().length; i++) {
             if (!Ints.contains(axes[1], i))
                 listB.add(i);
         }
@@ -172,9 +186,9 @@ public class TensorMmul extends DynamicCustomOp {
         int[] newAxesB = Ints.concat(axes[1], Ints.toArray(listB));
 
         int n2 = 1;
-        int aLength = Math.min(a.getShape().length, axes[0].length);
+        int aLength = Math.min(aArray.shape().length, axes[0].length);
         for (int i = 0; i < aLength; i++) {
-            n2 *= a.getShape()[axes[0][i]];
+            n2 *= aArray.shape()[axes[0][i]];
         }
 
         //if listA and listB are empty these do not initialize.
@@ -186,13 +200,13 @@ public class TensorMmul extends DynamicCustomOp {
         } else {
             oldShapeA = Longs.toArray(listA);
             for (int i = 0; i < oldShapeA.length; i++)
-                oldShapeA[i] = a.getShape()[(int) oldShapeA[i]];
+                oldShapeA[i] = aArray.shape()[(int) oldShapeA[i]];
         }
 
         int n3 = 1;
-        int bNax = Math.min(b.getShape().length, axes[1].length);
+        int bNax = Math.min(bArray.shape().length, axes[1].length);
         for (int i = 0; i < bNax; i++) {
-            n3 *= b.getShape()[axes[1][i]];
+            n3 *= bArray.shape()[axes[1][i]];
         }
 
 
@@ -203,7 +217,7 @@ public class TensorMmul extends DynamicCustomOp {
         } else {
             oldShapeB = Longs.toArray(listB);
             for (int i = 0; i < oldShapeB.length; i++)
-                oldShapeB[i] = b.getShape()[(int) oldShapeB[i]];
+                oldShapeB[i] = bArray.shape()[(int) oldShapeB[i]];
         }
 
 
@@ -238,6 +252,13 @@ public class TensorMmul extends DynamicCustomOp {
     public TensorMmul(INDArray x, INDArray y, INDArray z, int[][] axes) {
         super(null,new INDArray[]{x, y, z},null);
         this.axes = axes;
+    }
+
+    public TensorMmul(INDArray x, INDArray y, int[] dimensionsX, int[] dimensionsY,
+                      boolean transposeX, boolean transposeY, boolean transposeZ) {
+        super(null,new INDArray[]{x, y},null);
+        this.axes = new int[][]{dimensionsX, dimensionsY};
+        addBArgument(transposeX, transposeY, transposeZ);
     }
 
     @Override

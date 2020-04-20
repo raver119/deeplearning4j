@@ -18,7 +18,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     public IntVectorVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef IntVectorVector put(@ByRef IntVectorVector x);
+    public native @Name("operator =") @ByRef IntVectorVector put(@ByRef IntVectorVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -67,7 +67,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     public LongVectorVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef LongVectorVector put(@ByRef LongVectorVector x);
+    public native @Name("operator =") @ByRef LongVectorVector put(@ByRef LongVectorVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -107,7 +107,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     }
 }
 
-@Name("std::vector<nd4j::NDArray*>") public static class NDArrayVector extends Pointer {
+@Name("std::vector<sd::NDArray*>") public static class NDArrayVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public NDArrayVector(Pointer p) { super(p); }
@@ -117,7 +117,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     public NDArrayVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef NDArrayVector put(@ByRef NDArrayVector x);
+    public native @Name("operator =") @ByRef NDArrayVector put(@ByRef NDArrayVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -135,9 +135,9 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
         public Iterator(Pointer p) { super(p); }
         public Iterator() { }
 
-        public native @Name("operator++") @ByRef Iterator increment();
-        public native @Name("operator==") boolean equals(@ByRef Iterator it);
-        public native @Name("operator*") @Const NDArray get();
+        public native @Name("operator ++") @ByRef Iterator increment();
+        public native @Name("operator ==") boolean equals(@ByRef Iterator it);
+        public native @Name("operator *") @Const NDArray get();
     }
 
     public NDArray[] get() {
@@ -175,7 +175,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     }
 }
 
-@Name("std::vector<const nd4j::NDArray*>") public static class ConstNDArrayVector extends Pointer {
+@Name("std::vector<const sd::NDArray*>") public static class ConstNDArrayVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public ConstNDArrayVector(Pointer p) { super(p); }
@@ -185,7 +185,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     public ConstNDArrayVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator=") @ByRef ConstNDArrayVector put(@ByRef ConstNDArrayVector x);
+    public native @Name("operator =") @ByRef ConstNDArrayVector put(@ByRef ConstNDArrayVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -203,9 +203,9 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
         public Iterator(Pointer p) { super(p); }
         public Iterator() { }
 
-        public native @Name("operator++") @ByRef Iterator increment();
-        public native @Name("operator==") boolean equals(@ByRef Iterator it);
-        public native @Name("operator*") @Const NDArray get();
+        public native @Name("operator ++") @ByRef Iterator increment();
+        public native @Name("operator ==") boolean equals(@ByRef Iterator it);
+        public native @Name("operator *") @Const NDArray get();
     }
 
     public NDArray[] get() {
@@ -250,7 +250,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     public IntIntPair(int firstValue, int secondValue) { this(); put(firstValue, secondValue); }
     public IntIntPair()       { allocate();  }
     private native void allocate();
-    public native @Name("operator=") @ByRef IntIntPair put(@ByRef IntIntPair x);
+    public native @Name("operator =") @ByRef IntIntPair put(@ByRef IntIntPair x);
 
 
     @MemberGetter public native int first(); public native IntIntPair first(int first);
@@ -287,7 +287,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 
 // #ifndef ND4J_DATATYPE_H
 // #define ND4J_DATATYPE_H
-    /** enum nd4j::DataType */
+    /** enum sd::DataType */
     public static final int
         INHERIT = 0,
         BOOL = 1,
@@ -343,14 +343,14 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #define DEV_TESTS_DATABUFFER_H
 
 // #include <cstring>
-// #include <op_boilerplate.h>
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <array/DataType.h>
 // #include <memory/Workspace.h>
 // #include <execution/LaunchContext.h>
 
-@Namespace("nd4j") @NoOffset public static class DataBuffer extends Pointer {
+@Namespace("sd") @NoOffset public static class DataBuffer extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public DataBuffer(Pointer p) { super(p); }
@@ -363,46 +363,46 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 
 
         public DataBuffer(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/, @Cast("const bool") boolean isOwnerSpecial/*=false*/,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType, isOwnerPrimary, isOwnerSpecial, workspace); }
         private native void allocate(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/, @Cast("const bool") boolean isOwnerSpecial/*=false*/,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType); }
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(primary, special, lenInBytes, dataType); }
         private native void allocate(Pointer primary, Pointer special,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(primary, lenInBytes, dataType, isOwnerPrimary, workspace); }
         private native void allocate(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType,
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType,
                                        @Cast("const bool") boolean isOwnerPrimary/*=false*/,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(primary, lenInBytes, dataType); }
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(primary, lenInBytes, dataType); }
         private native void allocate(Pointer primary,
-                                       @Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+                                       @Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes,
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes,
                                        Workspace workspace/*=nullptr*/) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes, workspace); }
         private native void allocate(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes,
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes,
                                        Workspace workspace/*=nullptr*/);
         public DataBuffer(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes); }
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes) { super((Pointer)null); allocate(hostBuffer, dataType, lenInBytes); }
         private native void allocate(@Const Pointer hostBuffer,
-                                       @Cast("const nd4j::DataType") int dataType, @Cast("const size_t") long lenInBytes);
+                                       @Cast("const sd::DataType") int dataType, @Cast("const size_t") long lenInBytes);
 
-        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/) { super((Pointer)null); allocate(lenInBytes, dataType, workspace, allocBoth); }
-        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/);
-        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType) { super((Pointer)null); allocate(lenInBytes, dataType); }
-        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const nd4j::DataType") int dataType);
+        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/) { super((Pointer)null); allocate(lenInBytes, dataType, workspace, allocBoth); }
+        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType, Workspace workspace/*=nullptr*/, @Cast("const bool") boolean allocBoth/*=false*/);
+        public DataBuffer(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType) { super((Pointer)null); allocate(lenInBytes, dataType); }
+        private native void allocate(@Cast("const size_t") long lenInBytes, @Cast("const sd::DataType") int dataType);
 
         public DataBuffer(@Const @ByRef DataBuffer other) { super((Pointer)null); allocate(other); }
         private native void allocate(@Const @ByRef DataBuffer other);
@@ -411,8 +411,8 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 
         public native @ByRef @Name("operator =") DataBuffer put(@Const @ByRef DataBuffer other);
 
-        public native @Cast("nd4j::DataType") int getDataType();
-        public native void setDataType(@Cast("nd4j::DataType") int dataType);
+        public native @Cast("sd::DataType") int getDataType();
+        public native void setDataType(@Cast("sd::DataType") int dataType);
         public native @Cast("size_t") long getLenInBytes();
 
         public native Pointer primary();
@@ -497,10 +497,10 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #include <array/DataType.h>
 // #include <unordered_map>
 // #include <vector>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <array/ConstantDataBuffer.h>
-    @Namespace("nd4j") @NoOffset public static class ConstantDescriptor extends Pointer {
+    @Namespace("sd") @NoOffset public static class ConstantDescriptor extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ConstantDescriptor(Pointer p) { super(p); }
@@ -547,6 +547,10 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
     }
 
 
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+
 
 // #endif //DEV_TESTS_CONSTANTDESCRIPTOR_H
 
@@ -575,9 +579,9 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #ifndef LIBND4J_CONSTANTDATABUFFER_H
 // #define LIBND4J_CONSTANTDATABUFFER_H
 
-// #include <dll.h>
-// #include <pointercast.h>
-    @Namespace("nd4j") @NoOffset public static class ConstantDataBuffer extends Pointer {
+// #include <system/dll.h>
+// #include <system/pointercast.h>
+    @Namespace("sd") @NoOffset public static class ConstantDataBuffer extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ConstantDataBuffer(Pointer p) { super(p); }
@@ -634,7 +638,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #define DEV_TESTS_TADPACK_H
 
 // #include "ConstantDataBuffer.h"
-    @Namespace("nd4j") @NoOffset public static class TadPack extends Pointer {
+    @Namespace("sd") @NoOffset public static class TadPack extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public TadPack(Pointer p) { super(p); }
@@ -698,7 +702,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #define DEV_TESTS_ERRORREFERENCE_H
 
 // #include <string>
-// #include <dll.h>
+// #include <system/dll.h>
     @Namespace("sd") @NoOffset public static class ErrorReference extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
@@ -801,7 +805,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 
 // #ifndef DEV_TESTS_MEMORYTYPE_H
 // #define DEV_TESTS_MEMORYTYPE_H
-        /** enum nd4j::memory::MemoryType */
+        /** enum sd::memory::MemoryType */
         public static final int
             HOST = 0,
             DEVICE = 10;
@@ -811,7 +815,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #endif //DEV_TESTS_MEMORYTYPE_H
 
 
-// Parsed from Environment.h
+// Parsed from system/Environment.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -838,12 +842,12 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 
 // #include <atomic>
 // #include <vector>
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <stdexcept>
 // #include <array/DataType.h>
 // #include <types/pair.h>
-// #include <pointercast.h>
-    @Namespace("nd4j") @NoOffset public static class Environment extends Pointer {
+// #include <system/pointercast.h>
+    @Namespace("sd") @NoOffset public static class Environment extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Environment(Pointer p) { super(p); }
@@ -868,6 +872,8 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
         public native void setLeaksDetector(@Cast("bool") boolean reallyDetect);
         public native @Cast("bool") boolean helpersAllowed();
         public native void allowHelpers(@Cast("bool") boolean reallyAllow);
+
+        public native @Cast("bool") boolean blasFallback();
         
         public native int tadThreshold();
         public native void setTadThreshold(int threshold);
@@ -908,8 +914,8 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
         public native @Cast("bool") boolean isUseMKLDNN();
         public native void setUseMKLDNN(@Cast("bool") boolean useMKLDNN);
 
-        public native @Cast("nd4j::DataType") int defaultFloatDataType();
-        public native void setDefaultFloatDataType(@Cast("nd4j::DataType") int dtype);
+        public native @Cast("sd::DataType") int defaultFloatDataType();
+        public native void setDefaultFloatDataType(@Cast("sd::DataType") int dtype);
 
         public native @Cast("bool") boolean precisionBoostAllowed();
         public native void allowPrecisionBoost(@Cast("bool") boolean reallyAllow);
@@ -956,8 +962,8 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #define DEV_TESTS_UTF8STRING_H
 
 // #include <string>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class utf8string extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class utf8string extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public utf8string(Pointer p) { super(p); }
@@ -992,7 +998,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #endif //DEV_TESTS_UTF8STRING_H
 
 
-// Parsed from NativeOps.h
+// Parsed from legacy/NativeOps.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -1038,9 +1044,9 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 #endif
 */
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <types/float16.h>
-// #include <cnpy.h>
+// #include <cnpy/cnpy.h>
 
 //DO NOT REMOVE: THIS IS AN EDITOR SEMANTICS THING FOR CLION
 //IT DEFINES THE EXPORT MACRO FOR THE EDITOR AND THEN
@@ -1050,7 +1056,7 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
 // #else
 // #define ND4J_EXPORT
 // #endif
-// #include <dll.h>
+// #include <system/dll.h>
 
 /*
 int tad_threshold = 1;
@@ -1071,7 +1077,7 @@ bool verbose = false;
 // #include <graph/GraphState.h>
 // #include <graph/execution/LogicExecutor.h>
 // #include <graph/ResultWrapper.h>
-// #include <DebugInfo.h>
+// #include <helpers/DebugInfo.h>
 // #include <memory/MemoryCounter.h>
 
 /**
@@ -2421,7 +2427,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2434,7 +2440,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2447,7 +2453,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                          int opNum,
                          @Cast("void**") @ByPtrPtr Pointer arguments,
@@ -2460,7 +2466,7 @@ public native void execAggregate(@Cast("Nd4jPointer*") PointerPointer extraPoint
                          int numIntArrays,
                          Pointer realArguments,
                          int numRealArguments,
-                         @Cast("nd4j::DataType") int dtype);
+                         @Cast("sd::DataType") int dtype);
 
 
 public native void batchExecutor(@Cast("Nd4jPointer*") PointerPointer extraPointers,
@@ -2473,7 +2479,7 @@ public native void batchExecutor(@Cast("Nd4jPointer*") PointerPointer extraPoint
                                int maxIdx,
                                int maxReals,
                                Pointer ptrToArguments,
-                               @Cast("nd4j::DataType") int dtype);
+                               @Cast("sd::DataType") int dtype);
 
 public native void execAggregateBatch(@Cast("Nd4jPointer*") PointerPointer extraPointers,
                               int numAggregates,
@@ -2485,7 +2491,7 @@ public native void execAggregateBatch(@Cast("Nd4jPointer*") PointerPointer extra
                               int maxIdx,
                               int maxReals,
                               Pointer ptrToArguments,
-                              @Cast("nd4j::DataType") int dtype);
+                              @Cast("sd::DataType") int dtype);
 
 /**
  * Random operations
@@ -3066,17 +3072,17 @@ public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointe
 public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointers, @Cast("Nd4jPointer") Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jPointer") Pointer specialBuffer, @Cast("Nd4jLong*") LongBuffer specialShapeInfo, @Cast("Nd4jPointer") Pointer debugInfo);
 public native void inspectArray(@Cast("Nd4jPointer*") PointerPointer extraPointers, @Cast("Nd4jPointer") Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jPointer") Pointer specialBuffer, @Cast("Nd4jLong*") long[] specialShapeInfo, @Cast("Nd4jPointer") Pointer debugInfo);
 
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
-public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] strides, @Cast("nd4j::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
+public native OpaqueConstantDataBuffer shapeBuffer(int rank, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] strides, @Cast("sd::DataType") int dtype, char order, @Cast("Nd4jLong") long ews, @Cast("bool") boolean empty);
 
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer data, int length);
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer data, int length);
-public native OpaqueConstantDataBuffer constantBufferLong(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, DoublePointer data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, DoubleBuffer data, int length);
-public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("nd4j::DataType") int dtype, double[] data, int length);
-public native OpaqueConstantDataBuffer constantBuffer(@Cast("nd4j::DataType") int dtype, ConstantDescriptor descriptor);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer data, int length);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer data, int length);
+public native OpaqueConstantDataBuffer constantBufferLong(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, DoublePointer data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, DoubleBuffer data, int length);
+public native OpaqueConstantDataBuffer constantBufferDouble(@Cast("sd::DataType") int dtype, double[] data, int length);
+public native OpaqueConstantDataBuffer constantBuffer(@Cast("sd::DataType") int dtype, ConstantDescriptor descriptor);
 
 public native @Cast("Nd4jPointer") Pointer getConstantDataBufferPrimary(OpaqueConstantDataBuffer dbf);
 public native @Cast("Nd4jPointer") Pointer getConstantDataBufferSpecial(OpaqueConstantDataBuffer dbf);
@@ -3090,6 +3096,7 @@ public native OpaqueRandomGenerator getGraphContextRandomGenerator(OpaqueContext
 public native void ctxAllowHelpers(OpaqueContext ptr, @Cast("bool") boolean reallyAllow);
 public native void ctxShapeFunctionOverride(OpaqueContext ptr, @Cast("bool") boolean reallyOverride);
 public native void ctxSetExecutionMode(OpaqueContext ptr, int execMode);
+public native void ctxPurge(OpaqueContext ptr);
 public native void markGraphContextInplace(OpaqueContext ptr, @Cast("bool") boolean reallyInplace);
 public native void setGraphContextCudaContext(OpaqueContext ptr, Pointer stream, Pointer reductionPointer, Pointer allocationPointer);
 public native void setGraphContextInputArray(OpaqueContext ptr, int index, Pointer buffer, Pointer shapeInfo, Pointer specialBuffer, Pointer specialShapeInfo);
@@ -3188,9 +3195,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_EXTERNALWORKSPACE_H
 // #define LIBND4J_EXTERNALWORKSPACE_H
 
-// #include <pointercast.h>
-// #include <dll.h>
-        @Namespace("nd4j::memory") @NoOffset public static class ExternalWorkspace extends Pointer {
+// #include <system/pointercast.h>
+// #include <system/dll.h>
+        @Namespace("sd::memory") @NoOffset public static class ExternalWorkspace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ExternalWorkspace(Pointer p) { super(p); }
@@ -3249,13 +3256,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <atomic>
 // #include <vector>
 // #include <mutex>
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <types/float16.h>
 // #include <memory/ExternalWorkspace.h>
 // #include <memory/MemoryType.h>
 
-        @Namespace("nd4j::memory") @NoOffset public static class Workspace extends Pointer {
+        @Namespace("sd::memory") @NoOffset public static class Workspace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Workspace(Pointer p) { super(p); }
@@ -3293,7 +3300,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 //            bool resizeSupported();
 
             public native Pointer allocateBytes(@Cast("Nd4jLong") long numBytes);
-            public native Pointer allocateBytes(@Cast("nd4j::memory::MemoryType") int type, @Cast("Nd4jLong") long numBytes);
+            public native Pointer allocateBytes(@Cast("sd::memory::MemoryType") int type, @Cast("Nd4jLong") long numBytes);
 
             public native void scopeIn();
             public native void scopeOut();
@@ -3334,10 +3341,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_NDINDEX_H
 // #define LIBND4J_NDINDEX_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class NDIndex extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class NDIndex extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndex(Pointer p) { super(p); }
@@ -3364,7 +3371,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public static native NDIndex interval(@Cast("Nd4jLong") long start, @Cast("Nd4jLong") long end);
     }
 
-    @Namespace("nd4j") public static class NDIndexAll extends NDIndex {
+    @Namespace("sd") public static class NDIndexAll extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexAll(Pointer p) { super(p); }
@@ -3381,7 +3388,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
     }
 
 
-    @Namespace("nd4j") public static class NDIndexPoint extends NDIndex {
+    @Namespace("sd") public static class NDIndexPoint extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexPoint(Pointer p) { super(p); }
@@ -3391,7 +3398,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @Cast("bool") boolean isInterval();
     }
 
-    @Namespace("nd4j") public static class NDIndexInterval extends NDIndex {
+    @Namespace("sd") public static class NDIndexInterval extends NDIndex {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDIndexInterval(Pointer p) { super(p); }
@@ -3436,7 +3443,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <initializer_list>
 // #include "NDIndex.h"
-    @Namespace("nd4j") @NoOffset public static class IndicesList extends Pointer {
+    @Namespace("sd") @NoOffset public static class IndicesList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public IndicesList(Pointer p) { super(p); }
@@ -3475,7 +3482,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #ifndef ND4J_VARIABLE_TYPE_H
 // #define ND4J_VARIABLE_TYPE_H
-        /** enum nd4j::graph::VariableType */
+        /** enum sd::graph::VariableType */
         public static final int
             NDARRAY = 0,
             ARRAY_LIST = 1,
@@ -3512,12 +3519,12 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_INPUTLIST_H
 // #define LIBND4J_INPUTLIST_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <types/pair.h>
-    @Namespace("nd4j::graph") @NoOffset public static class ArgumentsList extends Pointer {
+    @Namespace("sd::graph") @NoOffset public static class ArgumentsList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ArgumentsList(Pointer p) { super(p); }
@@ -3577,8 +3584,8 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_PAIR_H
 // #define LIBND4J_PAIR_H
 
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class Pair extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class Pair extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Pair(Pointer p) { super(p); }
@@ -3603,7 +3610,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #endif //LIBND4J_PAIR_H
 
 
-// Parsed from NDArray.h
+// Parsed from array/NDArray.h
 
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
@@ -3624,11 +3631,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef NDARRAY_H
 // #define NDARRAY_H
 
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <initializer_list>
 // #include <functional>
-// #include <shape.h>
-// #include "NativeOpExecutioner.h"
+// #include <helpers/shape.h>
+// #include "legacy/NativeOpExecutioner.h"
 // #include <indexing/NDIndex.h>
 // #include <indexing/IndicesList.h>
 // #include <graph/Intervals.h>
@@ -3639,13 +3646,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <array/ArrayType.h>
 // #include <array/ResultSet.h>
 // #include <helpers/ShapeBuilders.h>
-// #include <op_enums.h>
+// #include <system/op_enums.h>
 // #include <ops/BroadcastOpsTuple.h>
 // #include <ops/BroadcastBoolOpsTuple.h>
 // #include <ops/BroadcastIntOpsTuple.h>
 // #include <array/ExtraArguments.h>
-// #include <Status.h>
-// #include <ShapeDescriptor.h>
+// #include <graph/Status.h>
+// #include <array/ShapeDescriptor.h>
 // #include <helpers/ConstantShapeHelper.h>
 // #include <array/DataBuffer.h>
 // #include <execution/AffinityManager.h>
@@ -3656,9 +3663,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 
 
-    @Namespace("nd4j") public static native @ByVal NDArray mmul(@Const @ByRef NDArray arg0, @Const @ByRef NDArray arg1);
+    @Namespace("sd") public static native @ByVal NDArray mmul(@Const @ByRef NDArray arg0, @Const @ByRef NDArray arg1);
 
-    @Namespace("nd4j") @NoOffset public static class NDArray extends Pointer {
+    @Namespace("sd") @NoOffset public static class NDArray extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDArray(Pointer p) { super(p); }
@@ -3676,16 +3683,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
         *  do not allocate memory, memory for array is passed from outside
         */
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongPointer shapeInfo);
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") LongBuffer shapeInfo);
-        public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, shapeInfo, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
         public NDArray(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(buffer, shapeInfo); }
         private native void allocate(Pointer buffer, @Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3693,16 +3700,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  do not allocate memory, memory for array is passed from outside
         *  we suppose the content of both (device and host) buffers is identical
         */
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongPointer shapeInfo);
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") LongBuffer shapeInfo);
-        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
-        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
+        public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo, context, isBuffAlloc, isBuffDAlloc); }
+        private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/, @Cast("const bool") boolean isBuffDAlloc/*=false*/);
         public NDArray(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(buffer, bufferD, shapeInfo); }
         private native void allocate(Pointer buffer, Pointer bufferD, @Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3726,16 +3733,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
 		*  constructor creates new NDArray using shape information from "shapeInfo", set all elements in new array to zeros, if copyStrides is true then use stride values from "shapeInfo", else calculate strides independently
         */
-		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo);
-		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context); }
-		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, copyStrides, context, nullify); }
+		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
 		public NDArray(@Cast("Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
 		private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo);
 
@@ -3743,67 +3750,66 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  constructor creates new NDArray using shape information from "shapeInfo", set all elements in new array to be zeros, if copyStrides is true then use stride values from "shapeInfo", else calculate strides independently
         *  set dtype as array type
         */
-        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context); }
-        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
-        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
-        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/) { super((Pointer)null); allocate(shapeInfo, dtype, copyStrides, context, nullify); }
+        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean nullify/*=true*/);
+        public NDArray(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype) { super((Pointer)null); allocate(shapeInfo, dtype); }
+        private native void allocate(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype);
 
         /**
         *  this constructor creates new array using shape information contained in vector argument
         */
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(order, shape); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
 
         /**
         * This constructor creates new array with elements copied from data and using shape information stored in shape, elements from data will be casted to dtype
         */
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @StdVector DoublePointer data);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @StdVector DoubleBuffer data);
-        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
-        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("nd4j::DataType") int dtype/*=nd4j::DOUBLE*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(order, shape, data, dtype, context); }
+        private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data, @Cast("sd::DataType") int dtype/*=sd::DOUBLE*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
         public NDArray(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data) { super((Pointer)null); allocate(order, shape, data); }
         private native void allocate(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @StdVector double[] data);
 
         /**
         *  this constructor creates new array using given buffer (without memory allocation) and shape information stored in shape
         */
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("nd4j::DataType") int dtype);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("nd4j::DataType") int dtype);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
-        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
-        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("nd4j::DataType") int dtype);
-
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape,  @Cast("sd::DataType") int dtype);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape,  @Cast("sd::DataType") int dtype);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/) { super((Pointer)null); allocate(buffer, order, shape, dtype, context, isBuffAlloc); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isBuffAlloc/*=false*/);
+        public NDArray(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(buffer, order, shape, dtype); }
+        private native void allocate(Pointer buffer, byte order, @Cast("Nd4jLong*") @StdVector long[] shape,  @Cast("sd::DataType") int dtype);
 
         /**
         * This method returns new array with the same shape & data type
@@ -3822,16 +3828,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  this constructor creates new NDArray with shape matching "other" array,
         *  doesn't copy "other" elements into new array !!!
         */
-        public NDArray(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(other, copyStrides, context); }
-        private native void allocate(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/);
+        public NDArray(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/) { super((Pointer)null); allocate(other, copyStrides, context); }
+        private native void allocate(@Const NDArray other, @Cast("const bool") boolean copyStrides/*=false*/, LaunchContext context/*=sd::LaunchContext::defaultContext()*/);
 
         /**
         *  this constructor creates scalar(and set its value = 0) or empty array depending on bool argument isScalar
         */
-        public NDArray(@Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/) { super((Pointer)null); allocate(dtype, context, isScalar); }
-        private native void allocate(@Cast("nd4j::DataType") int dtype, LaunchContext context/*=nd4j::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/);
-        public NDArray(@Cast("nd4j::DataType") int dtype) { super((Pointer)null); allocate(dtype); }
-        private native void allocate(@Cast("nd4j::DataType") int dtype);
+        public NDArray(@Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/) { super((Pointer)null); allocate(dtype, context, isScalar); }
+        private native void allocate(@Cast("sd::DataType") int dtype, LaunchContext context/*=sd::LaunchContext::defaultContext()*/, @Cast("const bool") boolean isScalar/*=true*/);
+        public NDArray(@Cast("sd::DataType") int dtype) { super((Pointer)null); allocate(dtype); }
+        private native void allocate(@Cast("sd::DataType") int dtype);
 
         /**
          * This method blocks until asynchronous operation finishes
@@ -3944,9 +3950,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
         *  cast array elements to given dtype
         */
-        public native @ByVal NDArray cast(@Cast("nd4j::DataType") int dtype);
+        public native @ByVal NDArray cast(@Cast("sd::DataType") int dtype);
 
-        public native void cast(@ByRef NDArray target, @Cast("nd4j::DataType") int dtype);
+        public native void cast(@ByRef NDArray target, @Cast("sd::DataType") int dtype);
 
         /**
         *   returns _context
@@ -4036,6 +4042,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @ByVal NDArray permute(@Const IntPointer dimensions, int rank);
         public native @ByVal NDArray permute(@Const IntBuffer dimensions, int rank);
         public native @ByVal NDArray permute(@Const int[] dimensions, int rank);
+        
+        
+        
 
         public native void permute(@Const IntPointer dimensions, int rank, @ByRef NDArray target);
         public native void permute(@Const IntBuffer dimensions, int rank, @ByRef NDArray target);
@@ -4049,6 +4058,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") LongPointer dimensions, int rank);
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") LongBuffer dimensions, int rank);
         public native @ByVal NDArray permute(@Cast("const Nd4jLong*") long[] dimensions, int rank);
+        
+        
+        
 
         public native void permute(@Cast("const Nd4jLong*") LongPointer dimensions, int rank, @ByRef NDArray target);
         public native void permute(@Cast("const Nd4jLong*") LongBuffer dimensions, int rank, @ByRef NDArray target);
@@ -4142,6 +4154,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *   apply transpose operation to the copy of this array, that is this array remains unaffected
         */
         public native @ByVal NDArray transpose();
+        
 
         /**
         *  perform transpose operation and store result in target, this array remains unaffected
@@ -4153,15 +4166,6 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  apply in-place transpose operation to this array, so this array becomes transposed
         */
         public native void transposei();
-
-        /**
-        *  return array pointing on certain range of this array
-        *  index - the number of array to be returned among set of possible arrays
-        *  dimensions - array of dimensions to point on
-        */
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector IntPointer dimensions);
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector IntBuffer dimensions);
-        public native @ByVal NDArray tensorAlongDimension(@Cast("Nd4jLong") long index, @StdVector int[] dimensions);
 
         /**
         *  returns the number of arrays pointing on specified dimension(s)
@@ -4250,14 +4254,20 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  set new order and shape in case of suitable array length (in-place operation)
         *  order - order to set
         *  shape - shape to set
-        *
+        *  copyToNewBuff - if true then old buffer will be copied to new buffer if last one will be allocated after reshaping
         *  if there was permute applied before or there are weird strides, then new buffer is allocated for array
         */
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
 		public native @Cast("bool") boolean reshapei(@Cast("Nd4jLong*") @StdVector long[] shape);
 
         /**
@@ -4267,9 +4277,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *
         * if permute have been applied before or there are weird strides, then new buffer is allocated for new array
         */
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("const bool") boolean copyToNewBuff/*=true*/);
+		public native @ByVal NDArray reshape(byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+        
 
         /**
         *  calculate strides and set given order
@@ -4379,6 +4393,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         *  negative operator, it changes sign of all array elements on opposite
         */
         public native @ByVal @Name("operator -") NDArray subtract();
+        
 
         /**
         *  pairwise multiplication unary operator array *= other
@@ -4458,7 +4473,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef __JAVACPP_HACK__
 // #endif
 
-        public native @ByVal NDArray asT(@Cast("nd4j::DataType") int dtype);
+        public native @ByVal NDArray asT(@Cast("sd::DataType") int dtype);
 
 
         public native void linspace(double start);
@@ -4486,9 +4501,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo);
         public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo);
         public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtype);
-        public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtype);
+        public native void setShapeInfo(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtype);
         public native void setShapeInfo(@Const @ByRef ShapeDescriptor descriptor);
         public native void setShapeInfo(@Const @ByRef ConstantDataBuffer shapeBuffer);
 
@@ -4683,7 +4698,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         * Returns data type of this array
         * @return
         */
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
 
         /**
          * This method returns true if value is from Integer space
@@ -4880,7 +4895,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #if defined(__CUDACC__) //&& defined(BUILD_TESTS)
 // for CUDA we need stil stuff inline
-// #include "cuda/NDArrayLambda.hpp"
+// #include <array/NDArrayLambda.hXX>
 // #endif
 
 
@@ -4918,10 +4933,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <string>
 // #include <atomic>
 // #include <unordered_map>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <memory/Workspace.h>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class NDArrayList extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class NDArrayList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public NDArrayList(Pointer p) { super(p); }
@@ -4931,7 +4946,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         public NDArrayList(int height) { super((Pointer)null); allocate(height); }
         private native void allocate(int height);
 
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
 
         public native NDArray read(int idx);
         public native NDArray readRaw(int idx);
@@ -4948,7 +4963,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
         public native @ByRef IntIntPair id();
         public native @StdString @ByRef @Cast({"char*", "std::string*"}) BytePointer name();
-        //nd4j::memory::Workspace* workspace();
+        //sd::memory::Workspace* workspace();
         public native LaunchContext context();
         public native NDArrayList clone();
 
@@ -4982,11 +4997,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
  ******************************************************************************/
 
 //
-// This class is suited for execution results representation. 
-// 
+// This class is suited for execution results representation.
+//
 // PLESE NOTE: It will delete all stored NDArrays upon destructor call
 //
-// Created by raver119 on 07.09.17.
+// @author raver119@gmail.com
 //
 
 // #ifndef LIBND4J_RESULTSET_H
@@ -4994,10 +5009,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <vector>
 // #include <graph/generated/result_generated.h>
-// #include <pointercast.h>
-// #include <dll.h> // forward declaration of template class NDArray
-    
-    @Namespace("nd4j") @NoOffset public static class ResultSet extends Pointer {
+// #include <system/pointercast.h>
+// #include <system/dll.h> // forward declaration of template class NDArray
+
+    @Namespace("sd") @NoOffset public static class ResultSet extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ResultSet(Pointer p) { super(p); }
@@ -5008,9 +5023,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             return (ResultSet)super.position(position);
         }
     
-        // default constructor
         public ResultSet() { super((Pointer)null); allocate(); }
         private native void allocate();
+
+// #ifndef __JAVACPP_HACK__
+// #endif
 
         public ResultSet(@Const @ByRef ResultSet other) { super((Pointer)null); allocate(other); }
         @NoException private native void allocate(@Const @ByRef ResultSet other);
@@ -5062,9 +5079,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_GRAPH_RNG_H
 
 // #include <types/u64.h>
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
 // #include <chrono>
 // #include <array/DataTypeUtils.h>
 // #include <helpers/logger.h>
@@ -5074,7 +5091,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #endif
 // #ifdef __CUDACC__
 // #else
-        @Namespace("nd4j::graph") @NoOffset public static class RandomGenerator extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class RandomGenerator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public RandomGenerator(Pointer p) { super(p); }
@@ -5158,9 +5175,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         
 
         //////
-        @Namespace("nd4j::graph") public static native @Cast("uint32_t") int rotl(@Cast("const uint32_t") int x, int k);
+        @Namespace("sd::graph") public static native @Cast("uint32_t") int rotl(@Cast("const uint32_t") int x, int k);
 
-        @Namespace("nd4j::graph") public static native @Cast("uint64_t") long rotl(@Cast("const uint64_t") long x, int k);
+        @Namespace("sd::graph") public static native @Cast("uint64_t") long rotl(@Cast("const uint64_t") long x, int k);
 
         
 
@@ -5199,13 +5216,17 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_VARIABLE_H
 
 // #include <string>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <array/NDArrayList.h>
 // #include <graph/VariableType.h>
 // #include <graph/generated/array_generated.h>
 // #include <graph/generated/node_generated.h>
 // #include <graph/generated/graph_generated.h>
-        @Namespace("nd4j::graph") @NoOffset public static class Variable extends Pointer {
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+        @Namespace("sd::graph") @NoOffset public static class Variable extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Variable(Pointer p) { super(p); }
@@ -5233,6 +5254,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public Variable(NDArray array/*=nullptr*/, @Cast("char*") BytePointer name/*=nullptr*/) { super((Pointer)null); allocate(array, name); }
             private native void allocate(NDArray array/*=nullptr*/, @Cast("char*") BytePointer name/*=nullptr*/);
 
+// #ifndef __JAVACPP_HACK__
+// #endif
+
             public native Variable clone();
 
             public native @Cast("bool") boolean hasNDArray();
@@ -5250,8 +5274,8 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native @Cast("bool") boolean isPlaceholder();
 
-            public native @Cast("nd4j::graph::VariableType") int variableType();
-            public native void setVariableType(@Cast("nd4j::graph::VariableType") int variableType);
+            public native @Cast("sd::graph::VariableType") int variableType();
+            public native void setVariableType(@Cast("sd::graph::VariableType") int variableType);
 
             /**
              * This method returns InputType of this variable  
@@ -5312,10 +5336,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <iterator>
 // #include <vector>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <graph/Variable.h>
-        @Namespace("nd4j::graph") @NoOffset public static class VariablesSet extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class VariablesSet extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public VariablesSet(Pointer p) { super(p); }
@@ -5367,13 +5391,15 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_FLOWPATH_H
 // #define LIBND4J_FLOWPATH_H
 
+// #include <system/op_boilerplate.h>
+// #include <unordered_map>
 // #include <map>
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <graph/NodeState.h>
 // #include <graph/FrameState.h>
 // #include <graph/profiling/GraphProfile.h>
-// #include <dll.h>
-        @Namespace("nd4j::graph") @NoOffset public static class FlowPath extends Pointer {
+// #include <system/dll.h>
+        @Namespace("sd::graph") @NoOffset public static class FlowPath extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public FlowPath(Pointer p) { super(p); }
@@ -5454,12 +5480,12 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_INTERVALS_H
 // #define LIBND4J_INTERVALS_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
 // #include <initializer_list>
-// #include <dll.h>
+// #include <system/dll.h>
 
-    @Namespace("nd4j") @NoOffset public static class Intervals extends Pointer {
+    @Namespace("sd") @NoOffset public static class Intervals extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public Intervals(Pointer p) { super(p); }
@@ -5519,12 +5545,14 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_STASH_H
 
 //#include <graph/Block.h>
-// #include <NDArray.h>
-// #include <unordered_map>
+// #include <array/NDArray.h>
+// #include <map>
+// #include <vector>
 // #include <string>
 // #include <atomic>
-// #include <pointercast.h>
-        @Namespace("nd4j::graph") @NoOffset public static class KeyPair extends Pointer {
+// #include <functional>
+// #include <system/pointercast.h>
+        @Namespace("sd::graph") @NoOffset public static class KeyPair extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public KeyPair(Pointer p) { super(p); }
@@ -5543,9 +5571,19 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             private native void allocate(int node/*=0*/, @Cast("char*") BytePointer name/*=nullptr*/);
 
             public native @Cast("bool") @Name("operator <") boolean lessThan(@Const @ByRef KeyPair other);
-        }
 
-        @Namespace("nd4j::graph") @NoOffset public static class Stash extends Pointer {
+            public native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef KeyPair other);
+
+            public native int key();
+            public native @StdString BytePointer name();
+        }
+    
+
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
+        @Namespace("sd::graph") @NoOffset public static class Stash extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Stash(Pointer p) { super(p); }
@@ -5559,21 +5597,22 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public Stash() { super((Pointer)null); allocate(); }
             private native void allocate();
 
-            //void storeArray(nd4j::graph::Block<T>& block, const char *name, nd4j::NDArray<T> *array);
+            //void storeArray(sd::graph::Block<T>& block, const char *name, sd::NDArray<T> *array);
             public native void storeArray(int nodeId, @Cast("char*") String name, NDArray array);
             public native void storeArray(int nodeId, @Cast("char*") BytePointer name, NDArray array);
 
-            //bool checkStash(nd4j::graph::Block<T>& block, const char *name);
+            //bool checkStash(sd::graph::Block<T>& block, const char *name);
             public native @Cast("bool") boolean checkStash(int nodeId, @Cast("char*") String name);
             public native @Cast("bool") boolean checkStash(int nodeId, @Cast("char*") BytePointer name);
 
-            //nd4j::NDArray<T>* extractArray(nd4j::graph::Block<T>& block, const char *name);
+            //sd::NDArray<T>* extractArray(sd::graph::Block<T>& block, const char *name);
             public native NDArray extractArray(int nodeId, @Cast("char*") String name);
             public native NDArray extractArray(int nodeId, @Cast("char*") BytePointer name);
 
             public native void clear();
         }
     
+
 
 
 
@@ -5607,20 +5646,21 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_GRAPHSTATE_H
 // #define LIBND4J_GRAPHSTATE_H
 
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <unordered_map>
+// #include <map>
 // #include <graph/Scope.h>
-// #include <Status.h>
+// #include <graph/Status.h>
 // #include <graph/VariableSpace.h>
 // #include <ops/declarable/DeclarableOp.h>
 // #include <types/pair.h>
 // #include <graph/ArgumentsList.h>
 // #include <graph/Graph.h>
 
-    @Namespace("nd4j::graph") @NoOffset public static class GraphState extends Pointer {
+    @Namespace("sd::graph") @NoOffset public static class GraphState extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public GraphState(Pointer p) { super(p); }
@@ -5729,13 +5769,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <list>
 // #include <unordered_map>
 // #include <mutex>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <array/NDArrayList.h>
 // #include <graph/Variable.h>
 // #include <memory/Workspace.h>
 // #include <graph/Stash.h>
 // #include <graph/FlowPath.h>
-        @Namespace("nd4j::graph") @NoOffset public static class VariableSpace extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class VariableSpace extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public VariableSpace(Pointer p) { super(p); }
@@ -5752,7 +5792,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @ByRef @Name("operator =") VariableSpace put(@Const @ByRef VariableSpace other);
 
             public native int numberOfPlaceholders();
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getPlaceholders();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getPlaceholders();
             public native void setWorkspace(Workspace workspace);
 
             public native LaunchContext launchContext();
@@ -5771,13 +5811,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native Variable getVariable(@ByRef IntIntPair pair);
             public native Variable getVariable(@StdString @Cast({"char*", "std::string*"}) BytePointer symbol);
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getVariables();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getVariables();
 
-            public native void putVariable(@ByRef IntIntPair pair, NDArray array);
+            public native Variable putVariable(@ByRef IntIntPair pair, NDArray array);
             public native void putVariable(@ByRef IntIntPair pair, Variable variable);
             public native void putVariable(int id, Variable variable);
             public native void putVariable(int id, NDArray array);
-            public native void putVariable(int id, int idx, NDArray array);
+            public native Variable putVariable(int id, int idx, NDArray array);
             public native void putVariable(int id, int idx, Variable array);
 
             public native void dropVariable(@ByRef IntIntPair pair);
@@ -5800,7 +5840,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native VariableSpace clone();
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer handles();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer handles();
 
 
             public native VariableSpace asT();
@@ -5808,7 +5848,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native Stash getStash();
 
-            public native @Cast("nd4j::graph::Variable**") @StdVector PointerPointer getExternalVariables();
+            public native @Cast("sd::graph::Variable**") @StdVector PointerPointer getExternalVariables();
 
             public native void setFlowPath(FlowPath timers);
             public native FlowPath flowPath();
@@ -5845,10 +5885,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_HELPER_GENERATOR_H
 // #define LIBND4J_HELPER_GENERATOR_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
 // #include <array/DataTypeUtils.h>
-// #include <dll.h>
+// #include <system/dll.h>
 
 // #ifdef _MSC_VER
 // include for uint64_t on MSVC
@@ -5873,7 +5913,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #ifdef __CUDACC__
 // #else
-        @Namespace("nd4j::random") @NoOffset public static class RandomBuffer extends Pointer {
+        @Namespace("sd::random") @NoOffset public static class RandomBuffer extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public RandomBuffer(Pointer p) { super(p); }
@@ -6034,7 +6074,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
         }
 
-        @Namespace("nd4j::random") @NoOffset public static class IGenerator extends Pointer {
+        @Namespace("sd::random") @NoOffset public static class IGenerator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public IGenerator(Pointer p) { super(p); }
@@ -6054,7 +6094,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 
 
-        @Namespace("nd4j::random") @NoOffset public static class Xoroshiro128 extends IGenerator {
+        @Namespace("sd::random") @NoOffset public static class Xoroshiro128 extends IGenerator {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Xoroshiro128(Pointer p) { super(p); }
@@ -6095,13 +6135,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define ND4J_GRAPH_PROFILE_H
 
 // #include "NodeProfile.h"
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <vector>
 // #include <string>
 // #include <map>
 // #include <chrono>
-        @Namespace("nd4j::graph") @NoOffset public static class GraphProfile extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class GraphProfile extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public GraphProfile(Pointer p) { super(p); }
@@ -6200,10 +6240,11 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_NODE_PROFILE_H
 // #define LIBND4J_NODE_PROFILE_H
 
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
 // #include <string>
-        @Namespace("nd4j::graph") @NoOffset public static class NodeProfile extends Pointer {
+// #include <vector>
+        @Namespace("sd::graph") @NoOffset public static class NodeProfile extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public NodeProfile(Pointer p) { super(p); }
@@ -6235,10 +6276,19 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setObjectsSize(@Cast("Nd4jLong") long bytes);
             public native void setTotalSize(@Cast("Nd4jLong") long bytes);
 
+            public native void addInputShape(@Cast("Nd4jLong*") LongPointer shapeInfo);
+            public native void addInputShape(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+            public native void addInputShape(@Cast("Nd4jLong*") long[] shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") LongPointer shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+            public native void addOutputShape(@Cast("Nd4jLong*") long[] shapeInfo);
+
             public native @Cast("Nd4jLong") long getActivationsSize();
             public native @Cast("Nd4jLong") long getTemporarySize();
             public native @Cast("Nd4jLong") long getObjectsSize();
             public native @Cast("Nd4jLong") long getTotalSize();
+
+            public native @Cast("Nd4jLong") long getExecutionTime();
 
             public native @StdString @ByRef @Cast({"char*", "std::string*"}) BytePointer name();
 
@@ -6279,7 +6329,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define LIBND4J_CONTEXT_H
 
 // #include <vector>
-// #include <NDArray.h>
+// #include <array/NDArray.h>
 // #include <graph/Variable.h>
 // #include <graph/VariableSpace.h>
 // #include <graph/ContextPrototype.h>
@@ -6292,7 +6342,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
         /**
          * This class defines input desired for any given node/operation within graph
          */
-        @Namespace("nd4j::graph") @NoOffset public static class Context extends ContextPrototype {
+        @Namespace("sd::graph") @NoOffset public static class Context extends ContextPrototype {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public Context(Pointer p) { super(p); }
@@ -6315,10 +6365,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @Cast("Nd4jLong") long getOuterTime();
             public native @Cast("Nd4jLong") long getInnerTime();
 
-            public native @Cast("nd4j::DataType") int dataType();
+            public native @Cast("sd::DataType") int dataType();
 
-            public native @Cast("nd4j::DataType") int dataType(int index);
-            public native void setDataType(int index, @Cast("nd4j::DataType") int type);
+            public native @Cast("sd::DataType") int dataType(int index);
+            public native void setDataType(int index, @Cast("sd::DataType") int type);
             // these methods are related to Workspace abstraction
             public native @Cast("bool") boolean hasWorkspaceProvided();
             public native void attachWorkspace(Workspace workspace);
@@ -6412,10 +6462,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             // methods used in java interop
             /**
-             * This method checks, if Context uses fastpath variable access
+             * This method checks if Context uses fastpath variable access
              * @return
              */
             public native @Cast("bool") boolean isFastPath();
+
+            /**
+             * Method allows to forbid FastPath execution
+             * @param reallyForbid
+             */
+            public native void forbidFastPath(@Cast("bool") boolean reallyForbid);
 
 // #ifndef __JAVACPP_HACK__
 // #endif
@@ -6438,9 +6494,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setIArguments(@Cast("Nd4jLong*") long[] arguments, int numberOfArguments);
             public native void setBArguments(@Cast("bool*") BooleanPointer arguments, int numberOfArguments);
             public native void setBArguments(@Cast("bool*") boolean[] arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") IntPointer arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") IntBuffer arguments, int numberOfArguments);
-            public native void setDArguments(@Cast("nd4j::DataType*") int[] arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") IntPointer arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") IntBuffer arguments, int numberOfArguments);
+            public native void setDArguments(@Cast("sd::DataType*") int[] arguments, int numberOfArguments);
 
             public native void setTArguments(@StdVector DoublePointer tArgs);
             public native void setTArguments(@StdVector DoubleBuffer tArgs);
@@ -6450,9 +6506,16 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native void setIArguments(@Cast("Nd4jLong*") @StdVector long[] tArgs);
             public native void setBArguments(@Cast("bool*") @StdVector BooleanPointer tArgs);
             public native void setBArguments(@Cast("bool*") @StdVector boolean[] tArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntPointer dArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector IntBuffer dArgs);
-            public native void setDArguments(@Cast("nd4j::DataType*") @StdVector int[] dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector IntPointer dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector IntBuffer dArgs);
+            public native void setDArguments(@Cast("sd::DataType*") @StdVector int[] dArgs);
+
+            /**
+             * This method purges fastpath in/out contents and releases all the handles.
+             *
+             * PLEASE NOTE: I/T/B/D args will stay intact
+             */
+            public native void clearFastPath();
 
             public native void setCudaContext(@Cast("Nd4jPointer") Pointer cudaStream, @Cast("Nd4jPointer") Pointer reductionPointer, @Cast("Nd4jPointer") Pointer allocationPointer);
 
@@ -6502,10 +6565,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #define ND4J_CONTEXT_PROTOTYPE_H
 
 // #include <vector>
-// #include <Environment.h>
+// #include <system/Environment.h>
 // #include <array/DataType.h>
-// #include <dll.h>
-// #include <RandomGenerator.h>
+// #include <system/dll.h>
+// #include <graph/RandomGenerator.h>
 // #include <ops/declarable/OpDescriptor.h>
 // #include <execution/Engine.h>
 // #include <execution/ExecutionMode.h>
@@ -6514,7 +6577,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #include <config.h>
 // #endif
 
-        @Namespace("nd4j::graph") @NoOffset public static class ContextPrototype extends Pointer {
+        @Namespace("sd::graph") @NoOffset public static class ContextPrototype extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ContextPrototype(Pointer p) { super(p); }
@@ -6538,9 +6601,9 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
             public native void setOpDescriptor(OpDescriptor opDescriptor);
 
-            public native @Cast("nd4j::DataType") int dataType();
-            public native @Cast("nd4j::DataType") int dataType(int index);
-            public native void setDataType(int index, @Cast("nd4j::DataType") int type);
+            public native @Cast("sd::DataType") int dataType();
+            public native @Cast("sd::DataType") int dataType(int index);
+            public native void setDataType(int index, @Cast("sd::DataType") int type);
 
             public native @Cast("bool") boolean isInplace();
             public native void markInplace(@Cast("bool") boolean reallyInplace);
@@ -6556,7 +6619,7 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
             public native @StdVector DoublePointer getTArguments();
             public native @StdVector IntPointer getIArguments();
             public native @Cast("bool*") @StdVector BooleanPointer getBArguments();
-            public native @Cast("nd4j::DataType*") @StdVector IntPointer getDArguments();
+            public native @Cast("sd::DataType*") @StdVector IntPointer getDArguments();
             public native @StdVector IntPointer getAxis();
 
             public native @Cast("samediff::Engine") int engine();
@@ -6621,10 +6684,10 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 // #ifndef LIBND4J_RESULTWRAPPER_H
 // #define LIBND4J_RESULTWRAPPER_H
 
-// #include <op_boilerplate.h>
-// #include <pointercast.h>
-// #include <dll.h>
-        @Namespace("nd4j::graph") @NoOffset public static class ResultWrapper extends org.nd4j.nativeblas.ResultWrapperAbstraction {
+// #include <system/op_boilerplate.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
+        @Namespace("sd::graph") @NoOffset public static class ResultWrapper extends org.nd4j.nativeblas.ResultWrapperAbstraction {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public ResultWrapper(Pointer p) { super(p); }
@@ -6673,13 +6736,13 @@ public native @Cast("bool") boolean isOptimalRequirementsMet();
 
 // #include <cstring>
 // #include <cstdio>
-// #include "../dll.h"
-// #include "../nd4jmalloc.h"
-// #include "../templatemath.h"
+// #include "system/dll.h"
+// #include "system/nd4jmalloc.h"
+// #include "math/templatemath.h"
 // #include "../helpers/logger.h"
-// #include "../pointercast.h"
+// #include "system/pointercast.h"
 // #include "../cnpy/cnpy.h"
-// #include <op_boilerplate.h>
+// #include <system/op_boilerplate.h>
 
 public static final int MAX_DIMENSION = 0x7fffffff;
 public static final int MAX_NUM_THREADS =  1024;
@@ -6696,7 +6759,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define INLINEDEF inline
 // #endif
 
-// #include "../pairwise_util.h"
+// #include "system/pairwise_util.h"
 // #include <stdint.h>
 // #include <array/ArrayOptions.h>
 
@@ -6811,9 +6874,12 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean haveSameShapeAndStrides(@Cast("const Nd4jLong*") LongBuffer shapeInfo1, @Cast("const Nd4jLong*") LongBuffer shapeInfo2, @Cast("const Nd4jLong*") LongBuffer shapeInfo3);
     @Namespace("shape") public static native @Cast("bool") boolean haveSameShapeAndStrides(@Cast("const Nd4jLong*") long[] shapeInfo1, @Cast("const Nd4jLong*") long[] shapeInfo2, @Cast("const Nd4jLong*") long[] shapeInfo3);
 
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongPointer shape, int dim);
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongBuffer shape, int dim);
-    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") long[] shape, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongPointer shapeInfo, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") LongBuffer shapeInfo, int dim);
+    @Namespace("shape") public static native int sizeAt(@Cast("const Nd4jLong*") long[] shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") LongPointer shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") LongBuffer shapeInfo, int dim);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long strideAt(@Cast("const Nd4jLong*") long[] shapeInfo, int dim);
 
     @Namespace("shape") public static native void traceNew(int id);
 
@@ -6828,33 +6894,39 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean canReshape(int oldRank, @Cast("Nd4jLong*") LongBuffer oldShape, int newRank, @Cast("Nd4jLong*") LongBuffer newShape, @Cast("bool") boolean isFOrder);
     @Namespace("shape") public static native @Cast("bool") boolean canReshape(int oldRank, @Cast("Nd4jLong*") long[] oldShape, int newRank, @Cast("Nd4jLong*") long[] newShape, @Cast("bool") boolean isFOrder);
 
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") LongPointer oldShapeInfo, int newRank, @Cast("const Nd4jLong*") LongPointer newShape, @Cast("Nd4jLong*") LongPointer newShapeInfo);
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") LongBuffer oldShapeInfo, int newRank, @Cast("const Nd4jLong*") LongBuffer newShape, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
-    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(int oldRank, @Cast("const Nd4jLong*") long[] oldShapeInfo, int newRank, @Cast("const Nd4jLong*") long[] newShape, @Cast("Nd4jLong*") long[] newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongPointer oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") LongPointer newShape, @Cast("Nd4jLong*") LongPointer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongBuffer oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") LongBuffer newShape, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") long[] oldShapeInfo, byte newOrder, int newRank, @Cast("const Nd4jLong*") long[] newShape, @Cast("Nd4jLong*") long[] newShapeInfo);
+    /**
+    * newShapeInfo contains rank, shape and order only, no strides/ews/type
+    */
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongPointer oldShapeInfo, @Cast("Nd4jLong*") LongPointer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") LongBuffer oldShapeInfo, @Cast("Nd4jLong*") LongBuffer newShapeInfo);
+    @Namespace("shape") public static native @Cast("bool") boolean reshapeC(@Cast("const Nd4jLong*") long[] oldShapeInfo, @Cast("Nd4jLong*") long[] newShapeInfo);
 
     /**
     * Get the shape info buffer
     * for the given rank and shape.
     */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
 
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBuffer(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] buffer);
 
     /**
     * Get the shape info buffer
     * for the given rank and shape.
      */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape);
 
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer output);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer output);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer output);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeBufferFortran(int rank, @Cast("sd::DataType") int dtype, @Cast("Nd4jLong*") long[] shape, @Cast("Nd4jLong*") long[] output);
 
 // #ifdef __CUDACC__
 // #endif
@@ -7138,6 +7210,15 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") LongPointer shapeInfo);
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") LongBuffer shapeInfo);
     @Namespace("shape") public static native @Cast("bool") boolean isColumnVector(@Cast("Nd4jLong*") long[] shapeInfo);
+
+    /**
+    * shape - input inShape is shape only, not shapeInfo
+    * returns number of non-unity dimensions in inShape
+    */
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") LongPointer inShape);
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") LongBuffer inShape);
+    @Namespace("shape") public static native int numOfNonUnitDims(int rank, @Cast("const Nd4jLong*") long[] inShape);
+
     /**
  * Returns whether the
  * given shape is a vector or not
@@ -7156,9 +7237,9 @@ public static final int PREALLOC_SIZE = 33554432;
  * Returns the shape portion of an information
  * buffer
  */
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeOf(@Cast("Nd4jLong*") LongPointer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeOf(@Cast("Nd4jLong*") LongBuffer buffer);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeOf(@Cast("Nd4jLong*") long[] buffer);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer shapeOf(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer shapeOf(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] shapeOf(@Cast("Nd4jLong*") long[] shapeInfo);
 
 /**
  * Return a copy of a buffer.
@@ -7238,14 +7319,12 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native int rank(@Const IntBuffer shapeInfo);
     @Namespace("shape") public static native int rank(@Const int[] shapeInfo);
 
-    // returns pointer on elementWiseStride
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer ews(@Cast("Nd4jLong*") LongPointer shapeInfo);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer ews(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] ews(@Cast("Nd4jLong*") long[] shapeInfo);
-
     /**
     *  returns pointer on elementWiseStride
     */
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer ews(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer ews(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native @Cast("Nd4jLong*") long[] ews(@Cast("Nd4jLong*") long[] shapeInfo);
 
 /**
  * Converts a raw int buffer of the layout:
@@ -7701,18 +7780,18 @@ public static final int PREALLOC_SIZE = 33554432;
 * @return the double at the specified index
 */
 
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer indices);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] indices, @Cast("Nd4jLong") long baseOffset/*=0*/);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] indices);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords, @Cast("Nd4jLong") long baseOffset/*=0*/);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long getOffset(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords);
 
     @Namespace("shape") public static native @Cast("Nd4jLong*") LongPointer createShapeInfo(@Cast("Nd4jLong*") LongPointer shape, @Cast("Nd4jLong*") LongPointer stride, int rank);
     @Namespace("shape") public static native @Cast("Nd4jLong*") LongBuffer createShapeInfo(@Cast("Nd4jLong*") LongBuffer shape, @Cast("Nd4jLong*") LongBuffer stride, int rank);
@@ -7738,14 +7817,20 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongPointer shape, IntPointer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") LongBuffer shape, IntBuffer coords);
     @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, int rank, @Cast("const Nd4jLong*") long[] shape, int[] coords);
+
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong*") LongPointer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, IntPointer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, IntBuffer coords);
+    @Namespace("shape") public static native void index2coordsCPU(@Cast("const Nd4jLong") long startIndex, @Cast("const Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, int[] coords);
+
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong*") LongPointer coords, int dimsSize, @Const IntPointer tadDims);
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer coords, int dimsSize, @Const IntBuffer tadDims);
-    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] coords, int dimsSize, @Const int[] tadDims);
-
-
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongPointer shapeInfo, IntPointer coords, int dimsSize, @Const IntPointer tadDims);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") LongBuffer shapeInfo, IntBuffer coords, int dimsSize, @Const IntBuffer tadDims);
+    @Namespace("shape") public static native void index2coords(@Cast("Nd4jLong") long index, @Cast("const Nd4jLong*") long[] shapeInfo, int[] coords, int dimsSize, @Const int[] tadDims);
 
     /**
     * Convert coordinates to the corresponding linear index (sequence number in other words)
@@ -7757,15 +7842,15 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords);
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords);
     @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer coords);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongPointer shape, @Const IntPointer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") LongBuffer shape, @Const IntBuffer coords);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(int rank, @Cast("const Nd4jLong*") long[] shape, @Const int[] coords);
     /**
     * take into account only dimensions stored in tadDims, tadDims must be sorted in increasing order!
     */
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer coords, int dimsSize, @Const IntPointer tadDims);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer coords, int dimsSize, @Const IntBuffer tadDims);
-    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] coords, int dimsSize, @Const int[] tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Const IntPointer coords, int dimsSize, @Const IntPointer tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Const IntBuffer coords, int dimsSize, @Const IntBuffer tadDims);
+    @Namespace("shape") public static native @Cast("Nd4jLong") long coords2index(@Cast("const Nd4jLong*") long[] shapeInfo, @Const int[] coords, int dimsSize, @Const int[] tadDims);
 
    /**
    * increment n-dimensional array by one iteration by changing coord appropriately
@@ -7855,32 +7940,32 @@ public static final int PREALLOC_SIZE = 33554432;
     // function calculates the coordinates of min array (and saves them into minIdxs) given coordinates of max array (already stored in maxIdxs)
     // dimsToExclude - should be sorted in increasing order
     // dimsLen - length of dimsToExclude, if not set (= -1), then it is calculated as maxRank - minRank
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("Nd4jLong*") LongPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("Nd4jLong*") LongPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("Nd4jLong*") LongBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("Nd4jLong*") LongBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("Nd4jLong*") long[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
-    @Namespace("shape") public static native void maxIndToMinInd(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("Nd4jLong*") long[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(IntPointer maxIdxs, IntPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(IntPointer maxIdxs, IntPointer minIdxs, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(IntBuffer maxIdxs, IntBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(IntBuffer maxIdxs, IntBuffer minIdxs, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
+    @Namespace("shape") public static native void maxIndToMinInd(int[] maxIdxs, int[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/, int dimsLen/*=-1*/);
+    @Namespace("shape") public static native void maxIndToMinInd(int[] maxIdxs, int[] minIdxs, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
 
     // calculate indexes of max-array, these output indexes correspond to one minIdx index of min-array which is sub-array of max-array
     // dimsToExclude - should be sorted in increasing order
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") LongBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayIndexes(@Cast("Nd4jLong*") long[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(IntPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Const IntPointer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(IntPointer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(IntBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Const IntBuffer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(IntBuffer maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo);
+    @Namespace("shape") public static native int outerArrayIndexes(int[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Const int[] dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayIndexes(int[] maxIdxs, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo);
 
     // calculate offsets of max-array, these offsets correspond to one minIdx index of min-array which is sub-array of max-array
     // maxOffsets - will contain calculated offsets of max-array, buffer for maxOffsets should be allocated beforehand
     // dimsToExclude - should be sorted in increasing order
     // memBuff - auxiliary memory buffer (size = 2 * max_rank) for coordinates and increments storing, should be allocated beforehand
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") LongPointer memBuff, @Const IntPointer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") LongPointer memBuff);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") LongBuffer memBuff, @Const IntBuffer dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") LongBuffer memBuff);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") long[] memBuff, @Const int[] dimsToExclude/*=nullptr*/);
-    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") long[] memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, IntPointer memBuff, @Const IntPointer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongPointer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("const Nd4jLong*") LongPointer minShapeInfo, IntPointer memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, IntBuffer memBuff, @Const IntBuffer dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") LongBuffer maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("const Nd4jLong*") LongBuffer minShapeInfo, IntBuffer memBuff);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, int[] memBuff, @Const int[] dimsToExclude/*=nullptr*/);
+    @Namespace("shape") public static native int outerArrayOffsets(@Cast("Nd4jLong*") long[] maxOffsets, @Cast("const Nd4jLong") long minIdx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("const Nd4jLong*") long[] minShapeInfo, int[] memBuff);
 
     // calculates offsets for entities (elements or sub-arrays), shape in context of sub-array means dimensions excluded from outer array
     // rank is equal to size of shape
@@ -7896,40 +7981,22 @@ public static final int PREALLOC_SIZE = 33554432;
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong*") LongBuffer offsets);
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] offsets, byte order/*='c'*/);
     @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong*") long[] offsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, @Cast("const Nd4jLong*") LongPointer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongPointer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer xOffsets, @Cast("const Nd4jLong*") LongPointer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer yOffsets, @Cast("const Nd4jLong*") LongPointer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer zOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, @Cast("const Nd4jLong*") LongBuffer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") LongBuffer xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer xOffsets, @Cast("const Nd4jLong*") LongBuffer yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer yOffsets, @Cast("const Nd4jLong*") LongBuffer zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer zOffsets);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, @Cast("const Nd4jLong*") long[] zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] zOffsets, byte order/*='c'*/);
-    @Namespace("shape") public static native void calcOffsets(@Cast("const Nd4jLong*") long[] xShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] xOffsets, @Cast("const Nd4jLong*") long[] yShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] yOffsets, @Cast("const Nd4jLong*") long[] zShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] zOffsets);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") LongPointer buffer, byte order);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") LongBuffer buffer, byte order);
-    @Namespace("shape") public static native void shapeOldScalar(@Cast("nd4j::DataType") int dtype, @Cast("Nd4jLong*const") long[] buffer, byte order);
-
-    // deduce element-wise stride
-    // if array is scalar or unit length vector then ews = 1
-    // if array is common vector then ews = stride of non-unity dimension
-    // if strides are normal set ews = 1, otherwise ews = 0
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong") long len);
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong") long len);
-    @Namespace("shape") public static native void setEws(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong") long len);
+    // ND4J_EXPORT void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const char order = 'c');
+    // ND4J_EXPORT void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const Nd4jLong* zShapeInfo, Nd4jLong*& zOffsets, const char order = 'c');
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") LongPointer buffer, byte order);
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") LongBuffer buffer, byte order);
+    @Namespace("shape") public static native void shapeOldScalar(@Cast("sd::DataType") int dtype, @Cast("Nd4jLong*const") long[] buffer, byte order);
 
     // deduce order and element-wise stride
     // if array is scalar or unit length vector then ews = 1 and order is preserved
     // if array is common vector then ews = stride of non-unity dimension and order is preserved
     // if strides are normal/contiguous then ews = 1 and corresponding order is set, otherwise ews = 0 and order is preserved
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongPointer shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongPointer shapeInfo);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongBuffer shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") LongBuffer shapeInfo);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") long[] shapeInfo, @Cast("Nd4jLong") long len/*=-1*/);
-    @Namespace("shape") public static native void setOrderAndEws(@Cast("Nd4jLong*") long[] shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongPointer shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") LongPointer shapeNoUnities, @Cast("const Nd4jLong*") LongPointer stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongBuffer shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") LongBuffer shapeNoUnities, @Cast("const Nd4jLong*") LongBuffer stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") long[] shapeInfo, byte proposedOrder, int numOfNonUnitDims, @Cast("const Nd4jLong*") long[] shapeNoUnities, @Cast("const Nd4jLong*") long[] stridesNoUnities);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongPointer shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") LongBuffer shapeInfo);
+    @Namespace("shape") public static native void checkStridesEwsAndOrder(@Cast("Nd4jLong*") long[] shapeInfo);
 
     /**
     * processes whole set of sub-arrays
@@ -7939,17 +8006,62 @@ public static final int PREALLOC_SIZE = 33554432;
     * numOfSubArrs - number of sub-arrays, size of subArrOffsets is equal to numOfSubArrs
     * dimsSize - size of dimsToExclude, if dimsSize = array rank or dimsSize = 0 it means sub-array is whole array, copy of wholeShapeInfo and one zero offset will be returned
     * dimsToExclude - MUST BE SORTED, dimensions to evaluate sub-array along, i.e. when shape is [2,3,4,5] and dimsToExclude={0,2}, then there will be 8 sub-arrays with shape [3,5]
-    * subArrShapeInfo    - output argument, contains shapeInfo common for all sub-arrays
+    * subArrShapeInfo    - output argument, contains shapeInfo (same for all sub-arrays)
     * subArrOffsets      - output argument, contains successive sub-arrays offsets from original this-buffer
     * keepUnitiesInShape - if false then eliminate unities from sub-array shapeInfo, for example {1,a,1,b} -> {a,b}
     */
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
-    @Namespace("shape") public static native void calcSubArrShapeAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongPointer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer subArrShapeInfo, @Cast("Nd4jLong*") LongPointer subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") LongBuffer wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer subArrShapeInfo, @Cast("Nd4jLong*") LongBuffer subArrOffsets);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets, @Cast("bool") boolean keepUnitiesInShape/*=false*/);
+    @Namespace("shape") public static native void calcSubArrsShapeInfoAndOffsets(@Cast("const Nd4jLong*") long[] wholeShapeInfo, @Cast("const Nd4jLong") long numOfSubArrs, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] subArrShapeInfo, @Cast("Nd4jLong*") long[] subArrOffsets);
 
+    /**
+    * processes only one sub-array, evaluates shapeInfo of sub-array and its buffer offset from original array
+    * arguments:
+    * idx - input argument, intervals of indexes which define the sub-array to point on,
+    *        when isStrided = false then idx has form {dim0Start,dim0End,  dim1Start,dim1End, ....} and length (2 * maxRank)
+    *        when isStrided = true  then idx has form {dim0Start,dim0End,dim0Stride,  dim1Start,dim1End,dim1Stride, ....} and length (3 * maxRank)
+    *        when (dimStart == dimEnd) then whole range will be used for current dimension
+    * maxShapeInfo - input argument, shapeInfo of original array
+    * minShapeInfo - output argument, shapeInfo of sub-array to be deduced
+    * minOffset - output argument, offset of sub-array buffer offsets from original buffer
+    * keepUnitiesInShape - input argument, if false then eliminate unities from sub-array shapeInfo, for example {1,a,1,b} -> {a,b}
+    * isStrided - input argument, if true then idx has length (3 * this->rankOf()) and contains additional stride numbers which correspond to stride between dimStart and dimEnd,
+    * numOfUntiesInMinShape - input argument, number of occurrences in idx when (dimEnd - dimStart) = 1
+    */
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongPointer idx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongPointer minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongPointer idx, @Cast("const Nd4jLong*") LongPointer maxShapeInfo, @Cast("Nd4jLong*") LongPointer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongPointer minOffset);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongBuffer idx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongBuffer minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") LongBuffer idx, @Cast("const Nd4jLong*") LongBuffer maxShapeInfo, @Cast("Nd4jLong*") LongBuffer minShapeInfo, @Cast("Nd4jLong*") @ByRef LongBuffer minOffset);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") long[] idx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") @ByRef long[] minOffset, @Cast("const bool") boolean keepUnitiesInShape/*=false*/, @Cast("const bool") boolean isStrided/*=false*/, int numOfUntiesInMinShape/*=0*/);
+    @Namespace("shape") public static native void calcSubArrShapeInfoAndOffset(@Cast("const Nd4jLong*") long[] idx, @Cast("const Nd4jLong*") long[] maxShapeInfo, @Cast("Nd4jLong*") long[] minShapeInfo, @Cast("Nd4jLong*") @ByRef long[] minOffset);
+
+    /**
+    * for example inShapeInfo is {3, 2,1,4, 4,4,1, 16384,1,99}
+    * then output shapeNoUnities will contain {2,4, 4,1} - that is only shape and strides, no rank/type/ews/order
+    * stridesNoUnities will point on strides in shapeNoUnities that is on {4,1}
+    * returns number of non-unity dimensions in inShapeInfo
+    * if there is no unities in inShapeInfo, then no copy procedure will be performed and shapeNoUnities/stridesNoUnities will point on corresponding places in inShapeInfo
+    */
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongPointer inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongPointer shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef LongPointer stridesNoUnities);
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongBuffer inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef LongBuffer stridesNoUnities);
+    @Namespace("shape") public static native int excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") long[] inShapeInfo, @Cast("Nd4jLong*&") @ByPtrRef long[] shapeNoUnities, @Cast("Nd4jLong*&") @ByPtrRef long[] stridesNoUnities);
+
+    /**
+    * for example inShapeInfo is {3, 2,1,3,1,4,  12,12,4,4,1, 16384,1,99}, dimsToExclude = {1,3}, dimsSize = 2
+    * then outShapeInfo will contain {3, 2,3,4, 12,4,1, 16384,1,99}
+    */
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongPointer inShapeInfo, int dimsSize, @Const IntPointer dimsToExclude, @Cast("Nd4jLong*") LongPointer outShapeInfo);
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") LongBuffer inShapeInfo, int dimsSize, @Const IntBuffer dimsToExclude, @Cast("Nd4jLong*") LongBuffer outShapeInfo);
+    @Namespace("shape") public static native void excludeUnitiesFromShapeInfo(@Cast("const Nd4jLong*") long[] inShapeInfo, int dimsSize, @Const int[] dimsToExclude, @Cast("Nd4jLong*") long[] outShapeInfo);
+
+    /**
+    * get stride over contiguous axis (contiguous axis must have stride = 1)
+    * for example when inShapeInfo is {4, 2,5,4,3,  60,1,5,20, 16384,0,99} then output is 5 (that is smallest stride in inShapeInfo except those equal to 1)
+    */
+    // INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo);
 
 
 
@@ -8178,6 +8290,8 @@ public static final int PREALLOC_SIZE = 33554432;
  * @param shape the shape of the array
  * @param rank the rank of the shape
  */
+
+//////////////////////////////////////////////////////////////////////
 
 /**
 * Returns whether the
@@ -8719,7 +8833,7 @@ public static final int PREALLOC_SIZE = 33554432;
 //         target[shape::shapeInfoLength(newRank) - 3] = 0;
 //         target[shape::shapeInfoLength(newRank) - 2] = 0;
 //         target[shape::shapeInfoLength(newRank) - 1] = isFOrder ? 102 : 99;
-//         nd4j::ArrayOptions::setDataType(target, nd4j::ArrayOptions::dataType(oldShape));
+//         sd::ArrayOptions::setDataType(target, sd::ArrayOptions::dataType(oldShape));
 
 //         delete[] olddims;
 //         delete[] oldstrides;
@@ -8728,68 +8842,59 @@ public static final int PREALLOC_SIZE = 33554432;
 //         return true;
 //     }
 
-// INLINEDEF _CUDA_H bool reshapeC(const int oldRank, const Nd4jLong* oldShapeInfo, const int newRank, const Nd4jLong* newShape, const bool isFOrder, Nd4jLong* newShapeInfo) {
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_H bool reshapeC(const int oldRank, const Nd4jLong* oldShapeInfo, const int newRank, const Nd4jLong* newShape, Nd4jLong* newShapeInfo) {
 
 //         // PLEASE NOTE !: reshaping not-permuted (ews=1) array in f order (except insertion/elimination of unities) will definitely cause allocation of new buffer for array elements
 //         // also this function takes into account identical shapes automatically, namely in that case oldShapeInfo is completely copied to newShapeInfo
 
-//         const int newOrder = isFOrder ? 102 : 99;
-//         const int oldOrder = oldShapeInfo[2 * oldRank + 3];
-
 //         newShapeInfo[0] = newRank;
 //         memcpy(newShapeInfo + 1, newShape, newRank * sizeof(Nd4jLong));
 
-//         Nd4jLong* newStrides = shape::stride(newShapeInfo);
-//         const Nd4jLong* oldShape = shape::shapeOf(const_cast<Nd4jLong*>(oldShapeInfo));
+//         Nd4jLong* newStrides       = shape::stride(newShapeInfo);
+//         const Nd4jLong* oldShape   = shape::shapeOf(const_cast<Nd4jLong*>(oldShapeInfo));
 //         const Nd4jLong* oldStrides = shape::stride(const_cast<Nd4jLong*>(oldShapeInfo));
-//         int oldStart(0), oldStop(1), newStart(0), newStop(1), newDim, oldDim;
-
+//         Nd4jLong oldStart(0), oldStop(1), newStart(0), newStop(1), newDim, oldDim;
 
 //         while (newStart < newRank && oldStart < oldRank) {
 
 //             newDim = newShape[newStart];
 //             oldDim = oldShape[oldStart];
 
-//             while (newDim != oldDim)
+//             while (newDim != oldDim && newDim > 0 && oldDim > 0)
 //                 if (newDim < oldDim) newDim *= newShape[newStop++];
 //                 else                 oldDim *= oldShape[oldStop++];
 
 //             // ------ Check whether the original axes can be combined ------ //
-//             for (int i = oldStart; i < oldStop - 1; i++) {
-
-//                 if(oldShape[i] == 1) {                         // ignore strides like {...,1,1,...}
-//                     if(oldOrder == 102) ++oldStart;
+//             for (int step = 1, i = oldStart; i < oldStop - 1; ++i) {
+//                 if(oldShape[i] == 1)                // skip unity-dimension and its stride
 //                     continue;
-//                 }
-
-//                 if(oldOrder == 102 && oldStrides[i + 1] != oldShape[i] * oldStrides[i])
-//                     return false;       // not contiguous enough
-//                 if(oldOrder == 99  && oldStrides[i] != oldShape[i + 1] * oldStrides[i + 1])
-//                     return false;       // not contiguous enough
+//                 while((i + step) < oldRank && oldShape[i + step] == 1)
+//                     ++step;                         // skip following unity-dimensions and its strides if such are present
+//                 if((i + step) < oldRank && oldStrides[i] != oldShape[i + step] * oldStrides[i + step])
+//                     return false;                   // not contiguous enough
 //             }
 
-//             // ------ Calculate new strides for all axes currently worked with ------ //
-//             if(isFOrder) {
-//                 newStrides[newStart] = oldStrides[oldStart];
-//                 for (int i = newStart + 1; i < newStop; ++i)
-//                     newStrides[i] = newStrides[i - 1] * newShape[i - 1];
-//             }
-//             else {
-//                 newStrides[newStop - 1] = oldStrides[oldStop - 1];
-//                 for (int i = newStop - 1; i > newStart; --i)
-//                     newStrides[i - 1] = newStrides[i] * newShape[i];
-//             }
+//             newStrides[newStop - 1] = oldStrides[oldStop - 1];
+//             for (int i = newStop - 1; i > newStart; --i)
+//                 newStrides[i - 1] = newStrides[i] * newShape[i];
 
 //             newStart = newStop++;
 //             oldStart = oldStop++;
 //         }
 
-//         newShapeInfo[2 * newRank + 3] = shape::order(oldShapeInfo);    // order
-//         newShapeInfo[2 * newRank + 2] = shape::elementWiseStride(oldShapeInfo);    // ews
-//         newShapeInfo[2 * newRank + 1] = shape::type(oldShapeInfo);    // type
+//         // rest of strides should be unities (if there is remainder in strides space, that is newStart < newRank)
+//         for (int i = newStart; i < newRank; ++i)
+//             newStrides[i] = 1;
+
+//         newShapeInfo[2 * newRank + 3] = shape::order(oldShapeInfo);                 // order
+//         newShapeInfo[2 * newRank + 2] = shape::elementWiseStride(oldShapeInfo);     // ews
+//         newShapeInfo[2 * newRank + 1] = shape::type(oldShapeInfo);                  // type
 
 //         return true;
 //     }
+
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 
@@ -8834,6 +8939,222 @@ public static final int PREALLOC_SIZE = 33554432;
 
 //////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const Nd4jLong* zShapeInfo, Nd4jLong*& zOffsets, const char order) {
+
+//     // we assume all array have same length
+//     const Nd4jLong len = shape::length(xShapeInfo);
+
+//     const Nd4jLong xEws = shape::elementWiseStride(xShapeInfo);
+//     const Nd4jLong yEws = shape::elementWiseStride(yShapeInfo);
+//     const Nd4jLong zEws = shape::elementWiseStride(zShapeInfo);
+
+//     const char xOrder = shape::order(xShapeInfo);
+//     const char yOrder = shape::order(yShapeInfo);
+//     const char zOrder = shape::order(zShapeInfo);
+
+//     const bool shapesSame = shape::shapeEquals(xShapeInfo, yShapeInfo, zShapeInfo);
+
+//     if (xEws == 1 && yEws == 1 && zEws == 1 && xOrder == yOrder && xOrder == zOrder && (xOrder == 'c' || shapesSame)) {
+//         xOffsets = yOffsets = zOffsets = nullptr;
+//     }
+//     else if(xEws == 1 && yEws == 1 && xOrder == yOrder && (xOrder == 'c' || shape::shapeEquals(xShapeInfo, yShapeInfo))) {
+//         xOffsets = yOffsets = nullptr;
+//         zOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(zShapeInfo, zOffsets, xOrder);
+//     }
+//     else if(xEws == 1 && zEws == 1 && xOrder == zOrder && (xOrder == 'c' || shape::shapeEquals(xShapeInfo, zShapeInfo))) {
+//         xOffsets = zOffsets = nullptr;
+//         yOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//     }
+//     else if(yEws == 1 && zEws == 1 && yOrder == zOrder && (yOrder == 'c' || shape::shapeEquals(yShapeInfo, zShapeInfo))) {
+//         yOffsets = zOffsets = nullptr;
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//     }
+//     else if(xEws == 1) {
+//         xOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets, xOrder);
+//             }
+//         }
+//     }
+//     else if(yEws == 1) {
+//         yOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets, yOrder);
+//             }
+//         }
+//     }
+//     else if(zEws == 1) {
+//         zOffsets = nullptr;
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets, zOrder);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets, zOrder);
+//             }
+//         }
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo, zShapeInfo)) {
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets);
+//         yOffsets = zOffsets = xOffsets;
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo)) {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets);
+//             }
+//         }
+//         yOffsets = xOffsets;
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, zShapeInfo)) {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//         }
+//         zOffsets = xOffsets;
+//     }
+//     else {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 zOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(zShapeInfo, zOffsets);
+//             }
+//         }
+//     }
+// }
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD void calcOffsets(const Nd4jLong *xShapeInfo, Nd4jLong*& xOffsets, const Nd4jLong *yShapeInfo, Nd4jLong*& yOffsets, const char order) {
+
+//     // we assume all array have same length
+//     const Nd4jLong len = shape::length(xShapeInfo);
+
+//     const Nd4jLong xEws = shape::elementWiseStride(xShapeInfo);
+//     const Nd4jLong yEws = shape::elementWiseStride(yShapeInfo);
+
+//     const char xOrder = shape::order(xShapeInfo);
+//     const char yOrder = shape::order(yShapeInfo);
+
+//     const bool shapesSame = shape::shapeEquals(xShapeInfo, yShapeInfo);
+
+//     if (xEws == 1 && yEws == 1 && xOrder == yOrder && (xOrder == 'c' || shapesSame)) {
+//         xOffsets = yOffsets = nullptr;
+//     }
+//     else if(xEws == 1) {
+//         xOffsets = nullptr;
+//         yOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(yShapeInfo, yOffsets, xOrder);
+//     }
+//     else if(yEws == 1) {
+//         yOffsets = nullptr;
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets, yOrder);
+//     }
+//     else if(shape::haveSameShapeAndStrides(xShapeInfo, yShapeInfo)) {
+//         xOffsets = new Nd4jLong[len];
+//         shape::calcOffsets(xShapeInfo, xOffsets);
+//         yOffsets = xOffsets;
+//     }
+//     else {
+//         PRAGMA_OMP_PARALLEL_SECTIONS
+//         {
+//             PRAGMA_OMP_SECTION
+//             {
+//                 xOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(xShapeInfo, xOffsets);
+//             }
+//             PRAGMA_OMP_SECTION
+//             {
+//                 yOffsets = new Nd4jLong[len];
+//                 shape::calcOffsets(yShapeInfo, yOffsets);
+//             }
+//         }
+//     }
+// }
+
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+// INLINEDEF _CUDA_HD Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo) {
+
+//     Nd4jLong result = 9223372036854775807LL;
+
+//     for(uint i = 0; i < shape::rank(inShapeInfo); ++i) {
+
+//         const auto currentStride = shape::stride(inShapeInfo)[i];
+
+//         if(i == axis || shape::shapeOf(inShapeInfo)[i] == 1)
+//             continue;
+
+//         if(result > currentStride)
+//             result = currentStride;
+//     }
+
+//     return result == 9223372036854775807LL ? 1 : result;
+// }
+
 
 
 
@@ -8867,9 +9188,9 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_SHAPELIST_H
 
 // #include <vector>
-// #include <shape.h>
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class ShapeList extends Pointer {
+// #include <helpers/shape.h>
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class ShapeList extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ShapeList(Pointer p) { super(p); }
@@ -8935,7 +9256,7 @@ public static final int PREALLOC_SIZE = 33554432;
 
 // #ifndef ND4J_INPUTTYPE_H
 // #define ND4J_INPUTTYPE_H
-        /** enum nd4j::ops::InputType */
+        /** enum sd::ops::InputType */
         public static final int
             InputType_BOOLEAN = 0,
             InputType_NUMERIC = 1,
@@ -8974,7 +9295,6 @@ public static final int PREALLOC_SIZE = 33554432;
 
 // #include <string>
 // #include <vector>
-// #include <map>
 // #include <initializer_list>
 // #include <helpers/helper_hash.h>
 // #include <ops/InputType.h>
@@ -8985,7 +9305,7 @@ public static final int PREALLOC_SIZE = 33554432;
         *   This class is very basic info holder for ops. bean/pojo pretty much.
         *
         */
-        @Namespace("nd4j::ops") @NoOffset public static class OpDescriptor extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class OpDescriptor extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public OpDescriptor(Pointer p) { super(p); }
@@ -9058,6 +9378,9 @@ public static final int PREALLOC_SIZE = 33554432;
             // returns TRUE if this op allows in-place execution
             public native @Cast("bool") boolean allowsInplace();
 
+            // this method allows you to enable/disable inplace call for a given op
+            public native void allowInplace(@Cast("bool") boolean reallyAllow);
+
             // this method returns opNum (applicable for legacy XYZ ops only)
             public native int getOpNum();
 
@@ -9066,30 +9389,30 @@ public static final int PREALLOC_SIZE = 33554432;
 
             public native void setHash(@Cast("Nd4jLong") long hash);
 
-            public native @Cast("nd4j::ops::InputType") int inputType();
+            public native @Cast("sd::ops::InputType") int inputType();
 
 
 
-            public native OpDescriptor setInputType(@Cast("nd4j::ops::InputType") int type);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntPointer dtype);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntBuffer dtype);
-            public native OpDescriptor setAllowedInputTypes(int index, @Cast("nd4j::DataType*") @StdVector int[] dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntPointer dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector IntBuffer dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType*") @StdVector int[] dtype);
-            public native OpDescriptor setAllowedInputTypes(int index,  @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedInputTypes(@Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setAllowedOutputTypes(@Cast("nd4j::DataType") int dtype);
+            public native OpDescriptor setInputType(@Cast("sd::ops::InputType") int type);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector IntPointer dtype);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector IntBuffer dtype);
+            public native OpDescriptor setAllowedInputTypes(int index, @Cast("sd::DataType*") @StdVector int[] dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector IntPointer dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector IntBuffer dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType*") @StdVector int[] dtype);
+            public native OpDescriptor setAllowedInputTypes(int index,  @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedOutputTypes(int index, @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedInputTypes(@Cast("sd::DataType") int dtype);
+            public native OpDescriptor setAllowedOutputTypes(@Cast("sd::DataType") int dtype);
             public native OpDescriptor allowOverride(@Cast("bool") boolean reallyAllow);
             public native OpDescriptor setSameMode(@Cast("bool") boolean reallySame);
-            public native OpDescriptor setInputType(int idx, @Cast("nd4j::DataType") int dtype);
-            public native OpDescriptor setOutputType(int idx, @Cast("nd4j::DataType") int dtype);
+            public native OpDescriptor setInputType(int idx, @Cast("sd::DataType") int dtype);
+            public native OpDescriptor setOutputType(int idx, @Cast("sd::DataType") int dtype);
 
-            public native @Cast("nd4j::DataType*") @StdVector IntPointer getOutputTypesForOutput(int index);
+            public native @Cast("sd::DataType*") @StdVector IntPointer getOutputTypesForOutput(int index);
 
-            public native @Cast("bool") boolean checkInputMatch(int index, @Cast("nd4j::DataType") int dataType);
-            public native @Cast("bool") boolean checkOutputMatch(int index, @Cast("nd4j::DataType") int dataType);
+            public native @Cast("bool") boolean checkInputMatch(int index, @Cast("sd::DataType") int dataType);
+            public native @Cast("bool") boolean checkOutputMatch(int index, @Cast("sd::DataType") int dataType);
             public native @Cast("bool") boolean isSameMode();
 
             public native @Cast("bool") boolean isInherit(int index);
@@ -9125,16 +9448,16 @@ public static final int PREALLOC_SIZE = 33554432;
 // #ifndef SD_PLATFORMHELPER_H
 // #define SD_PLATFORMHELPER_H
 
-// #include <ShapeUtils.h>
+// #include <helpers/ShapeUtils.h>
 // #include <execution/Engine.h>
 // #include <graph/Context.h>
 // #include <string>
-// #include <pointercast.h>
-// #include <dll.h>
+// #include <system/pointercast.h>
+// #include <system/dll.h>
             /**
              * This abstract class defines methods used by platform-specific helpers implementations
              */
-            @Namespace("nd4j::ops::platforms") @NoOffset public static class PlatformHelper extends Pointer {
+            @Namespace("sd::ops::platforms") @NoOffset public static class PlatformHelper extends Pointer {
                 static { Loader.load(); }
                 /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
                 public PlatformHelper(Pointer p) { super(p); }
@@ -9169,6 +9492,14 @@ public static final int PREALLOC_SIZE = 33554432;
                  * @return
                  */
                 public native NDArray getZ(@ByRef Context ctx, int inputId);
+
+                /**
+                 * Helper method, needed for compatibility with DeclarableOp macros
+                 * @param ctx
+                 * @param inputId
+                 * @return
+                 */
+                public native NDArray getNullifiedZ(@ByRef Context ctx, int inputId);
             }
         
     
@@ -9207,7 +9538,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include "OpDescriptor.h"
 // #include "DeclarableOp.h"
 // #include "DeclarableCustomOp.h"
-        @Namespace("nd4j::ops") public static class BroadcastableOp extends DeclarableCustomOp {
+        @Namespace("sd::ops") public static class BroadcastableOp extends DeclarableCustomOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public BroadcastableOp(Pointer p) { super(p); }
@@ -9220,6 +9551,50 @@ public static final int PREALLOC_SIZE = 33554432;
 
 
 // #endif //LIBND4J_BROADCASTABLEOP_H
+
+
+// Parsed from ops/declarable/BroadcastableBoolOp.h
+
+/*******************************************************************************
+ * Copyright (c) 2015-2018 Skymind, Inc.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
+
+//
+// Created by raver on 6/6/2018.
+//
+
+// #ifndef SD_BROADCASTABLEBOOLOP_H
+// #define SD_BROADCASTABLEBOOLOP_H
+
+// #include <graph/Context.h>
+// #include "OpDescriptor.h"
+// #include "DeclarableOp.h"
+// #include "DeclarableCustomOp.h"
+        @Namespace("sd::ops") public static class BroadcastableBoolOp extends DeclarableCustomOp {
+            static { Loader.load(); }
+            /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
+            public BroadcastableBoolOp(Pointer p) { super(p); }
+        
+
+            public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
+        }
+    
+
+
+
+// #endif //SD_BROADCASTABLEBOOLOP_H
 
 
 // Parsed from helpers/OpArgsHolder.h
@@ -9248,10 +9623,10 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_OPARGSHOLDER_H
 
 
-// #include <NDArray.h>
-// #include <dll.h>
+// #include <array/NDArray.h>
+// #include <system/dll.h>
 
-@Namespace("nd4j") @NoOffset public static class OpArgsHolder extends Pointer {
+@Namespace("sd") @NoOffset public static class OpArgsHolder extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public OpArgsHolder(Pointer p) { super(p); }
@@ -9353,15 +9728,15 @@ public static final int PREALLOC_SIZE = 33554432;
 
 // #include <sstream>
 // #include <types/float16.h>
-// #include <pointercast.h>
-// #include <NDArray.h>
+// #include <system/pointercast.h>
+// #include <array/NDArray.h>
 // #include <graph/Context.h>
 // #include "OpDescriptor.h"
 // #include <helpers/helper_hash.h>
 // #include <array/ShapeList.h>
 // #include <array/ResultSet.h>
 // #include <helpers/OpArgsHolder.h>
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <ops/declarable/EmptyHandling.h>
 //#include <ops/declarable/declarable_ops.h>
 
@@ -9369,14 +9744,14 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include <ctime>
 // #include <mutex>
 
-        @Namespace("nd4j::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") String file, int line, int condition, int argNumber, @Cast("char*") String format);
-        @Namespace("nd4j::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") BytePointer file, int line, int condition, int argNumber, @Cast("char*") BytePointer format);
+        @Namespace("sd::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") String file, int line, int condition, int argNumber, @Cast("char*") String format);
+        @Namespace("sd::ops") public static native @Cast("Nd4jStatus") int conditionHelper(@Cast("char*") BytePointer file, int line, int condition, int argNumber, @Cast("char*") BytePointer format);
 
         /**
          * This class is the basic building block of Graph Operations. Any CustomOp out there is built on top of this "abstract" class.
          *
          */
-        @Namespace("nd4j::ops") @NoOffset public static class DeclarableOp extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class DeclarableOp extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableOp(Pointer p) { super(p); }
@@ -9431,44 +9806,44 @@ public static final int PREALLOC_SIZE = 33554432;
 
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs);
 
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
             public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @Cast("Nd4jStatus") int execute(@Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
 
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs);
 
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
 
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet evaluate(@Const @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs/*=std::vector<bool>()*/, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/);
-
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector IntPointer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector IntPointer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoublePointer tArgs, @Cast("Nd4jLong*") @StdVector LongPointer iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("nd4j::DataType*") @StdVector IntBuffer dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs, @Cast("sd::DataType*") @StdVector IntBuffer dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector DoubleBuffer tArgs, @Cast("Nd4jLong*") @StdVector LongBuffer iArgs, @Cast("bool*") @StdVector BooleanPointer bArgs);
-            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("nd4j::DataType*") @StdVector int[] dArgs/*=std::vector<nd4j::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("nd4j::DataType") int type/*=nd4j::DataType::FLOAT32*/);
+            public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs, @Cast("sd::DataType*") @StdVector int[] dArgs/*=std::vector<sd::DataType>()*/, @Cast("bool") boolean isInplace/*=false*/, @Cast("sd::DataType") int type/*=sd::DataType::FLOAT32*/);
             public native @Cast("Nd4jStatus") int execute(@ByRef RandomGenerator rng, @Const @ByRef NDArrayVector inputs, @Const @ByRef NDArrayVector outputs, @StdVector double[] tArgs, @Cast("Nd4jLong*") @StdVector long[] iArgs, @Cast("bool*") @StdVector boolean[] bArgs);
 
-            public native ResultSet execute(@Const @ByRef OpArgsHolder holder, @Cast("bool") boolean isInplace/*=false*/);
-            public native ResultSet execute(@Const @ByRef OpArgsHolder holder);
+            public native @ByVal ResultSet execute(@Const @ByRef OpArgsHolder holder, @Cast("bool") boolean isInplace/*=false*/);
+            public native @ByVal ResultSet execute(@Const @ByRef OpArgsHolder holder);
+
 
             // There methods provide various validation options
             public native @Cast("Nd4jStatus") int validateNonEmptyInput(@ByRef Context block);
@@ -9532,7 +9907,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include <graph/Context.h>
 // #include <ops/declarable/OpRegistrator.h>
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableListOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableListOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableListOp(Pointer p) { super(p); }
@@ -9540,9 +9915,9 @@ public static final int PREALLOC_SIZE = 33554432;
 
             
             public native @Cast("Nd4jStatus") int execute(Context block);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @StdVector IntPointer iArgs);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @StdVector IntBuffer iArgs);
-            public native ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @StdVector int[] iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoublePointer tArgs, @StdVector IntPointer iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector DoubleBuffer tArgs, @StdVector IntBuffer iArgs);
+            public native @ByVal ResultSet execute(NDArrayList list, @ByRef NDArrayVector inputs, @StdVector double[] tArgs, @StdVector int[] iArgs);
 
             public native ShapeList calculateOutputShape(ShapeList inputShape, @ByRef Context block);
         }
@@ -9577,7 +9952,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_DECLARABLE_REDUCTION_OP_H
 
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableReductionOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableReductionOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableReductionOp(Pointer p) { super(p); }
@@ -9617,7 +9992,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define LIBND4J_DECLARABLECUSTOMOP_H
 
 // #include <ops/declarable/DeclarableOp.h>
-        @Namespace("nd4j::ops") public static class DeclarableCustomOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class DeclarableCustomOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public DeclarableCustomOp(Pointer p) { super(p); }
@@ -9659,7 +10034,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include <graph/Context.h>
 // #include "OpDescriptor.h"
 // #include "DeclarableOp.h"
-        @Namespace("nd4j::ops") @NoOffset public static class BooleanOp extends DeclarableOp {
+        @Namespace("sd::ops") @NoOffset public static class BooleanOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public BooleanOp(Pointer p) { super(p); }
@@ -9712,7 +10087,7 @@ public static final int PREALLOC_SIZE = 33554432;
          * Their code is the part of GraphExecutioner logic. But we still want them to be expressed via Graph
          * \tparam T
          */
-        @Namespace("nd4j::ops") public static class LogicOp extends DeclarableOp {
+        @Namespace("sd::ops") public static class LogicOp extends DeclarableOp {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public LogicOp(Pointer p) { super(p); }
@@ -9756,7 +10131,7 @@ public static final int PREALLOC_SIZE = 33554432;
 // #ifndef LIBND4J_OPREGISTRATOR_H
 // #define LIBND4J_OPREGISTRATOR_H
 
-// #include <pointercast.h>
+// #include <system/pointercast.h>
 // #include <vector>
 // #include <unordered_map>
 // #include <mutex>
@@ -9767,6 +10142,10 @@ public static final int PREALLOC_SIZE = 33554432;
 // handlers part
 // #include <cstdlib>
 // #include <csignal>
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
         /**
         *   This class provides runtime ops lookup, based on opName or opHash.
         *   To build lookup directory we use *_OP_IMPL macro, which puts static structs at compile time in .cpp files,
@@ -9774,7 +10153,7 @@ public static final int PREALLOC_SIZE = 33554432;
         *   available at runtime via this singleton.
         *
         */
-        @Namespace("nd4j::ops") @NoOffset public static class OpRegistrator extends Pointer {
+        @Namespace("sd::ops") @NoOffset public static class OpRegistrator extends Pointer {
             static { Loader.load(); }
             /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
             public OpRegistrator(Pointer p) { super(p); }
@@ -9849,10 +10228,10 @@ public static final int PREALLOC_SIZE = 33554432;
 // #ifndef LIBND4J_CONTEXTBUFFERS_H
 // #define LIBND4J_CONTEXTBUFFERS_H
 
-// #include <dll.h>
-// #include <pointercast.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
 // #include <execution/ErrorReference.h>
-    @Namespace("nd4j") @NoOffset public static class ContextBuffers extends Pointer {
+    @Namespace("sd") @NoOffset public static class ContextBuffers extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public ContextBuffers(Pointer p) { super(p); }
@@ -9940,16 +10319,16 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include "config.h"
 // #endif
 
-// #include <dll.h>
+// #include <system/dll.h>
 // #include <memory>
-// #include <op_boilerplate.h>
+// #include <system/op_boilerplate.h>
 // #include <memory/Workspace.h>
 // #include <vector>
 // #include <mutex>
 // #include <execution/ContextBuffers.h>
 // #include <execution/ErrorReference.h>
 
-@Namespace("nd4j") @NoOffset public static class LaunchContext extends Pointer {
+@Namespace("sd") @NoOffset public static class LaunchContext extends Pointer {
     static { Loader.load(); }
     /** Native array allocator. Access with {@link Pointer#position(long)}. */
     public LaunchContext(long size) { super((Pointer)null); allocateArray(size); }
@@ -9961,7 +10340,6 @@ public static final int PREALLOC_SIZE = 33554432;
 // #ifdef __CUDABLAS__
 
 // #ifndef __JAVACPP_HACK__
-
 
 // #endif // JCPP
 
@@ -9980,6 +10358,10 @@ public static final int PREALLOC_SIZE = 33554432;
     	public native int getDeviceID();
     	public native void setDeviceID(int deviceID);
         public native ErrorReference errorReference();
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
 
     	public static native @Cast("bool") boolean isInitialized();
     	public static native void releaseBuffers();
@@ -10025,12 +10407,12 @@ public static final int PREALLOC_SIZE = 33554432;
 
 // #include <unordered_map>
 // #include <vector>
-// #include <dll.h>
-// #include <pointercast.h>
-// #include <DataType.h>
+// #include <system/dll.h>
+// #include <system/pointercast.h>
+// #include <array/DataType.h>
 // #include <initializer_list>
 
-@Namespace("nd4j") @NoOffset public static class ShapeDescriptor extends Pointer {
+@Namespace("sd") @NoOffset public static class ShapeDescriptor extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public ShapeDescriptor(Pointer p) { super(p); }
@@ -10055,12 +10437,12 @@ public static final int PREALLOC_SIZE = 33554432;
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("bool") boolean inheritDtype/*=true*/);
         public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo) { super((Pointer)null); allocate(shapeInfo); }
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
-        public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
-        private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const nd4j::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
+        public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
+        private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const sd::DataType") int dtypeOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
         private native void allocate(@Cast("const Nd4jLong*") LongPointer shapeInfo, @Cast("const Nd4jLong*") LongPointer dtypeOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer dtypeOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride); }
@@ -10073,38 +10455,38 @@ public static final int PREALLOC_SIZE = 33554432;
         private native void allocate(@Cast("const Nd4jLong*") LongBuffer shapeInfo, @Cast("const Nd4jLong*") LongBuffer dtypeOverride, @Cast("const Nd4jLong*") LongBuffer orderOverride);
         public ShapeDescriptor(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] dtypeOverride, @Cast("const Nd4jLong*") long[] orderOverride) { super((Pointer)null); allocate(shapeInfo, dtypeOverride, orderOverride); }
         private native void allocate(@Cast("const Nd4jLong*") long[] shapeInfo, @Cast("const Nd4jLong*") long[] dtypeOverride, @Cast("const Nd4jLong*") long[] orderOverride);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, @Cast("const Nd4jLong") long length) { super((Pointer)null); allocate(type, length); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, @Cast("const Nd4jLong") long length);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(type, order, shape); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides) { super((Pointer)null); allocate(type, order, shape, strides); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews);
-        public ShapeDescriptor(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
-        private native void allocate(@Cast("const nd4j::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, @Cast("const Nd4jLong") long length) { super((Pointer)null); allocate(type, length); }
+        private native void allocate(@Cast("const sd::DataType") int type, @Cast("const Nd4jLong") long length);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank) { super((Pointer)null); allocate(type, order, shape, rank); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, int rank);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongPointer shape, @Cast("const Nd4jLong*") LongPointer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") LongBuffer shape, @Cast("const Nd4jLong*") LongBuffer strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty) { super((Pointer)null); allocate(type, order, shape, strides, rank, ews, empty); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("const Nd4jLong*") long[] shape, @Cast("const Nd4jLong*") long[] strides, int rank, @Cast("Nd4jLong") long ews, @Cast("const bool") boolean empty);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape) { super((Pointer)null); allocate(type, order, shape); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides) { super((Pointer)null); allocate(type, order, shape, strides); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongPointer shape, @Cast("Nd4jLong*") @StdVector LongPointer strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector LongBuffer shape, @Cast("Nd4jLong*") @StdVector LongBuffer strides, @Cast("const Nd4jLong") long ews);
+        public ShapeDescriptor(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews) { super((Pointer)null); allocate(type, order, shape, strides, ews); }
+        private native void allocate(@Cast("const sd::DataType") int type, byte order, @Cast("Nd4jLong*") @StdVector long[] shape, @Cast("Nd4jLong*") @StdVector long[] strides, @Cast("const Nd4jLong") long ews);
         public ShapeDescriptor() { super((Pointer)null); allocate(); }
         private native void allocate();
 
@@ -10112,7 +10494,7 @@ public static final int PREALLOC_SIZE = 33554432;
         public native @Cast("Nd4jLong") long ews();
         public native @Cast("Nd4jLong") long arrLength();
         public native char order();
-        public native @Cast("nd4j::DataType") int dataType();
+        public native @Cast("sd::DataType") int dataType();
         public native @Cast("bool") boolean isEmpty();
         public native @Cast("Nd4jLong*") @StdVector LongPointer shape();
         public native @Cast("Nd4jLong*") @StdVector LongPointer strides();
@@ -10131,13 +10513,15 @@ public static final int PREALLOC_SIZE = 33554432;
         public native @Cast("Nd4jLong*") LongPointer toShapeInfo();
 
 
-        public static native @ByVal ShapeDescriptor emptyDescriptor(@Cast("const nd4j::DataType") int type);
-        public static native @ByVal ShapeDescriptor scalarDescriptor(@Cast("const nd4j::DataType") int type);
-        public static native @ByVal ShapeDescriptor vectorDescriptor(@Cast("const Nd4jLong") long length, @Cast("const nd4j::DataType") int type);
+        public static native @ByVal ShapeDescriptor emptyDescriptor(@Cast("const sd::DataType") int type);
+        public static native @ByVal ShapeDescriptor scalarDescriptor(@Cast("const sd::DataType") int type);
+        public static native @ByVal ShapeDescriptor vectorDescriptor(@Cast("const Nd4jLong") long length, @Cast("const sd::DataType") int type);
     }
 
 
+// #ifndef __JAVACPP_HACK__
 
+// #endif
 
 
 // #endif //DEV_TESTS_SHAPEDESCRIPTOR_H
@@ -10169,8 +10553,8 @@ public static final int PREALLOC_SIZE = 33554432;
 // #define DEV_TESTS_TADDESCRIPTOR_H
 
 // #include "ShapeDescriptor.h"
-// #include <dll.h>
-    @Namespace("nd4j") @NoOffset public static class TadDescriptor extends Pointer {
+// #include <system/dll.h>
+    @Namespace("sd") @NoOffset public static class TadDescriptor extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public TadDescriptor(Pointer p) { super(p); }
@@ -10215,9 +10599,14 @@ public static final int PREALLOC_SIZE = 33554432;
 
         public native @StdVector IntPointer axis();
         public native @ByRef ShapeDescriptor originalShape();
+        public native @Const @ByRef ShapeDescriptor originalShapeConst();
         public native @Cast("bool") boolean areUnitiesinShape();
     }
 
+
+// #ifndef __JAVACPP_HACK__
+
+// #endif
 
 
 // #endif //DEV_TESTS_TADDESCRIPTOR_H
@@ -10248,18 +10637,18 @@ public static final int PREALLOC_SIZE = 33554432;
 // #ifndef LIBND4J__DEBUG_INFO_HELPER__H
 // #define LIBND4J__DEBUG_INFO_HELPER__H
 
-// #include <pointercast.h>
-// #include <op_boilerplate.h>
-// #include <Environment.h>
-// #include <StringUtils.h>
+// #include <system/pointercast.h>
+// #include <system/op_boilerplate.h>
+// #include <system/Environment.h>
+// #include <helpers/StringUtils.h>
 // #include <string>
-// #include <dll.h>
-// #include <templatemath.h>
+// #include <system/dll.h>
+// #include <math/templatemath.h>
 
 // #ifdef __CUDACC__
 
 // #endif
-    @Namespace("nd4j") public static class DebugInfo extends Pointer {
+    @Namespace("sd") public static class DebugInfo extends Pointer {
         static { Loader.load(); }
         /** Default native constructor. */
         public DebugInfo() { super((Pointer)null); allocate(); }
@@ -10284,7 +10673,7 @@ public static final int PREALLOC_SIZE = 33554432;
        public native @Cast("Nd4jLong") long _nanCount(); public native DebugInfo _nanCount(long setter);
     }
 
-    @Namespace("nd4j") public static native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef DebugInfo first, @Const @ByRef DebugInfo second);
+    @Namespace("sd") public static native @Cast("bool") @Name("operator ==") boolean equals(@Const @ByRef DebugInfo first, @Const @ByRef DebugInfo second);
 
 
 
@@ -10341,17 +10730,18 @@ public static final int PREALLOC_SIZE = 33554432;
 // #include <ops/declarable/headers/util.h>
 // #include <ops/declarable/headers/BarnesHutTsne.h>
 // #include <ops/declarable/headers/images.h>
-// #include <dll.h>
+// #include <ops/declarable/headers/updaters.h>
+// #include <system/dll.h>
 // #include <helpers/shape.h>
 // #include <helpers/TAD.h>
-// #include <Status.h>
+// #include <graph/Status.h>
 // #include <helpers/ArrayUtils.h>
 // #include <helpers/ShapeBuilders.h>
-// #include <NDArrayFactory.h>
+// #include <array/NDArrayFactory.h>
 // #include <helpers/OpTracker.h>
-// #include <ConstantShapeHelper.h>
-// #include <ConstantTadHelper.h>
-    @Namespace("nd4j") public static class _loader extends Pointer {
+// #include <helpers/ConstantShapeHelper.h>
+// #include <helpers/ConstantTadHelper.h>
+    @Namespace("sd") public static class _loader extends Pointer {
         static { Loader.load(); }
         /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
         public _loader(Pointer p) { super(p); }

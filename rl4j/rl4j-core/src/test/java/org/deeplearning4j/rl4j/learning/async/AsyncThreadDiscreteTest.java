@@ -1,7 +1,25 @@
+/*******************************************************************************
+ * Copyright (c) 2015-2019 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************/
+
 package org.deeplearning4j.rl4j.learning.async;
 
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.rl4j.learning.IHistoryProcessor;
+import org.deeplearning4j.rl4j.learning.configuration.IAsyncLearningConfiguration;
 import org.deeplearning4j.rl4j.learning.listener.TrainingListenerList;
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.observation.Observation;
@@ -32,8 +50,9 @@ public class AsyncThreadDiscreteTest {
         MockMDP mdpMock = new MockMDP(observationSpace);
         TrainingListenerList listeners = new TrainingListenerList();
         MockPolicy policyMock = new MockPolicy();
-        MockAsyncConfiguration config = new MockAsyncConfiguration(5, 16, 0, 0, 2, 5,0, 0, 0, 0);
+        MockAsyncConfiguration config = new MockAsyncConfiguration(5L, 100, 0,0, 0, 0, 0, 0, 2, 5);
         TestAsyncThreadDiscrete sut = new TestAsyncThreadDiscrete(asyncGlobalMock, mdpMock, listeners, 0, 0, policyMock, config, hpMock);
+        sut.getLegacyMDPWrapper().setTransformProcess(MockMDP.buildTransformProcess(observationSpace.getShape(), hpConf.getSkipFrame(), hpConf.getHistoryLength()));
 
         // Act
         sut.run();
@@ -41,8 +60,8 @@ public class AsyncThreadDiscreteTest {
         // Assert
         assertEquals(2, sut.trainSubEpochResults.size());
         double[][] expectedLastObservations = new double[][] {
-            new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 },
-            new double[] { 8.0, 9.0, 11.0, 13.0, 15.0 },
+            new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 },
+            new double[] { 8.0, 10.0, 12.0, 14.0, 16.0 },
         };
         double[] expectedSubEpochReturnRewards = new double[] { 42.0, 58.0 };
         for(int i = 0; i < 2; ++i) {
@@ -60,12 +79,6 @@ public class AsyncThreadDiscreteTest {
         assertEquals(2, asyncGlobalMock.enqueueCallCount);
 
         // HistoryProcessor
-        double[] expectedAddValues = new double[] { 0.0, 2.0, 4.0, 6.0, 8.0, 9.0, 11.0, 13.0, 15.0 };
-        assertEquals(expectedAddValues.length, hpMock.addCalls.size());
-        for(int i = 0; i < expectedAddValues.length; ++i) {
-            assertEquals(expectedAddValues[i], hpMock.addCalls.get(i).getDouble(0), 0.00001);
-        }
-
         double[] expectedRecordValues = new double[] { 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, };
         assertEquals(expectedRecordValues.length, hpMock.recordCalls.size());
         for(int i = 0; i < expectedRecordValues.length; ++i) {
@@ -75,9 +88,9 @@ public class AsyncThreadDiscreteTest {
         // Policy
         double[][] expectedPolicyInputs = new double[][] {
                 new double[] { 0.0, 2.0, 4.0, 6.0, 8.0 },
-                new double[] { 2.0, 4.0, 6.0, 8.0, 9.0 },
-                new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 },
-                new double[] { 6.0, 8.0, 9.0, 11.0, 13.0 },
+                new double[] { 2.0, 4.0, 6.0, 8.0, 10.0 },
+                new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 },
+                new double[] { 6.0, 8.0, 10.0, 12.0, 14.0 },
         };
         assertEquals(expectedPolicyInputs.length, policyMock.actionInputs.size());
         for(int i = 0; i < expectedPolicyInputs.length; ++i) {
@@ -93,11 +106,11 @@ public class AsyncThreadDiscreteTest {
         assertEquals(2, nnMock.copyCallCount);
         double[][] expectedNNInputs = new double[][] {
                 new double[] { 0.0, 2.0, 4.0, 6.0, 8.0 },
-                new double[] { 2.0, 4.0, 6.0, 8.0, 9.0 },
-                new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 }, // FIXME: This one comes from the computation of output of the last minitrans
-                new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 },
-                new double[] { 6.0, 8.0, 9.0, 11.0, 13.0 },
-                new double[] { 8.0, 9.0, 11.0, 13.0, 15.0 }, // FIXME: This one comes from the computation of output of the last minitrans
+                new double[] { 2.0, 4.0, 6.0, 8.0, 10.0 },
+                new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 }, // FIXME: This one comes from the computation of output of the last minitrans
+                new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 },
+                new double[] { 6.0, 8.0, 10.0, 12.0, 14.0 },
+                new double[] { 8.0, 10.0, 12.0, 14.0, 16.0 }, // FIXME: This one comes from the computation of output of the last minitrans
         };
         assertEquals(expectedNNInputs.length, nnMock.outputAllInputs.size());
         for(int i = 0; i < expectedNNInputs.length; ++i) {
@@ -113,13 +126,13 @@ public class AsyncThreadDiscreteTest {
         double[][][] expectedMinitransObs = new double[][][] {
             new double[][] {
                     new double[] { 0.0, 2.0, 4.0, 6.0, 8.0 },
-                    new double[] { 2.0, 4.0, 6.0, 8.0, 9.0 },
-                    new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 }, // FIXME: The last minitrans contains the next observation
+                    new double[] { 2.0, 4.0, 6.0, 8.0, 10.0 },
+                    new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 }, // FIXME: The last minitrans contains the next observation
             },
             new double[][] {
-                    new double[] { 4.0, 6.0, 8.0, 9.0, 11.0 },
-                    new double[] { 6.0, 8.0, 9.0, 11.0, 13.0 },
-                    new double[] { 8.0, 9.0, 11.0, 13.0, 15 }, // FIXME: The last minitrans contains the next observation
+                    new double[] { 4.0, 6.0, 8.0, 10.0, 12.0 },
+                    new double[] { 6.0, 8.0, 10.0, 12.0, 14.0 },
+                    new double[] { 8.0, 10.0, 12.0, 14.0, 16.0 }, // FIXME: The last minitrans contains the next observation
             }
         };
         double[] expectedOutputs = new double[] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
@@ -178,7 +191,7 @@ public class AsyncThreadDiscreteTest {
         }
 
         @Override
-        protected AsyncConfiguration getConf() {
+        protected IAsyncLearningConfiguration getConf() {
             return config;
         }
 

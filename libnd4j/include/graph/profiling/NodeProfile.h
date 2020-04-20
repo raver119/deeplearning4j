@@ -21,11 +21,12 @@
 #ifndef LIBND4J_NODE_PROFILE_H
 #define LIBND4J_NODE_PROFILE_H
 
-#include <pointercast.h>
-#include <dll.h>
+#include <system/pointercast.h>
+#include <system/dll.h>
 #include <string>
+#include <vector>
 
-namespace nd4j {
+namespace sd {
     namespace graph {
         class ND4J_EXPORT NodeProfile {
         private:
@@ -65,6 +66,9 @@ namespace nd4j {
 
             // total amount of memory used during execution
             Nd4jLong _memoryTotal = 0L;
+
+            std::vector<std::string> _inputShapes;
+            std::vector<std::string> _outputShapes;
         public:
             NodeProfile() = default;
             ~NodeProfile() = default;
@@ -84,10 +88,15 @@ namespace nd4j {
             void setObjectsSize(Nd4jLong bytes);
             void setTotalSize(Nd4jLong bytes);
 
-            Nd4jLong getActivationsSize();
-            Nd4jLong getTemporarySize();
-            Nd4jLong getObjectsSize();
-            Nd4jLong getTotalSize();
+            void addInputShape(Nd4jLong *shapeInfo);
+            void addOutputShape(Nd4jLong *shapeInfo);
+
+            Nd4jLong getActivationsSize() const;
+            Nd4jLong getTemporarySize() const;
+            Nd4jLong getObjectsSize() const;
+            Nd4jLong getTotalSize() const;
+
+            Nd4jLong getExecutionTime() const;
 
             std::string& name();
 

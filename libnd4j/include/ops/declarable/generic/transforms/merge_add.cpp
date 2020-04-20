@@ -18,13 +18,13 @@
 // Created by raver119 on 24.11.17.
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_mergeadd)
 
 #include <ops/declarable/CustomOperations.h>
 #include<ops/declarable/helpers/transforms.h>
 
-namespace nd4j {
+namespace sd {
 namespace ops  {
 
 OP_IMPL(mergeadd, -1, 1, false) {
@@ -33,7 +33,7 @@ OP_IMPL(mergeadd, -1, 1, false) {
         
     auto output = OUTPUT_VARIABLE(0);
 
-    std::vector<NDArray*> inArrs(block.width());
+    std::vector<const NDArray*> inArrs(block.width());
     
     for(int i = 0; i < block.width(); ++i)
         inArrs[i] = INPUT_VARIABLE(i);
@@ -42,7 +42,6 @@ OP_IMPL(mergeadd, -1, 1, false) {
 
     return Status::OK();
 }
-
 DECLARE_SYN(mergesum, mergeadd);
 DECLARE_SYN(add_n, mergeadd);
 DECLARE_SYN(addn, mergeadd);
@@ -51,9 +50,48 @@ DECLARE_SYN(accumulate_n, mergeadd);
 
     DECLARE_TYPES(mergeadd) {
         getOpDescriptor()
-                ->setAllowedInputTypes(nd4j::DataType::ANY)
-                ->setAllowedOutputTypes(nd4j::DataType::ANY);
+                ->setAllowedInputTypes(sd::DataType::ANY)
+                ->setAllowedOutputTypes(sd::DataType::ANY);
     }
+
+
+    CUSTOM_OP_IMPL(mergeadd_bp, 2, 1, false, 0, 0) {
+
+        auto inSize = block.width() - 1;
+
+        REQUIRE_OK(this->validateInputDimensionsMatch(block));
+
+        std::vector<NDArray*> outArrs(inSize);
+        
+        const auto gradient = INPUT_VARIABLE(inSize);
+
+        for (int i = 0; i < inSize; ++i) {
+            outArrs[i] = OUTPUT_VARIABLE(i);
+        }
+        helpers::mergeAddBp(block.launchContext(), *gradient, outArrs);
+
+        return Status::OK();
+    }
+
+    DECLARE_TYPES(mergeadd_bp) {
+        getOpDescriptor()
+            ->setAllowedInputTypes(sd::DataType::ANY)
+            ->setAllowedOutputTypes(sd::DataType::ANY);
+    }
+    DECLARE_SHAPE_FN(mergeadd_bp) {
+
+        const int numOfInArrs = block.width() - 1;
+
+        auto shapeList = SHAPELIST();
+
+        for (int e = 0; e < numOfInArrs; e++) {
+            auto inShape = inputShape->at(e);
+            shapeList->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(ArrayOptions::dataType(inShape), shape::order(inShape), shape::shapeOf(inShape), shape::rank(inShape))));
+        }
+
+        return shapeList;
+    }
+
 }
 }
 

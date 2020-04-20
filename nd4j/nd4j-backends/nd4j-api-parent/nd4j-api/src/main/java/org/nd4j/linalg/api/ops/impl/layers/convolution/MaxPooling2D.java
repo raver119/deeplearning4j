@@ -68,6 +68,10 @@ public class MaxPooling2D extends DynamicCustomOp {
         addArgs();
     }
 
+    public MaxPooling2D(INDArray input, @NonNull Pooling2DConfig config){
+        this(input, null, config);
+    }
+
     @Override
     public boolean isConfigProperties() {
         return true;

@@ -32,6 +32,7 @@ import org.nd4j.linalg.api.memory.enums.LearningPolicy;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
+import org.nd4j.nativeblas.NativeOpsHolder;
 
 
 import java.nio.ByteBuffer;
@@ -397,6 +398,28 @@ public class DataBufferTests extends BaseNd4jTest {
             assertArrayEquals(db.getLongsAt(0, 10), db2.getLongsAt(0, 10));
         }
     }
+
+
+    @Test
+    public void testEnsureLocation(){
+        //https://github.com/eclipse/deeplearning4j/issues/8783
+        Nd4j.create(1);
+
+        BytePointer bp = new BytePointer(5);
+
+
+        Pointer ptr = NativeOpsHolder.getInstance().getDeviceNativeOps().pointerForAddress(bp.address());
+        DataBuffer buff = Nd4j.createBuffer(ptr, 5, DataType.INT8);
+
+
+        INDArray arr2 = Nd4j.create(buff, new long[]{5}, new long[]{1}, 0, 'c', DataType.INT8);
+        long before = arr2.data().pointer().address();
+        Nd4j.getAffinityManager().ensureLocation(arr2, AffinityManager.Location.HOST);
+        long after = arr2.data().pointer().address();
+
+        assertEquals(before, after);
+    }
+
 
     @Override
     public char ordering() {

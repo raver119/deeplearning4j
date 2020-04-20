@@ -24,82 +24,95 @@
 #include "../MmulHelper.h"
 #include <helpers/ShapeUtils.h>
 #include <helpers/BlasHelper.h>
-#include <NDArrayFactory.h>
+#include <array/NDArrayFactory.h>
 
-namespace nd4j {
+namespace sd {
 
 //////////////////////////////////////////////////////////////////////////
-nd4j::NDArray* nd4j::MmulHelper::tensorDot(const nd4j::NDArray* A, const nd4j::NDArray* B, const std::initializer_list<int>& axesA, const std::initializer_list<int>& axesB) {
+sd::NDArray* sd::MmulHelper::tensorDot(const sd::NDArray* A, const sd::NDArray* B, const std::initializer_list<int>& axesA, const std::initializer_list<int>& axesB) {
     std::vector<int> aA(axesA);
     std::vector<int> aB(axesB);
     return tensorDot(A, B, aA, aB);
 }
 
 //////////////////////////////////////////////////////////////////////////
-nd4j::NDArray* nd4j::MmulHelper::tensorDot(const nd4j::NDArray* a, const nd4j::NDArray* b, const std::vector<int>& axes_0, const std::vector<int>& axes_1) {
+sd::NDArray* sd::MmulHelper::tensorDot(const sd::NDArray* a, const sd::NDArray* b, const std::vector<int>& axes_0, const std::vector<int>& axes_1) {
 
     std::vector<int> permutAt, permutBt;
     std::vector<Nd4jLong> shapeAt, shapeBt;
 
     auto outShape = ShapeUtils::evalShapeForTensorDot(a, b, axes_0, axes_1, permutAt, permutBt, shapeAt, shapeBt);
 
-    NDArray aPR = a->permute(permutAt);
-    NDArray bPR = b->permute(permutBt);
+    // check whether permutation is necessary
+    const NDArray* aP = permutAt.empty() ? a : new NDArray(a->permute(permutAt));
+    const NDArray* bP = permutBt.empty() ? b : new NDArray(b->permute(permutBt));
 
     // check whether reshape is necessary
-    if(!aPR.isSameShape(shapeAt))
-        aPR.reshapei( shapeAt);
-    if(!bPR.isSameShape(shapeBt))
-        bPR.reshapei( shapeBt);
+    const NDArray* aPR = aP->isSameShape(shapeAt) ? aP : new NDArray(aP->reshape(aP->ordering(), shapeAt));
+    const NDArray* bPR = bP->isSameShape(shapeAt) ? bP : new NDArray(bP->reshape(bP->ordering(), shapeBt));
 
-    NDArray* c = mmul(&aPR, &bPR, nullptr, 1.0, 0.0);
+    NDArray* c = mmul(aPR, bPR, nullptr, 1.0, 0.0);
 
     c->reshapei(outShape);
+
+    if(aP != aPR)
+        delete aPR;
+    if(bP != bPR)
+        delete bPR;
+    if(a != aP)
+        delete aP;
+    if(b != bP)
+        delete bP;
 
     return c;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
-void nd4j::MmulHelper::tensorDot(const nd4j::NDArray* a, const nd4j::NDArray* b, nd4j::NDArray* c, const std::vector<int>& axes_a, const std::vector<int>& axes_b, const std::vector<int>& permutForC) {
+void sd::MmulHelper::tensorDot(const sd::NDArray* a, const sd::NDArray* b, sd::NDArray* c, const std::vector<int>& axes_a, const std::vector<int>& axes_b, const std::vector<int>& permutForC) {
 
     std::vector<int> permutAt, permutBt;
     std::vector<Nd4jLong> shapeAt, shapeBt;
     ShapeUtils::evalShapeForTensorDot(a, b, axes_a, axes_b, permutAt, permutBt, shapeAt, shapeBt);
 
-    NDArray *cP(c), *cPR(c);
-
     // check whether permutation is required
-    if(!permutForC.empty())
-        cP = new NDArray(c->permute(permutForC));
+    NDArray* cP = permutForC.empty() ? c : new NDArray(c->permute(permutForC));
 
-    auto aPR = a->permute(permutAt);
-    auto bPR = b->permute(permutBt);
+    // check whether permutation is necessary
+    const NDArray* aP = permutAt.empty() ? a : new NDArray(a->permute(permutAt));
+    const NDArray* bP = permutBt.empty() ? b : new NDArray(b->permute(permutBt));
 
     // check whether reshape is necessary
-    if(!aPR.isSameShape(shapeAt))
-            aPR.reshapei(shapeAt);
-    if(!bPR.isSameShape(shapeBt))
-            bPR.reshapei(shapeBt);
+    const NDArray* aPR = aP->isSameShape(shapeAt) ? aP : new NDArray(aP->reshape(aP->ordering(), shapeAt));
+    const NDArray* bPR = bP->isSameShape(shapeAt) ? bP : new NDArray(bP->reshape(bP->ordering(), shapeBt));
 
-    if(!cP->isSameShape({aPR.sizeAt(0), bPR.sizeAt(1)}))
-        cPR = new NDArray(cP->reshape(cP->ordering(), {aPR.sizeAt(0), bPR.sizeAt(1)}));
+    std::vector<Nd4jLong> requiredCshape = {aPR->sizeAt(0), bPR->sizeAt(1)};
 
-    mmul(&aPR, &bPR, cPR, 1.0, 0.0);
+    NDArray* cPR = cP->isSameShape(requiredCshape) ? cP : new NDArray(cP->reshape(cP->ordering(), requiredCshape, false));
+
+    mmul(aPR, bPR, cPR, 1.0, 0.0);
 
     if(cPR->getBuffer() != cP->getBuffer() || cPR->getSpecialBuffer() != cP->getSpecialBuffer() )   // this means both permute and reshape have been performed on c, cP always points on c->getBuffer()
         cP->assign(cPR);
 
-    if(cPR != c)
+   if(aP != aPR)
+        delete aPR;
+    if(bP != bPR)
+        delete bPR;
+    if(a != aP)
+        delete aP;
+    if(b != bP)
+        delete bP;
+
+    if(cP != cPR)
         delete cPR;
-    if(cP != c)
+    if(c != cP)
         delete cP;
 }
 
 
 #ifndef __JAVACPP_HACK__
 //////////////////////////////////////////////////////////////////////////
-void nd4j::MmulHelper::tensorDot(const NDArray* a, const NDArray* b, NDArray* c, const std::vector<std::vector<Nd4jLong>>& modifA, const std::vector<std::vector<Nd4jLong>>& modifB, const std::vector<std::vector<Nd4jLong>>& modifC) {
+void sd::MmulHelper::tensorDot(const NDArray* a, const NDArray* b, NDArray* c, const std::vector<std::vector<Nd4jLong>>& modifA, const std::vector<std::vector<Nd4jLong>>& modifB, const std::vector<std::vector<Nd4jLong>>& modifC) {
 
     NDArray *aPR(const_cast<NDArray*>(a)), *bPR(const_cast<NDArray*>(b));
     std::string whatToDoWithA, whatToDoWithB, whatToDoWithC;         // "" - nothing; "p" - permutation; "r" - reshaping; "pr" - permutation+reshaping; "rp" - reshaping/permutation, and so on; if another string is produced - throw exception
@@ -129,7 +142,7 @@ void nd4j::MmulHelper::tensorDot(const NDArray* a, const NDArray* b, NDArray* c,
     if(!whatToDoWithC.empty()) {
         cArrs = std::vector<NDArray*>(whatToDoWithC.size()+1, c);
         for(int i = 0; i < cArrs.size()-1; ++i)
-            cArrs[i+1] = (whatToDoWithC[i] == 'p') ? new NDArray(cArrs[i]->permute(modifC[i])) : new NDArray(cArrs[i]->reshape(c->ordering(), modifC[i]));  // since we ignore first element in cArrs (that is cArrs[0]) then it is always equal to c
+            cArrs[i+1] = (whatToDoWithC[i] == 'p') ? new NDArray(cArrs[i]->permute(modifC[i])) : new NDArray(cArrs[i]->reshape(c->ordering(), modifC[i], false));  // since we ignore first element in cArrs (that is cArrs[0]) then it is always equal to c
     }
 
     mmul(aPR, bPR, cArrs[cArrs.size()-1], 1.0, 0.0);
@@ -150,7 +163,7 @@ void nd4j::MmulHelper::tensorDot(const NDArray* a, const NDArray* b, NDArray* c,
 }
 
 //////////////////////////////////////////////////////////////////////////
-NDArray* nd4j::MmulHelper::tensorDot(const nd4j::NDArray* a, const nd4j::NDArray* b, const std::vector<std::vector<Nd4jLong>>& modifA, const std::vector<std::vector<Nd4jLong>>& modifB) {
+NDArray* sd::MmulHelper::tensorDot(const sd::NDArray* a, const sd::NDArray* b, const std::vector<std::vector<Nd4jLong>>& modifA, const std::vector<std::vector<Nd4jLong>>& modifB) {
 
     NDArray *aPR(const_cast<NDArray*>(a)), *bPR(const_cast<NDArray*>(b));
     std::string whatToDoWithA, whatToDoWithB;         // "" - nothing; "p" - permutation only; "r" - reshaping only; "pr" - permutation+reshaping; "rp" - reshaping/permutation; another string - throw exception
@@ -185,7 +198,7 @@ NDArray* nd4j::MmulHelper::tensorDot(const nd4j::NDArray* a, const nd4j::NDArray
 
 
 //////////////////////////////////////////////////////////////////////////
-nd4j::NDArray* MmulHelper::mmul(const nd4j::NDArray* A, const nd4j::NDArray* B, nd4j::NDArray* C , const double alpha, const double beta, const char outOrder) {
+sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B, sd::NDArray* C , const double alpha, const double beta, const char outOrder) {
 
     int lenDim;
     const int aRank = A->rankOf();
@@ -208,7 +221,7 @@ nd4j::NDArray* MmulHelper::mmul(const nd4j::NDArray* A, const nd4j::NDArray* B, 
     // vector x matrix, A{M} x B{M,N} = C{N} -> reduce to matrix x matrix A2{1,M} x B{M,N} = C2{1,N}, since there is no corresponding blas operation sgevm
     if(isAVector && bRank == 2) {
         NDArray* A2 = new NDArray(A->reshape(A->ordering(), {1, A->lengthOf()}));               // A{M} -> A2{1,M}
-        NDArray* C2 = C ? new NDArray(C->reshape(C->ordering(), {1, C->lengthOf()})) : nullptr; // C{N} -> C2{1,N}
+        NDArray* C2 = C ? new NDArray(C->reshape(C->ordering(), {1, C->lengthOf()}, false)) : nullptr; // C{N} -> C2{1,N}
         auto result = mmulMxM(A2, B, C2, alpha, beta, outOrder);                                // result{1,N}
         delete A2;
         delete C2;
@@ -226,7 +239,7 @@ nd4j::NDArray* MmulHelper::mmul(const nd4j::NDArray* A, const nd4j::NDArray* B, 
 
 
 //////////////////////////////////////////////////////////////////////////
-    void MmulHelper::matmul(const nd4j::NDArray* x, const nd4j::NDArray* y, nd4j::NDArray* z, const bool transX, const bool transY) {
+    void MmulHelper::matmul(const sd::NDArray* x, const sd::NDArray* y, sd::NDArray* z, const bool transX, const bool transY) {
         int xRank = x->rankOf();
         int yRank = y->rankOf();
 

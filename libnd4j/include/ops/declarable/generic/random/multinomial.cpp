@@ -19,14 +19,14 @@
 // @author Oleh Semeniv (oleg.semeniv@gmail.com)
 //
 
-#include <op_boilerplate.h>
+#include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_random_multinomial)
 
 #include <ops/declarable/CustomOperations.h>
 #include <helpers/RandomLauncher.h>
 #include <ops/declarable/helpers/random.h>
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         ///////////////////////
         /**
@@ -42,7 +42,7 @@ namespace nd4j {
         CUSTOM_OP_IMPL(random_multinomial, 2, 1, false, 0, 0) {
             
             auto input = INPUT_VARIABLE(0);
-            auto output = OUTPUT_VARIABLE(0);
+            auto output = OUTPUT_NULLIFIED(0);
             auto inputSamples = INPUT_VARIABLE(1);
 
 
@@ -98,14 +98,14 @@ namespace nd4j {
             auto dimA = (0 == dimC) ? 1 : 0;
             nShape[dimA] = numOfSamples;
 
-            DataType nType = (argSize > 1) ? ( INT_ARG(1) >= 0 ? static_cast<DataType>(INT_ARG(1)) : nd4j::DataType::INT64) : nd4j::DataType::INT64;
+            DataType nType = (argSize > 1) ? ( INT_ARG(1) >= 0 ? static_cast<DataType>(INT_ARG(1)) : sd::DataType::INT64) : sd::DataType::INT64;
             return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(nType, input->ordering(), nShape));
         }
         
         DECLARE_TYPES(random_multinomial) {
             getOpDescriptor()
                     ->setAllowedInputTypes(0, { ALL_FLOATS, ALL_INTS })
-                    ->setAllowedInputTypes(1, { nd4j::DataType::INT32 })
+                    ->setAllowedInputTypes(1, { sd::DataType::INT32 })
                     ->setAllowedOutputTypes(0, { ALL_INDICES });
         }
     }

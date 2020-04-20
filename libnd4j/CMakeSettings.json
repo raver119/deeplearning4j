@@ -7,7 +7,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
-      "cmakeCommandArgs": "-DLIBND4J_ALL_OPS=true  -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON   -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": "-DSD_ALL_OPS=true -DCMAKE_BUILD_TYPE=Debug -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": []
@@ -19,7 +19,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "buildRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\build\\${name}",
       "installRoot": "${env.USERPROFILE}\\CMakeBuilds\\${workspaceHash}\\install\\${name}",
-      "cmakeCommandArgs": "-DLIBND4J_ALL_OPS=true  -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON   -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": "-DSD_ALL_OPS=true -DCMAKE_BUILD_TYPE=Debug -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
       "buildCommandArgs": "-v",
       "ctestCommandArgs": "",
       "variables": []
@@ -28,7 +28,7 @@
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "buildCommandArgs": "-j 4",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
-      "cmakeCommandArgs": "-DLIBND4J_ALL_OPS=true  -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON  -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": "-DSD_ALL_OPS=true -DCMAKE_BUILD_TYPE=Debug -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2",
       "cmakeExecutable": "/usr/bin/cmake",
       "configurationType": "Debug",
       "ctestCommandArgs": "",
@@ -43,7 +43,7 @@
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "buildCommandArgs": "-j 4",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
-      "cmakeCommandArgs": "-DLIBND4J_ALL_OPS=true -DCMAKE_BUILD_TYPE=Release -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON  -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": "-DSD_ALL_OPS=true  -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON    -DEXTENSION=avx2",
       "cmakeExecutable": "/usr/bin/cmake",
       "configurationType": "Release",
       "ctestCommandArgs": "",
@@ -51,7 +51,13 @@
       "inheritEnvironments": [ "linux_x64" ],
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "name": "WSL-GCC-Release",
-      "variables": [],
+      "variables": [
+        {
+          "name": "SD_BUILD_TESTS",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ],
       "wslPath": "${defaultWSLPath}"
     },
     {
@@ -60,7 +66,7 @@
       "configurationType": "Release",
       "cmakeExecutable": "/snap/bin/cmake",
       "remoteCopySourcesExclusionList": [ ".vs", ".git", "out", "blasbuild", "build" ],
-      "cmakeCommandArgs": "-DCMAKE_RULE_MESSAGES:BOOL=OFF -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DLIBND4J_ALL_OPS=true -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON   -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": "-DCMAKE_RULE_MESSAGES:BOOL=OFF -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DSD_ALL_OPS=true  -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON   -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
       "buildCommandArgs": "-j 16",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_x64" ],
@@ -76,14 +82,13 @@
       "remoteCopyExcludeDirectories": [ "out" ],
       "variables": []
     },
-
     {
       "name": "Linux-Debug",
       "generator": "Unix Makefiles",
       "configurationType": "Debug",
       "cmakeExecutable": "/snap/bin/cmake",
       "remoteCopySourcesExclusionList": [ ".vs", ".git", "out", "blasbuild", "build" ],
-      "cmakeCommandArgs": "-DLIBND4J_ALL_OPS=true -DCPU_BLAS=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON   -DEXTENSION=avx2 ",
+      "cmakeCommandArgs": " -DCMAKE_BUILD_TYPE=Debug -DSD_CPU=true -DLIBND4J_NAME=nd4jcpu -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DOPENBLAS_PATH=/usr/lib/openblas-base/  -DEXTENSION=avx2 ",
       "buildCommandArgs": "-j 16",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_x64" ],

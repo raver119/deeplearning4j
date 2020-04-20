@@ -53,14 +53,17 @@ public class Dilation2D extends DynamicCustomOp {
     public Dilation2D() {
     }
 
+    public Dilation2D(SameDiff sameDiff, SDVariable df, SDVariable weights, int[] strides, int[] rates, boolean isSameMode) {
+        this(sameDiff, new SDVariable[]{df, weights}, strides, rates, isSameMode, false);
+    }
+
     public Dilation2D(SameDiff sameDiff, SDVariable[] inputAndWeights, int[] strides,
                       int[] rates, boolean isSameMode, boolean inPlace ) {
         super(null, sameDiff, inputAndWeights, inPlace);
-
-        if (rates.length < 4)
-            throw new IllegalArgumentException("Dilation rate length must be 4.");
-        if (strides.length < 4)
-            throw new IllegalArgumentException("Strides length must be 4.");
+        Preconditions.checkArgument(rates.length == 4,
+                "Dilation rate length must be 4, got an array with length %s with values %s", rates.length, rates);
+        Preconditions.checkArgument(strides.length == 4,
+                "Dilation strides length must be 4, got an array with length %s with values %s", strides.length, strides);
 
         r0 = rates[0];
         r1 = rates[1];
@@ -79,6 +82,27 @@ public class Dilation2D extends DynamicCustomOp {
     public Dilation2D(INDArray[] inputArrays, INDArray[] outputs) {
         super(null, inputArrays, outputs);
 
+    }
+
+    public Dilation2D(INDArray df, INDArray weights, int[] strides, int[] rates,  boolean isSameMode) {
+        addInputArgument(df, weights);
+
+        if (rates.length < 4)
+            throw new IllegalArgumentException("Dilation rate length must be 4.");
+        if (strides.length < 4)
+            throw new IllegalArgumentException("Strides length must be 4.");
+
+        r0 = rates[0];
+        r1 = rates[1];
+        r2 = rates[2];
+        r3 = rates[3];
+        s0 = strides[0];
+        s1 = strides[1];
+        s2 = strides[2];
+        s3 = strides[3];
+        this.isSameMode = isSameMode;
+
+        addArgs();
     }
 
     protected void addArgs() {

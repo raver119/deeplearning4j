@@ -48,6 +48,11 @@ public class CropAndResize extends DynamicCustomOp {
         addArgs();
     }
 
+    public CropAndResize(@NonNull SameDiff sameDiff, SDVariable image, SDVariable cropBoxes, SDVariable boxIndices,
+                         SDVariable cropOutSize, double extrapolationValue) {
+        this(sameDiff, image, cropBoxes, boxIndices, cropOutSize, null, extrapolationValue);
+    }
+
     public CropAndResize(@NonNull INDArray image, @NonNull INDArray cropBoxes, @NonNull INDArray boxIndices,
                          @NonNull INDArray cropOutSize, @NonNull Method method, double extrapolationValue,
                          INDArray output){
@@ -60,6 +65,10 @@ public class CropAndResize extends DynamicCustomOp {
         this.extrapolationValue = extrapolationValue;
         addArgs();
         outputArguments.add(output);
+    }
+
+    public CropAndResize(INDArray image, INDArray cropBoxes, INDArray boxIndices, INDArray cropOutSize, double extrapolationValue ) {
+        this(image, cropBoxes, boxIndices, cropOutSize, null, extrapolationValue, null);
     }
 
     @Override

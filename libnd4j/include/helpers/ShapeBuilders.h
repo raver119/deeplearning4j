@@ -23,25 +23,25 @@
 
 #include <vector>
 #include <helpers/shape.h>
-#include <pointercast.h>
+#include <system/pointercast.h>
 #include <memory/Workspace.h>
 #include <array/DataType.h>
 #include <array/ArrayOptions.h>
 
-namespace nd4j {
+namespace sd {
     class ND4J_EXPORT ShapeBuilders {
-    public:        
-        static Nd4jLong* createScalarShapeInfo(nd4j::DataType dataType, nd4j::memory::Workspace* workspace = nullptr);
-        
-        static Nd4jLong* createVectorShapeInfo(const nd4j::DataType dataType, const Nd4jLong length, nd4j::memory::Workspace* workspace = nullptr);
+    public:
+        static Nd4jLong* createScalarShapeInfo(sd::DataType dataType, sd::memory::Workspace* workspace = nullptr);
+
+        static Nd4jLong* createVectorShapeInfo(const sd::DataType dataType, const Nd4jLong length, sd::memory::Workspace* workspace = nullptr);
 
         /**
         *   create shapeInfo for given order basing on shape stored in shapeOnly vector
         *   memory allocation for shapeInfo is on given workspace
-        */        
-        static Nd4jLong* createShapeInfo(const nd4j::DataType dataType, const char order, int rank, const Nd4jLong* shapeOnly, memory::Workspace* workspace = nullptr);
-        static Nd4jLong* createShapeInfo(const nd4j::DataType dataType, const char order, const std::vector<Nd4jLong>& shapeOnly, memory::Workspace* workspace = nullptr);
-        static Nd4jLong* createShapeInfo(const nd4j::DataType dataType, const char order, const std::initializer_list<Nd4jLong>& shapeOnly, memory::Workspace* workspace = nullptr);
+        */
+        static Nd4jLong* createShapeInfo(const sd::DataType dataType, const char order, int rank, const Nd4jLong* shapeOnly, memory::Workspace* workspace = nullptr);
+        static Nd4jLong* createShapeInfo(const sd::DataType dataType, const char order, const std::vector<Nd4jLong>& shapeOnly, memory::Workspace* workspace = nullptr);
+        static Nd4jLong* createShapeInfo(const sd::DataType dataType, const char order, const std::initializer_list<Nd4jLong>& shapeOnly, memory::Workspace* workspace = nullptr);
 
         /**
         *   allocates memory for new shapeInfo and copy all information from inShapeInfo to new shapeInfo
@@ -51,9 +51,16 @@ namespace nd4j {
         static Nd4jLong* copyShapeInfoAndType(const Nd4jLong* inShapeInfo, const DataType dtype, const bool copyStrides, memory::Workspace* workspace = nullptr);
         static Nd4jLong* copyShapeInfoAndType(const Nd4jLong* inShapeInfo, const Nd4jLong* shapeInfoToGetTypeFrom, const bool copyStrides, memory::Workspace* workspace = nullptr);
 
-        static Nd4jLong* emptyShapeInfo(const nd4j::DataType dataType, memory::Workspace* workspace = nullptr);
+        /**
+        * allocates memory for new shapeInfo and copy all information from inShapeInfo to new shapeInfo except dimensions in dimsToExclude (unit dimensions) and corresponding strides
+        * for example inShapeInfo is {3, 2,1,3,1,4,  12,12,4,4,1, 16384,1,99}, dimsToExclude = {2,3}, dimsSize = 2
+        * then outShapeInfo will contain {3, 2,3,4, 12,4,1, 16384,1,99}
+        */
+        static Nd4jLong* copyShapeInfoWithoutUnites(const Nd4jLong* inShapeInfo, const int dimsSize, const int* dimsToExclude, memory::Workspace* workspace = nullptr);
 
-        static Nd4jLong* emptyShapeInfo(const nd4j::DataType dataType, const char order, const std::vector<Nd4jLong> &shape, memory::Workspace* workspace = nullptr);
+        static Nd4jLong* emptyShapeInfo(const sd::DataType dataType, memory::Workspace* workspace = nullptr);
+
+        static Nd4jLong* emptyShapeInfo(const sd::DataType dataType, const char order, const std::vector<Nd4jLong> &shape, memory::Workspace* workspace = nullptr);
 
     };
 }

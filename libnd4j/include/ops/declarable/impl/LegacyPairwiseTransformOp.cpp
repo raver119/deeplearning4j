@@ -22,14 +22,14 @@
 #include <ops/declarable/LegacyPairwiseTransformOp.h>
 
 
-namespace nd4j {
+namespace sd {
     namespace ops {
         LegacyPairwiseTransformOp::LegacyPairwiseTransformOp() : LegacyOp::LegacyOp(2) {
-            // just a no-op
+            this->getOpDescriptor()->allowInplace(true);
         }
 
         LegacyPairwiseTransformOp::LegacyPairwiseTransformOp(int opNum) : LegacyOp::LegacyOp(2, opNum) {
-            // just a no-op
+            this->getOpDescriptor()->allowInplace(true);
         }
 
         LegacyOp* LegacyPairwiseTransformOp::clone() {
@@ -43,11 +43,8 @@ namespace nd4j {
 
             NDArray::prepareSpecialUse({z}, {x, y});
 
-            if (!x->isSameShape(y)) {
-                std::string sx = ShapeUtils::shapeAsString(x);
-                std::string sy = ShapeUtils::shapeAsString(y);
-                REQUIRE_TRUE(x->isSameShape(y) || y->isScalar(), 0, "Node_%i: For Pairwise transforms shapes of both operands should be equal but got %s vs %s", block.getNodeId(), sx.c_str(), sy.c_str());
-            }
+            if (!x->isSameShape(y))
+                REQUIRE_TRUE(x->isSameShape(y) || y->isScalar(), 0, "Node_%i: For Pairwise transforms shapes of both operands should be equal but got %s vs %s", block.getNodeId(), ShapeUtils::shapeAsString(x).c_str(), ShapeUtils::shapeAsString(y).c_str());
 
             int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
@@ -68,7 +65,7 @@ namespace nd4j {
         /**
         *   Output shape of PWT operations always the same as input[0] shape, no exclusions.
         */
-        ShapeList *LegacyPairwiseTransformOp::calculateOutputShape(ShapeList *inputShape, nd4j::graph::Context &block) {
+        ShapeList *LegacyPairwiseTransformOp::calculateOutputShape(ShapeList *inputShape, sd::graph::Context &block) {
             auto inShape = inputShape->at(0);
 
             Nd4jLong *newShape;

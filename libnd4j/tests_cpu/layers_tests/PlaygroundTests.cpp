@@ -15,28 +15,27 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
- //
- // Created by raver119 on 20.11.17.
- //
+//
+// Created by raver119 on 20.11.17.
+//
 
 #include "testlayers.h"
-#include <Graph.h>
+#include <graph/Graph.h>
 #include <chrono>
-#include <Node.h>
+#include <graph/Node.h>
 #include <ops/declarable/CustomOperations.h>
 #include <graph/profiling/GraphProfilingHelper.h>
-#include <type_conversions.h>
+#include <loops/type_conversions.h>
 #include <helpers/threshold.h>
 #include <helpers/MmulHelper.h>
 #include <ops/ops.h>
-#include <OmpLaunchHelper.h>
-#include <GradCheck.h>
+#include <helpers/OmpLaunchHelper.h>
+#include <helpers/GradCheck.h>
 #include <ops/declarable/helpers/im2col.h>
-#include <Loops.h>
-#include <RandomLauncher.h>
+#include <helpers/Loops.h>
+#include <helpers/RandomLauncher.h>
 #include <ops/declarable/helpers/convolutions.h>
 
-#include <ops/declarable/helpers/addBias.h>
 #include <helpers/BenchmarkHelper.h>
 #include <ops/declarable/helpers/scatter.h>
 #include <helpers/ConstantShapeHelper.h>
@@ -44,745 +43,1033 @@
 #include <array>
 #include <performance/benchmarking/FullBenchmarkSuit.h>
 #include <performance/benchmarking/LightBenchmarkSuit.h>
-#include <iostream>
-#include <ops/declarable/helpers/legacy_helpers.h>
-#include <algorithm>
-#include <numeric> 
 #include <random>
-#include <LoopCoordsHelper.h>
-using namespace nd4j;
-using namespace nd4j::graph;
+#include <ops/declarable/helpers/legacy_helpers.h>
+#include <ops/declarable/helpers/addBias.h>
+#include <ops/declarable/helpers/axis.h>
+#include <ops/declarable/helpers/reductions.h>
+#include <helpers/LoopsCoordsHelper.h>
+
+using namespace sd;
+using namespace sd::graph;
 
 class PlaygroundTests : public testing::Test {
 public:
-	int numIterations = 100;
-	int poolSize = 10;
+    int numIterations = 3;
+    int poolSize = 10;
 
-	PlaygroundTests() {
-		printf("\n");
-		fflush(stdout);
-	}
-};
-#define BENCH_RELEASE 1
-#if defined(BENCH_RELEASE)
-
-int bnch_cases[][4] = {
-	 {40, 2, 4, 2056},
-	 {2056, 2, 4, 19 },
-	 {16, 8, 16, 2056},
-	 {2056, 8, 16, 15 },
-	 {32, 7, 7, 96},
-     {32, 32, 32, 16},
-	 {32, 600, 600, 3},
-     {32, 112, 112, 32},
-	 {32, 7, 7, 1024},
-	 {2,3,1,32}
+    PlaygroundTests() {
+        printf("\n");
+        fflush(stdout);
+    }
 };
 
-//constexpr int coords_k = 1;// 6;
-#else
-int bnch_cases[][4] = {
-	{7,3,5,9},
-	 {2,3,1,32},
-	 {32,32,2,2}
-};
+TEST_F(PlaygroundTests, test_avx) {
+    nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
+}
 
-constexpr int coords_k = 0;
 
+TEST_F(PlaygroundTests, test_biasAdd_1) {
+    auto x = NDArrayFactory::create<float>('c', {512, 3072});
+    auto y = NDArrayFactory::create<float>('c', {3072});
+
+    std::vector<Nd4jLong> values;
+
+    sd::ops::biasadd op;
+
+    for (int e = 0; e < 100; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        op.execute({&x, &y}, {&x});
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+}
+
+
+TEST_F(PlaygroundTests, test_bert_full_1) {
+#ifdef _RELEASE
+
+    // this test will run ONLY if this model exists
+    if (sd::graph::getFileSize("/home/raver119/Downloads/BertFull/model.fb") < 0)
+        return;
+
+    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
+
+    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in0_IteratorGetNext.npy");
+    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in1_IteratorGetNext_1.npy");
+    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in2_IteratorGetNext_4.npy");
+    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/out_loss-Softmax.npy");
+
+    //graph->printOut();
+
+    graph->tagInplaceNodes();
+
+    graph->getVariableSpace()->putVariable(658,0, t);
+    graph->getVariableSpace()->putVariable(659,0, u);
+    graph->getVariableSpace()->putVariable(660,0, v);
+
+/*
+    // validating graph now
+    auto status = GraphExecutioner::execute(graph);
+    ASSERT_EQ(Status::OK(), status);
+    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(1620));
+
+    auto array = graph->getVariableSpace()->getVariable(1620)->getNDArray();
+    ASSERT_EQ(z, *array);
+
+*/
+
+    sd::Environment::getInstance()->setProfiling(true);
+    auto profile = GraphProfilingHelper::profile(graph, 1);
+
+    profile->printOut();
+
+    sd::Environment::getInstance()->setProfiling(false);
+    delete profile;
+
+/*
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 1; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        GraphExecutioner::execute(graph);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+*/
+    delete graph;
 #endif
-#define BENCH_BASES 1
-#define BENCH_TEST_F_ORDER 1
-#define BENCH_TEST_F_ORDER_NC 1
-#define BENCH_TEST_C_ORDER 1
-#define BENCH_TEST_C_ORDER_NC 1
-#define BENCH_TEST_MIXED_ORDERS 1
-#define bench_coords 1
+}
 
-#if defined(BENCH_RELEASE)
-int outter_loops = 10;
-int inner_loops = 10;// 100;
-#else
-int outter_loops = 1;//  10;
-int inner_loops = 1;// 10;// 100;
+
+TEST_F(PlaygroundTests, test_bert_1) {
+#ifdef _RELEASE
+    // this test will run ONLY if this model exists
+    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb") < 0)
+        return;
+
+    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
+
+    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
+    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
+    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
+    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model_output.numpy");
+
+    //graph->printOut();
+
+    graph->tagInplaceNodes();
+
+    graph->getVariableSpace()->putVariable(85,0, t);
+    graph->getVariableSpace()->putVariable(86,0, u);
+    graph->getVariableSpace()->putVariable(87,0, v);
+
+/*
+    // validating graph now
+    auto status = GraphExecutioner::execute(graph);
+    ASSERT_EQ(Status::OK(), status);
+    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
+
+    auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
+    ASSERT_EQ(z, *array);
+
+*/
+    sd::Environment::getInstance()->setProfiling(true);
+    auto profile = GraphProfilingHelper::profile(graph, 1);
+
+    profile->printOut();
+
+    sd::Environment::getInstance()->setProfiling(false);
+    delete profile;
+
+/*
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 1; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        GraphExecutioner::execute(graph);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+*/
+    delete graph;
 #endif
-#if defined (_MSC_VER)
-#define use(x)
-#define escape(x)
-#define clobber()
-#else
+}
+
+TEST_F(PlaygroundTests, test_bert_2) {
+#ifdef _RELEASE
+    // this test will run ONLY if this model exists
+    if (sd::graph::getFileSize("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb") < 0)
+        return;
+
+    auto graph = GraphExecutioner::importFromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
+
+    //graph->printOut();
+
+    graph->tagInplaceNodes();
+
+
+/*
+    // validating graph now
+    auto status = GraphExecutioner::execute(graph);
+    ASSERT_EQ(Status::OK(), status);
+    ASSERT_TRUE(graph->getVariableSpace()->hasVariable(198));
+
+    auto array = graph->getVariableSpace()->getVariable(198)->getNDArray();
+    ASSERT_EQ(z, *array);
+*/
+
+    sd::Environment::getInstance()->setProfiling(true);
+    auto profile = GraphProfilingHelper::profile(graph, 1);
+
+    profile->printOut();
+
+    sd::Environment::getInstance()->setProfiling(false);
+    delete profile;
+
+/*
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 1; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        GraphExecutioner::execute(graph);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+*/
+    delete graph;
+#endif
+}
+
+
+TEST_F(PlaygroundTests, test_one_off_ops_1) {
+    auto x = NDArrayFactory::create<float>('c', {4, 128, 768});
+    auto y = NDArrayFactory::create<float>('c', {4, 128, 1});
+    auto z = x.ulike();
+
+    sd::ops::squaredsubtract op;
+    op.execute({&x, &y}, {&z});
+}
+
+
+//temporarly, testing against the original one
+void original_argmax(const NDArray& input, std::vector<int>& axis, NDArray& output) {
+    sd::ops::helpers::adjustAxis(input.rankOf(), axis);
+    input.applyIndexReduce(sd::indexreduce::IndexMax, output, axis);
+}
+
 template<typename T>
-void use(T&& t) {
-	__asm__ __volatile__("" :: "g" (t));
+void fill_random(sd::NDArray& arr) {
+    Nd4jLong coords[MAX_RANK] = {};
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    //for floats
+    std::uniform_real_distribution<T> dis((T)-10.0, (T)22.9);
+    T* x = arr.bufferAsT<T>();
+    Nd4jLong* shapeInfo = arr.getShapeInfo();
+    Nd4jLong* strides = arr.stridesOf();
+    Nd4jLong rank = shapeInfo[0];
+    Nd4jLong* bases = &(shapeInfo[1]);
+    size_t t = 1;
+    for (size_t i = 0; i < rank ; i++) {
+        t *= bases[i];
+    }
+    size_t offset = 0;
+    if (arr.ordering() == 'c') {
+
+        for (size_t i = 0; i < t; i++) {
+            x[offset] = dis(gen) ;
+            offset = sd::inc_coords(bases, strides, coords, offset, rank);
+        }
+
+    }
+    else {
+
+        for (size_t i = 0; i < t; i++) {
+            x[offset] = dis(gen) ;
+            offset = sd::inc_coords<false>(bases, strides, coords, offset, rank);
+        }
+
+    }
 }
 
-void escape(void* p) {
-	__asm__ __volatile__("" : "+r" (p) :: "memory");
-}
 
-void clobber() {
-	__asm__ __volatile__("" : : : "memory");
-}
+TEST_F(PlaygroundTests, ArgMaxPerf) {
+#if 1
+    int bases[] = { 3, 2, 4, 5, 7 };
+    constexpr int Loop = 1;
+#else
+    int bases[] = { 8, 32, 64, 32, 64 };
+    constexpr int Loop = 10;
 #endif
+    constexpr int N = 5;
 
-template<typename Op, typename... Args>
-void time_it(Op op, Nd4jLong totalFlops, Args&&... args) {
-	std::vector<double> values;
+    auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
+    //x.linspace(1);
+    fill_random<float>(x);
+#define COMBINATIONS 1
+#if COMBINATIONS
+    //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
+    for (int k = N; k >= 1; k--) {
 
-	size_t n_1 = outter_loops > 1 ? outter_loops - 1 : 1;
-	for (int e = 0; e < outter_loops; e++) {
-		auto timeStart = std::chrono::system_clock::now();
+        std::string bitmask(k, 1); // K leading 1's
+        bitmask.resize(N, 0); // N-K trailing 0's
 
-		for (int i = 0; i < inner_loops; i++)
-			op(std::forward<Args>(args)...);
-
-		auto timeEnd = std::chrono::system_clock::now();
-		auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
-		values.emplace_back((double)elapsed_time / double(inner_loops));
-	}
-
-	std::sort(values.begin(), values.end());
-	auto sum = std::accumulate(std::begin(values), std::end(values), 0.0);
-	auto avg = (double)sum / outter_loops;
-	auto sum_sq = std::accumulate(std::begin(values), std::end(values), 0.0, [&avg](int sumsq, int x) { return sumsq + (x - avg) * (x - avg); });
-
-	if (totalFlops > 0) {
-		nd4j_printf("Median: %f us\tAvg: %f (sd: %f)\tFlops: %f Mflops\n",
-			values[values.size() / 2], avg, sqrt(sum_sq / n_1),
-			(double)(totalFlops) / avg);
-	}
-	else {
-		nd4j_printf("Median: %f us\tAvg: %f (sd: %f)\n",
-			values[values.size() / 2], avg, sqrt(sum_sq / n_1));
-	}
-}
-
-template<typename T>
-void fill_random(nd4j::NDArray& arr) {
-	Nd4jLong coords[MAX_RANK] = {};
-
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	//for floats
-	std::uniform_real_distribution<T> dis((T)0.0, (T)2.0);
-	T* x = arr.bufferAsT<T>();
-	Nd4jLong* shapeInfo = arr.getShapeInfo();
-	Nd4jLong* strides = arr.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-
-	size_t t = 1;
-	for (size_t i = 0; i < rank; i++) {
-		t *= bases[i];
-	}
-	size_t offset = 0;
-	for (size_t i = 0; i < t; i++) {
-		x[offset] = dis(gen);
-		offset = offset = nd4j::inc_coords(bases, strides, coords, offset, rank);
-	}
-}
+        do {
 
 
+            std::vector<int> dimension;
 
-void check_correctness_with_experimental(Context& ctx, const NDArray& x, const NDArray& y, NDArray& z, bool isNCHW) {
+            std::vector<Nd4jLong> output_bases;
 
-	auto expected = z.ulike();
-	nd4j::ops::helpers::addBias_Experimental(ctx, x, y, expected, isNCHW, true);
-	ASSERT_TRUE(expected.equalsTo(z));
-
-}
-
-void check_correctness_with_base(Context& ctx, const NDArray& x, const NDArray& y, NDArray& z, bool isNCHW) {
-
-	auto expected = z.ulike();
-	nd4j::ops::helpers::addBias(ctx, x, y, expected, isNCHW);
-	ASSERT_TRUE(expected.equalsTo(z));
-
-}
-#if defined(BENCH_TEST_C_ORDER)
-
-#if defined(BENCH_BASES)
-TEST_F(PlaygroundTests, test_bias_base) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
-
-	};
-}
+            for (int i = 0; i < N; ++i) // [0..N-1] integers
+            {
+                if (bitmask[i])  dimension.push_back(i);
+                else {
+                    output_bases.push_back(bases[i]);
+                }
+            }
+#else
+    std::vector<int> dimension = { 0,1,2,3 };
+    int k = 4;
 #endif
-
-TEST_F(PlaygroundTests, test_bias_experimental_continuous) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
-
-
-		check_correctness_with_base(ctx, x, y, z, false);
-	};
-
-}
-
-TEST_F(PlaygroundTests, test_bias_experimental_coords_strided) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, true);
-
-	};
-
-}
-
-#endif
-#if defined(BENCH_TEST_C_ORDER_NC)
-#if defined(BENCH_BASES)
-TEST_F(PlaygroundTests, test_bias_NC_base) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, true);
-
-	};
-}
-#endif
-
-TEST_F(PlaygroundTests, test_bias_NC_experimental_continuous) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
-
-		//check
-		check_correctness_with_base(ctx, x, y, z, true);
-	};
-
-}
-
-TEST_F(PlaygroundTests, test_bias_NC_experimental_coords_strided) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
-		//check
-		check_correctness_with_base(ctx, x, y, z, true);
-
-	};
-
-}
-
-#endif
-
-#if defined(BENCH_TEST_F_ORDER)
-#if defined(BENCH_BASES)
-TEST_F(PlaygroundTests, test_bias_Fortran_base) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
-
-	};
-}
-#endif
-TEST_F(PlaygroundTests, test_bias_Fortran_experimental_continuous) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, false);
-
-
-		check_correctness_with_base(ctx, x, y, z, false);
-	};
-
-}
-
-TEST_F(PlaygroundTests, test_bias_Fortran_experimental_coords_strided) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][3] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, false, true);
-
-		check_correctness_with_base(ctx, x, y, z, false);
-
-	};
-
-}
-
-#endif
-
-#if defined(BENCH_TEST_F_ORDER_NC)
-#if defined(BENCH_BASES)
-TEST_F(PlaygroundTests, test_bias_Fortran_NC_base) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, true);
-
-	};
-}
-#endif
-TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_continuous) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
-
-		//check
-		check_correctness_with_base(ctx, x, y, z, true);
-	};
-
-}
-
-TEST_F(PlaygroundTests, test_bias_Fortran_NC_experimental_coords_strided) {
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('f', { bnch_cases[k][1] });
-		auto z = x.ulike();
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, true);
-		//check
-		check_correctness_with_base(ctx, x, y, z, true);
-
-	};
-
-}
-
+    auto dim = NDArrayFactory::create<int>(dimension);
+
+#if 1 
+    nd4j_printf("C(N:%d K:%d) \n", N, k);
+    dim.printIndexedBuffer("Dimension");
+    for (int xind : dimension) {
+        nd4j_printf(" %d ,", bases[xind]);
+    }
+    nd4j_printf("%s", "\n");
 #endif
 
 
-#if defined(BENCH_TEST_MIXED_ORDERS)
-TEST_F(PlaygroundTests, test_bias_base_different_order_inF_out_C) {
+    sd::ops::argmax op;
+    std::vector<Nd4jLong> values;
+    sd::ResultSet result;
+    for (int e = 0; e < Loop; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+        result = op.evaluate({ &x, &dim }, {}, {});
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+    auto z = result.at(0);
 
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
-		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
-
-		//check for correctness with base to see if they are equal
-		check_correctness_with_base(ctx, x, y, z, false);
-	};
-}
-
-
-TEST_F(PlaygroundTests, test_bias_base_different_order_inC_outF) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][3] });
-		auto z = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias, total_flops, ctx, x, y, z, false);
-
-		//check for correctness with base to see if they are equal
-		//check_correctness_with_base(ctx, x, y, z, false);
-	};
-}
-
-TEST_F(PlaygroundTests, test_bias_different_order_NC_inF_out_C) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
-		auto z = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
-
-		//check for correctness with base to see if they are equal
-		check_correctness_with_base(ctx, x, y, z, true);
-	};
-}
-
-TEST_F(PlaygroundTests, test_bias_different_order_NC_inC_outF) {
-
-
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-
-		Nd4jLong total_flops = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		auto y = NDArrayFactory::create<float>('c', { bnch_cases[k][1] });
-		auto z = NDArrayFactory::create<float>('f', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });;
-
-		Context ctx(1);
-
-		fill_random<float>(x);
-		fill_random<float>(y);
-		//nd4j::ops::biasadd op;  
-		nd4j_printf("NdArray: {%ld, %ld, %ld, %ld };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3]);
-		time_it(nd4j::ops::helpers::addBias_Experimental, total_flops, ctx, x, y, z, true, false);
-
-		//check for correctness with base to see if they are equal
-		check_correctness_with_base(ctx, x, y, z, true);
-	};
-}
-
+#if 1
+    //check for the correctness
+    NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
+    original_argmax(x, dimension, exp);
 #endif
 
-#if defined(bench_coords) 
-
-TEST_F(PlaygroundTests, test_coord1) {
-	outter_loops = 2;
-	inner_loops = 2;
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		size_t inc = bnch_cases[k][3];
-		fill_random<float>(x);
-		Nd4jLong coords[MAX_RANK];
-		Nd4jLong add_coords[MAX_RANK];
-		Nd4jLong* shapeInfo = x.getShapeInfo();
-		shape::index2coords(0, shapeInfo, coords);
-		shape::index2coords(inc, shapeInfo, add_coords);
-
-		auto ops = [&]() {
-
-			for (size_t i = 0; i < t; i += inc) {
-				shape::index2coords(i, shapeInfo, coords);
-				//add to prevent code elimination
-				use(coords);
-			}
-
-		};
-		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
-		time_it(ops, 0);
-	}
-}
-
-
-
-TEST_F(PlaygroundTests, test_coord6_loop_offset) {
-	outter_loops = 4;
-	inner_loops = 4;
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		size_t inc = bnch_cases[k][3];
-		fill_random<float>(x);
-		Nd4jLong coords[MAX_RANK];
-
-		Nd4jLong* shapeInfo = x.getShapeInfo();
-		Nd4jLong* strides = x.stridesOf();
-		Nd4jLong rank = shapeInfo[0];
-		Nd4jLong* bases = &(shapeInfo[1]);
-		shape::index2coords(0, shapeInfo, coords);
-
-		size_t offset = 0;
-		escape(&rank);
-		escape(coords);
-		auto ops = [&]() {
-			size_t zStrideB = strides[0];
-			size_t zStrideH = strides[1];
-			size_t zStrideW = strides[2];
-			escape(&zStrideB);
-			escape(&zStrideH);
-			escape(&zStrideW);
-			escape(&(bnch_cases[k][0]));
-			escape(&(bnch_cases[k][1]));
-			escape(&(bnch_cases[k][2]));
-
-			for (uint b = 0; b < bnch_cases[k][0]; b += inc)
-				for (uint h = 0; h < bnch_cases[k][1]; h++)
-					for (uint w = 0; w < bnch_cases[k][2]; w++) {
-						offset = b * zStrideB + h * zStrideH + w * zStrideW;
-						use(offset);
-						use(h);
-						use(w);
-						use(b);
-					}
-
-		};
-		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
-		time_it(ops, 0);
-
-	}
-}
-
-
-
-
-TEST_F(PlaygroundTests, test_coord8_offset) {
-	outter_loops = 4;
-	inner_loops = 4;
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		size_t inc = bnch_cases[k][3];
-		fill_random<float>(x);
-		Nd4jLong coords[MAX_RANK];
-		Nd4jLong* shapeInfo = x.getShapeInfo();
-		Nd4jLong* strides = x.stridesOf();
-		Nd4jLong rank = shapeInfo[0];
-		Nd4jLong* bases = &(shapeInfo[1]);
-		shape::index2coords(0, shapeInfo, coords);
-		size_t offset = 0;
-		escape(&rank);
-		escape(coords);
-		escape(bases);
-		escape(&offset);
-		escape(strides);
-		auto ops = [&]() {
-
-			for (size_t i = 0; i < t; i++) {
-
-				offset = nd4j::inc_coords(bases, strides, coords, offset, rank - 1);
-				use(coords);
-				use(offset);
-				use(i);
-			}
-
-		};
-		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
-		time_it(ops, 0);
-	}
-}
-
-
-
-TEST_F(PlaygroundTests, test_coord9_offset) {
-	outter_loops = 4;
-	inner_loops = 4;
-	for (int k = 0; k < sizeof(bnch_cases) / sizeof(bnch_cases[0]); k++) {
-		Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2];// *bnch_cases[k][3];
-		auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-		size_t inc = bnch_cases[k][3];
-		fill_random<float>(x);
-		Nd4jLong coords[MAX_RANK];
-		Nd4jLong* shapeInfo = x.getShapeInfo();
-		Nd4jLong* strides = x.stridesOf();
-		Nd4jLong rank = shapeInfo[0];
-		Nd4jLong* bases = &(shapeInfo[1]);
-		shape::index2coords(0, shapeInfo, coords);
-		nd4j::CoordsState<2> cbs;
-		size_t offset = nd4j::init_coords<3>(cbs, 0, bases, strides);
-		escape(&rank);
-		escape(coords);
-		escape(bases);
-		escape(&offset);
-		escape(strides);
-		auto ops = [&]() {
-
-			for (size_t i = 0; i < t; i++) {
-
-				offset = nd4j::inc_coords<3>(cbs, offset);
-				use(coords);
-				use(offset);
-				use(i);
-			}
-
-		};
-		nd4j_printf("NdArray: {%ld, %ld, %ld  };\n", bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2]);
-		time_it(ops, 0);
-	}
-}
-
-
-
-
-TEST_F(PlaygroundTests, test_coord_correctness) {
-	constexpr int k = 0;
-	Nd4jLong t = bnch_cases[k][0] * bnch_cases[k][1] * bnch_cases[k][2] * bnch_cases[k][3];
-	auto x = NDArrayFactory::create<float>('c', { bnch_cases[k][0], bnch_cases[k][1], bnch_cases[k][2], bnch_cases[k][3] });
-	size_t inc = 1;// bnch_cases[k][3];
-
-
-	Nd4jLong coords[MAX_RANK];
-
-
-	Nd4jLong coords5[MAX_RANK] = {};
-
-	Nd4jLong* shapeInfo = x.getShapeInfo();
-
-	Nd4jLong* strides = x.stridesOf();
-	Nd4jLong rank = shapeInfo[0];
-	Nd4jLong* bases = &(shapeInfo[1]);
-	nd4j::CoordsState<3> cbs;
-	size_t offset_n = nd4j::init_coords<4>(cbs, 0, bases, strides);
-
-	size_t offset_uni = 0;
-	for (size_t i = 0; i < t; i += inc) {
-
-		shape::index2coords(i, shapeInfo, coords);
-
-		for (int j = 0; j < rank; j++) {
-			ASSERT_TRUE(coords[j] == coords5[j]);
-		}
-		//coordsState_eq<3>(cbs, (const Nd4jLong*)coords);
-		//increment should be last
-
-		ASSERT_EQ(offset_uni, i);
-		offset_uni = nd4j::inc_coords(bases, strides, coords5, offset_uni, rank);
-
-		//printf("%ld  %lld %lld %lld %lld\n", offset_n, cbs.CoordsState<0>::coord, cbs.CoordsState<1>::coord , cbs.CoordsState<2>::coord, cbs.CoordsState<3>::coord);
-		ASSERT_EQ(offset_n, i);
-		offset_n = nd4j::inc_coords<4>(cbs, offset_n);
-	}
-
-
-
-}
-
-
-
-
+#if 0
+     x.printIndexedBuffer("X"); 
+    exp.printIndexedBuffer("Expected");
+    z->printIndexedBuffer("Z");
 #endif
+#if 1
+    ASSERT_TRUE(exp.isSameShape(z));
+    ASSERT_TRUE(exp.equalsTo(z));
+#endif
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+#if COMBINATIONS
+
+        } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+    }
+#endif
+}
+
+TEST_F(PlaygroundTests, FortranArgMaxPerf) {
+#if 1
+    int bases[] = { 3,2,/*  4, 5,*/ 7 };
+    constexpr int Loop = 1;
+#else
+    int bases[] = { 8, 32, 64, 32, 64 };
+    constexpr int Loop = 10;
+#endif
+    constexpr int N = 3;// 5;
+
+    auto x = NDArrayFactory::create<float>('f', { bases[0], bases[1], bases[2]/*, bases[3], bases[4]*/ });
+    //x.linspace(1);
+    fill_random<float>(x);
+#define COMBINATIONS 1
+#if COMBINATIONS
+    //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
+    for (int k = N; k >= 1; k--) {
+
+        std::string bitmask(k, 1); // K leading 1's
+        bitmask.resize(N, 0); // N-K trailing 0's
+
+        do {
+
+
+            std::vector<int> dimension;
+
+            std::vector<Nd4jLong> output_bases;
+
+            for (int i = 0; i < N; ++i) // [0..N-1] integers
+            {
+                if (bitmask[i])  dimension.push_back(i);
+                else {
+                    output_bases.push_back(bases[i]);
+                }
+            }
+#else
+    std::vector<int> dimension = { 0,1,2,3 };
+    int k = 4;
+#endif
+    auto dim = NDArrayFactory::create<int>(dimension);
+
+#if 1 
+    nd4j_printf("C(N:%d K:%d) \n", N, k);
+    dim.printIndexedBuffer("Dimension");
+    for (int xind : dimension) {
+        nd4j_printf(" %d ,", bases[xind]);
+    }
+    nd4j_printf("%s", "\n");
+#endif
+#if 1
+    x.printIndexedBuffer("X"); 
+#endif
+
+    sd::ops::argmax op;
+    std::vector<Nd4jLong> values;
+    sd::ResultSet result;
+    for (int e = 0; e < Loop; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+        result = op.evaluate({ &x, &dim }, {}, {});
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+    auto z = result.at(0);
+
+#if 1
+    //check for the correctness
+    NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('f', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
+    original_argmax(x, dimension, exp);
+#endif
+
+#if 1
+    x.printIndexedBuffer("X");
+    exp.printIndexedBuffer("Expected");
+    z->printIndexedBuffer("Z");
+#endif
+#if 1
+    ASSERT_TRUE(exp.isSameShape(z));
+    ASSERT_TRUE(exp.equalsTo(z));
+#endif
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+#if COMBINATIONS
+
+        } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+    }
+#endif
+}
+
+
+
+/*
+
+TEST_F(PlaygroundTests, test_broadcast_1) {
+    int pool = 1000;
+    std::vector<NDArray*> aX(pool);
+    std::vector<NDArray*> aY(pool);
+    std::vector<NDArray*> aZ(pool);
+
+    for (int e = 0; e < pool; e++) {
+        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create_<float>('c', {3072});
+        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+
+        aX[e]->assign(119 * (e+1));
+        aY[e]->assign(119 * (e+3));
+    }
+
+    std::vector<Nd4jLong> values;
+    Context ctx(1);
+
+    sd::ops::biasadd op;
+
+    for (int e = 0; e < 1000; e++) {
+        auto x = aX[e < pool ? e : e % pool];
+        auto y = aY[e < pool ? e : e % pool];
+        auto z = aZ[e < pool ? e : e % pool];
+
+        auto timeStart = std::chrono::system_clock::now();
+
+        //op.execute({x, y}, {z});
+        sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+
+    for (int e = 0; e < pool; e++) {
+        delete aX[e];
+        delete aY[e];
+        delete aZ[e];
+    }
+}
+
+
+/*
+TEST_F(PlaygroundTests, test_broadcast_1) {
+    int pool = 500;
+    std::vector<NDArray*> aX(pool);
+    std::vector<NDArray*> aY(pool);
+    std::vector<NDArray*> aZ(pool);
+
+    for (int e = 0; e < pool; e++) {
+        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create_<float>('c', {768});
+        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+
+        aX[e]->assign( (e+1) / 119);
+        aY[e]->assign( (e+3) / 119);
+    }
+
+
+
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 1000; e++) {
+        auto x = aX[e < pool ? e : e % pool];
+        auto y = aY[e < pool ? e : e % pool];
+        auto z = aZ[e < pool ? e : e % pool];
+
+        auto timeStart = std::chrono::system_clock::now();
+
+        //x->applyTrueBroadcast(BroadcastOpsTuple::Multiply(), *y, *z);
+        x->applyTransform(transform::Tanh, *z, nullptr);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+
+    for (int e = 0; e < pool; e++) {
+        delete aX[e];
+        delete aY[e];
+        delete aZ[e];
+    }
+}
+
+*/
+/*
+
+TEST_F(PlaygroundTests, test_s_0) {
+    std::vector<std::vector<Nd4jLong>> shapes = {{32, 224, 224, 3}, {32, 56, 56, 64}, {32, 7, 7, 512}};
+    std::vector<int> threads = {1, 2, 4, 8, 16};
+
+    for (auto shape: shapes) {
+        for (auto t: threads) {
+            sd::Environment::getInstance()->setMaxMasterThreads(t);
+
+            auto x = NDArrayFactory::create<float>('c', shape);
+            auto y = NDArrayFactory::create<float>('c', {shape[3]});
+            auto z = x.ulike();
+
+            std::vector<Nd4jLong> values;
+            Context ctx(1);
+            ctx.setInputArray(0, &x);
+            ctx.setInputArray(1, &y);
+            ctx.setOutputArray(0, &z);
+
+            sd::ops::biasadd op;
+
+
+            for (int e = 0; e < 10000; e++) {
+                auto timeStart = std::chrono::system_clock::now();
+
+                op.execute(&ctx);
+                sd::ops::helpers::addBias(ctx, x, y, z, false);
+
+                auto timeEnd = std::chrono::system_clock::now();
+                auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+                values.emplace_back(outerTime);
+            }
+
+            std::sort(values.begin(), values.end());
+
+            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time: %lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() / 2]);
+        }
+    }
+}
+
+TEST_F(PlaygroundTests, test_s_1) {
+    std::vector<std::vector<Nd4jLong>> shapes = {{32, 3, 224, 224}, {32, 64, 56, 56}, {32, 512, 7, 7}};
+    std::vector<int> threads = {1, 2, 4, 8, 16};
+
+    for (auto shape: shapes) {
+        for (auto t: threads) {
+            sd::Environment::getInstance()->setMaxMasterThreads(t);
+
+            auto x = NDArrayFactory::create<float>('c', shape);
+            auto y = NDArrayFactory::create<float>('c', {shape[1]});
+            auto z = x.ulike();
+
+            std::vector<Nd4jLong> values;
+            Context ctx(1);
+            ctx.setInputArray(0, &x);
+            ctx.setInputArray(1, &y);
+            ctx.setOutputArray(0, &z);
+
+            sd::ops::biasadd op;
+
+
+            for (int e = 0; e < 10000; e++) {
+                auto timeStart = std::chrono::system_clock::now();
+
+                //op.execute({&x, &y}, {&z}, {true});
+                sd::ops::helpers::addBias(ctx, x, y, z, true);
+
+                auto timeEnd = std::chrono::system_clock::now();
+                auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+                values.emplace_back(outerTime);
+            }
+
+            std::sort(values.begin(), values.end());
+
+            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time: %lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() / 2]);
+        }
+    }
+}
+*/
+
+/*
+TEST_F(PlaygroundTests, test_s_0) {
+    auto x = NDArrayFactory::create<float>('c', {32, 112, 112, 16});
+    auto y = NDArrayFactory::create<float>('c', {16});
+    auto z = x.ulike();
+
+    std::vector<Nd4jLong> values;
+    Context ctx(1);
+    ctx.setInputArray(0, &x);
+    ctx.setInputArray(1, &y);
+    ctx.setOutputArray(0, &z);
+
+    sd::ops::biasadd op;
+
+
+    for (int e = 0; e < 10000; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        op.execute(&ctx);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+}
+*/
+/*
+TEST_F(PlaygroundTests, test_s_1) {
+    auto x0 = NDArrayFactory::create<float>('c', {32, 7, 7, 176});
+    auto x1 = x0.ulike();
+    auto x2 = x0.ulike();
+    auto x3 = x0.ulike();
+    auto x4 = x0.ulike();
+    auto x5 = x0.ulike();
+
+    auto y = NDArrayFactory::create<int >(3);
+    auto z = NDArrayFactory::create<float>('c', {32, 7, 7, 1056});
+
+    Context ctx(1);
+    ctx.setInputArray(0, &x0);
+    ctx.setInputArray(1, &x1);
+    ctx.setInputArray(2, &x2);
+    ctx.setInputArray(3, &x3);
+    ctx.setInputArray(4, &x4);
+    ctx.setInputArray(5, &x5);
+
+    ctx.setInputArray(6, &y);
+    ctx.setOutputArray(0, &z);
+    ctx.setBArguments({true});
+
+    std::vector<Nd4jLong> values;
+
+    sd::ops::concat op;
+    op.execute(&ctx);
+
+    for (int e = 0; e < 1000; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        op.execute(&ctx);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+}
+*/
+
+/*
+TEST_F(PlaygroundTests, test_s_1) {
+    auto t = ::runLightBenchmarkSuit(true);
+    delete[] t;
+}
+
+TEST_F(PlaygroundTests, test_s_2) {
+    std::atomic<int> s;
+    s = 0;
+    auto func = PRAGMA_THREADS_FOR {
+        s++;
+    };
+
+    samediff::Threads::parallel_for(func, 0, 8192, 1, 4);
+    std::vector<Nd4jLong> values;
+
+    for (int e = 0; e < 100000; e++) {
+        s = 0;
+
+        auto timeStart = std::chrono::system_clock::now();
+        //samediff::Threads::parallel_for(func, 0, 8192, 1, 4);
+        PRAGMA_OMP_PARALLEL_THREADS(4) {
+            s++;
+        }
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds> (timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    };
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld;\n", values[values.size() / 2]);
+}
+ */
+/*
+TEST_F(PlaygroundTests, test_s_4) {
+    std::atomic<float> f;
+    std::atomic<int> s;
+    std::vector<Nd4jLong> valuesX, valuesY;
+    int iterations = 1000;
+    s = 0;
+    auto func = PRAGMA_THREADS_FOR {
+        s++;
+    };
+
+    samediff::Threads::parallel_for(func, 0, 8192, 1, 4);
+
+    ////////
+
+    auto x = NDArrayFactory::create<float>('c', {32, 3, 256, 256});
+    auto z = NDArrayFactory::create<float>('c', {32, 3, 256, 256});
+    x.linspace(1.0);
+
+    auto xs0 = x.sizeAt(0);
+    auto xs1 = x.sizeAt(1);
+    auto xs2 = x.sizeAt(2);
+    auto xs3 = x.sizeAt(3);
+
+    auto buffer = x.bufferAsT<float>();
+    auto zbuffer = z.bufferAsT<float>();
+
+    for (int e = 0; e < iterations; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+        PRAGMA_OMP_PARALLEL_FOR_COLLAPSE(2)
+        for (int i = 0; i < xs0; i++) {
+            for (int j = 0; j < xs1; j++) {
+                auto thread_id = omp_get_thread_num();
+                for (int k = 0; k < xs2; k++) {
+                    for (int l = 0; l < xs3; l++) {
+                        zbuffer[thread_id] += buffer[i * j + (k*l)] * 2.5f;
+                    }
+                }
+            }
+        }
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
+        valuesX.emplace_back(outerTime);
+    }
+
+
+    for (int e = 0; e < iterations; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+        auto f2d = PRAGMA_THREADS_FOR_2D {
+            for (auto i = start_x; i < stop_x; i++) {
+                for (auto j = start_y; j < stop_y; j++) {
+
+                    for (auto k = 0; k < xs2; k++) {
+                        for (auto l = 0; l < xs3; l++) {
+                            zbuffer[thread_id] += buffer[i * j + (k * l)] * 2.5f;
+                        }
+                    }
+                }
+            }
+        };
+        samediff::Threads::parallel_for(f2d, 0, xs0, 1, 0, xs1, 1);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
+        valuesY.emplace_back(outerTime);
+    }
+
+    if (valuesX.size() > 0) {
+        std::sort(valuesX.begin(), valuesX.end());
+        nd4j_printf("OpenMP time: %lld; Min: %lld; Max: %lld;\n", valuesX[valuesX.size() / 2], valuesX[0], valuesX[valuesX.size() - 1]);
+    }
+
+    if (valuesY.size() > 0) {
+        std::sort(valuesY.begin(), valuesY.end());
+        nd4j_printf("Threads time: %lld; Min: %lld; Max: %lld;\n", valuesY[valuesY.size() / 2], valuesY[0], valuesY[valuesY.size() - 1]);
+    }
+
+    nd4j_printf("Sum: %f\n", z.sumNumber().e<float>(0));
+}
+
+
+TEST_F(PlaygroundTests, test_s_5) {
+    auto x = NDArrayFactory::create<float>('c', {32, 1, 28, 28});
+
+    std::vector<Nd4jLong> values;
+    auto iterations = 100;
+
+    auto startX = 0;
+    auto stopX = x.sizeAt(0);
+    auto incX = 1;
+    auto startY = 0;
+    auto stopY = x.sizeAt(1);
+    auto incY = 1;
+    auto numThreads = 4;
+
+    // number of elements per loop
+    auto delta_x = (stopX - startX);
+    auto delta_y = (stopY - startY);
+
+    // number of iterations per loop
+    auto itersX = delta_x / incX;
+    auto itersY = delta_y / incY;
+
+    for (int e = 0; e < iterations; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        // picking best fit here
+        auto splitLoop = samediff::ThreadsHelper::pickLoop2d(numThreads, itersX, itersY);
+        auto span = samediff::Span2::build(splitLoop, 0, numThreads, startX, stopX, incX, startY, stopY, incY);
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n", values[values.size() / 2], values[0], values[values.size()-1]);
+}
+
+
+TEST_F(PlaygroundTests, test_s_6) {
+    auto x = NDArrayFactory::create<float>('c', {1024 * 1024 * 64});
+    auto buffer = x.bufferAsT<float>();
+    auto len = x.lengthOf();
+    std::vector<Nd4jLong> values;
+    auto iterations = 1000;
+
+    for (int i = 0; i < iterations; i++) {
+        auto timeStart = std::chrono::system_clock::now();
+
+        // picking best fit here
+        for (int e = 0; e < len; e++) {
+            buffer[e] = (buffer[e] + 1.72f) * 3.17f - 0.0012f;
+        }
+
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n", values[values.size() / 2], values[0], values[values.size()-1]);
+}
+
+
+TEST_F(PlaygroundTests, test_s_3) {
+    std::atomic<int> s;
+    s = 0;
+    auto func = PRAGMA_THREADS_FOR {
+        s++;
+    };
+
+    for (int e = 0; e < 10000; e++) {
+
+        samediff::Threads::parallel_for(func, 0, 8192, 1, 4);
+    }
+}
+ */
+
+/*
+TEST_F(PlaygroundTests, test_relubp_1) {
+    auto x = NDArrayFactory::create<float>('c', {128, 64, 224, 224});
+    auto y = x.ulike();
+    auto z = x.ulike();
+    RandomGenerator rng(119, 120);
+    RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng, &x, -1.0, 1.0);
+    RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng, &y, -1.0, 1.0);
+
+    int iterations = 10;
+
+    auto timeStart = std::chrono::system_clock::now();
+    for (int e = 0; e < iterations; e++)
+        ops::helpers::reluDerivative(LaunchContext::defaultContext(), &x, &y, &z);
+    auto timeEnd = std::chrono::system_clock::now();
+
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+    auto time = (Nd4jLong) outerTime / iterations;
+    auto bw = (1000000L * (float) (x.lengthOf() * x.sizeOfT()) / time) / 1024 / 1024 / 1024;
+
+    nd4j_printf("Time: %lld; BW: %f GB/s\n", time, bw);
+}
+
+//////////////////////////////////////////////////////////////////////
+TEST_F(PlaygroundTests, my) {
+
+    int bS=8, iD=32,iH=32,iW=32,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,  pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2;
+    int       oD,oH,oW;
+
+    sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW, sD, sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
+
+    printf("!!%i, %i, %i\n", oD,oH,oW);
+
+    NDArray col('c', {bS, iC, kD, kH, kW, iD, iH, iW}, sd::DataType::DOUBLE);
+    NDArray vol('c', {bS, iC, oD, oH, oW}, sd::DataType::DOUBLE);
+
+    col = 3.77;
+    vol = -10.33;
+
+    auto variableSpace = new VariableSpace();
+    auto block = new Context(1, variableSpace, false);  // not-in-place
+
+    auto timeStart = std::chrono::system_clock::now();
+    sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH, pW, dD, dH, dW);
+    auto timeEnd = std::chrono::system_clock::now();
+    auto time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+
+    printf("time: %i \n", time);
+
+    delete block;
+    delete variableSpace;
+}
+
+TEST_F(PlaygroundTests, my) {
+
+    int bS=32, iD=32,iH=64,iW=64,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,  pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2;
+    int       oD,oH,oW;
+
+    // sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW, sD, sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
+    sd::ops::ConvolutionUtils::calcOutSizeDeconv2D(oH, oW, kH, kW, sH, sW, pH, pW,dH, dW, iH, iW, 0);
+
+    printf("!!%i, %i, %i\n", oD,oH,oW);
+
+    // NDArray col('c', {bS, iC, kD, kH, kW, iD, iH, iW}, sd::DataType::DOUBLE);
+    // NDArray vol('c', {bS, iC, oD, oH, oW}, sd::DataType::DOUBLE);
+    NDArray col('c', {bS, iC, kH, kW, iH, iW}, sd::DataType::DOUBLE);
+    NDArray im('c', {bS, iC, oH, oW}, sd::DataType::DOUBLE);
+
+    col = 3.77;
+    // vol = -10.33;
+    im = -10.33;
+
+    auto variableSpace = new VariableSpace();
+    auto block = new Context(1, variableSpace, false);  // not-in-place
+
+    auto timeStart = std::chrono::system_clock::now();
+    // sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH, pW, dD, dH, dW);
+    sd::ops::helpers::col2im(*col.getContext(), col, im, sH, sW, pH, pW, iH, iW, dH, dW);
+    auto timeEnd = std::chrono::system_clock::now();
+    auto time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+
+    printf("time: %i \n", time);
+
+    delete block;
+    delete variableSpace;
+}
+
+TEST_F(PlaygroundTests, my) {
+
+    int N = 100;
+    int bS=16, iH=128,iW=128,  iC=32,oC=64,  kH=4,kW=4,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
+    int        oH=128,oW=128;
+
+    int paddingMode = 1;             // 1-SAME, 0-VALID;
+    int dataFormat  = 1;             // 1-NHWC, 0-NCHW
+
+    // NDArray input('c', {bS, iC, iH, iW}, sd::DataType::FLOAT32);
+    // NDArray output('c', {bS, oC, oH, oW}, sd::DataType::FLOAT32);
+    NDArray input('c', {bS, iH, iW, iC}, sd::DataType::FLOAT32);
+    NDArray output('c', {bS, oH, oW, oC}, sd::DataType::FLOAT32);
+    // NDArray weights('c', {kH, kW, iC, oC}, sd::DataType::FLOAT32);    // permute [kH, kW, iC, oC] -> [oC, iC, kH, kW]
+    NDArray weights('c', {oC, iC, kH, kW}, sd::DataType::FLOAT32);
+    NDArray bias('c', {oC}, sd::DataType::FLOAT32);
+
+    input = 5.;
+    weights = 3.;
+    bias = 1.;
+
+    sd::ops::conv2d op;
+    auto err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
+
+    auto timeStart = std::chrono::system_clock::now();
+    for (int i = 0; i < N; ++i)
+        err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
+    auto timeEnd = std::chrono::system_clock::now();
+    auto time = std::chrono::duration_cast<std::chrono::microseconds> ((timeEnd - timeStart) / N).count();
+
+    printf("time: %i \n", time);
+}
+
+
+*/
