@@ -32,41 +32,53 @@
 
 namespace sd {
     class SD_EXPORT NDArrayList {
-    private:
-        // workspace where chunks belong to
-        //sd::memory::Workspace* _workspace = nullptr;
-        sd::LaunchContext * _context = sd::LaunchContext ::defaultContext();
+    protected:
+        class InternalArrayList {
+        public:
+            // numeric and symbolic ids of this list
+            std::pair<int, int> _id;
+            std::string _name;
 
-        // numeric and symbolic ids of this list
-        std::pair<int, int> _id;
-        std::string _name;
+            sd::DataType _dtype;
 
-        sd::DataType _dtype;
+            // stored chunks
+            MAP_IMPL<int, sd::NDArray> _chunks;
 
-        // stored chunks
-        MAP_IMPL<int, sd::NDArray> _chunks;
+            // just a counter, for stored elements
+            std::atomic<int> _elements;
+            mutable std::atomic<int> _counter;
 
-        // just a counter, for stored elements
-        std::atomic<int> _elements;
-        mutable std::atomic<int> _counter;
+            // reference shape
+            std::vector<Nd4jLong> _shape;
 
-        // reference shape
-        std::vector<Nd4jLong> _shape;
+            // unstack axis
+            int _axis = 0;
 
-        // unstack axis
-        int _axis = 0;
+            //
+            bool _expandable = false;
 
-        //
-        bool _expandable = false;
+            // maximum number of elements
+            int _height = 0;
 
-        // maximum number of elements
-        int _height = 0;
+
+            //////////
+            InternalArrayList(int height = 0, bool expandable = false);
+            ~InternalArrayList() = default;
+        };
+
+        std::shared_ptr<InternalArrayList> _state;
+
     public:
         NDArrayList(int height = 0, bool expandable = false);
         ~NDArrayList();
 
         NDArrayList(const sd::NDArrayList &other);
         NDArrayList(sd::NDArrayList &&other);
+
+        NDArrayList& operator=(const NDArrayList& other) noexcept;
+
+        // move assignment operator
+        NDArrayList& operator=(NDArrayList&& other) noexcept;
 
         sd::DataType dataType() const;
 
@@ -85,9 +97,8 @@ namespace sd {
 
         const std::pair<int,int>& id() const;
         const std::string& name() const;
-        //sd::memory::Workspace* workspace();
-        sd::LaunchContext * context();
-        NDArrayList* clone();
+
+        NDArrayList clone();
 
         bool equals(NDArrayList& other);
 

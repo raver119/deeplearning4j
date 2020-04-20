@@ -41,18 +41,18 @@ namespace sd {
                 expandable = true;
             }
 
-            auto list = new NDArrayList(height, expandable);
+            NDArrayList list(height, expandable);
 
             // we recieve input array for graph integrity purposes only
             auto input = INPUT_VARIABLE(0);
-            setupResultList(*list, block);
-//            OVERWRITE_RESULT(list);
+            setupResultList(list, block);
 
-            auto scalar = NDArrayFactory::create(list->counter());
+            auto scalar = NDArrayFactory::create(list.counter());
             block.pushNDArrayToVariableSpace(block.nodeId(), 1, scalar);
 
-            return ND4J_STATUS_OK;
+            return Status::OK();
         }
+
         DECLARE_SYN(TensorArrayV3, create_list);
         DECLARE_SYN(tensorarrayv3, create_list);
         DECLARE_SYN(TensorArrayCreateV3, create_list);

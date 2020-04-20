@@ -45,9 +45,6 @@ TEST_F(ListOperationsTests, BasicTest_Write_1) {
     auto result2 = op.execute(list, {&x}, {}, {2});
 
     ASSERT_EQ(2, list.elements());
-
-    
-    
 }
 
 TEST_F(ListOperationsTests, BasicTest_Stack_1) {
@@ -91,8 +88,8 @@ TEST_F(ListOperationsTests, BasicTest_UnStackList_1) {
 
     auto result = op.execute(list, {&x}, {}, {0});
 
-    ASSERT_EQ(ND4J_STATUS_OK, result.status());
-    ASSERT_EQ(list.elements(), 10);
+    ASSERT_EQ(Status::OK(), result.status());
+    ASSERT_EQ(10, list.elements());
 
 //    auto z = result.at(0);
 //    z->printShapeInfo("The first of");
@@ -264,8 +261,8 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
     int cnt1 = 0;
     int cnt2 = 0;
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create_<double>('c', {5});
-        row->assign((double) e);
+        auto row = NDArrayFactory::create<double>('c', {5});
+        row.assign((double) e);
         tads.at(e).assign(row);
 
         if (e < 2)
@@ -274,8 +271,6 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
             tads1.at(cnt1++).assign(row);
         else
             tads2.at(cnt2++).assign(row);
-
-        delete row;
     }
 
     sd::ops::split_list op;
@@ -330,21 +325,18 @@ TEST_F(ListOperationsTests, BasicTest_Scatter_1) {
 }
 
 TEST_F(ListOperationsTests, BasicTest_Clone_1) {
-    auto list = new NDArrayList(0, true);
+    NDArrayList list(0, true);
 
     VariableSpace variableSpace;
-    auto var = new Variable();
-    //var->setNDArrayList(list);
-
-    //variableSpace.putVariable(-1, var);
-    //variableSpace.trackList(list);
+    auto var = std::make_shared<Variable>(list, "", -1);
+    variableSpace.putVariable(-1, var);
 
     Context block(1, &variableSpace);
     block.pickInput(-1);
 
     sd::ops::clone_list op;
 
-    ASSERT_TRUE(list == block.variable(0)->getNDArrayList().get());
+    //ASSERT_TRUE(list == block.variable(0)->getNDArrayList().get());
 
     auto result = op.execute(&block);
 
@@ -352,11 +344,11 @@ TEST_F(ListOperationsTests, BasicTest_Clone_1) {
 
     auto resVar = variableSpace.getVariable(1);
 
-    auto resList = resVar->getNDArrayList();
+    auto resList = resVar->getNDArrayList().get();
 
     ASSERT_TRUE( resList != nullptr);
 
-    ASSERT_TRUE(list->equals(*resList));
+    ASSERT_TRUE(list.equals(*resList));
 }
 
 TEST_F(ListOperationsTests, BasicTest_Gather_1) {

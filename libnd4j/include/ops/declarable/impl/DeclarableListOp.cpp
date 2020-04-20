@@ -96,10 +96,12 @@ namespace sd {
             int cnt = -1;
             std::vector<int> in;
 
-            auto listVar = std::make_shared<Variable>(list, "", -1);
-            varSpace.putVariable(-1, listVar);
-            in.push_back(-1);
-            cnt--;
+            // first input must be our NDArrayList, except create_list op. it creates list itself.
+            if (getOpName() != "create_list") {
+                auto listVar = std::make_shared<Variable>(list, "", cnt);
+                varSpace.putVariable(cnt, listVar);
+                in.push_back(cnt--);
+            }
 
             for (auto v: inputs) {
                 auto var = std::make_shared<Variable>(*v, "", cnt);
