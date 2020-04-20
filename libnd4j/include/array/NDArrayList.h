@@ -44,11 +44,11 @@ namespace sd {
         sd::DataType _dtype;
 
         // stored chunks
-        MAP_IMPL<int, sd::NDArray*> _chunks;
+        MAP_IMPL<int, sd::NDArray> _chunks;
 
         // just a counter, for stored elements
         std::atomic<int> _elements;
-        std::atomic<int> _counter;
+        mutable std::atomic<int> _counter;
 
         // reference shape
         std::vector<Nd4jLong> _shape;
@@ -62,39 +62,39 @@ namespace sd {
         // maximum number of elements
         int _height = 0;
     public:
-        NDArrayList(int height, bool expandable = false);
+        NDArrayList(int height = 0, bool expandable = false);
         ~NDArrayList();
 
         NDArrayList(const sd::NDArrayList &other);
         NDArrayList(sd::NDArrayList &&other);
 
-        sd::DataType dataType();
+        sd::DataType dataType() const;
 
-        NDArray* read(int idx);
-        NDArray* readRaw(int idx);
-        Nd4jStatus write(int idx, NDArray* array);
+        NDArray read(int idx);
+        NDArray readRaw(int idx);
+        Nd4jStatus write(int idx, const NDArray &array);
 
-        NDArray* pick(std::initializer_list<int> indices);
-        NDArray* pick(std::vector<int>& indices);
-        bool isWritten(int index);
+        NDArray pick(const std::vector<int>& indices);
+        bool isWritten(int index) const;
 
-        std::vector<Nd4jLong>& shape();
+        const std::vector<Nd4jLong>& shape() const;
+        void setShape(const std::vector<Nd4jLong> &shape);
 
-        NDArray* stack();
-        void unstack(NDArray* array, int axis);
+        NDArray stack() const;
+        void unstack(const NDArray &array, int axis);
 
-        std::pair<int,int>& id();
-        std::string& name();
+        const std::pair<int,int>& id() const;
+        const std::string& name() const;
         //sd::memory::Workspace* workspace();
         sd::LaunchContext * context();
         NDArrayList* clone();
 
         bool equals(NDArrayList& other);
 
-        int elements();
-        int height();
+        int elements() const;
+        int height() const;
 
-        int counter();
+        int counter() const;
     };
 }
 

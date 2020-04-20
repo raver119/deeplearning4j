@@ -28,6 +28,16 @@
 
 namespace sd {
     namespace graph {
+        Variable::Variable(const NDArrayList &arrayList, const std::string &name, int id, int idx) {
+            _list = std::make_shared<sd::NDArrayList>(arrayList);
+
+            if (!name.empty())
+                _name = name;
+
+            _id = id;
+            _index = idx;
+        }
+
         Variable::Variable(const NDArray &array, const std::string &name, int id, int idx) {
             _ndarray = std::make_shared<NDArray>(array);
 
@@ -55,7 +65,7 @@ namespace sd {
         }
 
         bool sd::graph::Variable::hasNDArrayList() const {
-            return _list.get() != nullptr;
+            return _list != nullptr;
         }
 
         bool sd::graph::Variable::isPlaceholder() const {

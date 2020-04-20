@@ -36,13 +36,13 @@ TEST_F(ListOperationsTests, BasicTest_Write_1) {
 
     sd::ops::write_list op;
 
-    auto result = op.execute(&list, {&x}, {}, {1});
+    auto result = op.execute(list, {&x}, {}, {1});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
     ASSERT_EQ(1, list.elements());
 
-    auto result2 = op.execute(&list, {&x}, {}, {2});
+    auto result2 = op.execute(list, {&x}, {}, {2});
 
     ASSERT_EQ(2, list.elements());
 
@@ -55,15 +55,15 @@ TEST_F(ListOperationsTests, BasicTest_Stack_1) {
     auto exp = NDArrayFactory::create<double>('c', {10, 100});
     auto tads = exp.allTensorsAlongDimension({1});
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create_<double>('c', {100});
-        row->assign((double) e);
+        auto row = NDArrayFactory::create<double>('c', {100});
+        row.assign((double) e);
         list.write(e, row);
         tads.at(e).assign(row);
     }
 
     sd::ops::stack_list op;
 
-    auto result = op.execute(&list, {}, {}, {1});
+    auto result = op.execute(list, {}, {}, {1});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -89,7 +89,7 @@ TEST_F(ListOperationsTests, BasicTest_UnStackList_1) {
 
     sd::ops::unstack_list op;
 
-    auto result = op.execute(&list, {&x}, {}, {0});
+    auto result = op.execute(list, {&x}, {}, {0});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
     ASSERT_EQ(list.elements(), 10);
@@ -100,9 +100,8 @@ TEST_F(ListOperationsTests, BasicTest_UnStackList_1) {
 //    ASSERT_TRUE(exp.equalsTo(z));
     for (int e = 0; e < 10; e++) {
         auto row = list.read(e);
-        ASSERT_TRUE(row->equalsTo(tads.at(e)));
+        ASSERT_TRUE(row.equalsTo(tads.at(e)));
         //list.write(e, row);
-        delete row;
     }
 
     
@@ -149,14 +148,14 @@ TEST_F(ListOperationsTests, BasicTest_Read_1) {
     for (int e = 0; e < 10; e++) {
         auto row = NDArrayFactory::create_<double>('c', {1, 100});
         row->assign((double) e);
-        list.write(e, new NDArray(row->dup()));
+        list.write(e, row->dup());
 
         delete row;
     }
 
     sd::ops::read_list op;
 
-    auto result = op.execute(&list, {}, {}, {4});
+    auto result = op.execute(list, {}, {}, {4});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -175,7 +174,7 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
     for (int e = 0; e < 10; e++) {
         auto row = NDArrayFactory::create_<double>('c', {100});
         row->assign((double) e);
-        list.write(e, new NDArray(row->dup()));
+        list.write(e, row->dup());
 
         delete row;
     }
@@ -188,7 +187,7 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
 
 
     sd::ops::pick_list op;
-    auto result = op.execute(&list, {}, {}, {1, 1, 3, 3});
+    auto result = op.execute(list, {}, {}, {1, 1, 3, 3});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -206,14 +205,14 @@ TEST_F(ListOperationsTests, BasicTest_Size_1) {
     for (int e = 0; e < 10; e++) {
         auto row = NDArrayFactory::create_<double>('c', {100});
         row->assign((double) e);
-        list.write(e, new NDArray(row->dup()));
+        list.write(e, row->dup());
 
         delete row;
     }
 
     sd::ops::size_list op;
 
-    auto result = op.execute(&list, {}, {}, {1});
+    auto result = op.execute(list, {}, {}, {1});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -231,7 +230,7 @@ TEST_F(ListOperationsTests, BasicTest_Create_1) {
 
     sd::ops::create_list op;
 
-    auto result = op.execute(nullptr, {&matrix}, {}, {1, 1});
+    auto result = op.execute(NDArrayList(), {&matrix}, {}, {1, 1});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -280,7 +279,7 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
     }
 
     sd::ops::split_list op;
-    auto result = op.execute(&list, {&matrix, &lengths}, {}, {});
+    auto result = op.execute(list, {&matrix, &lengths}, {}, {});
     ASSERT_EQ(Status::OK(), result.status());
 
     ASSERT_EQ(3, list.height());
@@ -315,7 +314,7 @@ TEST_F(ListOperationsTests, BasicTest_Scatter_1) {
         indices.p(e, 9 - e);
 
     sd::ops::scatter_list op;
-    auto result = op.execute(&list, {&indices, &matrix, &s}, {}, {});
+    auto result = op.execute(list, {&indices, &matrix, &s}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -323,9 +322,9 @@ TEST_F(ListOperationsTests, BasicTest_Scatter_1) {
         auto row = tads.at(9 - e);
         auto chunk = list.readRaw(e);
 
-        ASSERT_TRUE(chunk->isSameShape(row));
+        ASSERT_TRUE(chunk.isSameShape(row));
 
-        ASSERT_TRUE(chunk->equalsTo(row));
+        ASSERT_TRUE(chunk.equalsTo(row));
     }
     
 }
@@ -363,11 +362,9 @@ TEST_F(ListOperationsTests, BasicTest_Clone_1) {
 TEST_F(ListOperationsTests, BasicTest_Gather_1) {
     NDArrayList list(0, true);
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create_<double>('c', {3});
-        row->assign((double) e);
-        list.write(e, new NDArray(row->dup()));
-
-        delete row;
+        auto row = NDArrayFactory::create<double>('c', {3});
+        row.assign((double) e);
+        list.write(e, row.dup());
     }
 
     auto exp = NDArrayFactory::create<double>('c', {10, 3});
@@ -381,7 +378,7 @@ TEST_F(ListOperationsTests, BasicTest_Gather_1) {
     indices.linspace(9, -1);
 
     sd::ops::gather_list op;
-    auto result = op.execute(&list, {&indices}, {}, {});
+    auto result = op.execute(list, {&indices}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
     ASSERT_EQ(1, result.size());

@@ -57,15 +57,15 @@ namespace sd {
                 if (idx >= tads.size())
                     return ND4J_STATUS_BAD_ARGUMENTS;
 
-                auto arr = new NDArray(tads.at(e).dup(array->ordering()));
+                auto arr = tads.at(e).dup(array->ordering());
                 auto res = list->write(idx, arr);
-                if (res != ND4J_STATUS_OK)
+
+                if (res != Status::OK())
                     return res;
             }
 
             if (!hasList)
-                //OVERWRITE_RESULT(list);
-                setupResultList(list, block);
+                setupResultList(*list, block);
 
             return Status::OK();
         }

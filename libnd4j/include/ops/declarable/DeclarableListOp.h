@@ -35,18 +35,15 @@ namespace sd {
             Nd4jStatus validateAndExecute(Context& block) override = 0;
 
             sd::NDArray* getZ(Context& block, int inputId) ;
-            void setupResult(NDArray* array, Context& block);
-            void setupResultList(NDArrayList* arrayList, Context& block);
+            void setupResult(const NDArray &array, Context& block);
+            void setupResultList(const NDArrayList &arrayList, Context& block);
 
         public:
             DeclarableListOp(int numInputs, int numOutputs, const char* opName, int tArgs, int iArgs);
-
             
             Nd4jStatus execute(Context* block) override;
-            
 
-            ResultSet execute(NDArrayList* list, std::initializer_list<NDArray*> inputs, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs);
-            ResultSet execute(NDArrayList* list, std::vector<NDArray*>& inputs, std::vector<double>& tArgs, std::vector<int>& iArgs);
+            ResultSet execute(const NDArrayList &list, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs = {}, const std::vector<int>& iArgs = {});
 
             ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
         };

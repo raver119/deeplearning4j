@@ -39,9 +39,9 @@ namespace sd {
                 //nd4j_printf("Writing [%i]:\n", idx->e<int>(0));
                 //input->printShapeInfo("input shape");
                 //input->printIndexedBuffer("input buffer");
-                Nd4jStatus result = list->write(idx->e<int>(0), new NDArray(input->dup()));
+                Nd4jStatus result = list->write(idx->e<int>(0), input->dup());
 
-                auto res = NDArrayFactory::create_(list->counter(), block.launchContext());
+                auto res = NDArrayFactory::create(list->counter(), block.launchContext());
                 //res->printShapeInfo("Write_list 2 output shape");
 
                 setupResult(res, block);
@@ -52,9 +52,9 @@ namespace sd {
                 auto input = INPUT_VARIABLE(1);
                 auto idx = INT_ARG(0);
 
-                Nd4jStatus result = list->write(idx, new NDArray(input->dup()));
+                Nd4jStatus result = list->write(idx, input->dup());
 
-                auto res = NDArrayFactory::create_(list->counter(), block.launchContext());
+                auto res = NDArrayFactory::create(list->counter(), block.launchContext());
                 //res->printShapeInfo("Write_list 1 output shape");
                 //OVERWRITE_RESULT(res);
                 setupResult(res, block);

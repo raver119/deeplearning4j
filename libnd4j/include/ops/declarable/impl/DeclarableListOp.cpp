@@ -56,20 +56,14 @@ namespace sd {
             return nullptr;
         }
 
-        void DeclarableListOp::setupResult(NDArray* array, Context& block) {
-            block.pushNDArrayToVariableSpace(block.getNodeId(), 0, *array);
+        void DeclarableListOp::setupResult(const NDArray &array, Context& block) {
+            block.pushNDArrayToVariableSpace(block.getNodeId(), 0, array);
         }
 
-        void DeclarableListOp::setupResultList(NDArrayList* arrayList, Context& block) {
-            block.pushNDArrayListToVariableSpace(block.getNodeId(), 0, *arrayList);
+        void DeclarableListOp::setupResultList(const NDArrayList &arrayList, Context& block) {
+            block.pushNDArrayListToVariableSpace(block.getNodeId(), 0, arrayList);
         }
 
-        ResultSet DeclarableListOp::execute(NDArrayList* list, std::initializer_list<NDArray*> inputs, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs) {
-            std::vector<NDArray*> ins(inputs);
-            std::vector<double> tas(tArgs);
-            std::vector<int> ias(iArgs);
-            return this->execute(list, ins, tas, ias);
-        }
 
         Nd4jStatus DeclarableListOp::execute(Context* block) {
             if (block == nullptr)
@@ -94,33 +88,23 @@ namespace sd {
             return status;
         }
 
-        ResultSet DeclarableListOp::execute(NDArrayList* list, std::vector<NDArray*>& inputs, std::vector<double>& tArgs, std::vector<int>& iArgs) {
+        ResultSet DeclarableListOp::execute(const NDArrayList &list, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs, const std::vector<int>& iArgs) {
             VariableSpace varSpace;
             int nodeId = 119;
 
             // should be never used in practice, since in-graph NDArrayList should have id set
             int cnt = -1;
             std::vector<int> in;
-            if (list != nullptr) {
-                if (list->id().first == 0)
-                    list->id().first = -1;
 
-                auto listVar = std::make_shared<Variable>();
-                listVar->setId(-119, 0);
-                //listVar->setNDArrayList(list);
-                //varSpace.putVariable(-1, listVar);
-                //in.push_back(-1);
-                //cnt--;
-                throw std::runtime_error("DeclarableListOp::execute - Not implemented yet");
-            }
-
+            auto listVar = std::make_shared<Variable>(list, "", -1);
+            varSpace.putVariable(-1, listVar);
+            in.push_back(-1);
+            cnt--;
 
             for (auto v: inputs) {
-                //auto var = new Variable(v);
-                //var->markRemovable(false);
-                //in.push_back(cnt);
-                //varSpace.putVariable(cnt--, var);
-                throw std::runtime_error("DeclarableListOp::execute - Not implemented yet");
+                auto var = std::make_shared<Variable>(*v, "", cnt);
+                in.push_back(cnt);
+                varSpace.putVariable(cnt--, var);
             }
 
             Context block(1, &varSpace, false);

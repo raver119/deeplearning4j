@@ -80,6 +80,7 @@ namespace sd {
             explicit Variable(const sd::NDArray &array, const std::string &name, int id, int idx = 0);
             explicit Variable(std::shared_ptr<sd::NDArray> array, const std::string &name, int id, int idx = 0);
             explicit Variable(std::shared_ptr<sd::NDArray> array, const char *name = nullptr);
+            explicit Variable(const NDArrayList &arrayList, const std::string &name, int id, int idx = 0);
             explicit Variable();
 
 #ifndef __JAVACPP_HACK__

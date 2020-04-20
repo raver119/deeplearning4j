@@ -44,13 +44,13 @@ namespace sd {
 
                 // now we should fill other dimensions 
                 if (e == 0) {
-                    for (int d = 0; d < array->rankOf(); d++)
-                        shape.emplace_back(array->sizeAt(d));
+                    for (int d = 0; d < array.rankOf(); d++)
+                        shape.emplace_back(array.sizeAt(d));
                 }
             }
 
             auto result = NDArrayFactory::create_('c', shape, list->dataType());
-            std::vector<Nd4jLong> indicesList((list->readRaw(0)->rankOf() + 1) * 2, 0);
+            std::vector<Nd4jLong> indicesList((list->readRaw(0).rankOf() + 1) * 2, 0);
             int skipPosition = 0;
             for (int e = 0; e < indices->lengthOf(); e++) {
                 auto idx = indices->e<int>(e);
@@ -65,7 +65,7 @@ namespace sd {
             }
 
             //OVERWRITE_RESULT(result);
-            setupResult(result, block);
+            setupResult(*result, block);
             return Status::OK();
         }
         DECLARE_SYN(TensorArrayGatherV3, gather_list);

@@ -45,7 +45,7 @@ namespace sd {
 
             // we recieve input array for graph integrity purposes only
             auto input = INPUT_VARIABLE(0);
-            setupResultList(list, block);
+            setupResultList(*list, block);
 //            OVERWRITE_RESULT(list);
 
             auto scalar = NDArrayFactory::create(list->counter());

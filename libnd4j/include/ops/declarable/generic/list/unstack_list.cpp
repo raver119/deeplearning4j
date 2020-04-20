@@ -32,13 +32,10 @@ namespace ops {
         if (outputList == nullptr) {
             outputList = new NDArrayList(0, true);
             //block.trackList(outputList);
-            setupResultList(outputList, block);
+            setupResultList(*outputList, block);
         }
-        outputList->unstack(input, INT_ARG(0));
+        outputList->unstack(*input, INT_ARG(0));
 
-        //OVERWRITE_RESULT(list);
-
-        //
         return Status::OK();
     }
 }

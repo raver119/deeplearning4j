@@ -50,7 +50,7 @@ namespace sd {
             REQUIRE_TRUE(sizes->isZ(), 0, "split_list: sizes array must have one of integer types");
             REQUIRE_TRUE(sizes->rankOf() == 1, 0, "split_list: sizes array must be 1D")
 
-            list->shape() = array->getShapeAsVector();
+            list->setShape(array->getShapeAsVector());
 
             // now let's build subarrays
             int cnt = 0;
@@ -68,7 +68,7 @@ namespace sd {
 
                 auto subarray = (*array)(indices);
 
-                auto status = list->write(e, new NDArray(subarray.dup(array->ordering())));
+                auto status = list->write(e, subarray.dup(array->ordering()));
 
                 if (status != ND4J_STATUS_OK)
                     return status;
@@ -76,7 +76,7 @@ namespace sd {
 
             if (!hasList) {
                 //OVERWRITE_RESULT(list);
-                setupResultList(list, block);
+                setupResultList(*list, block);
             }
 
             return Status::OK();

@@ -27,7 +27,7 @@ namespace sd {
     namespace ops {
         LIST_OP_IMPL(read_list, 1, 1, 0, 0) {
             auto list = INPUT_LIST(0);
-            NDArray *result = nullptr;
+            NDArray result;
 
             REQUIRE_TRUE(list->height() > 0, 0, "ReadList: number of elements in list should be positive prior to Read call");
 
