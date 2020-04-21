@@ -72,6 +72,10 @@ namespace sd {
             void printOutNode(const Node &node) const;
 
             std::vector<std::string> _placeholders;
+
+            mutable OptimizedGraph _optimized;
+
+            mutable std::mutex _optimizedLock;
         public:
             Graph(const FlatGraph *flatGraph = nullptr, const GraphMemoryManager &memoryManager = GraphMemoryManager());
 
@@ -168,7 +172,7 @@ namespace sd {
 
             FORCEINLINE bool built();
 
-            OptimizedGraph optimizedGraph() const;
+            const OptimizedGraph& optimizedGraph() const;
 
             /**
              * This method executes this Graph instance and returns execution results

@@ -31,11 +31,11 @@ namespace sd {
             return _sequences.size();
         }
 
-        OpSequence ExecutionLayer::at(uint64_t index) const {
+        const OpSequence& ExecutionLayer::at(uint64_t index) const {
             return _sequences[index];
         }
 
-        OpSequence ExecutionLayer::operator[](uint64_t index) const {
+        const OpSequence& ExecutionLayer::operator[](uint64_t index) const {
             return at(index);
         }
 

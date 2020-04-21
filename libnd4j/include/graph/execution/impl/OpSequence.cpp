@@ -29,12 +29,13 @@ namespace sd {
 
         OpSequence::OpSequence(const std::vector<ExecutionTask> &ops, const int deviceId) {
             _deviceId = deviceId;
-
             for (const auto v : ops)
                 _ops.emplace_back(v);
         }
 
         OpSequence::OpSequence(const OpSequence& other) noexcept{
+            _ops.clear();
+
             for (const auto v : other._ops)
                 _ops.emplace_back(v);
         }
@@ -58,6 +59,7 @@ namespace sd {
             if (this == &other)
                 return *this;
 
+            _ops.clear();
             for (const auto v : other._ops)
                 _ops.emplace_back(v);
 
@@ -68,11 +70,11 @@ namespace sd {
             return _deviceId;
         }
 
-        ExecutionTask OpSequence::at(uint64_t index) const {
+        const ExecutionTask& OpSequence::at(uint64_t index) const {
             return _ops[index];
         }
 
-        ExecutionTask OpSequence::operator[](uint64_t index) const {
+        const ExecutionTask& OpSequence::operator[](uint64_t index) const {
             return at(index);
         }
 
@@ -104,7 +106,7 @@ namespace sd {
             //
         }
 
-        ExecutionTask OpSequence::iterator::operator*() const {
+        const ExecutionTask& OpSequence::iterator::operator*() const {
             return _container._ops[_position];
         }
 

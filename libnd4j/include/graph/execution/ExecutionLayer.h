@@ -55,8 +55,8 @@ namespace sd {
              * This method returns specified OpSequence from this layer
              * @return
              */
-            OpSequence at(uint64_t index) const;
-            OpSequence operator[](uint64_t index) const;
+            const OpSequence& at(uint64_t index) const;
+            const OpSequence& operator[](uint64_t index) const;
 
             /**
              * This method appends OpSequence to the end of this layer

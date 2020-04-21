@@ -47,9 +47,12 @@ namespace sd {
             GraphMemoryManager *_memoryManager = nullptr;
             Graph *_originalGraph = nullptr;
 
-            std::mutex _mutex;
+            mutable std::mutex _mutex;
+
+            mutable size_t _size = 0;
         public:
             OptimizedGraph(Graph *original);
+            OptimizedGraph() = default;
             ~OptimizedGraph() = default;
 
             OptimizedGraph(const OptimizedGraph& other) noexcept;
@@ -96,6 +99,11 @@ namespace sd {
              */
             const Graph& originalGraph() const;
 
+            /**
+             * This method returns number of nodes in this graph instance
+             * @return
+             */
+            size_t size() const;
         protected:
             /*
             * optimize original graph
@@ -176,7 +184,6 @@ namespace sd {
             bool isInBranching() const { return bInBranching; }
             bool isOutBranching() const { return bOutBranching; }
             bool isProcessed() const { return bProcessed; }
-
         };
 
     }

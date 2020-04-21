@@ -61,6 +61,20 @@ namespace sd {
             return *this;
         }
 
+        size_t OptimizedGraph::size() const {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            std::vector<OpSequence> seq;
+            if (_size == 0)
+                for (const auto &v:_onion) {
+                    for (int e = 0; e < v.second.width(); e++) {
+                        _size += v.second.at(0).length();
+                    }
+                }
+
+            return _size;
+        }
+
         uint64_t OptimizedGraph::layers() const {
             return _onion.size();
         }
@@ -72,6 +86,7 @@ namespace sd {
         void OptimizedGraph::append(const std::vector<OpSequence> &layer) {
             std::lock_guard<std::mutex> lock(_mutex);
             _onion[_onion.size()] = layer;
+            _size = 0;
         }
 
         void OptimizedGraph::append(OpSequence &sequence) {
@@ -81,6 +96,7 @@ namespace sd {
         void OptimizedGraph::append(const ExecutionLayer &layer) {
             std::lock_guard<std::mutex> lock(_mutex);
             _onion[_onion.size()] = layer;
+            _size = 0;
         }
 
         const GraphMemoryManager &OptimizedGraph::memoryManager() const {

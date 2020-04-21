@@ -665,10 +665,14 @@ namespace sd {
             return _memoryMaager;
         }
 
-        OptimizedGraph Graph::optimizedGraph() const {
+        const OptimizedGraph& Graph::optimizedGraph() const {
+            std::lock_guard<std::mutex> lock(_optimizedLock);
 
-            OptimizedGraph optGraph(const_cast<Graph*>(this));
-            return optGraph;
+            // optionally rebuild optimized graph, if it's out of date
+            if (_optimized.size() != size())
+                _optimized = OptimizedGraph(const_cast<Graph*>(this));
+
+            return _optimized;
         }
     }
 }

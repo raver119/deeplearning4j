@@ -74,8 +74,8 @@ namespace sd {
              * @param index
              * @return
              */
-            ExecutionTask at(uint64_t index) const;
-            ExecutionTask operator[](uint64_t index) const;
+            const ExecutionTask& at(uint64_t index) const;
+            const ExecutionTask& operator[](uint64_t index) const;
 
             /**
              * This method allows to add DeclarableOp to the end of execution queue
@@ -101,7 +101,7 @@ namespace sd {
                 OpSequence & _container;
             public:
                 explicit iterator(OpSequence & container, uint64_t index = 0);
-                ExecutionTask operator*() const;
+                const ExecutionTask& operator*() const;
                 iterator & operator++();
                 iterator & operator++(int);
                 bool operator!=(const iterator &) const;
