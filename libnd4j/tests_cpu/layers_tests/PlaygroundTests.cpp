@@ -332,8 +332,11 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
     constexpr int N = 5;
 
     auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
-    //x.linspace(1);
+#if 0
+     x.linspace(1);
+#else
     fill_random<float>(x);
+#endif
 #define COMBINATIONS 1
 #if COMBINATIONS
     //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
@@ -421,8 +424,12 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
     constexpr int N = 5;// 3;// 5;
 
     auto x = NDArrayFactory::create<float>('f', { bases[0], bases[1], bases[2] , bases[3], bases[4] });
-    //x.linspace(1);
+
+#if 0
+    x.linspace(1);
+#else    
     fill_random<float>(x);
+#endif
 #define COMBINATIONS 1
 #if COMBINATIONS
     //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
@@ -476,7 +483,7 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
     }
     auto z = result.at(0);
 
-#if 1
+#if 0
     //check for the correctness
     NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('f', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
     original_argmax(x, dimension, exp);
@@ -488,7 +495,7 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
     exp.printIndexedBuffer("Expected");
     z->printIndexedBuffer("Z");
 #endif
-#if 1
+#if 0
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
 #endif
