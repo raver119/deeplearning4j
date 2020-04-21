@@ -319,9 +319,8 @@ void fill_random(sd::NDArray& arr) {
 
     }
 }
-
-
-TEST_F(PlaygroundTests, ArgMaxPerf) {
+ 
+void testLegacy(bool random) {
 #if 0
     int bases[] = { 3, 2, 4, 5, 7 };
     constexpr int Loop = 1;
@@ -332,11 +331,94 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
     constexpr int N = 5;
 
     auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
-#if 0
-     x.linspace(1);
+    if (!random) {
+        x.linspace(1);
+    }
+    else{
+        fill_random<float>(x);
+     }
+
+#define COMBINATIONS 1
+#if COMBINATIONS
+//https://www.rosettacode.org/wiki/Combinations#C.2B.2B
+for (int k = N; k >= 1; k--) {
+
+    std::string bitmask(k, 1); // K leading 1's
+    bitmask.resize(N, 0); // N-K trailing 0's
+
+    do {
+
+
+        std::vector<int> dimension;
+
+        std::vector<Nd4jLong> output_bases;
+
+        for (int i = 0; i < N; ++i) // [0..N-1] integers
+        {
+            if (bitmask[i])  dimension.push_back(i);
+            else {
+                output_bases.push_back(bases[i]);
+            }
+        }
 #else
-    fill_random<float>(x);
+std::vector<int> dimension = { 0,1,2,3 };
+int k = 4;
 #endif
+auto dim = NDArrayFactory::create<int>(dimension);
+
+#if 1 
+nd4j_printf("C(N:%d K:%d) \n", N, k);
+dim.printIndexedBuffer("Dimension");
+for (int xind : dimension) {
+    nd4j_printf(" %d ,", bases[xind]);
+}
+nd4j_printf("%s", "\n");
+#endif
+
+
+
+NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
+std::vector<Nd4jLong> values;
+sd::ResultSet result;
+for (int e = 0; e < Loop; e++) {
+    auto timeStart = std::chrono::system_clock::now();
+    original_argmax(x, dimension, exp);
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+    values.emplace_back(outerTime);
+}
+ 
+std::sort(values.begin(), values.end());
+
+nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+#if COMBINATIONS
+
+    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+}
+#endif
+}
+
+
+void testNewReduction(bool random, bool checkCorrectness = false) {
+
+#if 0
+    int bases[] = { 3, 2, 4, 5, 7 };
+    constexpr int Loop = 1;
+#else
+    int bases[] = { 8, 32, 64, 32, 64 };
+    constexpr int Loop = 10;
+#endif
+    constexpr int N = 5;
+
+    auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
+    if (!random) {
+        x.linspace(1);
+    }
+    else {
+        fill_random<float>(x);
+    }
+
 #define COMBINATIONS 1
 #if COMBINATIONS
     //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
@@ -387,21 +469,21 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
     }
     auto z = result.at(0);
 
-#if 1
-    //check for the correctness
-    NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
-    original_argmax(x, dimension, exp);
-#endif
+    if (checkCorrectness) {
+        //check for the correctness
+        NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
+        original_argmax(x, dimension, exp);
+   
 
 #if 0
-     x.printIndexedBuffer("X"); 
+    x.printIndexedBuffer("X");
     exp.printIndexedBuffer("Expected");
     z->printIndexedBuffer("Z");
 #endif
-#if 1
-    ASSERT_TRUE(exp.isSameShape(z));
-    ASSERT_TRUE(exp.equalsTo(z));
-#endif
+ 
+        ASSERT_TRUE(exp.isSameShape(z));
+        ASSERT_TRUE(exp.equalsTo(z));
+    }
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
@@ -412,6 +494,28 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
     }
 #endif
 }
+
+
+TEST_F(PlaygroundTests, ArgMaxPerfLinspace) {
+    testNewReduction(false,true);
+}
+
+TEST_F(PlaygroundTests, ArgMaxPerfRandom) {
+    testNewReduction(true,true);
+}
+
+TEST_F(PlaygroundTests, ArgMaxPerfLegacyLinspace) {
+    testLegacy(false);
+}
+
+TEST_F(PlaygroundTests, ArgMaxPerfLegacyRandom) {
+    testLegacy(true);
+}
+
+
+
+
+#if CheckFortran
 
 TEST_F(PlaygroundTests, FortranArgMaxPerf) {
 #if 0
@@ -510,7 +614,7 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
 #endif
 }
 
-
+#endif
 
 /*
 

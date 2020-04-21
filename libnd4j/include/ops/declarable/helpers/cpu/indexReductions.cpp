@@ -574,6 +574,57 @@ namespace sd {
 			}
 
 
+			template<typename X, typename Z, size_t constRank, bool Last_Index_Faster = true>
+			void argMaxCaseConstRank(const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong& output_stride, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, X* bufferX, Z* outputZ)
+			{
+
+				//total
+				Nd4jLong total = getLength<Last_Index_Faster>(outer_bases, constRank);
+				Nd4jLong inner_stride =/* true ?*/ inner_strides[second_rank - 1];// : inner_strides[0];
+
+				auto func = [outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+#if 0
+					nd4j_printf("___%s_________%d\n", __PRETTY_FUNCTION__, thread_id);
+#endif
+					sd::CoordsState<constRank - 1> cst;
+					size_t offset = sd::init_coords<constRank, 0, Last_Index_Faster>(cst, start, outer_bases, outer_strides);
+
+
+					Nd4jLong loopTotal = stop - start;
+					//lambda captures values as immutable , so either we should make it mutable or just 
+					// use another local value
+					Z* outputPtr = &(outputZ[start * output_stride]);
+
+					if (second_rank == 1) {
+						const Nd4jLong inner_total = inner_bases[0];
+						for (Nd4jLong i = 0; i < loopTotal; i++) {
+							Z argMax; X max;
+							argMaxInnerReduction(&(bufferX[offset]), inner_total, inner_stride, max, argMax);
+							outputPtr[i * output_stride] = argMax;
+							offset = sd::inc_coords<constRank, 0, Last_Index_Faster>(cst, offset);
+						}
+
+					}
+					else {
+						Nd4jLong inner_last;
+						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
+
+						for (Nd4jLong i = 0; i < loopTotal; i++) {
+							Z argMax; X max;
+							argMaxInnerReduction<X, Z, true>(second_rank, &(bufferX[offset]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
+							outputPtr[i * output_stride] = argMax;
+							offset = sd::inc_coords<constRank, 0, Last_Index_Faster>(cst, offset);
+
+						}
+					}
+
+				};
+
+				//
+				samediff::Threads::parallel_tad(func, 0, total, 1);
+			}
+
+
 
 			template<typename X, typename Z>
 			void  argMax_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
@@ -619,7 +670,16 @@ namespace sd {
 
 					}
 					else if (try_squash_outer && first_rank <= output_rank) {
-						argMaxCase3<X, Z>(first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						//add some constant cases for better results
+						if (first_rank == 2) {
+							argMaxCaseConstRank<X, Z, 2, true>(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						}
+						else if (first_rank == 3) {
+							argMaxCaseConstRank<X, Z, 3, true>(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						}
+						else {
+							argMaxCase3<X, Z>(first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						}
 					}
 					//no squashing was done
 					else if (first_rank == output_rank) {
