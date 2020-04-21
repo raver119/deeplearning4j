@@ -322,7 +322,7 @@ void fill_random(sd::NDArray& arr) {
 
 
 TEST_F(PlaygroundTests, ArgMaxPerf) {
-#if 1
+#if 0
     int bases[] = { 3, 2, 4, 5, 7 };
     constexpr int Loop = 1;
 #else
@@ -411,7 +411,7 @@ TEST_F(PlaygroundTests, ArgMaxPerf) {
 }
 
 TEST_F(PlaygroundTests, FortranArgMaxPerf) {
-#if 1
+#if 0
     int bases[] = { 3,2,   4, 5,7};
     constexpr int Loop = 1;
 #else
@@ -482,7 +482,7 @@ TEST_F(PlaygroundTests, FortranArgMaxPerf) {
     original_argmax(x, dimension, exp);
 #endif
 
-#if 1
+#if 0
     
     //x.printIndexedBuffer("X");
     exp.printIndexedBuffer("Expected");

@@ -43,17 +43,14 @@ namespace sd {
             if (block.width() > 1 && axis.size() == 0) {
                 auto axisVector = INPUT_VARIABLE(1);
                 helpers::adjustAxis(input->rankOf(), axisVector, axis);
-#if 1
-#else
+ 
                 input->applyIndexReduce(indexreduce::IndexMin, *output, axis);
-#endif
+ 
             } else {
                 helpers::adjustAxis(input->rankOf(), axis);
-#if 1
-
-#else
+ 
                 input->applyIndexReduce(indexreduce::IndexMin, *output, axis);
-#endif
+ 
             }
 
             STORE_RESULT(output);

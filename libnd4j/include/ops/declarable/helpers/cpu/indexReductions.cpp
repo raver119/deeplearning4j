@@ -265,7 +265,7 @@ namespace sd {
 					}//<256
 				}
 
-#if 1				
+#if 0			
 				nd4j_printf("___%f +\n", max );
 #endif
 			}
@@ -311,7 +311,7 @@ namespace sd {
 				output[output_stride] = argMax1;
 				output[2*output_stride] = argMax2;
 				output[3*output_stride] = argMax3;
-#if 1				
+#if 0			
 				nd4j_printf("___%f__%f__%f__%f+\n",  max,max1,max2,max3);
 #endif
 			}
@@ -399,7 +399,7 @@ namespace sd {
 
 						const Nd4jLong inner_total = inner_bases[0];
 						if (loopTotal >= 4 && (inner_stride > outer_stride || inner_total<256)) {
-#if 1
+#if 0
 							nd4j_printf("___%s_________%d %d+ looptotal %d innertotal %d\n", __PRETTY_FUNCTION__, thread_id, 0, loopTotal,inner_total);
 #endif
 							Nd4jLong loopTotal_K = loopTotal / 4;
@@ -419,7 +419,7 @@ namespace sd {
 							}
 						}
 						else {
-#if 1
+#if 0
 							nd4j_printf("___%s_________%d %d+\n", __PRETTY_FUNCTION__, thread_id, 1);
 #endif
 							//better do blocking inside inner reduction whenever possible
@@ -434,7 +434,7 @@ namespace sd {
 
 					}
 					else {
-#if 1
+#if 0
 						nd4j_printf("___%s_________%d %d+\n", __PRETTY_FUNCTION__, thread_id, 2);
 #endif
 						Nd4jLong inner_last;
@@ -450,7 +450,7 @@ namespace sd {
 					}
 
 				};
-#if 1
+#if 0
 				func(0, 0, total, 1);
 #else
 				//
@@ -467,7 +467,7 @@ namespace sd {
                 Nd4jLong inner_stride  = true ? inner_strides[second_rank - 1]  : inner_strides[0];
 
 				auto func = [first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
-#if 1
+#if 0
 					nd4j_printf("___%s_________%d\n", __PRETTY_FUNCTION__, thread_id);
 #endif
 					Nd4jLong outer_coords[MAX_RANK] = {};
@@ -522,7 +522,7 @@ namespace sd {
 				Nd4jLong inner_stride = true /*Last_Index_Faster*/? inner_strides[second_rank - 1] : inner_strides[0];
 
 				auto func = [first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
-#if 1
+#if 0
 					
 #endif
 					Nd4jLong outer_coords[MAX_RANK] = {};
@@ -541,7 +541,9 @@ namespace sd {
 					Nd4jLong loopTotal = stop - start;
 
 					if (second_rank == 1) {
+#if 0
 						nd4j_printf("___%s_________+%d\n", __PRETTY_FUNCTION__, 0);
+#endif
 						const Nd4jLong inner_total = inner_bases[0];
 						for (Nd4jLong i = 0; i < loopTotal; i++) {
 							Z argMax; X max;
@@ -552,7 +554,9 @@ namespace sd {
 
 					}
 					else {
+#if 0
 						nd4j_printf("___%s_________+%d\n", __PRETTY_FUNCTION__, 1);
+#endif
 						Nd4jLong inner_last;
 						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
 						for (Nd4jLong i = 0; i < loopTotal; i++) {
@@ -584,7 +588,7 @@ namespace sd {
 				const Nd4jLong* input_strides   = &(input_shapeInfo[rank + 1]);
 				const Nd4jLong  output_rank     = output_shapeInfo[0];
 				const Nd4jLong* output_strides  = &(output_shapeInfo[output_rank + 1]);
-#if 1
+#if 0
 				nd4j_printf("___%s_________+ input_rank %d output_rank %d \n", __PRETTY_FUNCTION__,rank,output_rank);
 #endif
 				Nd4jLong new_bases[MAX_RANK];
@@ -610,7 +614,7 @@ namespace sd {
 						argMaxCase1Scalar<X,Z>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
 
 					}
-					else if (try_squash_outer && first_rank == 1) {
+					else if (/*try_squash_outer &&*/ first_rank == 1) {
 						argMaxCase2( outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
 
 					}
