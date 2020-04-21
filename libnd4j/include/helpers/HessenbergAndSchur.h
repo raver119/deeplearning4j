@@ -65,6 +65,12 @@ class Schur {
 
         void calcShift(const int ind, const int iter, T& shift, NDArray& shiftInfo);
 
+        void initFrancisQR(const int ind1,  const int ind2, const NDArray& shiftVec, int& ind3, NDArray& householderVec);
+
+        void doFrancisQR(const int ind1, const int ind2, const int ind3, const NDArray& householderVec);
+
+        void calcFromHessenberg(NDArray& H, NDArray& Q);
+
     private:
 
     	static const int _maxItersPerRow = 40;
@@ -72,9 +78,9 @@ class Schur {
         void evalData(const NDArray& matrix);
 
 	    //////////////////////////////////////////////////////////////////////////
-		FORCEINLINE Nd4jLong getSmallSubdiagEntry(const int inInd) {
+		FORCEINLINE int getSmallSubdiagEntry(const int inInd) {
 
-			Nd4jLong outInd = inInd;
+			int outInd = inInd;
 			while (outInd > 0) {
 		    	T factor = math::nd4j_abs<T>(_T.t<T>(outInd-1, outInd-1)) + math::nd4j_abs<T>(_T.t<T>(outInd, outInd));
 		    	if (math::nd4j_abs<T>(_T.t<T>(outInd, outInd-1)) <= DataTypeUtils::eps<T>() * factor)
@@ -83,7 +89,6 @@ class Schur {
 		  	}
 			return outInd;
 		}
-
 };
 
 

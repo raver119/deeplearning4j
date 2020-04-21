@@ -136,14 +136,12 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
   		NDArray fistRow = matrix({0,1, 0,0}, true);
 
 		if(tail.isColumnVector()) {
-
     		auto resultingRow = mmul(tail.transpose(), bottomPart);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
     		bottomPart -= mmul(tail, resultingRow) * coeff;
 		}
 		else {
-
     		auto resultingRow = mmul(tail, bottomPart);
     		resultingRow += fistRow;
     		fistRow -= resultingRow * coeff;
