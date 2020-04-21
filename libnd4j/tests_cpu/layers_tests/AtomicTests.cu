@@ -145,6 +145,8 @@ static void divHost(NDArray &input, NDArray &output) {
     BUILD_SINGLE_SELECTOR(input.dataType(), divLauncher, (input.specialBuffer(), input.lengthOf(), output.specialBuffer()), FLOAT_TYPES);
 }
 
+#if !defined(_WIN32) && !defined(__WIN32__) && !defined(WIN32)
+
 TEST_F(AtomicTests, test_multiply) {
     std::vector<sd::DataType> dtypes = {sd::DataType::FLOAT32, sd::DataType::DOUBLE, sd::DataType::INT16, sd::DataType::HALF};
 
@@ -239,3 +241,5 @@ TEST_F(AtomicTests, test_div) {
         ASSERT_EQ(exp, output);
     }
 }
+
+#endif
