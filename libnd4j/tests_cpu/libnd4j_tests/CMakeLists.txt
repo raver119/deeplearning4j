@@ -115,7 +115,7 @@ elseif(WIN32)
 		set(CMAKE_CXX_FLAGS  " -g -fPIC -std=c++11 -Wa,-mbig-obj")
 	endif()
 else()
-    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -DLINUX_BUILD=true")
+    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -ffast-math -DFFAST_MATH=true -DLINUX_BUILD=true")
 
     if ("${_RELEASE}" OR CMAKE_BUILD_TYPE STREQUAL "Release")
         message("Release build for tests")
