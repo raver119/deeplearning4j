@@ -98,7 +98,7 @@ public class KerasModelEndToEndTest extends BaseDL4JTest {
 
     @Override
     public long getTimeoutMilliseconds() {
-        return 90000L;
+        return 180000L;     //Most benchmarks should run very quickly; large timeout is to avoid issues with unusually slow download of test resources
     }
 
     @Test(expected = IllegalStateException.class)
@@ -320,7 +320,7 @@ public class KerasModelEndToEndTest extends BaseDL4JTest {
         INDArray[] output = model.output(input);
     }
 
-    @Test
+    @Test @Ignore   //AB 2020/04/22 Ignored until Keras model import updated to use NHWC support
     public void importAcganGenerator() throws Exception {
         ComputationGraph model = importFunctionalModelH5Test("modelimport/keras/examples/acgan/acgan_generator_1_epochs.h5");
         //System.out.println(model.summary()) ;

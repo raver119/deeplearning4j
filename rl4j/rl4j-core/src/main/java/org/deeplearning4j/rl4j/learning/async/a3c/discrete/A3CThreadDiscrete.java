@@ -27,7 +27,6 @@ import org.deeplearning4j.rl4j.policy.ACPolicy;
 import org.deeplearning4j.rl4j.policy.Policy;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.space.Encodable;
-import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.rng.Random;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.api.rng.Random;
@@ -66,13 +65,13 @@ public class A3CThreadDiscrete<O extends Encodable> extends AsyncThreadDiscrete<
     }
 
     @Override
-    protected Policy<O, Integer> getPolicy(IActorCritic net) {
+    protected Policy<Integer> getPolicy(IActorCritic net) {
         return new ACPolicy(net, rnd);
     }
 
     @Override
     protected UpdateAlgorithm<IActorCritic> buildUpdateAlgorithm() {
         int[] shape = getHistoryProcessor() == null ? getMdp().getObservationSpace().getShape() : getHistoryProcessor().getConf().getShape();
-        return new A3CUpdateAlgorithm(asyncGlobal, shape, getMdp().getActionSpace().getSize(), conf.getLearnerUpdateFrequency(), conf.getGamma());
+        return new AdvantageActorCriticUpdateAlgorithm(asyncGlobal.getTarget().isRecurrent(), shape, getMdp().getActionSpace().getSize(), conf.getGamma());
     }
 }

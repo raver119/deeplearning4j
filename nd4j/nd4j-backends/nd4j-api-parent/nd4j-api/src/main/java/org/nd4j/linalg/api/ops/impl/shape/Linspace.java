@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2019 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -117,6 +118,6 @@ public class Linspace extends DynamicCustomOp {
 
     @Override
     public List<SDVariable> doDiff(List<SDVariable> gradients){
-        return Arrays.asList(f().zerosLike(arg(0)), f().zerosLike(arg(1)), f().zerosLike(arg(2)));
+        return Arrays.asList(sameDiff.zerosLike(arg(0)), sameDiff.zerosLike(arg(1)), sameDiff.zerosLike(arg(2)));
     }
 }
