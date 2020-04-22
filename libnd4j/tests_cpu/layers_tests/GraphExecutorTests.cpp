@@ -44,7 +44,7 @@ TEST_F(GraphExecutorTests, test_basic_exec_1) {
     GraphMemoryManager memoryManager;
     Graph graph;
 
-    OptimizedGraph optimizedGraph(&graph);
+    OptimizedGraph optimizedGraph;
     OpSequence sequence;
 
     optimizedGraph.append(sequence);
@@ -73,7 +73,7 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     graph.addNode(m, {"A", "B"});
     graph.addNode(a, {"mul", "C"});
 
-    OptimizedGraph optimizedGraph(&graph);
+    OptimizedGraph optimizedGraph;
     OpSequence sequence;
 
     ASSERT_EQ(2, m.protoContext().inputs().size());
