@@ -45,7 +45,7 @@ class Householder {
     *
     *  x - input vector, remains unaffected
     */
-    static NDArray evalHHmatrix(const NDArray& x);
+    // static NDArray evalHHmatrix(const NDArray& x);
 
     /**
     *  this method evaluates data required for calculation of Householder matrix P = identity_matrix - coeff * w * w^T

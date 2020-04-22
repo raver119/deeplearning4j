@@ -289,7 +289,6 @@ void Schur<T>::doFrancisQR(const int ind1, const int ind2, const int ind3, const
             else if (!firstIter)
                 _T.t<T>(k, k-1) = normX;
 
-
             NDArray block1 = _T({k,k+3, k,numCols}, true);
             Householder<T>::mulLeft(block1, tail, coeff);
 
@@ -348,8 +347,6 @@ void Schur<T>::calcFromHessenberg(NDArray& H, NDArray& Q) {
 
     if(norm != T(0)) {
 
-        int ii=0;
-
         while (iu >= 0) {
 
             const int il = getSmallSubdiagEntry(iu);
@@ -384,10 +381,7 @@ void Schur<T>::calcFromHessenberg(NDArray& H, NDArray& Q) {
                 int im;
                 initFrancisQR(il, iu, shiftVec, im, householderVec);
                 doFrancisQR(il, im, iu, householderVec);
-
             }
-            if(ii++ == 6)
-                break;
         }
     }
 }

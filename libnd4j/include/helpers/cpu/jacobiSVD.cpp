@@ -233,7 +233,7 @@ void JacobiSVD<T>::createJacobiRotationGivens(const T& p, const T& q, NDArray& r
     else {
         T t = p / q;
         T u = math::nd4j_sqrt<T,T>((T)1 + t*t);
-        if( q <(T)0)
+        if(q < (T)0)
             u = -u;
         sin = -(T)1 / u;
         cos = -t * sin;

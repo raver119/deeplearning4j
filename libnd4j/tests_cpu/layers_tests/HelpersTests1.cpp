@@ -61,35 +61,34 @@ TEST_F(HelpersTests1, test_binary_search_2) {
     ASSERT_EQ(-1, idx);
 }
 
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, evalHHmatrix_test1) {
+// ///////////////////////////////////////////////////////////////////
+// TEST_F(HelpersTests1, evalHHmatrix_test1) {
 
 
-    auto x = NDArrayFactory::create<double>('c', {1,4}, {14,17,3,1});
-    auto exp = NDArrayFactory::create<double>('c', {4,4}, {-0.629253, -0.764093,   -0.13484, -0.0449467, -0.764093,  0.641653, -0.0632377, -0.0210792, -0.13484,-0.0632377,    0.98884,-0.00371987, -0.0449467,-0.0210792,-0.00371987,    0.99876});
+//     auto x = NDArrayFactory::create<double>('c', {4}, {14,17,3,1});
+//     auto exp = NDArrayFactory::create<double>('c', {4,4}, {-0.629253, -0.764093,   -0.13484, -0.0449467, -0.764093,  0.641653, -0.0632377, -0.0210792, -0.13484,-0.0632377,    0.98884,-0.00371987, -0.0449467,-0.0210792,-0.00371987,    0.99876});
 
-    auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
-    ASSERT_TRUE(result.isSameShape(&exp));
-    ASSERT_TRUE(result.equalsTo(&exp));
+//     auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
+//     ASSERT_TRUE(result.isSameShape(&exp));
+//     ASSERT_TRUE(result.equalsTo(&exp));
 
-}
+// }
 
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, evalHHmatrix_test2) {
+// ///////////////////////////////////////////////////////////////////
+// TEST_F(HelpersTests1, evalHHmatrix_test2) {
 
-    #ifdef __CUDABLAS__
-    return;
-    #endif
-    auto x = NDArrayFactory::create<double>('c', {1,3}, {14,-4,3});
-    auto exp = NDArrayFactory::create<double>('c', {3,3}, {-0.941742, 0.269069,-0.201802, 0.269069, 0.962715,0.0279639, -0.201802,0.0279639, 0.979027});
+//     #ifdef __CUDABLAS__
+//     return;
+//     #endif
+//     auto x = NDArrayFactory::create<double>('c', {3}, {14,-4,3});
+//     auto exp = NDArrayFactory::create<double>('c', {3,3}, {-0.941742, 0.269069,-0.201802, 0.269069, 0.962715,0.0279639, -0.201802,0.0279639, 0.979027});
 
-    auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
+//     auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
 
-    ASSERT_TRUE(result.isSameShape(&exp));
-    ASSERT_TRUE(result.equalsTo(&exp));
+//     ASSERT_TRUE(result.isSameShape(&exp));
+//     ASSERT_TRUE(result.equalsTo(&exp));
 
-}
-
+// }
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, evalHHmatrixData_test1) {

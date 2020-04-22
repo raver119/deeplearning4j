@@ -26,45 +26,51 @@ namespace helpers {
 
 
 //////////////////////////////////////////////////////////////////////////
-template <typename T>
-NDArray Householder<T>::evalHHmatrix(const NDArray& x) {
+// template <typename T>
+// NDArray Householder<T>::evalHHmatrix(const NDArray& x) {
 
-	// input validation
-	if(!x.isVector() && !x.isScalar())
-		throw std::runtime_error("ops::helpers::Householder::evalHHmatrix method: input array must be vector or scalar!");
+// 	// input validation
+// 	if(x.rankOf() != 1 && !x.isScalar())
+// 		throw std::runtime_error("ops::helpers::Householder::evalHHmatrix method: iinput array must have rank = 1 or to be scalar!");
 
-	const auto xLen = (int)x.lengthOf();
+// 	const auto xLen = x.lengthOf();
 
-	NDArray w(x.ordering(), {xLen, 1}, x.dataType(), x.getContext());							// column-vector
+// 	NDArray w(x.ordering(), {xLen, 1}, x.dataType(), x.getContext());							// column-vector
 
-	T coeff;
-	T normX = x.reduceNumber(reduce::Norm2).t<T>(0);
+// 	NDArray xTail = xLen > 1 ? x({1,-1}) : NDArray();
+// 	T tailXnorm   = xLen > 1 ? xTail.reduceNumber(reduce::SquaredNorm).t<T>(0) : (T)0;
 
-	const auto xFirstElem = x.t<T>(0);
+// 	const auto xFirstElem = x.t<T>(0);
 
-	if(normX*normX - xFirstElem * xFirstElem <= DataTypeUtils::min<T>() || xLen == 1) {
+// 	T coeff, normX;
 
-		normX = xFirstElem;
-		coeff = 0.f;
-		w = 0.f;
-	}
-	else {
+// 	if(tailXnorm <= DataTypeUtils::min<T>()) {
 
-		if(xFirstElem >= (T)0.f)
-			normX = -normX;									// choose opposite sign to lessen roundoff error
+// 		normX = xFirstElem;
+// 		coeff = 0.f;
+// 		if(xLen > 1)
+// 			w({1,-1, 0,0}) = 0.f;
+// 	}
+// 	else {
 
-		T u0 = xFirstElem - normX;
-		coeff = -u0 / normX;
-		w.assign(x / u0);
-	}
+// 		normX = math::nd4j_sqrt<T,T>(xFirstElem*xFirstElem + tailXnorm);
 
-	w.t<T>(0) = (T)1;
+// 		if(xFirstElem >= (T)0.f)
+// 			normX = -normX;									// choose opposite sign to lessen roundoff error
 
-	NDArray identity(x.ordering(), {xLen, xLen}, x.dataType(), x.getContext());
-	identity.setIdentity();																			// identity matrix
+// 		coeff = (normX - xFirstElem) / normX;
 
-	return identity - mmul(w, w.transpose()) * coeff;
-}
+// 		if(xLen > 1)
+// 			w({1,-1, 0,0}).assign(xTail / (xFirstElem - normX));
+// 	}
+
+// 	w.t<T>(0) = (T)1;
+
+// 	NDArray identity(x.ordering(), {xLen, xLen}, x.dataType(), x.getContext());
+// 	identity.setIdentity();																			// identity matrix
+
+// 	return identity - mmul(w, w.transpose()) * coeff;
+// }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
@@ -77,11 +83,14 @@ void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
 	if(!x.isScalar() && x.lengthOf() != tail.lengthOf() + 1)
 		throw std::runtime_error("ops::helpers::Householder::evalHHmatrixData method: input tail vector must have length less than unity compared to input x vector!");
 
-	normX = x.reduceNumber(reduce::Norm2).t<T>(0);
+	const auto xLen = x.lengthOf();
+
+	const NDArray xTail = xLen > 1 ? x({1,-1}) : NDArray();
+	T tailXnorm   = xLen > 1 ? xTail.reduceNumber(reduce::SquaredNorm).t<T>(0) : (T)0;
 
 	const auto xFirstElem = x.t<T>(0);
 
-	if(normX*normX - xFirstElem * xFirstElem <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+	if(tailXnorm <= DataTypeUtils::min<T>()) {
 
 		normX = xFirstElem;
 		coeff = (T)0.f;
@@ -89,13 +98,14 @@ void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
 	}
 	else {
 
+		normX = math::nd4j_sqrt<T,T>(xFirstElem*xFirstElem + tailXnorm);
+
 		if(xFirstElem >= (T)0.f)
 			normX = -normX;									// choose opposite sign to lessen roundoff error
 
-		T u0 = xFirstElem - normX;
-		coeff = -u0 / normX;
+		coeff = (normX - xFirstElem) / normX;
 
-		tail.assign(x({1,-1}) / u0);
+		tail.assign(xTail / (xFirstElem - normX));
 	}
 }
 
@@ -138,14 +148,16 @@ void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff
 		if(tail.isColumnVector()) {
     		auto resultingRow = mmul(tail.transpose(), bottomPart);
     		resultingRow += fistRow;
-    		fistRow -= resultingRow * coeff;
-    		bottomPart -= mmul(tail, resultingRow) * coeff;
+    		resultingRow *= coeff;
+    		fistRow -= resultingRow;
+    		bottomPart -= mmul(tail, resultingRow);
 		}
 		else {
     		auto resultingRow = mmul(tail, bottomPart);
     		resultingRow += fistRow;
-    		fistRow -= resultingRow * coeff;
-    		bottomPart -= mmul(tail.transpose(), resultingRow) * coeff;
+    		resultingRow *= coeff;
+    		fistRow -= resultingRow;
+    		bottomPart -= mmul(tail.transpose(), resultingRow);
 		}
 	}
 }
@@ -170,15 +182,17 @@ void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail, const T coef
 
     		auto resultingCol = mmul(rightPart, tail);
     		resultingCol += fistCol;
-    		fistCol -= resultingCol * coeff;
-    		rightPart -= mmul(resultingCol, tail.transpose()) * coeff;
+    		resultingCol *= coeff;
+    		fistCol -= resultingCol;
+    		rightPart -= mmul(resultingCol, tail.transpose());
 		}
 		else {
 
     		auto resultingCol = mmul(rightPart, tail.transpose());
     		resultingCol += fistCol;
-    		fistCol -= resultingCol * coeff;
-    		rightPart -= mmul(resultingCol, tail) * coeff;
+    		resultingCol *= coeff;
+    		fistCol -= resultingCol;
+    		rightPart -= mmul(resultingCol, tail);
 		}
 	}
 }
