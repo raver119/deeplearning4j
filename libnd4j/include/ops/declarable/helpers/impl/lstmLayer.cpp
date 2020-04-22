@@ -1027,10 +1027,10 @@ void lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
 
             // bp
             for (int t = sL-1; t >= 0; --t) {
-                const NDArray dLdhh  = dLdh ? dLdhSet->at(t) : NDArrayFactory::undefined();
-                const NDArray dLdhhL = (t == sL-1 && dLdhL) ? *dLdhL : NDArrayFactory::undefined();
-                const NDArray dLdccL = (t == sL-1 && dLdcL) ? *dLdcL : NDArrayFactory::undefined();
-                lstmLayerCellBp(&xSet->at(t), Wx, Wr, b, &hSet->at(t), &cSet->at(t), Wp, &dLdhh, &dLdhhL, &dLdccL,
+                const NDArray* dLdhh  = dLdh ? &dLdhSet->at(t) : nullptr;
+                const NDArray* dLdhhL = (t == sL-1 && dLdhL) ? dLdhL : nullptr;
+                const NDArray* dLdccL = (t == sL-1 && dLdcL) ? dLdcL : nullptr;
+                lstmLayerCellBp(&xSet->at(t), Wx, Wr, b, &hSet->at(t), &cSet->at(t), Wp, dLdhh, dLdhhL, dLdccL,
                                 &zSet->at(t), &aSet->at(t), &cSet->at(t+1), params, &dLdxSet->at(t), dLdWx, dLdWr, dLdh0, dLdc0, dLdb, dLdWp);
             }
         }
@@ -1062,10 +1062,10 @@ void lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                 // bp
                 for (int t = limit-1; t >= 0; --t) {
                     const auto ind = getBatchTimeTotalIndex(dataFormat, sL, bS, t, e);
-                    const NDArray dLdhh  = dLdh ? dLdhSet->at(ind) : NDArrayFactory::undefined();
-                    const NDArray dLdhhL = (t == limit-1 && dLdhL) ? dLdhLSet->at(e) : NDArrayFactory::undefined();
-                    const NDArray dLdccL = (t == limit-1 && dLdcL) ? dLdcLSet->at(e) : NDArrayFactory::undefined();
-                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at(t*bS + e), &cSet->at(t*bS + e), Wp, &dLdhh, &dLdhhL, &dLdccL,
+                    const NDArray* dLdhh  = dLdh ? &dLdhSet->at(ind) : nullptr;
+                    const NDArray* dLdhhL = (t == limit-1 && dLdhL) ? &dLdhLSet->at(e) : nullptr;
+                    const NDArray* dLdccL = (t == limit-1 && dLdcL) ? &dLdcLSet->at(e) : nullptr;
+                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at(t*bS + e), &cSet->at(t*bS + e), Wp, dLdhh, dLdhhL, dLdccL,
                                     &zSet->at(t*bS + e), &aSet->at(t*bS + e), &cSet->at((t+1)*bS + e), params, &dLdxSet->at(ind), dLdWx, dLdWr,
                                     &dLdh0Set->at(e), &dLdc0Set->at(e), dLdb, dLdWp);
                 }
@@ -1094,10 +1094,10 @@ void lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
 
             // bp
             for (int t = 0; t < sL; ++t) {
-                const NDArray dLdhh  = dLdh ? dLdhSet->at(t) : NDArrayFactory::undefined();
-                const NDArray dLdhhL = (t == 0 && dLdhL) ? *dLdhL : NDArrayFactory::undefined();
-                const NDArray dLdccL = (t == 0 && dLdcL) ? *dLdcL : NDArrayFactory::undefined();
-                lstmLayerCellBp(&xSet->at(t), Wx, Wr, b, &hSet->at(t+1), &cSet->at(t+1), Wp,  &dLdhh, &dLdhhL, &dLdccL,
+                const NDArray* dLdhh  = dLdh ? &dLdhSet->at(t) : nullptr;
+                const NDArray* dLdhhL = (t == 0 && dLdhL) ? dLdhL : nullptr;
+                const NDArray* dLdccL = (t == 0 && dLdcL) ? dLdcL : nullptr;
+                lstmLayerCellBp(&xSet->at(t), Wx, Wr, b, &hSet->at(t+1), &cSet->at(t+1), Wp, dLdhh, dLdhhL, dLdccL,
                                 &zSet->at(t), &aSet->at(t), &cSet->at(t), params, &dLdxSet->at(t), dLdWx, dLdWr, dLdh0, dLdc0, dLdb, dLdWp);
             }
         }
@@ -1129,10 +1129,10 @@ void lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                 // bp
                 for (int t = sL-limit; t < sL; ++t) {
                     const auto ind = getBatchTimeTotalIndex(dataFormat, sL, bS, t, e);
-                    const NDArray dLdhh  = dLdh ? dLdhSet->at(ind) : NDArrayFactory::undefined();
-                    const NDArray dLdhhL = (t == sL-limit && dLdhL) ? dLdhLSet->at(e) : NDArrayFactory::undefined();
-                    const NDArray dLdccL = (t == sL-limit && dLdcL) ? dLdcLSet->at(e) : NDArrayFactory::undefined();
-                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at((t+1)*bS + e), &cSet->at((t+1)*bS + e), Wp, &dLdhh, &dLdhhL, &dLdccL,
+                    const NDArray* dLdhh  = dLdh ? &dLdhSet->at(ind) : nullptr;
+                    const NDArray* dLdhhL = (t == sL-limit && dLdhL) ? &dLdhLSet->at(e) : nullptr;
+                    const NDArray* dLdccL = (t == sL-limit && dLdcL) ? &dLdcLSet->at(e) : nullptr;
+                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at((t+1)*bS + e), &cSet->at((t+1)*bS + e), Wp, dLdhh, dLdhhL, dLdccL,
                                     &zSet->at(t*bS + e), &aSet->at(t*bS + e), &cSet->at(t*bS + e), params, &dLdxSet->at(ind), dLdWx, dLdWr,
                                     &dLdh0Set->at(e), &dLdc0Set->at(e), dLdb, dLdWp);
                 }
@@ -1169,10 +1169,10 @@ void lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
                 // bp
                 for (int t = 0; t < limit; ++t) {
                     const auto ind = getBatchTimeTotalIndex(dataFormat, sL, bS, t, e);
-                    const NDArray dLdhh  = dLdh ? dLdhSet->at(ind) : NDArrayFactory::undefined();
-                    const NDArray dLdhhL = (t == 0 && dLdhL) ? dLdhLSet->at(e) : NDArrayFactory::undefined();
-                    const NDArray dLdccL = (t == 0 && dLdcL) ? dLdcLSet->at(e) : NDArrayFactory::undefined();
-                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at((t+1)*bS + e), &cSet->at((t+1)*bS + e), Wp, &dLdhh, &dLdhhL, &dLdccL,
+                    const NDArray* dLdhh  = dLdh ? &dLdhSet->at(ind) : nullptr;
+                    const NDArray* dLdhhL = (t == 0 && dLdhL) ? &dLdhLSet->at(e) : nullptr;
+                    const NDArray* dLdccL = (t == 0 && dLdcL) ? &dLdcLSet->at(e) : nullptr;
+                    lstmLayerCellBp(&xSet->at(ind), Wx, Wr, b, &hSet->at((t+1)*bS + e), &cSet->at((t+1)*bS + e), Wp, dLdhh, dLdhhL, dLdccL,
                                     &zSet->at(t*bS + e), &aSet->at(t*bS + e), &cSet->at(t*bS + e), params, &dLdxSet->at(ind), dLdWx, dLdWr,
                                     &dLdh0Set->at(e), &dLdc0Set->at(e), dLdb, dLdWp);
                 }

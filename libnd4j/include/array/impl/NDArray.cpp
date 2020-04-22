@@ -61,16 +61,16 @@ NDArray::NDArray(const NDArray& other) {
     else
         _buffer = std::make_shared<DataBuffer>();
         */
-    _buffer = other._buffer;
-    _shapeInfo = other._shapeInfo;
+    _buffer     = other._buffer;
+    _shapeInfo  = other._shapeInfo;
     _shapeInfoD = other._shapeInfoD;
-    _length = other._length;
+    _length     = other._length;
     _isAttached = other._isAttached;
-    _isView = other._isView;
-    _context = other._context;
-    _dataType = other._dataType;
-    _deviceId = other._deviceId;
-    _offset = other._offset;
+    _isView     = other._isView;
+    _context    = other._context;
+    _dataType   = other._dataType;
+    _deviceId   = other._deviceId;
+    _offset     = other._offset;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -885,16 +885,16 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape, const std::vector<const cha
     if (this == &other || (_shapeInfo == other._shapeInfo && _shapeInfo == nullptr))
         return *this;
 
-        _buffer = other._buffer;
-        _shapeInfo = other._shapeInfo;
+        _buffer     = other._buffer;
+        _shapeInfo  = other._shapeInfo;
         _shapeInfoD = other._shapeInfoD;
-        _length = other._length;
+        _length     = other._length;
         _isAttached = other._isAttached;
-        _isView = other._isView;
-        _context = other._context;
-        _dataType = other._dataType;
-        _deviceId = other._deviceId;
-        _offset = other._offset;
+        _isView     = other._isView;
+        _context    = other._context;
+        _dataType   = other._dataType;
+        _deviceId   = other._deviceId;
+        _offset     = other._offset;
 
 /*
     if (_shapeInfo != nullptr && shape::equalsTypesAndShapesSoft(_shapeInfo, other._shapeInfo)) {
