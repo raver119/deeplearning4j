@@ -258,7 +258,7 @@ def _maven_build(use_docker):
     else:
         create_pom_from_config()
         pom_xml = os.path.join(_MY_DIR, 'pom.xml')
-        command = 'mvn clean install -f ' + pom_xml
+        command = 'mvn -U clean install -f ' + pom_xml
         os.system(command)
         version = _CONFIG['dl4j_version']
         jar_name = "pydl4j-{}-bin.jar".format(version)
@@ -304,7 +304,7 @@ def validate_jars():
                     break
         if not found_super_set_jar:
             set_context(original_context)
-            print("pdl4j: required uberjar not found, building with docker...")
+            print("pydl4j: required uberjar not found, building with docker...")
             maven_build()
 
 
