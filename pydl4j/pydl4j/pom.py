@@ -49,22 +49,7 @@ def datavec_dependencies():
         </dependency>
         <dependency>
             <groupId>org.datavec</groupId>
-            <artifactId>datavec-camel</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.datavec</groupId>
             <artifactId>datavec-excel</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.datavec</groupId>
-            <artifactId>datavec-geo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.datavec</groupId>
-            <artifactId>datavec-hadoop</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
