@@ -74,11 +74,6 @@ def datavec_dependencies():
         </dependency>
         <dependency>
             <groupId>org.datavec</groupId>
-            <artifactId>datavec-perf</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.datavec</groupId>
             <artifactId>datavec-spark_{scala.binary.version}</artifactId>
             <version>{dl4j.spark.version}</version>
         </dependency>
