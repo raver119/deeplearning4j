@@ -46,15 +46,6 @@
         <pydatavec.version>0.1</pydatavec.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>pydl4j</artifactId>
-            <version>${dl4j.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>

@@ -53,12 +53,6 @@
             <artifactId>${nd4j.backend}</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>pydl4j</artifactId>
-            <version>${dl4j.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
