@@ -258,7 +258,7 @@ def _maven_build(use_docker):
     else:
         create_pom_from_config()
         pom_xml = os.path.join(_MY_DIR, 'pom.xml')
-        command = 'mvn -U -B -e clean install -f ' + pom_xml
+        command = 'mvn -U -B -e clean install dependency:tree -Dverbose -f ' + pom_xml
         os.system(command)
         version = _CONFIG['dl4j_version']
         jar_name = "pydl4j-{}-bin.jar".format(version)
