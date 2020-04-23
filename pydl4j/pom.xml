@@ -168,7 +168,7 @@
                             <skip>${pydl4j.test.skip}</skip>
                             <arguments>
                                 <argument>-m</argument>
-                                <argument>pytest</argument>
+                                <argument>py.test</argument>
                                 <argument>--pep8</argument>
                                 <argument>-m</argument>
                                 <argument>pep8</argument>
