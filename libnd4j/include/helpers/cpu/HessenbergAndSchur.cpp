@@ -145,8 +145,10 @@ void Schur<T>::evalData(const NDArray& matrix) {
     // perform Hessenberg decomposition
     Hessenberg<T> hess(matrix / scale);
 
-    // perform Schur decomposition
-    calcFromHessenberg(hess._H, hess._Q);
+    _T = std::move(hess._H);
+    _U = std::move(hess._Q);
+
+    calcFromHessenberg();
 
     _T *= scale;
 }
@@ -327,10 +329,7 @@ void Schur<T>::doFrancisQR(const int ind1, const int ind2, const int ind3, const
 
 //////////////////////////////////////////////////////////////////////////
 template<typename T>
-void Schur<T>::calcFromHessenberg(NDArray& H, NDArray& Q) {
-
-    _T = std::move(H);
-    _U = std::move(Q);
+void Schur<T>::calcFromHessenberg() {
 
     const int maxIters = _maxItersPerRow * _T.sizeAt(0);
 

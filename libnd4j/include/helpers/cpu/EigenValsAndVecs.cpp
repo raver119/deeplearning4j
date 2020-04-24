@@ -51,10 +51,16 @@ EigenValsAndVecs<T>::EigenValsAndVecs(const NDArray& matrix) {
 
     Schur<T> schur(matrix);
 
-    _Vecs = std::move(schur._U);
+    NDArray& schurMatrixU = schur._U;
+    NDArray& schurMatrixT = schur._T;
+
+    _Vecs = NDArray(matrix.ordering(), {2, schurMatrixU.sizeAt(1), schurMatrixU.sizeAt(1)}, matrix.dataType(), matrix.getContext());
     _Vals = NDArray(matrix.ordering(), {2, matrix.sizeAt(1)}, matrix.dataType(), matrix.getContext());
 
-    calcEigenVals(schur._T);
+    // sequence of methods calls matters
+    calcEigenVals(schurMatrixT);
+    calcPseudoEigenVecs(schurMatrixU, schurMatrixU);    // pseudo-eigenvectors are real and will be stored in schurMatrixU
+    calcEigenVecs(schurMatrixU);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,9 +115,9 @@ void EigenValsAndVecs<T>::calcEigenVals(const NDArray& schurMatrixT) {
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void EigenValsAndVecs<T>::calcEigenVecs(NDArray& schurMatrixT) {
+void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& schurMatrixU) {
 
-    const int numOfCols = _Vecs.sizeAt(1);
+    const int numOfCols = schurMatrixU.sizeAt(1);
 
     T norm = 0;
     for (int j = 0; j < numOfCols; ++j)
@@ -241,8 +247,53 @@ void EigenValsAndVecs<T>::calcEigenVecs(NDArray& schurMatrixT) {
     }
 
      for (int j = numOfCols-1; j >= 0; j--)
-        _Vecs({0,0, j,j+1}, true).assign( mmul(_Vecs({0,0, 0,j+1}, true), schurMatrixT({0,j+1, j,j+1}, true)) );
+        schurMatrixU({0,0, j,j+1}, true).assign( mmul(schurMatrixU({0,0, 0,j+1}, true), schurMatrixT({0,j+1, j,j+1}, true)) );
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+template <typename T>
+void EigenValsAndVecs<T>::calcEigenVecs(const NDArray& schurMatrixU) {
+
+    const T precision = T(2) * DataTypeUtils::eps<T>();
+
+    const int numOfCols = schurMatrixU.sizeAt(1);
+
+    for (int j = 0; j < numOfCols; ++j) {
+
+        if(math::nd4j_abs<T>(_Vals.t<T>(1,j)) <= math::nd4j_abs<T>(_Vals.t<T>(0,j)) * precision || j+1 == numOfCols) {    // real
+
+            _Vecs({0,1, 0,0, j,j+1}).assign(schurMatrixU({0,0, j,j+1}));
+            _Vecs({1,2, 0,0, j,j+1}) = (T)0;
+
+            // normalize
+            const T norm2 = _Vecs({0,1, 0,0, j,j+1}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            if(norm2 > (T)0)
+                _Vecs({0,1, 0,0, j,j+1}) /= math::nd4j_sqrt<T,T>(norm2);
+        }
+        else { // complex
+
+            for (int i = 0; i < numOfCols; ++i) {
+                _Vecs.t<T>(0, i, j)   = _Vecs.t<T>(0, i, j+1) = schurMatrixU.t<T>(i, j);
+                _Vecs.t<T>(1, i, j)   = schurMatrixU.t<T>(i, j+1);
+                _Vecs.t<T>(1, i, j+1) = -schurMatrixU.t<T>(i, j+1);
+            }
+
+            // normalize
+            T norm2 = _Vecs({0,0, 0,0, j,j+1}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            if(norm2 > (T)0)
+                _Vecs({0,0, 0,0, j,j+1}) /= math::nd4j_sqrt<T,T>(norm2);
+
+            // normalize
+            norm2 = _Vecs({0,0, 0,0, j+1,j+2}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            if(norm2 > (T)0)
+                _Vecs({0,0, 0,0, j+1,j+2}) /= math::nd4j_sqrt<T,T>(norm2);
+
+            ++j;
+        }
+    }
+}
+
 
 template class ND4J_EXPORT EigenValsAndVecs<float>;
 template class ND4J_EXPORT EigenValsAndVecs<float16>;

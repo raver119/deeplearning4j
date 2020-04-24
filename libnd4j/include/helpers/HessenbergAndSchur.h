@@ -33,11 +33,12 @@ namespace helpers {
 // H - Hessenberg matrix
 template <typename T>
 class Hessenberg {
+    // suppose we got input square NxN matrix
 
     public:
 
-        NDArray _Q;
-        NDArray _H;
+        NDArray _Q;     // {N,N}
+        NDArray _H;     // {N,N}
 
         explicit Hessenberg(const NDArray& matrix);
 
@@ -53,11 +54,12 @@ class Hessenberg {
 
 template <typename T>
 class Schur {
+        // suppose we got input square NxN matrix
 
     public:
 
-        NDArray _T;
-        NDArray _U;
+        NDArray _T;     // {N,N}
+        NDArray _U;     // {N,N}
 
         explicit Schur(const NDArray& matrix);
 
@@ -69,7 +71,7 @@ class Schur {
 
         void doFrancisQR(const int ind1, const int ind2, const int ind3, const NDArray& householderVec);
 
-        void calcFromHessenberg(NDArray& H, NDArray& Q);
+        void calcFromHessenberg();
 
     private:
 

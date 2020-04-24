@@ -17,21 +17,7 @@
 
 #include "testlayers.h"
 #include <helpers/HessenbergAndSchur.h>
-// #include <helpers/biDiagonalUp.h>
-// #include <helpers/hhSequence.h>
-// #include <helpers/svd.h>
-// #include <helpers/hhColPivQR.h>
-// #include <array>
-// #include <helpers/jacobiSVD.h>
-// #include <ops/declarable/helpers/reverse.h>
-// #include <ops/declarable/helpers/activations.h>
-// #include <ops/declarable/helpers/rnn.h>
-// #include <ops/declarable/helpers/sg_cb.h>
-// #include <helpers/MmulHelper.h>
-// #include <helpers/GradCheck.h>
-// #include <ops/declarable/CustomOperations.h>
-// #include <ops/declarable/helpers/lstmLayer.h>
-
+#include <helpers/EigenValsAndVecs.h>
 
 using namespace sd;
 
