@@ -786,8 +786,8 @@ TEST_F(RNGTests, Test_ExponentialDistribution_2_SGA) {
     ASSERT_FALSE(exp0.equalsTo(z));
     //
 //    z->printBuffer("\nExponential2+");
-    auto mean = z->reduceNumber(reduce::Mean);
-    auto variance = z->varianceNumber(variance::SummaryStatsVariance, false);
+    auto mean = z.reduceNumber(reduce::Mean);
+    auto variance = z.varianceNumber(variance::SummaryStatsVariance, false);
     mean.printBuffer("Mean for exponential with param 1.0 (1 exp) is");
     variance.printBuffer("Variance for exponential with param 1. (1 exp) is");
     ASSERT_FALSE(nexp0->equalsTo(z));
@@ -816,8 +816,8 @@ TEST_F(RNGTests, Test_ExponentialDistribution_3_SGA) {
     //ASSERT_FALSE(exp0.equalsTo(z));
     //
 //    z->printBuffer("\nExponential2+");
-   auto mean = z->reduceNumber(reduce::Mean);
-   auto variance = z->varianceNumber(variance::SummaryStatsVariance, false);
+   auto mean = z.reduceNumber(reduce::Mean);
+   auto variance = z.varianceNumber(variance::SummaryStatsVariance, false);
    mean.printBuffer("Mean");
    variance.printBuffer("Variance");
     ASSERT_NEAR(mean.e<double>(0), 1.f, 1.e-2f);
