@@ -61,8 +61,7 @@ def datavec_dependencies():
             <groupId>org.datavec</groupId>
             <artifactId>datavec-spark_{scala.binary.version}</artifactId>
             <version>{dl4j.spark.version}</version>
-        </dependency>
-"""
+        </dependency>"""
 
 
 def pom_template():
@@ -86,7 +85,6 @@ def pom_template():
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.deeplearning4j</groupId>
@@ -126,13 +124,6 @@ def pom_template():
             <groupId>org.nd4j</groupId>
             <artifactId>{nd4j.backend}</artifactId>
             <version>${project.version}</version>
-            <classifier>linux-x86_64</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>{nd4j.backend}</artifactId>
-            <version>${project.version}</version>
-            <classifier>windows-x86_64</classifier>
         </dependency>
         {dl4j.core.dependencies}
         {spark.dependencies}

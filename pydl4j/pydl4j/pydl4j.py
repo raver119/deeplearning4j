@@ -206,7 +206,7 @@ def create_pom_from_config():
             dl4j_version = dl4j_version.replace("-SNAPSHOT", "")
             dl4j_spark_version = dl4j_version + "_spark_" + spark_version + "-SNAPSHOT"
         else:
-            dl4j_spark_version = dl4j_version + "_spark_" + spark_version
+            dl4j_spark_version = dl4j_version
         pom = pom.replace('{dl4j.spark.version}', dl4j_spark_version)
 
     # TODO replace if exists
