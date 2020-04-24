@@ -377,11 +377,11 @@ nd4j_printf("%s", "\n");
 
 
 
-NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
 std::vector<Nd4jLong> values;
 sd::ResultSet result;
 for (int e = 0; e < Loop; e++) {
     auto timeStart = std::chrono::system_clock::now();
+    NDArray exp = output_bases.size() > 0 ? NDArrayFactory::create<Nd4jLong>('c', output_bases) : NDArrayFactory::create<Nd4jLong>(0);
     original_argmax(x, dimension, exp);
     auto timeEnd = std::chrono::system_clock::now();
     auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
@@ -399,11 +399,12 @@ nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 #endif
 }
 
+//#define DEBUG 1
 
 void testNewReduction(bool random, bool checkCorrectness = false) {
 
-#if 0
-    int bases[] = { 3, 2, 4, 5, 7 };
+#if defined(DEBUG)
+    int bases[] = { 3, 2, 3, 3, 5 };
     constexpr int Loop = 1;
 #else
     int bases[] = { 8, 32, 64, 32, 64 };
@@ -475,7 +476,7 @@ void testNewReduction(bool random, bool checkCorrectness = false) {
         original_argmax(x, dimension, exp);
    
 
-#if 0
+#if defined(DEBUG)
     x.printIndexedBuffer("X");
     exp.printIndexedBuffer("Expected");
     z->printIndexedBuffer("Z");
@@ -495,15 +496,18 @@ void testNewReduction(bool random, bool checkCorrectness = false) {
 #endif
 }
 
-
+constexpr bool test_corr = true;
+#if 1
 TEST_F(PlaygroundTests, ArgMaxPerfLinspace) {
-    testNewReduction(false,true);
+    testNewReduction(false, test_corr);
 }
-
+#endif
+#if 1
 TEST_F(PlaygroundTests, ArgMaxPerfRandom) {
-    testNewReduction(true,true);
+    testNewReduction(true, test_corr);
 }
-
+#endif
+#if 1
 TEST_F(PlaygroundTests, ArgMaxPerfLegacyLinspace) {
     testLegacy(false);
 }
@@ -512,7 +516,7 @@ TEST_F(PlaygroundTests, ArgMaxPerfLegacyRandom) {
     testLegacy(true);
 }
 
-
+#endif
 
 
 #if CheckFortran
