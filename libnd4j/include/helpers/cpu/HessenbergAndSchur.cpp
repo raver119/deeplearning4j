@@ -184,6 +184,8 @@ void Schur<T>::splitTwoRows(const int ind, const T shift) {
         JacobiSVD<T>::mulRotationOnRight(ind-1, ind, topRows, rotation);
 
         JacobiSVD<T>::mulRotationOnRight(ind-1, ind, _U, rotation);
+
+        _T.t<T>(ind, ind-1) = (T)0;
     }
 
     if (ind > 1)
@@ -357,6 +359,7 @@ void Schur<T>::calcFromHessenberg() {
                     _T.t<T>(iu, iu-1) = T(0);
                 iu--;
                 iter = 0;
+
             }
             else if (il == iu-1) {
 

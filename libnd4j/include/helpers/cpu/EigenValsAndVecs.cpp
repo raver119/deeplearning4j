@@ -54,12 +54,12 @@ EigenValsAndVecs<T>::EigenValsAndVecs(const NDArray& matrix) {
     NDArray& schurMatrixU = schur._U;
     NDArray& schurMatrixT = schur._T;
 
-    _Vecs = NDArray(matrix.ordering(), {2, schurMatrixU.sizeAt(1), schurMatrixU.sizeAt(1)}, matrix.dataType(), matrix.getContext());
-    _Vals = NDArray(matrix.ordering(), {2, matrix.sizeAt(1)}, matrix.dataType(), matrix.getContext());
+    _Vecs = NDArray(matrix.ordering(), {schurMatrixU.sizeAt(1), schurMatrixU.sizeAt(1), 2}, matrix.dataType(), matrix.getContext());
+    _Vals = NDArray(matrix.ordering(), {matrix.sizeAt(1), 2}, matrix.dataType(), matrix.getContext());
 
     // sequence of methods calls matters
     calcEigenVals(schurMatrixT);
-    calcPseudoEigenVecs(schurMatrixU, schurMatrixU);    // pseudo-eigenvectors are real and will be stored in schurMatrixU
+    calcPseudoEigenVecs(schurMatrixT, schurMatrixU);    // pseudo-eigenvectors are real and will be stored in schurMatrixU
     calcEigenVecs(schurMatrixU);
 }
 
@@ -73,12 +73,12 @@ void EigenValsAndVecs<T>::calcEigenVals(const NDArray& schurMatrixT) {
     int i = 0;
     while (i < numOfCols) {
 
-        if (i == numOfCols - 1 || schurMatrixT.t<T>(i+1, i) == T(0)) {
+        if (i == numOfCols - 1 || schurMatrixT.t<T>(i+1, i) == T(0.f)) {
 
-            _Vals.t<T>(0, i) = schurMatrixT.t<T>(i, i); // real part
-            _Vals.t<T>(1, i) = T(0);                    // imaginary part
+            _Vals.t<T>(i, 0) = schurMatrixT.t<T>(i, i); // real part
+            _Vals.t<T>(i, 1) = T(0);                    // imaginary part
 
-            if(!math::nd4j_isfin<T>(_Vals.t<T>(0, i))) {
+            if(!math::nd4j_isfin<T>(_Vals.t<T>(i, 0))) {
                 throw std::runtime_error("ops::helpers::igenValsAndVec::calcEigenVals: got infinite eigen value !");
                 return;
             }
@@ -99,11 +99,11 @@ void EigenValsAndVecs<T>::calcEigenVals(const NDArray& schurMatrixT) {
                 z = maxval * math::nd4j_sqrt<T,T>(math::nd4j_abs<T>(p0 * p0 + t0 * t1));
             }
 
-            _Vals.t<T>(0, i) = _Vals.t<T>(0, i+1) = schurMatrixT.t<T>(i+1, i+1) + p;
-            _Vals.t<T>(1, i)   = z;
-            _Vals.t<T>(1, i+1) = -z;
+            _Vals.t<T>(i, 0)  = _Vals.t<T>(i+1, 0) = schurMatrixT.t<T>(i+1, i+1) + p;
+            _Vals.t<T>(i, 1)  = z;
+            _Vals.t<T>(i+1,1) = -z;
 
-            if(!(math::nd4j_isfin<T>(_Vals.t<T>(0,i)) && math::nd4j_isfin<T>(_Vals.t<T>(0,i+1)) && math::nd4j_isfin<T>(_Vals.t<T>(1,i))) && math::nd4j_isfin<T>(_Vals.t<T>(1,i+1))) {
+            if(!(math::nd4j_isfin<T>(_Vals.t<T>(i,0)) && math::nd4j_isfin<T>(_Vals.t<T>(i+1,0)) && math::nd4j_isfin<T>(_Vals.t<T>(i,1))) && math::nd4j_isfin<T>(_Vals.t<T>(i+1,1))) {
                 throw std::runtime_error("ops::helpers::igenValsAndVec::calcEigenVals: got infinite eigen value !");
                 return;
             }
@@ -128,8 +128,8 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
 
     for (int n = numOfCols-1; n >= 0; n--) {
 
-        T p = _Vals.t<T>(0, n);     // real part
-        T q = _Vals.t<T>(1, n);     // imaginary part
+        T p = _Vals.t<T>(n, 0);     // real part
+        T q = _Vals.t<T>(n, 1);     // imaginary part
 
         if(q == 0) {    // not complex
 
@@ -141,16 +141,16 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
             for (int i = n-1; i >= 0; i--) {
 
                 T w = schurMatrixT.t<T>(i,i) - p;
-                T r = mmul(schurMatrixT({i,i+1, l,n+1}), schurMatrixT({l,n+1, n,n+1})).t<T>(0); // dot
+                T r = mmul(schurMatrixT({i,i+1, l,n+1}, true), schurMatrixT({l,n+1, n,n+1}, true)).t<T>(0); // dot
 
-                if (_Vals.t<T>(1, i) < T(0)) {
+                if (_Vals.t<T>(i, 1) < T(0)) {
                     lastw = w;
                     lastr = r;
                 }
                 else {
 
                     l = i;
-                    if (_Vals.t<T>(1, i) == T(0)) {
+                    if (_Vals.t<T>(i, 1) == T(0)) {
 
                         if (w != T(0))
                             schurMatrixT.t<T>(i, n) = -r / w;
@@ -161,7 +161,7 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
 
                         T x = schurMatrixT.t<T>(i, i+1);
                         T y = schurMatrixT.t<T>(i+1, i);
-                        T denom = (_Vals.t<T>(0, i) - p) * (_Vals.t<T>(0, i) - p) + _Vals.t<T>(1, i) * _Vals.t<T>(1, i);
+                        T denom = (_Vals.t<T>(i, 0) - p) * (_Vals.t<T>(i, 0) - p) + _Vals.t<T>(i, 1) * _Vals.t<T>(i, 1);
                         T t = (x * lastr - lastw * r) / denom;
                         schurMatrixT.t<T>(i, n) = t;
 
@@ -197,12 +197,12 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
 
             for (int i = n-2; i >= 0; i--) {
 
-                T ra = mmul(schurMatrixT({i,i+1, l,n+1}), schurMatrixT({l,n+1, n-1,n})).t<T>(0);            // dot
-                T sa = mmul(schurMatrixT({i,i+1, l,n+1}), schurMatrixT({l,n+1, n,n+1})).t<T>(0);            // dot
+                T ra = mmul(schurMatrixT({i,i+1, l,n+1}, true), schurMatrixT({l,n+1, n-1,n}, true)).t<T>(0);            // dot
+                T sa = mmul(schurMatrixT({i,i+1, l,n+1}, true), schurMatrixT({l,n+1, n,n+1}, true)).t<T>(0);            // dot
 
                 T w = schurMatrixT.t<T>(i,i) - p;
 
-                if (_Vals.t<T>(1, i) < T(0)) {
+                if (_Vals.t<T>(i, 1) < T(0)) {
                     lastw = w;
                     lastra = ra;
                     lastsa = sa;
@@ -211,15 +211,15 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
 
                     l = i;
 
-                    if (_Vals.t<T>(1, i) == T(0)) {
+                    if (_Vals.t<T>(i, 1) == T(0)) {
                         divideCompexNums(-ra,-sa, w,q, schurMatrixT.t<T>(i,n-1),schurMatrixT.t<T>(i,n));
                     }
                     else {
 
                         T x = schurMatrixT.t<T>(i,i+1);
                         T y = schurMatrixT.t<T>(i+1,i);
-                        T vr = (_Vals.t<T>(0,i) - p) * (_Vals.t<T>(0,i) - p) + _Vals.t<T>(1,i) * _Vals.t<T>(1,i) - q * q;
-                        T vi = (_Vals.t<T>(0,i) - p) * T(2) * q;
+                        T vr = (_Vals.t<T>(i, 0) - p) * (_Vals.t<T>(i, 0) - p) + _Vals.t<T>(i, 1) * _Vals.t<T>(i, 1) - q * q;
+                        T vi = (_Vals.t<T>(i, 0) - p) * T(2) * q;
 
                         if ((vr == T(0)) && (vi == T(0)))
                             vr = DataTypeUtils::eps<T>() * norm * (math::nd4j_abs<T>(w) + math::nd4j_abs<T>(q) + math::nd4j_abs<T>(x) + math::nd4j_abs<T>(y) + math::nd4j_abs<T>(lastw));
@@ -246,8 +246,9 @@ void EigenValsAndVecs<T>::calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& sc
             throw std::runtime_error("ops::helpers::EigenValsAndVecs::calcEigenVecs: internal bug !");
     }
 
-     for (int j = numOfCols-1; j >= 0; j--)
+    for (int j = numOfCols-1; j >= 0; j--)
         schurMatrixU({0,0, j,j+1}, true).assign( mmul(schurMatrixU({0,0, 0,j+1}, true), schurMatrixT({0,j+1, j,j+1}, true)) );
+
 }
 
 
@@ -261,33 +262,33 @@ void EigenValsAndVecs<T>::calcEigenVecs(const NDArray& schurMatrixU) {
 
     for (int j = 0; j < numOfCols; ++j) {
 
-        if(math::nd4j_abs<T>(_Vals.t<T>(1,j)) <= math::nd4j_abs<T>(_Vals.t<T>(0,j)) * precision || j+1 == numOfCols) {    // real
+        if(math::nd4j_abs<T>(_Vals.t<T>(j, 1)) <= math::nd4j_abs<T>(_Vals.t<T>(j, 0)) * precision || j+1 == numOfCols) {    // real
 
-            _Vecs({0,1, 0,0, j,j+1}).assign(schurMatrixU({0,0, j,j+1}));
-            _Vecs({1,2, 0,0, j,j+1}) = (T)0;
+            _Vecs({0,0, j,j+1, 0,1}).assign(schurMatrixU({0,0, j,j+1}));
+            _Vecs({0,0, j,j+1, 1,2}) = (T)0;
 
             // normalize
-            const T norm2 = _Vecs({0,1, 0,0, j,j+1}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            const T norm2 = _Vecs({0,0, j,j+1, 0,1}).reduceNumber(reduce::SquaredNorm).t<T>(0);
             if(norm2 > (T)0)
-                _Vecs({0,1, 0,0, j,j+1}) /= math::nd4j_sqrt<T,T>(norm2);
+                _Vecs({0,0, j,j+1, 0,1}) /= math::nd4j_sqrt<T,T>(norm2);
         }
         else { // complex
 
             for (int i = 0; i < numOfCols; ++i) {
-                _Vecs.t<T>(0, i, j)   = _Vecs.t<T>(0, i, j+1) = schurMatrixU.t<T>(i, j);
-                _Vecs.t<T>(1, i, j)   = schurMatrixU.t<T>(i, j+1);
-                _Vecs.t<T>(1, i, j+1) = -schurMatrixU.t<T>(i, j+1);
+                _Vecs.t<T>(i, j, 0)   = _Vecs.t<T>(i, j+1, 0) = schurMatrixU.t<T>(i, j);
+                _Vecs.t<T>(i, j, 1)   = schurMatrixU.t<T>(i, j+1);
+                _Vecs.t<T>(i, j+1, 1) = -schurMatrixU.t<T>(i, j+1);
             }
 
             // normalize
-            T norm2 = _Vecs({0,0, 0,0, j,j+1}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            T norm2 = _Vecs({0,0, j,j+1, 0,0}).reduceNumber(reduce::SquaredNorm).t<T>(0);
             if(norm2 > (T)0)
-                _Vecs({0,0, 0,0, j,j+1}) /= math::nd4j_sqrt<T,T>(norm2);
+                _Vecs({0,0, j,j+1, 0,0}) /= math::nd4j_sqrt<T,T>(norm2);
 
             // normalize
-            norm2 = _Vecs({0,0, 0,0, j+1,j+2}).reduceNumber(reduce::SquaredNorm).t<T>(0);
+            norm2 = _Vecs({0,0, j+1,j+2, 0,0}).reduceNumber(reduce::SquaredNorm).t<T>(0);
             if(norm2 > (T)0)
-                _Vecs({0,0, 0,0, j+1,j+2}) /= math::nd4j_sqrt<T,T>(norm2);
+                _Vecs({0,0, j+1,j+2, 0,0}) /= math::nd4j_sqrt<T,T>(norm2);
 
             ++j;
         }

@@ -34,15 +34,15 @@ class EigenValsAndVecs {
     public:
         // suppose we got input square NxN matrix
 
-        NDArray _Vals;      	// {2,N} matrix of eigenvalues, 2 means real and imaginary part
-        NDArray _Vecs;      	// {2,N,N} matrix, whose columns are the eigenvectors (complex), 2 means real and imaginary part
+        NDArray _Vals;      	// {N,2} matrix of eigenvalues, 2 means real and imaginary part
+        NDArray _Vecs;      	// {N,N,2} matrix, whose columns are the eigenvectors (complex), 2 means real and imaginary part
 
         explicit EigenValsAndVecs(const NDArray& matrix);
 
     private:
 
         void calcEigenVals(const NDArray& schurMatrixT);						// calculates _Vals
-        void calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& schurMatrixU);	// makes changes both in schurMatrixT(NxN) and schurMatrixU(NxN), also calculates and store pseudo-eigenvectors (real) in schurMatrixU columns
+        void calcPseudoEigenVecs(NDArray& schurMatrixT, NDArray& schurMatrixU);	// makes changes both in schurMatrixT(NxN) and schurMatrixU(NxN), also calculates and stores pseudo-eigenvectors (real) in schurMatrixU columns
         void calcEigenVecs(const NDArray& schurMatrixU);						// calculates _Vecs
 
 };
