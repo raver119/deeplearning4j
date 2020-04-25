@@ -91,7 +91,8 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         LossMixtureDensity.builder().gaussians(2).labelWidth(3).build(),
                         new LossMultiLabel(), new LossWasserstein(),
                         new LossSparseMCXENT(),
-                        new SDLossMAE(), new SDLossMSE()
+                        new SDLossMAE(), new SDLossMSE(),
+                        new LossFloat(new LossMSE(), 0.1), new LossFloat(new LossMCXENT(), 0.1)
         };
 
         Activation[] outputActivationFn = new Activation[] {Activation.SIGMOID, //xent
@@ -132,7 +133,9 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         Activation.TANH, // SDLossMAE
                         Activation.SOFTMAX, // SDLossMSE
                         Activation.SIGMOID, // SDLossMSE
-                        Activation.TANH //SDLossMSE
+                        Activation.TANH, //SDLossMSE
+                        Activation.IDENTITY,// Float Loss + MSE
+                        Activation.SOFTMAX  // Float Loss + MCXENT
         };
 
         int[] nOut = new int[] {1, //xent
@@ -174,6 +177,8 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         3, // SDLossMSE
                         3, // SDLossMSE
                         3, // SDLossMSE
+                        3, // Float Loss + MSE
+                        3  // Float Loss + MCXENT
         };
 
         int[] minibatchSizes = new int[] {1, 3};
@@ -255,7 +260,9 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         new LossFMeasure(2.0), LossMixtureDensity.builder().gaussians(2).labelWidth(3).build(),
                         LossMixtureDensity.builder().gaussians(2).labelWidth(3).build(),
                         new LossMultiLabel(), new LossWasserstein(),
-                        new LossSparseMCXENT()
+                        new LossSparseMCXENT(),
+                        new LossFloat(new LossMSE(), 0.1), new LossFloat(new LossMCXENT(), 0.1)
+
         };
 
         Activation[] outputActivationFn = new Activation[] {Activation.SIGMOID, //xent
@@ -289,7 +296,9 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         Activation.TANH, // MixtureDensity + tanh
                         Activation.TANH, // MultiLabel
                         Activation.IDENTITY, // Wasserstein
-                        Activation.SOFTMAX
+                        Activation.SOFTMAX,
+                        Activation.IDENTITY,// Float Loss + MSE
+                        Activation.SOFTMAX  // Float Loss + MCXENT
         };
 
         int[] nOut = new int[] {1, //xent
@@ -323,7 +332,9 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         10, // Mixture Density + tanh
                         10, // MultiLabel
                         2, // Wasserstein
-                        4
+                        4,
+                        3, // Float Loss + MSE
+                        3  // Float Loss + MCXENT
         };
 
         int[] minibatchSizes = new int[] {1, 3};
@@ -482,6 +493,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                     throw new RuntimeException();
                 }
                 break;
+            case "LossFloat":
             case "LossMCXENT":
             case "LossNegativeLogLikelihood":
                 ret[1] = Nd4j.zeros(labelsShape);
@@ -625,7 +637,9 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
             ILossFunction[] lossFunctions = new ILossFunction[] {new LossBinaryXENT(w), new LossL1(w), new LossL1(w),
                             new LossL2(w), new LossL2(w), new LossMAE(w), new LossMAE(w), new LossMAPE(w),
                             new LossMAPE(w), new LossMCXENT(w), new LossMSE(w), new LossMSE(w), new LossMSLE(w),
-                            new LossMSLE(w), new LossNegativeLogLikelihood(w), new LossNegativeLogLikelihood(w),};
+                            new LossMSLE(w), new LossNegativeLogLikelihood(w), new LossNegativeLogLikelihood(w),
+                            new LossFloat(new LossNegativeLogLikelihood(w), 0.1)
+            };
 
             Activation[] outputActivationFn = new Activation[] {Activation.SIGMOID, //xent
                             Activation.TANH, //l1
@@ -643,6 +657,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                             Activation.SOFTMAX, //msle + softmax
                             Activation.SIGMOID, //nll
                             Activation.SOFTMAX, //nll + softmax
+                            Activation.SOFTMAX, //float + nll + softmax
             };
 
             int[] minibatchSizes = new int[] {1, 3};
