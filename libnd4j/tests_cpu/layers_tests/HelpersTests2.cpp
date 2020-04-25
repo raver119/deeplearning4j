@@ -18,6 +18,8 @@
 #include "testlayers.h"
 #include <helpers/HessenbergAndSchur.h>
 #include <helpers/EigenValsAndVecs.h>
+#include <helpers/TriangularSolver.h>
+
 
 using namespace sd;
 
@@ -351,5 +353,56 @@ TEST_F(HelpersTests2, EigenValsAndVecs_4) {
     ASSERT_TRUE(eig._Vecs.equalsTo(&expVecs));
 }
 
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests2, triangularSolver_1) {
+
+    NDArray a('c', {4,4}, {0.33 ,-7.25 ,1.71 ,6.20 ,1.34 ,5.38 ,-2.76 ,-8.51 ,7.59 ,3.44 ,2.24 ,-6.82 ,-1.15 ,4.80 ,-4.67 ,2.14}, sd::DataType::DOUBLE);
+    NDArray b('c', {4}, {2.,-5,14,10}, sd::DataType::DOUBLE);
+
+    NDArray x = b.ulike();
+
+    NDArray expX1('c', {4}, {6.060606, -2.438887, -10.54028, -9.601288}, sd::DataType::DOUBLE);
+    NDArray expX2('c', {4}, {184.9221, 16.96723, 20.4773, 4.672897}, sd::DataType::DOUBLE);
+    NDArray expX3('c', {4}, {2, -7.68, 25.2392, 167.0311}, sd::DataType::DOUBLE);
+    NDArray expX4('c', {4}, {2024.985, 306.972, 82.2, 10}, sd::DataType::DOUBLE);
+
+    ops::helpers::TriangularSolver<double>::solveVector(a,b,true,false, x);
+    ASSERT_TRUE(x.equalsTo(&expX1));
+
+    ops::helpers::TriangularSolver<double>::solveVector(a,b,false,false, x);
+    ASSERT_TRUE(x.equalsTo(&expX2));
+
+    ops::helpers::TriangularSolver<double>::solveVector(a,b,true,true, x);
+    ASSERT_TRUE(x.equalsTo(&expX3));
+
+    ops::helpers::TriangularSolver<double>::solveVector(a,b,false,true, x);
+    ASSERT_TRUE(x.equalsTo(&expX4));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests2, triangularSolver_2) {
+
+    NDArray a('c', {4,4}, {0.33 ,-7.25 ,1.71 ,6.20 ,1.34 ,5.38 ,-2.76 ,-8.51 ,7.59 ,3.44 ,2.24 ,-6.82 ,-1.15 ,4.80 ,-4.67 ,2.14}, sd::DataType::DOUBLE);
+    NDArray b('c', {4,2}, {2.,-5,14,10, -2.,9,-15,1}, sd::DataType::DOUBLE);
+
+    NDArray x = b.ulike();
+
+    NDArray expX1('c', {4,2}, {6.060606,-15.15152,1.092712, 5.632534,-23.10666, 46.70718,-56.62778,81.61782}, sd::DataType::DOUBLE);
+    NDArray expX2('c', {4,2}, {-184.0415,66.271, -19.89124,5.38897, -22.23381,5.440587, -7.009346,0.4672897}, sd::DataType::DOUBLE);
+
+    ops::helpers::TriangularSolver<double>::solve(a,b,true,false, x);
+    ASSERT_TRUE(x.equalsTo(&expX1));
+
+    ops::helpers::TriangularSolver<double>::solve(a,b,false,false, x);
+    ASSERT_TRUE(x.equalsTo(&expX2));
+}
 
 #endif
+
+
+
+
+
+
+
+
