@@ -39,7 +39,7 @@ namespace helpers {
      *
      * */
     template <typename T>
-    static void lowerTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool unitsOnDiag, NDArray* output) {
+    static void lowerTriangularSolve(sd::LaunchContext * context, NDArray const * leftInput, NDArray const* rightInput, bool const unitsOnDiag, NDArray* output) {
         auto rows = leftInput->rows();
         auto cols = rightInput->columns();
         //output->t<T>(0,0) = rightInput->t<T>(0,0) / leftInput->t<T>(0,0);
@@ -69,7 +69,7 @@ namespace helpers {
      * */
 
     template <typename T>
-    static void upperTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool unitsOnDiag, NDArray* output) {
+    static void upperTriangularSolve(sd::LaunchContext* context, NDArray const* leftInput, NDArray const* rightInput, bool const unitsOnDiag, NDArray* output) {
         auto rows = leftInput->rows();
         auto cols = rightInput->columns();
         for (Nd4jLong r = rows; r > 0; r--) {
@@ -101,6 +101,7 @@ namespace helpers {
             upperTriangularSolve<T>(context, &leftInput, &rightInput, unitsOnDiag, &output);
         }
     }
+    BUILD_SINGLE_TEMPLATE(template void triangularSolve2D, (sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output), FLOAT_TYPES);
 
     template <typename T>
     static int triangularSolveFunctor_(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output) {
