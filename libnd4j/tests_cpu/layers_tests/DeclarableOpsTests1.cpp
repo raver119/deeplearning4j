@@ -3242,7 +3242,7 @@ TEST_F(DeclarableOpsTests1, Test_Expose_1) {
 
 TEST_F(DeclarableOpsTests1, Test_Expose_2) {
     if (1 > 0)
-        throw std::runtime_error("Not implemented yet");
+        throw std::runtime_error("Test not implemented yet");
 
     auto list = new NDArrayList(0, true);
 

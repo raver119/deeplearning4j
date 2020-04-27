@@ -93,14 +93,14 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     executor.execute(optimizedGraph, proxy);
 
     // checking results by ID
-    ASSERT_TRUE(graph.variableSpace().hasVariable(m.id()));
-    ASSERT_TRUE(graph.variableSpace().hasVariable(a.id()));
+    ASSERT_TRUE(proxy.hasVariable(m.id()));
+    ASSERT_TRUE(proxy.hasVariable(a.id()));
 
     // checking results by name
-    ASSERT_TRUE(graph.variableSpace().hasVariable("mul"));
-    ASSERT_TRUE(graph.variableSpace().hasVariable("add"));
+    ASSERT_TRUE(proxy.hasVariable("mul"));
+    ASSERT_TRUE(proxy.hasVariable("add"));
 
     // checking if result is valid
-    auto result = graph.variableSpace().getVariable(a.id())->getNDArray();
+    auto result = proxy.getVariable(a.id())->getNDArray();
     ASSERT_EQ(exp, *result);
 }

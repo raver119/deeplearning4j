@@ -25,87 +25,56 @@
 namespace sd {
     namespace graph {
         GraphHolder* GraphHolder::getInstance() {
-            if (_INSTANCE == 0)
+            if (_INSTANCE == nullptr)
                 _INSTANCE = new GraphHolder();
 
             return _INSTANCE;
         };
 
-        void GraphHolder::registerGraph(Nd4jLong graphId, Graph* graph) {
-            if (hasGraphAny(graphId))
+        void GraphHolder::registerGraph(Nd4jLong graphId, const Graph &graph) {
+            if (hasGraph(graphId))
                 throw graph_exists_exception(graphId);
 
-            _graphF[graphId] = graph;
-
-            sd::SimpleReadWriteLock lock;
-            _locks[graphId] = lock;
+            std::lock_guard<std::mutex> lock(_mutex);
+            _graphs[graphId] = graph;
         }
 
-        Graph* GraphHolder::cloneGraph(Nd4jLong graphId) {
+        Graph& GraphHolder::graph(Nd4jLong graphId) {
             if (!this->hasGraph(graphId)) {
                 nd4j_printf("GraphHolder doesn't have graph stored for [%lld]\n", graphId);
                 throw std::runtime_error("Bad argument");
             }
 
-            auto graph = _graphF[graphId]->cloneWithProxy();
-
-            throw std::runtime_error("GraphHolder::cloneGraph - not implemented yet");
-        }
-
-        Graph* GraphHolder::pullGraph(Nd4jLong graphId) {
-            if (!this->hasGraph(graphId)) {
-                nd4j_printf("GraphHolder doesn't have graph stored for [%lld]\n", graphId);
-                throw std::runtime_error("Bad argument");
-            }
-
-            auto graph = _graphF[graphId];
-
-            return graph;
+            std::lock_guard<std::mutex> lock(_mutex);
+            return _graphs[graphId];
         }
 
         void GraphHolder::forgetGraph(Nd4jLong graphId) {
-            if (this->hasGraph(graphId))
-                _graphF.erase(graphId);
-        }
-
-        void GraphHolder::dropGraph(Nd4jLong graphId) {
             if (this->hasGraph(graphId)) {
-                auto g = _graphF[graphId];
-                forgetGraph(graphId);
-                delete g;
+                std::lock_guard<std::mutex> lock(_mutex);
+                _graphs.erase(graphId);
             }
         }
 
-        void GraphHolder::dropGraphAny(Nd4jLong graphId) {
-            if (!hasGraphAny(graphId))
-                return;
-
-            this->lockWrite(graphId);
-
-            this->dropGraph(graphId);
-
-            this->unlockWrite(graphId);
-        }
-
-        bool GraphHolder::hasGraphAny(Nd4jLong graphId) {
-            return this->hasGraph(graphId);
+        void GraphHolder::dropGraph(Nd4jLong graphId) {
+            forgetGraph(graphId);
         }
 
         bool GraphHolder::hasGraph(Nd4jLong graphId) {
-                return _graphF.count(graphId) > 0;
+            std::lock_guard<std::mutex> lock(_mutex);
+            return _graphs.count(graphId) > 0;
         }
 
-        void GraphHolder::replaceGraph(Nd4jLong graphId, Graph* graph) {
+        void GraphHolder::replaceGraph(Nd4jLong graphId, const Graph& graph) {
             if (!hasGraph(graphId)) {
                 registerGraph(graphId, graph);
                 return;
             }
 
-            this->lockWrite(graphId);
-
-            _graphF[graphId] = graph;
-
-            this->unlockWrite(graphId);
+            forgetGraph(graphId);
+            
+            std::lock_guard<std::mutex> lock(_mutex);
+            _graphs[graphId] = graph;
         }
 
 

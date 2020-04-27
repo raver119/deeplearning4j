@@ -105,17 +105,18 @@ namespace sd {
                 node.pickInput(idByName(v), 0);
             }
 
+            // actually storing the node. Later, topological sort will be applied on this map
             _unmapped[node.id()] = node;
         }
 
         void Graph::addNode(Node &node, const std::initializer_list<int> &inputs) {
-            throw std::runtime_error("not implemented yet");
+            throw std::runtime_error("Graph::addNode() - Not implemented yet");
         }
 
         void Graph::addNode(Node &node, const std::initializer_list<std::pair<int, int>> &inputs) {
             node.markRemovable(false);
 
-            throw std::runtime_error("not implemented yet");
+            throw std::runtime_error("Graph::addNode() - Not implemented yet");
         }
 
         Graph::Graph(const FlatGraph *flatGraph, const GraphMemoryManager &memoryManager) : _memoryMaager(memoryManager) {

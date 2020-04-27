@@ -283,7 +283,7 @@ TEST_F(OneOffTests, test_identity_n_2) {
 
 TEST_F(OneOffTests, test_non2d_1) {
     if (1 > 0)
-        throw std::runtime_error("Not implemented yet");
+        throw std::runtime_error("Test not implemented yet");
 
     auto e = NDArrayFactory::create<float>('c', {1, 1}, {5.42746449f});
 

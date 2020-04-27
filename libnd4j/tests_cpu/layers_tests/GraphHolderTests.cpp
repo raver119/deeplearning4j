@@ -33,48 +33,11 @@ public:
 TEST_F(GraphHolderTests, SimpleTests_1) {
     Graph graph;
     Nd4jLong graphId = 119;
-    GraphHolder::getInstance()->registerGraph(graphId, &graph);
+    GraphHolder::getInstance()->registerGraph(graphId, graph);
 
     ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
 
     GraphHolder::getInstance()->forgetGraph(graphId);
-
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
-}
-
-
-
-TEST_F(GraphHolderTests, SimpleTests_2) {
-    Graph graph;
-    Nd4jLong graphId = 117;
-    GraphHolder::getInstance()->registerGraph(graphId, &graph);
-
-    ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
-
-    auto graph2 = GraphHolder::getInstance()->cloneGraph(graphId);
-
-    ASSERT_TRUE(graph2 != nullptr);
-
-    GraphHolder::getInstance()->forgetGraph(graphId);
-
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
-
-    delete graph2;
-}
-
-
-TEST_F(GraphHolderTests, SimpleTests_3) {
-    Graph graph;
-    Nd4jLong graphId = 117;
-    GraphHolder::getInstance()->registerGraph(graphId, &graph);
-
-    ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
-
-    auto graph2 = GraphHolder::getInstance()->cloneGraph(graphId);
-
-    ASSERT_TRUE(graph2 != nullptr);
-
-    GraphHolder::getInstance()->dropGraph(graphId);
 
     ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
 }

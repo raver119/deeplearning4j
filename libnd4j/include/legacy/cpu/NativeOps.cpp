@@ -2174,25 +2174,6 @@ int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer flat
     }
 }
 
-static VariablesSet* executeStoredGraphT(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int* inputIndices, int numInputs) {
-    auto graph = sd::graph::GraphHolder::getInstance()->cloneGraph(graphId);
-    auto varSpace = graph->variableSpace();
-
-    for (int e = 0; e < numInputs; e++) {
-        auto idx = inputIndices[e];
-
-        // we'll delete this array later, together with cloned VariableSpace
-
-        if (varSpace.hasVariable(idx)) {
-            auto var = varSpace.getVariable(idx);
-            var->setNDArray(std::make_shared<sd::NDArray>(inputBuffers[e], reinterpret_cast<Nd4jLong *>(inputShapes[e])));
-        } else
-            varSpace.putVariable(idx, sd::NDArray(inputBuffers[e], reinterpret_cast<Nd4jLong *>(inputShapes[e])));
-    }
-
-    throw std::runtime_error("executeStoredGraphT - not implemented yet");
-}
-
 sd::graph::VariablesSet* executeStoredGraph(Nd4jPointer *extraPointers, Nd4jLong graphId, Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int* inputIndices, int numInputs) {
     return nullptr;
 }
@@ -2230,10 +2211,8 @@ void* getVariableBuffer(sd::graph::Variable* variable) {
 }
 
 int unregisterGraph(Nd4jPointer *extraPointers, Nd4jLong graphId) {
-
-    sd::graph::GraphHolder::getInstance()->dropGraphAny(graphId);
-
-    return sd::Status::OK();
+    sd::graph::GraphHolder::getInstance()->forgetGraph(graphId);
+    return Status::OK();
 }
 
 void deletePointerArray(Nd4jPointer pointer) {

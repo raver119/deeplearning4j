@@ -31,64 +31,28 @@ namespace sd {
         class SD_EXPORT GraphHolder {
         private:
             static GraphHolder *_INSTANCE;
-            MAP_IMPL<Nd4jLong, Graph *> _graphF;
+            MAP_IMPL<Nd4jLong, Graph> _graphs;
 
-            MAP_IMPL<Nd4jLong, SimpleReadWriteLock> _locks;
+            std::mutex _mutex;
 
             GraphHolder() = default;
             ~GraphHolder() = default;
         public:
             static GraphHolder* getInstance();
 
-            void registerGraph(Nd4jLong graphId, Graph *graph);
-            
-            Graph* cloneGraph(Nd4jLong graphId);
+            void registerGraph(Nd4jLong graphId, const Graph &graph);
 
-            Graph* pullGraph(Nd4jLong graphId);
+            Graph& graph(Nd4jLong graphId);
 
             void forgetGraph(Nd4jLong graphId);
 
             void dropGraph(Nd4jLong graphId);
 
-            void dropGraphAny(Nd4jLong graphId);
-
             bool hasGraph(Nd4jLong graphId);
-
-            bool hasGraphAny(Nd4jLong graphId);
 
             flatbuffers::Offset<FlatResult> execute(Nd4jLong graphId, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request);
 
-            void replaceGraph(Nd4jLong graphId, Graph *graph);
-
-            /////////////////////////////
-
-            FORCEINLINE void lockWrite(Nd4jLong graphId) {
-                if (_locks.count(graphId) == 0)
-                    return;
-
-                _locks[graphId].lockWrite();
-            }
-
-            FORCEINLINE void unlockWrite(Nd4jLong graphId) {
-                if (_locks.count(graphId) == 0)
-                    return;
-
-                _locks[graphId].unlockWrite();
-            }
-
-            FORCEINLINE void lockRead(Nd4jLong graphId) {
-                if (_locks.count(graphId) == 0)
-                    return;
-
-                _locks[graphId].lockRead();
-            }
-
-            FORCEINLINE void unlockRead(Nd4jLong graphId) {
-                if (_locks.count(graphId) == 0)
-                    return;
-
-                _locks[graphId].unlockRead();
-            }
+            void replaceGraph(Nd4jLong graphId, const Graph &graph);
         };
     }
 }

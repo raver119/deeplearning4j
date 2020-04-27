@@ -1953,7 +1953,7 @@ Nd4jLong NDArray::argMax(std::initializer_list<int> dimensions) {
         return max;
     }
     else
-        throw std::runtime_error("Not implemented yet");
+        throw std::runtime_error("NDArray::argMax() - Not implemented yet");
 }
 
 //////////////////////////////////////////////////////////////////////////
