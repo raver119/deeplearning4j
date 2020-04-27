@@ -39,7 +39,7 @@ namespace helpers {
      *
      * */
     template <typename T>
-    static void lowerTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool adjoint, NDArray* output) {
+    static void lowerTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool unitsOnDiag, NDArray* output) {
         auto rows = leftInput->rows();
         auto cols = rightInput->columns();
         //output->t<T>(0,0) = rightInput->t<T>(0,0) / leftInput->t<T>(0,0);
@@ -49,7 +49,7 @@ namespace helpers {
                 for (Nd4jLong c = 0; c < r; c++) {
                     sum -= leftInput->t<T>(r, c) * output->t<T>(c, j);
                 }
-                output->t<T>(r, j) = sum / leftInput->t<T>(r, r);
+                output->t<T>(r, j) = unitsOnDiag?sum: sum / leftInput->t<T>(r, r);
             }
         }
     }
@@ -69,7 +69,7 @@ namespace helpers {
      * */
 
     template <typename T>
-    static void upperTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool adjoint, NDArray* output) {
+    static void upperTriangularSolve(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool unitsOnDiag, NDArray* output) {
         auto rows = leftInput->rows();
         auto cols = rightInput->columns();
         for (Nd4jLong r = rows; r > 0; r--) {
@@ -78,8 +78,27 @@ namespace helpers {
                 for (Nd4jLong c = r; c < rows; c++) {
                     sum -= leftInput->t<T>(r - 1, c) * output->t<T>(c, j);
                 }
-                output->t<T>(r - 1, j) = sum / leftInput->t<T>(r - 1, r - 1);
+                output->t<T>(r - 1, j) = unitsOnDiag? sum : sum / leftInput->t<T>(r - 1, r - 1);
             }
+        }
+    }
+
+    ///  triangularSolve2D - 2D implementation of triangularSolveFunctor
+    /// \tparam T - type of NDArray output
+    /// \param context - launch context pointer
+    /// \param leftInput  - T matrix of equation Tx = b
+    /// \param rightInput  - b vector of equation Tx = b
+    /// \param lower - lower or upper triangular matrix
+    /// \param unitsOnDiag - solve for case when only units (1.0) on diagonal is assumed
+    /// \param output - output vector (x on equation Tx = b)
+    ///
+    template <typename T>
+    void triangularSolve2D(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output) {
+        if (lower) {
+            lowerTriangularSolve<T>(context, &leftInput, &rightInput, unitsOnDiag, &output);
+        }
+        else {
+            upperTriangularSolve<T>(context, &leftInput, &rightInput, unitsOnDiag, &output);
         }
     }
 
@@ -92,9 +111,9 @@ namespace helpers {
         auto batchLoop = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
                 if (lower) {
-                    lowerTriangularSolve<T>(context, leftPart[i], rightPart[i], adjoint, outputPart[i]);
+                    lowerTriangularSolve<T>(context, leftPart[i], rightPart[i], false, outputPart[i]);
                 } else {
-                    upperTriangularSolve<T>(context, leftPart[i], rightPart[i], adjoint, outputPart[i]);
+                    upperTriangularSolve<T>(context, leftPart[i], rightPart[i], false, outputPart[i]);
                 }
             }
         };
