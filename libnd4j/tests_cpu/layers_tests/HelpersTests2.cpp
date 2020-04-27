@@ -372,10 +372,10 @@ TEST_F(HelpersTests2, triangularSolver_1) {
     ops::helpers::TriangularSolver<double>::solveVector(a,b,false,false, x);
     ASSERT_TRUE(x.equalsTo(&expX2));
 
-    ops::helpers::TriangularSolver<double>::solveVector(a,b,true,true, x);
+    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,true,true, x);
     ASSERT_TRUE(x.equalsTo(&expX3));
 
-    ops::helpers::TriangularSolver<double>::solveVector(a,b,false,true, x);
+    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,false,true, x);
     ASSERT_TRUE(x.equalsTo(&expX4));
 }
 
