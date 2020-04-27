@@ -103,7 +103,7 @@ TEST_F(GraphTests2, test_placeholder_resolution_2) {
 
     graph.addPlaceholder("input", DataType::FLOAT32);
 
-    graph.addNode(Node(sd::ops::tanh(), "tanh_node"), {"input"});
+    graph.addNode(Node(sd::ops::rationaltanh(), "tanh_node"), {"input"});
 
     auto result = graph.execute({{"input", NDArrayFactory::create(0.5f)}}, {"tanh_node"});
 

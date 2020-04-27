@@ -23,9 +23,9 @@
 
 namespace sd {
     namespace graph {
-        Context GraphExecutor::prepareContext(const ContextPrototype &contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const {
+        Context GraphExecutor::prepareContext(const ContextPrototype &contextPrototype, VariableProxy &variableProxy, const GraphMemoryManager &memoryManager) const {
             // TODO: maybe we'll want to do something here?
-            return Context(contextPrototype, &variableSpace, const_cast<GraphMemoryManager*>(&memoryManager));
+            return Context(contextPrototype, &variableProxy, const_cast<GraphMemoryManager*>(&memoryManager));
         }
 
         Nd4jStatus GraphExecutor::preprocess(sd::ops::DeclarableOp *op, Context &context) const {
@@ -44,20 +44,19 @@ namespace sd {
         }
 
 
-        Nd4jStatus GraphExecutor::execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
-            //auto &varSpace = graph.originalGraph().variableSpace();
-            //auto ctx = prepareContext(contextPrototype, varSpace, graph.memoryManager());
-            //return op->execute(&ctx);
-            throw std::runtime_error("GraphExecutor::execute - Not implemented yet");
+        Nd4jStatus GraphExecutor::execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const {
+            auto ctx = prepareContext(contextPrototype, proxy,  graph.memoryManager());
+            return op->execute(&ctx);
+            //throw std::runtime_error("GraphExecutor::execute - Not implemented yet");
         }
 
-        Nd4jStatus GraphExecutor::execute(const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const {
+        Nd4jStatus GraphExecutor::execute(const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const {
             /*
              * this is a basic implementation that works without dispatching etc
              */
             for (int e = 0; e < sequence.length(); e++) {
                 auto v = sequence[e];
-                auto result = execute(v.op(), v.protoContext(), sequence, graph, deviceId >= 0 ? deviceId : sequence.deviceId());
+                auto result = execute(v.op(), v.protoContext(), sequence, graph, proxy, deviceId >= 0 ? deviceId : sequence.deviceId());
                 if (result != Status::OK())
                     return result;
             }
@@ -65,7 +64,7 @@ namespace sd {
             return Status::OK();
         }
 
-        Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph) const {
+        Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph, VariableProxy &proxy) const {
             const auto numDevices = AffinityManager::numberOfDevices();
 
             /*
@@ -73,10 +72,10 @@ namespace sd {
              */
             Nd4jStatus result = Status::OK();
             for (uint64_t l = 0; l < graph.layers(); l++) {
-                auto layer = graph.layer(l);
+                const auto &layer = graph.layer(l);
 
                 for (uint64_t o = 0; o < layer.width(); o++) {
-                    execute(layer[o], graph);
+                    execute(layer[o], graph, proxy, -1);
                 }
 
                 // optionally block until all sequences in this layer processed

@@ -34,6 +34,7 @@ namespace sd {
         OptimizedGraph::OptimizedGraph(const OptimizedGraph &other) noexcept {
             _onion = other._onion;
             _memoryManager = other._memoryManager;
+            _originalGraph = other._originalGraph;
         }
 
         OptimizedGraph &OptimizedGraph::operator=(const OptimizedGraph &other) noexcept {
@@ -42,6 +43,7 @@ namespace sd {
 
             _onion = other._onion;
             _memoryManager = other._memoryManager;
+            _originalGraph = other._originalGraph;
 
             return *this;
         }
@@ -49,6 +51,7 @@ namespace sd {
         OptimizedGraph::OptimizedGraph(OptimizedGraph &&other) noexcept {
             _onion = std::move(other._onion);
             _memoryManager = other._memoryManager;
+            _originalGraph = other._originalGraph;
         }
 
         OptimizedGraph &OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
@@ -57,6 +60,7 @@ namespace sd {
 
             _onion = std::move(other._onion);
             _memoryManager = other._memoryManager;
+            _originalGraph = other._originalGraph;
 
             return *this;
         }

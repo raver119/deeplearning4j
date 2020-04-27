@@ -2265,7 +2265,7 @@ const char* getAllOperations() {
 }
 
 Nd4jStatus execCustomOpWithScope(Nd4jPointer *extraPointers, Nd4jPointer state, Nd4jLong opHash, Nd4jLong *scopes, int numScopes, Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int numInputs, Nd4jPointer *outputBuffers, Nd4jPointer *outputShapes, int numOutputs) {
-
+    return 0;
 }
 
 void deleteResultWrapper(Nd4jPointer ptr) {

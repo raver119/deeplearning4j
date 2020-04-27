@@ -49,8 +49,9 @@ TEST_F(GraphExecutorTests, test_basic_exec_1) {
 
     optimizedGraph.append(sequence);
 
+    VariableProxy proxy(&graph.variableSpace());
     GraphExecutor executor;
-    executor.execute(optimizedGraph);
+    executor.execute(optimizedGraph, proxy);
 }
 
 TEST_F(GraphExecutorTests, test_basic_exec_2) {
@@ -87,8 +88,9 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
     ASSERT_EQ(2, sequence.length());
     ASSERT_EQ(1, optimizedGraph.layers());
 
+    VariableProxy proxy(&graph.variableSpace());
     GraphExecutor executor;
-    executor.execute(optimizedGraph);
+    executor.execute(optimizedGraph, proxy);
 
     // checking results by ID
     ASSERT_TRUE(graph.variableSpace().hasVariable(m.id()));

@@ -165,7 +165,9 @@ namespace sd {
 
         std::shared_ptr<Variable>
         VariableSpace::putVariable(const std::string &name, int id, int idx, const NDArray &array) {
-            return std::shared_ptr<Variable>();
+            auto variable = std::make_shared<Variable>(array, name, id, idx);
+            this->putVariable({id, idx}, variable);
+            return variable;
         }
 
         void VariableSpace::dropVariable(const std::string &pair) {

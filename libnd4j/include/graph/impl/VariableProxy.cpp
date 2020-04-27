@@ -24,7 +24,7 @@
 namespace sd {
     namespace graph {
         
-        VariableProxy::VariableProxy(VariableSpace* ref) {
+        VariableProxy::VariableProxy(const VariableSpace* ref) {
             if (ref == nullptr)
                 _backed = new VariableSpace();
 

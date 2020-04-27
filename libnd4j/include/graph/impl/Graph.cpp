@@ -557,6 +557,9 @@ namespace sd {
         }
 
         std::map<std::string, NDArray> Graph::execute(const std::map<std::string, NDArray> &dictionary, const std::vector<std::string> &outputs, const GraphExecutor &executor) const {
+            // creating our proxy, we'll use it for actual execution
+            VariableProxy proxy(&_variableSpace);
+
             // first of all we check existence of placeholders in dictionary
             int placeholdersCount = 0;
             for (const auto &v:dictionary) {
@@ -571,6 +574,9 @@ namespace sd {
                 auto shape = v.second.getShapeAsVector();
                 if (shape != var->shape())
                     throw shape_mismatch_exception::build("Placeholder requires specific shape", var->shape(), shape);
+
+                // update the placeholder
+                proxy.putVariable(v.first, var->id(), var->index(), v.second);
 
                 // we must also check if all placeholders were resolved
                 placeholdersCount++;
@@ -588,17 +594,17 @@ namespace sd {
             }
 
             // execute optimized version of this graph
-            auto status = executor.execute(optimizedGraph());
+            auto status = executor.execute(optimizedGraph(), proxy);
             if (status != Status::OK())
                 throw graph_execution_exception("Graph execution failed, error code: ", status);
 
-            // fetch outputs from VariableSpace
+            // fetch outputs from our VariableProxy
             std::map<std::string, NDArray> result;
             for (const auto &v:outputs) {
-                if (!_variableSpace.hasVariable(v))
+                if (!proxy.hasVariable(v))
                     throw unresolved_output_exception::build("Requested output doesn't exist after execution", v);
 
-                auto var = _variableSpace.getVariable(v);
+                auto var = proxy.getVariable(v);
 
                 // TODO: we want to make sure ManagedDataBuffer doesn't leak here
                 result[v] = *var->getNDArray();

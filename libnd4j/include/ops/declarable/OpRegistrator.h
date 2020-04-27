@@ -68,6 +68,7 @@ namespace sd {
             OpRegistrator() {
                 nd4j_debug("OpRegistrator started\n","");
 
+                /*
 #ifndef _RELEASE
                 std::signal(SIGSEGV, &OpRegistrator::sigSegVHandler);
                 std::signal(SIGINT, &OpRegistrator::sigIntHandler);
@@ -77,6 +78,7 @@ namespace sd {
                 std::signal(SIGTERM, &OpRegistrator::sigIntHandler);
                 atexit(&OpRegistrator::exitHandler);
 #endif
+                 */
             };
 
             MAP_IMPL<Nd4jLong, std::string> _msvc;

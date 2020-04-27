@@ -24,6 +24,7 @@
 #include <system/dll.h>
 #include <graph/OptimizedGraph.h>
 #include <memory/GraphMemoryManager.h>
+#include <graph/VariableProxy.h>
 
 namespace sd {
     namespace graph {
@@ -31,7 +32,7 @@ namespace sd {
 
         class SD_EXPORT GraphExecutor {
         protected:
-            virtual Context prepareContext(const ContextPrototype &contextPrototype, VariableSpace &variableSpace, const GraphMemoryManager &memoryManager) const;
+            virtual Context prepareContext(const ContextPrototype &contextPrototype, VariableProxy &variableSpace, const GraphMemoryManager &memoryManager) const;
 
             /*
              * preprocessor call involves:
@@ -58,7 +59,7 @@ namespace sd {
              * @param graph
              * @return
              */
-            virtual Nd4jStatus execute(const OptimizedGraph &graph) const;
+            virtual Nd4jStatus execute(const OptimizedGraph &graph, VariableProxy &proxy) const;
 
             /**
              * This method executes OpSequence
@@ -66,7 +67,7 @@ namespace sd {
              * @param deviceId - this argument allows to override device affinity specified in OpSequence, keep it < 0 to follow OpSequence
              * @return
              */
-            virtual Nd4jStatus execute(const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId = -1) const;
+            virtual Nd4jStatus execute(const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, int deviceId) const;
 
             /**
              * This method executes given op
@@ -74,7 +75,7 @@ namespace sd {
              * @param contextPrototype
              * @return
              */
-            virtual Nd4jStatus execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, const int deviceId) const;
+            virtual Nd4jStatus execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const;
         };
     }
 }

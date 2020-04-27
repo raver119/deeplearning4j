@@ -18,16 +18,19 @@
 //  @author raver119@gmail.com
 //
 
+#ifndef SD_VARIABLEPROXY_H
+#define SD_VARIABLEPROXY_H
+
 #include <graph/VariableSpace.h>
 
 namespace sd {
     namespace graph {
         class SD_EXPORT VariableProxy: public VariableSpace {
         protected:
-            VariableSpace* _backed = nullptr;
+            const VariableSpace* _backed;
             VariableSpace* _current = nullptr;
         public:
-            explicit VariableProxy(VariableSpace* reference);
+            explicit VariableProxy(const VariableSpace* reference);
             ~VariableProxy();
 
             virtual VariableSpace& operator=(const VariableSpace& other);
@@ -80,3 +83,5 @@ namespace sd {
         };
     }
 }
+
+#endif // SD_VARIABLEPROXY_H
