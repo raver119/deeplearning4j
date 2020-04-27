@@ -169,7 +169,7 @@ TEST_F(OneOffTests, test_tensor_array_2) {
 
 TEST_F(OneOffTests, test_tensor_array_3) {
     if (1 > 0)
-        throw std::runtime_error("Temporary disabled");
+        throw std::runtime_error("This test crashes");
 
     auto e = NDArrayFactory::create<int>('c', {3, 2, 3}, {7, 2, 9, 4, 3, 3, 8, 7, 0, 0, 6, 8, 7, 9, 0, 1, 1, 4});
 
@@ -282,8 +282,8 @@ TEST_F(OneOffTests, test_identity_n_2) {
 }
 
 TEST_F(OneOffTests, test_non2d_1) {
-    if (1 > 0)
-        throw std::runtime_error("Test not implemented yet");
+    //if (1 > 0)
+    //    throw std::runtime_error("Test not implemented yet");
 
     auto e = NDArrayFactory::create<float>('c', {1, 1}, {5.42746449f});
 

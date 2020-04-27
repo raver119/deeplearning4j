@@ -47,7 +47,7 @@ namespace sd {
             // empty arrays is special case, nothing to restore here
             if (shape::isEmpty(newShape)) {
                 delete[] newShape;
-                return NDArrayFactory::empty(dtype, nullptr);
+                return NDArrayFactory::empty(dtype);
             }
             // TODO fix UTF16 and UTF32
             if (dtype == UTF8) {

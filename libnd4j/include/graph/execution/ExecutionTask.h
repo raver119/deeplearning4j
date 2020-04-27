@@ -33,7 +33,7 @@ namespace sd {
             const ContextPrototype &_context;
 
         public:
-            ExecutionTask(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &ctx);
+            ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &ctx);
 
             ~ExecutionTask() = default;
 

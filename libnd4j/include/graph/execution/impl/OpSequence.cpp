@@ -82,7 +82,7 @@ namespace sd {
             return _ops.size();
         }
 
-        void OpSequence::append(std::shared_ptr<sd::ops::DeclarableOp> op, const sd::graph::ContextPrototype &ctx) {
+        void OpSequence::append(const std::shared_ptr<sd::ops::DeclarableOp> &op, const sd::graph::ContextPrototype &ctx) {
             ExecutionTask task(op, ctx);
             _ops.emplace_back(task);
         }

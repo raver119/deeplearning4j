@@ -40,8 +40,8 @@ namespace sd {
 
             int _deviceId = 0;
         public:
-            explicit OpSequence(const std::vector<ExecutionTask> &ops, const int deviceId = 0);
-            OpSequence(const int deviceId = 0);
+            explicit OpSequence(const std::vector<ExecutionTask> &ops, int deviceId = 0);
+            OpSequence(int deviceId = 0);
             ~OpSequence() = default;
 
             OpSequence(const OpSequence& other) noexcept;
@@ -82,7 +82,7 @@ namespace sd {
              * @param op - Op to be executed
              * @param ctx - ContextPrototype for this operation with inputs/outputs/args defined
              */
-            void append(std::shared_ptr<sd::ops::DeclarableOp> op, const sd::graph::ContextPrototype &ctx);
+            void append(const std::shared_ptr<sd::ops::DeclarableOp> &op, const sd::graph::ContextPrototype &ctx);
             void append(sd::ops::DeclarableOp *op, const sd::graph::ContextPrototype &ctx);
 
             /**

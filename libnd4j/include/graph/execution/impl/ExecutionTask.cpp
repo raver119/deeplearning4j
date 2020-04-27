@@ -22,7 +22,7 @@
 
 namespace sd {
     namespace graph {
-        ExecutionTask::ExecutionTask(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &ctx) : _op(op), _context(ctx) {
+        ExecutionTask::ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &ctx) : _op(op), _context(ctx) {
             //
         }
 
