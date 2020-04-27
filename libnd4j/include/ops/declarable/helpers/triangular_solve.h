@@ -27,8 +27,10 @@ namespace ops {
 namespace helpers {
 
     int triangularSolveFunctor(sd::LaunchContext* context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output);
+//    template <typename T>
+//    void triangularSolve2D(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
     template <typename T>
-    void triangularSolve2D(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
+    void triangularSolve2D(NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
     void adjointMatrix(sd::LaunchContext* context, NDArray const* input, bool const lower, NDArray* output);
 }
 }

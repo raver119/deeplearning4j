@@ -93,15 +93,17 @@ namespace helpers {
     /// \param output - output vector (x on equation Tx = b)
     ///
     template <typename T>
-    void triangularSolve2D(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output) {
+    void triangularSolve2D(NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output) {
+//        void triangularSolve2D(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output) {
         if (lower) {
-            lowerTriangularSolve<T>(context, &leftInput, &rightInput, unitsOnDiag, &output);
+            lowerTriangularSolve<T>(nullptr, &leftInput, &rightInput, unitsOnDiag, &output);
         }
         else {
-            upperTriangularSolve<T>(context, &leftInput, &rightInput, unitsOnDiag, &output);
+            upperTriangularSolve<T>(nullptr, &leftInput, &rightInput, unitsOnDiag, &output);
         }
     }
-    BUILD_SINGLE_TEMPLATE(template void triangularSolve2D, (sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output), FLOAT_TYPES);
+//    BUILD_SINGLE_TEMPLATE(template void triangularSolve2D, (sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output), FLOAT_TYPES);
+    BUILD_SINGLE_TEMPLATE(template void triangularSolve2D, (NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output), FLOAT_TYPES);
 
     template <typename T>
     static int triangularSolveFunctor_(sd::LaunchContext * context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output) {

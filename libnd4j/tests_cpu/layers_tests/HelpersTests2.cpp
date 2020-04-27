@@ -366,16 +366,16 @@ TEST_F(HelpersTests2, triangularSolver_1) {
     NDArray expX3('c', {4,1}, {2, -7.68, 25.2392, 167.0311}, sd::DataType::DOUBLE);
     NDArray expX4('c', {4,1}, {2024.985, 306.972, 82.2, 10}, sd::DataType::DOUBLE);
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,true,false, x);
+    ops::helpers::triangularSolve2D<double>(a,b,true,false, x);
     ASSERT_TRUE(x.equalsTo(&expX1));
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,false,false, x);
+    ops::helpers::triangularSolve2D<double>(a,b,false,false, x);
     ASSERT_TRUE(x.equalsTo(&expX2));
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,true,true, x);
+    ops::helpers::triangularSolve2D<double>(a,b,true,true, x);
     ASSERT_TRUE(x.equalsTo(&expX3));
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,false,true, x);
+    ops::helpers::triangularSolve2D<double>(a,b,false,true, x);
     ASSERT_TRUE(x.equalsTo(&expX4));
 }
 
@@ -390,10 +390,10 @@ TEST_F(HelpersTests2, triangularSolver_2) {
     NDArray expX1('c', {4,2}, {6.060606,-15.15152,1.092712, 5.632534,-23.10666, 46.70718,-56.62778,81.61782}, sd::DataType::DOUBLE);
     NDArray expX2('c', {4,2}, {-184.0415,66.271, -19.89124,5.38897, -22.23381,5.440587, -7.009346,0.4672897}, sd::DataType::DOUBLE);
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a, b,true,false, x);
+    ops::helpers::triangularSolve2D<double>(a, b,true,false, x);
     ASSERT_TRUE(x.equalsTo(&expX1));
 
-    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,false,false, x);
+    ops::helpers::triangularSolve2D<double>(a,b,false,false, x);
     ASSERT_TRUE(x.equalsTo(&expX2));
 }
 
