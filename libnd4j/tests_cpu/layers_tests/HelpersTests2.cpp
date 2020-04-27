@@ -357,19 +357,19 @@ TEST_F(HelpersTests2, EigenValsAndVecs_4) {
 TEST_F(HelpersTests2, triangularSolver_1) {
 
     NDArray a('c', {4,4}, {0.33 ,-7.25 ,1.71 ,6.20 ,1.34 ,5.38 ,-2.76 ,-8.51 ,7.59 ,3.44 ,2.24 ,-6.82 ,-1.15 ,4.80 ,-4.67 ,2.14}, sd::DataType::DOUBLE);
-    NDArray b('c', {4}, {2.,-5,14,10}, sd::DataType::DOUBLE);
+    NDArray b('c', {4,1}, {2.,-5,14,10}, sd::DataType::DOUBLE);
 
     NDArray x = b.ulike();
 
-    NDArray expX1('c', {4}, {6.060606, -2.438887, -10.54028, -9.601288}, sd::DataType::DOUBLE);
-    NDArray expX2('c', {4}, {184.9221, 16.96723, 20.4773, 4.672897}, sd::DataType::DOUBLE);
-    NDArray expX3('c', {4}, {2, -7.68, 25.2392, 167.0311}, sd::DataType::DOUBLE);
-    NDArray expX4('c', {4}, {2024.985, 306.972, 82.2, 10}, sd::DataType::DOUBLE);
+    NDArray expX1('c', {4,1}, {6.060606, -2.438887, -10.54028, -9.601288}, sd::DataType::DOUBLE);
+    NDArray expX2('c', {4,1}, {184.9221, 16.96723, 20.4773, 4.672897}, sd::DataType::DOUBLE);
+    NDArray expX3('c', {4,1}, {2, -7.68, 25.2392, 167.0311}, sd::DataType::DOUBLE);
+    NDArray expX4('c', {4,1}, {2024.985, 306.972, 82.2, 10}, sd::DataType::DOUBLE);
 
-    ops::helpers::TriangularSolver<double>::solveVector(a,b,true,false, x);
+    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,true,false, x);
     ASSERT_TRUE(x.equalsTo(&expX1));
 
-    ops::helpers::TriangularSolver<double>::solveVector(a,b,false,false, x);
+    ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,false,false, x);
     ASSERT_TRUE(x.equalsTo(&expX2));
 
     ops::helpers::triangularSolve2D<double>(a.getContext(), a,b,true,true, x);
