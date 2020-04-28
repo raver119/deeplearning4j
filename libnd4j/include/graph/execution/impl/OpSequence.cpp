@@ -29,14 +29,14 @@ namespace sd {
 
         OpSequence::OpSequence(const std::vector<ExecutionTask> &ops, const int deviceId) {
             _deviceId = deviceId;
-            for (const auto v : ops)
+            for (const auto &v : ops)
                 _ops.emplace_back(v);
         }
 
         OpSequence::OpSequence(const OpSequence& other) noexcept{
             _ops.clear();
 
-            for (const auto v : other._ops)
+            for (const auto &v : other._ops)
                 _ops.emplace_back(v);
         }
 

@@ -359,9 +359,12 @@ namespace sd {
 
 
         void OptimizedGraph::printOut() const {
-            for (const auto &layer : _onion)
-                for (uint64_t l = 0; l < layer.second.width(); l++)
-                    layer.second.at(l).printOut();
+            for (uint64_t o = 0; o < _onion.size(); o++) {
+                const auto &layer = _onion.at(o);
+                printf("Layer [%lu]\n", o);
+                for (uint64_t l = 0; l < layer.width(); l++)
+                    layer.at(l).printOut();
+            }
         }
     }
 }

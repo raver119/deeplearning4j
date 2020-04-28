@@ -54,10 +54,33 @@ namespace sd {
 
         void ExecutionTask::printOut() const {
             if (_context.name().empty()) {
-                nd4j_printf("Node <%s/%i>:\n",  "_", _context.nodeId());
+                if (_op != nullptr)
+                    printf("   <%i:0>: {Op: %s}; ", _context.nodeId(), _op->getOpName().c_str());
+                else
+                    printf("   <%i:0>: ", _context.nodeId());
             } else {
-                nd4j_printf("Node <%s/%i>:\n",  _context.name().c_str(), _context.nodeId());
+                printf("   <%s> <%i>: ",  _context.name().c_str(), _context.nodeId());
             }
+
+            auto sz = _context.inputs().size();
+            if (sz) {
+                printf(" Inputs: [");
+                int cnt = 0;
+                for (const auto &v:_context.inputs()) {
+                    printf("<%i:%i>", v.first, v.second);
+
+                    if (cnt < sz - 1)
+                        printf(", ");
+                    cnt++;
+                }
+
+                printf("]; ");
+            } else {
+                printf(" No inputs; ");
+            }
+
+            printf("\n");
+            fflush(stdout);
         }
 
         ExecutionTask &ExecutionTask::operator=(ExecutionTask &&other) noexcept {

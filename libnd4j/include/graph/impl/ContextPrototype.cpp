@@ -31,7 +31,7 @@ namespace sd {
             _opDescriptor = opDescriptor;
         }
 
-        void ContextPrototype::pickInput(std::pair<int, int>& p) {
+        void ContextPrototype::pickInput(const std::pair<int, int>& p) {
             this->_inputs.emplace_back(p);
         }
 
@@ -48,7 +48,7 @@ namespace sd {
             this->_opNum = opNum;
         }
 
-        std::vector<std::pair<int, int>> & ContextPrototype::inputs() const {
+        const std::vector<std::pair<int, int>> & ContextPrototype::inputs() const {
             return const_cast<std::vector<std::pair<int, int>> &>(_inputs);
         }
 

@@ -92,10 +92,10 @@ namespace sd {
 
             void pickInput(int input);
             void pickInput(int input, int index);
-            void pickInput(std::pair<int, int>& p);
+            void pickInput(const std::pair<int, int>& p);
             void fillInputs(std::initializer_list<int> inputs);
             void fillInputs(std::vector<int>& inputs);
-            std::vector<std::pair<int, int>>& inputs() const;
+            const std::vector<std::pair<int, int>>& inputs() const;
 
             const std::vector<double>& getTArguments() const;
             const std::vector<int>& getIArguments() const;

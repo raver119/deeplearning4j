@@ -658,7 +658,7 @@ namespace sd {
                         ContextPrototype block(nullptr, this->id(), false);
 
                         for (int e = 0; e < this->input().size(); e++) {
-                            block.inputs().emplace_back(this->input().at(e));
+                            block.pickInput(this->input().at(e));
                         }
 
                         // there's no other IArgs in legacy options, actually
@@ -701,7 +701,7 @@ namespace sd {
                         ContextPrototype block(nullptr, this->id());
 
                         for (int e = 0; e < this->input().size(); e++) {
-                            block.inputs().emplace_back(this->input().at(e));
+                            block.pickInput(this->input().at(e));
                         }
 
                         if (node->extraInteger() != nullptr)
