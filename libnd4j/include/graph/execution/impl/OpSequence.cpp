@@ -60,10 +60,15 @@ namespace sd {
                 return *this;
 
             _ops.clear();
-            for (const auto v : other._ops)
+            for (const auto &v : other._ops)
                 _ops.emplace_back(v);
 
             return *this;
+        }
+
+        void OpSequence::printOut() const {
+            for (const auto &v: _ops)
+                v.printOut();
         }
 
         int OpSequence::deviceId() const {

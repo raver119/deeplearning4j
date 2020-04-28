@@ -75,7 +75,7 @@ namespace sd {
              * @param contextPrototype
              * @return
              */
-            virtual Nd4jStatus execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const;
+            virtual Nd4jStatus execute(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const;
         };
     }
 }

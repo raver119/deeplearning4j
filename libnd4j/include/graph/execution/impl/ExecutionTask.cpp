@@ -52,6 +52,14 @@ namespace sd {
             //
         }
 
+        void ExecutionTask::printOut() const {
+            if (_context.name().empty()) {
+                nd4j_printf("Node <%s/%i>:\n",  "_", _context.nodeId());
+            } else {
+                nd4j_printf("Node <%s/%i>:\n",  _context.name().c_str(), _context.nodeId());
+            }
+        }
+
         ExecutionTask &ExecutionTask::operator=(ExecutionTask &&other) noexcept {
             if (this == &other)
                 return *this;

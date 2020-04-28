@@ -47,6 +47,7 @@ namespace sd {
             // move assignment operator
             ExecutionTask& operator=(ExecutionTask&& other) noexcept;
 
+            void printOut() const;
 
             std::shared_ptr<sd::ops::DeclarableOp> op() const;
 

@@ -64,6 +64,11 @@ namespace sd {
             Nd4jStatus wait() const;
 
             /**
+             * This method prints out content of the sequence
+             */
+            void printOut() const;
+
+            /**
              * This method returns number of individual operations within this sequence
              * @return
              */

@@ -268,7 +268,12 @@ namespace sd {
 
             fflush(stdout);
 
-            throw std::runtime_error("Graph::printOut - not implemented yet");
+            if (size() > 0) {
+                nd4j_printf("\nPrinting out Nodes...\n", "");
+
+                // since we need structure - we'll print out nodes of OptimizedGraph
+                optimizedGraph().printOut();
+            }
         }
 
         Nd4jStatus Graph::validateNode(Node *node) {

@@ -104,6 +104,11 @@ namespace sd {
              * @return
              */
             size_t size() const;
+
+            /**
+             * This method prints out graph content
+             */
+            void printOut() const;
         protected:
             /*
             * optimize original graph

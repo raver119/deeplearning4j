@@ -44,7 +44,7 @@ namespace sd {
         }
 
 
-        Nd4jStatus GraphExecutor::execute(std::shared_ptr<sd::ops::DeclarableOp> op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const {
+        Nd4jStatus GraphExecutor::execute(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const {
             auto ctx = prepareContext(contextPrototype, proxy,  graph.memoryManager());
             return op->execute(&ctx);
             //throw std::runtime_error("GraphExecutor::execute - Not implemented yet");

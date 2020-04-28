@@ -357,6 +357,11 @@ namespace sd {
             return true;
         }
 
-        
+
+        void OptimizedGraph::printOut() const {
+            for (const auto &layer : _onion)
+                for (uint64_t l = 0; l < layer.second.width(); l++)
+                    layer.second.at(l).printOut();
+        }
     }
 }

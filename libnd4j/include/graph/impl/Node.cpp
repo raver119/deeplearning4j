@@ -587,8 +587,8 @@ namespace sd {
                     }
                 }
 
-                if (node->dimensions() != nullptr && node->dimensions()->size() > 0)
-                    throw std::runtime_error("FlatNode has dimensions defined. Graph is outdated");
+                //if (node->dimensions() != nullptr && node->dimensions()->size() > 0)
+                //    throw std::runtime_error("FlatNode has dimensions defined. Graph is outdated");
 
                 if (this->opType() == OpType_LOGIC && this->opNum() == 100L) {
                     if (node->extraInteger()->size() < 1) {

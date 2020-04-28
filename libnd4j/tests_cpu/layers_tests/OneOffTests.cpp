@@ -75,7 +75,9 @@ TEST_F(OneOffTests, test_assert_scalar_float32_2) {
     sd::ops::noop op2;
     auto graph = Graph::fromFlatBuffers("./resources/assertsomething.fb");
 
-    graph.execute();
+    graph.printOut();
+
+    //graph.execute();
 }
 
 
