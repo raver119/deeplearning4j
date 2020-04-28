@@ -29,8 +29,11 @@ namespace sd {
     namespace ops {
         namespace helpers {
 
-            //void argmin(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
-            void argmax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
+            void argMax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
+            void argAbsMax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
+            void argMin(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
+            void argAbsMin(const NDArray& input, NDArray& output, const std::vector<int>& dimensions);
+            
         }
     }
 }

@@ -70,14 +70,14 @@ TEST_F(PlaygroundTests, test_avx) {
 
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
-    auto x = NDArrayFactory::create<float>('c', {512, 3072});
+    auto x = NDArrayFactory::create<float>('c', {32,512, 3072});
     auto y = NDArrayFactory::create<float>('c', {3072});
 
     std::vector<Nd4jLong> values;
 
     sd::ops::biasadd op;
 
-    for (int e = 0; e < 100; e++) {
+    for (int e = 0; e < 1000; e++) {
         auto timeStart = std::chrono::system_clock::now();
 
         op.execute({&x, &y}, {&x});
@@ -88,8 +88,9 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
     }
 
     std::sort(values.begin(), values.end());
+    double sum_of_elems = std::accumulate(values.begin(), values.end(), 0.0);
 
-    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+    nd4j_printf("Time: %lld us; Avg: %f us\n", values[values.size() / 2], sum_of_elems/1000);
 }
 
 
@@ -399,20 +400,25 @@ nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 #endif
 }
 
-//#define DEBUG 1
+#define DEBUG 1
 
-void testNewReduction(bool random, bool checkCorrectness = false) {
-
+void testNewReduction(bool random, bool checkCorrectness = false , char order ='c') {
+    std::vector<Nd4jLong> arr_dimensions;
 #if defined(DEBUG)
-    int bases[] = { 3, 2, 3, 3, 5 };
+    int bases[] = { 3, 2, 3, 3, 5 ,4,7,4,7,7 };
     constexpr int Loop = 1;
+    constexpr int N = 10;
 #else
     int bases[] = { 8, 32, 64, 32, 64 };
     constexpr int Loop = 10;
-#endif
     constexpr int N = 5;
 
-    auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
+#endif
+    
+    for (int i = 0; i < N; i++) {
+        arr_dimensions.push_back(bases[i]);
+    }
+    auto x = NDArrayFactory::create<float>(order,arr_dimensions);
     if (!random) {
         x.linspace(1);
     }
@@ -476,8 +482,8 @@ void testNewReduction(bool random, bool checkCorrectness = false) {
         original_argmax(x, dimension, exp);
    
 
-#if defined(DEBUG)
-    x.printIndexedBuffer("X");
+#if  0// defined(DEBUG)
+     x.printIndexedBuffer("X");
     exp.printIndexedBuffer("Expected");
     z->printIndexedBuffer("Z");
 #endif
@@ -497,17 +503,21 @@ void testNewReduction(bool random, bool checkCorrectness = false) {
 }
 
 constexpr bool test_corr = true;
-#if 1
+#if !defined(DEBUG)
 TEST_F(PlaygroundTests, ArgMaxPerfLinspace) {
     testNewReduction(false, test_corr);
 }
 #endif
-#if 1
+ 
 TEST_F(PlaygroundTests, ArgMaxPerfRandom) {
     testNewReduction(true, test_corr);
 }
-#endif
-#if 1
+
+TEST_F(PlaygroundTests, ArgMaxPerfRandomOrderF) {
+    testNewReduction(true, test_corr, 'f');
+}
+ 
+#if !defined(DEBUG)
 TEST_F(PlaygroundTests, ArgMaxPerfLegacyLinspace) {
     testLegacy(false);
 }

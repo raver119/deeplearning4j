@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
- *
+ * Copyright (c) 2019 Konduit K.K.
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
  * https://www.apache.org/licenses/LICENSE-2.0.
@@ -14,12 +14,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-//
-// Created by raver119 on 01.11.2017.
-// Modified by GS <sgazeos@gmail.com> 4/5/2018.
+ // Created by Abdelrauf 2020 (based on argmax)
 
 #include <system/op_boilerplate.h>
-#if NOT_EXCLUDED(OP_argmin)
+#if NOT_EXCLUDED(OP_argamax)
 
 #include <ops/declarable/helpers/axis.h>
 #include <ops/declarable/helpers/reductions.h>
@@ -28,65 +26,64 @@
 
 namespace sd {
     namespace ops {
-
-        DECLARE_TYPES(argmin) {
+        DECLARE_TYPES(argamax) {
             getOpDescriptor()
                 ->setAllowedInputTypes({ ALL_FLOATS,ALL_INTS })
-                    ->setAllowedOutputTypes({ALL_INTS});
+                ->setAllowedOutputTypes({ ALL_INTS });
         }
 
-        CUSTOM_OP_IMPL(argmin, 1, 1, false, 0, -2) {
+        CUSTOM_OP_IMPL(argamax, 1, 1, false, 0, -2) {
             auto input = INPUT_VARIABLE(0);
-            auto axis = *block.getIArguments();
-
             auto output = OUTPUT_VARIABLE(0);
+
+            auto axis = *block.getIArguments();
 
             // axis might be dynamic (i.e. tf mode)
             if (block.width() > 1 && axis.size() == 0) {
                 auto axisVector = INPUT_VARIABLE(1);
                 helpers::adjustAxis(input->rankOf(), axisVector, axis);
-                helpers::argMin(*input, *output, axis);
+                helpers::argAbsMax(*input, *output, axis);
             }
             else {
                 helpers::adjustAxis(input->rankOf(), axis);
-                helpers::argMin(*input, *output, axis);
+                helpers::argAbsMax(*input, *output, axis);
 
             }
 
             STORE_RESULT(output);
 
-            return ND4J_STATUS_OK;
+            return Status::OK();
         }
 
-        DECLARE_SHAPE_FN(argmin) {
+        DECLARE_SHAPE_FN(argamax) {
             std::vector<int> dims;
-            auto in = inputShape->at(0);
+
             if (block.width() == 1) {
                 dims = *block.getIArguments();
-            } else {
+            }
+            else {
                 auto y = INPUT_VARIABLE(1);
                 dims = y->template asVectorT<int>();
             }
 
             // we're resolving negative axis here
-            helpers::adjustAxis(shape::rank(in), dims);
+            helpers::adjustAxis(shape::rank(inputShape->at(0)), dims);
 
             if (dims.size() > 1)
                 std::sort(dims.begin(), dims.end());
 
-            for (auto d:dims) {
-                REQUIRE_TRUE(inputShape->at(0)[d+1] != 0, 0, "ArgMin: you can't reduce along axis with 0 in shape");
+
+            for (auto d : dims) {
+                REQUIRE_TRUE(inputShape->at(0)[d + 1] != 0, 0, "ArgAmax: you can't reduce along axis with 0 in shape");
             }
 
             // special case - output is scalar
             if (dims.size() == 0 || (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
-                return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT64));
+                return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64));
             }
 
-            auto newShape = ShapeUtils::evalReduceShapeInfo('c', dims, in, DataType::INT64, false, false, block.getWorkspace());
-            return SHAPELIST(newShape);
+            return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), DataType::INT64, false, false, block.getWorkspace()));
         }
-
     }
 }
 

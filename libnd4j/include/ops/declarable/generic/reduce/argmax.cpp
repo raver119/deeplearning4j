@@ -43,19 +43,12 @@ namespace sd {
             // axis might be dynamic (i.e. tf mode)
             if (block.width() > 1 && axis.size() == 0) {
                 auto axisVector = INPUT_VARIABLE(1);
-                helpers::adjustAxis(input->rankOf(), axisVector, axis);
-#if 1
-                helpers::argmax(*input, *output, axis);
-#else
-                input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
-#endif
+                helpers::adjustAxis(input->rankOf(), axisVector, axis); 
+                helpers::argMax(*input, *output, axis); 
             } else {
-                helpers::adjustAxis(input->rankOf(), axis);
-#if  1
-               helpers::argmax(*input, *output, axis);
-#else
-                input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
-#endif
+                helpers::adjustAxis(input->rankOf(), axis); 
+                helpers::argMax(*input, *output, axis);
+
             }
 
             STORE_RESULT(output);

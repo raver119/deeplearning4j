@@ -13,12 +13,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
-
-
  //
  // @author AbdelRauf 
  //
-
 #include <type_traits>
 #include <cmath>
 #include <stdexcept>
@@ -27,872 +24,938 @@
 #include <execution/ThreadPool.h>
 #include <helpers/LoopsCoordsHelper.h>
 #include <ops/declarable/helpers/reductions.h>
-
 #if 1
-#define LOG_CALLS(X) 
+#define  LOG_CALLS(X) 
 #else
-static bool call_reset = false;
-#define LOG_CALLS(X)  nd4j_printf("___%s_________%d+\n", __PRETTY_FUNCTION__, X); 
+ 
+#define  LOG_CALLS(X)  nd4j_printf("___%s_________%d+\n", __PRETTY_FUNCTION__, X); 
 #endif
 namespace sd {
 	namespace ops {
 		namespace helpers {
-
-
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReduction(const int rank, const X* buffer, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopStart, const Nd4jLong& outerLoopStop, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride, X& max, Z& argMax)
+			constexpr int threadingThreshold = 4096;
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1(const X* buffer, X& current, Z& argCurrent, const Nd4jLong& loopCount)
 			{
+				argCurrent = 0;
+				current = buffer[0];
+				LOG_CALLS(0)
+				Nd4jLong j_offset = 0;
+				for (Z j = 0; j < loopCount; j++) {
+					ReductionOp::update(current, argCurrent, buffer[j], j);
+				}
+			}
 
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1(const X* buffer, X& current, Z& argCurrent, const Nd4jLong& loopCount, const Nd4jLong& inner_stride)
+			{
+				argCurrent = 0;
+				current = buffer[0];
+				LOG_CALLS(0)
+				Nd4jLong j_offset = 0;
+				for (Z j = 0; j < loopCount; j++) {
+					ReductionOp::update(current, argCurrent, buffer[j_offset], j);
+					j_offset += inner_stride;
+				}
+			}
+
+			template<typename X, typename Z, typename ReductionOp, size_t constRank, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReductionConstRank(const X* buffer, X& current, Z& argCurrent, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong outerLoopCount, const Nd4jLong& innerLoopCount)
+			{
+				//skip 1 from the beginning or end depending the Order 
+				constexpr size_t updated_index = LastIndexFaster ? 0 : 1;
+				constexpr size_t updated_rank = constRank - 1;
+				sd::CoordsState<updated_rank - 1> cst;
+				//we skip 1  
+				size_t offset = sd::init_coords<updated_rank, 0, LastIndexFaster>(cst, 0, bases + updated_index, strides + updated_index);
+				Z startIndex = 0;
+				argCurrent = 0;
+				current = buffer[offset];
+				LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					//typename std::make_signed<Z>::type iArgMax = -1;
+					for (Z j = 0; j < innerLoopCount; j++) {
+						ReductionOp::update(current, argCurrent, inner_buffer[j], j + startIndex);
+					}
+					//we skip 1
+					offset = sd::inc_coords<updated_rank, 0, LastIndexFaster>(cst, offset);
+					startIndex += innerLoopCount;
+				}
+			}
+
+			template<typename X, typename Z, typename ReductionOp, size_t constRank, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReductionConstRank(const X* buffer, X& current, Z& argCurrent, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong outerLoopCount, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride)
+			{
+				//skip 1 from the beginning or end depending the Order 
+				constexpr size_t updated_index = LastIndexFaster ? 0 : 1;
+				constexpr size_t updated_rank = constRank - 1;
+				sd::CoordsState<updated_rank - 1> cst;
+				//we skip 1  
+				size_t offset = sd::init_coords<updated_rank, 0, LastIndexFaster>(cst, 0, bases + updated_index, strides + updated_index);
+				Z startIndex = 0;
+				argCurrent = 0;
+				current = buffer[offset];
+				LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					for (Z j = 0; j < innerLoopCount; j++) {
+						ReductionOp::update(current, argCurrent, *inner_buffer, j + startIndex);
+						inner_buffer += inner_stride;
+					}
+					//we alreaddy skiped
+					offset = sd::inc_coords<updated_rank, 0, LastIndexFaster>(cst, offset);
+					startIndex += innerLoopCount;
+				}
+			}
+
+			template<typename X, typename Z, typename ReductionOp, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReduction(const int& rank, const X* buffer, X& current, Z& argCurrent, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopStart, const Nd4jLong& outerLoopStop, const Nd4jLong& innerLoopCount)
+			{
 				size_t offset = 0;
 				Nd4jLong outerLoopCount = outerLoopStop - outerLoopStart;
 				Nd4jLong coords[MAX_RANK] = {};
 				Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
 				if (outerLoopStart > 0) {
-					//	if (Last_Index_Faster) {
 					sd::index2coords_C(outerLoopStart, rank - 1, bases, ptr_coords);
-					/*	}
-						else {
-							sd::index2coords_F(outerLoopStart, rank-1, &(bases[1]), ptr_coords);
-						}*/
 					offset = sd::offset_from_coords(strides, ptr_coords, rank);
 				}
-
 				Z startIndex = outerLoopStart * innerLoopCount;
-				argMax = startIndex;
-				max = buffer[offset];
-
-				if (inner_stride == 1) {
-					LOG_CALLS(0)
-						for (Z i = 0; i < outerLoopCount; i++) {
-							const X* inner_buffer = &(buffer[offset]);
-							//typename std::make_signed<Z>::type iArgMax = -1;
-
-							for (Z j = 0; j < innerLoopCount; j++) {
-								//nd4j_printf("%f\n", inner_buffer[j]);
-								if (inner_buffer[j] > max) {
-									max = inner_buffer[j];
-									argMax = startIndex + j;
-								}
-
-							}
-
-							offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
-							//if (iArgMax >= 0) argMax = startIndex + iArgMax;
-							startIndex += innerLoopCount;
-
-						}
-				}
-				else {
-					LOG_CALLS(1)
-
-						for (Z i = 0; i < outerLoopCount; i++) {
-							const X* inner_buffer = &(buffer[offset]);
-							//typename std::make_signed<Z>::type iArgMax = -1;
-
-							for (Z j = 0; j < innerLoopCount; j++) {
-								if (inner_buffer[j * inner_stride] > max) {
-									max = inner_buffer[j * inner_stride];
-									argMax = startIndex + j;
-								}
-
-							}
-
-							offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
-
-							//offset = inc_coords<Last_Index_Faster>(bases, strides, ptr_coords, offset, rank, 1);
-							//if (iArgMax >= 0) argMax = startIndex + iArgMax;
-							startIndex += innerLoopCount;
-						}
+				argCurrent = startIndex;
+				current = buffer[offset];
+				LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					//typename std::make_signed<Z>::type iArgMax = -1;
+					for (Z j = 0; j < innerLoopCount; j++) {
+						//nd4j_printf("%f\n", inner_buffer[j]);
+						ReductionOp::update(current, argCurrent, inner_buffer[j], j + startIndex);
+					}
+					offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
+					//if (iArgMax >= 0) argCurrent = startIndex + iArgMax;
+					startIndex += innerLoopCount;
 				}
 			}
 
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1Stride1Block4(const X* buffer, const Nd4jLong& loopCount, X& max, Z& argMax)
+			template<typename X, typename Z, typename ReductionOp, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReduction(const int& rank, const X* buffer, X& current, Z& argCurrent, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopStart, const Nd4jLong& outerLoopStop, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride)
 			{
-				argMax = 0;
-				max = buffer[0];
-
-				LOG_CALLS(0)
-					Nd4jLong loopCount4 = loopCount / 4;
-				Nd4jLong loopCountEnd = loopCount4 + (loopCount & 3);
-
-				const X* buffer_1 = buffer + loopCount4;
-				const X* buffer_2 = buffer_1 + loopCount4;
-				const X* buffer_3 = buffer_2 + loopCount4;
-				X max_1 = *buffer_1;
-				X max_2 = *buffer_2;
-				X max_3 = *buffer_3;
-				Z argMax_1 = 0;
-				Z argMax_2 = 0;
-				Z argMax_3 = 0;
-
-				for (Z j = 0; j < loopCount4; j++) {
-					if (buffer[j] > max) {
-						max = buffer[j];
-						argMax = j;
-					}
-					if (buffer_1[j] > max_1) {
-						max_1 = buffer_1[j];
-						argMax_1 = j;
-					}
-					if (buffer_2[j] > max_2) {
-						max_2 = buffer_2[j];
-						argMax_2 = j;
-					}
-					if (buffer_3[j] > max_3) {
-						max_3 = buffer_3[j];
-						argMax_3 = j;
-					}
+				size_t offset = 0;
+				Nd4jLong outerLoopCount = outerLoopStop - outerLoopStart;
+				Nd4jLong coords[MAX_RANK] = {};
+				Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
+				if (outerLoopStart > 0) {
+					sd::index2coords_C(outerLoopStart, rank - 1, bases, ptr_coords);
+					offset = sd::offset_from_coords(strides, ptr_coords, rank);
 				}
+				Z startIndex = outerLoopStart * innerLoopCount;
+				argCurrent = startIndex;
+				current = buffer[offset];
+				LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					//typename std::make_signed<Z>::type iArgMax = -1;
+					for (Z j = 0; j < innerLoopCount; j++) {
+						ReductionOp::update(current, argCurrent, inner_buffer[j * inner_stride], startIndex + j);
+					}
+					offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
+					//offset = inc_coords<LastIndexFaster>(bases, strides, ptr_coords, offset, rank, 1);
+					//if (iArgMax >= 0) argCurrent = startIndex + iArgMax;
+					startIndex += innerLoopCount;
+				}
+			}
 
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1Block4WithMerge(const X* buffer, X& current, Z& argCurrent, const Nd4jLong& loopCount)
+			{
+				argCurrent = 0;
+				current = buffer[0];
+				LOG_CALLS(0)
+				Nd4jLong loopCount4 = loopCount / 4;
+				Nd4jLong loopCountEnd = loopCount4 + (loopCount & 3);
+				const X* buffer1 = buffer + 1 * loopCount4;
+				const X* buffer2 = buffer1 + 1 * loopCount4;
+				const X* buffer3 = buffer2 + 1 * loopCount4;
+				X current1 = *buffer1;
+				X current2 = *buffer2;
+				X current3 = *buffer3;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
+				for (Z j = 0; j < loopCount4; j++) {
+					ReductionOp::update(current, argCurrent, buffer[j], j);
+					ReductionOp::update(current1, argCurrent1, buffer1[j], j);
+					ReductionOp::update(current2, argCurrent2, buffer2[j], j);
+					ReductionOp::update(current3, argCurrent3, buffer3[j], j);
+				}
 				//tail
 				for (Z j = loopCount4; j < loopCountEnd; j++) {
-					if (buffer_3[j] > max_3) {
-						max_3 = buffer_3[j];
-						argMax_3 = j;
-					}
+					ReductionOp::update(current3, argCurrent3, buffer3[j], j);
 				}
-
 				//merge
-				argMax_1 += loopCount4;
-				argMax_2 += 2 * loopCount4;
-				argMax_3 += 3 * loopCount4;
-
-				if (max_1 > max) {
-					max = max_1;
-					argMax = argMax_1;
-				}
-				if (max_2 > max) {
-					max = max_2;
-					argMax = argMax_2;
-				}
-				if (max_3 > max) {
-					max = max_3;
-					argMax = argMax_3;
-				}
-
-
-
+				argCurrent1 += loopCount4;
+				argCurrent2 += 2 * loopCount4;
+				argCurrent3 += 3 * loopCount4;
+				ReductionOp::update(current, argCurrent, current1, argCurrent1);
+				ReductionOp::update(current, argCurrent, current2, argCurrent2);
+				ReductionOp::update(current, argCurrent, current3, argCurrent3);
 			}
 
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1Stride1Ordinary(const X* buffer, const Nd4jLong& loopCount,  X& max, Z& argMax)
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1Block4WithMerge(const X* buffer, X& current, Z& argCurrent, const Nd4jLong& loopCount, const Nd4jLong& inner_stride)
 			{
-				argMax = 0;
-				max = buffer[0];
+				argCurrent = 0;
+				current = buffer[0];
 				LOG_CALLS(0)
-					for (Z j = 1; j < loopCount; j++) {
-						if (buffer[j] > max) {
-							max = buffer[j];
-							argMax = j;
-						}
-
-					}
-
-			}
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1StrideNBlock4(const X* buffer, const Nd4jLong& loopCount, const Nd4jLong& inner_stride, X& max, Z& argMax)
-			{
-				argMax = 0;
-				max = buffer[0];
-
-				LOG_CALLS(0)
-					Nd4jLong loopCount4 = loopCount / 4;
+				Nd4jLong loopCount4 = loopCount / 4;
 				Nd4jLong loopCountEnd = loopCount4 + (loopCount & 3);
-
-				const X* buffer_1 = buffer + inner_stride * loopCount4;
-				const X* buffer_2 = buffer_1 + inner_stride * loopCount4;
-				const X* buffer_3 = buffer_2 + inner_stride * loopCount4;
-				X max_1 = *buffer_1;
-				X max_2 = *buffer_2;
-				X max_3 = *buffer_3;
-				Z argMax_1 = 0;
-				Z argMax_2 = 0;
-				Z argMax_3 = 0;
+				const X* buffer1 = buffer + inner_stride * loopCount4;
+				const X* buffer2 = buffer1 + inner_stride * loopCount4;
+				const X* buffer3 = buffer2 + inner_stride * loopCount4;
+				X current1 = *buffer1;
+				X current2 = *buffer2;
+				X current3 = *buffer3;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
 				Nd4jLong j_offset = 0;
 				for (Z j = 0; j < loopCount4; j++) {
-					if (buffer[j_offset] > max) {
-						max = buffer[j_offset];
-						argMax = j;
-					}
-					if (buffer_1[j_offset] > max_1) {
-						max_1 = buffer_1[j_offset];
-						argMax_1 = j;
-					}
-					if (buffer_2[j_offset] > max_2) {
-						max_2 = buffer_2[j_offset];
-						argMax_2 = j;
-					}
-					if (buffer_3[j_offset] > max_3) {
-						max_3 = buffer_3[j_offset];
-						argMax_3 = j;
-					}
-
+					ReductionOp::update(current, argCurrent, buffer[j_offset], j);
+					ReductionOp::update(current1, argCurrent1, buffer1[j_offset], j);
+					ReductionOp::update(current2, argCurrent2, buffer2[j_offset], j);
+					ReductionOp::update(current3, argCurrent3, buffer3[j_offset], j);
 					j_offset += inner_stride;
 				}
-
 				//tail
 				for (Z j = loopCount4; j < loopCountEnd; j++) {
-					if (buffer_3[j_offset] > max_3) {
-						max_3 = buffer_3[j_offset];
-						argMax_3 = j;
-					}
+					ReductionOp::update(current3, argCurrent3, buffer3[j_offset], j);
 					j_offset += inner_stride;
 				}
-
 				//merge
-				argMax_1 += loopCount4;
-				argMax_2 += 2 * loopCount4;
-				argMax_3 += 3 * loopCount4;
-
-				if (max_1 > max) {
-					max = max_1;
-					argMax = argMax_1;
-				}
-				if (max_2 > max) {
-					max = max_2;
-					argMax = argMax_2;
-				}
-				if (max_3 > max) {
-					max = max_3;
-					argMax = argMax_3;
-				}
-
-
+				argCurrent1 += loopCount4;
+				argCurrent2 += 2 * loopCount4;
+				argCurrent3 += 3 * loopCount4;
+				ReductionOp::update(current, argCurrent, current1, argCurrent1);
+				ReductionOp::update(current, argCurrent, current2, argCurrent2);
+				ReductionOp::update(current, argCurrent, current3, argCurrent3);
 			}
 
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1StrideNOrdinary(const X* buffer, const Nd4jLong& loopCount, const Nd4jLong& inner_stride, X& max, Z& argMax)
-			{
-				argMax = 0;
-				max = buffer[0]; 
-				LOG_CALLS(0)
-					for (Z j = 0; j < loopCount; j++) {
-						if (*buffer > max) {
-							max = *buffer;
-							argMax = j;
-						}
-						buffer += inner_stride;
-					}
-
-			}
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1OutStrideNOutBlock4(const X* buffer, const Nd4jLong outer_stride, const Nd4jLong& loopCount, const Nd4jLong& inner_stride, Z* output, const Nd4jLong output_stride)
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1Block4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3, Z* output, Z* output1, Z* output2, Z* output3, const Nd4jLong& loopCount)
 			{
 				LOG_CALLS(0)
-					const X* buffer1 = buffer + outer_stride;
-				const X* buffer2 = buffer1 + outer_stride;
-				const X* buffer3 = buffer2 + outer_stride;
-				Z argMax = 0;
-				Z argMax1 = 0;
-				Z argMax2 = 0;
-				Z argMax3 = 0;
-				X max = buffer[0];
-				X max1 = buffer1[0];
-				X max2 = buffer2[0];
-				X max3 = buffer3[0];
-				Nd4jLong offset = 0;
-				 
-				if (inner_stride == 1) {
-					for (Z j = 0; j < loopCount; j++) {
-						if (buffer[j] > max) {
-							max = buffer[j];
-							argMax = j;
-						}
-						if (buffer1[j] > max1) {
-							max1 = buffer1[j];
-							argMax1 = j;
-						}
-						if (buffer2[j] > max2) {
-							max2 = buffer2[j];
-							argMax2 = j;
-						}
-						if (buffer3[j] > max3) {
-							max3 = buffer3[j];
-							argMax3 = j;
-						} 
-					}
-				}
-				else {
-					for (Z j = 0; j < loopCount; j++) {
-						if (buffer[offset] > max) {
-							max = buffer[offset];
-							argMax = j;
-						}
-						if (buffer1[offset] > max1) {
-							max1 = buffer1[offset];
-							argMax1 = j;
-						}
-						if (buffer2[offset] > max2) {
-							max2 = buffer2[offset];
-							argMax2 = j;
-						}
-						if (buffer3[offset] > max3) {
-							max3 = buffer3[offset];
-							argMax3 = j;
-						}
-						offset += inner_stride;
-					}
-				}
-				output[0] = argMax;
-				output[output_stride] = argMax1;
-				output[2 * output_stride] = argMax2;
-				output[3 * output_stride] = argMax3;
-#if 0     
-				nd4j_printf("___%f__%f__%f__%f+\n", max, max1, max2, max3);
-#endif
-			}
-
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1OutStride1OutBlock4(const X* buffer,  const Nd4jLong& loopCount, const Nd4jLong& inner_stride, Z* output)
-			{
-				LOG_CALLS(0)
-				const X* buffer1 = buffer + 1;
-				const X* buffer2 = buffer + 2;
-				const X* buffer3 = buffer + 3;
-				Z argMax = 0;
-				Z argMax1 = 0;
-				Z argMax2 = 0;
-				Z argMax3 = 0;
-				X max = buffer[0];
-				X max1 = buffer1[0];
-				X max2 = buffer2[0];
-				X max3 = buffer3[0];
-				Nd4jLong offset = 0;
-				 
-					for (Z j = 0; j < loopCount; j++) {
-						if (buffer[offset] > max) {
-							max = buffer[offset];
-							argMax = j;
-						}
-						if (buffer1[offset] > max1) {
-							max1 = buffer1[offset];
-							argMax1 = j;
-						}
-						if (buffer2[offset] > max2) {
-							max2 = buffer2[offset];
-							argMax2 = j;
-						}
-						if (buffer3[offset] > max3) {
-							max3 = buffer3[offset];
-							argMax3 = j;
-						}
-						offset += inner_stride;
-					}
-				output[0] = argMax;
-				output[1] = argMax1;
-				output[2] = argMax2;
-				output[3] = argMax3;
-			}
-
-
-			template<typename X, typename Z>
-			FORCEINLINE void argMaxInnerReductionRank1OutBlock4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3, const Nd4jLong& loopCount, const Nd4jLong& inner_stride, Z* output)
-			{
-				LOG_CALLS(0)
-					 
-				Z argMax = 0;
-				Z argMax1 = 0;
-				Z argMax2 = 0;
-				Z argMax3 = 0;
-				X max = buffer[0];
-				X max1 = buffer1[0];
-				X max2 = buffer2[0];
-				X max3 = buffer3[0];
-				Nd4jLong offset = 0;
-
+				Z argCurrent = 0;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
+				X current = buffer[0];
+				X current1 = buffer1[0];
+				X current2 = buffer2[0];
+				X current3 = buffer3[0];
 				for (Z j = 0; j < loopCount; j++) {
-					if (buffer[offset] > max) {
-						max = buffer[offset];
-						argMax = j;
-					}
-					if (buffer1[offset] > max1) {
-						max1 = buffer1[offset];
-						argMax1 = j;
-					}
-					if (buffer2[offset] > max2) {
-						max2 = buffer2[offset];
-						argMax2 = j;
-					}
-					if (buffer3[offset] > max3) {
-						max3 = buffer3[offset];
-						argMax3 = j;
-					}
-					offset += inner_stride;
+					ReductionOp::update(current, argCurrent, buffer[j], j);
+					ReductionOp::update(current1, argCurrent1, buffer1[j], j);
+					ReductionOp::update(current2, argCurrent2, buffer2[j], j);
+					ReductionOp::update(current3, argCurrent3, buffer3[j], j);
 				}
-				output[0] = argMax;
-				output[1] = argMax1;
-				output[2] = argMax2;
-				output[3] = argMax3;
-
+				*output = argCurrent;
+				*output1 = argCurrent1;
+				*output2 = argCurrent2;
+				*output3 = argCurrent3;
 				return;
 			}
 
-
-			template<typename X, typename Z, size_t constRank, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReductionConstantRankOutBlock4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride, Z* output)
+			template<typename X, typename Z, typename ReductionOp>
+			FORCEINLINE void indexInnerReductionRank1Block4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3, Z* output, Z* output1, Z* output2, Z* output3, const Nd4jLong& loopCount, const Nd4jLong& inner_stride)
 			{
 				LOG_CALLS(0)
-
-					//skip 1 from the beginning or end depending the Order 
-			    constexpr size_t updated_index = Last_Index_Faster ? 0 : 1;
-				constexpr size_t updated_rank = constRank - 1;
-				sd::CoordsState<updated_rank - 1> cst;
-				//we skip 1  
-				size_t offset = sd::init_coords<updated_rank, 0, Last_Index_Faster>(cst, 0, bases + updated_index, strides + updated_index);
-
-				Z startIndex = 0;
-				Z argMax = 0;
-				Z argMax1 = 0;
-				Z argMax2 = 0;
-				Z argMax3 = 0;
-				X max = buffer[0];
-				X max1 = buffer1[0];
-				X max2 = buffer2[0];
-				X max3 = buffer3[0];
-
-				LOG_CALLS(0)
-					if (inner_stride == 1) {
-						for (Z i = 0; i < outerLoopCount; i++) {
-							const X* inner_buffer = &(buffer[offset]);
-							const X* inner_buffer1 = &(buffer1[offset]);
-							const X* inner_buffer2 = &(buffer2[offset]);
-							const X* inner_buffer3 = &(buffer3[offset]);
-							//typename std::make_signed<Z>::type iArgMax = -1; 
-							for (Z j = 0; j < innerLoopCount; j++) {
-								if (inner_buffer[j] > max) {
-									max = inner_buffer[j];
-									argMax = j + startIndex;
-								}
-								if (inner_buffer1[j] > max1) {
-									max1 = inner_buffer1[j];
-									argMax1 = j + startIndex;
-								}
-								if (inner_buffer2[j] > max2) {
-									max2 = inner_buffer2[j];
-									argMax2 = j + startIndex;
-								}
-								if (inner_buffer3[j] > max3) {
-									max3 = inner_buffer3[j];
-									argMax3 = j + startIndex;
-								} 
-							}
-							//we skip 1
-							offset = sd::inc_coords<updated_rank, 0, Last_Index_Faster>(cst, offset);
-							startIndex += innerLoopCount;
-						}
-					}
-					else {
-						for (Z i = 0; i < outerLoopCount; i++) {
-							const X* inner_buffer = &(buffer[offset]);
-							const X* inner_buffer1 = &(buffer1[offset]);
-							const X* inner_buffer2 = &(buffer2[offset]);
-							const X* inner_buffer3 = &(buffer3[offset]);
-							//typename std::make_signed<Z>::type iArgMax = -1;
-							Nd4jLong inner_offset = 0;
-							for (Z j = 0; j < innerLoopCount; j++) {
-								if (inner_buffer[inner_offset] > max) {
-									max = inner_buffer[inner_offset];
-									argMax = j + startIndex;
-								}
-								if (inner_buffer1[inner_offset] > max1) {
-									max1 = inner_buffer1[inner_offset];
-									argMax1 = j + startIndex;
-								}
-								if (inner_buffer2[inner_offset] > max2) {
-									max2 = inner_buffer2[inner_offset];
-									argMax2 = j + startIndex;
-								}
-								if (inner_buffer3[inner_offset] > max3) {
-									max3 = inner_buffer3[inner_offset];
-									argMax3 = j + startIndex;
-								}
-								inner_offset += inner_stride;
-							}
-							//we skip 1
-							offset = sd::inc_coords<updated_rank, 0, Last_Index_Faster>(cst, offset);
-							startIndex += innerLoopCount;
-						}
-					}
-				output[0] = argMax;
-				output[1] = argMax1;
-				output[2] = argMax2;
-				output[3] = argMax3;
-
+				Z argCurrent = 0;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
+				X current = buffer[0];
+				X current1 = buffer1[0];
+				X current2 = buffer2[0];
+				X current3 = buffer3[0];
+				Nd4jLong j_offset = 0;
+				for (Z j = 0; j < loopCount; j++) {
+					ReductionOp::update(current, argCurrent, buffer[j_offset], j);
+					ReductionOp::update(current1, argCurrent1, buffer1[j_offset], j);
+					ReductionOp::update(current2, argCurrent2, buffer2[j_offset], j);
+					ReductionOp::update(current3, argCurrent3, buffer3[j_offset], j);
+					j_offset += inner_stride;
+				}
+				*output = argCurrent;
+				*output1 = argCurrent1;
+				*output2 = argCurrent2;
+				*output3 = argCurrent3;
 				return;
 			}
 
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReductionStrideN(const int rank, const X* buffer, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong outerLoopCount, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride, X& max, Z& argMax)
+			template<typename X, typename Z, typename ReductionOp, size_t constRank, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReductionConstRankBlock4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3,
+				Z* output, Z* output1, Z* output2, Z* output3, const Nd4jLong* bases, const Nd4jLong* strides,
+				const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount)
 			{
-
-				size_t offset = 0;
-				Nd4jLong coords[MAX_RANK] = {};
-				Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
-				Z startIndex = 0;
-				argMax = 0;
-				max = buffer[offset];
 				LOG_CALLS(0)
-
-					for (Z i = 0; i < outerLoopCount; i++) {
-						const X* inner_buffer = &(buffer[offset]);
-						//typename std::make_signed<Z>::type iArgMax = -1;
-
-						for (Z j = 0; j < innerLoopCount; j++) {
-							if (*inner_buffer > max) {
-								max = *inner_buffer;
-								argMax = startIndex + j;
-							}
-							inner_buffer += inner_stride;
-						}
-
-						offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
-						startIndex += innerLoopCount;
-					}
-			}
-
-
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReductionStride1(const int rank, const X* buffer, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount, X& max, Z& argMax)
-			{
-
-				size_t offset = 0;
-				Nd4jLong coords[MAX_RANK] = {};
-				Nd4jLong* ptr_coords = (Nd4jLong*)&coords;
-				Z startIndex = 0;
-				argMax = 0;
-				max = buffer[offset];
-				LOG_CALLS(0)
-
-					for (Z i = 0; i < outerLoopCount; i++) {
-						const X* inner_buffer = &(buffer[offset]);
-						//typename std::make_signed<Z>::type iArgMax = -1;
-
-						for (Z j = 0; j < innerLoopCount; j++) {
-							if (inner_buffer[j] > max) {
-								max = inner_buffer[j];
-								argMax = startIndex + j;
-							}
-						}
-
-						offset = inc_coords<true>(bases, strides, ptr_coords, offset, rank, 1);
-						startIndex += innerLoopCount;
-					}
-			}
-
-
-			template<typename X, typename Z, size_t constRank, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReductionStride1ConstRank(  const X* buffer, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount, X& max, Z& argMax)
-			{
-
 				//skip 1 from the beginning or end depending the Order 
-				constexpr size_t updated_index = Last_Index_Faster ? 0 : 1;
+				constexpr size_t updated_index = LastIndexFaster ? 0 : 1;
 				constexpr size_t updated_rank = constRank - 1;
 				sd::CoordsState<updated_rank - 1> cst;
 				//we skip 1  
-				size_t offset = sd::init_coords<updated_rank, 0, Last_Index_Faster>(cst, 0, bases + updated_index, strides + updated_index);
-
+				size_t offset = sd::init_coords<updated_rank, 0, LastIndexFaster>(cst, 0, bases + updated_index, strides + updated_index);
 				Z startIndex = 0;
-				argMax = 0;
-				max = buffer[offset];
-
-				LOG_CALLS(0)
-
-					for (Z i = 0; i < outerLoopCount; i++) {
-						const X* inner_buffer = &(buffer[offset]);
-						//typename std::make_signed<Z>::type iArgMax = -1;
-
-						for (Z j = 0; j < innerLoopCount; j++) {
-							if (inner_buffer[j] > max) {
-								max = inner_buffer[j];
-								argMax = startIndex + j;
-							}
-						}
-						//we skip 1
-						offset = sd::inc_coords<updated_rank, 0, Last_Index_Faster>(cst, offset);
-						startIndex += innerLoopCount;
+				Z argCurrent = 0;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
+				X current = buffer[0];
+				X current1 = buffer1[0];
+				X current2 = buffer2[0];
+				X current3 = buffer3[0];
+				//LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					const X* inner_buffer1 = &(buffer1[offset]);
+					const X* inner_buffer2 = &(buffer2[offset]);
+					const X* inner_buffer3 = &(buffer3[offset]);
+					//typename std::make_signed<Z>::type iArgMax = -1; 
+					for (Z j = 0; j < innerLoopCount; j++) {
+						ReductionOp::update(current, argCurrent, inner_buffer[j], j + startIndex);
+						ReductionOp::update(current1, argCurrent1, inner_buffer1[j], j + startIndex);
+						ReductionOp::update(current2, argCurrent2, inner_buffer2[j], j + startIndex);
+						ReductionOp::update(current3, argCurrent3, inner_buffer3[j], j + startIndex);
 					}
+					//we skip 1
+					offset = sd::inc_coords<updated_rank, 0, LastIndexFaster>(cst, offset);
+					startIndex += innerLoopCount;
+				}
+				*output = argCurrent;
+				*output1 = argCurrent1;
+				*output2 = argCurrent2;
+				*output3 = argCurrent3;
+				return;
 			}
 
-			template<typename X, typename Z, size_t constRank, bool Last_Index_Faster = true>
-			FORCEINLINE void argMaxInnerReductionStrideNConstRank(  const X* buffer, const Nd4jLong* bases, const Nd4jLong* strides, const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride, X& max, Z& argMax)
+			template<typename X, typename Z, typename ReductionOp, size_t constRank, bool LastIndexFaster = true>
+			FORCEINLINE void indexInnerReductionConstRankBlock4(const X* buffer, const X* buffer1, const X* buffer2, const X* buffer3,
+				Z* output, Z* output1, Z* output2, Z* output3, const Nd4jLong* bases, const Nd4jLong* strides,
+				const Nd4jLong& outerLoopCount, const Nd4jLong& innerLoopCount, const Nd4jLong& inner_stride)
 			{
+				LOG_CALLS(0)
 				//skip 1 from the beginning or end depending the Order 
-				constexpr size_t updated_index = Last_Index_Faster ? 0 : 1;
+				constexpr size_t updated_index = LastIndexFaster ? 0 : 1;
 				constexpr size_t updated_rank = constRank - 1;
 				sd::CoordsState<updated_rank - 1> cst;
 				//we skip 1  
-				size_t offset = sd::init_coords<updated_rank, 0, Last_Index_Faster>(cst, 0, bases + updated_index, strides + updated_index);
+				size_t offset = sd::init_coords<updated_rank, 0, LastIndexFaster>(cst, 0, bases + updated_index, strides + updated_index);
 				Z startIndex = 0;
-				argMax = 0;
-				max = buffer[offset];
-				LOG_CALLS(0)
-					for (Z i = 0; i < outerLoopCount; i++) {
-						const X* inner_buffer = &(buffer[offset]);
-						for (Z j = 0; j < innerLoopCount; j++) {
-							if (*inner_buffer > max) {
-								max = *inner_buffer;
-								argMax = startIndex + j;
-							}
-							inner_buffer += inner_stride;
-						}
-						//we alreaddy skiped
-						offset = sd::inc_coords<updated_rank, 0, Last_Index_Faster>(cst, offset);
-						startIndex += innerLoopCount;
+				Z argCurrent = 0;
+				Z argCurrent1 = 0;
+				Z argCurrent2 = 0;
+				Z argCurrent3 = 0;
+				X current = buffer[0];
+				X current1 = buffer1[0];
+				X current2 = buffer2[0];
+				X current3 = buffer3[0];
+				//LOG_CALLS(0)
+				for (Z i = 0; i < outerLoopCount; i++) {
+					const X* inner_buffer = &(buffer[offset]);
+					const X* inner_buffer1 = &(buffer1[offset]);
+					const X* inner_buffer2 = &(buffer2[offset]);
+					const X* inner_buffer3 = &(buffer3[offset]);
+					//typename std::make_signed<Z>::type iArgMax = -1;
+					Nd4jLong inner_offset = 0;
+					for (Z j = 0; j < innerLoopCount; j++) {
+						ReductionOp::update(current, argCurrent, inner_buffer[inner_offset], j + startIndex);
+						ReductionOp::update(current1, argCurrent1, inner_buffer1[inner_offset], j + startIndex);
+						ReductionOp::update(current2, argCurrent2, inner_buffer2[inner_offset], j + startIndex);
+						ReductionOp::update(current3, argCurrent3, inner_buffer3[inner_offset], j + startIndex);
+						inner_offset += inner_stride;
 					}
+					//we skip 1
+					offset = sd::inc_coords<updated_rank, 0, LastIndexFaster>(cst, offset);
+					startIndex += innerLoopCount;
+				}
+				*output = argCurrent;
+				*output1 = argCurrent1;
+				*output2 = argCurrent2;
+				*output3 = argCurrent3;
+				return;
 			}
 
-
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			void argMaxCase1Scalar(const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, const  X* bufferX, Z* outputZ)
+			template<typename X, typename Z, typename ReductionOp, bool LastIndexFaster = true>
+			void argIndexCase1Scalar(const  int& second_rank,const Nd4jLong* inner_bases,const Nd4jLong* inner_strides, const  X* bufferX, Z* outputZ)
 			{
-				int maxThreads = sd::Environment::getInstance()->maxMasterThreads();
-				std::unique_ptr<X[]> maxValues(new X[maxThreads]);
-				std::unique_ptr<Z[]> maxIndices(new Z[maxThreads]);
 				Nd4jLong inner_total;
 				Nd4jLong inner_last = 0;
-				X* ptrMaxValues = maxValues.get();
-				Z* ptrMaxIndices = maxIndices.get();
+				int maxThreads = sd::Environment::getInstance()->maxMasterThreads();
 				if (second_rank == 1) {
-					inner_total = inner_bases[0];
+					inner_total = inner_bases[0]; 
+					if (inner_total  < threadingThreshold) {
+						maxThreads = 1;
+					}
 				}
 				else {
-					inner_total = getLength<Last_Index_Faster>(inner_bases, second_rank, 1, inner_last);
+					inner_total = getLength<LastIndexFaster>(inner_bases, second_rank, 1, inner_last);
+					if (inner_total * inner_last < threadingThreshold) {
+						maxThreads = 1;
+					}
 				}
-				auto func = [ptrMaxValues, ptrMaxIndices, inner_last, second_rank, inner_bases, inner_strides, bufferX](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
-					LOG_CALLS(0)
-						const Nd4jLong inner_stride = Last_Index_Faster ? inner_strides[second_rank - 1] : inner_strides[0];
 
-					Z argMax; X max;
+				
+
+				std::unique_ptr<X[]> maxValues(new X[maxThreads]);
+				std::unique_ptr<Z[]> maxIndices(new Z[maxThreads]);
+				X* ptrMaxValues = maxValues.get();
+				Z* ptrMaxIndices = maxIndices.get();
+				auto func = [ptrMaxValues, ptrMaxIndices, inner_last, second_rank, inner_bases, inner_strides, bufferX](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+					//LOG_CALLS(0)
+					const Nd4jLong inner_stride = LastIndexFaster ? inner_strides[second_rank - 1] : inner_strides[0];
+					Z argCurrent; X current;
 					if (second_rank == 1) {
 						const Nd4jLong loopTotal = stop - start;
 						if (inner_stride == 1) {
-							argMaxInnerReductionRank1Stride1Block4(&(bufferX[start]), loopTotal, max, argMax);
+							indexInnerReductionRank1Block4WithMerge<X, Z, ReductionOp>(&(bufferX[start]), current, argCurrent, loopTotal);
 						}
 						else {
-							argMaxInnerReductionRank1StrideNBlock4(&(bufferX[start * inner_stride]), loopTotal, inner_stride, max, argMax);
+							indexInnerReductionRank1Block4WithMerge<X, Z, ReductionOp>(&(bufferX[start * inner_stride]), current, argCurrent, loopTotal, inner_stride);
 						}
-						ptrMaxIndices[thread_id] = argMax + start;
+						ptrMaxIndices[thread_id] = argCurrent + start;
 					}
 					else {
-						argMaxInnerReduction<X, Z, Last_Index_Faster>(second_rank, bufferX, inner_bases, inner_strides, start, stop, inner_last, inner_stride, max, argMax);
-						ptrMaxIndices[thread_id] = argMax;
+						if (inner_stride == 1) {
+							indexInnerReduction<X, Z, ReductionOp, LastIndexFaster>(second_rank, bufferX, current, argCurrent, inner_bases, inner_strides, start, stop, inner_last, inner_stride);
+						}
+						else {
+							indexInnerReduction<X, Z, ReductionOp, LastIndexFaster>(second_rank, bufferX, current, argCurrent, inner_bases, inner_strides, start, stop, inner_last, inner_stride);
+						}
+						ptrMaxIndices[thread_id] = argCurrent;
 					}
-
-					ptrMaxValues[thread_id] = max;
+					ptrMaxValues[thread_id] = current;
 				};
 #if 0
 				int Count = 0;
 				func(0, 0, inner_total, 1);
 #else
-				int Count = samediff::Threads::parallel_tad(func, 0, inner_total, 1);
+				int Count = samediff::Threads::parallel_tad(func, 0, inner_total, 1, maxThreads);
 #endif
-				int arg = 0;
-				X max = ptrMaxValues[0];
-#if 0
-				nd4j_printf("%ld %f\n", ptrMaxIndices[0], ptrMaxValues[0]);
-#endif
-				for (int i = 1; i < Count; i++) {
-#if 0
-					nd4j_printf("%ld %f\n", ptrMaxIndices[i], ptrMaxValues[i]);
-#endif
-					if (ptrMaxValues[i] > max) {
-						max = ptrMaxValues[i];
-						arg = i;
-					}
-				};
-#if 0
-				nd4j_printf("---> %ld %f\n", ptrMaxIndices[arg], ptrMaxValues[arg]);
-#endif
-				* outputZ = ptrMaxIndices[arg];
+				Z arg = 0;
+				X current = ptrMaxValues[0];
+
+				for (Z i = 1; i < Count; i++) {
+					ReductionOp::update(current, arg, ptrMaxValues[i], i);
+				}
+
+				*outputZ = ptrMaxIndices[arg];
 			}
 
+			template<typename Derived>
+			struct CoordsBaseMovement {
+				void init(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+					static_cast<Derived*>(this)->initImpl(bases, strides1, strides2, rank, start);
+				}
+
+				void increment(int skipRank = 0) {
+					static_cast<Derived*>(this)->incrementImpl(skipRank);
+				}
+
+				Nd4jLong  First() { return static_cast<Derived*>(this)->FirstImpl(); };
+				Nd4jLong  Second()   { return static_cast<Derived*>(this)->SecondImpl(); };
+			};
 
 
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			void argMaxCase2(const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong output_stride, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, const X* bufferX, Z* outputZ)
+			struct ZipGenericCoordsRank1Stride1 : CoordsBaseMovement<ZipGenericCoordsRank1Stride1> {
+
+				size_t offset1;
+				size_t offset2;
+
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+					offset1 = start;
+					offset2 = start;
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset1 += 1;
+					offset2 += 1;
+				}
+
+				Nd4jLong  FirstImpl() { return offset1; };
+				Nd4jLong  SecondImpl() { return offset2; };
+
+			};
+
+
+
+			struct ZipGenericCoordsRank1BothStrideN : CoordsBaseMovement<ZipGenericCoordsRank1BothStrideN> {
+				size_t stride1;
+				size_t stride2;
+				size_t offset1;
+				size_t offset2;
+
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+					stride1 =  strides1[0];
+					stride2 =  strides2[0];
+					offset1 = start * stride1;
+					offset2 = start * stride2;
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset1 += stride1;
+					offset2 += stride2;
+				}
+
+				Nd4jLong  FirstImpl() { return offset1; };
+				Nd4jLong  SecondImpl() { return offset2; };
+
+			};
+
+			template<int ConstRank, bool LastIndexFaster = true>
+			struct ZipGenericCoordsConstMovementSecondStride1 : CoordsBaseMovement<ZipGenericCoordsConstMovementSecondStride1<ConstRank, LastIndexFaster>> {
+				sd::CoordsState<ConstRank - 1> cst;
+				Nd4jLong coords[MAX_RANK];
+				size_t offset1;
+				size_t offset2;
+				int _rank;
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+					offset1 = sd::init_coords<ConstRank, 0, LastIndexFaster>(cst, start, bases, strides1);
+					offset2 = start * 1;
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset1 = sd::inc_coords<ConstRank, 0, LastIndexFaster>(cst, offset1);
+					offset2 += 1;
+				}
+
+				Nd4jLong  FirstImpl() { return offset1; };
+				Nd4jLong  SecondImpl() { return offset2; };
+
+			};
+
+
+			template<int ConstRank, bool LastIndexFaster = true>
+			struct ZipGenericCoordsConstMovementSecondStrideN : CoordsBaseMovement<ZipGenericCoordsConstMovementSecondStrideN<ConstRank, LastIndexFaster>> {
+				sd::CoordsState<ConstRank - 1> cst;
+				Nd4jLong _stride2;
+				Nd4jLong coords[MAX_RANK];
+				size_t offset1;
+				size_t offset2;
+				int _rank;
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+					_stride2 = strides2[0];
+					offset1 = sd::init_coords<ConstRank, 0, LastIndexFaster>(cst, start, bases, strides1);
+					offset2 = start * _stride2;
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset1 = sd::inc_coords<ConstRank, 0, LastIndexFaster>(cst, offset1);
+					offset2 += _stride2;
+				}
+
+				Nd4jLong  FirstImpl() { return offset1; };
+				Nd4jLong  SecondImpl() { return offset2; };
+
+			};
+
+
+			template<bool LastIndexFaster = true>
+			struct ZipGenericCoordsMovementSecondStrideN : CoordsBaseMovement<ZipGenericCoordsMovementSecondStrideN<LastIndexFaster>> {
+				const Nd4jLong* _bases;
+				const Nd4jLong* _strides1;
+				Nd4jLong _stride2;
+				Nd4jLong coords[MAX_RANK];
+				zip_size_t offset;
+				int _rank;
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+
+					_bases = bases;
+					_strides1 = strides1;
+					_stride2 = strides2[0];
+					_rank = rank;
+					if (start == 0) {
+						for (int i = 0; i < MAX_RANK; i++) {
+							coords[i] = 0;
+						}
+						offset = { 0,0 };
+
+					}
+					else {
+						if (LastIndexFaster) {
+							sd::index2coords_C(start, rank, bases, (Nd4jLong*)&coords);
+						}
+						else {
+							sd::index2coords_F(start, rank, bases, (Nd4jLong*)&coords);
+						}
+						offset.first = sd::offset_from_coords(strides1, (Nd4jLong*)&coords, rank);
+						offset.second = start * _stride2;
+					}
+
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset.first = inc_coords<LastIndexFaster>(_bases, _strides1, (Nd4jLong*)&coords, offset.first, _rank, skipRank);
+					offset.second += _stride2;
+				}
+
+				Nd4jLong  FirstImpl() { return offset.first; };
+				Nd4jLong  SecondImpl() { return offset.second; };
+
+			};
+
+			template<bool LastIndexFaster = true>
+			struct ZipGenericCoordsMovement : CoordsBaseMovement<ZipGenericCoordsMovement<LastIndexFaster>> {
+				const Nd4jLong* _bases;
+				const Nd4jLong* _strides1;
+				const Nd4jLong* _strides2;
+				Nd4jLong coords[MAX_RANK];
+				zip_size_t offset;
+				int _rank;
+
+				void initImpl(const Nd4jLong* bases, const Nd4jLong* strides1, const Nd4jLong* strides2, int rank, int start = 0) {
+
+					_bases = bases;
+					_strides1 = strides1;
+					_strides2 = strides2;
+					_rank = rank;
+					if (start == 0) {
+						for (int i = 0; i < MAX_RANK; i++) {
+							coords[i] = 0;
+						}
+						offset = { 0,0 };
+
+					}
+					else {
+						if (LastIndexFaster) {
+							sd::index2coords_C(start, rank, bases, (Nd4jLong*)&coords);
+						}
+						else {
+							sd::index2coords_F(start, rank, bases, (Nd4jLong*)&coords);
+						}
+						offset = sd::offset_from_coords(strides1, strides2, (Nd4jLong*)&coords, rank);
+					}
+
+				}
+
+				void incrementImpl(int skipRank = 0) {
+					offset = inc_coords<LastIndexFaster>(_bases, _strides1, _strides2, (Nd4jLong*)&coords, offset, _rank, skipRank);
+				}
+
+				Nd4jLong  FirstImpl() { return offset.first; };
+				Nd4jLong  SecondImpl() { return offset.second; };
+
+			};
+
+			template<typename X, typename Z, typename ReductionOp, typename Movement, bool LastIndexFaster = true>
+			void argReductionInnerCases(Movement& movement, Nd4jLong loopTotal, const int& second_rank,const Nd4jLong* inner_bases,const Nd4jLong* inner_strides, const X* bufferX, Z* outputZ)
 			{
 
-				//total
-				const Nd4jLong total = outer_bases[0];
-				const Nd4jLong outer_stride = outer_strides[0];
-				const Nd4jLong inner_stride = true ? inner_strides[second_rank - 1] : inner_strides[0];
-				auto func = [outer_stride, inner_stride, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+				Nd4jLong inner_stride = true /*LastIndexFaster*/ ? inner_strides[second_rank - 1] : inner_strides[0];
 
-					Nd4jLong loopTotal = stop - start;
-					//lambda captures values as immutable , so either we should make our lambda mutable 
-					// or just use another local value
-					const X* bufferPtr = &(bufferX[start * outer_stride]);
-					Z* outputPtr = outputZ + start * output_stride;
-
+				Nd4jLong loopTotal_K = loopTotal / 4;
+				Nd4jLong loopTotal_Tail = loopTotal & 3;
+				if (inner_stride == 1) {
 					if (second_rank == 1) {
+						LOG_CALLS(0)
+						Nd4jLong inner_total = getLength<true>(inner_bases, second_rank);
+						for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+							const X* buffer0 = &(bufferX[movement.First()]);
+							Z* output0 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer1 = &(bufferX[movement.First()]);
+							Z* output1 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer2 = &(bufferX[movement.First()]);
+							Z* output2 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer3 = &(bufferX[movement.First()]);
+							Z* output3 = &(outputZ[movement.Second()]);
+							movement.increment();
+							indexInnerReductionRank1Block4<X, Z, ReductionOp>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_total);
 
-						const Nd4jLong inner_total = inner_bases[0];
-						if (loopTotal >= 4 /*&& (inner_stride > outer_stride )*/) {
-							if (output_stride == 1 && outer_stride==1) {
-								LOG_CALLS(0)
-									Nd4jLong loopTotal_K = loopTotal / 4;
-								Nd4jLong loopTotal_Tail = loopTotal & 3;
-								for (Nd4jLong i = 0; i < loopTotal_K; i++) {
-
-									argMaxInnerReductionRank1OutStride1OutBlock4(bufferPtr,  inner_total, inner_stride, outputPtr);
-									bufferPtr += 4 ;
-									outputPtr += 4;
-								}
-								for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionRank1StrideNOrdinary(bufferPtr, inner_total, inner_stride, max, argMax);
-									*outputPtr = argMax;
-									bufferPtr++;
-									outputPtr++;
-								}
-
-							}
-							else {
-								LOG_CALLS(10)
-									Nd4jLong loopTotal_K = loopTotal / 4;
-								Nd4jLong loopTotal_Tail = loopTotal & 3;
-								for (Nd4jLong i = 0; i < loopTotal_K; i++) {
-
-									argMaxInnerReductionRank1OutStrideNOutBlock4(bufferPtr, outer_stride, inner_total, inner_stride, outputPtr, output_stride);
-									bufferPtr += 4 * outer_stride;
-									outputPtr += 4 * output_stride;
-								}
-								for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionRank1StrideNOrdinary(bufferPtr, inner_total, inner_stride, max, argMax);
-									*outputPtr = argMax;
-									bufferPtr += outer_stride;
-									outputPtr += output_stride;
-								}
-
-							}
 						}
-						else if(inner_stride==1){
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Block4(bufferPtr, inner_total, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Ordinary(bufferPtr, inner_total, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+						if (inner_total >= 2048) {
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionRank1Block4WithMerge<X, Z, ReductionOp>(buffer0, current, outputZ[movement.Second()], inner_total);
+								movement.increment();
 							}
 						}
 						else {
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNBlock4(bufferPtr, inner_total,inner_stride, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNOrdinary(bufferPtr, inner_total,inner_stride, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionRank1<X, Z, ReductionOp>(buffer0, current, outputZ[movement.Second()], inner_total);
+								movement.increment();
 							}
 						}
 
 					}
 					else {
-
 						Nd4jLong inner_last;
 						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
 						if (second_rank == 2) {
-							if (inner_stride == 1) {
-								LOG_CALLS(2)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStride1ConstRank<X, Z, 2, true>( bufferPtr, inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							LOG_CALLS(1)
+							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+								const X* buffer0 = &(bufferX[movement.First()]);
+								Z* output0 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer1 = &(bufferX[movement.First()]);
+								Z* output1 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer2 = &(bufferX[movement.First()]);
+								Z* output2 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer3 = &(bufferX[movement.First()]);
+								Z* output3 = &(outputZ[movement.Second()]);
+								movement.increment();
+								indexInnerReductionConstRankBlock4<X, Z, ReductionOp, 2>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_bases, inner_strides,
+									inner_loop, inner_last);
+
 							}
-							else {
-								LOG_CALLS(3)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStrideNConstRank<X, Z, 2, true>( bufferPtr, inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionConstRank<X, Z, ReductionOp, 2>(buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides, inner_loop, inner_last);
+								movement.increment();
 							}
+
 						}
 						else if (second_rank == 3) {
-							if (inner_stride == 1) {
-								LOG_CALLS(4)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStride1ConstRank<X, Z, 3, true>( bufferPtr, inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							LOG_CALLS(2)
+							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+								const X* buffer0 = &(bufferX[movement.First()]);
+								Z* output0 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer1 = &(bufferX[movement.First()]);
+								Z* output1 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer2 = &(bufferX[movement.First()]);
+								Z* output2 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer3 = &(bufferX[movement.First()]);
+								Z* output3 = &(outputZ[movement.Second()]);
+								movement.increment();
+								indexInnerReductionConstRankBlock4<X, Z, ReductionOp, 3>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_bases, inner_strides,
+									inner_loop, inner_last);
+
 							}
-							else {
-								LOG_CALLS(5)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStrideNConstRank<X, Z, 3, true>( bufferPtr, inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionConstRank<X, Z, ReductionOp, 3>(buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides,
+									inner_loop, inner_last);
+								movement.increment();
+							}
+
+						}
+						else {
+							LOG_CALLS(3)
+							//nd4j_printf("-----%d \n", loopTotal);
+							for (Nd4jLong i = 0; i < loopTotal; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReduction<X, Z, ReductionOp>(second_rank, buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides, 0,
+									inner_loop, inner_last);
+								movement.increment();
+							}
+
+						}
+					}
+
+				}
+				else {
+					if (second_rank == 1) {
+						LOG_CALLS(10)
+						Nd4jLong inner_total = getLength<true>(inner_bases, second_rank);
+						for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+							const X* buffer0 = &(bufferX[movement.First()]);
+							Z* output0 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer1 = &(bufferX[movement.First()]);
+							Z* output1 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer2 = &(bufferX[movement.First()]);
+							Z* output2 = &(outputZ[movement.Second()]);
+							movement.increment();
+							const X* buffer3 = &(bufferX[movement.First()]);
+							Z* output3 = &(outputZ[movement.Second()]);
+							movement.increment();
+							indexInnerReductionRank1Block4<X, Z, ReductionOp>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_total, inner_stride);
+
+						}
+						if (inner_total >= 2048) {
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionRank1Block4WithMerge<X, Z, ReductionOp>(buffer0, current, outputZ[movement.Second()], inner_total, inner_stride);
+								movement.increment();
 							}
 						}
 						else {
-							if (inner_stride == 1) {
-								LOG_CALLS(6)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStride1<X, Z, true>(second_rank, bufferPtr, inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
-							}
-							else {
-								LOG_CALLS(7)
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionStrideN<X, Z, true>(second_rank, bufferPtr, inner_bases, inner_strides, inner_loop, inner_last,inner_stride, max, argMax);
-										*outputPtr = argMax;
-										bufferPtr += outer_stride;
-										outputPtr += output_stride;
-									}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionRank1<X, Z, ReductionOp>(buffer0, current, outputZ[movement.Second()], inner_total, inner_stride);
+								movement.increment();
 							}
 						}
+
+					}
+					else {
+						Nd4jLong inner_last;
+						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
+						if (second_rank == 2) {
+							LOG_CALLS(11)
+							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+								const X* buffer0 = &(bufferX[movement.First()]);
+								Z* output0 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer1 = &(bufferX[movement.First()]);
+								Z* output1 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer2 = &(bufferX[movement.First()]);
+								Z* output2 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer3 = &(bufferX[movement.First()]);
+								Z* output3 = &(outputZ[movement.Second()]);
+								movement.increment();
+								indexInnerReductionConstRankBlock4<X, Z, ReductionOp, 2>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_bases, inner_strides,
+									inner_loop, inner_last, inner_stride);
+
+							}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionConstRank<X, Z, ReductionOp, 2>(buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides,
+									inner_loop, inner_last, inner_stride);
+								movement.increment();
+							}
+
+						}
+						else if (second_rank == 3) {
+							LOG_CALLS(12)
+							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
+								const X* buffer0 = &(bufferX[movement.First()]);
+								Z* output0 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer1 = &(bufferX[movement.First()]);
+								Z* output1 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer2 = &(bufferX[movement.First()]);
+								Z* output2 = &(outputZ[movement.Second()]);
+								movement.increment();
+								const X* buffer3 = &(bufferX[movement.First()]);
+								Z* output3 = &(outputZ[movement.Second()]);
+								movement.increment();
+								indexInnerReductionConstRankBlock4<X, Z, ReductionOp, 3>(buffer0, buffer1, buffer2, buffer3, output0, output1, output2, output3, inner_bases, inner_strides,
+									inner_loop, inner_last, inner_stride);
+
+							}
+							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReductionConstRank<X, Z, ReductionOp, 3>(buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides,
+									inner_loop, inner_last, inner_stride);
+								movement.increment();
+							}
+
+						}
+						else {
+							LOG_CALLS(13)
+							//nd4j_printf("-------%d inner loop %d inner_last %d\n", loopTotal, inner_loop,inner_last);
+							for (Nd4jLong i = 0; i < loopTotal; i++) {
+								X current;
+								const X* buffer0 = &(bufferX[movement.First()]);
+								indexInnerReduction<X, Z, ReductionOp>(second_rank, buffer0, current, outputZ[movement.Second()], inner_bases, inner_strides, 0,
+									inner_loop, inner_last, inner_stride);
+								movement.increment();
+							}
+
+						}
+					}
+
+				}
+
+			}
+
+			template<typename X, typename Z, typename ReductionOp, bool LastIndexFaster = true>
+			void argIndexCaseNonScalar(const  int& first_rank, const int& output_rank, bool squashed, const  int& second_rank,
+				const Nd4jLong*& outer_bases,const Nd4jLong* outer_strides,const Nd4jLong* output_strides, const Nd4jLong &output_stride,
+				const Nd4jLong*& inner_bases,const Nd4jLong* inner_strides, const X* bufferX, Z* outputZ)
+			{
+
+				Nd4jLong total = getLength<LastIndexFaster>(outer_bases, first_rank);
+				Nd4jLong inner_stride = true /*LastIndexFaster*/ ? inner_strides[second_rank - 1] : inner_strides[0];
+				Nd4jLong outer_stride =  LastIndexFaster  ? outer_strides[second_rank - 1] : outer_strides[0];
+				auto func = [first_rank, output_rank, squashed, outer_bases, outer_strides, output_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
+
+					Nd4jLong loopTotal = stop - start;
+					Nd4jLong stride = LastIndexFaster ? outer_strides[first_rank - 1] : outer_strides[0];
+					if (first_rank == 1) {
+
+						if (stride == 1) {
+							ZipGenericCoordsRank1Stride1 movement;
+							movement.init(nullptr, nullptr, nullptr, 0, start);
+							argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+						}
+						else {
+							ZipGenericCoordsRank1BothStrideN movement;
+							movement.init(nullptr, &stride, &output_stride, 0, start);
+							argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+						}
+
+					}
+					else if (squashed && first_rank <= output_rank) {
+						if (first_rank == 2) {
+							if (output_stride == 1) {
+								ZipGenericCoordsConstMovementSecondStride1<2, LastIndexFaster> movement;
+								movement.init(outer_bases, outer_strides, nullptr, first_rank, start);
+								argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+							}
+							else {
+								ZipGenericCoordsConstMovementSecondStrideN<2, LastIndexFaster> movement;
+								movement.init(outer_bases, outer_strides, &output_stride, first_rank, start);
+								argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+							}
+						}
+						else if (first_rank == 3) {
+							if (output_stride == 1) {
+								ZipGenericCoordsConstMovementSecondStride1<3, LastIndexFaster> movement;
+								movement.init(outer_bases, outer_strides, nullptr, first_rank, start);
+								argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+							}
+							else {
+								ZipGenericCoordsConstMovementSecondStrideN<3, LastIndexFaster> movement;
+								movement.init(outer_bases, outer_strides, &output_stride, first_rank, start);
+								argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+							}
+						}
+						else {
+							ZipGenericCoordsMovementSecondStrideN< LastIndexFaster> movement;
+							movement.init(outer_bases, outer_strides, &output_stride, first_rank, start);
+
+							argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
+						}
+
+					}
+					else { 
+						ZipGenericCoordsMovement<LastIndexFaster> movement;
+						movement.init(outer_bases, outer_strides, output_strides, first_rank, start);
+
+						argReductionInnerCases<X, Z, ReductionOp>(movement, loopTotal, second_rank, inner_bases, inner_strides, bufferX, outputZ);
+
 					}
 
 				};
@@ -901,374 +964,23 @@ namespace sd {
 #else
 				//
 				uint32_t numThreads = sd::Environment::getInstance()->maxMasterThreads();
-				if (inner_stride > outer_stride && total <= 256) {
-					numThreads = numThreads > total /4 ? total / 4 : numThreads;
+			    Nd4jLong inner_total = getLength<true>(inner_bases, second_rank);
+				if (total * inner_total <= threadingThreshold) {
+						numThreads = 1;
 				}
+				else {
+					if (inner_stride > outer_stride && total <= 256) {
+						auto desired = total > 4 ? (total / 4) : 1;
+						numThreads = numThreads > desired ? desired : numThreads;
+					}
+				}
+				 
 				samediff::Threads::parallel_tad(func, 0, total, 1, numThreads);
 #endif
 			}
 
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			void argMaxCase3(const int& first_rank, const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong& output_stride, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, X* bufferX, Z* outputZ)
-			{
-
-				//total
-				Nd4jLong total = getLength<Last_Index_Faster>(outer_bases, first_rank);
-				Nd4jLong inner_stride = true ? inner_strides[second_rank - 1] : inner_strides[0];
-
-				auto func = [first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
-
-					Nd4jLong outer_coords[MAX_RANK] = {};
-					Nd4jLong* ptr_coords = (Nd4jLong*)&outer_coords;
-					if (Last_Index_Faster) {
-						sd::index2coords_C(start, first_rank, outer_bases, ptr_coords);
-					}
-					else {
-						sd::index2coords_F(start, first_rank, outer_bases, ptr_coords);
-					}
-					//offset
-					size_t offset = sd::offset_from_coords(outer_strides, ptr_coords, first_rank); 
-					const Nd4jLong outer_stride = Last_Index_Faster ? outer_strides[first_rank - 1] : outer_strides[0];
-					Nd4jLong loopTotal = stop - start;
-					//lambda captures values as immutable , so either we should make it mutable or just 
-					// use another local value
-					Z* outputPtr = &(outputZ[start * output_stride]);
-
-					if (second_rank == 1) {
-						const Nd4jLong inner_total = inner_bases[0];
-						if (output_stride == 1 && inner_stride > outer_stride) {
-							Nd4jLong loopTotal_K = loopTotal / 4;
-							Nd4jLong loopTotal_Tail = loopTotal & 3;
-							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
-								const X* buffer0 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer1 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer2 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer3 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-
-								argMaxInnerReductionRank1OutBlock4(buffer0, buffer1, buffer2, buffer3, inner_total, inner_stride, outputPtr);
-								
-								outputPtr += 4;
-							}
-							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
-								Z argMax; X max;
-								argMaxInnerReductionRank1StrideNOrdinary(&(bufferX[offset]), inner_total, inner_stride, max, argMax);
-								*outputPtr = argMax;
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								outputPtr++;
-							}
-						}
-						else if (inner_stride == 1) {
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Block4(&(bufferX[offset]), inner_total, max, argMax);
-										*outputPtr = argMax; 
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-										outputPtr += output_stride;
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Ordinary(&(bufferX[offset]), inner_total, max, argMax);
-										*outputPtr = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-										outputPtr += output_stride;
-									}
-							}
-						}
-						else {
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNBlock4(&(bufferX[offset]), inner_total, inner_stride, max, argMax);
-										*outputPtr = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-										outputPtr += output_stride;
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNOrdinary(&(bufferX[offset]), inner_total, inner_stride, max, argMax);
-										*outputPtr = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-										outputPtr += output_stride;
-									}
-							}
-						} 
-
-					}
-					else if (second_rank == 2) {
-
-						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-						if (output_stride == 1 /*&& inner_stride > outer_stride*/) {
-							Nd4jLong loopTotal_K =  loopTotal / 4;
-							Nd4jLong loopTotal_Tail = loopTotal  &3 ;
-							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
-								const X* buffer0 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer1 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer2 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer3 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-
-								argMaxInnerReductionConstantRankOutBlock4<X, Z, 2, true>(buffer0, buffer1, buffer2, buffer3, inner_bases, inner_strides, inner_loop,inner_last, inner_stride, outputPtr);
-
-								outputPtr += 4;
-							}
-							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
-								Z argMax; X max;
-								argMaxInnerReductionStrideNConstRank<X, Z, 2, true>(&(bufferX[offset]), inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-								*outputPtr = argMax;
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								outputPtr++;
-							}
-						}
-						else if (inner_stride == 1) {
-							LOG_CALLS(1)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStride1ConstRank<X, Z, 2, true>( &(bufferX[offset]), inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-									outputPtr[i * output_stride] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								}
-						}
-						else {
-							LOG_CALLS(2)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStrideNConstRank<X, Z, 2, true>(  &(bufferX[offset]), inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-									outputPtr[i * output_stride] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								}
-						}
-					}
-					else if (second_rank == 3) {
-						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-						if (output_stride == 1/* && inner_stride > outer_stride*/) {
-							Nd4jLong loopTotal_K = loopTotal / 4;
-							Nd4jLong loopTotal_Tail = loopTotal & 3;
-							for (Nd4jLong i = 0; i < loopTotal_K; i++) {
-								const X* buffer0 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer1 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer2 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								const X* buffer3 = &(bufferX[offset]);
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-
-								argMaxInnerReductionConstantRankOutBlock4<X, Z, 3, true>(buffer0, buffer1, buffer2, buffer3, inner_bases, inner_strides, inner_loop, inner_last, inner_stride, outputPtr);
-
-
-								outputPtr += 4;
-							}
-							for (Nd4jLong i = 0; i < loopTotal_Tail; i++) {
-								Z argMax; X max;
-								argMaxInnerReductionStrideNConstRank<X, Z, 3, true>(&(bufferX[offset]), inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-								*outputPtr = argMax;
-								offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								outputPtr++;
-							}
-						}
-						else if (inner_stride == 1) {
-							LOG_CALLS(3)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStride1ConstRank<X, Z, 3, true>( &(bufferX[offset]), inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-									outputPtr[i * output_stride] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								}
-						}
-						else {
-							LOG_CALLS(4)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStrideNConstRank<X, Z, 3, true>( &(bufferX[offset]), inner_bases, inner_strides,  inner_loop, inner_last, inner_stride, max, argMax);
-									outputPtr[i * output_stride] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-								}
-						}
-					}
-					else {
-						LOG_CALLS(5)
-							Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-
-						for (Nd4jLong i = 0; i < loopTotal; i++) {
-							Z argMax; X max;
-							argMaxInnerReduction<X, Z, true>(second_rank, &(bufferX[offset]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
-							outputPtr[i * output_stride] = argMax;
-							offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, ptr_coords, offset, first_rank);
-						}
-					}
-
-				};
-
-				//
-				samediff::Threads::parallel_tad(func, 0, total, 1);
-			}
-
-
-			template<typename X, typename Z, bool Last_Index_Faster = true>
-			void argMaxCase4(const int& first_rank, const Nd4jLong* outer_bases, const Nd4jLong* outer_strides, const Nd4jLong* output_strides, const  int& second_rank, const Nd4jLong*& inner_bases, const Nd4jLong*& inner_strides, X* bufferX, Z* outputZ)
-			{
-				Nd4jLong total = getLength<Last_Index_Faster>(outer_bases, first_rank);
-				Nd4jLong inner_stride = true /*Last_Index_Faster*/ ? inner_strides[second_rank - 1] : inner_strides[0];
-
-				auto func = [first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, inner_stride, bufferX, outputZ](uint64_t thread_id, int64_t start, int64_t stop, int64_t increment) -> void {
-
-					Nd4jLong outer_coords[MAX_RANK] = {};
-
-					Nd4jLong* ptr_coords = (Nd4jLong*)&outer_coords;
-					if (Last_Index_Faster) {
-						sd::index2coords_C(start, first_rank, outer_bases, ptr_coords);
-					}
-					else {
-						sd::index2coords_F(start, first_rank, outer_bases, ptr_coords);
-					}
-					//offset
-					auto offset = sd::offset_from_coords(outer_strides, output_strides, (const Nd4jLong*)ptr_coords, (const Nd4jLong)first_rank);
-
-					//total 
-					Nd4jLong loopTotal = stop - start;
-
-					if (second_rank == 1) {
-						const Nd4jLong inner_total = inner_bases[0];
-						if (inner_stride == 1) {
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Block4(&(bufferX[offset.first]), inner_total, max, argMax);
-										outputZ[offset.second] = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1Stride1Ordinary(&(bufferX[offset.first]), inner_total, max, argMax);
-										outputZ[offset.second] = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-									}
-							}
-						}
-						else {
-							if (inner_total >= 256) {
-								LOG_CALLS(11)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNBlock4(&(bufferX[offset.first]), inner_total, inner_stride, max, argMax);
-										outputZ[offset.second] = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-									}
-							}
-							else {
-								LOG_CALLS(12)
-									//better do blocking inside inner reduction whenever possible
-									for (Nd4jLong i = 0; i < loopTotal; i++) {
-										Z argMax; X max;
-										argMaxInnerReductionRank1StrideNOrdinary(&(bufferX[offset.first]), inner_total, inner_stride, max, argMax);
-										outputZ[offset.second] = argMax;
-										offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-									}
-							}
-						}
-
-					}
-					else if (second_rank == 2) {
-
-						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-						if (inner_stride == 1) {
-							LOG_CALLS(1)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStride1ConstRank<X, Z, 2, true>( &(bufferX[offset.first]), inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-									outputZ[offset.second] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-								}
-						}
-						else {
-							LOG_CALLS(2)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStrideNConstRank<X, Z, 2, true>( &(bufferX[offset.first]), inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-									outputZ[offset.second] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-								}
-						}
-					}
-					else if (second_rank == 3) {
-						Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-						if (inner_stride == 1) {
-							LOG_CALLS(3)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStride1ConstRank<X, Z, 3, true>( &(bufferX[offset.first]), inner_bases, inner_strides, inner_loop, inner_last, max, argMax);
-									outputZ[offset.second] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-								}
-						}
-						else {
-							LOG_CALLS(4)
-								for (Nd4jLong i = 0; i < loopTotal; i++) {
-									Z argMax; X max;
-									argMaxInnerReductionStrideNConstRank<X, Z, 3, true>( &(bufferX[offset.first]), inner_bases, inner_strides, inner_loop, inner_last, inner_stride, max, argMax);
-									outputZ[offset.second] = argMax;
-									offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-								}
-						}
-					}
-					else {
-						LOG_CALLS(5)
-							Nd4jLong inner_last;
-						Nd4jLong inner_loop = getLength<true>(inner_bases, second_rank, 1, inner_last);
-
-						for (Nd4jLong i = 0; i < loopTotal; i++) {
-							Z argMax; X max;
-							argMaxInnerReduction<X, Z, true>(second_rank, &(bufferX[offset.first]), inner_bases, inner_strides, 0, inner_loop, inner_last, inner_stride, max, argMax);
-							outputZ[offset.second] = argMax;
-							offset = inc_coords<Last_Index_Faster>(outer_bases, outer_strides, output_strides, ptr_coords, offset, first_rank);
-						}
-					}
-                    
-
-				};
-
-				//
-				samediff::Threads::parallel_tad(func, 0, total, 1);
-			}
-
-
-
-
-			template<typename X, typename Z>
-			void  argMax_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
- 
+			template<typename X, typename Z, typename ReductionOp>
+			void  argIndex_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
 				char input_order = input.ordering();
 				bool try_squash_outer = (input_order == output.ordering()) && output.ews() != 0;
 				Nd4jLong* input_shapeInfo = input.getShapeInfo();
@@ -1278,90 +990,136 @@ namespace sd {
 				const Nd4jLong* input_strides = &(input_shapeInfo[rank + 1]);
 				const Nd4jLong  output_rank = output_shapeInfo[0];
 				const Nd4jLong* output_strides = &(output_shapeInfo[output_rank + 1]);
-
 				Nd4jLong new_bases[MAX_RANK];
 				Nd4jLong new_strides[MAX_RANK];
 				int first_begin, first_end, second_begin, second_end;
-
 				//rePartition into two parts based on the selection
 				rePartition(input_order, dimensions, rank, input_bases, input_strides, new_bases, new_strides, first_begin, first_end, second_begin, second_end, try_squash_outer, input_order == 'c');
-
 				int first_rank = first_end - first_begin; //the first rank can be 0 for scalar cases
 				int second_rank = second_end - second_begin;
-
 				X* bufferX = input.bufferAsT<X>();
 				Z* outputZ = output.bufferAsT<Z>();
 				const Nd4jLong* outer_bases = &(new_bases[first_begin]);
 				const Nd4jLong* outer_strides = &(new_strides[first_begin]);
 				const Nd4jLong* inner_bases = &(new_bases[second_begin]);
 				const Nd4jLong* inner_strides = &(new_strides[second_begin]);
-				const Nd4jLong  output_stride = (input_order == 'c') ? output_strides[output_rank - 1] : output_strides[0];
-
+				const Nd4jLong output_stride = output.ordering()  == 'c' ? output_strides[output_rank-1]:output_strides[0];
 				if (input_order == 'c') {
 					if (first_rank == 0) {
-						argMaxCase1Scalar<X, Z>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
+						argIndexCase1Scalar<X, Z, ReductionOp>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
 					}
-					else if (/*try_squash_outer &&*/ first_rank == 1) {
-						argMaxCase2(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
+					else {
+						argIndexCaseNonScalar<X, Z, ReductionOp>(first_rank, output_rank, try_squash_outer, second_rank, outer_bases, outer_strides, output_strides,
+							output_stride,inner_bases, inner_strides, bufferX, outputZ);
 					}
-					else if (try_squash_outer && first_rank <= output_rank) {
-						////add some constant cases for better results
-						//if (first_rank == 2) {
-						//	argMaxCaseConstRank<X, Z, 2, true>(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-						//}
-						//else if (first_rank == 3) {
-						//	argMaxCaseConstRank<X, Z, 3, true>(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-						//}
-						//else {
-							argMaxCase3<X, Z>(first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-						//}
-					}
-					//no squashing was done
-					else if (first_rank == output_rank) {
-						argMaxCase4<X, Z>(first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
-					}
-
 				}
 				else {
 					if (first_rank == 0) {
+						LOG_CALLS(0);
 						if (second_rank == 1) {
-							argMaxCase1Scalar<X, Z, false>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
+							argIndexCase1Scalar<X, Z, ReductionOp, false>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
 						}
 						else {
-							//we are obliged to find C order index
-							argMaxCase1Scalar<X, Z, true>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
+							argIndexCase1Scalar<X, Z, ReductionOp, true>(second_rank, inner_bases, inner_strides, bufferX, outputZ);
 						}
-
 					}
-					else if (/*try_squash_outer &&*/ first_rank == 1) {
-						argMaxCase2<X, Z, false>(outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
-					}
-					else if (try_squash_outer && first_rank <= output_rank) {
-						argMaxCase3<X, Z, false>(first_rank, outer_bases, outer_strides, output_stride, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-					}
-					//no squashing was done
-					else if (first_rank == output_rank) {
-						argMaxCase4<X, Z, false>(first_rank, outer_bases, outer_strides, output_strides, second_rank, inner_bases, inner_strides, bufferX, outputZ);
-
+					else {
+						LOG_CALLS(1);
+						argIndexCaseNonScalar<X, Z, ReductionOp,false>(first_rank, output_rank, try_squash_outer, second_rank, outer_bases, outer_strides, output_strides,
+							output_stride, inner_bases, inner_strides, bufferX, outputZ);
 					}
 				}
-
-
 			}
 
-			//////////////////////////////////////////////////////////////////////////
-			void  argmax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+			template <typename X, typename Z>
+			struct IndexMax {
+				static FORCEINLINE void  update(X& current, Z& currentIndex, const X& candidate, const Z& candidateIndex) {
+					if (candidate > current) {
+						current = candidate;
+						currentIndex = candidateIndex;
+					}
+				}
+			};
 
+			template <typename X, typename Z>
+			struct IndexMin {
+				static FORCEINLINE void  update(X& current, Z& currentIndex, const X& candidate, const Z& candidateIndex) {
+					if (candidate < current) {
+						current = candidate;
+						currentIndex = candidateIndex;
+					}
+				}
+			};
+
+			template <typename X, typename Z>
+			struct IndexAbsMax {
+				static FORCEINLINE void  update(X& current, Z& currentIndex, const X& candidate, const Z& candidateIndex) {
+					auto absCandidate = sd::math::nd4j_abs<X>(candidate);
+					if (absCandidate > current) {
+						current = absCandidate;
+						currentIndex = candidateIndex;
+					}
+				}
+			};
+
+			template <typename X, typename Z>
+			struct IndexAbsMin {
+				static FORCEINLINE void  update(X& current, Z& currentIndex, const X& candidate, const Z& candidateIndex) {
+					auto absCandidate = sd::math::nd4j_abs<X>(candidate);
+					if (absCandidate < current) {
+						current = absCandidate;
+						currentIndex = candidateIndex;
+					}
+				}
+			};
+
+			
+			//////////////////////////////////////////////////////////////////////////
+			template<typename X, typename Z>
+			void  argMax_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				return argIndex_<X, Z, IndexMax<X, Z>>(input, output, dimensions);
+			}
+
+			template<typename X, typename Z>
+			void  argMin_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				return argIndex_<X, Z, IndexMin<X, Z>>(input, output, dimensions);
+			}
+
+			template<typename X, typename Z>
+			void  argAbsMax_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				return argIndex_<X, Z, IndexAbsMax<X, Z>>(input, output, dimensions);
+			}
+
+			template<typename X, typename Z>
+			void  argAbsMin_(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				return argIndex_<X, Z, IndexAbsMin<X, Z>>(input, output, dimensions);
+			}
+			//////////////////////////////////////////////////////////////////////////
+			void  argMax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
 				BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(), argMax_, (input, output, dimensions), FLOAT_TYPES, INDEXING_TYPES);
 			}
 
+			void  argMin(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(), argMin_, (input, output, dimensions), FLOAT_TYPES, INDEXING_TYPES);
+			}
+
+			void  argAbsMax(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(), argAbsMax_, (input, output, dimensions), FLOAT_TYPES, INDEXING_TYPES);
+			}
+
+			void  argAbsMin(const NDArray& input, NDArray& output, const std::vector<int>& dimensions) {
+				BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(), argAbsMin_, (input, output, dimensions), FLOAT_TYPES, INDEXING_TYPES);
+			}
 
 			BUILD_DOUBLE_TEMPLATE(template void argMax_, (const NDArray& input, NDArray& output, const std::vector<int>& dimensions), FLOAT_TYPES, INDEXING_TYPES);
-			}
+
+			BUILD_DOUBLE_TEMPLATE(template void argMin_, (const NDArray& input, NDArray& output, const std::vector<int>& dimensions), FLOAT_TYPES, INDEXING_TYPES);
+
+			BUILD_DOUBLE_TEMPLATE(template void argAbsMax_, (const NDArray& input, NDArray& output, const std::vector<int>& dimensions), FLOAT_TYPES, INDEXING_TYPES);
+
+			BUILD_DOUBLE_TEMPLATE(template void argAbsMin_, (const NDArray& input, NDArray& output, const std::vector<int>& dimensions), FLOAT_TYPES, INDEXING_TYPES);
+
+
 		}
 	}
+}
