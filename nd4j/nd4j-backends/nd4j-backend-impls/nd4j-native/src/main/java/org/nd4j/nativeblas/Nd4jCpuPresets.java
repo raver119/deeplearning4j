@@ -19,7 +19,7 @@ package org.nd4j.nativeblas;
 import org.bytedeco.javacpp.annotation.Platform;
 import org.bytedeco.javacpp.annotation.Properties;
 import org.bytedeco.javacpp.tools.*;
-import org.bytedeco.openblas.global.openblas;
+//import org.bytedeco.openblas.global.openblas;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import java.util.Scanner;
  *
  * @author saudet
  */
-@Properties(inherit = openblas.class, target = "org.nd4j.nativeblas.Nd4jCpu", helper = "org.nd4j.nativeblas.Nd4jCpuHelper",
+@Properties(target = "org.nd4j.nativeblas.Nd4jCpu", helper = "org.nd4j.nativeblas.Nd4jCpuHelper",
                 value = {@Platform(define = "LIBND4J_ALL_OPS", include = {
                                               "memory/MemoryType.h",
                                               "array/DataType.h",

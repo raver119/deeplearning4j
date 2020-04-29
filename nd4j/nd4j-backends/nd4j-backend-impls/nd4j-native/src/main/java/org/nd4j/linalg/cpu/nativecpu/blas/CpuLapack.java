@@ -29,14 +29,15 @@ import org.bytedeco.javacpp.IntPointer;
 
 import org.nd4j.linalg.api.blas.BlasException ;
 
-import static org.bytedeco.openblas.global.openblas.*;
+//import static org.bytedeco.openblas.global.openblas.*;
 
 /**
  * CPU lapack implementation
  */
 public class CpuLapack extends BaseLapack {
     protected static int getColumnOrder(INDArray A) {
-        return A.ordering() == 'f' ? LAPACK_COL_MAJOR : LAPACK_ROW_MAJOR;
+        //return A.ordering() == 'f' ? LAPACK_COL_MAJOR : LAPACK_ROW_MAJOR;
+        return 0;
     }
 
     protected static int getLda(INDArray A) {
@@ -49,6 +50,7 @@ public class CpuLapack extends BaseLapack {
 // L U DECOMP
     @Override
     public void sgetrf(int M, int N, INDArray A, INDArray IPIV, INDArray INFO) {
+        /*
         int status = LAPACKE_sgetrf(getColumnOrder(A), M, N, 
             (FloatPointer)A.data().addressPointer(), 
             getLda(A), (IntPointer)IPIV.data().addressPointer()
@@ -56,22 +58,26 @@ public class CpuLapack extends BaseLapack {
         if( status < 0 ) {
             throw new BlasException( "Failed to execute sgetrf", status ) ;
         }
+         */
     }
 
     @Override
     public void dgetrf(int M, int N, INDArray A, INDArray IPIV, INDArray INFO) {
+        /*
         int status = LAPACKE_dgetrf(getColumnOrder(A), M, N, (DoublePointer)A.data().addressPointer(), 
             getLda(A), (IntPointer)IPIV.data().addressPointer()
             );
         if( status < 0 ) {
             throw new BlasException( "Failed to execute dgetrf", status ) ;
         }
+         */
     }
 
 //=========================    
 // Q R DECOMP
     @Override
     public void sgeqrf(int M, int N, INDArray A, INDArray R, INDArray INFO) {
+        /*
         INDArray tau = Nd4j.create(DataType.FLOAT, N ) ;
 
         int status = LAPACKE_sgeqrf(getColumnOrder(A), M, N, 
@@ -101,10 +107,12 @@ public class CpuLapack extends BaseLapack {
         if( status != 0 ) {
             throw new BlasException( "Failed to execute sorgqr", status ) ;
         }
+         */
     }
 
     @Override
     public void dgeqrf(int M, int N, INDArray A, INDArray R, INDArray INFO)  {
+        /*
         INDArray tau = Nd4j.create(DataType.DOUBLE, N ) ;
 
         int status = LAPACKE_dgeqrf(getColumnOrder(A), M, N,
@@ -134,6 +142,8 @@ public class CpuLapack extends BaseLapack {
         if( status != 0 ) {
             throw new BlasException( "Failed to execute dorgqr", status ) ;
         }
+
+         */
     }
 
 
@@ -141,6 +151,7 @@ public class CpuLapack extends BaseLapack {
 // CHOLESKY DECOMP
     @Override
     public void spotrf(byte uplo, int N, INDArray A, INDArray INFO) {
+        /*
         int status = LAPACKE_spotrf(getColumnOrder(A), uplo, N, 
                         (FloatPointer)A.data().addressPointer(), getLda(A) );
         if( status != 0 ) {
@@ -161,10 +172,13 @@ public class CpuLapack extends BaseLapack {
                 A.put(ix, 0) ;
             }        
         }
+
+         */
     }
 
     @Override
     public void dpotrf(byte uplo, int N, INDArray A, INDArray INFO) {
+        /*
         int status = LAPACKE_dpotrf(getColumnOrder(A), uplo, N, 
                     (DoublePointer)A.data().addressPointer(), getLda(A) );
         if( status != 0 ) {
@@ -185,6 +199,8 @@ public class CpuLapack extends BaseLapack {
                 A.put(ix, 0) ;
             }        
         }
+
+         */
     }
 
 
@@ -194,6 +210,7 @@ public class CpuLapack extends BaseLapack {
     @Override
     public void sgesvd(byte jobu, byte jobvt, int M, int N, INDArray A, INDArray S, INDArray U, INDArray VT,
                     INDArray INFO) {
+        /*
         INDArray superb = Nd4j.create(DataType.FLOAT, M < N ? M : N ) ;
         int status = LAPACKE_sgesvd(getColumnOrder(A), jobu, jobvt, M, N, 
                         (FloatPointer)A.data().addressPointer(), getLda(A),
@@ -205,11 +222,14 @@ public class CpuLapack extends BaseLapack {
         if( status != 0 ) {
             throw new BlasException( "Failed to execute sgesvd", status ) ;
         }
+
+         */
     }
 
     @Override
     public void dgesvd(byte jobu, byte jobvt, int M, int N, INDArray A, INDArray S, INDArray U, INDArray VT,
                     INDArray INFO) {
+        /*
         INDArray superb = Nd4j.create(DataType.DOUBLE, M < N ? M : N ) ;
         int status = LAPACKE_dgesvd(getColumnOrder(A), jobu, jobvt, M, N, 
                         (DoublePointer)A.data().addressPointer(), getLda(A),
@@ -221,6 +241,8 @@ public class CpuLapack extends BaseLapack {
         if( status != 0 ) {
             throw new BlasException( "Failed to execute dgesvd", status ) ;
         }
+
+         */
     }
 
 
@@ -229,6 +251,7 @@ public class CpuLapack extends BaseLapack {
 //
     @Override
     public int ssyev( char jobz, char uplo, int N, INDArray A, INDArray R ) {
+        /*
 	FloatPointer fp = new FloatPointer(1) ;
 	int status = LAPACKE_ssyev_work( getColumnOrder(A), (byte)jobz, (byte)uplo, 
 					N, (FloatPointer)A.data().addressPointer(), getLda(A),
@@ -246,11 +269,14 @@ public class CpuLapack extends BaseLapack {
 		}
 	}
 	return status ;
+         */
+
+        return 0;
     }
 
 
     public int dsyev( char jobz, char uplo, int N, INDArray A, INDArray R ) {
-
+/*
 	DoublePointer dp = new DoublePointer(1) ;
 	int status = LAPACKE_dsyev_work( getColumnOrder(A), (byte)jobz, (byte)uplo, 
 					N, (DoublePointer)A.data().addressPointer(), getLda(A),
@@ -269,6 +295,9 @@ public class CpuLapack extends BaseLapack {
 		}
 	}
 	return status ;
+
+ */
+        return 0;
     }
 
 

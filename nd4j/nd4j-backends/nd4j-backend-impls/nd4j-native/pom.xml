@@ -45,6 +45,8 @@
             <version>${javacpp.version}</version>
             <classifier>${dependency.platform}</classifier>
         </dependency>
+
+        <!--
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>openblas</artifactId>
@@ -56,6 +58,7 @@
             <version>${openblas.version}-${javacpp-presets.version}</version>
             <classifier>${dependency.platform}</classifier>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.nd4j</groupId>
@@ -99,6 +102,8 @@
                         <artifactId>nd4j-native-api</artifactId>
                         <version>${project.version}</version>
                     </dependency>
+
+                    <!--
                     <dependency>
                         <groupId>org.bytedeco</groupId>
                         <artifactId>openblas</artifactId>
@@ -110,6 +115,8 @@
                         <version>${openblas.version}-${javacpp-presets.version}</version>
                         <classifier>${dependency.platform}</classifier>
                     </dependency>
+                    -->
+
                 </dependencies>
                 <configuration>
                     <properties>${javacpp.platform.properties}</properties>
@@ -152,17 +159,17 @@
                     <linkPath>${libnd4jhome}/blasbuild/cpu/blas</linkPath>
                     <buildResources>
                         <buildResource>/${javacpp.platform.library.path}/</buildResource>
-                        <buildResource>/org/bytedeco/openblas/${javacpp.platform}/</buildResource>
+                 <!--       <buildResource>/org/bytedeco/openblas/${javacpp.platform}/</buildResource> -->
                     </buildResources>
                     <includeResources>
                         <includeResource>/${javacpp.platform.library.path}/include/</includeResource>
-                        <includeResource>/org/bytedeco/openblas/${javacpp.platform}/include/</includeResource>
+                  <!--      <includeResource>/org/bytedeco/openblas/${javacpp.platform}/include/</includeResource> -->
                     </includeResources>
                     <linkResources>
                         <linkResource>/${javacpp.platform.library.path}/</linkResource>
                         <linkResource>/${javacpp.platform.library.path}/lib/</linkResource>
-                       <linkResource>/org/bytedeco/openblas/${javacpp.platform}/</linkResource>
-                        <linkResource>/org/bytedeco/openblas/${javacpp.platform}/lib/</linkResource>
+                  <!--     <linkResource>/org/bytedeco/openblas/${javacpp.platform}/</linkResource>
+                        <linkResource>/org/bytedeco/openblas/${javacpp.platform}/lib/</linkResource> -->
                     </linkResources>
                 </configuration>
                 <executions>
