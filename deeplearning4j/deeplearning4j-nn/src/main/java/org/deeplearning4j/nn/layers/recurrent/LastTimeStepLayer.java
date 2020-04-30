@@ -26,7 +26,7 @@ import org.deeplearning4j.util.TimeSeriesUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
-import org.nd4j.linalg.primitives.Pair;
+import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 
@@ -61,11 +61,8 @@ public class LastTimeStepLayer extends BaseWrapperLayer {
     @Override
     public Pair<Gradient, INDArray> backpropGradient(INDArray epsilon, LayerWorkspaceMgr workspaceMgr) {
         long[] newEpsShape = origOutputShape;
-        boolean nwc = (underlying instanceof BaseRecurrentLayer &&
-                ((BaseRecurrentLayer) underlying).getDataFormat() == RNNFormat.NWC)||
-                (underlying instanceof MaskZeroLayer && ((MaskZeroLayer)underlying).getUnderlying() instanceof
-                BaseRecurrentLayer && ((BaseRecurrentLayer)((MaskZeroLayer)underlying).getUnderlying()).getDataFormat()
-                == RNNFormat.NWC);
+
+        boolean nwc = TimeSeriesUtils.getFormatFromRnnLayer(underlying.conf().getLayer()) == RNNFormat.NWC;
         INDArray newEps = Nd4j.create(epsilon.dataType(), newEpsShape, 'f');
         if(lastTimeStepIdxs == null){
             //no mask case

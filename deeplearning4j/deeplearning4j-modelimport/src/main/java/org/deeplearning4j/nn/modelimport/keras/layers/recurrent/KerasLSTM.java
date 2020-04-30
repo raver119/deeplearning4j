@@ -41,7 +41,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
-import org.nd4j.linalg.primitives.Pair;
+import org.nd4j.common.primitives.Pair;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -186,7 +186,7 @@ public class KerasLSTM extends KerasLayer {
                 .weightInitRecurrent(recurrentInit)
                 .biasInit(0.0) // TODO: this is incorrect
                 .l1(this.weightL1Regularization)
-                .l2(this.weightL2Regularization);
+                .l2(this.weightL2Regularization).dataFormat(RNNFormat.NWC);
         Integer nIn = KerasLayerUtils.getNInFromInputDim(layerConfig, conf);
         if(nIn != null)
             builder.setNIn(nIn);

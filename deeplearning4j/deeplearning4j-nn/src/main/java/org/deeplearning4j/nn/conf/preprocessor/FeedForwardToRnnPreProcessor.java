@@ -26,7 +26,7 @@ import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.util.TimeSeriesUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
-import org.nd4j.linalg.primitives.Pair;
+import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
@@ -52,7 +52,8 @@ public class FeedForwardToRnnPreProcessor implements InputPreProcessor {
     private RNNFormat rnnDataFormat = RNNFormat.NCW;
 
     public FeedForwardToRnnPreProcessor(@JsonProperty("rnnDataFormat") RNNFormat rnnDataFormat){
-        this.rnnDataFormat = rnnDataFormat;
+        if(rnnDataFormat != null)
+            this.rnnDataFormat = rnnDataFormat;
     }
     @Override
     public INDArray preProcess(INDArray input, int miniBatchSize, LayerWorkspaceMgr workspaceMgr) {

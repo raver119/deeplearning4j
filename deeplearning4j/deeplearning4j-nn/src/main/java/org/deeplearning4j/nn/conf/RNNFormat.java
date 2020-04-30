@@ -23,7 +23,7 @@ package org.deeplearning4j.nn.conf;
  * "width" corresponds to sequence length and "channels" corresponds to sequence item size.
  */
 
-public enum RNNFormat {
+public enum RNNFormat implements DataFormat {
     NCW,
     NWC
 }

@@ -27,7 +27,7 @@ import org.nd4j.TFGraphRunnerService;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.primitives.Pair;
+import org.nd4j.common.primitives.Pair;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -125,17 +125,9 @@ public class TFOpLayerImpl extends AbstractLayer<TFOpLayer> {
     }
 
     private INDArray runGraph(INDArray input){
-        if (input.rank() == 3){
-            // TODO make this a preprocessor
-            input = input.permute(0, 2, 1);
-        }
         Map<String, INDArray> inputMap = new HashMap<>();
         inputMap.put(inputNames.get(0), input);
         INDArray out = graphRunnerService.run(inputMap).values().toArray(new INDArray[0])[0];
-        if (out.rank() == 3){
-            out = out.permute(0, 2, 1); // TODO post-processing?
-        }
-
         return out;
     }
 
