@@ -20,6 +20,7 @@ import org.bytedeco.javacv.Frame;
 import org.datavec.image.data.ImageWritable;
 import org.junit.Before;
 import org.junit.Test;
+import org.nd4j.common.tests.BaseND4JTest;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author raver119@gmail.com
  */
-public class ResizeImageTransformTest {
+public class ResizeImageTransformTest extends BaseND4JTest {
     @Before
     public void setUp() throws Exception {
 

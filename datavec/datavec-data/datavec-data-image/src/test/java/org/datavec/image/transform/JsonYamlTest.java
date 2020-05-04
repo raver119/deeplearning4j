@@ -18,6 +18,7 @@ package org.datavec.image.transform;
 
 import org.datavec.image.data.ImageWritable;
 import org.junit.Test;
+import org.nd4j.common.tests.BaseND4JTest;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by kepricon on 17. 5. 25.
  */
-public class JsonYamlTest {
+public class JsonYamlTest extends BaseND4JTest {
     @Test
     public void testJsonYamlImageTransformProcess() throws IOException {
         int seed = 12345;

@@ -16,34 +16,25 @@
 
 package org.datavec.image.loader;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.records.reader.RecordReader;
-import org.datavec.api.split.FileSplit;
-import org.datavec.api.split.InputSplit;
-import org.datavec.image.recordreader.ImageRecordReader;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nd4j.common.tests.BaseND4JTest;
 import org.nd4j.linalg.dataset.DataSet;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
  */
-public class LoaderTests {
+public class LoaderTests extends BaseND4JTest {
 
     private static void ensureDataAvailable(){
         //Ensure test resources available by initializing CifarLoader and relying on auto download

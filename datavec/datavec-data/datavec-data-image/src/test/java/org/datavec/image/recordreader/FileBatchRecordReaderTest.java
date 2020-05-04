@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.nd4j.common.loader.FileBatch;
+import org.nd4j.common.tests.BaseND4JTest;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.io.ClassPathResource;
 
@@ -36,7 +37,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-public class FileBatchRecordReaderTest {
+public class FileBatchRecordReaderTest extends BaseND4JTest {
 
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();

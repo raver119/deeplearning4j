@@ -117,6 +117,13 @@
                     <classpathDependencyExcludes>
                         <classpathDependencyExclude>com.google.android:android</classpathDependencyExclude>
                     </classpathDependencyExcludes>
+                    <includes>
+                        <include>*.java</include>
+                        <include>**/*.java</include>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase.java</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>

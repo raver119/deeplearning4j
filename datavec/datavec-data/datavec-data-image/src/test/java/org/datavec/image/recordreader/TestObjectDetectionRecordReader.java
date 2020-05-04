@@ -34,6 +34,7 @@ import org.datavec.image.transform.ResizeImageTransform;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.nd4j.common.tests.BaseND4JTest;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.BooleanIndexing;
@@ -49,7 +50,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TestObjectDetectionRecordReader {
+public class TestObjectDetectionRecordReader extends BaseND4JTest {
 
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();

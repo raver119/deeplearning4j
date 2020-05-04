@@ -21,6 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.common.tests.BaseND4JTest;
 
 import java.io.File;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class TestVocLabelProvider {
+public class TestVocLabelProvider extends BaseND4JTest {
 
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();

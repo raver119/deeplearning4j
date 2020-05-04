@@ -28,6 +28,7 @@ import org.datavec.image.data.ImageWritable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.nd4j.common.tests.BaseND4JTest;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -55,7 +56,7 @@ import static org.junit.Assert.fail;
  * @author saudet
  */
 @Slf4j
-public class TestNativeImageLoader {
+public class TestNativeImageLoader extends BaseND4JTest {
     static final long seed = 10;
     static final Random rng = new Random(seed);
 

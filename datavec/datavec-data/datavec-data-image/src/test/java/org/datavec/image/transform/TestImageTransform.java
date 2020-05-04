@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bytedeco.opencv.opencv_core.*;
+import org.nd4j.common.tests.BaseND4JTest;
 
 import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
@@ -42,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @author saudet
  */
-public class TestImageTransform {
+public class TestImageTransform extends BaseND4JTest {
     static final long seed = 10;
     static final Random rng = new Random(seed);
     static final OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
