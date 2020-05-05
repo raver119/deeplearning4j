@@ -134,6 +134,7 @@
         <module>nd4s</module>
         <module>rl4j</module>
         <module>scalnet</module>
+        <module>pydl4j</module>
         <module>jumpy</module>
         <module>pydatavec</module>
         <module>pydl4j</module>
