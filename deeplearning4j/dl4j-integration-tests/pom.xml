@@ -18,7 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+
     <parent>
         <artifactId>deeplearning4j-parent</artifactId>
         <groupId>org.deeplearning4j</groupId>
@@ -29,11 +29,14 @@
 
     <artifactId>dl4j-integration-tests</artifactId>
 
+    <properties>
+        <java.compile.version>1.8</java.compile.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api
-            </artifactId>          <!-- Version set by deeplearning4j-parent dependency management -->
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
@@ -58,17 +61,13 @@
         <!-- For unit tests -->
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit
-            </artifactId>          <!-- Version set by deeplearning4j-parent dependency management -->
-            <scope>test</scope>
+            <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic
-            </artifactId> <!-- Version set by deeplearning4j-parent dependency management -->
+            <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-common-tests</artifactId>
@@ -100,19 +99,15 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.compile.version}</source>
+                    <target>${java.compile.version}</target>
+                </configuration>
+            </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <profiles>
