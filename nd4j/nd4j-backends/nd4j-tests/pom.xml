@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2015-2018 Skymind, Inc.
   ~
@@ -14,14 +15,17 @@
   ~ SPDX-License-Identifier: Apache-2.0
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>nd4j-backends</artifactId>
         <groupId>org.nd4j</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nd4j-tests</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -37,66 +41,49 @@
         <maven.compiler.testSource>1.8</maven.compiler.testSource>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!-- Shaded version of Jackson -->
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>jackson</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
-
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${logback.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>5.0.2.RELEASE</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.6.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
@@ -109,7 +96,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common-tests</artifactId>
@@ -118,15 +104,22 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>testresources</id>
         </profile>
-
         <profile>
             <id>nd4j-testresources</id>
         </profile>
-
         <profile>
             <id>nd4j-tests-cpu</id>
             <activation>
@@ -146,7 +139,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <environmentVariables>
-                                <LD_LIBRARY_PATH>${env.LD_LIBRARY_PATH}:${user.dir}:${libnd4jhome}/blasbuild/cpu/blas/
+                                <LD_LIBRARY_PATH>
+                                    ${env.LD_LIBRARY_PATH}:${user.dir}:${libnd4jhome}/blasbuild/cpu/blas/
                                 </LD_LIBRARY_PATH>
                             </environmentVariables>
                             <testSourceDirectory>src/test/java</testSourceDirectory>
@@ -159,9 +153,11 @@
                             </includes>
                             <junitArtifactName>junit:junit</junitArtifactName>
                             <systemPropertyVariables>
-                                <org.nd4j.linalg.defaultbackend>org.nd4j.linalg.cpu.nativecpu.CpuBackend
+                                <org.nd4j.linalg.defaultbackend>
+                                    org.nd4j.linalg.cpu.nativecpu.CpuBackend
                                 </org.nd4j.linalg.defaultbackend>
-                                <org.nd4j.linalg.tests.backendstorun>org.nd4j.linalg.cpu.nativecpu.CpuBackend
+                                <org.nd4j.linalg.tests.backendstorun>
+                                    org.nd4j.linalg.cpu.nativecpu.CpuBackend
                                 </org.nd4j.linalg.tests.backendstorun>
                             </systemPropertyVariables>
                             <!--
@@ -176,7 +172,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>nd4j-tests-cuda</id>
             <activation>
@@ -217,9 +212,11 @@
                             </includes>
                             <junitArtifactName>junit:junit</junitArtifactName>
                             <systemPropertyVariables>
-                                <org.nd4j.linalg.defaultbackend>org.nd4j.linalg.jcublas.JCublasBackend
+                                <org.nd4j.linalg.defaultbackend>
+                                    org.nd4j.linalg.jcublas.JCublasBackend
                                 </org.nd4j.linalg.defaultbackend>
-                                <org.nd4j.linalg.tests.backendstorun>org.nd4j.linalg.jcublas.JCublasBackend
+                                <org.nd4j.linalg.tests.backendstorun>
+                                    org.nd4j.linalg.jcublas.JCublasBackend
                                 </org.nd4j.linalg.tests.backendstorun>
                             </systemPropertyVariables>
                             <!--
@@ -233,5 +230,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

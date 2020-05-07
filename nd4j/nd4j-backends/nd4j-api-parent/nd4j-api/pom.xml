@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2015-2018 Skymind, Inc.
   ~
@@ -14,13 +15,17 @@
   ~ SPDX-License-Identifier: Apache-2.0
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>nd4j-api-parent</artifactId>
         <groupId>org.nd4j</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nd4j-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -29,121 +34,8 @@
     <name>nd4j-api</name>
     <url>https://deeplearning4j.org</url>
 
-    <build>
-        <plugins>
-
-            <!-- AB 2019/08/24 This plugin is to be added TEMPORARILY due to a change in the filenames of the generated ONNX -->
-            <!-- Normal "mvn clean" etc won't delete these files, and any users who have built ND4J even once before the
-                 change will run into a compilation error. This can be removed after a few weeks.-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <delete file="${project.build.sourceDirectory}/onnx/OnnxMlProto3.java" />
-                                <delete file="${project.build.sourceDirectory}/onnx/OnnxOperatorsProto3.java" />
-                                <delete file="${project.build.sourceDirectory}/onnx/OnnxProto3.java" />
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.os72</groupId>
-                <artifactId>protoc-jar-maven-plugin</artifactId>
-                <version>3.8.0</version>
-                <executions>
-                    <execution>
-                        <id>tensorflow</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <protocVersion>3.8.0</protocVersion>
-                            <extension>.proto</extension>
-                            <includeDirectories>
-                                <include>src/main/protobuf/tf</include>
-                                <include>src/main/protobuf/onnx</include>
-                            </includeDirectories>
-                            <inputDirectories>
-                                <include>src/main/protobuf/tf/tensorflow</include>
-                                <include>src/main/protobuf/onnx</include>
-                            </inputDirectories>
-                            <addSources>main</addSources>
-                            <cleanOutputFolder>false</cleanOutputFolder>
-                            <outputDirectory>src/main/java/</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <configuration>
-                    <includes>
-                        <include>${project.build.sourceDirectory}/org/tensorflow/**</include>
-                        <include>${project.build.sourceDirectory}/tensorflow/**</include>
-                        <include>${project.build.sourceDirectory}/onnx/**</include>
-                    </includes>
-                    <token>com.google.protobuf.</token>
-                    <value>org.nd4j.shade.protobuf.</value>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>replace-imports</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>
-                                true
-                            </addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.compile.version>1.7</java.compile.version>
     </properties>
 
     <dependencyManagement>
@@ -158,16 +50,14 @@
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
-
     <dependencies>
         <dependency>
-          <groupId>com.jakewharton.byteunits</groupId>
-          <artifactId>byteunits</artifactId>
-          <version>0.9.1</version>
+            <groupId>com.jakewharton.byteunits</groupId>
+            <artifactId>byteunits</artifactId>
+            <version>0.9.1</version>
         </dependency>
 
         <dependency>
@@ -190,7 +80,6 @@
             <artifactId>protobuf</artifactId>
             <version>${project.version}</version>
         </dependency>
-
 
 
         <!-- oshi: Used for collecting system information for system info reporting -->
@@ -239,6 +128,117 @@
             <version>${javacpp.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- AB 2019/08/24 This plugin is to be added TEMPORARILY due to a change in the filenames of the generated ONNX -->
+            <!-- Normal "mvn clean" etc won't delete these files, and any users who have built ND4J even once before the
+                 change will run into a compilation error. This can be removed after a few weeks.-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete
+                                    file="${project.build.sourceDirectory}/onnx/OnnxMlProto3.java"/>
+                                <delete
+                                    file="${project.build.sourceDirectory}/onnx/OnnxOperatorsProto3.java"/>
+                                <delete
+                                    file="${project.build.sourceDirectory}/onnx/OnnxProto3.java"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>tensorflow</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <protocVersion>3.8.0</protocVersion>
+                            <extension>.proto</extension>
+                            <includeDirectories>
+                                <include>src/main/protobuf/tf</include>
+                                <include>src/main/protobuf/onnx</include>
+                            </includeDirectories>
+                            <inputDirectories>
+                                <include>src/main/protobuf/tf/tensorflow</include>
+                                <include>src/main/protobuf/onnx</include>
+                            </inputDirectories>
+                            <addSources>main</addSources>
+                            <cleanOutputFolder>false</cleanOutputFolder>
+                            <outputDirectory>src/main/java/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <configuration>
+                    <includes>
+                        <include>${project.build.sourceDirectory}/org/tensorflow/**</include>
+                        <include>${project.build.sourceDirectory}/tensorflow/**</include>
+                        <include>${project.build.sourceDirectory}/onnx/**</include>
+                    </includes>
+                    <token>com.google.protobuf.</token>
+                    <value>org.nd4j.shade.protobuf.</value>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>replace-imports</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.compile.version}</source>
+                    <target>${java.compile.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>
+                                true
+                            </addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2015-2018 Skymind, Inc.
   ~
@@ -14,14 +15,17 @@
   ~ SPDX-License-Identifier: Apache-2.0
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>nd4j-jdbc</artifactId>
         <groupId>org.nd4j</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nd4j-jdbc-hsql</artifactId>
     <packaging>jar</packaging>
@@ -31,7 +35,6 @@
     <properties>
         <commons-db.version>1.7</commons-db.version>
         <hsqldb.version>2.4.0</hsqldb.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -55,7 +58,6 @@
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common-tests</artifactId>
@@ -68,11 +70,9 @@
         <profile>
             <id>testresources</id>
         </profile>
-
         <profile>
             <id>nd4j-testresources</id>
         </profile>
-
         <profile>
             <id>nd4j-tests-cpu</id>
             <activation>
