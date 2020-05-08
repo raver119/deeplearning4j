@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>rl4j-doom</artifactId>
-    <packaging>jar</packaging>
 
     <name>rl4j-doom</name>
 
