@@ -146,12 +146,12 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>2.0.0</version>
                 <configuration>
-                    <configFile>${session.executionRootDirectory}/contrib/formatter.xml</configFile>
                     <directories>
                         <directory>arbiter-deeplearning4j</directory>
                         <directory>arbiter-core</directory>
+                        <directory>arbiter-server</directory>
+                        <directory>arbiter-ui</directory>
                     </directories>
                 </configuration>
             </plugin>

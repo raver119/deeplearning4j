@@ -168,9 +168,7 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>2.0.0</version>
                 <configuration>
-                    <configFile>${session.executionRootDirectory}/contrib/formatter.xml</configFile>
                     <directories>
                         <directory>nd4j-shade</directory>
                         <directory>nd4j-jdbc</directory>

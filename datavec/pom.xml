@@ -174,17 +174,16 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>${maven-formatter-plugin.version}</version>
                 <configuration>
-                    <configFile>${session.executionRootDirectory}/contrib/formatter.xml</configFile>
                     <directories>
                         <directory>datavec-api</directory>
+                        <directory>datavec-arrow</directory>
                         <directory>datavec-data</directory>
-                        <directory>datavec-geo</directory>
-                        <directory>datavec-hadoop</directory>
-                        <directory>datavec-spark</directory>
-                        <directory>datavec-camel</directory>
+                        <directory>datavec-excel</directory>
+                        <directory>datavec-jdbc</directory>
                         <directory>datavec-local</directory>
+                        <directory>datavec-python</directory>
+                        <directory>datavec-spark</directory>
                         <directory>datavec-spark-inference-parent</directory>
                     </directories>
                 </configuration>

@@ -252,9 +252,7 @@
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
-                <version>${maven-formatter-plugin.version}</version>
                 <configuration>
-                    <configFile>${session.executionRootDirectory}/contrib/formatter.xml</configFile>
                     <directories>
                         <directory>rl4j-api</directory>
                         <directory>rl4j-core</directory>
