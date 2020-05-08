@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Copyright (c) 2015-2018 Skymind, Inc.
   ~
@@ -21,26 +22,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>arbiter</artifactId>
         <groupId>org.deeplearning4j</groupId>
+        <artifactId>arbiter</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>arbiter-server</artifactId>
-    <packaging>jar</packaging>
 
     <name>arbiter-server</name>
 
     <dependencies>
         <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>1.27</version>
-        </dependency>
-        <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>arbiter-deeplearning4j</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
