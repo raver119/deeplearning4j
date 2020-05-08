@@ -17,8 +17,8 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>org.deeplearning4j</groupId>
@@ -124,8 +124,10 @@
                         <buildResource>/org/bytedeco/openblas/${libnd4j.platform}/</buildResource>
                     </buildResources>
                     <includeResources>
-                        <includeResource>/${javacpp.platform.library.path}/include/</includeResource>
-                        <includeResource>/org/bytedeco/openblas/${libnd4j.platform}/include/</includeResource>
+                        <includeResource>/${javacpp.platform.library.path}/include/
+                        </includeResource>
+                        <includeResource>/org/bytedeco/openblas/${libnd4j.platform}/include/
+                        </includeResource>
                     </includeResources>
                     <linkResources>
                         <linkResource>/${javacpp.platform.library.path}/</linkResource>
@@ -288,7 +290,8 @@
                 </property>
             </activation>
             <properties>
-                <libnd4j.classifier>${libnd4j.platform}-${libnd4j.chip}-${cuda.version}</libnd4j.classifier>
+                <libnd4j.classifier>${libnd4j.platform}-${libnd4j.chip}-${cuda.version}
+                </libnd4j.classifier>
             </properties>
         </profile>
         <profile>
