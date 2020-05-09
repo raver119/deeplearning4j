@@ -83,6 +83,7 @@ public abstract class BaseNd4jTest extends BaseND4JTest {
 
     @Before
     public void beforeTest2(){
+        System.out.println("BaseNd4jTest.beforeTest2()");
         Nd4j.factory().setOrder(ordering());
     }
 
@@ -99,6 +100,7 @@ public abstract class BaseNd4jTest extends BaseND4JTest {
         String gpuBackend = "org.nd4j.linalg.jcublas.JCublasBackend";
         String clazz = System.getProperty(DEFAULT_BACKEND, cpuBackend);
         try {
+            System.out.println("BaseNd4jTest.getDefaultBackend()");
             return (Nd4jBackend) Class.forName(clazz).newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);

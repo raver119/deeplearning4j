@@ -114,14 +114,19 @@ public abstract class BaseND4JTest {
 
     @Before
     public void beforeTest(){
+        System.out.println("BaseND4JTest.beforeTest()");
+//        Nd4j.getExecutioner().commit();
+//        System.out.println("BaseND4JTest.afterTest() - committed");
         log.info("{}.{}", getClass().getSimpleName(), name.getMethodName());
         //Suppress ND4J initialization - don't need this logged for every test...
         System.setProperty(ND4JSystemProperties.LOG_INITIALIZATION, "false");
         System.setProperty(ND4JSystemProperties.ND4J_IGNORE_AVX, "true");
         Nd4j.getExecutioner().setProfilingMode(getProfilingMode());
         Nd4j.getExecutioner().setProfilingConfig(ProfilerConfig.builder().build());
+        System.out.println("BaseND4JTest.beforeTest() - about to set default FP type");
         Nd4j.setDefaultDataTypes(getDataType(), getDefaultFPDataType());
         Nd4j.getExecutioner().setProfilingConfig(ProfilerConfig.builder().build());
+        System.out.println("BaseND4JTest.beforeTest() - debug/verbose");
         Nd4j.getExecutioner().enableDebugMode(false);
         Nd4j.getExecutioner().enableVerboseMode(false);
         int numThreads = numThreads();
@@ -131,10 +136,14 @@ public abstract class BaseND4JTest {
         }
         startTime = System.currentTimeMillis();
         threadCountBefore = ManagementFactory.getThreadMXBean().getThreadCount();
+        System.out.println("BaseND4JTest.beforeTest() - done");
     }
 
     @After
     public void afterTest(){
+        System.out.println("BaseND4JTest.afterTest()");
+//        Nd4j.getExecutioner().commit();
+//        System.out.println("BaseND4JTest.afterTest() - committed");
         //Attempt to keep workspaces isolated between tests
         Nd4j.getWorkspaceManager().destroyAllWorkspacesForCurrentThread();
         MemoryWorkspace currWS = Nd4j.getMemoryManager().getCurrentWorkspace();
@@ -155,6 +164,7 @@ public abstract class BaseND4JTest {
             System.exit(1);
         }
 
+        System.out.println("BaseND4JTest.afterTest() - get memory");
         StringBuilder sb = new StringBuilder();
         long maxPhys = Pointer.maxPhysicalBytes();
         long maxBytes = Pointer.maxBytes();
@@ -175,6 +185,7 @@ public abstract class BaseND4JTest {
                 .append(", totalBytes=").append(currBytes).append(", maxBytes=").append(maxBytes)
                 .append(", currPhys=").append(currPhys).append(", maxPhys=").append(maxPhys);
 
+        System.out.println("BaseND4JTest.afterTest() - get workspaces");
         List<MemoryWorkspace> ws = Nd4j.getWorkspaceManager().getAllWorkspacesForCurrentThread();
         if(ws != null && ws.size() > 0){
             long currSize = 0;
@@ -188,6 +199,7 @@ public abstract class BaseND4JTest {
         }
 
 
+        System.out.println("BaseND4JTest.afterTest() - get environment info");
         Properties p = Nd4j.getExecutioner().getEnvironmentInformation();
         Object o = p.get("cuda.devicesInformation");
         if(o instanceof List){
@@ -208,5 +220,6 @@ public abstract class BaseND4JTest {
             }
         }
         log.info(sb.toString());
+        System.out.println("BaseND4JTest.afterTest() - done");
     }
 }

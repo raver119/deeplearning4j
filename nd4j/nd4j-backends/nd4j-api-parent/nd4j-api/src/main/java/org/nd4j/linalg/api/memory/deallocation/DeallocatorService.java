@@ -121,7 +121,14 @@ public class DeallocatorService {
                         }
                     } else {
                         // invoking deallocator
-                        reference.getDeallocator().deallocate();
+                        synchronized (DeallocatorService.this.counter) {
+                            Deallocatable d = reference.get();
+                            if(d == null)
+                                d = referenceMap.get(reference.getId()).get();
+                            log.info("Dealloc1: {} - {} - {}", reference.getClass().getSimpleName(), (d == null ? "" : d.getClass().getSimpleName()), reference.getId());
+                            reference.getDeallocator().deallocate();
+                            log.info("Dealloc done1");
+                        }
                         referenceMap.remove(reference.getId());
                     }
                 } else {
@@ -131,7 +138,14 @@ public class DeallocatorService {
                             continue;
 
                         // invoking deallocator
-                        reference.getDeallocator().deallocate();
+                        synchronized (DeallocatorService.this.counter) {
+                            Deallocatable d = reference.get();
+                            if(d == null)
+                                d = referenceMap.get(reference.getId()).get();
+                            log.info("Dealloc2: {} - {} - {}", reference.getClass().getSimpleName(), (d == null ? "" : d.getClass().getSimpleName()), reference.getId());
+                            reference.getDeallocator().deallocate();
+                            log.info("Dealloc done2");
+                        }
                         referenceMap.remove(reference.getId());
                     } catch (InterruptedException e) {
                         canRun = false;

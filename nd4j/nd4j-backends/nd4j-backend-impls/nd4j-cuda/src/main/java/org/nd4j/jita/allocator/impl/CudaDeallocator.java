@@ -34,7 +34,7 @@ public class CudaDeallocator implements Deallocator {
 
     @Override
     public void deallocate() {
-        log.trace("Deallocating CUDA memory");
+        log.info("Deallocating CUDA memory");
         NativeOpsHolder.getInstance().getDeviceNativeOps().deleteDataBuffer(opaqueDataBuffer);
     }
 }
