@@ -244,8 +244,6 @@ __host__ void ReduceBoolFunction<X,Z>::intermediateXD(dim3 launchDims, cudaStrea
                                                       void *reductionPointer,
                                                       const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets) {
 
-        nd4j_printf("Step A%i\n", -1);
-
     if(shape::isEmpty(hXShapeInfo)) {
 
         if(shape::isEmpty(hZShapeInfo))
