@@ -19,6 +19,7 @@ package org.nd4j.nativeblas;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bytedeco.javacpp.Pointer;
 import org.nd4j.linalg.api.buffer.DataType;
 
@@ -206,6 +207,13 @@ public class OpaqueDataBuffer extends Pointer {
      */
     public void syncToSpecial() {
         NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToSpecial(this);
+
+        val ec = NativeOpsHolder.getInstance().getDeviceNativeOps().lastErrorCode();
+        if (ec != 0) {
+            val em = NativeOpsHolder.getInstance().getDeviceNativeOps().lastErrorMessage();
+
+            throw new RuntimeException(em);
+        }
     }
 
     /**
@@ -213,6 +221,13 @@ public class OpaqueDataBuffer extends Pointer {
      */
     public void syncToPrimary() {
         NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToPrimary(this);
+
+        val ec = NativeOpsHolder.getInstance().getDeviceNativeOps().lastErrorCode();
+        if (ec != 0) {
+            val em = NativeOpsHolder.getInstance().getDeviceNativeOps().lastErrorMessage();
+
+            throw new RuntimeException(em);
+        }
     }
 
     /**

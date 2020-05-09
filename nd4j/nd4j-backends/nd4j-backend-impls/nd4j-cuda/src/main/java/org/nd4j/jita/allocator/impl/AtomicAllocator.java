@@ -354,7 +354,7 @@ public class AtomicAllocator implements Allocator {
     @Override
     public void synchronizeHostData(DataBuffer buffer) {
         // we actually need synchronization only in device-dependant environment. no-op otherwise. managed by native code
-        NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToPrimary(((BaseCudaDataBuffer) buffer).getOpaqueDataBuffer());
+        ((BaseCudaDataBuffer) buffer).getOpaqueDataBuffer().syncToPrimary();
     }
 
 

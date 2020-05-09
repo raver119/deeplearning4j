@@ -62,12 +62,12 @@ public class SynchronousFlowController implements FlowController {
      */
     @Override
     public void synchronizeToHost(AllocationPoint point) {
-        NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToPrimary(point.getPtrDataBuffer());
+        point.getPtrDataBuffer().syncToPrimary();
     }
 
     @Override
     public void synchronizeToDevice(@NonNull AllocationPoint point) {
-        NativeOpsHolder.getInstance().getDeviceNativeOps().dbSyncToSpecial(point.getPtrDataBuffer());
+        point.getPtrDataBuffer().syncToSpecial();
     }
 
     @Override
