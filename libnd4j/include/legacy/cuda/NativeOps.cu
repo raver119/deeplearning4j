@@ -3751,11 +3751,21 @@ OpaqueDataBuffer* dbCreateView(OpaqueDataBuffer *dataBuffer, Nd4jLong length, Nd
 }
 
 void dbSyncToSpecial(OpaqueDataBuffer *dataBuffer) {
-    dataBuffer->dataBuffer()->syncToSpecial();
+    try {
+        dataBuffer->dataBuffer()->syncToSpecial();
+    } catch (std::exception &e) {
+        sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+    }
 }
 
 void dbSyncToPrimary(OpaqueDataBuffer *dataBuffer) {
-    dataBuffer->dataBuffer()->syncToPrimary(nullptr);
+    try {
+        dataBuffer->dataBuffer()->syncToPrimary(LaunchContext::defaultContext());
+    } catch (std::exception &e) {
+        sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+        sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
+    }
 }
 
 void dbTickHostRead(OpaqueDataBuffer *dataBuffer) {

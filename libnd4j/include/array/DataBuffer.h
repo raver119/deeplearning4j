@@ -116,7 +116,7 @@ class ND4J_EXPORT DataBuffer {
         template <typename T> FORCEINLINE T* primaryAsT();
         template <typename T> FORCEINLINE T* specialAsT();
 
-        void syncToPrimary(const LaunchContext* context, const bool forceSync = false);
+        void syncToPrimary(const LaunchContext* context = LaunchContext::defaultContext(), const bool forceSync = false);
         void syncToSpecial(const bool forceSync = false);
 
         void setToZeroBuffers(const bool both = false);
