@@ -28,8 +28,8 @@
 #include <helpers/ArrayUtils.h>
 #include <helpers/ShapeUtils.h>
 #include <ops/declarable/BooleanOp.h>
-#include <ops/declarable/BroadcastableOp.h>
 #include <ops/declarable/BroadcastableBoolOp.h>
+#include <ops/declarable/BroadcastableOp.h>
 #include <ops/declarable/DeclarableCustomOp.h>
 #include <ops/declarable/DeclarableListOp.h>
 #include <ops/declarable/DeclarableOp.h>

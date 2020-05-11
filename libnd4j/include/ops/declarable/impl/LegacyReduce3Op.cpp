@@ -68,28 +68,30 @@ Nd4jStatus LegacyReduce3Op::validateAndExecute(Context &block) {
             ? packX.primaryShapeInfo()
             : packX
                   .specialShapeInfo();  //(Nd4jLong *)
-                                        //manager.replicatePointer(tadX.tadOnlyShapeInfo,
-                                        //shape::shapeInfoByteLength(tadX.tadOnlyShapeInfo));
+                                        // manager.replicatePointer(tadX.tadOnlyShapeInfo,
+                                        // shape::shapeInfoByteLength(tadX.tadOnlyShapeInfo));
     auto xTadOffsets =
         Environment::getInstance()->isCPU()
             ? packX.primaryOffsets()
-            : packX.specialOffsets();  //(Nd4jLong *)
-                                       //manager.replicatePointer(tadX.tadOffsets,
-                                       //tadX.numTads * sizeof(Nd4jLong));
+            : packX
+                  .specialOffsets();  //(Nd4jLong *)
+                                      // manager.replicatePointer(tadX.tadOffsets,
+                                      // tadX.numTads * sizeof(Nd4jLong));
 
     auto yTadShape =
         Environment::getInstance()->isCPU()
             ? packZ.primaryShapeInfo()
             : packZ
                   .specialOffsets();  //(Nd4jLong *)
-                                      //manager.replicatePointer(tadY.tadOnlyShapeInfo,
-                                      //shape::shapeInfoByteLength(tadY.tadOnlyShapeInfo));
+                                      // manager.replicatePointer(tadY.tadOnlyShapeInfo,
+                                      // shape::shapeInfoByteLength(tadY.tadOnlyShapeInfo));
     auto yTadOffsets =
         Environment::getInstance()->isCPU()
             ? packZ.primaryOffsets()
-            : packZ.specialOffsets();  //(Nd4jLong *)
-                                       //manager.replicatePointer(tadY.tadOffsets,
-                                       //tadY.numTads * sizeof(Nd4jLong));
+            : packZ
+                  .specialOffsets();  //(Nd4jLong *)
+                                      // manager.replicatePointer(tadY.tadOffsets,
+                                      // tadY.numTads * sizeof(Nd4jLong));
 
     NativeOpExecutioner::execReduce3(
         block.launchContext(), opNum, x->buffer(), x->shapeInfo(),

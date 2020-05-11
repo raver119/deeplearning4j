@@ -48,14 +48,14 @@ Nd4jStatus LegacyBroadcastBoolOp::validateAndExecute(Context &block) {
           ? packX.primaryShapeInfo()
           : packX
                 .specialShapeInfo();  //(Nd4jLong *)
-                                      //manager.replicatePointer(tad.tadOnlyShapeInfo,
-                                      //shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
+                                      // manager.replicatePointer(tad.tadOnlyShapeInfo,
+                                      // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
   auto pTadOffsets =
       Environment::getInstance()->isCPU()
           ? packX.primaryOffsets()
           : packX.specialOffsets();  //(Nd4jLong *)
-                                     //manager.replicatePointer(tad.tadOffsets,
-                                     //tad.numTads * sizeof(Nd4jLong));
+                                     // manager.replicatePointer(tad.tadOffsets,
+                                     // tad.numTads * sizeof(Nd4jLong));
 
   REQUIRE_TRUE(shape::length(packX.primaryShapeInfo()) == y->lengthOf(), 0,
                "Length of broadcast TAD should be equal to length of Y "
@@ -82,14 +82,15 @@ Nd4jStatus LegacyBroadcastBoolOp::validateAndExecute(Context &block) {
             ? packZ.primaryShapeInfo()
             : packZ
                   .specialShapeInfo();  //(Nd4jLong *)
-                                        //manager.replicatePointer(tadZ.tadOnlyShapeInfo,
-                                        //shape::shapeInfoByteLength(tadZ.tadOnlyShapeInfo));
+                                        // manager.replicatePointer(tadZ.tadOnlyShapeInfo,
+                                        // shape::shapeInfoByteLength(tadZ.tadOnlyShapeInfo));
     auto zTadOffsets =
         Environment::getInstance()->isCPU()
             ? packZ.primaryOffsets()
-            : packZ.specialOffsets();  //(Nd4jLong *)
-                                       //manager.replicatePointer(tadZ.tadOffsets,
-                                       //tadZ.numTads * sizeof(Nd4jLong));
+            : packZ
+                  .specialOffsets();  //(Nd4jLong *)
+                                      // manager.replicatePointer(tadZ.tadOffsets,
+                                      // tadZ.numTads * sizeof(Nd4jLong));
 
     NativeOpExecutioner::execBroadcast(
         block.launchContext(), opNum, x->buffer(), x->shapeInfo(),

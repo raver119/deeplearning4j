@@ -84,8 +84,8 @@ CUSTOM_OP_IMPL(fused_batch_norm, 3, 3, false, 0, 2) {
                  iD, ShapeUtils::shapeAsString(variance).c_str());
   } else {
     // REQUIRE_TRUE(block.width() == 3, 0, "CUSTOM_OP fused_batch_norm: when
-    // isTraining=true then number of input arrays must be equal to 3, but got %i
-    // instead !", block.width());
+    // isTraining=true then number of input arrays must be equal to 3, but got
+    // %i instead !", block.width());
     std::vector<Nd4jLong> shape = {iD};
     mean = NDArrayFactory::create_(scale->ordering(), shape, scale->dataType(),
                                    block.launchContext());

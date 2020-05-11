@@ -49,7 +49,7 @@ class RNGTests : public testing::Test {
     //_bufferB = new Nd4jLong[100000];
     //_rngA = (sd::random::RandomBuffer *) initRandom(nullptr, _seed, 100000,
     //(Nd4jPointer) _bufferA); _rngB = (sd::random::RandomBuffer *)
-    //initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferB);
+    // initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferB);
     _rngA.setStates(_seed, _seed);
     _rngB.setStates(_seed, _seed);
     nexp0->assign(-1.0f);

@@ -94,20 +94,28 @@ static void pooling2dBP_(sd::graph::Context& block, const NDArray& input,
 
               if (hstart < 0)
                 hstart +=
-                    dH * ((-hstart + dH - 1) / dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
-                                                     // / static_cast<T>(dH));
+                    dH *
+                    ((-hstart + dH - 1) /
+                     dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
+                           // / static_cast<T>(dH));
               if (wstart < 0)
                 wstart +=
-                    dW * ((-wstart + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
-                                                     /// static_cast<T>(dW));
+                    dW *
+                    ((-wstart + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
+                           /// static_cast<T>(dW));
               if (hend > iH)
                 hend -=
-                    dH * ((hend - iH + dH - 1) / dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
-                                                       /// static_cast<T>(dH));
+                    dH *
+                    ((hend - iH + dH - 1) /
+                     dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
+                           /// static_cast<T>(dH));
               if (wend > iW)
                 wend -=
-                    dW * ((wend - iW + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
-                                                       /// static_cast<T>(dW));
+                    dW *
+                    ((wend - iW + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
+                           /// static_cast<T>(dW));
 
               sum = -DataTypeUtils::max<T>();
               valO = gO[b * oStride0 + c * oStride1 + oh * oStride2 +
@@ -178,20 +186,28 @@ static void pooling2dBP_(sd::graph::Context& block, const NDArray& input,
 
               if (hstart < 0)
                 hstart +=
-                    dH * ((-hstart + dH - 1) / dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
-                                                     // / static_cast<T>(dH));
+                    dH *
+                    ((-hstart + dH - 1) /
+                     dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
+                           // / static_cast<T>(dH));
               if (wstart < 0)
                 wstart +=
-                    dW * ((-wstart + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
-                                                     /// static_cast<T>(dW));
+                    dW *
+                    ((-wstart + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
+                           /// static_cast<T>(dW));
               if (hend > iH)
                 hend -=
-                    dH * ((hend - iH + dH - 1) / dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
-                                                       /// static_cast<T>(dH));
+                    dH *
+                    ((hend - iH + dH - 1) /
+                     dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
+                           /// static_cast<T>(dH));
               if (wend > iW)
                 wend -=
-                    dW * ((wend - iW + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
-                                                       /// static_cast<T>(dW));
+                    dW *
+                    ((wend - iW + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
+                           /// static_cast<T>(dW));
 
               hstart *= gIStride2;
               hend *= gIStride2;
@@ -244,20 +260,28 @@ static void pooling2dBP_(sd::graph::Context& block, const NDArray& input,
 
               if (hstart < 0)
                 hstart +=
-                    dH * ((-hstart + dH - 1) / dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
-                                                     // / static_cast<T>(dH));
+                    dH *
+                    ((-hstart + dH - 1) /
+                     dH);  // (Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-hstart)
+                           // / static_cast<T>(dH));
               if (wstart < 0)
                 wstart +=
-                    dW * ((-wstart + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
-                                                     /// static_cast<T>(dW));
+                    dW *
+                    ((-wstart + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(-wstart)
+                           /// static_cast<T>(dW));
               if (hend > iH)
                 hend -=
-                    dH * ((hend - iH + dH - 1) / dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
-                                                       /// static_cast<T>(dH));
+                    dH *
+                    ((hend - iH + dH - 1) /
+                     dH);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(hend-iH)
+                           /// static_cast<T>(dH));
               if (wend > iW)
                 wend -=
-                    dW * ((wend - iW + dW - 1) / dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
-                                                       /// static_cast<T>(dW));
+                    dW *
+                    ((wend - iW + dW - 1) /
+                     dW);  //(Nd4jLong)sd::math::nd4j_ceil<T,T>(static_cast<T>(wend-iW)
+                           /// static_cast<T>(dW));
 
               sum = static_cast<T>(0.f);
               valO = gO[b * oStride0 + c * oStride1 + oh * oStride2 +

@@ -3859,8 +3859,8 @@ INLINEDEF _CUDA_HD int rearMostLeftOverItem(Nd4jLong *data, Nd4jLong *dimension,
                                             int dimensionLength) {
   Nd4jLong *stride = shape::stride(data);
   // corner case: return the final item when its greater than the max, since its
-  // guaranteed to be left over note here that strides are interpreted in reverse
-  // for tad start from the front rather than the back
+  // guaranteed to be left over note here that strides are interpreted in
+  // reverse for tad start from the front rather than the back
 
   int rank = shape::rank(data);
 

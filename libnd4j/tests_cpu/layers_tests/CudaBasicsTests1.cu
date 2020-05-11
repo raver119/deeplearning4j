@@ -3421,14 +3421,18 @@ TEST_F(CudaBasicsTests1, execRandom_1) {
   //    LaunchContext lc(&stream);
   //
   //	//	::execRandom(extraPointers, random::GaussianDistribution, &gen,
-  //z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo(), &extra);
+  // z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo(),
+  // &extra);
   //	// call cuda kernel which calculates result
   //	NativeOpExecutioner::execRandom(&lc, sd::random::GaussianDistribution,
   //								&gen,
-  //								nullptr, z.shapeInfo(), z.specialBuffer(),
-  //z.specialShapeInfo(), 								nullptr, z.shapeInfo(), z.specialBuffer(),
-  //z.specialShapeInfo(), 								nullptr, z.shapeInfo(), z.specialBuffer(),
-  //z.specialShapeInfo(), 								extraArguments.argumentsAsT(z.dataType()));
+  //								nullptr, z.shapeInfo(),
+  //z.specialBuffer(),
+  // z.specialShapeInfo(), 								nullptr, z.shapeInfo(),
+  // z.specialBuffer(),
+  // z.specialShapeInfo(), 								nullptr, z.shapeInfo(),
+  // z.specialBuffer(), z.specialShapeInfo(),
+  // extraArguments.argumentsAsT(z.dataType()));
   //
   //	cudaResult = cudaStreamSynchronize(stream); ASSERT_EQ(0, cudaResult);
   //	ASSERT_EQ(cudaResult, 0);
@@ -3461,8 +3465,8 @@ TEST_F(CudaBasicsTests1, execRandom_2) {
   //    // prepare input arrays for prepareDataForCuda function
   //    std::vector<std::pair<void*,size_t>> hostData;
   //	hostData.emplace_back(extraArguments.data(), extraArguments.size() *
-  //sizeof(double));		// 0 -- dimensions 	std::vector<void*>
-  //devicePtrs(hostData.size(), nullptr);
+  // sizeof(double));		// 0 -- dimensions 	std::vector<void*>
+  // devicePtrs(hostData.size(), nullptr);
   //
   // create cuda stream and LaunchContext
   cudaError_t cudaResult;
@@ -3472,7 +3476,7 @@ TEST_F(CudaBasicsTests1, execRandom_2) {
 
   // allocate required amount of global device memory and copy host data to it
   //	cudaResult = allocateDeviceMem(lc, devicePtrs, hostData);
-  //ASSERT_EQ(0, cudaResult);
+  // ASSERT_EQ(0, cudaResult);
 
   // call cuda kernel which calculates result
   NativeOpExecutioner::execRandom(
@@ -3562,8 +3566,8 @@ TEST_F(CudaBasicsTests1, execRandom_4) {
   //    // prepare input arrays for prepareDataForCuda function
   //    std::vector<std::pair<void*,size_t>> hostData;
   //	hostData.emplace_back(extraArguments.data(), extraArguments.size() *
-  //sizeof(double));		// 0 -- dimensions 	std::vector<void*>
-  //devicePtrs(hostData.size(), nullptr);
+  // sizeof(double));		// 0 -- dimensions 	std::vector<void*>
+  // devicePtrs(hostData.size(), nullptr);
 
   // create cuda stream and LaunchContext
   //	cudaError_t cudaResult;
@@ -3572,8 +3576,8 @@ TEST_F(CudaBasicsTests1, execRandom_4) {
   //	LaunchContext lc(&stream);
   //
   //	// allocate required amount of global device memory and copy host data
-  //to it 	cudaResult = allocateDeviceMem(lc, devicePtrs, hostData);
-  //ASSERT_EQ(0, cudaResult);
+  // to it 	cudaResult = allocateDeviceMem(lc, devicePtrs, hostData);
+  // ASSERT_EQ(0, cudaResult);
   auto context = z.getContext();
   PointersManager pm(context, "execRandom4");
   // call cuda kernel which calculates result

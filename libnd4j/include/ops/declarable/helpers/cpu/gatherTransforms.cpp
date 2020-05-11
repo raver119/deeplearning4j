@@ -111,7 +111,8 @@ static void gather_(NDArray* input, const NDArray* indices, NDArray* output,
     if (indices->isScalar()) {
       if (input->rankOf() <= 1) {
         // For scalar indices, rank 0 or 1 input: can't do tensor along
-        // dimension 0 as this is whole array... instead, we want to get a scalar
+        // dimension 0 as this is whole array... instead, we want to get a
+        // scalar
         auto idx = indices->e<Nd4jLong>(0);
         auto scalarNDArray = input->e(idx);
         output->assign(scalarNDArray);

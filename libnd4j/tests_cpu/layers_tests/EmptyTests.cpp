@@ -59,8 +59,9 @@ TEST_F(EmptyTests, Test_Create_Empty_2) {
 
 TEST_F(EmptyTests, Test_Concat_1) {
   //    auto empty = NDArrayFactory::empty_<float>();
-  auto empty = NDArray('c', {0}, sd::DataType::FLOAT32);  // NDArrayFactory::create_<float>('c',
-                                                          // {(Nd4jLong)0}};
+  auto empty = NDArray(
+      'c', {0}, sd::DataType::FLOAT32);  // NDArrayFactory::create_<float>('c',
+                                         // {(Nd4jLong)0}};
   auto vector = NDArrayFactory::create<float>('c', {1}, {1.0f});
 
   ASSERT_TRUE(empty.isEmpty());

@@ -28,9 +28,9 @@
 
 namespace sd {}
 // template void Loops::loopReduce<double, double>(const double* x, const
-// Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, double* z, const Nd4jLong*
-// zShapeInfo, double* extraParams, std::function<double(const double*)>
-// startVal, std::function<double(double,double,double*)> update,
+// Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, double* z, const
+// Nd4jLong* zShapeInfo, double* extraParams, std::function<double(const
+// double*)> startVal, std::function<double(double,double,double*)> update,
 // std::function<double(double,double*)> op,
 // std::function<double(double,Nd4jLong,double*)> postPr); template void
 // Loops::loopReduce<float, float>(const float* x, const Nd4jLong* tadShapeInfo,

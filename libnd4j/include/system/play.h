@@ -146,7 +146,7 @@ validateAndExecute(Block<T>& block); \
 sd::ops::NAME<T>::validateAndExecute(Block<T>& block)
 */
 //#define END_OP(NAME) }; static sd::ops::__registrator<NAME<float>>
-//register_op##Name;
+// register_op##Name;
 
 //#DECLARE_OP(Concat, -1, 1)
 
@@ -160,7 +160,7 @@ sd::ops::NAME<T>::validateAndExecute(Block<T>& block)
 
 //_EXEC_KERNEL_F(scalarAlongDimension_, scalarAlongDimensionGeneric, float,
 //(float inputA, float inputB), (paramA, paramB), (10, SCALAR::Add), (11,
-//SCALAR::Subtract), (12, SCALAR::Multiply))
+// SCALAR::Subtract), (12, SCALAR::Multiply))
 
 // DISPATCH_KERNEL_SIMPLE(scalarAlongDimension_, scalarAlongDimensionGeneric,
 // float, INPUT(float inputA, float inputB), PARAMS(paramA, paramB),
@@ -178,20 +178,20 @@ opTypeB, N, x, xShape, y, yShape, z, zShape, extrasA, extrasB, scalarA,
 scalarB), float, OPS_A(PAIRWISE_TRANSFORM_OPS), OPS_B(SCALAR_OPS));*/
 
 // DISPATCH_KERNEL_META(invertedMetaPairwiseShaped_Pairwise_Scalar_,
-// invertedMetaPairwiseShapedGeneric, float, simdOps::InvertedMetaOp, INPUT(const
-// int opTypeA, const int opTypeB, long N, float *dx, int *xShapeInfo, float *dy,
-// int *yShapeInfo, float *dz, int *zShapeInfo, float *extraA, float *extraB,
-// float scalarA, float scalarB), PARAMS(opTypeA, opTypeB, N, dx, xShapeInfo, dy,
-// yShapeInfo, dz, zShapeInfo, extraA, extraB, scalarA, scalarB),
-// OPS_A(PAIRWISE_TRANSFORM_OPS), OPS_B(SCALAR_OPS))
+// invertedMetaPairwiseShapedGeneric, float, simdOps::InvertedMetaOp,
+// INPUT(const int opTypeA, const int opTypeB, long N, float *dx, int
+// *xShapeInfo, float *dy, int *yShapeInfo, float *dz, int *zShapeInfo, float
+// *extraA, float *extraB, float scalarA, float scalarB), PARAMS(opTypeA,
+// opTypeB, N, dx, xShapeInfo, dy, yShapeInfo, dz, zShapeInfo, extraA, extraB,
+// scalarA, scalarB), OPS_A(PAIRWISE_TRANSFORM_OPS), OPS_B(SCALAR_OPS))
 
 //_EXPAND_KERNEL_CALL(invertedMetaPairwiseShaped_Pairwise_Scalar_,
-//invertedMetaPairwiseShapedGeneric, float, simdOps::InvertedMetaOp, INPUT(const
-//int opTypeA, const int opTypeB, long N, float *dx, int *xShapeInfo, float *dy,
-//int *yShapeInfo, float *dz, int *zShapeInfo, float *extraA, float *extraB,
-//float scalarA, float scalarB), PARAMS(N, dx, dy, xStride, yStride, paramsPtr,
-//dz, zStride, nullptr, nullptr, nullptr), 66, simdOps::SomeOpA, 99,
-//simdOps::SomeOpB)
+// invertedMetaPairwiseShapedGeneric, float, simdOps::InvertedMetaOp,
+// INPUT(const int opTypeA, const int opTypeB, long N, float *dx, int
+// *xShapeInfo, float *dy, int *yShapeInfo, float *dz, int *zShapeInfo, float
+// *extraA, float *extraB, float scalarA, float scalarB), PARAMS(N, dx, dy,
+// xStride, yStride, paramsPtr, dz, zStride, nullptr, nullptr, nullptr), 66,
+// simdOps::SomeOpA, 99, simdOps::SomeOpB)
 
 /*
  extern "C" __global__ void

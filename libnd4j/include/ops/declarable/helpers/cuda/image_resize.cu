@@ -177,10 +177,11 @@ static void resizeImage_(sd::LaunchContext* context, NDArray const* images,
   Nd4jLong inBatchNumValues = inHeight * inRowSize;
   Nd4jLong outRowSize = outWidth * channels;
   auto stream = context->getCudaStream();
-  T const* pInput = images->getDataBuffer()
-                        ->specialAsT<T>();  // reinterpret_cast<T const
-                                            // *>(images->specialBuffer()); //
-                                            // this works only with 'c' direction
+  T const* pInput =
+      images->getDataBuffer()
+          ->specialAsT<T>();  // reinterpret_cast<T const
+                              // *>(images->specialBuffer()); //
+                              // this works only with 'c' direction
   F* pOutput =
       output->dataBuffer()
           ->specialAsT<F>();  // reinterpret_cast<F *>(output->specialBuffer());
@@ -1274,7 +1275,8 @@ static __global__ void resizeAreaKernel(
 
       // auto startPtr = sharedPtr + y * scalesDim * sizeof(float);
       // float* yScales = yScalesShare + y * sizeof(float) *
-      // scalesDim;//reinterpret_cast<float*>(startPtr); //shared + y * scalesDim
+      // scalesDim;//reinterpret_cast<float*>(startPtr); //shared + y *
+      // scalesDim
       // * y + scalesDim * sizeof(T const *) [scalesDim]; T const** yPtrs =
       // yPtrsShare + y * sizeof(T const*) * scalesDim; //[scalesDim]; yPtrs =
       // reinterpret_cast<T const**>(sharedBuf);
@@ -1520,13 +1522,13 @@ static __global__ void cropAndResizeKernel(
                 topLeftPos)]);  //->e<float>(bIn, topYIndex, left_x_index, d));
             const T topRight(images[shape::getOffset(
                 imagesShape, topRightPos)]);  //->e<float>(bIn, topYIndex,
-                                              //right_x_index, d));
+                                              // right_x_index, d));
             const T bottomLeft(images[shape::getOffset(
                 imagesShape, bottomLeftPos)]);  //->e<float>(bIn, bottomYIndex,
-                                                //left_x_index, d));
+                                                // left_x_index, d));
             const T bottomRight(images[shape::getOffset(
                 imagesShape, bottomRightPos)]);  //->e<float>(bIn, bottomYIndex,
-                                                 //right_x_index, d));
+                                                 // right_x_index, d));
             const T top = topLeft + (topRight - topLeft) * x_lerp;
             const T bottom = bottomLeft + (bottomRight - bottomLeft) * x_lerp;
             Nd4jLong zPos[] = {b, y, x, d};

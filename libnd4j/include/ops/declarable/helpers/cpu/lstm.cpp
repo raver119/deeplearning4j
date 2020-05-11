@@ -217,7 +217,8 @@ void lstmBlockCell(const NDArray* xt, const NDArray* cLast,
   m += (*b);     // addiRowVector
 
   // Note: weights are ordered [inputGate, blockInput, forgetGate, outputGate]
-  // to match TF (TF code comments state [i,f,z/ci,o] but behaviour is [i,z,f,o])
+  // to match TF (TF code comments state [i,f,z/ci,o] but behaviour is
+  // [i,z,f,o])
   auto zi = m({0, 0, 0, nOut});  // z for input modulation gate, [bS, nOut]
   auto zz = m({0, 0, nOut, 2 * nOut});      // z for block input, [bS, nOut]
   auto zf = m({0, 0, 2 * nOut, 3 * nOut});  // z for forget gate, [bS, nOut]

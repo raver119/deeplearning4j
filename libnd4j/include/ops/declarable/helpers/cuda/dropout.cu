@@ -321,8 +321,9 @@ int alphaDropOutFunctorBP_(graph::Context& context, NDArray* input,
   if (res == ND4J_STATUS_OK) {
     // FIXME: can we make it single-loop?
     (*output) *= alpha;
-    (*output) *= (*gradOut);  //->applyPairwiseTransform<transform::Multiply>(gradOut,
-                              //output, nullptr);
+    (*output) *=
+        (*gradOut);  //->applyPairwiseTransform<transform::Multiply>(gradOut,
+                     // output, nullptr);
   }
   return res;
 }

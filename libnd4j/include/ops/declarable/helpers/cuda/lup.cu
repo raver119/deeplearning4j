@@ -1063,8 +1063,9 @@ int logdetFunctor_(sd::LaunchContext *context, NDArray *input,
   cholesky(context, input, &tempOutput, false);
 
   auto outputBuf =
-      output->dataBuffer()->specialAsT<T>();  // reinterpret_cast<T*>(output->specialBuffer());
-                                              // // + e * n2; // + e * n2;
+      output->dataBuffer()
+          ->specialAsT<T>();  // reinterpret_cast<T*>(output->specialBuffer());
+                              // // + e * n2; // + e * n2;
   auto inputBuf =
       tempOutput.dataBuffer()
           ->specialAsT<

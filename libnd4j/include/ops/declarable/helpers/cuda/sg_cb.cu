@@ -731,11 +731,13 @@ void cbowBatchExec_(LaunchContext *lc, NDArray &s0, NDArray &s1, NDArray &s1n,
   const auto bIndices =
       indices.dataBuffer()->primaryAsT<int>();  // buffer());//AsT<int>();
   const auto bCodes =
-      codes.dataBuffer()->primaryAsT<int8_t>();  // reinterpret_cast<int8_t*>(codes.buffer());
-                                                 // //bufferAsT<int8_t>();
+      codes.dataBuffer()
+          ->primaryAsT<int8_t>();  // reinterpret_cast<int8_t*>(codes.buffer());
+                                   // //bufferAsT<int8_t>();
   const auto bStarters =
-      negStarters.dataBuffer()->primaryAsT<int>();  // reinterpret_cast<int*>(negStarters.buffer());
-                                                    // //AsT<int>();
+      negStarters.dataBuffer()
+          ->primaryAsT<int>();  // reinterpret_cast<int*>(negStarters.buffer());
+                                // //AsT<int>();
   const auto numIndices = indices.isEmpty() ? 0 : indices.sizeAt(1);
   lr.syncToHost();
   nLabels.syncToHost();

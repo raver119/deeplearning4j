@@ -18,8 +18,9 @@
 // @author Alex Black
 //
 
-#include "../OpBenchmark.h"
 #include <helpers/StringUtils.h>
+
+#include "../OpBenchmark.h"
 
 #ifndef SD_BROADCASTBENCHMARK_H
 #define SD_BROADCASTBENCHMARK_H

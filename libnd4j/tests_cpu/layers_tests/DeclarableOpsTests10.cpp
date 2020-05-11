@@ -1098,8 +1098,9 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_6) {
   NDArray input = NDArrayFactory::create<float>(
       'c', {12}, {10, 1, 9, 8, 11, 7, 6, 5, 12, 3, 2, 4});
   NDArray n = NDArrayFactory::create<int>(0);
-  NDArray exp = NDArrayFactory::create(1.f);  // NDArrayFactory::create<float>('c',
-                                              // {2,2}, {1.f, 4.f, 7.f, 10.f});
+  NDArray exp =
+      NDArrayFactory::create(1.f);  // NDArrayFactory::create<float>('c',
+                                    // {2,2}, {1.f, 4.f, 7.f, 10.f});
 
   //    input.linspace(1.f);
 
@@ -1117,8 +1118,9 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_06) {
   NDArray input = NDArrayFactory::create<float>(
       'c', {12}, {10, 1, 9, 8, 11, 7, 6, 5, 12, 3, 2, 4});
   NDArray n = NDArrayFactory::create<int>(4);
-  NDArray exp = NDArrayFactory::create(8.f);  // NDArrayFactory::create<float>('c',
-                                              // {2,2}, {1.f, 4.f, 7.f, 10.f});
+  NDArray exp =
+      NDArrayFactory::create(8.f);  // NDArrayFactory::create<float>('c',
+                                    // {2,2}, {1.f, 4.f, 7.f, 10.f});
 
   //    input.linspace(1.f);
 

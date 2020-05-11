@@ -265,8 +265,9 @@ BUILD_SINGLE_TEMPLATE(template void unstack_,
 // ///////////////////////////////////////////////////////////////////
 // template<typename T>
 // __host__ static void unstackCudaLauncher(const int blocksPerGrid, const int
-// threadsPerBlock, const cudaStream_t *stream, 										 const void* vx, const Nd4jLong*
-// xShapeInfo, void* pVz, const Nd4jLong* zTadShapeInfo, const int axis) {
+// threadsPerBlock, const cudaStream_t *stream,
+// const void* vx, const Nd4jLong* xShapeInfo, void* pVz, const Nd4jLong*
+// zTadShapeInfo, const int axis) {
 
 //     unstackCuda<T><<<blocksPerGrid, threadsPerBlock, 256, *stream>>>(vx,
 //     xShapeInfo, pVz, zTadShapeInfo, axis);
@@ -354,8 +355,9 @@ BUILD_SINGLE_TEMPLATE(template void unstack_,
 // ///////////////////////////////////////////////////////////////////
 // template<typename T>
 // __host__ static void stackCudaLauncher(const int blocksPerGrid, const int
-// threadsPerBlock, const cudaStream_t *stream, 					 				   void* pVx, const Nd4jLong*
-// xTadShapeInfo, void* vz, const Nd4jLong* zShapeInfo, const int axis) {
+// threadsPerBlock, const cudaStream_t *stream,
+// void* pVx, const Nd4jLong* xTadShapeInfo, void* vz, const Nd4jLong*
+// zShapeInfo, const int axis) {
 
 //     stackCuda<T><<<blocksPerGrid, threadsPerBlock, 256, *stream>>>(pVx,
 //     xTadShapeInfo, vz, zShapeInfo, axis);

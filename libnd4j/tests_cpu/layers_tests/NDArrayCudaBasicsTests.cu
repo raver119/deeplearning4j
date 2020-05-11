@@ -178,8 +178,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_1) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
 
   Nd4jPointer nativeStream = (Nd4jPointer)malloc(sizeof(cudaStream_t));
   CHECK_ALLOC(nativeStream, "Failed to allocate memory for new CUDA stream",
@@ -251,8 +251,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_3) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
 
   Nd4jPointer nativeStream = (Nd4jPointer)malloc(sizeof(cudaStream_t));
   CHECK_ALLOC(nativeStream, "Failed to allocate memory for new CUDA stream",
@@ -308,8 +308,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_4) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x.applyPairwiseTransform(pairwise::Add, y, z);
 
   //
@@ -337,8 +337,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_5) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x += y;
   // x.applyPairwiseTransform(pairwise::Add, &y, &z, nullptr);
   x.syncToHost();
@@ -370,8 +370,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_6) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x += y;
   // x.applyPairwiseTransform(pairwise::Add, &y, &z, nullptr);
   x.syncToHost();
@@ -400,8 +400,8 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_7) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x += 2.;
   // x.applyPairwiseTransform(pairwise::Add, &y, &z, nullptr);
   x.syncToHost();
@@ -430,8 +430,8 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_1) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x.applyPairwiseTransform(pairwise::Multiply, y, z);
   // x.printBuffer("3X = ");
   // y.printBuffer("3Y = ");
@@ -462,8 +462,8 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_2) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x.applyPairwiseTransform(pairwise::Multiply, y, z);
 
   //
@@ -491,8 +491,8 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_3) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res);
   x.applyPairwiseTransform(pairwise::Multiply, y, z);
   // x.printBuffer("23X = ");
   // y.printBuffer("23Y = ");
@@ -523,10 +523,9 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_4) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = ");
   x *= y;
   // x.tickWriteDevice();
   // x.printBuffer("33Result out");
@@ -548,8 +547,9 @@ TEST_F(NDArrayCudaBasicsTests, TestPrimitiveNeg_01) {
   auto y = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
   auto exp = NDArrayFactory::create<int>('c', {5}, {-1, -2, -3, -4, -5});
 
-  auto stream = x.getContext()->getCudaStream();  // reinterpret_cast<cudaStream_t
-                                                  // *>(&nativeStream);
+  auto stream =
+      x.getContext()->getCudaStream();  // reinterpret_cast<cudaStream_t
+                                        // *>(&nativeStream);
 
   NativeOpExecutioner::execTransformSame(
       x.getContext(), transform::Neg, x.buffer(), x.shapeInfo(),
@@ -893,8 +893,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_1) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr);
   x *= y;
   // x.syncToHost();
 
@@ -923,10 +924,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_01) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = ");
   x.applyTrueBroadcast(BroadcastOpsTuple::Multiply(), y, z);  // *= y;
   // z.printBuffer("53Result out");
 
@@ -958,10 +958,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_02) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = ");
   x.applyTrueBroadcast(BroadcastOpsTuple::Multiply(), y, z);  // *= y;
 
   // z.printBuffer("52Result out");
@@ -995,10 +994,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_002) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = ");
   x.applyPairwiseTransform(pairwise::Multiply, y, z);  // *= y;
 
   // z.printBuffer("51Result out");
@@ -1062,8 +1060,8 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastRaw_1) {
   LaunchContext* pLc = x.getContext();
 
   // allocate required amount of global device memory and copy host data to it
-  // cudaResult = allocateDeviceMem(*pLc, devicePtrs, hostData);	ASSERT_EQ(0,
-  // cudaResult);
+  // cudaResult = allocateDeviceMem(*pLc, devicePtrs, hostData);
+  // ASSERT_EQ(0, cudaResult);
   for (size_t i = 0; i < devicePtrs.size(); ++i) {
     cudaResult = cudaMalloc(
         &devicePtrs[i],
@@ -1112,10 +1110,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = ");
   x *= y;
 
   //
@@ -1145,13 +1142,11 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_2) {
   // x.lengthOf() * x.sizeOfT()); ASSERT_EQ(0, res); res =
   // cudaMalloc(reinterpret_cast<void **>(&devBufferPtrZ), x.lengthOf() *
   // x.sizeOfT()); ASSERT_EQ(0, res); res = cudaMalloc(reinterpret_cast<void
-  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo())); ASSERT_EQ(0,
-  // res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z, nullptr);
-  // x.printBuffer("23X = ");
-  // y.printBuffer("23Y = ");
-  // void NDArray::applyTrueBroadcast(sd::BroadcastOpsTuple op, const NDArray*
-  // other, NDArray* target, const bool checkTargetShape, ExtraArguments
-  // *extraArgs)
+  // **>(&devShapePtrX), shape::shapeInfoByteLength(x.shapeInfo()));
+  // ASSERT_EQ(0, res); x.applyPairwiseTransform(pairwise::Multiply, &y, &z,
+  // nullptr); x.printBuffer("23X = "); y.printBuffer("23Y = "); void
+  // NDArray::applyTrueBroadcast(sd::BroadcastOpsTuple op, const NDArray* other,
+  // NDArray* target, const bool checkTargetShape, ExtraArguments *extraArgs)
   x.applyTrueBroadcast(BroadcastOpsTuple::Multiply(), y, exp);
 
   //
@@ -1172,8 +1167,9 @@ TEST_F(NDArrayCudaBasicsTests, TestReduceSum_1) {
   auto y = NDArrayFactory::create<double>(15);
   auto exp = NDArrayFactory::create<double>(15);
 
-  auto stream = x.getContext()->getCudaStream();  // reinterpret_cast<cudaStream_t
-                                                  // *>(&nativeStream);
+  auto stream =
+      x.getContext()->getCudaStream();  // reinterpret_cast<cudaStream_t
+                                        // *>(&nativeStream);
 
   NativeOpExecutioner::execReduceSameScalar(
       x.getContext(), reduce::Sum, x.buffer(), x.shapeInfo(), x.specialBuffer(),

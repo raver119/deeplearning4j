@@ -61,7 +61,8 @@ static __global__ void globalExtractPatchesKernel(
   // outColDim/outRowDim
   for (Nd4jLong batch = start; batch < batchCount; batch += step) {
     auto patch = input + inputOffsets[batch];  // listOfMatricies->at(batch);
-    auto outMatrix = output + outputOffsets[batch];  // listOfOutputs->at(batch);
+    auto outMatrix =
+        output + outputOffsets[batch];  // listOfOutputs->at(batch);
 
     for (Nd4jLong i = 0; i < outRowDim; i++) {
       for (Nd4jLong j = 0; j < outColDim; j++) {

@@ -387,7 +387,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMinus_test2) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-///multiply
+/// multiply
 TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test1) {
   if (!Environment::getInstance()->isExperimentalBuild()) return;
 
@@ -425,7 +425,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test2) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-///multiply
+/// multiply
 TEST_F(MultiDataTypeTests, ndarray_operatorDivide_test1) {
   if (!Environment::getInstance()->isExperimentalBuild()) return;
 

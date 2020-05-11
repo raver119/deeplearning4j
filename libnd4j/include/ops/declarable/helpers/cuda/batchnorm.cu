@@ -31,12 +31,16 @@ namespace helpers {
 //////////////////////////////////////////////////////////////////////////
 // template<typename T>
 // __global__ static void batchnormCuda(const void* vx, const Nd4jLong*
-// xShapeInfo, 									const void* vMean, const Nd4jLong* meanShapeInfo, 									const void*
-// vVariance, const Nd4jLong* varianceShapeInfo, 									const void* vGamma, const
-// Nd4jLong* gammaShapeInfo, 									const void* vBeta, const Nd4jLong* betaShapeInfo,
-// 										  void* vz, const Nd4jLong*
-// zShapeInfo, 									const Nd4jLong* xTadShapeInfo, const Nd4jLong* xTadOffsets, 									const
-// Nd4jLong* zTadShapeInfo, const Nd4jLong* zTadOffsets, 									const T epsilon) {
+// xShapeInfo, 									const void* vMean,
+// const Nd4jLong* meanShapeInfo,
+// const void*
+// vVariance, const Nd4jLong* varianceShapeInfo,
+// const void* vGamma, const Nd4jLong* gammaShapeInfo,
+// const void* vBeta, const Nd4jLong* betaShapeInfo, 										  void* vz, const Nd4jLong*
+// zShapeInfo, 									const Nd4jLong*
+// xTadShapeInfo, const Nd4jLong* xTadOffsets,
+// const Nd4jLong* zTadShapeInfo, const Nd4jLong* zTadOffsets,
+// const T epsilon) {
 
 // 	const auto x    	= reinterpret_cast<const T*>(vx);
 //           auto z        = reinterpret_cast<T*>(vz);
@@ -164,16 +168,21 @@ __global__ static void batchnormCuda2(
 ///////////////////////////////////////////////////////////////////
 // template<typename T>
 // __host__ static void batchnormCudaLauncher(const int blocksPerGrid, const int
-// threadsPerBlock, const cudaStream_t *stream, 											const void* vx, const Nd4jLong*
-// xShapeInfo,
+// threadsPerBlock, const cudaStream_t *stream,
+// const void* vx, const Nd4jLong* xShapeInfo,
 //                                            	const void* vMean, const
 //                                            Nd4jLong* meanShapeInfo,
-// 											const void* vVariance,
-// const Nd4jLong* varianceShapeInfo, 											const void* vGamma, const Nd4jLong*
-// gammaShapeInfo, 											const void* vBeta, const Nd4jLong* betaShapeInfo, 												  void* vz,
-// const Nd4jLong* zShapeInfo, 											const Nd4jLong* xTadShapeInfo, const Nd4jLong*
-// xTadOffsets, 											const Nd4jLong* zTadShapeInfo, const Nd4jLong* zTadOffsets,
-// 											const double epsilon)
+// 											const void*
+// vVariance,
+// const Nd4jLong* varianceShapeInfo,
+// const void* vGamma, const Nd4jLong*
+// gammaShapeInfo, 											const
+// void* vBeta, const Nd4jLong* betaShapeInfo,
+// void* vz,
+// const Nd4jLong* zShapeInfo,
+// const Nd4jLong* xTadShapeInfo, const Nd4jLong* xTadOffsets,
+// const Nd4jLong* zTadShapeInfo, const Nd4jLong* zTadOffsets, 											const double
+// epsilon)
 // {
 
 //     batchnormCuda<T><<<blocksPerGrid, threadsPerBlock, 1024, *stream>>>(vx,

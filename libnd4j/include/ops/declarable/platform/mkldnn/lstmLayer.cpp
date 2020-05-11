@@ -681,9 +681,9 @@ PLATFORM_CHECK(lstmLayer, ENGINE_CPU) {
       && !hasSeqLen      // Sequence length array not supported in MKL DNN
       && dataFormat < 2  // Data format - only 0 and 1 supported in MKL DNN- 0 =
                          // [sL, bS, nIn], 1 = [bS, sL ,nIn]
-      && directionMode < 4  // Direction mode - only 0-3 supported in MKL DNN
-                            // (no extra dim option) - 0 = fwd, 1 = bwd, 2 =
-                            // bidirectional sum, 3 = bidirectional concat
+      && directionMode < 4     // Direction mode - only 0-3 supported in MKL DNN
+                               // (no extra dim option) - 0 = fwd, 1 = bwd, 2 =
+                               // bidirectional sum, 3 = bidirectional concat
       && retLastH == retLastC  // Return both lastH and lastC, or return neither
                                // (not just 1 or other)
       && hasInitH == hasInitC;  // Need both or neither initial H and C

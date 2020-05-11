@@ -27,9 +27,10 @@
 
 #if defined(HAVE_MKLDNN)
 
+#include <array/NDArray.h>
+
 #include <string>
 #include <vector>
-#include <array/NDArray.h>
 
 namespace sd {
 class MKLDNNStream {

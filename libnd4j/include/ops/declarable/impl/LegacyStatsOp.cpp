@@ -70,14 +70,15 @@ Nd4jStatus LegacyStatsOp::validateAndExecute(Context &block) {
             ? packX.primaryShapeInfo()
             : packX
                   .specialShapeInfo();  //(Nd4jLong *)
-                                        //manager.replicatePointer(tad.tadOnlyShapeInfo,
-                                        //shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
+                                        // manager.replicatePointer(tad.tadOnlyShapeInfo,
+                                        // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
     auto pTadOffsets =
         Environment::getInstance()->isCPU()
             ? packX.primaryOffsets()
-            : packX.specialOffsets();  //(Nd4jLong *)
-                                       //manager.replicatePointer(tad.tadOffsets,
-                                       //tad.numTads * sizeof(Nd4jLong));
+            : packX
+                  .specialOffsets();  //(Nd4jLong *)
+                                      // manager.replicatePointer(tad.tadOffsets,
+                                      // tad.numTads * sizeof(Nd4jLong));
 
     NativeOpExecutioner::execSummaryStats(
         block.launchContext(), opNum, x->buffer(), x->shapeInfo(),

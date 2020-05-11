@@ -249,9 +249,10 @@ _CUDA_D void SummaryStatsReduce<X, Z>::transform(
 
         __syncthreads();
         if (threadIdx.x == 0) {
-          z[i] = OpType::getValue(postProcessOrNot,
-                                  sPartials[threadIdx.x]);  // postProcess(sPartials[0],tadLength
-                                                            // ,extraParams);
+          z[i] = OpType::getValue(
+              postProcessOrNot,
+              sPartials[threadIdx.x]);  // postProcess(sPartials[0],tadLength
+                                        // ,extraParams);
         }
       }
     }

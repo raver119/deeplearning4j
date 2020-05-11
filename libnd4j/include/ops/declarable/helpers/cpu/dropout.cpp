@@ -176,8 +176,9 @@ int alphaDropOutFunctorBP_(graph::Context& context, NDArray* input,
                                 probValue, alpha, alpha1, beta);
   if (res == ND4J_STATUS_OK) {
     (*output) *= alpha;
-    (*output) *= (*gradOut);  //->applyPairwiseTransform<transform::Multiply>(gradOut,
-                              //output, nullptr);
+    (*output) *=
+        (*gradOut);  //->applyPairwiseTransform<transform::Multiply>(gradOut,
+                     // output, nullptr);
   }
   return res;
 }

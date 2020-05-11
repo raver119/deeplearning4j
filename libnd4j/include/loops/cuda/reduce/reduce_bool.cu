@@ -117,8 +117,9 @@ __device__ void ReduceBoolFunction<X, Z>::transformCudaXD(
     isPlainOutput = shape::order(zShapeInfo) == 'c' &&
                     shape::elementWiseStride(zShapeInfo) == 1;
 
-    tadLength = shape::length(tadOnlyShapeInfo);  // tadLength(xShapeInfo,
-                                                  // dimension, dimensionLength);
+    tadLength =
+        shape::length(tadOnlyShapeInfo);  // tadLength(xShapeInfo,
+                                          // dimension, dimensionLength);
     numTads = shape::length(xShapeInfo) / tadLength;
   }
   __syncthreads();

@@ -109,9 +109,9 @@ class TAD {
        * This method is for GPU mostly, it allows to initialize TAD instance
        * with precalculated tadOnlyShapeInfo
        */
-          INLINEDEF void
-          initWithExternalTAD(Nd4jLong *existingTAD, Nd4jLong *originalShape,
-                              int *dimension, int dimensionLength);
+      INLINEDEF void
+      initWithExternalTAD(Nd4jLong *existingTAD, Nd4jLong *originalShape,
+                          int *dimension, int dimensionLength);
 
 #ifdef __CUDACC__
   __host__ __device__
@@ -329,11 +329,13 @@ INLINEDEF void TAD::initWithExternalTAD(Nd4jLong *existingTAD,
 
   Nd4jLong ews = shape::elementWiseStride(originalShape);
 
-  this->numTads = shape::length(originalShape) /
-                  shape::length(existingTAD);  // this->tensorsAlongDimension(this->shapeInfo,
-                                               // this->dimension,
-                                               // this->dimensionLength);//shape::length(originalShape)
-                                               // / shape::length(existingTAD);
+  this->numTads =
+      shape::length(originalShape) /
+      shape::length(
+          existingTAD);  // this->tensorsAlongDimension(this->shapeInfo,
+                         // this->dimension,
+                         // this->dimensionLength);//shape::length(originalShape)
+                         // / shape::length(existingTAD);
   this->wholeThing = this->numTads == 1 ||
                      ((this->dimensionLength == this->rank ||
                        this->numTads == shape::length(this->shapeInfo)) &&

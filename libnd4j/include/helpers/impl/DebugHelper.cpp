@@ -79,7 +79,7 @@ void DebugHelper::retrieveDebugStatistics(DebugInfo* info,
 
       _meanValue += current;
       //_meanValue += delta / n; // this is a perfect formula but not working
-      //with omp in this notation _stdDevValue += delta2 * e / n;
+      // with omp in this notation _stdDevValue += delta2 * e / n;
 
       _zeroCount += sd::math::nd4j_abs(current) > 0.00001 ? 0 : 1;
       _positiveCount += current > 0 ? 1 : 0;

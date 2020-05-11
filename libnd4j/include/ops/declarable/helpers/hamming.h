@@ -21,8 +21,8 @@
 #ifndef SD_HAMMING_H
 #define SD_HAMMING_H
 
-#include <execution/LaunchContext.h>
 #include <array/NDArray.h>
+#include <execution/LaunchContext.h>
 
 namespace sd {
 namespace ops {

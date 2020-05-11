@@ -43,8 +43,8 @@ LaunchContext::LaunchContext(cudaStream_t* cudaStream,
   //_cudaStream 	   = cudaStream;
   //_cudaSpecialStream = &specialCudaStream; // ideal is = new cudaStream_t;
   //*_cudaSpecialStream = specialCudaStream; _reductionPointer  =
-  //reductionPointer; _scalarPointer     = scalarPointer; _allocationPointer =
-  //allocationPointer;
+  // reductionPointer; _scalarPointer     = scalarPointer; _allocationPointer =
+  // allocationPointer;
   _workspace = nullptr;
   _isAllocated = false;
 }

@@ -1828,8 +1828,8 @@ TEST_F(DeclarableOpsTests7, TestSegmentMean_02) {
 TEST_F(DeclarableOpsTests7, TestSegmentMean_021) {
   auto x = NDArrayFactory::create<float>(
       'c', {6, 3});  //, {1,
-                     //2,  3., 4., 5., 6.,  7., 8., 9., 10., 11., 12., 13., 14., 15.,
-                     //16., 17., 18.});
+                     // 2,  3., 4., 5., 6.,  7., 8., 9., 10., 11., 12., 13., 14.,
+                     // 15., 16., 17., 18.});
   auto idx = NDArrayFactory::create<int>({0, 0, 1, 1, 2, 2});
   auto exp = NDArrayFactory::create<float>(
       'c', {3, 3}, {2.5f, 3.5f, 4.5f, 8.5f, 9.5f, 10.5f, 14.5f, 15.5f, 16.5f});
@@ -1845,8 +1845,8 @@ TEST_F(DeclarableOpsTests7, TestSegmentMean_021) {
 TEST_F(DeclarableOpsTests7, TestSegmentMean_022) {
   auto x = NDArrayFactory::create<float>(
       'c', {6, 3});  //, {1,
-                     //2,  3., 4., 5., 6.,  7., 8., 9., 10., 11., 12., 13., 14., 15.,
-                     //16., 17., 18.});
+                     // 2,  3., 4., 5., 6.,  7., 8., 9., 10., 11., 12., 13., 14.,
+                     // 15., 16., 17., 18.});
   auto idx = NDArrayFactory::create<int>({0, 0, 1, 1, 2, 2});
   auto z = NDArrayFactory::create<float>(
       'c',
