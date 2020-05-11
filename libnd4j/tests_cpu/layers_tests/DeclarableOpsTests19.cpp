@@ -53,7 +53,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_1) {
 
     //encoded->printIndexedBuffer("ENC");
 
-    ASSERT_EQ(exp_encoded, *encoded);
+    ASSERT_EQ(exp_encoded, encoded);
     ASSERT_EQ(exp_gradients, x);
 
     // FIXME: we need to add a way to declare individual inplace outputs
@@ -75,7 +75,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_2) {
 
         auto encoded = result.at(1);
 
-        ASSERT_EQ(length + 4, encoded->lengthOf());
+        ASSERT_EQ(length + 4, encoded.lengthOf());
         ASSERT_EQ(exp_gradients, x);
     }
 }
@@ -90,7 +90,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_1) {
     auto gradients = result.at(0);
     auto encoded = result.at(1);
 
-    ASSERT_EQ(7, encoded->lengthOf());
+    ASSERT_EQ(7, encoded.lengthOf());
     ASSERT_EQ(3, x.sumNumber().e<int>(0));
 }
 
@@ -104,7 +104,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_2) {
     auto gradients = result.at(0);
     auto encoded = result.at(1);
 
-    ASSERT_EQ(104, encoded->lengthOf());
+    ASSERT_EQ(104, encoded.lengthOf());
 
     ASSERT_EQ(900, x.sumNumber().e<int>(0));
 }
@@ -138,10 +138,10 @@ TEST_F(DeclarableOpsTests19, test_bitmap_encode_1) {
 
     //encoded->printIndexedBuffer("encoded");
 
-    ASSERT_EQ(exp_c, *counter);
+    ASSERT_EQ(exp_c, counter);
 
     sd::ops::decode_bitmap dec;
-    auto status = dec.execute({&initial, encoded}, {&initial});
+    auto status = dec.execute({&initial, &encoded}, {&initial});
     ASSERT_EQ(Status::OK(), status);
 
 
@@ -162,16 +162,16 @@ TEST_F(DeclarableOpsTests19, test_bitmap_encode_decode) {
     auto encoded = enc_result.at(1);
 
     // checking equality of all encoded bits
-    for (int e = 5; e < encoded->lengthOf() - 1; e++) {
-        if (encoded->e<int>(e) != encoded->e<int>(e - 1))
-            nd4j_printf("Non equal encoded values at E[%i]: %i;\n", e, encoded->e<int>(e));
+    for (int e = 5; e < encoded.lengthOf() - 1; e++) {
+        if (encoded.e<int>(e) != encoded.e<int>(e - 1))
+            nd4j_printf("Non equal encoded values at E[%i]: %i;\n", e, encoded.e<int>(e));
     }
 
     ASSERT_NE(exp, initial);
     ASSERT_EQ(neg, initial);
 
     sd::ops::decode_bitmap dec;
-    auto status = dec.execute({&initial, encoded}, {&initial});
+    auto status = dec.execute({&initial, &encoded}, {&initial});
     ASSERT_EQ(Status::OK(), status);
 
     // checking equality of all dedoded bits
@@ -196,7 +196,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
     auto enc_result = enc.evaluate({&initial}, {0.5f});
     auto encoded = enc_result.at(1);
 
-    ASSERT_EQ(256000 + 4, encoded->lengthOf());
+    ASSERT_EQ(256000 + 4, encoded.lengthOf());
     ASSERT_NE(exp, initial);
 
     for (int e = 0; e < initial.lengthOf(); e++) {
@@ -215,7 +215,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
     //}
 
     sd::ops::decode_threshold dec;
-    auto status = dec.execute({&initial, encoded}, {&initial});
+    auto status = dec.execute({&initial, &encoded}, {&initial});
     ASSERT_EQ(Status::OK(), status);
 
     // checking equality of all dedoded bits

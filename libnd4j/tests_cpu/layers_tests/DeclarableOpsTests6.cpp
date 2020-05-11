@@ -158,7 +158,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     block->appendI(0);
     block->appendI(0);
 
-    auto inputShapes = new ShapeList({ones.getShapeInfo(), b.getShapeInfo(), e.getShapeInfo(), s.getShapeInfo()});
+    auto inputShapes = new ShapeList({ones.shapeInfo(), b.shapeInfo(), e.shapeInfo(), s.shapeInfo()});
 
     sd::ops::strided_slice op;
 
