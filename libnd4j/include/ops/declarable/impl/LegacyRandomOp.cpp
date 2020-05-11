@@ -344,8 +344,7 @@ namespace sd {
                 auto zShapeVector = zShapeArr->asVectorT<Nd4jLong>();
                 auto dtype = block.numD() > 0 ? D_ARG(0) : sd::DataType::FLOAT32;
 
-                newShape = ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', zShapeVector);
-                return SHAPELIST(newShape);
+                return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', zShapeVector));
             } else
                 throw std::runtime_error("LegacyRandomOp: Unknown input data type!");
         }

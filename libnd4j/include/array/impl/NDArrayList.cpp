@@ -180,7 +180,7 @@ namespace sd {
             inputs[e] = &_state->_chunks.at(e);
         }
 
-        auto inShapeInfo = inputs[0]->getShapeInfo();
+        auto inShapeInfo = inputs[0]->shapeInfo();
         int rank = shape::rank(inShapeInfo);
 	    NDArray array;
 

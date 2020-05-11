@@ -315,8 +315,12 @@ namespace sd {
             return ptr.get();
         }
 
-        void Context::setInputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo) {
-            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
+        void Context::setInputArray(int index, void *buffer, void * shapeInfo, void *specialBuffer, void * specialShapeInfo) {
+            this->setInputArray(index, buffer, const_cast<const void*>(shapeInfo), specialBuffer, const_cast<const void *>(specialShapeInfo));
+        }
+
+        void Context::setInputArray(int index, void *buffer, void const* shapeInfo, void *specialBuffer, void const* specialShapeInfo) {
+            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong const*>(shapeInfo));
 
             if (_fastpath_in.size() < index + 1)
                 _fastpath_in.resize(index+1);
@@ -334,11 +338,15 @@ namespace sd {
             _fastpath_out[index] = std::make_shared<NDArray>(array);
         }
 
-        void Context::setOutputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo) {
+        void Context::setOutputArray(int index, void *buffer, void * shapeInfo, void *specialBuffer, void * specialShapeInfo) {
+            this->setOutputArray(index, buffer, const_cast<const void *>(shapeInfo), specialBuffer, const_cast<const void *>(specialShapeInfo));
+        }
+
+        void Context::setOutputArray(int index, void *buffer, const void * shapeInfo, void *specialBuffer, const void * specialShapeInfo) {
             if (_fastpath_out.size() < index + 1)
                 _fastpath_out.resize(index+1);
 
-            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong *>(shapeInfo));
+            auto array = std::make_shared<NDArray>(buffer, specialBuffer, reinterpret_cast<Nd4jLong const*>(shapeInfo));
 
             _fastpath_out[index] = array;
 
@@ -346,7 +354,7 @@ namespace sd {
                 array->setContext(_context);
         }
 
-        void Context::setInputArray(int index, void *vdatabuffer, void *shapeInfo, void *specialShapeInfo) {
+        void Context::setInputArray(int index, void *vdatabuffer, void const* shapeInfo, void const* specialShapeInfo) {
             auto dataBuffer = reinterpret_cast<InteropDataBuffer*>(vdatabuffer);
 
             if (_fastpath_in.size() < index + 1)
@@ -354,9 +362,9 @@ namespace sd {
 
             std::shared_ptr<NDArray> array;
             if (dataBuffer != nullptr)
-                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong const*>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong const*>(shapeInfo))));
             else
-                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong const*>(shapeInfo));
 
             _fastpath_in[index] = array;
 
@@ -364,7 +372,7 @@ namespace sd {
                 array->setContext(_context);
         }
 
-        void Context::setOutputArray(int index, void *vdatabuffer, void *shapeInfo, void *specialShapeInfo) {
+        void Context::setOutputArray(int index, void *vdatabuffer, void const* shapeInfo, void const* specialShapeInfo) {
             auto dataBuffer = reinterpret_cast<InteropDataBuffer*>(vdatabuffer);
 
             if (_fastpath_out.size() < index + 1)
@@ -372,9 +380,9 @@ namespace sd {
 
             std::shared_ptr<NDArray> array;
             if (dataBuffer != nullptr)
-                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong *>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong *>(shapeInfo))));
+                array = std::make_shared<NDArray>(dataBuffer->dataBuffer(), reinterpret_cast<Nd4jLong const*>(shapeInfo), sd::LaunchContext::defaultContext(), dataBuffer->offset() / DataTypeUtils::sizeOf(ArrayOptions::dataType(reinterpret_cast<Nd4jLong const*>(shapeInfo))));
             else
-                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong *>(shapeInfo));
+                array = std::make_shared<NDArray>(nullptr, nullptr, reinterpret_cast<Nd4jLong const*>(shapeInfo));
 
             _fastpath_out[index] = array;
 

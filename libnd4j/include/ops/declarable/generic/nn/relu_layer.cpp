@@ -51,7 +51,7 @@ namespace sd {
             auto weightsShape = inputShape->at(1);
             auto outputShape = ShapeUtils::matrixProductShape(inShape, weightsShape, false, false, ArrayOptions::dataType(inShape), block.workspace());
 
-            return SHAPELIST(CONSTANT(outputShape));
+            return SHAPELIST(outputShape);
         }
 
         DECLARE_TYPES(relu_layer) {

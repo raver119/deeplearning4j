@@ -177,13 +177,15 @@ namespace sd {
 
             void setInputArray(int index, const std::shared_ptr<NDArray> &array);
             void setInputArray(int index, const NDArray &array);
-            void setInputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo);
-            void setInputArray(int index, void *databuffer, void *shapeInfo, void *specialShapeInfo);
+            void setInputArray(int index, void *buffer, void const* shapeInfo, void *specialBuffer, void const* specialShapeInfo);
+            void setInputArray(int index, void *buffer, void * shapeInfo, void *specialBuffer, void * specialShapeInfo);
+            void setInputArray(int index, void *databuffer, void const* shapeInfo, void const* specialShapeInfo);
 
             void setOutputArray(int index, const std::shared_ptr<NDArray> &array);
             void setOutputArray(int index, const NDArray &array);
-            void setOutputArray(int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo);
-            void setOutputArray(int index, void *databuffer, void *shapeInfo, void *specialShapeInfo);
+            void setOutputArray(int index, void *buffer, const void * shapeInfo, void *specialBuffer, const void * specialShapeInfo);
+            void setOutputArray(int index, void *buffer, void * shapeInfo, void *specialBuffer, void * specialShapeInfo);
+            void setOutputArray(int index, void *databuffer, void const* shapeInfo, void const* specialShapeInfo);
 
             void setTArguments(double *arguments, int numberOfArguments);
             void setIArguments(Nd4jLong *arguments, int numberOfArguments);
