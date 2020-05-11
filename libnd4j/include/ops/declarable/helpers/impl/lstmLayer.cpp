@@ -685,17 +685,16 @@ void lstmLayerCellBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
     (*dLdWp)({2 * nOut, 3 * nOut}) += std::move(dLdzo) * (*c);  // [nOut]
   } else if (Wp) {
     NDArray temp(Wp->ordering(), {nOut}, Wp->dataType(), Wp->getContext());
-    (std::move(dLdzi) * (*cI))
-        .reduceAlongDimension(reduce::Sum, temp,
-                              {0});  // [bS, nOut] -> reduce -> [nOut]
+    // [bS, nOut] -> reduce -> [nOut]
+    (std::move(dLdzi) * (*cI)).reduceAlongDimension(reduce::Sum, temp, {0});
     (*dLdWp)({0, nOut}) += temp;
-    (std::move(dLdzf) * (*cI))
-        .reduceAlongDimension(reduce::Sum, temp,
-                              {0});  // [bS, nOut] -> reduce -> [nOut]
+
+    // [bS, nOut] -> reduce -> [nOut]
+    (std::move(dLdzf) * (*cI)).reduceAlongDimension(reduce::Sum, temp, {0});
     (*dLdWp)({nOut, 2 * nOut}) += temp;
-    (std::move(dLdzo) * (*c))
-        .reduceAlongDimension(reduce::Sum, temp,
-                              {0});  // [bS, nOut] -> reduce -> [nOut]
+
+    // [bS, nOut] -> reduce -> [nOut]
+    (std::move(dLdzo) * (*c)).reduceAlongDimension(reduce::Sum, temp, {0});
     (*dLdWp)({2 * nOut, 3 * nOut}) += temp;
   }
 }
