@@ -86,7 +86,7 @@ void ContextBuffers::release() {
 
     if (_allocationPointer != nullptr) cudaFree(_allocationPointer);
 
-    if (_scalarPointer != nullptr) cudaFree(_scalarPointer);
+    if (_scalarPointer != nullptr) cudaFreeHost(_scalarPointer);
 
     if (_allocationPointer != nullptr) cudaFree(_reductionPointer);
 

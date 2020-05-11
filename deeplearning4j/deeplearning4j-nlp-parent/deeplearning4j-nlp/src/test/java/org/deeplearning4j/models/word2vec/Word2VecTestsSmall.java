@@ -47,8 +47,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @Slf4j
@@ -190,22 +192,20 @@ public class Word2VecTestsSmall extends BaseDL4JTest {
                         .nOut(4).build())
                 .build();
 
-        MultiLayerNetwork net = new MultiLayerNetwork(conf);
+        final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
 
         INDArray w0 = net.getParam("0_W");
         assertEquals(w, w0);
-
-
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ModelSerializer.writeModel(net, baos, true);
         byte[] bytes = baos.toByteArray();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        MultiLayerNetwork restored = ModelSerializer.restoreMultiLayerNetwork(bais, true);
+        final MultiLayerNetwork restored = ModelSerializer.restoreMultiLayerNetwork(bais, true);
 
         assertEquals(net.getLayerWiseConfigurations(), restored.getLayerWiseConfigurations());
-        assertEquals(net.params(), restored.params());
+        assertTrue(net.params().equalsWithEps(restored.params(), 2e-3));
     }
 }
