@@ -21,13 +21,13 @@
 #include <graph/optimization/GraphOptimizer.h>
 
 namespace sd {
-    namespace graph {
-        Graph *GraphOptimizer::optimize(const Graph &graph) {
-            auto clone = graph.clone();
+namespace graph {
+Graph *GraphOptimizer::optimize(const Graph &graph) {
+  auto clone = graph.clone();
 
-            //TODO: implement this method
+  // TODO: implement this method
 
-            return clone;
-        }
-    }
+  return clone;
 }
+}  // namespace graph
+}  // namespace sd

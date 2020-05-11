@@ -24,11 +24,12 @@
 #include <ops/declarable/helpers/helpers.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void _where(sd::LaunchContext * context, NDArray &condition, NDArray& output, memory::Workspace *workspace);
-        }
-    }
+namespace ops {
+namespace helpers {
+void _where(sd::LaunchContext *context, NDArray &condition, NDArray &output,
+            memory::Workspace *workspace);
 }
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_WHERE_H
+#endif  // SD_WHERE_H

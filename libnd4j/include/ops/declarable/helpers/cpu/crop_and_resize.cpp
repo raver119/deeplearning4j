@@ -33,31 +33,38 @@ limitations under the License.
 //  @author sgazeos@gmail.com
 //
 
-#include <ops/declarable/helpers/crop_and_resize.h>
 #include <execution/Threads.h>
+#include <ops/declarable/helpers/crop_and_resize.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
+namespace ops {
+namespace helpers {
 
-// ------------------------------------------------------------------------------------------------------------------ //
-// ------------------------------------------------------------------------------------------------------------------ //
-// crop and resize helper functor:
+// ------------------------------------------------------------------------------------------------------------------
+// //
+// ------------------------------------------------------------------------------------------------------------------
+// // crop and resize helper functor:
 // \@param context - launch context for operation
-// \@param images - batch of images (4D tensor) with shape {batch, width, height, channels} with given type
+// \@param images - batch of images (4D tensor) with shape {batch, width,
+// height, channels} with given type
 // \@param boxes - float boxes for crop
 // \@param indices - integer boxes indices for crop
 // \@param cropSize - integer size (newWidth, newHeight)
-// \@param method - one of bilinear (0) or nearest neighbour (1) interpolation algorithm
+// \@param method - one of bilinear (0) or nearest neighbour (1) interpolation
+// algorithm
 // \@param extrapolationVal - radix to increase/decrease image
 // \@param crops - output image batch (4D with given type)
 //
-            void
-            cropAndResizeFunctor(sd::LaunchContext * context, NDArray const *images, NDArray const *boxes,
-                                 NDArray const *indices, NDArray const *cropSize,
-                                 int method, double extrapolationVal, NDArray *crops) {
-                BUILD_TRIPLE_SELECTOR(images->dataType(), boxes->dataType(), indices->dataType(), cropAndResizeFunctor_, (images, boxes, indices, cropSize, method, extrapolationVal, crops), NUMERIC_TYPES, FLOAT_TYPES, INTEGER_TYPES);
-            }
-        }
-    }
+void cropAndResizeFunctor(sd::LaunchContext *context, NDArray const *images,
+                          NDArray const *boxes, NDArray const *indices,
+                          NDArray const *cropSize, int method,
+                          double extrapolationVal, NDArray *crops) {
+  BUILD_TRIPLE_SELECTOR(
+      images->dataType(), boxes->dataType(), indices->dataType(),
+      cropAndResizeFunctor_,
+      (images, boxes, indices, cropSize, method, extrapolationVal, crops),
+      NUMERIC_TYPES, FLOAT_TYPES, INTEGER_TYPES);
 }
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

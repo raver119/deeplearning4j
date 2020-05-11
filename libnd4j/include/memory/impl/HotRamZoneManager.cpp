@@ -21,18 +21,18 @@
 #include <memory/HotRamZoneManager.h>
 
 namespace sd {
-    namespace memory {
-        MemoryDescriptor HotRamZoneManager::allocate(uint64_t numBytes) {
-            _used += numBytes;
+namespace memory {
+MemoryDescriptor HotRamZoneManager::allocate(uint64_t numBytes) {
+  _used += numBytes;
 
-            auto ptr = new int8_t[numBytes];
-            return MemoryDescriptor(ptr, zone(), numBytes);
-        }
-
-        void HotRamZoneManager::release(MemoryDescriptor &descriptor) {
-            _used -= descriptor.bytes();
-
-            delete[](reinterpret_cast<int8_t*>(descriptor.address()));
-        }
-    }
+  auto ptr = new int8_t[numBytes];
+  return MemoryDescriptor(ptr, zone(), numBytes);
 }
+
+void HotRamZoneManager::release(MemoryDescriptor &descriptor) {
+  _used -= descriptor.bytes();
+
+  delete[](reinterpret_cast<int8_t *>(descriptor.address()));
+}
+}  // namespace memory
+}  // namespace sd

@@ -20,53 +20,52 @@
 
 #include <graph/profiling/GraphProfilingHelper.h>
 
-
 namespace sd {
-    namespace graph {
-        GraphProfile *GraphProfilingHelper::profile(Graph *graph, int iterations) {
-            if (1 > 0)
-                throw std::runtime_error("GraphProfilingHelper::profile - Not implemented yet");
+namespace graph {
+GraphProfile *GraphProfilingHelper::profile(Graph *graph, int iterations) {
+  if (1 > 0)
+    throw std::runtime_error(
+        "GraphProfilingHelper::profile - Not implemented yet");
 
-            // saving original workspace
-            //auto varSpace = graph->variableSpace();
+  // saving original workspace
+  // auto varSpace = graph->variableSpace();
 
-            // printing out graph structure
-            // graph->printOut();
+  // printing out graph structure
+  // graph->printOut();
 
-            // warm up
-            for (int e = 0; e < iterations; e++) {
-                FlowPath fp;
+  // warm up
+  for (int e = 0; e < iterations; e++) {
+    FlowPath fp;
 
-                //auto _vs = varSpace->clone();
-                //_vs->workspace()->expandTo(100000);
-                //_vs->setFlowPath(&fp);
-                //GraphExecutioner::execute(graph, _vs);
+    // auto _vs = varSpace->clone();
+    //_vs->workspace()->expandTo(100000);
+    //_vs->setFlowPath(&fp);
+    // GraphExecutioner::execute(graph, _vs);
 
-                //delete _vs;
-            }
+    // delete _vs;
+  }
 
+  auto profile = new GraphProfile();
+  for (int e = 0; e < iterations; e++) {
+    FlowPath fp;
+    /*
+                    // we're always starting from "fresh" varspace here
+                    auto _vs = varSpace->clone();
+                    //_vs->workspace()->expandTo(100000);
+                    _vs->setFlowPath(&fp);
+                    //GraphExecutioner::execute(graph, _vs);
 
-            auto profile = new GraphProfile();
-            for (int e = 0; e < iterations; e++) {
-                FlowPath fp;
-/*
-                // we're always starting from "fresh" varspace here
-                auto _vs = varSpace->clone();
-                //_vs->workspace()->expandTo(100000);
-                _vs->setFlowPath(&fp);
-                //GraphExecutioner::execute(graph, _vs);
+                    auto p = fp.profile();
+                    if (e == 0)
+                        profile->assign(p);
+                    else
+                        profile->merge(p);
 
-                auto p = fp.profile();
-                if (e == 0)
-                    profile->assign(p);
-                else
-                    profile->merge(p);
+                    delete _vs;
+                    */
+  }
 
-                delete _vs;
-                */
-            }
-
-            return profile;
-        }
-    }
+  return profile;
 }
+}  // namespace graph
+}  // namespace sd

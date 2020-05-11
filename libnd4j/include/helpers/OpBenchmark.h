@@ -21,54 +21,57 @@
 #ifndef SD_OPEXECUTIONER_H
 #define SD_OPEXECUTIONER_H
 
-#include <legacy/NativeOpExecutioner.h>
 #include <array/NDArray.h>
-#include <helpers/ShapeUtils.h>
-#include <helpers/PointersManager.h>
 #include <helpers/ConstantTadHelper.h>
+#include <helpers/PointersManager.h>
+#include <helpers/ShapeUtils.h>
+#include <legacy/NativeOpExecutioner.h>
 
 namespace sd {
-    class SD_EXPORT OpBenchmark {
-    protected:
-        int _opNum = 0;
-        std::string _testName;
-        NDArray _x;
-        NDArray _y;
-        NDArray _z;
-        std::vector<int> _axis;
-    public:
-        OpBenchmark() = default;
-        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &y, const NDArray &z);
-        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &z);
-        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &z, const std::vector<int> &axis);
-        OpBenchmark(const std::string& name, const NDArray &x, const NDArray &y, const NDArray &z, const std::vector<int> &axis);
+class SD_EXPORT OpBenchmark {
+ protected:
+  int _opNum = 0;
+  std::string _testName;
+  NDArray _x;
+  NDArray _y;
+  NDArray _z;
+  std::vector<int> _axis;
 
-        void setOpNum(int opNum);
-        void setTestName(const std::string &testName);
-        void setX(const NDArray &array);
-        void setY(const NDArray &array);
-        void setZ(const NDArray &array);
-        void setAxis(std::vector<int> axis);
-        void setAxis(std::initializer_list<int> axis);
+ public:
+  OpBenchmark() = default;
+  OpBenchmark(const std::string &name, const NDArray &x, const NDArray &y,
+              const NDArray &z);
+  OpBenchmark(const std::string &name, const NDArray &x, const NDArray &z);
+  OpBenchmark(const std::string &name, const NDArray &x, const NDArray &z,
+              const std::vector<int> &axis);
+  OpBenchmark(const std::string &name, const NDArray &x, const NDArray &y,
+              const NDArray &z, const std::vector<int> &axis);
 
-        NDArray& x();
-        int opNum() const;
-        const std::string& testName() const;
-        std::vector<int> getAxis();
+  void setOpNum(int opNum);
+  void setTestName(const std::string &testName);
+  void setX(const NDArray &array);
+  void setY(const NDArray &array);
+  void setZ(const NDArray &array);
+  void setAxis(std::vector<int> axis);
+  void setAxis(std::initializer_list<int> axis);
 
-        virtual std::string extra();
-        virtual std::string dataType();
-        virtual std::string axis() = 0;
-        virtual std::string orders() = 0;
-        virtual std::string strides() = 0;
-        virtual std::string shape();
-        virtual std::string inplace() = 0;
+  NDArray &x();
+  int opNum() const;
+  const std::string &testName() const;
+  std::vector<int> getAxis();
 
-        virtual void executeOnce() = 0;
+  virtual std::string extra();
+  virtual std::string dataType();
+  virtual std::string axis() = 0;
+  virtual std::string orders() = 0;
+  virtual std::string strides() = 0;
+  virtual std::string shape();
+  virtual std::string inplace() = 0;
 
-        virtual OpBenchmark* clone() = 0;
-    };
-}
+  virtual void executeOnce() = 0;
 
+  virtual OpBenchmark *clone() = 0;
+};
+}  // namespace sd
 
-#endif //SD_OPEXECUTIONER_H
+#endif  // SD_OPEXECUTIONER_H

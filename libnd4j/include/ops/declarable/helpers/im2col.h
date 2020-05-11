@@ -27,9 +27,12 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    SD_EXPORT void im2col(sd::LaunchContext & context, const NDArray& im,  NDArray& col, const int kH, const int kW, const int sH, const int sW, const int pH, const int pW, const int dH, const int dW, const NDArray& arrZeroPadVal);
+SD_EXPORT void im2col(sd::LaunchContext& context, const NDArray& im,
+                      NDArray& col, const int kH, const int kW, const int sH,
+                      const int sW, const int pH, const int pW, const int dH,
+                      const int dW, const NDArray& arrZeroPadVal);
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_HELPERS_H
+#endif  // LIBND4J_HELPERS_H

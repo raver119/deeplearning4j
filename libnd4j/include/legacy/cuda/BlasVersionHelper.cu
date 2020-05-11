@@ -21,9 +21,9 @@
 #include <system/BlasVersionHelper.h>
 
 namespace sd {
-    BlasVersionHelper::BlasVersionHelper() {
-        _blasMajorVersion = __CUDACC_VER_MAJOR__;
-        _blasMinorVersion = __CUDACC_VER_MINOR__;
-        _blasPatchVersion = __CUDACC_VER_BUILD__;
-    }
+BlasVersionHelper::BlasVersionHelper() {
+  _blasMajorVersion = __CUDACC_VER_MAJOR__;
+  _blasMinorVersion = __CUDACC_VER_MINOR__;
+  _blasPatchVersion = __CUDACC_VER_BUILD__;
 }
+}  // namespace sd

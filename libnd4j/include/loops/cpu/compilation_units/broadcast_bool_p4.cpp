@@ -21,7 +21,8 @@
 #include "../broadcasting_bool.hpp"
 
 namespace functions {
-    namespace broadcast {
-        BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT BroadcastBool, , LIBND4J_TYPES_4, BOOL_TYPES);
-    }
+namespace broadcast {
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT BroadcastBool, , LIBND4J_TYPES_4,
+                      BOOL_TYPES);
 }
+}  // namespace functions

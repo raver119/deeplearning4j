@@ -22,20 +22,20 @@
 #include <math/templatemath.h>
 
 namespace sd {
-    Triple CudaLaunchHelper::getFlatLaunchParams(Nd4jLong length, int SM, int CORES, int SHARED_MEMORY) {
-        // TODO: to be implemented
-        Triple triple(1, 2, 3);
+Triple CudaLaunchHelper::getFlatLaunchParams(Nd4jLong length, int SM, int CORES,
+                                             int SHARED_MEMORY) {
+  // TODO: to be implemented
+  Triple triple(1, 2, 3);
 
-        return triple;
-    }
-
-    int CudaLaunchHelper::getReductionBlocks(Nd4jLong xLength, int blockSize) {
-        int div = xLength / blockSize;
-        int can = sd::math::nd4j_max<int>(div, 1);
-        if (xLength % blockSize != 0 && xLength > blockSize)
-            can++;
-
-        // not more then 512 blocks
-        return sd::math::nd4j_min<int>(can, 512);
-    }
+  return triple;
 }
+
+int CudaLaunchHelper::getReductionBlocks(Nd4jLong xLength, int blockSize) {
+  int div = xLength / blockSize;
+  int can = sd::math::nd4j_max<int>(div, 1);
+  if (xLength % blockSize != 0 && xLength > blockSize) can++;
+
+  // not more then 512 blocks
+  return sd::math::nd4j_min<int>(can, 512);
+}
+}  // namespace sd

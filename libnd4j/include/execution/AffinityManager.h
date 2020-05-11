@@ -23,24 +23,25 @@
 
 #include <system/dll.h>
 #include <system/pointercast.h>
+
 #include <atomic>
 #include <mutex>
 
 namespace sd {
-    class SD_EXPORT AffinityManager {
-    private:
-        static std::atomic<int> _lastDevice;
-        static int _numberOfDevices;
-        static std::mutex _currentMutex;
-        static std::mutex _numberMutex;
+class SD_EXPORT AffinityManager {
+ private:
+  static std::atomic<int> _lastDevice;
+  static int _numberOfDevices;
+  static std::mutex _currentMutex;
+  static std::mutex _numberMutex;
 
-    public:
-        static int currentNativeDeviceId();
-        static int currentDeviceId();
-        static int numberOfDevices();
-        static void setCurrentDevice(int deviceId);
-        static void setCurrentNativeDevice(int deviceId);
-    };
-}
+ public:
+  static int currentNativeDeviceId();
+  static int currentDeviceId();
+  static int numberOfDevices();
+  static void setCurrentDevice(int deviceId);
+  static void setCurrentNativeDevice(int deviceId);
+};
+}  // namespace sd
 
-#endif //SD_AFFINITYMANAGER_H
+#endif  // SD_AFFINITYMANAGER_H

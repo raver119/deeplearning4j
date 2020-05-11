@@ -22,17 +22,22 @@
 //#define LIBND4J_LOOPS_CPP
 
 #include <Loops.h>
-#include <helpers/shape.h>
-#include <helpers/OmpLaunchHelper.h>
 #include <array/DataTypeUtils.h>
+#include <helpers/OmpLaunchHelper.h>
+#include <helpers/shape.h>
 
-
-namespace sd {
-
-
-}
-//template void Loops::loopReduce<double, double>(const double* x, const Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, double* z, const Nd4jLong* zShapeInfo, double* extraParams, std::function<double(const double*)> startVal, std::function<double(double,double,double*)> update, std::function<double(double,double*)> op, std::function<double(double,Nd4jLong,double*)> postPr);
-//template void Loops::loopReduce<float, float>(const float* x, const Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, float* z, const Nd4jLong* zShapeInfo, float* extraParams, std::function<float(const float*)> startVal, std::function<float(float,float,float*)> update, std::function<float(float,float*)> op, std::function<float(float,Nd4jLong,float*)> postPr);
+namespace sd {}
+// template void Loops::loopReduce<double, double>(const double* x, const
+// Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, double* z, const Nd4jLong*
+// zShapeInfo, double* extraParams, std::function<double(const double*)>
+// startVal, std::function<double(double,double,double*)> update,
+// std::function<double(double,double*)> op,
+// std::function<double(double,Nd4jLong,double*)> postPr); template void
+// Loops::loopReduce<float, float>(const float* x, const Nd4jLong* tadShapeInfo,
+// const Nd4jLong* tadOffsets, float* z, const Nd4jLong* zShapeInfo, float*
+// extraParams, std::function<float(const float*)> startVal,
+// std::function<float(float,float,float*)> update,
+// std::function<float(float,float*)> op,
+// std::function<float(float,Nd4jLong,float*)> postPr);
 
 //#endif // LIBND4J_LOOPS_CPP
-

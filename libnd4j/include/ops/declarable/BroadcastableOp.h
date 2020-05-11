@@ -22,22 +22,24 @@
 #define LIBND4J_BROADCASTABLEOP_H
 
 #include <graph/Context.h>
-#include "OpDescriptor.h"
-#include "DeclarableOp.h"
+
 #include "DeclarableCustomOp.h"
+#include "DeclarableOp.h"
+#include "OpDescriptor.h"
 
 namespace sd {
-    namespace ops {
-        class SD_EXPORT BroadcastableOp : public DeclarableCustomOp{
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override = 0;
-        public:
-            BroadcastableOp(const char *name, int numTArgs, int numIArgs);
+namespace ops {
+class SD_EXPORT BroadcastableOp : public DeclarableCustomOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context &block) override = 0;
 
-            ShapeList *calculateOutputShape(ShapeList *inputShape, sd::graph::Context& block) override;
-        };
-    }
-}
+ public:
+  BroadcastableOp(const char *name, int numTArgs, int numIArgs);
 
+  ShapeList *calculateOutputShape(ShapeList *inputShape,
+                                  sd::graph::Context &block) override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_BROADCASTABLEOP_H
+#endif  // LIBND4J_BROADCASTABLEOP_H

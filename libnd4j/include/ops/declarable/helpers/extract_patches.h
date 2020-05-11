@@ -19,16 +19,18 @@
 //
 #ifndef __EXTRACT_PATCHES_H_HELPERS__
 #define __EXTRACT_PATCHES_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void extractPatches(sd::LaunchContext * context, NDArray* images, NDArray* output, int sizeRow, int sizeCol, int stradeRow, int stradeCol, int rateRow, int rateCol, bool theSame);
+void extractPatches(sd::LaunchContext* context, NDArray* images,
+                    NDArray* output, int sizeRow, int sizeCol, int stradeRow,
+                    int stradeCol, int rateRow, int rateCol, bool theSame);
 
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

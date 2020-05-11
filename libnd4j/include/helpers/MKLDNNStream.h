@@ -27,48 +27,55 @@
 
 #if defined(HAVE_MKLDNN)
 
+#include <string>
+#include <vector>
+#include <array/NDArray.h>
+
 namespace sd {
-    class MKLDNNStream {
-    protected:
-        std::string _opName;
+class MKLDNNStream {
+ protected:
+  std::string _opName;
 
-        std::vector<const NDArray*> _inputs;
-        std::vector<const NDArray*> _outputs;
-        std::vector<float> _floatArguments;
-        std::vector<int> _intArguments;
+  std::vector<const NDArray *> _inputs;
+  std::vector<const NDArray *> _outputs;
+  std::vector<float> _floatArguments;
+  std::vector<int> _intArguments;
 
-    public:
-        template <typename X, typename Y>
-        static bool isSupported() {
-            // FIXME: strict float support doesn't work anymore
-            return typeid(X) == typeid(float) && typeid(Y) == typeid(float);
-        }
+ public:
+  template <typename X, typename Y>
+  static bool isSupported() {
+    // FIXME: strict float support doesn't work anymore
+    return typeid(X) == typeid(float) && typeid(Y) == typeid(float);
+  }
 
-        static bool isSupported(const std::vector<const NDArray*> &arrays) {
-            // FIXME: strict float support doesn't work anymore
-            for (auto v:arrays) {
-                if (v != nullptr && v->dataType() != sd::DataType::FLOAT32) {
-                    return false;
-                }
-            }
-            return true;
-        }
+  static bool isSupported(const std::vector<const NDArray *> &arrays) {
+    // FIXME: strict float support doesn't work anymore
+    for (auto v : arrays) {
+      if (v != nullptr && v->dataType() != sd::DataType::FLOAT32) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-        explicit MKLDNNStream(const std::string &opName) : _opName(opName) { }
+  explicit MKLDNNStream(const std::string &opName) : _opName(opName) {}
 
-        bool checkAndReset(const std::vector<const NDArray*> &inputs, const std::vector<const NDArray*> &outputs,
-                const std::vector<float> &floatArguments, const std::vector<int> &intArguments) {
-            if (inputs != _inputs || outputs != _outputs || floatArguments != _floatArguments || intArguments != _intArguments) {
-                _inputs = inputs;
-                _outputs = outputs;
-                _floatArguments = floatArguments;
-                _intArguments = intArguments;
-                return true;
-            }
-            return false;
-        }
-    };
-}
+  bool checkAndReset(const std::vector<const NDArray *> &inputs,
+                     const std::vector<const NDArray *> &outputs,
+                     const std::vector<float> &floatArguments,
+                     const std::vector<int> &intArguments) {
+    if (inputs != _inputs || outputs != _outputs ||
+        floatArguments != _floatArguments || intArguments != _intArguments) {
+      _inputs = inputs;
+      _outputs = outputs;
+      _floatArguments = floatArguments;
+      _intArguments = intArguments;
+      return true;
+    }
+    return false;
+  }
+};
+}  // namespace sd
 #endif
 
-#endif //LIBND4J_MKLDNNSTREAM_H
+#endif  // LIBND4J_MKLDNNSTREAM_H

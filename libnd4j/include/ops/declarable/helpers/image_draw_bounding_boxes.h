@@ -19,16 +19,17 @@
 //
 #ifndef __IMAGE_DRAW_BOUNDING_BOXES_H_HELPERS__
 #define __IMAGE_DRAW_BOUNDING_BOXES_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void drawBoundingBoxesFunctor(sd::LaunchContext * context, NDArray* images, NDArray* boxes, NDArray* colors, NDArray* output);
+void drawBoundingBoxesFunctor(sd::LaunchContext* context, NDArray* images,
+                              NDArray* boxes, NDArray* colors, NDArray* output);
 
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

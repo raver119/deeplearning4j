@@ -21,30 +21,34 @@
 #ifndef SD_DATATYPE_EXCEPTION_H
 #define SD_DATATYPE_EXCEPTION_H
 
-#include <string>
-#include <stdexcept>
 #include <array/DataType.h>
 #include <system/dll.h>
 
+#include <stdexcept>
+#include <string>
+
 #if defined(_MSC_VER)
 
-// we're ignoring warning about non-exportable parent class, since std::runtime_error is a part of Standard C++ Library
-#pragma warning( disable : 4275 )
+// we're ignoring warning about non-exportable parent class, since
+// std::runtime_error is a part of Standard C++ Library
+#pragma warning(disable : 4275)
 
 #endif
 
 namespace sd {
-    class SD_EXPORT datatype_exception : public std::runtime_error {
-    public:
-        datatype_exception(const std::string &message);
-        ~datatype_exception() = default;
+class SD_EXPORT datatype_exception : public std::runtime_error {
+ public:
+  datatype_exception(const std::string &message);
+  ~datatype_exception() = default;
 
+  static datatype_exception build(const std::string &message,
+                                  sd::DataType actual);
+  static datatype_exception build(const std::string &message,
+                                  sd::DataType expected, sd::DataType actual);
+  static datatype_exception build(const std::string &message,
+                                  sd::DataType expected, sd::DataType actualX,
+                                  sd::DataType actualY);
+};
+}  // namespace sd
 
-        static datatype_exception build(const std::string &message, sd::DataType actual);
-        static datatype_exception build(const std::string &message, sd::DataType expected, sd::DataType actual);
-        static datatype_exception build(const std::string &message, sd::DataType expected, sd::DataType actualX, sd::DataType actualY);
-    };
-}
-
-
-#endif //SD_DATATYPE_EXCEPTION_H
+#endif  // SD_DATATYPE_EXCEPTION_H

@@ -23,31 +23,36 @@
 
 #include <array/ResultSet.h>
 #include <graph/Context.h>
-#include <ops/declarable/OpRegistrator.h>
 #include <ops/declarable/DeclarableOp.h>
+#include <ops/declarable/OpRegistrator.h>
 
 using namespace sd::graph;
 
 namespace sd {
-    namespace ops {
-        class SD_EXPORT DeclarableListOp : public sd::ops::DeclarableOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override = 0;
+namespace ops {
+class SD_EXPORT DeclarableListOp : public sd::ops::DeclarableOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override = 0;
 
-            sd::NDArray* getZ(Context& block, int inputId) ;
-            void setupResult(const NDArray &array, Context& block);
-            void setupResultList(const NDArrayList &arrayList, Context& block);
+  sd::NDArray* getZ(Context& block, int inputId);
+  void setupResult(const NDArray& array, Context& block);
+  void setupResultList(const NDArrayList& arrayList, Context& block);
 
-        public:
-            DeclarableListOp(int numInputs, int numOutputs, const char* opName, int tArgs, int iArgs);
-            
-            Nd4jStatus execute(Context* block) override;
+ public:
+  DeclarableListOp(int numInputs, int numOutputs, const char* opName, int tArgs,
+                   int iArgs);
 
-            ResultSet execute(const NDArrayList &list, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs = {}, const std::vector<int>& iArgs = {});
+  Nd4jStatus execute(Context* block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
-        };
-    }
-}
+  ResultSet execute(const NDArrayList& list,
+                    const std::vector<NDArray*>& inputs,
+                    const std::vector<double>& tArgs = {},
+                    const std::vector<int>& iArgs = {});
+
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+};
+}  // namespace ops
+}  // namespace sd
 
 #endif

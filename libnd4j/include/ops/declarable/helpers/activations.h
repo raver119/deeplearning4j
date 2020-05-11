@@ -27,26 +27,37 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    SD_EXPORT void softMaxForVector(sd::LaunchContext * context, const NDArray &input, NDArray &output);
+SD_EXPORT void softMaxForVector(sd::LaunchContext *context,
+                                const NDArray &input, NDArray &output);
 
-    SD_EXPORT void logSoftMaxForVector(sd::LaunchContext * context, const NDArray &input, NDArray &output);
+SD_EXPORT void logSoftMaxForVector(sd::LaunchContext *context,
+                                   const NDArray &input, NDArray &output);
 
-    SD_EXPORT void softmax(sd::LaunchContext * context, const NDArray &input, NDArray &output, const int dimension);
+SD_EXPORT void softmax(sd::LaunchContext *context, const NDArray &input,
+                       NDArray &output, const int dimension);
 
-    SD_EXPORT void logSoftmax(sd::LaunchContext * context, const NDArray &input, NDArray &output, const int dimension);
+SD_EXPORT void logSoftmax(sd::LaunchContext *context, const NDArray &input,
+                          NDArray &output, const int dimension);
 
-    SD_EXPORT void softmaxDerivative(sd::LaunchContext * context, const NDArray& input, NDArray& output, const int dimension);
+SD_EXPORT void softmaxDerivative(sd::LaunchContext *context,
+                                 const NDArray &input, NDArray &output,
+                                 const int dimension);
 
-    SD_EXPORT void prelu(sd::LaunchContext * context, const NDArray &input, const NDArray &alpha, NDArray &output);
+SD_EXPORT void prelu(sd::LaunchContext *context, const NDArray &input,
+                     const NDArray &alpha, NDArray &output);
 
-    SD_EXPORT void preluBP(sd::LaunchContext * context, const NDArray &input, const NDArray &alpha, const NDArray &dLdO, NDArray &dLdI, NDArray &dLdA);
+SD_EXPORT void preluBP(sd::LaunchContext *context, const NDArray &input,
+                       const NDArray &alpha, const NDArray &dLdO, NDArray &dLdI,
+                       NDArray &dLdA);
 
-    SD_EXPORT void thresholdRelu(sd::LaunchContext * context, const NDArray &input, double threshold, NDArray &output);
+SD_EXPORT void thresholdRelu(sd::LaunchContext *context, const NDArray &input,
+                             double threshold, NDArray &output);
 
-    SD_EXPORT void thresholdReluDerivative(sd::LaunchContext * context, NDArray *input, double threshold, NDArray* dLdO, NDArray *output);
-}
-}
-}
+SD_EXPORT void thresholdReluDerivative(sd::LaunchContext *context,
+                                       NDArray *input, double threshold,
+                                       NDArray *dLdO, NDArray *output);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-
-#endif //LIBND4J_ACTIVATIONS_H
+#endif  // LIBND4J_ACTIVATIONS_H

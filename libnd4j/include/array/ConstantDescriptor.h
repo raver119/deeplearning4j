@@ -21,55 +21,56 @@
 #ifndef SD_CONSTANTDESCRIPTOR_H
 #define SD_CONSTANTDESCRIPTOR_H
 
+#include <array/ConstantDataBuffer.h>
 #include <array/DataType.h>
+#include <system/dll.h>
+#include <system/pointercast.h>
+
 #include <unordered_map>
 #include <vector>
-#include <system/pointercast.h>
-#include <system/dll.h>
-#include <array/ConstantDataBuffer.h>
 
 namespace sd {
-    class SD_EXPORT ConstantDescriptor {
-    private:
-        std::vector<Nd4jLong> _integerValues;
-        std::vector<double> _floatValues;
-    public:
-        ConstantDescriptor(double* values, int length);
-        ConstantDescriptor(Nd4jLong const* values, int length);
-        ConstantDescriptor(std::initializer_list<double> values);
+class SD_EXPORT ConstantDescriptor {
+ private:
+  std::vector<Nd4jLong> _integerValues;
+  std::vector<double> _floatValues;
 
-        explicit ConstantDescriptor(std::vector<Nd4jLong> &values);
-        explicit ConstantDescriptor(std::vector<double> &values);
+ public:
+  ConstantDescriptor(double *values, int length);
+  ConstantDescriptor(Nd4jLong const *values, int length);
+  ConstantDescriptor(std::initializer_list<double> values);
 
-        ~ConstantDescriptor() = default;
+  explicit ConstantDescriptor(std::vector<Nd4jLong> &values);
+  explicit ConstantDescriptor(std::vector<double> &values);
 
-        // equal to operator
-        bool operator==(const ConstantDescriptor &other) const;
+  ~ConstantDescriptor() = default;
 
-        // less than operator
-        bool operator<(const ConstantDescriptor &other) const;
+  // equal to operator
+  bool operator==(const ConstantDescriptor &other) const;
 
-        bool isInteger() const;
-        bool isFloat() const;
+  // less than operator
+  bool operator<(const ConstantDescriptor &other) const;
 
-        Nd4jLong length() const;
+  bool isInteger() const;
+  bool isFloat() const;
 
-        const std::vector<Nd4jLong>& integerValues() const;
-        const std::vector<double>& floatValues() const;
-    };
-}
+  Nd4jLong length() const;
+
+  const std::vector<Nd4jLong> &integerValues() const;
+  const std::vector<double> &floatValues() const;
+};
+}  // namespace sd
 
 #ifndef __JAVACPP_HACK__
 
 namespace std {
-    template<>
-    class SD_EXPORT hash<sd::ConstantDescriptor> {
-    public:
-        size_t operator()(const sd::ConstantDescriptor &k) const;
-    };
-}
+template <>
+class SD_EXPORT hash<sd::ConstantDescriptor> {
+ public:
+  size_t operator()(const sd::ConstantDescriptor &k) const;
+};
+}  // namespace std
 
 #endif
 
-
-#endif //SD_CONSTANTDESCRIPTOR_H
+#endif  // SD_CONSTANTDESCRIPTOR_H

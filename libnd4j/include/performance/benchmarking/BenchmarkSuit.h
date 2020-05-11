@@ -21,21 +21,21 @@
 #ifndef LIBND4J_BENCHMARKSUIT_H
 #define LIBND4J_BENCHMARKSUIT_H
 
-#include <string>
-#include <system/pointercast.h>
-#include <system/dll.h>
-#include <helpers/BenchmarkHelper.h>
 #include <array/NDArrayFactory.h>
+#include <helpers/BenchmarkHelper.h>
+#include <system/dll.h>
+#include <system/pointercast.h>
+
+#include <string>
 
 namespace sd {
-    class SD_EXPORT BenchmarkSuit {
-    public:
-        BenchmarkSuit() = default;
-        ~BenchmarkSuit() = default;
+class SD_EXPORT BenchmarkSuit {
+ public:
+  BenchmarkSuit() = default;
+  ~BenchmarkSuit() = default;
 
-        virtual std::string runSuit() = 0;
-    };
-}
+  virtual std::string runSuit() = 0;
+};
+}  // namespace sd
 
-
-#endif //SD_BENCHMARKSUIT_H
+#endif  // SD_BENCHMARKSUIT_H

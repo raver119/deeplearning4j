@@ -24,19 +24,18 @@
 #include <vector>
 
 namespace sd {
-    class ParametersSpace {
-    protected:
-        std::string _name;
-    public:
-        ParametersSpace() = default;
-        ~ParametersSpace() = default;
+class ParametersSpace {
+ protected:
+  std::string _name;
 
-        std::string name() {
-            return _name;
-        }
+ public:
+  ParametersSpace() = default;
+  ~ParametersSpace() = default;
 
-        virtual std::vector<int> evaluate() = 0;
-    };
-}
+  std::string name() { return _name; }
 
-#endif //SD_PARAMETERSPACE_H
+  virtual std::vector<int> evaluate() = 0;
+};
+}  // namespace sd
+
+#endif  // SD_PARAMETERSPACE_H

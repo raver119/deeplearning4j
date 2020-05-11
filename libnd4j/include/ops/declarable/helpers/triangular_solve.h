@@ -19,16 +19,19 @@
 //
 #ifndef __TRIANGULAR_SOLVE__H_HELPERS__
 #define __TRIANGULAR_SOLVE__H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    int triangularSolveFunctor(sd::LaunchContext* context, NDArray* leftInput, NDArray* rightInput, bool lower, bool adjoint, NDArray* output);
-    void adjointMatrix(sd::LaunchContext* context, NDArray const* input, bool const lower, NDArray* output);
-}
-}
-}
+int triangularSolveFunctor(sd::LaunchContext* context, NDArray* leftInput,
+                           NDArray* rightInput, bool lower, bool adjoint,
+                           NDArray* output);
+void adjointMatrix(sd::LaunchContext* context, NDArray const* input,
+                   bool const lower, NDArray* output);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 #endif

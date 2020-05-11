@@ -24,19 +24,22 @@
 #include <ops/declarable/DeclarableOp.h>
 
 namespace sd {
-    namespace ops {
-        class SD_EXPORT DeclarableCustomOp : public sd::ops::DeclarableOp {
-        protected:
-            /**
-             * This method executes this Op
-             */
-            Nd4jStatus validateAndExecute(Context& block) override = 0;
-        public:
-            DeclarableCustomOp(int numInputs, int numOutputs, const char *opName, bool allowsInplace, int tArgs, int iArgs);
+namespace ops {
+class SD_EXPORT DeclarableCustomOp : public sd::ops::DeclarableOp {
+ protected:
+  /**
+   * This method executes this Op
+   */
+  Nd4jStatus validateAndExecute(Context& block) override = 0;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShapes, sd::graph::Context& block) override = 0;
-        };
-    }
-}
+ public:
+  DeclarableCustomOp(int numInputs, int numOutputs, const char* opName,
+                     bool allowsInplace, int tArgs, int iArgs);
 
-#endif //LIBND4J_DECLARABLECUSTOMOP_H
+  ShapeList* calculateOutputShape(ShapeList* inputShapes,
+                                  sd::graph::Context& block) override = 0;
+};
+}  // namespace ops
+}  // namespace sd
+
+#endif  // LIBND4J_DECLARABLECUSTOMOP_H

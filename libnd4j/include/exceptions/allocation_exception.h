@@ -21,28 +21,30 @@
 #ifndef SD_ALLOCATION_EXCEPTION_H
 #define SD_ALLOCATION_EXCEPTION_H
 
-#include <string>
-#include <stdexcept>
-#include <system/pointercast.h>
 #include <system/dll.h>
+#include <system/pointercast.h>
+
+#include <stdexcept>
+#include <string>
 
 #if defined(_MSC_VER)
 
-// we're ignoring warning about non-exportable parent class, since std::runtime_error is a part of Standard C++ Library
-#pragma warning( disable : 4275 )
+// we're ignoring warning about non-exportable parent class, since
+// std::runtime_error is a part of Standard C++ Library
+#pragma warning(disable : 4275)
 
 #endif
 
 namespace sd {
-    class SD_EXPORT allocation_exception : public std::runtime_error {
-    public:
-        allocation_exception(std::string message);
-        ~allocation_exception() = default;
+class SD_EXPORT allocation_exception : public std::runtime_error {
+ public:
+  allocation_exception(std::string message);
+  ~allocation_exception() = default;
 
-        static allocation_exception build(std::string message, Nd4jLong bytes);
-        static allocation_exception build(std::string message, Nd4jLong limit, Nd4jLong bytes);
-    };
-}
+  static allocation_exception build(std::string message, Nd4jLong bytes);
+  static allocation_exception build(std::string message, Nd4jLong limit,
+                                    Nd4jLong bytes);
+};
+}  // namespace sd
 
-
-#endif //SD_ALLOCATION_EXCEPTION_H
+#endif  // SD_ALLOCATION_EXCEPTION_H

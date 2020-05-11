@@ -26,71 +26,76 @@
 using namespace sd::graph;
 
 namespace sd {
-    class SD_EXPORT PairwiseBenchmark : public OpBenchmark {
-    public:
-        PairwiseBenchmark() : OpBenchmark() {
-            //
-        }
+class SD_EXPORT PairwiseBenchmark : public OpBenchmark {
+ public:
+  PairwiseBenchmark() : OpBenchmark() {
+    //
+  }
 
-        PairwiseBenchmark(pairwise::Ops op, const std::string &testName, const NDArray &x, const NDArray &y, const NDArray &z) : OpBenchmark(testName, x, y, z) {
-            _opNum = (int) op;
-        }
+  PairwiseBenchmark(pairwise::Ops op, const std::string &testName,
+                    const NDArray &x, const NDArray &y, const NDArray &z)
+      : OpBenchmark(testName, x, y, z) {
+    _opNum = (int)op;
+  }
 
-        PairwiseBenchmark(pairwise::Ops op, std::string name) : OpBenchmark() {
-            _opNum = (int) op;
-            _testName = name;
-        }
+  PairwiseBenchmark(pairwise::Ops op, std::string name) : OpBenchmark() {
+    _opNum = (int)op;
+    _testName = name;
+  }
 
-        ~PairwiseBenchmark(){
-            //
-        }
+  ~PairwiseBenchmark() {
+    //
+  }
 
-        void executeOnce() override {
-            PointersManager manager(LaunchContext::defaultContext(), "PairwiseBM");
+  void executeOnce() override {
+    PointersManager manager(LaunchContext::defaultContext(), "PairwiseBM");
 
-            NativeOpExecutioner::execPairwiseTransform(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), _y.buffer(), _y.shapeInfo(), _y.specialBuffer(), _y.specialShapeInfo(), _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), nullptr);
+    NativeOpExecutioner::execPairwiseTransform(
+        LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(),
+        _x.specialBuffer(), _x.specialShapeInfo(), _y.buffer(), _y.shapeInfo(),
+        _y.specialBuffer(), _y.specialShapeInfo(), _z.buffer(), _z.shapeInfo(),
+        _z.specialBuffer(), _z.specialShapeInfo(), nullptr);
 
-            manager.synchronize();
-        }
+    manager.synchronize();
+  }
 
-        std::string axis() override {
-            return "N/A";
-        }
+  std::string axis() override { return "N/A"; }
 
-        std::string inplace() override {
-            std::string result;
-            result += (_x.platformBuffer() == _y.platformBuffer() ? "x==y" : "x!=y");
-            result += "/";
-            result += (_x.platformBuffer() == _z.platformBuffer() ? "x==z" : "x!=z");
-            result += "/";
-            result += (_y.platformBuffer() == _z.platformBuffer() ? "y==z" : "y!=z");
-            return result;
-        }
+  std::string inplace() override {
+    std::string result;
+    result += (_x.platformBuffer() == _y.platformBuffer() ? "x==y" : "x!=y");
+    result += "/";
+    result += (_x.platformBuffer() == _z.platformBuffer() ? "x==z" : "x!=z");
+    result += "/";
+    result += (_y.platformBuffer() == _z.platformBuffer() ? "y==z" : "y!=z");
+    return result;
+  }
 
-        std::string orders() override {
-            std::string result;
-            result += _x.ordering();
-            result += "/";
-            result += _y.ordering();
-            result += "/";
-            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
-            return result;
-        }
+  std::string orders() override {
+    std::string result;
+    result += _x.ordering();
+    result += "/";
+    result += _y.ordering();
+    result += "/";
+    result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
+    return result;
+  }
 
-        std::string strides() override {
-            std::string result;
-            result += ShapeUtils::strideAsString(_x);
-            result += "/";
-            result += ShapeUtils::strideAsString(_y);
-            result += "/";
-            result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x) : ShapeUtils::strideAsString(_z);
-            return result;
-        }
+  std::string strides() override {
+    std::string result;
+    result += ShapeUtils::strideAsString(_x);
+    result += "/";
+    result += ShapeUtils::strideAsString(_y);
+    result += "/";
+    result += _z.shapeInfo() == nullptr ? ShapeUtils::strideAsString(_x)
+                                        : ShapeUtils::strideAsString(_z);
+    return result;
+  }
 
-        OpBenchmark* clone() override  {
-            return new PairwiseBenchmark((pairwise::Ops) _opNum, _testName, _x, _y, _z);
-        }
-    };
-}
+  OpBenchmark *clone() override {
+    return new PairwiseBenchmark((pairwise::Ops)_opNum, _testName, _x, _y, _z);
+  }
+};
+}  // namespace sd
 
-#endif //SD_SCALARBENCHMARK_H
+#endif  // SD_SCALARBENCHMARK_H

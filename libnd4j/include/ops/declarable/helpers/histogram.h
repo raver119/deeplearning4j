@@ -24,11 +24,12 @@
 #include <array/NDArray.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void histogramHelper(sd::LaunchContext *context, NDArray &input, NDArray &output);
-        }
-    }
+namespace ops {
+namespace helpers {
+void histogramHelper(sd::LaunchContext *context, NDArray &input,
+                     NDArray &output);
 }
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_HISTOGRAM_H
+#endif  // SD_HISTOGRAM_H

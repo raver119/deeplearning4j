@@ -21,38 +21,41 @@
 #ifndef SD_MEMORYTRACKER_H
 #define SD_MEMORYTRACKER_H
 
-#include <map>
-#include <string>
-#include <system/pointercast.h>
-#include <mutex>
-#include "AllocationEntry.h"
 #include <system/dll.h>
+#include <system/pointercast.h>
+
+#include <map>
+#include <mutex>
+#include <string>
+
+#include "AllocationEntry.h"
 
 namespace sd {
-    namespace memory {
-        /**
-         * This class is used for tracking memory allocation wrt their allocation points in code
-         */
-        class SD_EXPORT MemoryTracker {
-        private:
-            static MemoryTracker* _INSTANCE;
-            std::map<Nd4jLong, AllocationEntry> _allocations;
-            std::map<Nd4jLong, AllocationEntry> _released;
-            std::mutex _locker;
+namespace memory {
+/**
+ * This class is used for tracking memory allocation wrt their allocation points
+ * in code
+ */
+class SD_EXPORT MemoryTracker {
+ private:
+  static MemoryTracker* _INSTANCE;
+  std::map<Nd4jLong, AllocationEntry> _allocations;
+  std::map<Nd4jLong, AllocationEntry> _released;
+  std::mutex _locker;
 
-            MemoryTracker();
-            ~MemoryTracker() = default;
-        public:
-            static MemoryTracker* getInstance();
+  MemoryTracker();
+  ~MemoryTracker() = default;
 
-            void countIn(MemoryType type, Nd4jPointer ptr, Nd4jLong numBytes);
-            void countOut(Nd4jPointer ptr);
+ public:
+  static MemoryTracker* getInstance();
 
-            void summarize();
-            void reset();
-        };
-    }
-}
+  void countIn(MemoryType type, Nd4jPointer ptr, Nd4jLong numBytes);
+  void countOut(Nd4jPointer ptr);
 
+  void summarize();
+  void reset();
+};
+}  // namespace memory
+}  // namespace sd
 
-#endif //SD_MEMORYTRACKER_H
+#endif  // SD_MEMORYTRACKER_H

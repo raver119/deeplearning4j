@@ -21,18 +21,16 @@
 #ifndef LIBND4J_LOGICENTER_H
 #define LIBND4J_LOGICENTER_H
 
-#include <system/pointercast.h>
 #include <graph/Graph.h>
+#include <system/pointercast.h>
 
 namespace sd {
-    namespace graph {
-        class LogicEnter {
-        public:
-            static Nd4jStatus processNode(Graph* graph, Node* node);
-        };
-    }
-}
+namespace graph {
+class LogicEnter {
+ public:
+  static Nd4jStatus processNode(Graph* graph, Node* node);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-
-#endif //LIBND4J_LOGICEXIT_H
+#endif  // LIBND4J_LOGICEXIT_H

@@ -22,7 +22,8 @@
 #include "../indexreduce.hpp"
 
 namespace functions {
-    namespace indexreduce {
-        BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT IndexReduce, , LIBND4J_TYPES_1, (sd::DataType::INT64, Nd4jLong));
-    }
+namespace indexreduce {
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT IndexReduce, , LIBND4J_TYPES_1,
+                      (sd::DataType::INT64, Nd4jLong));
 }
+}  // namespace functions

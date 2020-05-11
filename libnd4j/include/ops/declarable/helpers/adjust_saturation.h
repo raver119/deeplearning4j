@@ -19,25 +19,24 @@
 // @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
-#include <system/op_boilerplate.h>
-#include <math/templatemath.h>
 #include <array/NDArray.h>
+#include <math/templatemath.h>
+#include <system/op_boilerplate.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
-    void adjustSaturation(sd::LaunchContext* context, const NDArray *input, const NDArray* factorScalarArr, NDArray *output, const int dimC);
+void adjustSaturation(sd::LaunchContext* context, const NDArray* input,
+                      const NDArray* factorScalarArr, NDArray* output,
+                      const int dimC);
 
 /*
     template <typename T>
-    static FORCEINLINE _CUDA_HD void rgb_to_hsv(T r, T g, T b, T* h, T* s, T* v) {
-        T vv = sd::math::nd4j_max<T>(r, sd::math::nd4j_max<T>(g, b));
-        T range = vv - sd::math::nd4j_min<T>(r, sd::math::nd4j_min<T>(g, b));
-        if (vv > 0) {
-            *s = range / vv;
-        } else {
-            *s = 0;
+    static FORCEINLINE _CUDA_HD void rgb_to_hsv(T r, T g, T b, T* h, T* s, T* v)
+   { T vv = sd::math::nd4j_max<T>(r, sd::math::nd4j_max<T>(g, b)); T range = vv
+   - sd::math::nd4j_min<T>(r, sd::math::nd4j_min<T>(g, b)); if (vv > 0) { *s =
+   range / vv; } else { *s = 0;
         }
         T norm = 1.0f / (6.0f * range);
         T hh;
@@ -59,15 +58,9 @@ namespace helpers {
     }
 
     template <typename T>
-    static FORCEINLINE _CUDA_HD void hsv_to_rgb(T h, T s, T v, T* r, T* g, T* b) {
-        T c = s * v;
-        T m = v - c;
-        T dh = h * 6;
-        T rr, gg, bb;
-        int h_category = static_cast<int>(dh);
-        T fmodu = dh;
-        while (fmodu <= (T) 0)
-            fmodu += (T) 2.0f;
+    static FORCEINLINE _CUDA_HD void hsv_to_rgb(T h, T s, T v, T* r, T* g, T* b)
+   { T c = s * v; T m = v - c; T dh = h * 6; T rr, gg, bb; int h_category =
+   static_cast<int>(dh); T fmodu = dh; while (fmodu <= (T) 0) fmodu += (T) 2.0f;
 
         while (fmodu >= (T) 2.0f)
             fmodu -= (T) 2.0f;
@@ -116,6 +109,6 @@ namespace helpers {
     }
 */
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

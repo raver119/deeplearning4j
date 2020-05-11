@@ -24,22 +24,23 @@
 #include <ops/declarable/LegacyOp.h>
 
 namespace sd {
-    namespace ops {
-        /**
-        *   This class provides wrapper for broadcast operations. 
-        */
-        class SD_EXPORT LegacyBroadcastBoolOp : public LegacyOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override ;
-        public:
-            LegacyBroadcastBoolOp();
-            LegacyBroadcastBoolOp(int opNum);
+namespace ops {
+/**
+ *   This class provides wrapper for broadcast operations.
+ */
+class SD_EXPORT LegacyBroadcastBoolOp : public LegacyOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
-            LegacyOp* clone() override;
-        };
-    }
-}
+ public:
+  LegacyBroadcastBoolOp();
+  LegacyBroadcastBoolOp(int opNum);
 
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+  LegacyOp* clone() override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_LEGACYBROADCASTOP_H
+#endif  // LIBND4J_LEGACYBROADCASTOP_H

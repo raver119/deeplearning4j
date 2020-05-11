@@ -18,40 +18,44 @@
 // @author raver119@gmail.com
 //
 
-#include "testlayers.h"
-#include <ops/declarable/CustomOperations.h>
+#include <array/ManagedDataBuffer.h>
 #include <array/NDArray.h>
 #include <legacy/NativeOps.h>
+#include <ops/declarable/CustomOperations.h>
+
 #include <fstream>
-#include <array/ManagedDataBuffer.h>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::graph;
 
 class ManagedDataBufferTests : public testing::Test {
-public:
-    ManagedDataBufferTests() {
-        ///
-    }
+ public:
+  ManagedDataBufferTests() {
+    ///
+  }
 };
 
 TEST_F(ManagedDataBufferTests, basic_constructor_test_1) {
-    GraphMemoryManager mgr;
-    auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 0, DataType::FLOAT32, memory::MemoryZone::HOT);
+  GraphMemoryManager mgr;
+  auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 0, DataType::FLOAT32,
+                                                 memory::MemoryZone::HOT);
 
-    NDArray array(mdb, 'c', {0});
+  NDArray array(mdb, 'c', {0});
 }
 
 TEST_F(ManagedDataBufferTests, basic_constructor_test_2) {
-    auto exp = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+  auto exp = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
 
-    GraphMemoryManager mgr;
-    auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 20, DataType::FLOAT32, memory::MemoryZone::HOT);
+  GraphMemoryManager mgr;
+  auto mdb = std::make_shared<ManagedDataBuffer>(mgr, 20, DataType::FLOAT32,
+                                                 memory::MemoryZone::HOT);
 
-    ASSERT_NE(nullptr, mdb->platform());
+  ASSERT_NE(nullptr, mdb->platform());
 
-    NDArray array(mdb, 'c', {5});
-    array.assign(1.0f);
+  NDArray array(mdb, 'c', {5});
+  array.assign(1.0f);
 
-    ASSERT_EQ(exp, array);
+  ASSERT_EQ(exp, array);
 }

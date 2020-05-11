@@ -21,135 +21,142 @@
 #ifndef LIBND4J_OPREGISTRATOR_H
 #define LIBND4J_OPREGISTRATOR_H
 
-#include <system/pointercast.h>
-#include <vector>
-#include <unordered_map>
-#include <mutex>
+#include <execution/Engine.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <ops/declarable/PlatformHelper.h>
-#include <execution/Engine.h>
+#include <system/pointercast.h>
+
+#include <mutex>
+#include <unordered_map>
+#include <vector>
 
 // handlers part
-#include <cstdlib>
 #include <csignal>
+#include <cstdlib>
 
 #ifndef __JAVACPP_HACK__
 
 namespace std {
 
-    template <>
-    class hash<std::pair<Nd4jLong, samediff::Engine>> {
-    public:
-        size_t operator()(const std::pair<Nd4jLong, samediff::Engine>& k) const;
-    };
-
-    template <>
-    class hash<std::pair<std::string, samediff::Engine>> {
-    public:
-        size_t operator()(const std::pair<std::string, samediff::Engine>& k) const;
-    };
+template <>
+class hash<std::pair<Nd4jLong, samediff::Engine>> {
+ public:
+  size_t operator()(const std::pair<Nd4jLong, samediff::Engine>& k) const;
 };
 
-#endif
+template <>
+class hash<std::pair<std::string, samediff::Engine>> {
+ public:
+  size_t operator()(const std::pair<std::string, samediff::Engine>& k) const;
+};
+};  // namespace std
 
+#endif
 
 namespace sd {
-    namespace ops {
-        /**
-        *   This class provides runtime ops lookup, based on opName or opHash.
-        *   To build lookup directory we use *_OP_IMPL macro, which puts static structs at compile time in .cpp files,
-        *   so once binary is executed, static objects are initialized automatically, and we get list of all ops
-        *   available at runtime via this singleton.
-        *
-        */
-        class SD_EXPORT OpRegistrator {
-        private:
-            static OpRegistrator* _INSTANCE;
-            OpRegistrator() {
-                nd4j_debug("OpRegistrator started\n","");
+namespace ops {
+/**
+ *   This class provides runtime ops lookup, based on opName or opHash.
+ *   To build lookup directory we use *_OP_IMPL macro, which puts static structs
+ * at compile time in .cpp files, so once binary is executed, static objects are
+ * initialized automatically, and we get list of all ops available at runtime
+ * via this singleton.
+ *
+ */
+class SD_EXPORT OpRegistrator {
+ private:
+  static OpRegistrator* _INSTANCE;
+  OpRegistrator() {
+    nd4j_debug("OpRegistrator started\n", "");
 
-                /*
+    /*
 #ifndef _RELEASE
-                std::signal(SIGSEGV, &OpRegistrator::sigSegVHandler);
-                std::signal(SIGINT, &OpRegistrator::sigIntHandler);
-                std::signal(SIGABRT, &OpRegistrator::sigIntHandler);
-                std::signal(SIGFPE, &OpRegistrator::sigIntHandler);
-                std::signal(SIGILL, &OpRegistrator::sigIntHandler);
-                std::signal(SIGTERM, &OpRegistrator::sigIntHandler);
-                atexit(&OpRegistrator::exitHandler);
+    std::signal(SIGSEGV, &OpRegistrator::sigSegVHandler);
+    std::signal(SIGINT, &OpRegistrator::sigIntHandler);
+    std::signal(SIGABRT, &OpRegistrator::sigIntHandler);
+    std::signal(SIGFPE, &OpRegistrator::sigIntHandler);
+    std::signal(SIGILL, &OpRegistrator::sigIntHandler);
+    std::signal(SIGTERM, &OpRegistrator::sigIntHandler);
+    atexit(&OpRegistrator::exitHandler);
 #endif
-                 */
-            };
+     */
+  };
 
-            MAP_IMPL<Nd4jLong, std::string> _msvc;
+  MAP_IMPL<Nd4jLong, std::string> _msvc;
 
-            // pointers to our operations
-            MAP_IMPL<Nd4jLong, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesLD;
-            MAP_IMPL<std::string, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesD;
+  // pointers to our operations
+  MAP_IMPL<Nd4jLong, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesLD;
+  MAP_IMPL<std::string, std::shared_ptr<sd::ops::DeclarableOp>> _declarablesD;
 
-            // pointers to platform-specific helpers
-            MAP_IMPL<std::pair<Nd4jLong, samediff::Engine>, sd::ops::platforms::PlatformHelper*> _helpersLH;
-            MAP_IMPL<std::pair<std::string, samediff::Engine>, sd::ops::platforms::PlatformHelper*> _helpersH;
-            std::vector<sd::ops::platforms::PlatformHelper*> _uniqueH;
+  // pointers to platform-specific helpers
+  MAP_IMPL<std::pair<Nd4jLong, samediff::Engine>,
+           sd::ops::platforms::PlatformHelper*>
+      _helpersLH;
+  MAP_IMPL<std::pair<std::string, samediff::Engine>,
+           sd::ops::platforms::PlatformHelper*>
+      _helpersH;
+  std::vector<sd::ops::platforms::PlatformHelper*> _uniqueH;
 
-            std::mutex _locker;
-            std::string _opsList;
-            bool isInit = false;
-        public:
-            ~OpRegistrator();
+  std::mutex _locker;
+  std::string _opsList;
+  bool isInit = false;
 
-            static OpRegistrator* getInstance();
+ public:
+  ~OpRegistrator();
 
-            static void exitHandler();
-            static void sigIntHandler(int sig);
-            static void sigSegVHandler(int sig);
+  static OpRegistrator* getInstance();
 
-            void updateMSVC(Nd4jLong newHash, std::string& oldName);
+  static void exitHandler();
+  static void sigIntHandler(int sig);
+  static void sigSegVHandler(int sig);
 
-            template <typename T>
-            std::string local_to_string(T value);
-            const char * getAllCustomOperations();
+  void updateMSVC(Nd4jLong newHash, std::string& oldName);
 
-            /**
-            * This method registers operation in our registry, so we can use them later
-            *
-            * @param op
-            */
-            bool registerOperation(const std::string &opName, std::shared_ptr<sd::ops::DeclarableOp> op);
-            bool registerOperation(std::shared_ptr<sd::ops::DeclarableOp> op);
+  template <typename T>
+  std::string local_to_string(T value);
+  const char* getAllCustomOperations();
 
-            void registerHelper(sd::ops::platforms::PlatformHelper* op);
+  /**
+   * This method registers operation in our registry, so we can use them later
+   *
+   * @param op
+   */
+  bool registerOperation(const std::string& opName,
+                         std::shared_ptr<sd::ops::DeclarableOp> op);
+  bool registerOperation(std::shared_ptr<sd::ops::DeclarableOp> op);
 
-            bool hasHelper(Nd4jLong hash, samediff::Engine engine);
+  void registerHelper(sd::ops::platforms::PlatformHelper* op);
 
-            std::shared_ptr<sd::ops::DeclarableOp> getOperation(Nd4jLong hash);
-            std::shared_ptr<sd::ops::DeclarableOp> getOperation(const std::string &name);
+  bool hasHelper(Nd4jLong hash, samediff::Engine engine);
 
-            bool hasOperation(const std::string &opName) const;
-            bool hasOperation(const Nd4jLong opName) const;
+  std::shared_ptr<sd::ops::DeclarableOp> getOperation(Nd4jLong hash);
+  std::shared_ptr<sd::ops::DeclarableOp> getOperation(const std::string& name);
 
-            sd::ops::platforms::PlatformHelper* getPlatformHelper(Nd4jLong hash, samediff::Engine engine);
+  bool hasOperation(const std::string& opName) const;
+  bool hasOperation(const Nd4jLong opName) const;
 
-            std::vector<Nd4jLong> getAllHashes();
+  sd::ops::platforms::PlatformHelper* getPlatformHelper(
+      Nd4jLong hash, samediff::Engine engine);
 
-            int numberOfOperations();
-    };
+  std::vector<Nd4jLong> getAllHashes();
 
+  int numberOfOperations();
+};
 
-        /*
-         *  These structs are used to "register" our ops in OpRegistrator.
-         */
-        template <typename OpName>
-        struct __registrator{
-            __registrator();
-        };
+/*
+ *  These structs are used to "register" our ops in OpRegistrator.
+ */
+template <typename OpName>
+struct __registrator {
+  __registrator();
+};
 
-        template <typename OpName>
-        struct __registratorSynonym {
-            __registratorSynonym(const char *name, const char *oname);
-        };
+template <typename OpName>
+struct __registratorSynonym {
+  __registratorSynonym(const char* name, const char* oname);
+};
 
-    }
-}
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_OPREGISTRATOR_H
+#endif  // LIBND4J_OPREGISTRATOR_H

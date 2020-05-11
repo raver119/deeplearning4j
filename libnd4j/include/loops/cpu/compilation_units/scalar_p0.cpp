@@ -21,7 +21,8 @@
 #include "../scalar.hpp"
 
 namespace functions {
-    namespace scalar {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT ScalarTransform, , PAIRWISE_TYPES_0);
-    }
+namespace scalar {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT ScalarTransform, ,
+                        PAIRWISE_TYPES_0);
 }
+}  // namespace functions

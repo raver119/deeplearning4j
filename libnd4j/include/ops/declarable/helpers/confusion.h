@@ -19,16 +19,17 @@
 //
 #ifndef __CONFUSION_H_HELPERS__
 #define __CONFUSION_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void confusionFunctor(sd::LaunchContext * context, NDArray* labels, NDArray* predictions, NDArray* weights, NDArray* output);
+void confusionFunctor(sd::LaunchContext* context, NDArray* labels,
+                      NDArray* predictions, NDArray* weights, NDArray* output);
 
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

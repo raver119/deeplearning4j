@@ -21,7 +21,8 @@
 #include "../../pairwise.chpp"
 
 namespace functions {
-    namespace pairwise_transforms {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT PairWiseTransform, , PAIRWISE_TYPES_5);
-    }
+namespace pairwise_transforms {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT PairWiseTransform, ,
+                        PAIRWISE_TYPES_5);
 }
+}  // namespace functions

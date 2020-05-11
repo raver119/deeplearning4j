@@ -21,22 +21,31 @@
 #ifndef LIBND4J_LOGGER_H
 #define LIBND4J_LOGGER_H
 
-#include <vector>
-#include <cstdarg>
-#include <system/Environment.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <system/Environment.h>
 #include <system/dll.h>
 #include <system/op_boilerplate.h>
 #include <system/pointercast.h>
 
+#include <cstdarg>
+#include <vector>
+
 #ifndef __CUDA_ARCH__
 
-#define nd4j_debug(FORMAT, ...) if (sd::Environment::getInstance()->isDebug() && sd::Environment::getInstance()->isVerbose()) sd::Logger::info(FORMAT, __VA_ARGS__);
-#define nd4j_logger(FORMAT, ...) if (sd::Environment::getInstance()->isDebug() && sd::Environment::getInstance()->isVerbose()) sd::Logger::info(FORMAT, __VA_ARGS__);
-#define nd4j_verbose(FORMAT, ...) if (sd::Environment::getInstance()->isVerbose()) sd::Logger::info(FORMAT, __VA_ARGS__);
+#define nd4j_debug(FORMAT, ...)                    \
+  if (sd::Environment::getInstance()->isDebug() && \
+      sd::Environment::getInstance()->isVerbose()) \
+    sd::Logger::info(FORMAT, __VA_ARGS__);
+#define nd4j_logger(FORMAT, ...)                   \
+  if (sd::Environment::getInstance()->isDebug() && \
+      sd::Environment::getInstance()->isVerbose()) \
+    sd::Logger::info(FORMAT, __VA_ARGS__);
+#define nd4j_verbose(FORMAT, ...)                  \
+  if (sd::Environment::getInstance()->isVerbose()) \
+    sd::Logger::info(FORMAT, __VA_ARGS__);
 #define nd4j_printf(FORMAT, ...) sd::Logger::info(FORMAT, __VA_ARGS__);
-#define nd4j_printv(FORMAT, VECTOR)     sd::Logger::printv(FORMAT, VECTOR);
+#define nd4j_printv(FORMAT, VECTOR) sd::Logger::printv(FORMAT, VECTOR);
 
 #else
 
@@ -49,17 +58,15 @@
 #endif
 
 namespace sd {
-    class SD_EXPORT Logger {
+class SD_EXPORT Logger {
+ public:
+  static void _CUDA_H info(const char *format, ...);
 
-    public:
+  static void _CUDA_H printv(const char *format, const std::vector<int> &vec);
+  static void _CUDA_H printv(const char *format,
+                             const std::vector<Nd4jLong> &vec);
+};
 
-        static void _CUDA_H info(const char *format, ...);
+}  // namespace sd
 
-        static void _CUDA_H printv(const char *format, const std::vector<int>& vec);
-        static void _CUDA_H printv(const char *format, const std::vector<Nd4jLong>& vec);
-    };
-
-}
-
-
-#endif //LIBND4J_LOGGER_H
+#endif  // LIBND4J_LOGGER_H

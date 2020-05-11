@@ -19,17 +19,17 @@
 //
 #ifndef __MATRIX_BAND_H_HELPERS__
 #define __MATRIX_BAND_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void matrixBandPart(sd::LaunchContext * context, NDArray* input, NDArray* output, Nd4jLong lowerBand, Nd4jLong upperBand);
+void matrixBandPart(sd::LaunchContext* context, NDArray* input, NDArray* output,
+                    Nd4jLong lowerBand, Nd4jLong upperBand);
 
-
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

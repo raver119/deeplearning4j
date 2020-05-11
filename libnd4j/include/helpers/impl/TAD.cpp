@@ -18,10 +18,7 @@
 // @author Adam Gibson
 //
 
-
 #include <helpers/TAD.h>
 #include <system/pointercast.h>
 
-namespace shape {
-
-}
+namespace shape {}

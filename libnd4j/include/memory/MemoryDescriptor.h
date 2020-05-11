@@ -23,35 +23,36 @@
 
 #include <memory/MemoryZone.h>
 #include <system/dll.h>
+
 #include <cstdint>
 
 namespace sd {
-    namespace memory {
-        class SD_EXPORT MemoryDescriptor {
-        private:
-            void* _ptr;
-            MemoryZone _zone;
-            uint64_t _bytes;
-        public:
-            MemoryDescriptor(void *ptr, MemoryZone zone, uint64_t bytes);
-            ~MemoryDescriptor() = default;
+namespace memory {
+class SD_EXPORT MemoryDescriptor {
+ private:
+  void* _ptr;
+  MemoryZone _zone;
+  uint64_t _bytes;
 
-            MemoryDescriptor(const MemoryDescriptor& other) noexcept;
+ public:
+  MemoryDescriptor(void* ptr, MemoryZone zone, uint64_t bytes);
+  ~MemoryDescriptor() = default;
 
-            MemoryDescriptor& operator=(const MemoryDescriptor& other) noexcept;
+  MemoryDescriptor(const MemoryDescriptor& other) noexcept;
 
-            // move constructor
-            MemoryDescriptor(MemoryDescriptor&& other) noexcept;
+  MemoryDescriptor& operator=(const MemoryDescriptor& other) noexcept;
 
-            // move assignment operator
-            MemoryDescriptor& operator=(MemoryDescriptor&& other) noexcept;
+  // move constructor
+  MemoryDescriptor(MemoryDescriptor&& other) noexcept;
 
-            void* address() const;
-            MemoryZone zone() const;
-            uint64_t bytes() const;
-        };
-    }
-}
+  // move assignment operator
+  MemoryDescriptor& operator=(MemoryDescriptor&& other) noexcept;
 
+  void* address() const;
+  MemoryZone zone() const;
+  uint64_t bytes() const;
+};
+}  // namespace memory
+}  // namespace sd
 
-#endif //SD_MEMORYDESCRIPTOR_H
+#endif  // SD_MEMORYDESCRIPTOR_H

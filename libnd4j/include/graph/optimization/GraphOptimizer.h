@@ -24,18 +24,17 @@
 #include <graph/Graph.h>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT GraphOptimizer {
-        public:
-            /**
-             * This method optimizes given Graph and returns independent cloned Graph
-             * @param graph
-             * @return
-             */
-            static Graph* optimize(const Graph &graph);
-        };
-    }
-}
+namespace graph {
+class SD_EXPORT GraphOptimizer {
+ public:
+  /**
+   * This method optimizes given Graph and returns independent cloned Graph
+   * @param graph
+   * @return
+   */
+  static Graph* optimize(const Graph& graph);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //SD_GRAPHOPTIMIZER_H
+#endif  // SD_GRAPHOPTIMIZER_H

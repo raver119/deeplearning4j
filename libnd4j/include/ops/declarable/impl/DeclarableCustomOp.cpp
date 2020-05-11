@@ -22,9 +22,13 @@
 #include <ops/declarable/DeclarableOp.h>
 
 namespace sd {
-    namespace ops {
-        DeclarableCustomOp::DeclarableCustomOp(int numInputs, int numOutputs, const char *opName, bool allowsInplace, int tArgs, int iArgs) : sd::ops::DeclarableOp(numInputs, numOutputs, opName, allowsInplace, tArgs, iArgs) {
-            //
-        }
-    }
+namespace ops {
+DeclarableCustomOp::DeclarableCustomOp(int numInputs, int numOutputs,
+                                       const char *opName, bool allowsInplace,
+                                       int tArgs, int iArgs)
+    : sd::ops::DeclarableOp(numInputs, numOutputs, opName, allowsInplace, tArgs,
+                            iArgs) {
+  //
 }
+}  // namespace ops
+}  // namespace sd

@@ -18,201 +18,197 @@
 // Created by Yurii Shyrma on 18.12.2017
 //
 
-#include <helpers/householder.h>
 #include <array/NDArrayFactory.h>
+#include <helpers/householder.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 NDArray Householder<T>::evalHHmatrix(const NDArray& x) {
+  // input validation
+  if (!x.isVector() && !x.isScalar())
+    throw std::runtime_error(
+        "ops::helpers::Householder::evalHHmatrix method: input array must be "
+        "vector or scalar!");
 
-	// input validation
-	if(!x.isVector() && !x.isScalar())
-		throw std::runtime_error("ops::helpers::Householder::evalHHmatrix method: input array must be vector or scalar!");
+  auto w =
+      NDArrayFactory::create(x.ordering(), {(int)x.lengthOf(), 1}, x.dataType(),
+                             x.getContext());  // column-vector
+  auto wT =
+      NDArrayFactory::create(x.ordering(), {1, (int)x.lengthOf()}, x.dataType(),
+                             x.getContext());  // row-vector (transposed w)
 
-	auto w = NDArrayFactory::create(x.ordering(),  {(int)x.lengthOf(), 1}, x.dataType(), x.getContext());							// column-vector
-	auto wT = NDArrayFactory::create(x.ordering(), {1, (int)x.lengthOf()}, x.dataType(), x.getContext());							// row-vector (transposed w)
+  T coeff;
+  T normX = x.reduceNumber(reduce::Norm2).e<T>(0);
 
-	T coeff;
-	T normX = x.reduceNumber(reduce::Norm2).e<T>(0);
+  if (normX * normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() ||
+      x.lengthOf() == 1) {
+    normX = x.e<T>(0);
+    coeff = 0.f;
+    w = 0.f;
 
-	if(normX*normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+  } else {
+    if (x.e<T>(0) >= (T)0.f)
+      normX = -normX;  // choose opposite sign to lessen roundoff error
 
-		normX = x.e<T>(0);
-		coeff = 0.f;
-		w = 0.f;
+    T u0 = x.e<T>(0) - normX;
+    coeff = -u0 / normX;
+    w.assign(x / u0);
+  }
 
-	}
-	else {
+  w.p(Nd4jLong(0), 1.f);
+  wT.assign(&w);
 
-		if(x.e<T>(0) >= (T)0.f)
-			normX = -normX;									// choose opposite sign to lessen roundoff error
+  NDArray identity = NDArrayFactory::create(
+      x.ordering(), {(int)x.lengthOf(), (int)x.lengthOf()}, x.dataType(),
+      x.getContext());
+  identity.setIdentity();  // identity matrix
 
-		T u0 = x.e<T>(0) - normX;
-		coeff = -u0 / normX;
-		w.assign(x / u0);
-	}
-
-	w.p(Nd4jLong(0), 1.f);
-	wT.assign(&w);
-
-	NDArray identity = NDArrayFactory::create(x.ordering(), {(int)x.lengthOf(), (int)x.lengthOf()}, x.dataType(), x.getContext());
-	identity.setIdentity();																			// identity matrix
-
-	return identity - mmul(w, wT) * coeff;
+  return identity - mmul(w, wT) * coeff;
 }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff, T& normX) {
+void Householder<T>::evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
+                                      T& normX) {
+  // input validation
+  if (!x.isVector() && !x.isScalar())
+    throw std::runtime_error(
+        "ops::helpers::Householder::evalHHmatrixData method: input array must "
+        "be vector or scalar!");
 
-	// input validation
-	if(!x.isVector() && !x.isScalar())
-		throw std::runtime_error("ops::helpers::Householder::evalHHmatrixData method: input array must be vector or scalar!");
+  if (!x.isScalar() && x.lengthOf() != tail.lengthOf() + 1)
+    throw std::runtime_error(
+        "ops::helpers::Householder::evalHHmatrixData method: input tail vector "
+        "must have length less than unity compared to input x vector!");
 
-	if(!x.isScalar() && x.lengthOf() != tail.lengthOf() + 1)
-		throw std::runtime_error("ops::helpers::Householder::evalHHmatrixData method: input tail vector must have length less than unity compared to input x vector!");
+  normX = x.reduceNumber(reduce::Norm2, nullptr).e<T>(0);
 
-	normX = x.reduceNumber(reduce::Norm2, nullptr).e<T>(0);
+  if (normX * normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() ||
+      x.lengthOf() == 1) {
+    normX = x.e<T>(0);
+    coeff = (T)0.f;
+    tail = (T)0.f;
+  } else {
+    if (x.e<T>(0) >= (T)0.f)
+      normX = -normX;  // choose opposite sign to lessen roundoff error
 
-	if(normX*normX - x.e<T>(0) * x.e<T>(0) <= DataTypeUtils::min<T>() || x.lengthOf() == 1) {
+    T u0 = x.e<T>(0) - normX;
+    coeff = -u0 / normX;
 
-		normX = x.e<T>(0);
-		coeff = (T)0.f;
-		tail = (T)0.f;
-	}
-	else {
-
-		if(x.e<T>(0) >= (T)0.f)
-			normX = -normX;									// choose opposite sign to lessen roundoff error
-
-		T u0 = x.e<T>(0) - normX;
-		coeff = -u0 / normX;
-
-		if(x.isRowVector())
-			tail.assign(static_cast<const NDArray&>(x({0,0, 1,-1})) / u0);
-		else
-			tail.assign(static_cast<const NDArray&>(x({1,-1, 0,0,})) / u0);
-	}
+    if (x.isRowVector())
+      tail.assign(static_cast<const NDArray&>(x({0, 0, 1, -1})) / u0);
+    else
+      tail.assign(static_cast<const NDArray&>(x({
+                      1,
+                      -1,
+                      0,
+                      0,
+                  })) /
+                  u0);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 void Householder<T>::evalHHmatrixDataI(const NDArray& x, T& coeff, T& normX) {
+  int rows = (int)x.lengthOf() - 1;
+  int num = 1;
 
-	int rows = (int)x.lengthOf()-1;
-	int num = 1;
+  if (rows == 0) {
+    rows = 1;
+    num = 0;
+  }
 
-	if(rows == 0) {
-		rows = 1;
-		num = 0;
-	}
+  auto tail = NDArrayFactory::create(x.ordering(), {rows, 1}, x.dataType(),
+                                     x.getContext());
+  evalHHmatrixData(x, tail, coeff, normX);
 
-	auto tail = NDArrayFactory::create(x.ordering(), {rows, 1}, x.dataType(), x.getContext());
-	evalHHmatrixData(x, tail, coeff, normX);
-
-	if(x.isRowVector()) {
-		auto temp = x({0,0,  num, x.sizeAt(1)}, true);
-		temp.assign(tail);
-	}
-	else {
-		auto temp = x({num,x.sizeAt(0), 0,0}, true);
-		temp.assign(tail);
-	}
+  if (x.isRowVector()) {
+    auto temp = x({0, 0, num, x.sizeAt(1)}, true);
+    temp.assign(tail);
+  } else {
+    auto temp = x({num, x.sizeAt(0), 0, 0}, true);
+    temp.assign(tail);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail, const T coeff) {
+void Householder<T>::mulLeft(NDArray& matrix, const NDArray& tail,
+                             const T coeff) {
+  // if(matrix.rankOf() != 2)
+  // 	throw "ops::helpers::Householder::mulLeft method: input array must be 2D
+  // matrix !";
 
-	// if(matrix.rankOf() != 2)
-	// 	throw "ops::helpers::Householder::mulLeft method: input array must be 2D matrix !";
+  if (matrix.sizeAt(0) == 1) {
+    matrix *= (T)1.f - coeff;
+  } else if (coeff != (T)0.f) {
+    auto bottomPart = matrix({1, matrix.sizeAt(0), 0, 0}, true);
+    auto bottomPartCopy = bottomPart.dup();
 
-	if(matrix.sizeAt(0) == 1) {
-        matrix *= (T) 1.f - coeff;
+    if (tail.isColumnVector()) {
+      auto column = tail;
+      auto row = tail.transpose();
+      auto resultingRow = mmul(row, bottomPartCopy);
+      auto fistRow = matrix({0, 1, 0, 0}, true);
+      resultingRow += fistRow;
+      fistRow -= resultingRow * coeff;
+      bottomPart -= mmul(column, resultingRow) * coeff;
+    } else {
+      auto row = tail;
+      auto column = tail.transpose();
+      auto resultingRow = mmul(row, bottomPartCopy);
+      auto fistRow = matrix({0, 1, 0, 0}, true);
+      resultingRow += fistRow;
+      fistRow -= resultingRow * coeff;
+      bottomPart -= mmul(column, resultingRow) * coeff;
     }
-    else if(coeff != (T)0.f) {
-
-  		auto bottomPart = matrix({1,matrix.sizeAt(0), 0,0}, true);
-		auto bottomPartCopy = bottomPart.dup();
-
-		if(tail.isColumnVector()) {
-
-			auto column = tail;
-			auto row = tail.transpose();
-    		auto resultingRow = mmul(row, bottomPartCopy);
-    		auto fistRow = matrix({0,1, 0,0}, true);
-    		resultingRow += fistRow;
-    		fistRow -= resultingRow * coeff;
-    		bottomPart -= mmul(column, resultingRow) * coeff;
-		}
-		else {
-
-			auto row = tail;
-			auto column = tail.transpose();
-    		auto resultingRow = mmul(row, bottomPartCopy);
-    		auto fistRow = matrix({0,1, 0,0}, true);
-    		resultingRow += fistRow;
-    		fistRow -= resultingRow * coeff;
-    		bottomPart -= mmul(column, resultingRow) * coeff;
-		}
-	}
+  }
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail, const T coeff) {
+void Householder<T>::mulRight(NDArray& matrix, const NDArray& tail,
+                              const T coeff) {
+  // if(matrix.rankOf() != 2)
+  // 	throw "ops::helpers::Householder::mulRight method: input array must be
+  // 2D matrix !";
 
-	// if(matrix.rankOf() != 2)
-	// 	throw "ops::helpers::Householder::mulRight method: input array must be 2D matrix !";
+  if (matrix.sizeAt(1) == 1)
+    matrix *= (T)1.f - coeff;
 
-	if(matrix.sizeAt(1) == 1)
-    	matrix *= (T)1.f - coeff;
+  else if (coeff != (T)0.f) {
+    auto rightPart = matrix({0, 0, 1, matrix.sizeAt(1)}, true);
+    auto rightPartCopy = rightPart.dup();
+    auto fistCol = matrix({0, 0, 0, 1}, true);
 
-  	else if(coeff != (T)0.f) {
-
-  		auto rightPart = matrix({0,0, 1,matrix.sizeAt(1)}, true);
-		auto rightPartCopy = rightPart.dup();
-		auto fistCol = matrix({0,0, 0,1}, true);
-
-  		if(tail.isColumnVector()) {
-
-			auto column = tail;
-			auto row = tail.transpose();
-    		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += fistCol;
-    		fistCol -= resultingCol * coeff;
-    		rightPart -= mmul(resultingCol, row) * coeff;
-		}
-		else {
-
-			auto row = tail;
-			auto column = tail.transpose();
-    		auto resultingCol = mmul(rightPartCopy, column);
-    		resultingCol += fistCol;
-    		fistCol -= resultingCol * coeff;
-    		rightPart -= mmul(resultingCol, row) * coeff;
-		}
-	}
+    if (tail.isColumnVector()) {
+      auto column = tail;
+      auto row = tail.transpose();
+      auto resultingCol = mmul(rightPartCopy, column);
+      resultingCol += fistCol;
+      fistCol -= resultingCol * coeff;
+      rightPart -= mmul(resultingCol, row) * coeff;
+    } else {
+      auto row = tail;
+      auto column = tail.transpose();
+      auto resultingCol = mmul(rightPartCopy, column);
+      resultingCol += fistCol;
+      fistCol -= resultingCol * coeff;
+      rightPart -= mmul(resultingCol, row) * coeff;
+    }
+  }
 }
-
 
 template class SD_EXPORT Householder<float>;
 template class SD_EXPORT Householder<float16>;
 template class SD_EXPORT Householder<bfloat16>;
 template class SD_EXPORT Householder<double>;
 
-
-
-
-
-
-
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

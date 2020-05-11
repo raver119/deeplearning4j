@@ -23,18 +23,21 @@
 
 #include <ops/declarable/helpers/helpers.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
+void rnnCell(sd::LaunchContext* context, const NDArray* xt, const NDArray* Wx,
+             const NDArray* Wh, const NDArray* b, const NDArray* ht_1,
+             NDArray* ht);
 
-	void rnnCell(sd::LaunchContext * context, const NDArray* xt, const NDArray* Wx, const NDArray* Wh, const NDArray* b, const NDArray* ht_1, NDArray* ht);
+void rnnTimeLoop(sd::LaunchContext* context, const NDArray* x,
+                 const NDArray* Wx, const NDArray* Wh, const NDArray* b,
+                 const NDArray* h0, const NDArray* maxTimeStep, NDArray* h,
+                 NDArray* hFinal);
 
-	void rnnTimeLoop(sd::LaunchContext * context, const NDArray* x, const NDArray* Wx, const NDArray* Wh, const NDArray* b, const NDArray* h0, const NDArray* maxTimeStep, NDArray* h, NDArray* hFinal);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-}
-}
-}
-
-
-#endif //LIBND4J_RNN_H
+#endif  // LIBND4J_RNN_H

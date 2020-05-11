@@ -21,11 +21,12 @@
 #include <ops/declarable/helpers/print_variable.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void print_special(LaunchContext &ctx, const NDArray &array, const std::string &message) {
-                array.printIndexedBuffer(message.c_str());
-            }
-        }
-    }
+namespace ops {
+namespace helpers {
+void print_special(LaunchContext &ctx, const NDArray &array,
+                   const std::string &message) {
+  array.printIndexedBuffer(message.c_str());
 }
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

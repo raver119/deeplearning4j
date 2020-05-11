@@ -22,7 +22,8 @@
 #include "../reduce/reduce_float.hpp"
 
 namespace functions {
-    namespace reduce {
-        BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReduceFloatFunction, , LIBND4J_TYPES, FLOAT_TYPES_0);
-    }
+namespace reduce {
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReduceFloatFunction, ,
+                      LIBND4J_TYPES, FLOAT_TYPES_0);
 }
+}  // namespace functions

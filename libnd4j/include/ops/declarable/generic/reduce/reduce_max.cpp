@@ -20,8 +20,8 @@
 //
 
 #include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/transforms.h>
 #include <ops/declarable/helpers/axis.h>
+#include <ops/declarable/helpers/transforms.h>
 
 namespace sd {
 namespace ops {
@@ -30,62 +30,74 @@ namespace ops {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(reduce_max, 1, 1, false, 0, 0) {
+  auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
 
-    auto input = INPUT_VARIABLE(0);
-    auto output = OUTPUT_VARIABLE(0);
+  std::vector<int> dimensions = block.getIArguments();
 
-    std::vector<int> dimensions = block.getIArguments();
+  if (block.width() > 1) {
+    auto axesVector = INPUT_VARIABLE(1);
+    helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
+  }
 
-    if (block.width() > 1) {
-        auto axesVector = INPUT_VARIABLE(1);
-        helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
-    }
+  REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0,
+               "REDUCE_MAX OP: the number of dimensions to reduce along must "
+               "be <= input array rank, but got %i instead",
+               dimensions.size());
 
-    REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_MAX OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
+  for (const auto& item : dimensions)
+    REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0],
+                 0,
+                 "REDUCE_MAX OP: the input dimension to reduce along must be "
+                 "in range [-%i, %i), but got %i instead !",
+                 input->rankOf(), input->rankOf(), item);
 
-    for(const auto& item : dimensions)
-        REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0], 0, "REDUCE_MAX OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
+  bool keepDims = false;  //: false;
+  if (block.numB() > 0)
+    keepDims = B_ARG(0);
+  else if (block.numT() > 0)
+    keepDims = (bool)T_ARG(0);
 
-    bool keepDims = false;//: false;
-    if (block.numB() > 0)
-        keepDims = B_ARG(0);
-    else if (block.numT() > 0)
-        keepDims = (bool)T_ARG(0);
+  input->reduceAlongDimension(reduce::Max, *output, dimensions, keepDims);
 
-    input->reduceAlongDimension(reduce::Max, *output, dimensions, keepDims);
-
-    return Status::OK();
+  return Status::OK();
 }
 
 DECLARE_SHAPE_FN(reduce_max) {
+  bool keepDims = false;  //: false;
 
-    bool keepDims = false;//: false;
+  if (block.numB() > 0)
+    keepDims = B_ARG(0);
+  else if (block.numT() > 0)
+    keepDims = (bool)T_ARG(0);
 
-    if (block.numB() > 0)
-        keepDims = B_ARG(0);
-    else if (block.numT() > 0)
-        keepDims = (bool)T_ARG(0);
+  auto dimensions = block.getIArguments();
+  if (block.width() > 1) {
+    auto axesVector = INPUT_VARIABLE(1);
+    helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
+  }
 
-    auto dimensions = block.getIArguments();
-    if (block.width() > 1) {
-        auto axesVector = INPUT_VARIABLE(1);
-        helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
-    }
+  REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0,
+               "REDUCE_MAX OP: the number of dimensions to reduce along must "
+               "be <= input array rank, but got %i instead",
+               dimensions.size());
 
-    REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0, "REDUCE_MAX OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
+  for (const auto& item : dimensions)
+    REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0],
+                 0,
+                 "REDUCE_MAX OP: the input dimension to reduce along must be "
+                 "in range [-%i, %i), but got %i instead !",
+                 inputShape->at(0)[0], inputShape->at(0)[0], item);
 
-    for(const auto& item : dimensions)
-        REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0], 0, "REDUCE_MAX OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , inputShape->at(0)[0], inputShape->at(0)[0], item);
+  auto outShapeInfo = ShapeUtils::evalReduceShapeInfo(
+      shape::order(inputShape->at(0)), dimensions, inputShape->at(0), keepDims,
+      false, block.workspace());
 
-    auto outShapeInfo = ShapeUtils::evalReduceShapeInfo(shape::order(inputShape->at(0)), dimensions, inputShape->at(0), keepDims, false, block.workspace());
-
-    return SHAPELIST(outShapeInfo);
+  return SHAPELIST(outShapeInfo);
 }
 
 DECLARE_TYPES(reduce_max) {
-    getOpDescriptor()
-        ->setAllowedInputTypes(sd::DataType::ANY)
-        ->setSameMode(true);
+  getOpDescriptor()->setAllowedInputTypes(sd::DataType::ANY)->setSameMode(true);
 }
 
 #endif
@@ -93,69 +105,81 @@ DECLARE_TYPES(reduce_max) {
 
 //////////////////////////////////////////////////////////////////////////
 CUSTOM_OP_IMPL(reduce_max_bp, 2, 1, false, 0, 0) {
+  auto input = INPUT_VARIABLE(0);
+  auto gradO = INPUT_VARIABLE(1);
+  auto gradI = OUTPUT_VARIABLE(0);
 
-    auto input = INPUT_VARIABLE(0);
-    auto gradO = INPUT_VARIABLE(1);
-    auto gradI = OUTPUT_VARIABLE(0);
+  std::vector<int> dimensions = block.getIArguments();
 
-    std::vector<int> dimensions = block.getIArguments();
+  if (block.width() > 2) {
+    auto axesVector = INPUT_VARIABLE(2);
+    helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
+  }
 
-    if (block.width() > 2) {
-        auto axesVector = INPUT_VARIABLE(2);
-        helpers::adjustAxis(input->rankOf(), axesVector, dimensions);
-    }
+  REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0,
+               "REDUCE_MAX_BP OP: the number of dimensions to reduce along "
+               "must be <= input array rank, but got %i instead",
+               dimensions.size());
 
-    REQUIRE_TRUE(dimensions.size() <= input->rankOf(), 0, "REDUCE_MAX_BP OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
+  for (const auto& item : dimensions)
+    REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0],
+                 0,
+                 "REDUCE_MAX_BP OP: the input dimension to reduce along must "
+                 "be in range [-%i, %i), but got %i instead !",
+                 input->rankOf(), input->rankOf(), item);
 
-    for(const auto& item : dimensions)
-        REQUIRE_TRUE(item >= -input->shapeInfo()[0] && item < input->shapeInfo()[0], 0, "REDUCE_MAX_BP OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
+  // *** calculations *** //
 
-    // *** calculations *** //
+  *gradI = 0;
 
-    *gradI = 0;
+  if (gradO->lengthOf() == 1) {
+    auto indOfMaxElem = input->indexReduceNumber(sd::indexreduce::IndexMax);
+    gradI->p(indOfMaxElem.t<Nd4jLong>(0), gradO->e(0));
+  } else {
+    auto indicesArr =
+        input->applyIndexReduce(sd::indexreduce::IndexMax, dimensions);
+    helpers::scatterSimple(
+        block.launchContext(), 6, *gradI, *gradO, indicesArr,
+        ShapeUtils::evalDimsToExclude(
+            gradI->rankOf(), dimensions));  // 6 corresponds to copy operation
+  }
 
-    if(gradO->lengthOf() == 1) {
-
-        auto indOfMaxElem = input->indexReduceNumber(sd::indexreduce::IndexMax);
-        gradI->p(indOfMaxElem.t<Nd4jLong>(0), gradO->e(0));
-    }
-    else {
-
-        auto indicesArr = input->applyIndexReduce(sd::indexreduce::IndexMax, dimensions);
-        helpers::scatterSimple(block.launchContext(), 6, *gradI, *gradO, indicesArr, ShapeUtils::evalDimsToExclude(gradI->rankOf(), dimensions)); // 6 corresponds to copy operation
-    }
-
-    return Status::OK();
+  return Status::OK();
 }
 
-
 DECLARE_SHAPE_FN(reduce_max_bp) {
+  std::vector<int> dimensions = block.getIArguments();
 
-    std::vector<int> dimensions = block.getIArguments();
+  if (block.width() > 2) {
+    auto axesVector = INPUT_VARIABLE(2);
+    helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
+  }
 
-    if (block.width() > 2) {
-        auto axesVector = INPUT_VARIABLE(2);
-        helpers::adjustAxis(INPUT_VARIABLE(0)->rankOf(), axesVector, dimensions);
-    }
+  REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0,
+               "REDUCE_MAX_BP OP: the number of dimensions to reduce along "
+               "must be <= input array rank, but got %i instead",
+               dimensions.size());
 
-    REQUIRE_TRUE(dimensions.size() <= inputShape->at(0)[0], 0, "REDUCE_MAX_BP OP: the number of dimensions to reduce along must be <= input array rank, but got %i instead" , dimensions.size());
+  for (const auto& item : dimensions)
+    REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0],
+                 0,
+                 "REDUCE_MAX_BP OP: the input dimension to reduce along must "
+                 "be in range [-%i, %i), but got %i instead !",
+                 inputShape->at(0)[0], inputShape->at(0)[0], item);
 
-    for(const auto& item : dimensions)
-        REQUIRE_TRUE(item >= -inputShape->at(0)[0] && item < inputShape->at(0)[0], 0, "REDUCE_MAX_BP OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !", inputShape->at(0)[0], inputShape->at(0)[0], item);
+  Nd4jLong* outShapeInfo;
+  COPY_SHAPE(inputShape->at(0), outShapeInfo);
 
-    Nd4jLong* outShapeInfo;
-    COPY_SHAPE(inputShape->at(0), outShapeInfo);
-
-    return SHAPELIST(CONSTANT(outShapeInfo));
+  return SHAPELIST(CONSTANT(outShapeInfo));
 }
 
 DECLARE_TYPES(reduce_max_bp) {
-    getOpDescriptor()
-        ->setAllowedInputTypes(sd::DataType::ANY)
-        ->setAllowedOutputTypes({ALL_FLOATS});
+  getOpDescriptor()
+      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedOutputTypes({ALL_FLOATS});
 }
 
 #endif
 
-}
-}
+}  // namespace ops
+}  // namespace sd

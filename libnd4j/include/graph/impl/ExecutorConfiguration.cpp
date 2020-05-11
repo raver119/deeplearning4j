@@ -21,30 +21,35 @@
 #include <graph/ExecutorConfiguration.h>
 
 namespace sd {
-    namespace graph {
-        ExecutorConfiguration::ExecutorConfiguration(const sd::graph::FlatConfiguration *conf) {
-            if (conf != nullptr) {
-                _profilingMode = conf->profilingMode();
-                _executionMode = conf->executionMode();
-                _outputMode = conf->outputMode();
-                _timestats = conf->timestats();
-                _footprintForward = conf->footprintForward();
-                _footprintBackward = conf->footprintBackward();
-                _direction = conf->direction();
-            } else {
-                _profilingMode = ProfilingMode_NONE;
-                _executionMode = ExecutionMode_SEQUENTIAL;
-                _outputMode = OutputMode_IMPLICIT;
-                _timestats = false;
-            }
-        };
+namespace graph {
+ExecutorConfiguration::ExecutorConfiguration(
+    const sd::graph::FlatConfiguration *conf) {
+  if (conf != nullptr) {
+    _profilingMode = conf->profilingMode();
+    _executionMode = conf->executionMode();
+    _outputMode = conf->outputMode();
+    _timestats = conf->timestats();
+    _footprintForward = conf->footprintForward();
+    _footprintBackward = conf->footprintBackward();
+    _direction = conf->direction();
+  } else {
+    _profilingMode = ProfilingMode_NONE;
+    _executionMode = ExecutionMode_SEQUENTIAL;
+    _outputMode = OutputMode_IMPLICIT;
+    _timestats = false;
+  }
+};
 
-        ExecutorConfiguration ExecutorConfiguration::clone() const {
-            return ExecutorConfiguration(*this);
-        };
+ExecutorConfiguration ExecutorConfiguration::clone() const {
+  return ExecutorConfiguration(*this);
+};
 
-        flatbuffers::Offset<FlatConfiguration> ExecutorConfiguration::asFlatConfiguration(flatbuffers::FlatBufferBuilder &builder) {
-            return CreateFlatConfiguration(builder, 0, _executionMode, _profilingMode, _outputMode, _timestats, _footprintBackward, _footprintBackward);
-        }
-    }
+flatbuffers::Offset<FlatConfiguration>
+ExecutorConfiguration::asFlatConfiguration(
+    flatbuffers::FlatBufferBuilder &builder) {
+  return CreateFlatConfiguration(builder, 0, _executionMode, _profilingMode,
+                                 _outputMode, _timestats, _footprintBackward,
+                                 _footprintBackward);
 }
+}  // namespace graph
+}  // namespace sd

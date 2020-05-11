@@ -20,7 +20,4 @@
 
 #include <helpers/shape.h>
 
-namespace shape {
-
-}
-
+namespace shape {}

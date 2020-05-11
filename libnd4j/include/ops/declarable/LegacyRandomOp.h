@@ -21,36 +21,42 @@
 #ifndef LIBND4J_LEGACYRANDOMOP_H
 #define LIBND4J_LEGACYRANDOMOP_H
 
-
 #include <helpers/helper_random.h>
 #include <ops/declarable/LegacyOp.h>
 
 namespace sd {
-    namespace ops {
-        /**
-        *   This class provides wrapper for Random operations (i.e. linspace or Uniform)
-        */
-        class SD_EXPORT LegacyRandomOp : public LegacyOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override;
-        public:
-            LegacyRandomOp();
-            LegacyRandomOp(int opNum);
-            ~LegacyRandomOp() = default;
+namespace ops {
+/**
+ *   This class provides wrapper for Random operations (i.e. linspace or
+ * Uniform)
+ */
+class SD_EXPORT LegacyRandomOp : public LegacyOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override;
 
-            template <typename T>
-            Nd4jStatus validateAndExecute_(Context &block);
+ public:
+  LegacyRandomOp();
+  LegacyRandomOp(int opNum);
+  ~LegacyRandomOp() = default;
 
-            sd::ResultSet  execute(sd::graph::RandomGenerator& rng, const std::vector<NDArray*>& inputs, const std::vector<double>& tArgs = {}, const std::vector<int>& iArgs = {}, const std::vector<sd::DataType>& dArgs = {}, bool isInplace = false);
+  template <typename T>
+  Nd4jStatus validateAndExecute_(Context& block);
 
-            Nd4jStatus execute(Context* block) override;
+  sd::ResultSet execute(sd::graph::RandomGenerator& rng,
+                        const std::vector<NDArray*>& inputs,
+                        const std::vector<double>& tArgs = {},
+                        const std::vector<int>& iArgs = {},
+                        const std::vector<sd::DataType>& dArgs = {},
+                        bool isInplace = false);
 
-            Nd4jStatus validateDataTypes(Context& block) override;
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
-            LegacyOp* clone() override;
-        };
-    }
-}
+  Nd4jStatus execute(Context* block) override;
 
+  Nd4jStatus validateDataTypes(Context& block) override;
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+  LegacyOp* clone() override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_LEGACYTRANSFORMOP_H
+#endif  // LIBND4J_LEGACYTRANSFORMOP_H

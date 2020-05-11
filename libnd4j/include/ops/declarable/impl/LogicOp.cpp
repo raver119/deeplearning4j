@@ -21,20 +21,21 @@
 #include "ops/declarable/LogicOp.h"
 
 namespace sd {
-    namespace ops {
-        LogicOp::LogicOp(const char *name) : DeclarableOp::DeclarableOp(name, true) {
-            // just using DeclarableOp constructor
-            //this->_descriptor->
-        }
-
-        Nd4jStatus LogicOp::validateAndExecute(sd::graph::Context &block) {
-            nd4j_logger("WARNING: LogicOps should NOT be ever called\n", "");
-            return ND4J_STATUS_BAD_INPUT;
-        }
-
-        ShapeList* LogicOp::calculateOutputShape(ShapeList *inputShape, sd::graph::Context &block) {
-            // FIXME: we probably want these ops to evaluate scopes
-            return SHAPELIST();
-        }
-    }
+namespace ops {
+LogicOp::LogicOp(const char *name) : DeclarableOp::DeclarableOp(name, true) {
+  // just using DeclarableOp constructor
+  // this->_descriptor->
 }
+
+Nd4jStatus LogicOp::validateAndExecute(sd::graph::Context &block) {
+  nd4j_logger("WARNING: LogicOps should NOT be ever called\n", "");
+  return ND4J_STATUS_BAD_INPUT;
+}
+
+ShapeList *LogicOp::calculateOutputShape(ShapeList *inputShape,
+                                         sd::graph::Context &block) {
+  // FIXME: we probably want these ops to evaluate scopes
+  return SHAPELIST();
+}
+}  // namespace ops
+}  // namespace sd

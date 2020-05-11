@@ -18,35 +18,37 @@
 // Created by raver119 on 13/11/17.
 //
 
-#include "testlayers.h"
 #include <graph/Graph.h>
 #include <graph/Node.h>
 #include <ops/declarable/CustomOperations.h>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::graph;
 
 class SanityTests : public testing::Test {
-public:
-
+ public:
 };
 
 TEST_F(SanityTests, VariableSpace_2) {
-    VariableSpace variableSpace;
-    variableSpace.putVariable(1, NDArrayFactory::create<float>('c', {3, 3}));
-    variableSpace.putVariable({1, 1}, NDArrayFactory::create<float>('c', {3, 3}));
+  VariableSpace variableSpace;
+  variableSpace.putVariable(1, NDArrayFactory::create<float>('c', {3, 3}));
+  variableSpace.putVariable({1, 1}, NDArrayFactory::create<float>('c', {3, 3}));
 
-    std::pair<int, int> pair(1, 2);
-    variableSpace.putVariable(pair, NDArrayFactory::create<float>('c', {3, 3}));
+  std::pair<int, int> pair(1, 2);
+  variableSpace.putVariable(pair, NDArrayFactory::create<float>('c', {3, 3}));
 }
 
-
 TEST_F(SanityTests, Graph_1) {
-    Graph graph;
+  Graph graph;
 
-    graph.variableSpace().putVariable(1, NDArrayFactory::create<float>('c', {3, 3}));
-    graph.variableSpace().putVariable({1, 1}, NDArrayFactory::create<float>('c', {3, 3}));
+  graph.variableSpace().putVariable(1,
+                                    NDArrayFactory::create<float>('c', {3, 3}));
+  graph.variableSpace().putVariable({1, 1},
+                                    NDArrayFactory::create<float>('c', {3, 3}));
 
-    std::pair<int, int> pair(1, 2);
-    graph.variableSpace().putVariable(pair, NDArrayFactory::create<float>('c', {3, 3}));
+  std::pair<int, int> pair(1, 2);
+  graph.variableSpace().putVariable(pair,
+                                    NDArrayFactory::create<float>('c', {3, 3}));
 }

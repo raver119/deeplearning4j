@@ -22,20 +22,24 @@
 #include <helpers/StringUtils.h>
 
 namespace sd {
-    allocation_exception::allocation_exception(std::string message) : std::runtime_error(message){
-        //
-    }
-
-    allocation_exception allocation_exception::build(std::string message, Nd4jLong numBytes) {
-        auto bytes = StringUtils::valueToString<Nd4jLong>(numBytes);
-        message += "; Requested bytes: [" + bytes + "]";
-        return allocation_exception(message);
-    }
-
-    allocation_exception allocation_exception::build(std::string message, Nd4jLong limit, Nd4jLong numBytes) {
-        auto bytes = StringUtils::valueToString<Nd4jLong>(numBytes);
-        auto lim = StringUtils::valueToString<Nd4jLong>(limit);
-        message += "; Limit bytes: [" + lim + "]; Requested bytes: [" + bytes + "]";
-        return allocation_exception(message);
-    }
+allocation_exception::allocation_exception(std::string message)
+    : std::runtime_error(message) {
+  //
 }
+
+allocation_exception allocation_exception::build(std::string message,
+                                                 Nd4jLong numBytes) {
+  auto bytes = StringUtils::valueToString<Nd4jLong>(numBytes);
+  message += "; Requested bytes: [" + bytes + "]";
+  return allocation_exception(message);
+}
+
+allocation_exception allocation_exception::build(std::string message,
+                                                 Nd4jLong limit,
+                                                 Nd4jLong numBytes) {
+  auto bytes = StringUtils::valueToString<Nd4jLong>(numBytes);
+  auto lim = StringUtils::valueToString<Nd4jLong>(limit);
+  message += "; Limit bytes: [" + lim + "]; Requested bytes: [" + bytes + "]";
+  return allocation_exception(message);
+}
+}  // namespace sd

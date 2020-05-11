@@ -25,30 +25,34 @@
 #include <ops/declarable/helpers/transforms.h>
 
 namespace sd {
-    namespace ops {
-        CONFIGURABLE_OP_IMPL(clipbyvalue, 1, 1, true, 2, 0) {
-            auto input = INPUT_VARIABLE(0);
-            auto output = OUTPUT_VARIABLE(0);
+namespace ops {
+CONFIGURABLE_OP_IMPL(clipbyvalue, 1, 1, true, 2, 0) {
+  auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
 
-            // FIXME: extra args!!!
-            auto left = T_ARG(0);
-            auto right = T_ARG(1);
+  // FIXME: extra args!!!
+  auto left = T_ARG(0);
+  auto right = T_ARG(1);
 
-            REQUIRE_TRUE(left < right, 0, "clip_by_value: left bound should be lesser than right. But %f >= %f given.", left, right);
-            //input->applyTransform(transform::ClipByValue, output, block.getTArguments()->data());
-            helpers::clipByValue(block.launchContext(), *input, left, right, *output);
-            //STORE_RESULT(*output);
+  REQUIRE_TRUE(left < right, 0,
+               "clip_by_value: left bound should be lesser than right. But %f "
+               ">= %f given.",
+               left, right);
+  // input->applyTransform(transform::ClipByValue, output,
+  // block.getTArguments()->data());
+  helpers::clipByValue(block.launchContext(), *input, left, right, *output);
+  // STORE_RESULT(*output);
 
-            return Status::OK();
-        }
-        DECLARE_SYN(ClipByValue, clipbyvalue);
-
-        DECLARE_TYPES(clipbyvalue) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(sd::DataType::ANY)
-                    ->setAllowedOutputTypes({ALL_FLOATS});
-        }
-    }
+  return Status::OK();
 }
+DECLARE_SYN(ClipByValue, clipbyvalue);
+
+DECLARE_TYPES(clipbyvalue) {
+  getOpDescriptor()
+      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedOutputTypes({ALL_FLOATS});
+}
+}  // namespace ops
+}  // namespace sd
 
 #endif

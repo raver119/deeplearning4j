@@ -21,23 +21,24 @@
 #ifndef __H__GRAPH_UTILS__
 #define __H__GRAPH_UTILS__
 
-#include <vector>
-#include <ops/declarable/OpDescriptor.h>
 #include <ops/declarable/DeclarableOp.h>
+#include <ops/declarable/OpDescriptor.h>
+
+#include <vector>
 
 namespace sd {
 namespace graph {
 
 class SD_EXPORT GraphUtils {
-public:
-    typedef std::vector<sd::ops::OpDescriptor> OpList;
+ public:
+  typedef std::vector<sd::ops::OpDescriptor> OpList;
 
-public:
-    static bool filterOperations(OpList& ops);
-    static std::string makeCommandLine(OpList& ops);
-    static int runPreprocessor(char const* input, char const* output);
+ public:
+  static bool filterOperations(OpList& ops);
+  static std::string makeCommandLine(OpList& ops);
+  static int runPreprocessor(char const* input, char const* output);
 };
 
-}
-}
+}  // namespace graph
+}  // namespace sd
 #endif

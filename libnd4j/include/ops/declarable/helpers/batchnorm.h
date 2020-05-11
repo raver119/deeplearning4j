@@ -23,17 +23,17 @@
 
 #include <ops/declarable/helpers/helpers.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
-
-	void batchnorm(const NDArray* input, const NDArray* mean, const NDArray* variance, const NDArray* gamma, const NDArray* beta, NDArray* output, const std::vector<int>& axes, const double epsilon);
-    
+void batchnorm(const NDArray* input, const NDArray* mean,
+               const NDArray* variance, const NDArray* gamma,
+               const NDArray* beta, NDArray* output,
+               const std::vector<int>& axes, const double epsilon);
 
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 
-
-#endif //LIBND4J_BATCHNORM_H
+#endif  // LIBND4J_BATCHNORM_H

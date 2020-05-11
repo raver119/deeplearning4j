@@ -23,48 +23,59 @@
 
 #include <ops/declarable/helpers/helpers.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
 //////////////////////////////////////////////////////////////////////////
-void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
-                   const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
-                   const std::vector<float>& params,
-                         NDArray* h, NDArray* c);
+void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx,
+                             const NDArray* Wr, const NDArray* b,
+                             const NDArray* hI, const NDArray* cI,
+                             const NDArray* Wp,
+                             const std::vector<float>& params, NDArray* h,
+                             NDArray* c);
 
 //////////////////////////////////////////////////////////////////////////
 // this auxiliary ff should be running before backprop
-void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
-                   const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
-                   const std::vector<float>& params,
-                   NDArray* z, NDArray* a, NDArray* h, NDArray* c);
+void SD_EXPORT lstmLayerCell(const NDArray* x, const NDArray* Wx,
+                             const NDArray* Wr, const NDArray* b,
+                             const NDArray* hI, const NDArray* cI,
+                             const NDArray* Wp,
+                             const std::vector<float>& params, NDArray* z,
+                             NDArray* a, NDArray* h, NDArray* c);
 
 //////////////////////////////////////////////////////////////////////////
-void SD_EXPORT lstmLayerCellBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr, const NDArray* b, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
-                     const NDArray* dLdh, const NDArray* dLdhL, const NDArray* dLdcL,
-                     const NDArray* z, const NDArray* a, const NDArray* c, const std::vector<float>& params,
-                     NDArray* dLdx, NDArray* dLdWx, NDArray* dLdWr, NDArray* dLdhI, NDArray* dLdcI, NDArray* dLdb, NDArray* dLdWp);
-
-
-//////////////////////////////////////////////////////////////////////////
-void SD_EXPORT lstmLayerTimeLoop(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
-                        const NDArray* b, const NDArray* seqLen, const NDArray* hI, const NDArray* cI, const NDArray* Wp,
-                        const std::vector<float>& params,
-                        const bool forward,
-                        NDArray* h, NDArray* hL, NDArray* cL);
+void SD_EXPORT lstmLayerCellBp(const NDArray* x, const NDArray* Wx,
+                               const NDArray* Wr, const NDArray* b,
+                               const NDArray* hI, const NDArray* cI,
+                               const NDArray* Wp, const NDArray* dLdh,
+                               const NDArray* dLdhL, const NDArray* dLdcL,
+                               const NDArray* z, const NDArray* a,
+                               const NDArray* c,
+                               const std::vector<float>& params, NDArray* dLdx,
+                               NDArray* dLdWx, NDArray* dLdWr, NDArray* dLdhI,
+                               NDArray* dLdcI, NDArray* dLdb, NDArray* dLdWp);
 
 //////////////////////////////////////////////////////////////////////////
-void SD_EXPORT lstmLayerTimeLoopBp(const NDArray* x, const NDArray* Wx, const NDArray* Wr,
-                        const NDArray* b, const NDArray* seqLen, NDArray* hI, NDArray* cI, const NDArray* Wp,
-                        const NDArray* dLdh, const NDArray* dLdhL, const NDArray* dLdcL,
-                        const std::vector<float>& params, const bool forward,
-                        NDArray* dLdx, NDArray* dLdWx, NDArray* dLdWr, NDArray* dLdb, NDArray* dLdhI, NDArray* dLdcI, NDArray* dLdWp);
+void SD_EXPORT lstmLayerTimeLoop(const NDArray* x, const NDArray* Wx,
+                                 const NDArray* Wr, const NDArray* b,
+                                 const NDArray* seqLen, const NDArray* hI,
+                                 const NDArray* cI, const NDArray* Wp,
+                                 const std::vector<float>& params,
+                                 const bool forward, NDArray* h, NDArray* hL,
+                                 NDArray* cL);
 
+//////////////////////////////////////////////////////////////////////////
+void SD_EXPORT lstmLayerTimeLoopBp(
+    const NDArray* x, const NDArray* Wx, const NDArray* Wr, const NDArray* b,
+    const NDArray* seqLen, NDArray* hI, NDArray* cI, const NDArray* Wp,
+    const NDArray* dLdh, const NDArray* dLdhL, const NDArray* dLdcL,
+    const std::vector<float>& params, const bool forward, NDArray* dLdx,
+    NDArray* dLdWx, NDArray* dLdWr, NDArray* dLdb, NDArray* dLdhI,
+    NDArray* dLdcI, NDArray* dLdWp);
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-
-#endif //LIBND4J_LSTMLAYER_H
+#endif  // LIBND4J_LSTMLAYER_H

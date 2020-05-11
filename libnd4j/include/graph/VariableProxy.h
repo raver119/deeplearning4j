@@ -24,64 +24,76 @@
 #include <graph/VariableSpace.h>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT VariableProxy: public VariableSpace {
-        protected:
-            const VariableSpace* _backed;
-            VariableSpace* _current = nullptr;
-        public:
-            explicit VariableProxy(const VariableSpace* reference);
-            ~VariableProxy();
+namespace graph {
+class SD_EXPORT VariableProxy : public VariableSpace {
+ protected:
+  const VariableSpace* _backed;
+  VariableSpace* _current = nullptr;
 
-            virtual VariableSpace& operator=(const VariableSpace& other);
+ public:
+  explicit VariableProxy(const VariableSpace* reference);
+  ~VariableProxy();
 
-            virtual int numberOfPlaceholders() const override;
-            virtual const std::vector<std::shared_ptr<Variable>>& placeholders() const override;
+  virtual VariableSpace& operator=(const VariableSpace& other);
 
-            virtual bool hasExternalVariable(int it) const override;
-            virtual bool hasExternalVariable(const std::pair<int,int>& pair) const override;
-            virtual bool hasExternalVariable(const std::string &symbol) const override;
+  virtual int numberOfPlaceholders() const override;
+  virtual const std::vector<std::shared_ptr<Variable>>& placeholders()
+      const override;
 
-            virtual bool hasVariable(int id) const override;
-            virtual bool hasVariable(int id, int idx) const override;
-            virtual bool hasVariable(const std::pair<int,int>& pair) const override;
-            virtual bool hasVariable(const std::string &symbol) const override;
+  virtual bool hasExternalVariable(int it) const override;
+  virtual bool hasExternalVariable(
+      const std::pair<int, int>& pair) const override;
+  virtual bool hasExternalVariable(const std::string& symbol) const override;
 
-            virtual std::shared_ptr<Variable> getVariable(int id) const override;
-            virtual std::shared_ptr<Variable> getVariable(int id, int idx) const override;
-            virtual std::shared_ptr<Variable> getVariable(const std::pair<int,int>& pair) const override;
-            virtual std::shared_ptr<Variable> getVariable(const std::string &symbol) const override;
+  virtual bool hasVariable(int id) const override;
+  virtual bool hasVariable(int id, int idx) const override;
+  virtual bool hasVariable(const std::pair<int, int>& pair) const override;
+  virtual bool hasVariable(const std::string& symbol) const override;
 
-            virtual std::vector<std::shared_ptr<Variable>> variables() const override;
+  virtual std::shared_ptr<Variable> getVariable(int id) const override;
+  virtual std::shared_ptr<Variable> getVariable(int id, int idx) const override;
+  virtual std::shared_ptr<Variable> getVariable(
+      const std::pair<int, int>& pair) const override;
+  virtual std::shared_ptr<Variable> getVariable(
+      const std::string& symbol) const override;
 
-            virtual std::shared_ptr<Variable> putVariable(const std::pair<int,int>& pair, const NDArray &array) override;
-            virtual std::shared_ptr<Variable> putVariable(int id, const NDArray &array) override;
-            virtual std::shared_ptr<Variable> putVariable(int id, int idx, const NDArray &array) override;
-            virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id, int idx, const NDArray &array) override;
-            virtual void putVariable(const std::string& name, int id, int idx, const std::shared_ptr<Variable> &variable) override;
-            virtual void putVariable(const std::pair<int,int>& pair, const std::shared_ptr<Variable> &variable) override;
-            virtual void putVariable(int id, const std::shared_ptr<Variable> &variable) override;
+  virtual std::vector<std::shared_ptr<Variable>> variables() const override;
 
-            virtual void replaceVariable(std::shared_ptr<Variable> variable) override;
+  virtual std::shared_ptr<Variable> putVariable(const std::pair<int, int>& pair,
+                                                const NDArray& array) override;
+  virtual std::shared_ptr<Variable> putVariable(int id,
+                                                const NDArray& array) override;
+  virtual std::shared_ptr<Variable> putVariable(int id, int idx,
+                                                const NDArray& array) override;
+  virtual std::shared_ptr<Variable> putVariable(const std::string& name, int id,
+                                                int idx,
+                                                const NDArray& array) override;
+  virtual void putVariable(const std::string& name, int id, int idx,
+                           const std::shared_ptr<Variable>& variable) override;
+  virtual void putVariable(const std::pair<int, int>& pair,
+                           const std::shared_ptr<Variable>& variable) override;
+  virtual void putVariable(int id,
+                           const std::shared_ptr<Variable>& variable) override;
 
-            virtual void dropVariable(const std::pair<int,int> &pair) override;
-            virtual void dropVariable(int id, int idx) override;
+  virtual void replaceVariable(std::shared_ptr<Variable> variable) override;
 
-            virtual void putOutputVariable(std::shared_ptr<Variable> variable) override;
+  virtual void dropVariable(const std::pair<int, int>& pair) override;
+  virtual void dropVariable(int id, int idx) override;
 
-            // memory-related statistics
-            virtual Nd4jLong externalMemory() const override;
-            virtual Nd4jLong internalMemory() const override;
-            virtual Nd4jLong totalMemory() const override;
+  virtual void putOutputVariable(std::shared_ptr<Variable> variable) override;
 
-            virtual int externalEntries() const override;
-            virtual int internalEntries() const override;
-            virtual int totalEntries() const override;
+  // memory-related statistics
+  virtual Nd4jLong externalMemory() const override;
+  virtual Nd4jLong internalMemory() const override;
+  virtual Nd4jLong totalMemory() const override;
 
+  virtual int externalEntries() const override;
+  virtual int internalEntries() const override;
+  virtual int totalEntries() const override;
 
-            virtual Stash* stash() const override;
-        };
-    }
-}
+  virtual Stash* stash() const override;
+};
+}  // namespace graph
+}  // namespace sd
 
-#endif // SD_VARIABLEPROXY_H
+#endif  // SD_VARIABLEPROXY_H

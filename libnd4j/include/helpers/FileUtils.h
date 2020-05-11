@@ -21,17 +21,17 @@
 #ifndef SD_FILEUTILS_H
 #define SD_FILEUTILS_H
 
-#include <cstdint>
 #include <system/dll.h>
 
+#include <cstdint>
+
 namespace sd {
-    class SD_EXPORT FileUtils {
-    public:
-        static bool fileExists(const char *filename);
+class SD_EXPORT FileUtils {
+ public:
+  static bool fileExists(const char *filename);
 
-        static int64_t fileSize(const char *filename);
-    };
-}
+  static int64_t fileSize(const char *filename);
+};
+}  // namespace sd
 
-
-#endif //SD_FILEUTILS_H
+#endif  // SD_FILEUTILS_H

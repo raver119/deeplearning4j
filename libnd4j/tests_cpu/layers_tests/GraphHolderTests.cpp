@@ -18,26 +18,26 @@
 // Created by raver119 on 11.12.17.
 //
 
-#include "testlayers.h"
 #include <graph/GraphHolder.h>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::ops;
 using namespace sd::graph;
 
 class GraphHolderTests : public testing::Test {
-public:
-
+ public:
 };
 
 TEST_F(GraphHolderTests, SimpleTests_1) {
-    Graph graph;
-    Nd4jLong graphId = 119;
-    GraphHolder::getInstance()->registerGraph(graphId, graph);
+  Graph graph;
+  Nd4jLong graphId = 119;
+  GraphHolder::getInstance()->registerGraph(graphId, graph);
 
-    ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
+  ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
 
-    GraphHolder::getInstance()->forgetGraph(graphId);
+  GraphHolder::getInstance()->forgetGraph(graphId);
 
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
+  ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
 }

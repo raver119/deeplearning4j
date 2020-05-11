@@ -24,23 +24,24 @@
 #include "ParametersSpace.h"
 
 namespace sd {
-    class PredefinedParameters : public ParametersSpace{
-        std::vector<int> _params;
-    public:
-        PredefinedParameters(std::string name, std::initializer_list<int> parameters) : ParametersSpace() {
-            _name = name;
-            _params = parameters;
-        }
+class PredefinedParameters : public ParametersSpace {
+  std::vector<int> _params;
 
-        PredefinedParameters(std::string name, std::vector<int> parameters) : ParametersSpace() {
-            _name = name;
-            _params = parameters;
-        }
+ public:
+  PredefinedParameters(std::string name, std::initializer_list<int> parameters)
+      : ParametersSpace() {
+    _name = name;
+    _params = parameters;
+  }
 
-        std::vector<int> evaluate() override {
-            return _params;
-        }
-    };
-}
+  PredefinedParameters(std::string name, std::vector<int> parameters)
+      : ParametersSpace() {
+    _name = name;
+    _params = parameters;
+  }
 
-#endif //SD_PREDEFINEDPARAMETERS_H
+  std::vector<int> evaluate() override { return _params; }
+};
+}  // namespace sd
+
+#endif  // SD_PREDEFINEDPARAMETERS_H

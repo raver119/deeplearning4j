@@ -21,38 +21,40 @@
 #ifndef LIBND4J_SHAPELIST_H
 #define LIBND4J_SHAPELIST_H
 
-#include <vector>
 #include <helpers/shape.h>
 #include <system/dll.h>
 
+#include <vector>
+
 namespace sd {
-    class SD_EXPORT ShapeList {
-    protected:
-        std::vector<const Nd4jLong*> _shapes;
+class SD_EXPORT ShapeList {
+ protected:
+  std::vector<const Nd4jLong*> _shapes;
 
-        bool _destroyed = false;
-        bool _autoremovable = false;
-        bool _workspace = false;
-    public:
-        ShapeList(const Nd4jLong* shape = nullptr);
-        ShapeList(const std::vector<const Nd4jLong*> &shapes, bool isWorkspace);
-        ShapeList(const std::vector<const Nd4jLong*>& shapes);
-        //ShapeList(bool autoRemovable);
+  bool _destroyed = false;
+  bool _autoremovable = false;
+  bool _workspace = false;
 
-        ~ShapeList();
+ public:
+  ShapeList(const Nd4jLong* shape = nullptr);
+  ShapeList(const std::vector<const Nd4jLong*>& shapes, bool isWorkspace);
+  ShapeList(const std::vector<const Nd4jLong*>& shapes);
+  // ShapeList(bool autoRemovable);
 
-        std::vector<const Nd4jLong*>* asVector();
-        void destroy();
-        int size() const;
-        const Nd4jLong* at(int idx);
-        void push_back(const Nd4jLong *shape);
+  ~ShapeList();
 
-        /**
-         * PLEASE NOTE: This method should be called ONLY if shapes were generated at workspaces. Otherwise you'll get memory leak
-         */
-        void detach();
-    };
-}
+  std::vector<const Nd4jLong*>* asVector();
+  void destroy();
+  int size() const;
+  const Nd4jLong* at(int idx);
+  void push_back(const Nd4jLong* shape);
 
+  /**
+   * PLEASE NOTE: This method should be called ONLY if shapes were generated at
+   * workspaces. Otherwise you'll get memory leak
+   */
+  void detach();
+};
+}  // namespace sd
 
-#endif //LIBND4J_SHAPELIST_H
+#endif  // LIBND4J_SHAPELIST_H

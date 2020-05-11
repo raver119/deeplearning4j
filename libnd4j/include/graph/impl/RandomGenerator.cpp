@@ -21,37 +21,36 @@
 #include <graph/RandomGenerator.h>
 
 namespace sd {
-    namespace graph {
-        RandomGenerator::RandomGenerator(const RandomGenerator& other) noexcept {
-            _rootState = other._rootState;
-            _nodeState = other._nodeState;
-        }
-
-        RandomGenerator& RandomGenerator::operator=(const RandomGenerator& other) noexcept {
-            if (this == &other)
-                return *this;
-
-            _rootState = other._rootState;
-            _nodeState = other._nodeState;
-
-            return *this;
-        }
-
-        // move constructor
-        RandomGenerator::RandomGenerator(RandomGenerator&& other) noexcept {
-            _rootState = other._rootState;
-            _nodeState = other._nodeState;
-        }
-
-        // move assignment operator
-        RandomGenerator& RandomGenerator::operator=(RandomGenerator&& other) noexcept {
-            if (this == &other)
-                return *this;
-
-            _rootState = other._rootState;
-            _nodeState = other._nodeState;
-
-            return *this;
-        }
-    }
+namespace graph {
+RandomGenerator::RandomGenerator(const RandomGenerator& other) noexcept {
+  _rootState = other._rootState;
+  _nodeState = other._nodeState;
 }
+
+RandomGenerator& RandomGenerator::operator=(
+    const RandomGenerator& other) noexcept {
+  if (this == &other) return *this;
+
+  _rootState = other._rootState;
+  _nodeState = other._nodeState;
+
+  return *this;
+}
+
+// move constructor
+RandomGenerator::RandomGenerator(RandomGenerator&& other) noexcept {
+  _rootState = other._rootState;
+  _nodeState = other._nodeState;
+}
+
+// move assignment operator
+RandomGenerator& RandomGenerator::operator=(RandomGenerator&& other) noexcept {
+  if (this == &other) return *this;
+
+  _rootState = other._rootState;
+  _nodeState = other._nodeState;
+
+  return *this;
+}
+}  // namespace graph
+}  // namespace sd

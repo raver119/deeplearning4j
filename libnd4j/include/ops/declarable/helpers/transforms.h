@@ -21,70 +21,105 @@
 #ifndef LIBND4J_TRANSFORMS_H
 #define LIBND4J_TRANSFORMS_H
 
-#include <ops/declarable/helpers/helpers.h>
-#include <helpers/helper_random.h>
 #include <graph/RandomGenerator.h>
+#include <helpers/helper_random.h>
+#include <ops/declarable/helpers/helpers.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
-	void triuBP(sd::LaunchContext * context, const NDArray& input, const NDArray& gradO, NDArray& gradI, const int diagonal);
+void triuBP(sd::LaunchContext* context, const NDArray& input,
+            const NDArray& gradO, NDArray& gradI, const int diagonal);
 
-	void trace(sd::LaunchContext * context, const NDArray& input, NDArray& output);
+void trace(sd::LaunchContext* context, const NDArray& input, NDArray& output);
 
-	void randomShuffle(sd::LaunchContext * context, NDArray& input, NDArray& output, sd::graph::RandomGenerator& rng, const bool isInplace);
+void randomShuffle(sd::LaunchContext* context, NDArray& input, NDArray& output,
+                   sd::graph::RandomGenerator& rng, const bool isInplace);
 
-    // auxiliary function which serves for recursion purpose and is used in pad operation
-	// void recursiveLoopForPad(const int mode, NDArray& input, const NDArray& paddings, NDArray& output, std::vector<int> dimensions, int dim, int inIdx, int outIdx, NDArray& padValue);
+// auxiliary function which serves for recursion purpose and is used in pad
+// operation void recursiveLoopForPad(const int mode, NDArray& input, const
+// NDArray& paddings, NDArray& output, std::vector<int> dimensions, int dim, int
+// inIdx, int outIdx, NDArray& padValue);
 
-	void pad(sd::LaunchContext * context, const int mode, const NDArray& input, const NDArray& paddings, NDArray& output, NDArray const& padValue);
+void pad(sd::LaunchContext* context, const int mode, const NDArray& input,
+         const NDArray& paddings, NDArray& output, NDArray const& padValue);
 
-	void invertPermutation(sd::LaunchContext * context, const NDArray& input, NDArray& output);
+void invertPermutation(sd::LaunchContext* context, const NDArray& input,
+                       NDArray& output);
 
-	void gatherND(sd::LaunchContext * context, NDArray& input, NDArray& indices, NDArray& output);
+void gatherND(sd::LaunchContext* context, NDArray& input, NDArray& indices,
+              NDArray& output);
 
-	void gather(sd::LaunchContext * context, NDArray* input, const NDArray* indices, NDArray* output, const std::vector<int>& intArgs);
+void gather(sd::LaunchContext* context, NDArray* input, const NDArray* indices,
+            NDArray* output, const std::vector<int>& intArgs);
 
-	void eye(sd::LaunchContext * context, NDArray& output);
+void eye(sd::LaunchContext* context, NDArray& output);
 
-	void scatterUpdate(sd::LaunchContext * context, NDArray& operand, NDArray& updates, const std::vector<int>* intArgs);
+void scatterUpdate(sd::LaunchContext* context, NDArray& operand,
+                   NDArray& updates, const std::vector<int>* intArgs);
 
-	void scatterSimple(sd::LaunchContext * context, const int opId, NDArray& input, const NDArray& updates, const NDArray& indices, const std::vector<int>& dimensions);
+void scatterSimple(sd::LaunchContext* context, const int opId, NDArray& input,
+                   const NDArray& updates, const NDArray& indices,
+                   const std::vector<int>& dimensions);
 
-	void mergeMaxIndex(sd::LaunchContext * context, const std::vector<const NDArray*>& inArrs, NDArray& output);
+void mergeMaxIndex(sd::LaunchContext* context,
+                   const std::vector<const NDArray*>& inArrs, NDArray& output);
 
-	void mergeMax(sd::LaunchContext * context, const std::vector<const NDArray*>& inArrs, NDArray& output);
-	void mergeMaxBp(sd::LaunchContext* context, const std::vector<const NDArray*>& inArrs, std::vector<NDArray*>& outArrs);
+void mergeMax(sd::LaunchContext* context,
+              const std::vector<const NDArray*>& inArrs, NDArray& output);
+void mergeMaxBp(sd::LaunchContext* context,
+                const std::vector<const NDArray*>& inArrs,
+                std::vector<NDArray*>& outArrs);
 
-	void mergeAvg(sd::LaunchContext * context, const std::vector<const NDArray*>& inArrs, NDArray& output);
-	void mergeAvgBp(sd::LaunchContext* context, const NDArray& gradient, std::vector<NDArray*>& outArrs);
+void mergeAvg(sd::LaunchContext* context,
+              const std::vector<const NDArray*>& inArrs, NDArray& output);
+void mergeAvgBp(sd::LaunchContext* context, const NDArray& gradient,
+                std::vector<NDArray*>& outArrs);
 
-	void mergeAdd(sd::LaunchContext * context, const std::vector<const NDArray*>& inArrs, NDArray& output);
-	void mergeAddBp(sd::LaunchContext* context, const NDArray& gradient, std::vector<NDArray*>& outArrs);
+void mergeAdd(sd::LaunchContext* context,
+              const std::vector<const NDArray*>& inArrs, NDArray& output);
+void mergeAddBp(sd::LaunchContext* context, const NDArray& gradient,
+                std::vector<NDArray*>& outArrs);
 
-	void clipByNorm(sd::LaunchContext * context, NDArray& input, NDArray& output, const std::vector<int>& dimensions, const NDArray& clipNorm, const bool isInplace);
-	void clipByGlobalNorm(sd::LaunchContext * context, std::vector<NDArray*> const& inputs, double clipNorm, sd::memory::Workspace* workspace, std::vector<NDArray*>& outputs, bool isInplace);
+void clipByNorm(sd::LaunchContext* context, NDArray& input, NDArray& output,
+                const std::vector<int>& dimensions, const NDArray& clipNorm,
+                const bool isInplace);
+void clipByGlobalNorm(sd::LaunchContext* context,
+                      std::vector<NDArray*> const& inputs, double clipNorm,
+                      sd::memory::Workspace* workspace,
+                      std::vector<NDArray*>& outputs, bool isInplace);
 
-	void clipByNormBP(sd::LaunchContext * context, const NDArray& input, const NDArray& gradO, NDArray& gradI /*output*/, const std::vector<int>& dimensions, const NDArray& clipNorm);
+void clipByNormBP(sd::LaunchContext* context, const NDArray& input,
+                  const NDArray& gradO, NDArray& gradI /*output*/,
+                  const std::vector<int>& dimensions, const NDArray& clipNorm);
 
-	void clipByAveraged(sd::LaunchContext * context, NDArray& input, NDArray& output, const std::vector<int>& dimensions, const NDArray& clipNorm, const bool isInplace);
-	void clipByValue(sd::LaunchContext * context, NDArray& input, double leftBound, double rightBound, NDArray& output);
+void clipByAveraged(sd::LaunchContext* context, NDArray& input, NDArray& output,
+                    const std::vector<int>& dimensions, const NDArray& clipNorm,
+                    const bool isInplace);
+void clipByValue(sd::LaunchContext* context, NDArray& input, double leftBound,
+                 double rightBound, NDArray& output);
 
-	void mirrorPad(sd::LaunchContext * context, const NDArray& input, const NDArray& paddings, NDArray& output, const int mode);
+void mirrorPad(sd::LaunchContext* context, const NDArray& input,
+               const NDArray& paddings, NDArray& output, const int mode);
 
-	void clipByValue(sd::LaunchContext * context, NDArray& input, double leftBound, double rightBound, NDArray& output);
+void clipByValue(sd::LaunchContext* context, NDArray& input, double leftBound,
+                 double rightBound, NDArray& output);
 
-	void mirrorPad(sd::LaunchContext * context, const NDArray& input, const NDArray& paddings, NDArray& output, const int mode);
+void mirrorPad(sd::LaunchContext* context, const NDArray& input,
+               const NDArray& paddings, NDArray& output, const int mode);
 
-	void concat(sd::LaunchContext * context, const std::vector<const NDArray*>& inArrs, NDArray& output, const int axis);
+void concat(sd::LaunchContext* context,
+            const std::vector<const NDArray*>& inArrs, NDArray& output,
+            const int axis);
 
-	void tileBP(sd::LaunchContext * context, const NDArray& gradO /*input*/, NDArray& gradI /*output*/, const std::vector<Nd4jLong> reps);
+void tileBP(sd::LaunchContext* context, const NDArray& gradO /*input*/,
+            NDArray& gradI /*output*/, const std::vector<Nd4jLong> reps);
 
-	void split(sd::LaunchContext* context, const NDArray& input, std::vector<NDArray*>& outArrs, const int axis);
-}
-}
-}
+void split(sd::LaunchContext* context, const NDArray& input,
+           std::vector<NDArray*>& outArrs, const int axis);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-
-#endif //LIBND4J_TRANSFORMS_H
+#endif  // LIBND4J_TRANSFORMS_H

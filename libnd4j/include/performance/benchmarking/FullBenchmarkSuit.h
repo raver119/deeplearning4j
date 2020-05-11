@@ -24,11 +24,10 @@
 #include <performance/benchmarking/BenchmarkSuit.h>
 
 namespace sd {
-    class FullBenchmarkSuit : public BenchmarkSuit {
-    public:
-        std::string runSuit() override;
-    };
-}
+class FullBenchmarkSuit : public BenchmarkSuit {
+ public:
+  std::string runSuit() override;
+};
+}  // namespace sd
 
-
-#endif //SD_FULLBENCHMARKSUIT_H
+#endif  // SD_FULLBENCHMARKSUIT_H

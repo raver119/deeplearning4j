@@ -21,12 +21,15 @@
 #ifndef SD_HAMMING_H
 #define SD_HAMMING_H
 
-namespace sd {
-    namespace ops {
-        namespace helpers {
-            void hamming(LaunchContext *context, NDArray &x, NDArray &y, NDArray &output);
-        }
-    }
-}
+#include <execution/LaunchContext.h>
+#include <array/NDArray.h>
 
-#endif //SD_HAMMING_H
+namespace sd {
+namespace ops {
+namespace helpers {
+void hamming(LaunchContext *context, NDArray &x, NDArray &y, NDArray &output);
+}
+}  // namespace ops
+}  // namespace sd
+
+#endif  // SD_HAMMING_H

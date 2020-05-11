@@ -24,19 +24,18 @@
 #include <system/dll.h>
 
 namespace sd {
-    class SD_EXPORT Pair {
-    protected:
-        int _first = 0;
-        int _second = 0;
+class SD_EXPORT Pair {
+ protected:
+  int _first = 0;
+  int _second = 0;
 
-    public:
-        Pair(int first = 0, int second = 0);
-        ~Pair() = default;
+ public:
+  Pair(int first = 0, int second = 0);
+  ~Pair() = default;
 
-        int first() const;
-        int second() const;
-    };
-}
+  int first() const;
+  int second() const;
+};
+}  // namespace sd
 
-
-#endif //LIBND4J_PAIR_H
+#endif  // LIBND4J_PAIR_H

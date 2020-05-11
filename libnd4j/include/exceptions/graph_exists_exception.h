@@ -21,24 +21,26 @@
 #ifndef SD_GRAPH_EXISTS_EXCEPTION_H
 #define SD_GRAPH_EXISTS_EXCEPTION_H
 
-#include <system/op_boilerplate.h>
-#include <system/pointercast.h>
-#include <stdexcept>
 #include <exceptions/graph_exception.h>
 #include <system/dll.h>
+#include <system/op_boilerplate.h>
+#include <system/pointercast.h>
+
+#include <stdexcept>
 
 #if defined(_MSC_VER)
 
-// we're ignoring warning about non-exportable parent class, since std::runtime_error is a part of Standard C++ Library
-#pragma warning( disable : 4275 )
+// we're ignoring warning about non-exportable parent class, since
+// std::runtime_error is a part of Standard C++ Library
+#pragma warning(disable : 4275)
 
 #endif
 
 namespace sd {
-    class SD_EXPORT graph_exists_exception: public graph_exception {
-    public:
-        explicit graph_exists_exception(Nd4jLong graphId);
-    };
-}
+class SD_EXPORT graph_exists_exception : public graph_exception {
+ public:
+  explicit graph_exists_exception(Nd4jLong graphId);
+};
+}  // namespace sd
 
-#endif //SD_UNKNOWN_GRAPH_EXCEPTION_H
+#endif  // SD_UNKNOWN_GRAPH_EXCEPTION_H

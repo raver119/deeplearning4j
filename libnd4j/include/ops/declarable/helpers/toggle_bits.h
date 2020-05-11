@@ -24,14 +24,15 @@
 #define SD_TOGGLE_BITS_H
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            template <typename T>
-            static void toggle_bits__(sd::LaunchContext * context, NDArray& in, NDArray& out);
+namespace ops {
+namespace helpers {
+template <typename T>
+static void toggle_bits__(sd::LaunchContext* context, NDArray& in,
+                          NDArray& out);
 
-            void __toggle_bits(sd::LaunchContext * context, NDArray& in, NDArray& out);
-        }
-    }
-}
+void __toggle_bits(sd::LaunchContext* context, NDArray& in, NDArray& out);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_TOGGLE_BITS_H
+#endif  // SD_TOGGLE_BITS_H

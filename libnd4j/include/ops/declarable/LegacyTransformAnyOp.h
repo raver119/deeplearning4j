@@ -21,26 +21,26 @@
 #ifndef LIBND4J__LEGACY_TRANSFORM_ANY_OP__H
 #define LIBND4J__LEGACY_TRANSFORM_ANY_OP__H
 
-
 #include <ops/declarable/LegacyOp.h>
 
 namespace sd {
-    namespace ops {
-        /**
-        *   This class provides wrapper for Transform operations (i.e. Pow or OneMinus)
-        */
-        class SD_EXPORT LegacyTransformAnyOp : public LegacyOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context &block) override;
-        public:
-            LegacyTransformAnyOp();
-            LegacyTransformAnyOp(int opNum);
+namespace ops {
+/**
+ *   This class provides wrapper for Transform operations (i.e. Pow or OneMinus)
+ */
+class SD_EXPORT LegacyTransformAnyOp : public LegacyOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context &block) override;
-            LegacyOp* clone() override;
-        };
-    }
-}
+ public:
+  LegacyTransformAnyOp();
+  LegacyTransformAnyOp(int opNum);
 
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+  LegacyOp* clone() override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J__LEGACY_TRANSFORM_FLOAT_OP__H
+#endif  // LIBND4J__LEGACY_TRANSFORM_FLOAT_OP__H

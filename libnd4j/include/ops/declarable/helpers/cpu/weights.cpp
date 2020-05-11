@@ -24,24 +24,31 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    template <typename T>
-    static void adjustWeights_(NDArray* input, NDArray* weights, NDArray* output, int minLength, int maxLength) {
-            for (Nd4jLong e = 0; e < input->lengthOf(); e++) {
-                int val = input->e<int>(e);
-                if (val < maxLength) {
-                    if (weights != nullptr)
-                        output->p(val, output->e<T>(val) + weights->e<T>(e));
-                    else
-                        output->p(val, output->e<T>(val) + 1);
-                }
-            }
+template <typename T>
+static void adjustWeights_(NDArray* input, NDArray* weights, NDArray* output,
+                           int minLength, int maxLength) {
+  for (Nd4jLong e = 0; e < input->lengthOf(); e++) {
+    int val = input->e<int>(e);
+    if (val < maxLength) {
+      if (weights != nullptr)
+        output->p(val, output->e<T>(val) + weights->e<T>(e));
+      else
+        output->p(val, output->e<T>(val) + 1);
     }
+  }
+}
 
-    void adjustWeights(sd::LaunchContext * context, NDArray* input, NDArray* weights, NDArray* output, int minLength, int maxLength) {
-        BUILD_SINGLE_SELECTOR(output->dataType(), adjustWeights_, (input, weights, output, minLength, maxLength), LIBND4J_TYPES);
-    }
+void adjustWeights(sd::LaunchContext* context, NDArray* input, NDArray* weights,
+                   NDArray* output, int minLength, int maxLength) {
+  BUILD_SINGLE_SELECTOR(output->dataType(), adjustWeights_,
+                        (input, weights, output, minLength, maxLength),
+                        LIBND4J_TYPES);
+}
 
-    BUILD_SINGLE_TEMPLATE(template void adjustWeights_, (NDArray* input, NDArray* weights, NDArray* output, int minLength, int maxLength), LIBND4J_TYPES);
-}
-}
-}
+BUILD_SINGLE_TEMPLATE(template void adjustWeights_,
+                      (NDArray * input, NDArray* weights, NDArray* output,
+                       int minLength, int maxLength),
+                      LIBND4J_TYPES);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

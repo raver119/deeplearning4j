@@ -18,121 +18,122 @@
 // Created by raver119 on 20.10.2017.
 //
 
+#include <graph/Status.h>
 #include <graph/logic/LogicConditional.h>
 #include <graph/logic/LogicReturn.h>
-#include <graph/Status.h>
-
 
 namespace sd {
-    namespace graph {
-        Nd4jStatus LogicConditional::processNode(Graph *graph, Node *node) {
-            throw std::runtime_error("LogicConditional::processNode - not implemented yet");
-            /*
-            auto __variableSpace = graph->variableSpace();
+namespace graph {
+Nd4jStatus LogicConditional::processNode(Graph *graph, Node *node) {
+  throw std::runtime_error(
+      "LogicConditional::processNode - not implemented yet");
+  /*
+  auto __variableSpace = graph->variableSpace();
 
-            auto size = node->input()->size();
+  auto size = node->input()->size();
 
-            // propagating inputs (optional)
-            for (int e = 0; e < size - 3; e++) {
-                std::pair<int, int> pair(node->id(), e);
-                if (!__variableSpace->hasVariable(pair)) {
-                    __variableSpace->putVariable(pair, new Variable(nullptr, nullptr, node->id(), e));
-                }
+  // propagating inputs (optional)
+  for (int e = 0; e < size - 3; e++) {
+      std::pair<int, int> pair(node->id(), e);
+      if (!__variableSpace->hasVariable(pair)) {
+          __variableSpace->putVariable(pair, new Variable(nullptr, nullptr,
+  node->id(), e));
+      }
 
-                auto va = node->input()->at(e);
+      auto va = node->input()->at(e);
 
-                auto inputVar = __variableSpace->getVariable(va);
+      auto inputVar = __variableSpace->getVariable(va);
 
-                auto innerVar = __variableSpace->getVariable(pair);
-                if (innerVar->hasNDArray()) {
-                    // TODO: ???
-                } else {
-                    // FIXME: in some cases it's possible to have no NDArray
-                    if (inputVar->hasNDArray())
-                        innerVar->setNDArray(new NDArray(inputVar->getNDArray()->dup()));
-                }
-            }
+      auto innerVar = __variableSpace->getVariable(pair);
+      if (innerVar->hasNDArray()) {
+          // TODO: ???
+      } else {
+          // FIXME: in some cases it's possible to have no NDArray
+          if (inputVar->hasNDArray())
+              innerVar->setNDArray(new NDArray(inputVar->getNDArray()->dup()));
+      }
+  }
 
 
-            int scopeConditionIndex = node->input()->at(size - 3).first;
-            int scopeFalseIndex = node->input()->at(size - 2).first;
-            int scopeTrueIndex = node->input()->at(size - 1).first;
+  int scopeConditionIndex = node->input()->at(size - 3).first;
+  int scopeFalseIndex = node->input()->at(size - 2).first;
+  int scopeTrueIndex = node->input()->at(size - 1).first;
 
-            auto scopeCondition = graph->scopeById(scopeConditionIndex);
-            int lastNode = 0;
-            for (auto v: *scopeCondition->nodes()) {
-                GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
-                lastNode = v->id();
-            }
+  auto scopeCondition = graph->scopeById(scopeConditionIndex);
+  int lastNode = 0;
+  for (auto v: *scopeCondition->nodes()) {
+      GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
+      lastNode = v->id();
+  }
 
-            // now we should take result of the Scope run, and evaluate it
-            //nd4j_debug("", "");
-            auto result = __variableSpace->getVariable(lastNode)->getNDArray();
-            //result->printBuffer("Result of the last node:");
+  // now we should take result of the Scope run, and evaluate it
+  //nd4j_debug("", "");
+  auto result = __variableSpace->getVariable(lastNode)->getNDArray();
+  //result->printBuffer("Result of the last node:");
 
-            bool isReturn = false;
+  bool isReturn = false;
 
-            // now we're executing one of the scopes, depending on condition evaluation
-            if (result->e<int>(0) ==  0) {
-                auto scopeFalse = graph->scopeById(scopeFalseIndex);
-                lastNode = 0;
-                int nodes = scopeFalse->nodes()->size();
-                for (int e = 0; e < nodes - 1; e++) {
-                    auto v = scopeFalse->nodes()->at(e);
-                    GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
-                    lastNode = v->id();
-                }
+  // now we're executing one of the scopes, depending on condition evaluation
+  if (result->e<int>(0) ==  0) {
+      auto scopeFalse = graph->scopeById(scopeFalseIndex);
+      lastNode = 0;
+      int nodes = scopeFalse->nodes()->size();
+      for (int e = 0; e < nodes - 1; e++) {
+          auto v = scopeFalse->nodes()->at(e);
+          GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
+          lastNode = v->id();
+      }
 
-                // last node is either return or just last op
-                auto *node = scopeFalse->nodes()->at(nodes -1);
-                if (node->opType() == OpType_LOGIC && node->opNum() == 40) {
-                    isReturn = true;
-                    LogicReturn::processNode(graph, node);
-                } else {
-                    GraphExecutioner::executeFlatNode(graph, node, __variableSpace);
-                    lastNode = node->id();
-                }
-            } else {
-                auto scopeTrue = graph->scopeById(scopeTrueIndex);
-                lastNode = 0;
-                int nodes = scopeTrue->nodes()->size();
-                for (int e = 0; e < nodes - 1; e++) {
-                    auto v = scopeTrue->nodes()->at(e);
-                    GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
-                    lastNode = v->id();
-                }
+      // last node is either return or just last op
+      auto *node = scopeFalse->nodes()->at(nodes -1);
+      if (node->opType() == OpType_LOGIC && node->opNum() == 40) {
+          isReturn = true;
+          LogicReturn::processNode(graph, node);
+      } else {
+          GraphExecutioner::executeFlatNode(graph, node, __variableSpace);
+          lastNode = node->id();
+      }
+  } else {
+      auto scopeTrue = graph->scopeById(scopeTrueIndex);
+      lastNode = 0;
+      int nodes = scopeTrue->nodes()->size();
+      for (int e = 0; e < nodes - 1; e++) {
+          auto v = scopeTrue->nodes()->at(e);
+          GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
+          lastNode = v->id();
+      }
 
-                // last node is either return or just last op
-                auto node = scopeTrue->nodes()->at(nodes -1);
-                if (node->opType() == OpType_LOGIC && node->opNum() == 40) {
-                    isReturn = true;
-                    LogicReturn::processNode(graph, node);
-                } else {
-                    GraphExecutioner::executeFlatNode(graph, node, __variableSpace);
-                    lastNode = node->id();
-                }
-            }
+      // last node is either return or just last op
+      auto node = scopeTrue->nodes()->at(nodes -1);
+      if (node->opType() == OpType_LOGIC && node->opNum() == 40) {
+          isReturn = true;
+          LogicReturn::processNode(graph, node);
+      } else {
+          GraphExecutioner::executeFlatNode(graph, node, __variableSpace);
+          lastNode = node->id();
+      }
+  }
 
-            // now fetch and transfer variables to Conditional node
-            // but only if return wasn't called at the end of scope
-            if (!isReturn) {
-                for (int e = 0; e < DataTypeUtils::max<int>(); e++) {
-                    std::pair<int, int> pair(lastNode, e);
-                    std::pair<int, int> pairNew(node->id(), e);
-                    if (__variableSpace->hasVariable(pair)) {
-                        auto array = __variableSpace->getVariable(pair)->getNDArray();
-                        auto newVar = new Variable(array);
-                        newVar->setId(lastNode, e);
-                        newVar->markRemovable(false);
+  // now fetch and transfer variables to Conditional node
+  // but only if return wasn't called at the end of scope
+  if (!isReturn) {
+      for (int e = 0; e < DataTypeUtils::max<int>(); e++) {
+          std::pair<int, int> pair(lastNode, e);
+          std::pair<int, int> pairNew(node->id(), e);
+          if (__variableSpace->hasVariable(pair)) {
+              auto array = __variableSpace->getVariable(pair)->getNDArray();
+              auto newVar = new Variable(array);
+              newVar->setId(lastNode, e);
+              newVar->markRemovable(false);
 
-                        __variableSpace->putVariable(pairNew, newVar);
-                    } else
-                        break;
-                }
-            }
+              __variableSpace->putVariable(pairNew, newVar);
+          } else
+              break;
+      }
+  }
 
-            return sd::Status::OK();
-             */
-        }
-    }
+  return sd::Status::OK();
+   */
 }
+}  // namespace graph
+}  // namespace sd

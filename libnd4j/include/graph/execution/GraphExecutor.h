@@ -21,64 +21,76 @@
 #ifndef SD_GRAPHEXECUTOR_H
 #define SD_GRAPHEXECUTOR_H
 
-#include <system/dll.h>
 #include <graph/OptimizedGraph.h>
-#include <memory/GraphMemoryManager.h>
 #include <graph/VariableProxy.h>
+#include <memory/GraphMemoryManager.h>
+#include <system/dll.h>
 
 namespace sd {
-    namespace graph {
-        class Graph;
+namespace graph {
+class Graph;
 
-        class SD_EXPORT GraphExecutor {
-        protected:
-            virtual Context prepareContext(const ContextPrototype &contextPrototype, VariableProxy &variableSpace, const GraphMemoryManager &memoryManager) const;
+class SD_EXPORT GraphExecutor {
+ protected:
+  virtual Context prepareContext(const ContextPrototype &contextPrototype,
+                                 VariableProxy &variableSpace,
+                                 const GraphMemoryManager &memoryManager) const;
 
-            /*
-             * preprocessor call involves:
-             * - ensure all inputs reside in HOT memory zone
-             * - shape function call
-             * - open workspace
-             */
-            virtual Nd4jStatus preprocess(sd::ops::DeclarableOp *op, Context &context) const;
+  /*
+   * preprocessor call involves:
+   * - ensure all inputs reside in HOT memory zone
+   * - shape function call
+   * - open workspace
+   */
+  virtual Nd4jStatus preprocess(sd::ops::DeclarableOp *op,
+                                Context &context) const;
 
-            /**
-             * postporcessor call involves:
-             * - remove all inputs that are not going to be used later from HOT memory zone
-             * - close workspace
-             * @return
-             */
-            virtual Nd4jStatus postprocess(sd::ops::DeclarableOp *op, Context *context) const;
+  /**
+   * postporcessor call involves:
+   * - remove all inputs that are not going to be used later from HOT memory
+   * zone
+   * - close workspace
+   * @return
+   */
+  virtual Nd4jStatus postprocess(sd::ops::DeclarableOp *op,
+                                 Context *context) const;
 
-        public:
-            GraphExecutor() = default;
-            virtual ~GraphExecutor() = default;
+ public:
+  GraphExecutor() = default;
+  virtual ~GraphExecutor() = default;
 
-            /**
-             * This method executes OptimizedGraph instance
-             * @param graph
-             * @return
-             */
-            virtual Nd4jStatus execute(const OptimizedGraph &graph, VariableProxy &proxy) const;
+  /**
+   * This method executes OptimizedGraph instance
+   * @param graph
+   * @return
+   */
+  virtual Nd4jStatus execute(const OptimizedGraph &graph,
+                             VariableProxy &proxy) const;
 
-            /**
-             * This method executes OpSequence
-             * @param sequence
-             * @param deviceId - this argument allows to override device affinity specified in OpSequence, keep it < 0 to follow OpSequence
-             * @return
-             */
-            virtual Nd4jStatus execute(const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, int deviceId) const;
+  /**
+   * This method executes OpSequence
+   * @param sequence
+   * @param deviceId - this argument allows to override device affinity
+   * specified in OpSequence, keep it < 0 to follow OpSequence
+   * @return
+   */
+  virtual Nd4jStatus execute(const OpSequence &sequence,
+                             const OptimizedGraph &graph, VariableProxy &proxy,
+                             int deviceId) const;
 
-            /**
-             * This method executes given op
-             * @param op
-             * @param contextPrototype
-             * @return
-             */
-            virtual Nd4jStatus execute(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &contextPrototype, const OpSequence &sequence, const OptimizedGraph &graph, VariableProxy &proxy, const int deviceId) const;
-        };
-    }
-}
+  /**
+   * This method executes given op
+   * @param op
+   * @param contextPrototype
+   * @return
+   */
+  virtual Nd4jStatus execute(const std::shared_ptr<sd::ops::DeclarableOp> &op,
+                             const ContextPrototype &contextPrototype,
+                             const OpSequence &sequence,
+                             const OptimizedGraph &graph, VariableProxy &proxy,
+                             const int deviceId) const;
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //SD_GRAPHEXECUTOR_H
+#endif  // SD_GRAPHEXECUTOR_H

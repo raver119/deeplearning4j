@@ -24,17 +24,23 @@
 #include <array/NDArray.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void scatter(sd::LaunchContext* context, pairwise::Ops op, const NDArray& indices, const NDArray& updates, NDArray& output, const bool lock);
+namespace ops {
+namespace helpers {
+void scatter(sd::LaunchContext* context, pairwise::Ops op,
+             const NDArray& indices, const NDArray& updates, NDArray& output,
+             const bool lock);
 
-            void scatterND(sd::LaunchContext* context, pairwise::Ops op, const NDArray& indices, const NDArray& updates, NDArray& output, const bool lock);
+void scatterND(sd::LaunchContext* context, pairwise::Ops op,
+               const NDArray& indices, const NDArray& updates, NDArray& output,
+               const bool lock);
 
-            void scatterForLoss(sd::LaunchContext* context, const NDArray& indices, NDArray& updates, NDArray& output, const bool calcGrad);
+void scatterForLoss(sd::LaunchContext* context, const NDArray& indices,
+                    NDArray& updates, NDArray& output, const bool calcGrad);
 
-            Nd4jLong checkIndices(sd::LaunchContext *context, const NDArray& indices, const NDArray& output, const int axis = -1);
-        }
-    }
-}
+Nd4jLong checkIndices(sd::LaunchContext* context, const NDArray& indices,
+                      const NDArray& output, const int axis = -1);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_SCATTER_H
+#endif  // SD_SCATTER_H

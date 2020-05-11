@@ -21,40 +21,41 @@
 #ifndef SD_EXECUTIONTASK_H
 #define SD_EXECUTIONTASK_H
 
-#include <memory>
-#include <system/dll.h>
 #include <ops/declarable/DeclarableOp.h>
+#include <system/dll.h>
+
+#include <memory>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT ExecutionTask {
-        protected:
-            std::shared_ptr<sd::ops::DeclarableOp> _op;
-            const ContextPrototype &_context;
+namespace graph {
+class SD_EXPORT ExecutionTask {
+ protected:
+  std::shared_ptr<sd::ops::DeclarableOp> _op;
+  const ContextPrototype& _context;
 
-        public:
-            ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp> &op, const ContextPrototype &ctx);
+ public:
+  ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp>& op,
+                const ContextPrototype& ctx);
 
-            ~ExecutionTask() = default;
+  ~ExecutionTask() = default;
 
-            ExecutionTask(const ExecutionTask& other);
+  ExecutionTask(const ExecutionTask& other);
 
-            ExecutionTask& operator=(const ExecutionTask& other) noexcept;
+  ExecutionTask& operator=(const ExecutionTask& other) noexcept;
 
-            // move constructor
-            ExecutionTask(ExecutionTask&& other);
+  // move constructor
+  ExecutionTask(ExecutionTask&& other);
 
-            // move assignment operator
-            ExecutionTask& operator=(ExecutionTask&& other) noexcept;
+  // move assignment operator
+  ExecutionTask& operator=(ExecutionTask&& other) noexcept;
 
-            void printOut() const;
+  void printOut() const;
 
-            std::shared_ptr<sd::ops::DeclarableOp> op() const;
+  std::shared_ptr<sd::ops::DeclarableOp> op() const;
 
-            const ContextPrototype &protoContext() const;
-        };
-    }
-}
+  const ContextPrototype& protoContext() const;
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //SD_EXECUTIONTASK_H
+#endif  // SD_EXECUTIONTASK_H

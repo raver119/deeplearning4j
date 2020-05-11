@@ -24,13 +24,17 @@
 #include "array/NDArray.h"
 
 namespace sd {
-    class SD_EXPORT AttentionHelper {
-
-    public:
-        static sd::NDArray multiHeadProject(const sd::NDArray* input, const sd::NDArray* projectionMatrix, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-        static void multiHeadProjectBp(const sd::NDArray* input, const sd::NDArray* projectionMatrix, const sd::NDArray* eps, sd::NDArray* dLdInput, sd::NDArray* dLdProjectionMatrix, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-    };
-}
-
+class SD_EXPORT AttentionHelper {
+ public:
+  static sd::NDArray multiHeadProject(
+      const sd::NDArray* input, const sd::NDArray* projectionMatrix,
+      sd::LaunchContext* context = sd::LaunchContext ::defaultContext());
+  static void multiHeadProjectBp(
+      const sd::NDArray* input, const sd::NDArray* projectionMatrix,
+      const sd::NDArray* eps, sd::NDArray* dLdInput,
+      sd::NDArray* dLdProjectionMatrix,
+      sd::LaunchContext* context = sd::LaunchContext ::defaultContext());
+};
+}  // namespace sd
 
 #endif

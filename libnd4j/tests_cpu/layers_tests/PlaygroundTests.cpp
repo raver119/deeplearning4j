@@ -19,201 +19,216 @@
 // Created by raver119 on 20.11.17.
 //
 
-#include "testlayers.h"
 #include <graph/Graph.h>
-#include <chrono>
 #include <graph/Node.h>
-#include <ops/declarable/CustomOperations.h>
 #include <graph/profiling/GraphProfilingHelper.h>
-#include <loops/type_conversions.h>
-#include <helpers/threshold.h>
-#include <helpers/MmulHelper.h>
-#include <ops/ops.h>
-#include <helpers/OmpLaunchHelper.h>
-#include <helpers/GradCheck.h>
-#include <ops/declarable/helpers/im2col.h>
-#include <helpers/Loops.h>
-#include <helpers/RandomLauncher.h>
-#include <ops/declarable/helpers/convolutions.h>
-
 #include <helpers/BenchmarkHelper.h>
-#include <ops/declarable/helpers/scatter.h>
 #include <helpers/ConstantShapeHelper.h>
 #include <helpers/ConstantTadHelper.h>
-#include <array>
+#include <helpers/FileUtils.h>
+#include <helpers/GradCheck.h>
+#include <helpers/Loops.h>
+#include <helpers/MmulHelper.h>
+#include <helpers/OmpLaunchHelper.h>
+#include <helpers/RandomLauncher.h>
+#include <helpers/threshold.h>
+#include <loops/type_conversions.h>
+#include <ops/declarable/CustomOperations.h>
+#include <ops/declarable/helpers/addBias.h>
+#include <ops/declarable/helpers/convolutions.h>
+#include <ops/declarable/helpers/im2col.h>
+#include <ops/declarable/helpers/legacy_helpers.h>
+#include <ops/declarable/helpers/scatter.h>
+#include <ops/ops.h>
 #include <performance/benchmarking/FullBenchmarkSuit.h>
 #include <performance/benchmarking/LightBenchmarkSuit.h>
 
-#include <ops/declarable/helpers/legacy_helpers.h>
-#include <ops/declarable/helpers/addBias.h>
-#include <helpers/FileUtils.h>
+#include <array>
+#include <chrono>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::graph;
 
 class PlaygroundTests : public testing::Test {
-public:
-    int numIterations = 3;
-    int poolSize = 10;
+ public:
+  int numIterations = 3;
+  int poolSize = 10;
 
-    PlaygroundTests() {
-        printf("\n");
-        fflush(stdout);
-    }
+  PlaygroundTests() {
+    printf("\n");
+    fflush(stdout);
+  }
 };
 
 TEST_F(PlaygroundTests, test_avx) {
-    nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(), ::binaryLevel());
+  nd4j_printf("Optimal level: %i; Binary level: %i;\n", ::optimalLevel(),
+              ::binaryLevel());
 }
-
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
-    auto x = NDArrayFactory::create<float>('c', {512, 3072});
-    auto y = NDArrayFactory::create<float>('c', {3072});
+  auto x = NDArrayFactory::create<float>('c', {512, 3072});
+  auto y = NDArrayFactory::create<float>('c', {3072});
 
-    std::vector<Nd4jLong> values;
+  std::vector<Nd4jLong> values;
 
-    sd::ops::biasadd op;
+  sd::ops::biasadd op;
 
-    for (int e = 0; e < 100; e++) {
-        auto timeStart = std::chrono::system_clock::now();
+  for (int e = 0; e < 100; e++) {
+    auto timeStart = std::chrono::system_clock::now();
 
-        op.execute({&x, &y}, {&x});
+    op.execute({&x, &y}, {&x});
 
-        auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
-    }
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(
+                         timeEnd - timeStart)
+                         .count();
+    values.emplace_back(outerTime);
+  }
 
-    std::sort(values.begin(), values.end());
+  std::sort(values.begin(), values.end());
 
-    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+  nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
 }
-
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
 #ifdef _RELEASE
 
+  // this test will run ONLY if this model exists
+  if (!FileUtils::fileExists("/home/raver119/Downloads/BertFull/model.fb"))
+    return;
 
+  auto graph =
+      Graph::fromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
 
-    // this test will run ONLY if this model exists
-    if (!FileUtils::fileExists("/home/raver119/Downloads/BertFull/model.fb"))
-        return;
+  auto t = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/BertFull/in0_IteratorGetNext.npy");
+  auto u = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/BertFull/in1_IteratorGetNext_1.npy");
+  auto v = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/BertFull/in2_IteratorGetNext_4.npy");
+  auto z = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/BertFull/out_loss-Softmax.npy");
 
-    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/BertFull/model.fb");
+  // graph->printOut();
 
-    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in0_IteratorGetNext.npy");
-    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in1_IteratorGetNext_1.npy");
-    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/in2_IteratorGetNext_4.npy");
-    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/BertFull/out_loss-Softmax.npy");
+  graph->tagInplaceNodes();
 
-    //graph->printOut();
+  graph->variableSpace()->putVariable(658, 0, t);
+  graph->variableSpace()->putVariable(659, 0, u);
+  graph->variableSpace()->putVariable(660, 0, v);
 
-    graph->tagInplaceNodes();
+  /*
+      // validating graph now
+      auto status = GraphExecutioner::execute(graph);
+      ASSERT_EQ(Status::OK(), status);
+      ASSERT_TRUE(graph->variableSpace()->hasVariable(1620));
 
-    graph->variableSpace()->putVariable(658,0, t);
-    graph->variableSpace()->putVariable(659,0, u);
-    graph->variableSpace()->putVariable(660,0, v);
+      auto array = graph->variableSpace()->getVariable(1620)->getNDArray();
+      ASSERT_EQ(z, *array);
 
-/*
-    // validating graph now
-    auto status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->variableSpace()->hasVariable(1620));
+  */
 
-    auto array = graph->variableSpace()->getVariable(1620)->getNDArray();
-    ASSERT_EQ(z, *array);
+  sd::Environment::getInstance()->setProfiling(true);
+  auto profile = GraphProfilingHelper::profile(graph, 1);
 
-*/
+  profile->printOut();
 
-    sd::Environment::getInstance()->setProfiling(true);
-    auto profile = GraphProfilingHelper::profile(graph, 1);
+  sd::Environment::getInstance()->setProfiling(false);
+  delete profile;
 
-    profile->printOut();
+  /*
+      std::vector<Nd4jLong> values;
 
-    sd::Environment::getInstance()->setProfiling(false);
-    delete profile;
+      for (int e = 0; e < 1; e++) {
+          auto timeStart = std::chrono::system_clock::now();
 
-/*
-    std::vector<Nd4jLong> values;
+          GraphExecutioner::execute(graph);
 
-    for (int e = 0; e < 1; e++) {
-        auto timeStart = std::chrono::system_clock::now();
+          auto timeEnd = std::chrono::system_clock::now();
+          auto outerTime =
+     std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+     timeStart).count(); values.emplace_back(outerTime);
+      }
 
-        GraphExecutioner::execute(graph);
+      std::sort(values.begin(), values.end());
 
-        auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
-    }
-
-    std::sort(values.begin(), values.end());
-
-    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-*/
-    delete graph;
+      nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+  */
+  delete graph;
 
 #endif
 }
 
-
 TEST_F(PlaygroundTests, test_bert_1) {
 #ifdef _RELEASE
-    // this test will run ONLY if this model exists
-    if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb"))
-        return;
+  // this test will run ONLY if this model exists
+  if (!FileUtils::fileExists(
+          "/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb"))
+    return;
 
-    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
+  auto graph = Graph::fromFlatBuffers(
+      "/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model.fb");
 
-    auto t = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext.numpy");
-    auto u = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_1.numpy");
-    auto v = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_input_IteratorGetNext_4.numpy");
-    auto z = NDArrayFactory::fromNpyFile("/home/raver119/Downloads/Bert_minimal_model/bert_minimal_model_output.numpy");
+  auto t = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/Bert_minimal_model/"
+      "bert_minimal_input_IteratorGetNext.numpy");
+  auto u = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/Bert_minimal_model/"
+      "bert_minimal_input_IteratorGetNext_1.numpy");
+  auto v = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/Bert_minimal_model/"
+      "bert_minimal_input_IteratorGetNext_4.numpy");
+  auto z = NDArrayFactory::fromNpyFile(
+      "/home/raver119/Downloads/Bert_minimal_model/"
+      "bert_minimal_model_output.numpy");
 
-    //graph->printOut();
+  // graph->printOut();
 
-    graph->tagInplaceNodes();
+  graph->tagInplaceNodes();
 
-    graph->variableSpace()->putVariable(85,0, t);
-    graph->variableSpace()->putVariable(86,0, u);
-    graph->variableSpace()->putVariable(87,0, v);
+  graph->variableSpace()->putVariable(85, 0, t);
+  graph->variableSpace()->putVariable(86, 0, u);
+  graph->variableSpace()->putVariable(87, 0, v);
 
-/*
-    // validating graph now
-    auto status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
+  /*
+      // validating graph now
+      auto status = GraphExecutioner::execute(graph);
+      ASSERT_EQ(Status::OK(), status);
+      ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
 
-    auto array = graph->variableSpace()->getVariable(198)->getNDArray();
-    ASSERT_EQ(z, *array);
+      auto array = graph->variableSpace()->getVariable(198)->getNDArray();
+      ASSERT_EQ(z, *array);
 
-*/
-    sd::Environment::getInstance()->setProfiling(true);
-    auto profile = GraphProfilingHelper::profile(graph, 1);
+  */
+  sd::Environment::getInstance()->setProfiling(true);
+  auto profile = GraphProfilingHelper::profile(graph, 1);
 
-    profile->printOut();
+  profile->printOut();
 
-    sd::Environment::getInstance()->setProfiling(false);
-    delete profile;
+  sd::Environment::getInstance()->setProfiling(false);
+  delete profile;
 
-/*
-    std::vector<Nd4jLong> values;
+  /*
+      std::vector<Nd4jLong> values;
 
-    for (int e = 0; e < 1; e++) {
-        auto timeStart = std::chrono::system_clock::now();
+      for (int e = 0; e < 1; e++) {
+          auto timeStart = std::chrono::system_clock::now();
 
-        GraphExecutioner::execute(graph);
+          GraphExecutioner::execute(graph);
 
-        auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
-    }
+          auto timeEnd = std::chrono::system_clock::now();
+          auto outerTime =
+     std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+     timeStart).count(); values.emplace_back(outerTime);
+      }
 
-    std::sort(values.begin(), values.end());
+      std::sort(values.begin(), values.end());
 
-    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-*/
-    delete graph;
+      nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+  */
+  delete graph;
 
 #endif
 }
@@ -221,67 +236,67 @@ TEST_F(PlaygroundTests, test_bert_1) {
 TEST_F(PlaygroundTests, test_bert_2) {
 #ifdef _RELEASE
 
-    // this test will run ONLY if this model exists
-    if (!FileUtils::fileExists("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb"))
-        return;
+  // this test will run ONLY if this model exists
+  if (!FileUtils::fileExists(
+          "/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb"))
+    return;
 
-    auto graph = Graph::fromFlatBuffers("/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
+  auto graph = Graph::fromFlatBuffers(
+      "/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
 
-    //graph->printOut();
+  // graph->printOut();
 
-    graph->tagInplaceNodes();
+  graph->tagInplaceNodes();
 
+  /*
+      // validating graph now
+      auto status = GraphExecutioner::execute(graph);
+      ASSERT_EQ(Status::OK(), status);
+      ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
 
-/*
-    // validating graph now
-    auto status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->variableSpace()->hasVariable(198));
+      auto array = graph->variableSpace()->getVariable(198)->getNDArray();
+      ASSERT_EQ(z, *array);
+  */
 
-    auto array = graph->variableSpace()->getVariable(198)->getNDArray();
-    ASSERT_EQ(z, *array);
-*/
+  sd::Environment::getInstance()->setProfiling(true);
+  auto profile = GraphProfilingHelper::profile(graph, 1);
 
-    sd::Environment::getInstance()->setProfiling(true);
-    auto profile = GraphProfilingHelper::profile(graph, 1);
+  profile->printOut();
 
-    profile->printOut();
+  sd::Environment::getInstance()->setProfiling(false);
+  delete profile;
 
-    sd::Environment::getInstance()->setProfiling(false);
-    delete profile;
+  /*
+      std::vector<Nd4jLong> values;
 
-/*
-    std::vector<Nd4jLong> values;
+      for (int e = 0; e < 1; e++) {
+          auto timeStart = std::chrono::system_clock::now();
 
-    for (int e = 0; e < 1; e++) {
-        auto timeStart = std::chrono::system_clock::now();
+          GraphExecutioner::execute(graph);
 
-        GraphExecutioner::execute(graph);
+          auto timeEnd = std::chrono::system_clock::now();
+          auto outerTime =
+     std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+     timeStart).count(); values.emplace_back(outerTime);
+      }
 
-        auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
-    }
+      std::sort(values.begin(), values.end());
 
-    std::sort(values.begin(), values.end());
-
-    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-*/
-    delete graph;
+      nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+  */
+  delete graph;
 
 #endif
 }
 
-
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
-    auto x = NDArrayFactory::create<float>('c', {4, 128, 768});
-    auto y = NDArrayFactory::create<float>('c', {4, 128, 1});
-    auto z = x.ulike();
+  auto x = NDArrayFactory::create<float>('c', {4, 128, 768});
+  auto y = NDArrayFactory::create<float>('c', {4, 128, 1});
+  auto z = x.ulike();
 
-    sd::ops::squaredsubtract op;
-    op.execute({&x, &y}, {&z});
+  sd::ops::squaredsubtract op;
+  op.execute({&x, &y}, {&z});
 }
-
 
 /*
 
@@ -316,8 +331,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
         sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
     }
 
     std::sort(values.begin(), values.end());
@@ -363,8 +379,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
         x->applyTransform(transform::Tanh, *z, nullptr);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
     }
 
     std::sort(values.begin(), values.end());
@@ -382,8 +399,8 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
 /*
 
 TEST_F(PlaygroundTests, test_s_0) {
-    std::vector<std::vector<Nd4jLong>> shapes = {{32, 224, 224, 3}, {32, 56, 56, 64}, {32, 7, 7, 512}};
-    std::vector<int> threads = {1, 2, 4, 8, 16};
+    std::vector<std::vector<Nd4jLong>> shapes = {{32, 224, 224, 3}, {32, 56, 56,
+64}, {32, 7, 7, 512}}; std::vector<int> threads = {1, 2, 4, 8, 16};
 
     for (auto shape: shapes) {
         for (auto t: threads) {
@@ -409,20 +426,23 @@ TEST_F(PlaygroundTests, test_s_0) {
                 sd::ops::helpers::addBias(ctx, x, y, z, false);
 
                 auto timeEnd = std::chrono::system_clock::now();
-                auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-                values.emplace_back(outerTime);
+                auto outerTime =
+std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
             }
 
             std::sort(values.begin(), values.end());
 
-            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time: %lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() / 2]);
+            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time:
+%lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() /
+2]);
         }
     }
 }
 
 TEST_F(PlaygroundTests, test_s_1) {
-    std::vector<std::vector<Nd4jLong>> shapes = {{32, 3, 224, 224}, {32, 64, 56, 56}, {32, 512, 7, 7}};
-    std::vector<int> threads = {1, 2, 4, 8, 16};
+    std::vector<std::vector<Nd4jLong>> shapes = {{32, 3, 224, 224}, {32, 64, 56,
+56}, {32, 512, 7, 7}}; std::vector<int> threads = {1, 2, 4, 8, 16};
 
     for (auto shape: shapes) {
         for (auto t: threads) {
@@ -448,13 +468,16 @@ TEST_F(PlaygroundTests, test_s_1) {
                 sd::ops::helpers::addBias(ctx, x, y, z, true);
 
                 auto timeEnd = std::chrono::system_clock::now();
-                auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
-                values.emplace_back(outerTime);
+                auto outerTime =
+std::chrono::duration_cast<std::chrono::microseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
             }
 
             std::sort(values.begin(), values.end());
 
-            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time: %lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() / 2]);
+            nd4j_printf("Shape: [%lld, %lld, %lld, %lld]; Threads: [%i]; Time:
+%lld us;\n", shape[0], shape[1], shape[2], shape[3], t, values[values.size() /
+2]);
         }
     }
 }
@@ -481,8 +504,8 @@ TEST_F(PlaygroundTests, test_s_0) {
         op.execute(&ctx);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>
+(timeEnd - timeStart).count(); values.emplace_back(outerTime);
     }
 
     std::sort(values.begin(), values.end());
@@ -525,8 +548,8 @@ TEST_F(PlaygroundTests, test_s_1) {
         op.execute(&ctx);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>
+(timeEnd - timeStart).count(); values.emplace_back(outerTime);
     }
 
 
@@ -562,8 +585,8 @@ TEST_F(PlaygroundTests, test_s_2) {
         }
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds> (timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>
+(timeEnd - timeStart).count(); values.emplace_back(outerTime);
     };
     std::sort(values.begin(), values.end());
 
@@ -611,8 +634,9 @@ TEST_F(PlaygroundTests, test_s_4) {
             }
         }
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
-        valuesX.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd -
+timeStart).count(); valuesX.emplace_back(outerTime);
     }
 
 
@@ -624,7 +648,8 @@ TEST_F(PlaygroundTests, test_s_4) {
 
                     for (auto k = 0; k < xs2; k++) {
                         for (auto l = 0; l < xs3; l++) {
-                            zbuffer[thread_id] += buffer[i * j + (k * l)] * 2.5f;
+                            zbuffer[thread_id] += buffer[i * j + (k * l)]
+* 2.5f;
                         }
                     }
                 }
@@ -633,18 +658,21 @@ TEST_F(PlaygroundTests, test_s_4) {
         samediff::Threads::parallel_for(f2d, 0, xs0, 1, 0, xs1, 1);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
-        valuesY.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd -
+timeStart).count(); valuesY.emplace_back(outerTime);
     }
 
     if (valuesX.size() > 0) {
         std::sort(valuesX.begin(), valuesX.end());
-        nd4j_printf("OpenMP time: %lld; Min: %lld; Max: %lld;\n", valuesX[valuesX.size() / 2], valuesX[0], valuesX[valuesX.size() - 1]);
+        nd4j_printf("OpenMP time: %lld; Min: %lld; Max: %lld;\n",
+valuesX[valuesX.size() / 2], valuesX[0], valuesX[valuesX.size() - 1]);
     }
 
     if (valuesY.size() > 0) {
         std::sort(valuesY.begin(), valuesY.end());
-        nd4j_printf("Threads time: %lld; Min: %lld; Max: %lld;\n", valuesY[valuesY.size() / 2], valuesY[0], valuesY[valuesY.size() - 1]);
+        nd4j_printf("Threads time: %lld; Min: %lld; Max: %lld;\n",
+valuesY[valuesY.size() / 2], valuesY[0], valuesY[valuesY.size() - 1]);
     }
 
     nd4j_printf("Sum: %f\n", z.sumNumber().e<float>(0));
@@ -677,17 +705,20 @@ TEST_F(PlaygroundTests, test_s_5) {
         auto timeStart = std::chrono::system_clock::now();
 
         // picking best fit here
-        auto splitLoop = samediff::ThreadsHelper::pickLoop2d(numThreads, itersX, itersY);
-        auto span = samediff::Span2::build(splitLoop, 0, numThreads, startX, stopX, incX, startY, stopY, incY);
+        auto splitLoop = samediff::ThreadsHelper::pickLoop2d(numThreads, itersX,
+itersY); auto span = samediff::Span2::build(splitLoop, 0, numThreads, startX,
+stopX, incX, startY, stopY, incY);
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
     }
 
     std::sort(values.begin(), values.end());
 
-    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n", values[values.size() / 2], values[0], values[values.size()-1]);
+    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n",
+values[values.size() / 2], values[0], values[values.size()-1]);
 }
 
 
@@ -707,13 +738,15 @@ TEST_F(PlaygroundTests, test_s_6) {
         }
 
         auto timeEnd = std::chrono::system_clock::now();
-        auto outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd - timeStart).count();
-        values.emplace_back(outerTime);
+        auto outerTime =
+std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd -
+timeStart).count(); values.emplace_back(outerTime);
     }
 
     std::sort(values.begin(), values.end());
 
-    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n", values[values.size() / 2], values[0], values[values.size()-1]);
+    nd4j_printf("Calculations time: [Median: %lld; Min: %lld; Max: %lld;]\n",
+values[values.size() / 2], values[0], values[values.size()-1]);
 }
 
 
@@ -737,19 +770,21 @@ TEST_F(PlaygroundTests, test_relubp_1) {
     auto y = x.ulike();
     auto z = x.ulike();
     RandomGenerator rng(119, 120);
-    RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng, &x, -1.0, 1.0);
-    RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng, &y, -1.0, 1.0);
+    RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng, &x,
+-1.0, 1.0); RandomLauncher::fillUniform(LaunchContext::defaultContext(), rng,
+&y, -1.0, 1.0);
 
     int iterations = 10;
 
     auto timeStart = std::chrono::system_clock::now();
     for (int e = 0; e < iterations; e++)
-        ops::helpers::reluDerivative(LaunchContext::defaultContext(), &x, &y, &z);
-    auto timeEnd = std::chrono::system_clock::now();
+        ops::helpers::reluDerivative(LaunchContext::defaultContext(), &x, &y,
+&z); auto timeEnd = std::chrono::system_clock::now();
 
-    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
-    auto time = (Nd4jLong) outerTime / iterations;
-    auto bw = (1000000L * (float) (x.lengthOf() * x.sizeOfT()) / time) / 1024 / 1024 / 1024;
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>
+(timeEnd - timeStart).count(); auto time = (Nd4jLong) outerTime / iterations;
+    auto bw = (1000000L * (float) (x.lengthOf() * x.sizeOfT()) / time) / 1024 /
+1024 / 1024;
 
     nd4j_printf("Time: %lld; BW: %f GB/s\n", time, bw);
 }
@@ -757,10 +792,11 @@ TEST_F(PlaygroundTests, test_relubp_1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(PlaygroundTests, my) {
 
-    int bS=8, iD=32,iH=32,iW=32,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,  pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2;
-    int       oD,oH,oW;
+    int bS=8, iD=32,iH=32,iW=32,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,
+pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2; int       oD,oH,oW;
 
-    sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW, sD, sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
+    sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW, sD,
+sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
 
     printf("!!%i, %i, %i\n", oD,oH,oW);
 
@@ -774,9 +810,10 @@ TEST_F(PlaygroundTests, my) {
     auto block = new Context(1, variableSpace, false);  // not-in-place
 
     auto timeStart = std::chrono::system_clock::now();
-    sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH, pW, dD, dH, dW);
-    auto timeEnd = std::chrono::system_clock::now();
-    auto time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+    sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH, pW,
+dD, dH, dW); auto timeEnd = std::chrono::system_clock::now(); auto time =
+std::chrono::duration_cast<std::chrono::microseconds> (timeEnd -
+timeStart).count();
 
     printf("time: %i \n", time);
 
@@ -786,11 +823,13 @@ TEST_F(PlaygroundTests, my) {
 
 TEST_F(PlaygroundTests, my) {
 
-    int bS=32, iD=32,iH=64,iW=64,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,  pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2;
-    int       oD,oH,oW;
+    int bS=32, iD=32,iH=64,iW=64,  iC=128,  kD=2,kH=2,kW=2,  sD=1,sH=1,sW=1,
+pD=0,pH=0,pW=0,  dD=2,dH=2,dW=2; int       oD,oH,oW;
 
-    // sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW, sD, sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
-    sd::ops::ConvolutionUtils::calcOutSizeDeconv2D(oH, oW, kH, kW, sH, sW, pH, pW,dH, dW, iH, iW, 0);
+    // sd::ops::ConvolutionUtils::calcOutSizeDeconv3D(oD, oH, oW, kD, kH, kW,
+sD, sH, sW, pD, pH, pW, dD, dH, dW, iD, iH, iW, 0);
+    sd::ops::ConvolutionUtils::calcOutSizeDeconv2D(oH, oW, kH, kW, sH, sW, pH,
+pW,dH, dW, iH, iW, 0);
 
     printf("!!%i, %i, %i\n", oD,oH,oW);
 
@@ -807,10 +846,11 @@ TEST_F(PlaygroundTests, my) {
     auto block = new Context(1, variableSpace, false);  // not-in-place
 
     auto timeStart = std::chrono::system_clock::now();
-    // sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH, pW, dD, dH, dW);
-    sd::ops::helpers::col2im(*col.getContext(), col, im, sH, sW, pH, pW, iH, iW, dH, dW);
-    auto timeEnd = std::chrono::system_clock::now();
-    auto time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd - timeStart).count();
+    // sd::ops::ConvolutionUtils::col2vol(*block, col, vol, sD, sH, sW, pD, pH,
+pW, dD, dH, dW); sd::ops::helpers::col2im(*col.getContext(), col, im, sH, sW,
+pH, pW, iH, iW, dH, dW); auto timeEnd = std::chrono::system_clock::now(); auto
+time = std::chrono::duration_cast<std::chrono::microseconds> (timeEnd -
+timeStart).count();
 
     printf("time: %i \n", time);
 
@@ -821,8 +861,8 @@ TEST_F(PlaygroundTests, my) {
 TEST_F(PlaygroundTests, my) {
 
     int N = 100;
-    int bS=16, iH=128,iW=128,  iC=32,oC=64,  kH=4,kW=4,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
-    int        oH=128,oW=128;
+    int bS=16, iH=128,iW=128,  iC=32,oC=64,  kH=4,kW=4,  sH=1,sW=1,  pH=0,pW=0,
+dH=1,dW=1; int        oH=128,oW=128;
 
     int paddingMode = 1;             // 1-SAME, 0-VALID;
     int dataFormat  = 1;             // 1-NHWC, 0-NCHW
@@ -831,22 +871,25 @@ TEST_F(PlaygroundTests, my) {
     // NDArray output('c', {bS, oC, oH, oW}, sd::DataType::FLOAT32);
     NDArray input('c', {bS, iH, iW, iC}, sd::DataType::FLOAT32);
     NDArray output('c', {bS, oH, oW, oC}, sd::DataType::FLOAT32);
-    // NDArray weights('c', {kH, kW, iC, oC}, sd::DataType::FLOAT32);    // permute [kH, kW, iC, oC] -> [oC, iC, kH, kW]
-    NDArray weights('c', {oC, iC, kH, kW}, sd::DataType::FLOAT32);
-    NDArray bias('c', {oC}, sd::DataType::FLOAT32);
+    // NDArray weights('c', {kH, kW, iC, oC}, sd::DataType::FLOAT32);    //
+permute [kH, kW, iC, oC] -> [oC, iC, kH, kW] NDArray weights('c', {oC, iC, kH,
+kW}, sd::DataType::FLOAT32); NDArray bias('c', {oC}, sd::DataType::FLOAT32);
 
     input = 5.;
     weights = 3.;
     bias = 1.;
 
     sd::ops::conv2d op;
-    auto err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
+    auto err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,
+pH,pW,  dH,dW, paddingMode, dataFormat});
 
     auto timeStart = std::chrono::system_clock::now();
     for (int i = 0; i < N; ++i)
-        err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,  pH,pW,  dH,dW, paddingMode, dataFormat});
-    auto timeEnd = std::chrono::system_clock::now();
-    auto time = std::chrono::duration_cast<std::chrono::microseconds> ((timeEnd - timeStart) / N).count();
+        err = op.execute({&input, &weights, &bias}, {&output}, {kH,kW,  sH,sW,
+pH,pW,  dH,dW, paddingMode, dataFormat}); auto timeEnd =
+std::chrono::system_clock::now(); auto time =
+std::chrono::duration_cast<std::chrono::microseconds> ((timeEnd - timeStart) /
+N).count();
 
     printf("time: %i \n", time);
 }
@@ -861,15 +904,17 @@ TEST_F(PlaygroundTests, lstmLayerCellBp_1) {
     // const int nOut = 6;
 
     const float cellClip = 1.1;       // clipping value
-    const Nd4jLong gateAct = 2;        // sigmoid activation for input (i), forget (f) and output (o) gates
-    const float gateAlpha = 0;      // alpha value for activation for gates, not required for sigmoid
-    const float gateBeta = 0;       // beta value for activation for gates, not required for sigmoid
-    const Nd4jLong cellAct = 0;        // tanh activation for cell state
-    const float cellAlpha = 0;      // alpha value for cell state activation, not required for tanh
-    const float cellBeta = 0;       // beta value for cell state activation, not required for tanh
-    const Nd4jLong outAct = 0;         // tanh activation for output
-    const float outAlpha = 0;       // alpha value for output activation, not required for tanh
-    const float outBeta = 0;        // beta value for output activation, not required for tanh
+    const Nd4jLong gateAct = 2;        // sigmoid activation for input (i),
+forget (f) and output (o) gates const float gateAlpha = 0;      // alpha value
+for activation for gates, not required for sigmoid const float gateBeta = 0; //
+beta value for activation for gates, not required for sigmoid const Nd4jLong
+cellAct = 0;        // tanh activation for cell state const float cellAlpha = 0;
+// alpha value for cell state activation, not required for tanh const float
+cellBeta = 0;       // beta value for cell state activation, not required for
+tanh const Nd4jLong outAct = 0;         // tanh activation for output const
+float outAlpha = 0;       // alpha value for output activation, not required for
+tanh const float outBeta = 0;        // beta value for output activation, not
+required for tanh
 
     NDArray x ('c',   {bS, nIn}, sd::DataType::DOUBLE);
     NDArray hI('c',   {bS, nOut}, sd::DataType::DOUBLE);
@@ -908,21 +953,23 @@ TEST_F(PlaygroundTests, lstmLayerCellBp_1) {
     std::vector<Nd4jLong> iArgs = {gateAct, cellAct, outAct};
 
     // std::vector<bool>     bArgs = {false, false};
-    // const OpArgsHolder argsHolderFF({&x, &Wx, &Wr, &hI, &cI}, tArgs, iArgs, bArgs);
-    // const OpArgsHolder argsHolderBP({&x, &Wx, &Wr, &hI, &cI, &dLdh}, tArgs, iArgs, bArgs);
+    // const OpArgsHolder argsHolderFF({&x, &Wx, &Wr, &hI, &cI}, tArgs, iArgs,
+bArgs);
+    // const OpArgsHolder argsHolderBP({&x, &Wx, &Wr, &hI, &cI, &dLdh}, tArgs,
+iArgs, bArgs);
 
     std::vector<bool>     bArgs = {true, true};
-    const OpArgsHolder argsHolderFF({&x, &Wx, &Wr, &b, &hI, &cI, &Wp}, tArgs, iArgs, bArgs);
-    const OpArgsHolder argsHolderBP({&x, &Wx, &Wr, &b, &hI, &cI, &Wp, &dLdh}, tArgs, iArgs, bArgs);
+    const OpArgsHolder argsHolderFF({&x, &Wx, &Wr, &b, &hI, &cI, &Wp}, tArgs,
+iArgs, bArgs); const OpArgsHolder argsHolderBP({&x, &Wx, &Wr, &b, &hI, &cI, &Wp,
+&dLdh}, tArgs, iArgs, bArgs);
 
     sd::ops::lstmLayerCell opFF;
     sd::ops::lstmLayerCellBp opBP;
 
-    const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF, argsHolderBP, {true, true, true, true, true, true, true});
+    const bool isGradCorrect = GradCheck::checkGrad(opFF, opBP, argsHolderFF,
+argsHolderBP, {true, true, true, true, true, true, true});
 }
 
 
 
 */
-
-

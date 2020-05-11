@@ -21,7 +21,8 @@
 #include "loops/cpu/pairwise.hpp"
 
 namespace functions {
-    namespace pairwise_transforms {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT PairWiseTransform, , PAIRWISE_TYPES_7);
-    }
+namespace pairwise_transforms {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT PairWiseTransform, ,
+                        PAIRWISE_TYPES_7);
 }
+}  // namespace functions

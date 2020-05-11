@@ -19,21 +19,26 @@
 //
 #ifndef __IMAGE_SUPPRESSION_H_HELPERS__
 #define __IMAGE_SUPPRESSION_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void nonMaxSuppression(sd::LaunchContext * context, NDArray* boxes, NDArray* scales, int maxSize,
-            double overlapThreshold, double scoreThreshold, NDArray* output);
-    Nd4jLong nonMaxSuppressionV3(sd::LaunchContext * context, NDArray* boxes, NDArray* scales, int maxSize,
-                           double overlapThreshold, double scoreThreshold, NDArray* output);
-    Nd4jLong nonMaxSuppressionGeneric(sd::LaunchContext* context, NDArray* boxes, NDArray* scores, int maxSize,
-                             double overlapThreshold, double scoreThreshold, NDArray* output);
+void nonMaxSuppression(sd::LaunchContext* context, NDArray* boxes,
+                       NDArray* scales, int maxSize, double overlapThreshold,
+                       double scoreThreshold, NDArray* output);
+Nd4jLong nonMaxSuppressionV3(sd::LaunchContext* context, NDArray* boxes,
+                             NDArray* scales, int maxSize,
+                             double overlapThreshold, double scoreThreshold,
+                             NDArray* output);
+Nd4jLong nonMaxSuppressionGeneric(sd::LaunchContext* context, NDArray* boxes,
+                                  NDArray* scores, int maxSize,
+                                  double overlapThreshold,
+                                  double scoreThreshold, NDArray* output);
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 #endif

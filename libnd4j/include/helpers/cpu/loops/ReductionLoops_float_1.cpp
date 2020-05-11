@@ -18,35 +18,41 @@
 // @author raver119@gmail.com
 //
 
-#include "ReductionLoops.hpp"
 #include <system/pointercast.h>
 #include <types/types.h>
+
+#include "ReductionLoops.hpp"
 
 using namespace simdOps;
 
 namespace sd {
 
-    template<typename X, typename Z>
-    template <typename OpType>
-    void ReductionFloatLoops<X, Z>::innerloopReduce(const X * x, const Nd4jLong* xShapeInfo, Z* z, const Nd4jLong* zShapeInfo, const Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, Z* extraParams, int64_t start, int64_t stop) {
+template <typename X, typename Z>
+template <typename OpType>
+void ReductionFloatLoops<X, Z>::innerloopReduce(
+    const X *x, const Nd4jLong *xShapeInfo, Z *z, const Nd4jLong *zShapeInfo,
+    const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets, Z *extraParams,
+    int64_t start, int64_t stop) {
 #ifndef INLINE_LOOPS
-        ReductionLoops<X,Z,Z>::template loopReduce<OpType>(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop);
+  ReductionLoops<X, Z, Z>::template loopReduce<OpType>(
+      x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams,
+      start, stop);
 #endif
-    }
-
-    template<typename X, typename Y>
-    void ReductionFloatLoops<X, Y>::wrapper(const int opNum,
-                                            const X *x, const Nd4jLong *xShapeInfo,
-                                            Y *z, const Nd4jLong *zShapeInfo,
-                                            const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets,
-                                            Y *extraParams,
-                                            int64_t start, int64_t stop) {
-#ifndef INLINE_LOOPS
-        DISPATCH_BY_OPNUM_TT(innerloopReduce, PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop), REDUCE_FLOAT_OPS);
-#endif
-    }
-
-    BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionFloatLoops, , LIBND4J_TYPES, FLOAT_TYPES_1);
 }
 
+template <typename X, typename Y>
+void ReductionFloatLoops<X, Y>::wrapper(
+    const int opNum, const X *x, const Nd4jLong *xShapeInfo, Y *z,
+    const Nd4jLong *zShapeInfo, const Nd4jLong *tadShapeInfo,
+    const Nd4jLong *tadOffsets, Y *extraParams, int64_t start, int64_t stop) {
+#ifndef INLINE_LOOPS
+  DISPATCH_BY_OPNUM_TT(innerloopReduce,
+                       PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo,
+                              tadOffsets, extraParams, start, stop),
+                       REDUCE_FLOAT_OPS);
+#endif
+}
 
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionFloatLoops, ,
+                      LIBND4J_TYPES, FLOAT_TYPES_1);
+}  // namespace sd

@@ -22,48 +22,48 @@
 
 namespace sd {
 
-
 #ifdef __CUDACC__
-    __host__
+__host__
 #endif
-    void Logger::info(const char *format, ...) {
-        va_list args;
-        va_start(args, format);
+    void
+    Logger::info(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
 
-        vprintf(format, args);
+  vprintf(format, args);
 
-        va_end(args);
+  va_end(args);
 
-        fflush(stdout);
-    }
-
-#ifdef __CUDACC__
-    __host__
-#endif
-     void Logger::printv(const char *format, const std::vector<int>& vec) {
-        printf("%s: {", format);
-        for(int e = 0; e < vec.size(); e++) {
-            auto v = vec[e];
-            printf("%i", v);
-            if (e < vec.size() - 1)
-                printf(", ");
-        }
-        printf("}\n");
-        fflush(stdout);
-    }
-
-    #ifdef __CUDACC__
-    __host__
-#endif
-     void Logger::printv(const char *format, const std::vector<Nd4jLong>& vec) {
-        printf("%s: {", format);
-        for(int e = 0; e < vec.size(); e++) {
-            auto v = vec[e];
-            printf("%lld", (long long) v);
-            if (e < vec.size() - 1)
-                printf(", ");
-        }
-        printf("}\n");
-        fflush(stdout);
-    }
+  fflush(stdout);
 }
+
+#ifdef __CUDACC__
+__host__
+#endif
+    void
+    Logger::printv(const char *format, const std::vector<int> &vec) {
+  printf("%s: {", format);
+  for (int e = 0; e < vec.size(); e++) {
+    auto v = vec[e];
+    printf("%i", v);
+    if (e < vec.size() - 1) printf(", ");
+  }
+  printf("}\n");
+  fflush(stdout);
+}
+
+#ifdef __CUDACC__
+__host__
+#endif
+    void
+    Logger::printv(const char *format, const std::vector<Nd4jLong> &vec) {
+  printf("%s: {", format);
+  for (int e = 0; e < vec.size(); e++) {
+    auto v = vec[e];
+    printf("%lld", (long long)v);
+    if (e < vec.size() - 1) printf(", ");
+  }
+  printf("}\n");
+  fflush(stdout);
+}
+}  // namespace sd

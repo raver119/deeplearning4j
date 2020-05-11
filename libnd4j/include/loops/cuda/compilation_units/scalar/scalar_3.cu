@@ -21,7 +21,8 @@
 #include "../../scalar.chpp"
 
 namespace functions {
-    namespace scalar {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT ScalarTransform, , PAIRWISE_TYPES_3);
-    }
+namespace scalar {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT ScalarTransform, ,
+                        PAIRWISE_TYPES_3);
 }
+}  // namespace functions

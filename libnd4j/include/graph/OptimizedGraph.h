@@ -22,177 +22,192 @@
 #ifndef SD_OPTIMIZEDGRAPH_H
 #define SD_OPTIMIZEDGRAPH_H
 
-#include <graph/execution/OpSequence.h>
 #include <graph/execution/ExecutionLayer.h>
+#include <graph/execution/OpSequence.h>
 #include <memory/GraphMemoryManager.h>
-#include <vector>
+
 #include <map>
 #include <mutex>
+#include <vector>
 
 namespace sd {
-    namespace graph {
+namespace graph {
 
-        class Graph;
-        class NodeInfo;
-        /**
-         * This class acts as a topologically sorted & optimized Graph representation, ready for execution
-         */
-        class SD_EXPORT OptimizedGraph {
-        protected:
-            // here we store independent OpSequences
-            // Graph starts from layer 0, and goes deeper step by step
-            // on each layer we can have 1+ OpSequences that can be executed independent
-            std::map<uint64_t, ExecutionLayer> _onion;
+class Graph;
+class NodeInfo;
+/**
+ * This class acts as a topologically sorted & optimized Graph representation,
+ * ready for execution
+ */
+class SD_EXPORT OptimizedGraph {
+ protected:
+  // here we store independent OpSequences
+  // Graph starts from layer 0, and goes deeper step by step
+  // on each layer we can have 1+ OpSequences that can be executed independent
+  std::map<uint64_t, ExecutionLayer> _onion;
 
-            GraphMemoryManager *_memoryManager = nullptr;
-            Graph *_originalGraph = nullptr;
+  GraphMemoryManager* _memoryManager = nullptr;
+  Graph* _originalGraph = nullptr;
 
-            mutable std::mutex _mutex;
+  mutable std::mutex _mutex;
 
-            mutable size_t _size = 0;
-        public:
-            OptimizedGraph(Graph *original);
-            OptimizedGraph() = default;
-            ~OptimizedGraph() = default;
+  mutable size_t _size = 0;
 
-            OptimizedGraph(const OptimizedGraph& other) noexcept;
+ public:
+  OptimizedGraph(Graph* original);
+  OptimizedGraph() = default;
+  ~OptimizedGraph() = default;
 
-            OptimizedGraph& operator=(const OptimizedGraph& other) noexcept;
+  OptimizedGraph(const OptimizedGraph& other) noexcept;
 
-            // move constructor
-            OptimizedGraph(OptimizedGraph&& other) noexcept;
+  OptimizedGraph& operator=(const OptimizedGraph& other) noexcept;
 
-            // move assignment operator
-            OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
+  // move constructor
+  OptimizedGraph(OptimizedGraph&& other) noexcept;
 
+  // move assignment operator
+  OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
 
-            /**
-             * This method returns number of layers within OptimizedGraph
-             * @return
-             */
-            uint64_t layers() const;
+  /**
+   * This method returns number of layers within OptimizedGraph
+   * @return
+   */
+  uint64_t layers() const;
 
-            /**
-             * This method returns OpSequences stored in a given layer
-             * @param index
-             * @return
-             */
-            const ExecutionLayer& layer(uint64_t index) const;
+  /**
+   * This method returns OpSequences stored in a given layer
+   * @param index
+   * @return
+   */
+  const ExecutionLayer& layer(uint64_t index) const;
 
-            /**
-             * This method allows to append layer to this OptimizedGraph instance
-             */
-             // FIXME: this method should be removed or made private
-            void append(const std::vector<OpSequence> &layer);
-            void append(const ExecutionLayer &layer);
-            void append(OpSequence &sequence);
+  /**
+   * This method allows to append layer to this OptimizedGraph instance
+   */
+  // FIXME: this method should be removed or made private
+  void append(const std::vector<OpSequence>& layer);
+  void append(const ExecutionLayer& layer);
+  void append(OpSequence& sequence);
 
-            /**
-             * This method returns GraphMemoryManager instance that manages this Graph
-             * @return
-             */
-            const GraphMemoryManager& memoryManager() const;
+  /**
+   * This method returns GraphMemoryManager instance that manages this Graph
+   * @return
+   */
+  const GraphMemoryManager& memoryManager() const;
 
-            /**
-             * This method returns pointer to original Graph
-             * @return
-             */
-            const Graph& originalGraph() const;
+  /**
+   * This method returns pointer to original Graph
+   * @return
+   */
+  const Graph& originalGraph() const;
 
-            /**
-             * This method returns number of nodes in this graph instance
-             * @return
-             */
-            size_t size() const;
+  /**
+   * This method returns number of nodes in this graph instance
+   * @return
+   */
+  size_t size() const;
 
-            /**
-             * This method prints out graph content
-             */
-            void printOut() const;
-        protected:
-            /*
-            * optimize original graph
-            */
-            void     createOptimizedGraph();
-            /*
-            * Topological graph analysis
-            * @param const start node for search
-            * @param const reference for nodes infor container
-            * @param operation gather
-            * @return stop iterating
-            */
-            bool      topolSearch(const int startNode, std::unordered_map<int, NodeInfo>& nodesConnections, std::vector<std::vector<OpSequence>>& opSeq) const;
-            /*
-            * Optimized graph analysis prototyping, gather nodes infor
-            * @param reference to node information collector
-            * @param reference to start nodes
-            * @param reference to input branching nodes (input branching node - atleast 2 internal inputs)
-            * @return stop iterating
-            */
-            bool      opGraphProto(std::unordered_map<int, NodeInfo>& collector, std::set<int>& startNodes, std::set<int>& inBranchingNodes) const;
-            /*
-            * Define layers and sequence positions based on nodes infor
-            * @param reference to node information collector
-            * @param node ID
-            * @param layer ID
-            * @param sequence ID
-            * @param map of layers and max sequence
-            * @return stop iterating
-            */
-            bool      layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID, int layer, int nStartSeq, std::unordered_map<int,int>& layersMaxSeq) const;
-            /*
-            * Initialize container with operations and context
-            * @param const reference to layers and sequence collection
-            * @param reference to opSequence collector
-            * @return stop iterating
-            */
-            bool      initOpSeqContainer(const std::unordered_map<int,int>& layersMaxSeq, std::vector<std::vector< OpSequence >>& vOpSeq) const;
+  /**
+   * This method prints out graph content
+   */
+  void printOut() const;
 
-        };
+ protected:
+  /*
+   * optimize original graph
+   */
+  void createOptimizedGraph();
+  /*
+   * Topological graph analysis
+   * @param const start node for search
+   * @param const reference for nodes infor container
+   * @param operation gather
+   * @return stop iterating
+   */
+  bool topolSearch(const int startNode,
+                   std::unordered_map<int, NodeInfo>& nodesConnections,
+                   std::vector<std::vector<OpSequence>>& opSeq) const;
+  /*
+   * Optimized graph analysis prototyping, gather nodes infor
+   * @param reference to node information collector
+   * @param reference to start nodes
+   * @param reference to input branching nodes (input branching node - atleast 2
+   * internal inputs)
+   * @return stop iterating
+   */
+  bool opGraphProto(std::unordered_map<int, NodeInfo>& collector,
+                    std::set<int>& startNodes,
+                    std::set<int>& inBranchingNodes) const;
+  /*
+   * Define layers and sequence positions based on nodes infor
+   * @param reference to node information collector
+   * @param node ID
+   * @param layer ID
+   * @param sequence ID
+   * @param map of layers and max sequence
+   * @return stop iterating
+   */
+  bool layersSeqDefine(std::unordered_map<int, NodeInfo>& collection, int ID,
+                       int layer, int nStartSeq,
+                       std::unordered_map<int, int>& layersMaxSeq) const;
+  /*
+   * Initialize container with operations and context
+   * @param const reference to layers and sequence collection
+   * @param reference to opSequence collector
+   * @return stop iterating
+   */
+  bool initOpSeqContainer(const std::unordered_map<int, int>& layersMaxSeq,
+                          std::vector<std::vector<OpSequence>>& vOpSeq) const;
+};
 
-        class NodeInfo {
-        private:
-            std::set<int> sConnections;
-            
-            bool bInBranching;
-            bool bOutBranching;
-            bool bProcessed;
+class NodeInfo {
+ private:
+  std::set<int> sConnections;
 
-            int  nLayer;
-            int  nSequence;
+  bool bInBranching;
+  bool bOutBranching;
+  bool bProcessed;
 
-            sd::graph::OpType opType;
-        public:
-              
-            NodeInfo(){ reset(); }
-            ~NodeInfo(){ reset(); }
+  int nLayer;
+  int nSequence;
 
-            void setInBranching(bool bValue) { bInBranching = bValue; }
-            void setOutBranching(bool bValue) { bOutBranching = bValue; }
-            void setProcessed(bool bValue = true) { bProcessed = bValue; }
+  sd::graph::OpType opType;
 
-            void reset() { sConnections.clear(); bProcessed = bInBranching = bOutBranching = false; nLayer = 0; nSequence = -1; opType = OpType_CUSTOM; }
+ public:
+  NodeInfo() { reset(); }
+  ~NodeInfo() { reset(); }
 
-            int layer() const { return nLayer; }
-            void setLayer(int layer) { nLayer = layer; }
+  void setInBranching(bool bValue) { bInBranching = bValue; }
+  void setOutBranching(bool bValue) { bOutBranching = bValue; }
+  void setProcessed(bool bValue = true) { bProcessed = bValue; }
 
-            int sequence() const { return nSequence; }
-            void setSequence(int sequence) { nSequence = sequence; }
+  void reset() {
+    sConnections.clear();
+    bProcessed = bInBranching = bOutBranching = false;
+    nLayer = 0;
+    nSequence = -1;
+    opType = OpType_CUSTOM;
+  }
 
-            void addConnection(int id) { sConnections.emplace(id); }
-            const std::set<int>& connections() const { return sConnections; }
+  int layer() const { return nLayer; }
+  void setLayer(int layer) { nLayer = layer; }
 
-            void setType(sd::graph::OpType value){ opType = value; }
-            sd::graph::OpType type() const { return opType; }
-            bool  isLogic(){ return opType == OpType_LOGIC; }
+  int sequence() const { return nSequence; }
+  void setSequence(int sequence) { nSequence = sequence; }
 
-            bool isInBranching() const { return bInBranching; }
-            bool isOutBranching() const { return bOutBranching; }
-            bool isProcessed() const { return bProcessed; }
-        };
+  void addConnection(int id) { sConnections.emplace(id); }
+  const std::set<int>& connections() const { return sConnections; }
 
-    }
-}
+  void setType(sd::graph::OpType value) { opType = value; }
+  sd::graph::OpType type() const { return opType; }
+  bool isLogic() { return opType == OpType_LOGIC; }
 
+  bool isInBranching() const { return bInBranching; }
+  bool isOutBranching() const { return bOutBranching; }
+  bool isProcessed() const { return bProcessed; }
+};
 
-#endif //SD_OPTIMIZEDGRAPH_H
+}  // namespace graph
+}  // namespace sd
+
+#endif  // SD_OPTIMIZEDGRAPH_H

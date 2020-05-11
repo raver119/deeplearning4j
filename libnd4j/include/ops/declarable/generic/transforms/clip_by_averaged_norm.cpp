@@ -22,31 +22,31 @@
 #if NOT_EXCLUDED(OP_clipbyavgnorm)
 
 #include <ops/declarable/CustomOperations.h>
-#include<ops/declarable/helpers/transforms.h>
+#include <ops/declarable/helpers/transforms.h>
 
 namespace sd {
-namespace ops  {
+namespace ops {
 
 CONFIGURABLE_OP_IMPL(clipbyavgnorm, 1, 1, true, 1, 0) {
+  auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
 
-    auto input  = INPUT_VARIABLE(0);
-    auto output = OUTPUT_VARIABLE(0);
+  const bool isInplace = block.isInplace();
+  auto ts = NDArrayFactory::create(T_ARG(0), block.launchContext());
 
-    const bool isInplace = block.isInplace();
-    auto ts = NDArrayFactory::create(T_ARG(0), block.launchContext());
+  helpers::clipByAveraged(block.launchContext(), *input, *output,
+                          block.getIArguments(), ts, isInplace);
 
-    helpers::clipByAveraged(block.launchContext(), *input, *output, block.getIArguments(), ts, isInplace);
-
-    return Status::OK();
+  return Status::OK();
 }
 
-    DECLARE_TYPES(clipbyavgnorm) {
-        getOpDescriptor()
-                ->setAllowedInputTypes(sd::DataType::ANY)
-                ->setAllowedOutputTypes({ALL_FLOATS});
-    }
+DECLARE_TYPES(clipbyavgnorm) {
+  getOpDescriptor()
+      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedOutputTypes({ALL_FLOATS});
+}
 
-}
-}
+}  // namespace ops
+}  // namespace sd
 
 #endif

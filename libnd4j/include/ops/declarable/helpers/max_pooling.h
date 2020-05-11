@@ -19,16 +19,18 @@
 //
 #ifndef __MAX_POOLING_HELPERS__
 #define __MAX_POOLING_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
 #include <graph/Context.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void maxPoolingFunctor(sd::LaunchContext * context, sd::graph::Context& block, NDArray* input, NDArray* values, std::vector<int> const& params, NDArray* indices);
+void maxPoolingFunctor(sd::LaunchContext* context, sd::graph::Context& block,
+                       NDArray* input, NDArray* values,
+                       std::vector<int> const& params, NDArray* indices);
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

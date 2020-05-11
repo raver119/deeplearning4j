@@ -21,30 +21,28 @@
 #ifndef ND4J_STATUS_H
 #define ND4J_STATUS_H
 
-#include <system/pointercast.h>
-#include <system/op_boilerplate.h>
-#include <system/dll.h>
 #include <helpers/logger.h>
+#include <system/dll.h>
+#include <system/op_boilerplate.h>
+#include <system/pointercast.h>
 
 namespace sd {
-    class SD_EXPORT Status {
-    public:
-        static FORCEINLINE Nd4jStatus OK() {
-            return ND4J_STATUS_OK;
-        };
+class SD_EXPORT Status {
+ public:
+  static FORCEINLINE Nd4jStatus OK() { return ND4J_STATUS_OK; };
 
-        static FORCEINLINE Nd4jStatus CODE(Nd4jStatus code, const char *message) {
-            nd4j_printf("%s\n", message);
-            return code;
-        }
+  static FORCEINLINE Nd4jStatus CODE(Nd4jStatus code, const char *message) {
+    nd4j_printf("%s\n", message);
+    return code;
+  }
 
-        static FORCEINLINE Nd4jStatus THROW(const char *message = nullptr) {
-            if (message != nullptr) {
-                nd4j_printf("%s\n", message);
-            }
-            return ND4J_STATUS_KERNEL_FAILURE;
-        }
-    };
-}
+  static FORCEINLINE Nd4jStatus THROW(const char *message = nullptr) {
+    if (message != nullptr) {
+      nd4j_printf("%s\n", message);
+    }
+    return ND4J_STATUS_KERNEL_FAILURE;
+  }
+};
+}  // namespace sd
 
-#endif // STATUS_H
+#endif  // STATUS_H

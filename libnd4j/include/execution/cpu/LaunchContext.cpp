@@ -18,13 +18,15 @@
 // Created by raver119 on 30.11.17.
 //
 
-#include <execution/LaunchContext.h>
-#include <execution/AffinityManager.h>
-#include <helpers/logger.h>
 #include <exceptions/cuda_exception.h>
+#include <execution/AffinityManager.h>
+#include <execution/LaunchContext.h>
+#include <helpers/logger.h>
+
 #include <thread>
 
-#if defined(SD_IOS_BUILD) || defined(SD_APPLE_BUILD) || defined(SD_ANDROID_BUILD)
+#if defined(SD_IOS_BUILD) || defined(SD_APPLE_BUILD) || \
+    defined(SD_ANDROID_BUILD)
 sd::ContextBuffers contextBuffers = sd::ContextBuffers();
 #else
 thread_local sd::ContextBuffers contextBuffers = sd::ContextBuffers();
@@ -36,62 +38,59 @@ thread_local sd::ContextBuffers contextBuffers = sd::ContextBuffers();
 
 namespace sd {
 
-    LaunchContext::~LaunchContext() {
+LaunchContext::~LaunchContext() {
 #ifdef HAVE_MKLDNN
-        delete reinterpret_cast<dnnl::engine*>(_engine);
+  delete reinterpret_cast<dnnl::engine*>(_engine);
 #endif
-    }
+}
 
-    std::vector<std::shared_ptr<LaunchContext>> LaunchContext::_contexts = std::vector<std::shared_ptr<LaunchContext>>();
-    MAP_IMPL<int, std::mutex*> LaunchContext::_deviceMutexes;
-    std::mutex LaunchContext::_mutex;
+std::vector<std::shared_ptr<LaunchContext>> LaunchContext::_contexts =
+    std::vector<std::shared_ptr<LaunchContext>>();
+MAP_IMPL<int, std::mutex*> LaunchContext::_deviceMutexes;
+std::mutex LaunchContext::_mutex;
 
 ////////////////////////////////////////////////////////////////////////
-    LaunchContext::LaunchContext() {
-        // default constructor, just to make clang/ranlib happy
-        _workspace = nullptr;
-        _deviceID = 0;
+LaunchContext::LaunchContext() {
+  // default constructor, just to make clang/ranlib happy
+  _workspace = nullptr;
+  _deviceID = 0;
 
 #ifdef HAVE_MKLDNN
-        _engine = new dnnl::engine(dnnl::engine::kind::cpu, 0);
+  _engine = new dnnl::engine(dnnl::engine::kind::cpu, 0);
 #endif
-    }
-
-    LaunchContext::LaunchContext(Nd4jPointer cudaStream, Nd4jPointer reductionPointer, Nd4jPointer scalarPointer, Nd4jPointer allocationPointer) {
-
-    }
-
-    LaunchContext* LaunchContext::defaultContext() {
-        // TODO: we need it to be device-aware, but only once we add NUMA support for cpu
-        if (LaunchContext::_contexts.empty()) {
-           LaunchContext::_contexts.emplace_back(std::make_shared<LaunchContext>());
-        }
-
-        // return context for current device
-        return LaunchContext::_contexts[0].get();
-    }
-
-    std::mutex* LaunchContext::deviceMutex() {
-        return &_mutex;
-    }
-
-    void LaunchContext::swapContextBuffers(ContextBuffers &buffers) {
-        //
-    }
-
-    bool LaunchContext::isInitialized() {
-        return true;
-    }
-
-    void LaunchContext::releaseBuffers() {
-        //
-    }
-
-    sd::ErrorReference* LaunchContext::errorReference() {
-        return contextBuffers.errorReference();
-    }
-
-    void* LaunchContext::engine() {
-        return _engine;
-    }
 }
+
+LaunchContext::LaunchContext(Nd4jPointer cudaStream,
+                             Nd4jPointer reductionPointer,
+                             Nd4jPointer scalarPointer,
+                             Nd4jPointer allocationPointer) {}
+
+LaunchContext* LaunchContext::defaultContext() {
+  // TODO: we need it to be device-aware, but only once we add NUMA support for
+  // cpu
+  if (LaunchContext::_contexts.empty()) {
+    LaunchContext::_contexts.emplace_back(std::make_shared<LaunchContext>());
+  }
+
+  // return context for current device
+  return LaunchContext::_contexts[0].get();
+}
+
+std::mutex* LaunchContext::deviceMutex() { return &_mutex; }
+
+void LaunchContext::swapContextBuffers(ContextBuffers& buffers) {
+  //
+}
+
+bool LaunchContext::isInitialized() { return true; }
+
+void LaunchContext::releaseBuffers() {
+  //
+}
+
+sd::ErrorReference* LaunchContext::errorReference() {
+  return contextBuffers.errorReference();
+}
+
+void* LaunchContext::engine() { return _engine; }
+}  // namespace sd

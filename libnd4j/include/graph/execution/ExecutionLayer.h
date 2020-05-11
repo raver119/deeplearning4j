@@ -18,53 +18,54 @@
 // @author raver119@gmail.com
 //
 
-
 #ifndef SD_EXECUTIONLAYER_H
 #define SD_EXECUTIONLAYER_H
 
-#include <system/dll.h>
 #include <graph/execution/OpSequence.h>
+#include <system/dll.h>
+
 #include <vector>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT ExecutionLayer {
-        protected:
-            std::vector<OpSequence> _sequences;
-        public:
-            ExecutionLayer(const std::vector<OpSequence> &sequences = {});
-            ~ExecutionLayer() = default;
+namespace graph {
+class SD_EXPORT ExecutionLayer {
+ protected:
+  std::vector<OpSequence> _sequences;
 
-            ExecutionLayer(const ExecutionLayer& other) noexcept;
+ public:
+  ExecutionLayer(const std::vector<OpSequence>& sequences = {});
+  ~ExecutionLayer() = default;
 
-            ExecutionLayer& operator=(const ExecutionLayer& other) noexcept;
+  ExecutionLayer(const ExecutionLayer& other) noexcept;
 
-            // move constructor
-            ExecutionLayer(ExecutionLayer&& other) noexcept;
+  ExecutionLayer& operator=(const ExecutionLayer& other) noexcept;
 
-            // move assignment operator
-            ExecutionLayer& operator=(ExecutionLayer&& other) noexcept;
+  // move constructor
+  ExecutionLayer(ExecutionLayer&& other) noexcept;
 
-            /**
-             * This method returns number of sequences in this layer
-             * @return
-             */
-            uint64_t width() const;
+  // move assignment operator
+  ExecutionLayer& operator=(ExecutionLayer&& other) noexcept;
 
-            /**
-             * This method returns specified OpSequence from this layer
-             * @return
-             */
-            const OpSequence& at(uint64_t index) const;
-            const OpSequence& operator[](uint64_t index) const;
+  /**
+   * This method returns number of sequences in this layer
+   * @return
+   */
+  uint64_t width() const;
 
-            /**
-             * This method appends OpSequence to the end of this layer
-             * @param sequence
-             */
-            void append(const OpSequence &sequence);
-        };
-    }
-}
+  /**
+   * This method returns specified OpSequence from this layer
+   * @return
+   */
+  const OpSequence& at(uint64_t index) const;
+  const OpSequence& operator[](uint64_t index) const;
 
-#endif //SD_EXECUTIONLAYER_H
+  /**
+   * This method appends OpSequence to the end of this layer
+   * @param sequence
+   */
+  void append(const OpSequence& sequence);
+};
+}  // namespace graph
+}  // namespace sd
+
+#endif  // SD_EXECUTIONLAYER_H

@@ -22,13 +22,14 @@
 #include <helpers/StringUtils.h>
 
 namespace sd {
-    cuda_exception::cuda_exception(std::string message) : std::runtime_error(message){
-        //
-    }
-
-    cuda_exception cuda_exception::build(std::string message, int errorCode) {
-        auto ec = StringUtils::valueToString<int>(errorCode);
-        message += "; Error code: [" + ec + "]";
-        return cuda_exception(message);
-    }
+cuda_exception::cuda_exception(std::string message)
+    : std::runtime_error(message) {
+  //
 }
+
+cuda_exception cuda_exception::build(std::string message, int errorCode) {
+  auto ec = StringUtils::valueToString<int>(errorCode);
+  message += "; Error code: [" + ec + "]";
+  return cuda_exception(message);
+}
+}  // namespace sd

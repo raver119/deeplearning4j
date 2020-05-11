@@ -19,16 +19,19 @@
 //
 #ifndef __FAKE_QUANTIZATION_H_HELPERS__
 #define __FAKE_QUANTIZATION_H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void fakeQuantWithMinMaxVars(NDArray* input, NDArray* min, NDArray* max, int numBits, bool narrowed, NDArray* output);
-    void fakeQuantWithMinMaxVarsPerChannel(LaunchContext* context, NDArray* input, NDArray* min, NDArray* max, int numBits, bool narrowed, NDArray* output);
-}
-}
-}
+void fakeQuantWithMinMaxVars(NDArray* input, NDArray* min, NDArray* max,
+                             int numBits, bool narrowed, NDArray* output);
+void fakeQuantWithMinMaxVarsPerChannel(LaunchContext* context, NDArray* input,
+                                       NDArray* min, NDArray* max, int numBits,
+                                       bool narrowed, NDArray* output);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 #endif

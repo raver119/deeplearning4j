@@ -23,17 +23,17 @@
 
 #if defined(_MSC_VER)
 
-#pragma warning( disable : 4244 )
-#pragma warning( disable : 4267 )
-#pragma warning( disable : 4251 )
-#pragma warning( disable : 4101 )
-#pragma warning( disable : 4305 )
-#pragma warning( disable : 4309 )
-#pragma warning( disable : 4333 )
-#pragma warning( disable : 4146 )
-#pragma warning( disable : 4018 )
-#pragma warning( disable : 4297 )
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4267)
+#pragma warning(disable : 4251)
+#pragma warning(disable : 4101)
+#pragma warning(disable : 4305)
+#pragma warning(disable : 4309)
+#pragma warning(disable : 4333)
+#pragma warning(disable : 4146)
+#pragma warning(disable : 4018)
+#pragma warning(disable : 4297)
 
 #endif
 
-#endif //SD_MSVC_H
+#endif  // SD_MSVC_H

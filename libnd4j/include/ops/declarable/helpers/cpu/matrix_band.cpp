@@ -23,51 +23,63 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    template <typename T>
-    void matrixBandPart_(NDArray* input, NDArray* output, Nd4jLong lowerBand, Nd4jLong upperBand) {
-        // TO DO: retrieve all 2D submatricies with last dimensions and process them with given bands
-        Nd4jLong M = input->sizeAt(-2);
-        Nd4jLong N = input->sizeAt(-1);
-        Nd4jLong lastDim = input->rankOf() - 1;
-        Nd4jLong preLastDim = input->rankOf() - 2;
-        ResultSet listOut = output->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
-        ResultSet listDiag = input->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
-        for (Nd4jLong e = 0; e < static_cast<Nd4jLong>(listOut.size()); ++e) {
-            auto inputMatrix = listDiag.at(e);
-            auto outputMatrix = listOut.at(e);
-            if (outputMatrix.platformBuffer() != inputMatrix.platformBuffer()) // if not inplace
-                outputMatrix.assign(inputMatrix);
-            if (lowerBand >= 0) {
-                for (Nd4jLong row = 0; row < inputMatrix.rows(); ++row) {
-                    for (Nd4jLong col = 0; col < row; ++col) {
-                        if ((row - col) > lowerBand)
-                            outputMatrix.p(row, col, 0.);
-//                        else
-  //                          (*outputMatrix)(row, col) = (*inputMatrix)(row, col);
-                    }
-//                    in_band(m, n) = (num_lower < 0 || (m-n) <= num_lower)) && (num_upper < 0 || (n-m) <= num_upper).
-                }
-            }
-            if (upperBand >= 0) {
-                for (Nd4jLong col = 0; col < inputMatrix.columns(); ++col) {
-                    for (Nd4jLong row = 0; row < col; ++row) {
-                        if ((col - row) > upperBand)
-                            outputMatrix.p(row, col, 0.);
-//                        else
-  //                          (*outputMatrix)(row, col) = (*inputMatrix)(row, col);
-                    }
-//                    in_band(m, n) = (num_lower < 0 || (m-n) <= num_lower)) && (num_upper < 0 || (n-m) <= num_upper).
-                }
-
-            }
+template <typename T>
+void matrixBandPart_(NDArray* input, NDArray* output, Nd4jLong lowerBand,
+                     Nd4jLong upperBand) {
+  // TO DO: retrieve all 2D submatricies with last dimensions and process them
+  // with given bands
+  Nd4jLong M = input->sizeAt(-2);
+  Nd4jLong N = input->sizeAt(-1);
+  Nd4jLong lastDim = input->rankOf() - 1;
+  Nd4jLong preLastDim = input->rankOf() - 2;
+  ResultSet listOut =
+      output->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
+  ResultSet listDiag =
+      input->allTensorsAlongDimension({(int)preLastDim, (int)lastDim});
+  for (Nd4jLong e = 0; e < static_cast<Nd4jLong>(listOut.size()); ++e) {
+    auto inputMatrix = listDiag.at(e);
+    auto outputMatrix = listOut.at(e);
+    if (outputMatrix.platformBuffer() !=
+        inputMatrix.platformBuffer())  // if not inplace
+      outputMatrix.assign(inputMatrix);
+    if (lowerBand >= 0) {
+      for (Nd4jLong row = 0; row < inputMatrix.rows(); ++row) {
+        for (Nd4jLong col = 0; col < row; ++col) {
+          if ((row - col) > lowerBand) outputMatrix.p(row, col, 0.);
+          //                        else
+          //                          (*outputMatrix)(row, col) =
+          //                          (*inputMatrix)(row, col);
         }
+        //                    in_band(m, n) = (num_lower < 0 || (m-n) <=
+        //                    num_lower)) && (num_upper < 0 || (n-m) <=
+        //                    num_upper).
+      }
     }
-
-    void matrixBandPart(sd::LaunchContext * context, NDArray* input, NDArray* output, Nd4jLong lowerBand, Nd4jLong upperBand) {
-        BUILD_SINGLE_SELECTOR(input->dataType(), matrixBandPart_, (input, output, lowerBand, upperBand), FLOAT_TYPES);
+    if (upperBand >= 0) {
+      for (Nd4jLong col = 0; col < inputMatrix.columns(); ++col) {
+        for (Nd4jLong row = 0; row < col; ++row) {
+          if ((col - row) > upperBand) outputMatrix.p(row, col, 0.);
+          //                        else
+          //                          (*outputMatrix)(row, col) =
+          //                          (*inputMatrix)(row, col);
+        }
+        //                    in_band(m, n) = (num_lower < 0 || (m-n) <=
+        //                    num_lower)) && (num_upper < 0 || (n-m) <=
+        //                    num_upper).
+      }
     }
-    BUILD_SINGLE_TEMPLATE(template void matrixBandPart_, (NDArray* input, NDArray* output, Nd4jLong lowerBand, Nd4jLong upperBand), FLOAT_TYPES);
-}
-}
+  }
 }
 
+void matrixBandPart(sd::LaunchContext* context, NDArray* input, NDArray* output,
+                    Nd4jLong lowerBand, Nd4jLong upperBand) {
+  BUILD_SINGLE_SELECTOR(input->dataType(), matrixBandPart_,
+                        (input, output, lowerBand, upperBand), FLOAT_TYPES);
+}
+BUILD_SINGLE_TEMPLATE(template void matrixBandPart_,
+                      (NDArray * input, NDArray* output, Nd4jLong lowerBand,
+                       Nd4jLong upperBand),
+                      FLOAT_TYPES);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

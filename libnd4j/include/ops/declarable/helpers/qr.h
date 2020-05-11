@@ -19,17 +19,17 @@
 //
 #ifndef __QR__H_HELPERS__
 #define __QR__H_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void qr(sd::LaunchContext * context, NDArray const* input, NDArray* outputQ, NDArray* outputR, bool const fullMatricies);
+void qr(sd::LaunchContext* context, NDArray const* input, NDArray* outputQ,
+        NDArray* outputR, bool const fullMatricies);
 
-
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

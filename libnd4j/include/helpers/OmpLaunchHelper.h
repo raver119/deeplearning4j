@@ -22,49 +22,48 @@
 #ifndef LIBND4J_OMPLAUNCHHELPER_H
 #define LIBND4J_OMPLAUNCHHELPER_H
 
-#include <vector>
-#include <system/pointercast.h>
 #include <system/op_boilerplate.h>
+#include <system/pointercast.h>
+
+#include <vector>
 
 namespace sd {
 
 class SD_EXPORT OmpLaunchHelper {
-	
-    public:				
-        
-		OmpLaunchHelper() = delete;
-        
-        OmpLaunchHelper(const Nd4jLong N, float desiredNumThreads = -1);
+ public:
+  OmpLaunchHelper() = delete;
 
-        FORCEINLINE Nd4jLong getThreadOffset(const int threadNum);
-        FORCEINLINE Nd4jLong getItersPerThread(const int threadNum);
+  OmpLaunchHelper(const Nd4jLong N, float desiredNumThreads = -1);
 
-        static Nd4jLong betterSpan(Nd4jLong N);
-        static Nd4jLong betterSpan(Nd4jLong N, Nd4jLong numThreads);
-        
-        static int betterThreads(Nd4jLong N);
-        static int betterThreads(Nd4jLong N, int maxThreads);
+  FORCEINLINE Nd4jLong getThreadOffset(const int threadNum);
+  FORCEINLINE Nd4jLong getItersPerThread(const int threadNum);
 
-        static int tadThreads(Nd4jLong tadLength, Nd4jLong numTads);
+  static Nd4jLong betterSpan(Nd4jLong N);
+  static Nd4jLong betterSpan(Nd4jLong N, Nd4jLong numThreads);
 
-        int _numThreads;
-		unsigned int _itersPerThread;
-        unsigned int _remainder;
+  static int betterThreads(Nd4jLong N);
+  static int betterThreads(Nd4jLong N, int maxThreads);
+
+  static int tadThreads(Nd4jLong tadLength, Nd4jLong numTads);
+
+  int _numThreads;
+  unsigned int _itersPerThread;
+  unsigned int _remainder;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 FORCEINLINE Nd4jLong OmpLaunchHelper::getThreadOffset(const int threadNum) {
-	
-		return threadNum * _itersPerThread;
+  return threadNum * _itersPerThread;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 FORCEINLINE Nd4jLong OmpLaunchHelper::getItersPerThread(const int threadNum) {
-	
-	return (threadNum == _numThreads - 1) ? _itersPerThread + _remainder : _itersPerThread;		// last thread may contain bigger number of iterations    	 
+  return (threadNum == _numThreads - 1)
+             ? _itersPerThread + _remainder
+             : _itersPerThread;  // last thread may contain bigger number of
+                                 // iterations
 }
 
-}
+}  // namespace sd
 
-
-#endif //LIBND4J_OMPLAUNCHHELPER_H
+#endif  // LIBND4J_OMPLAUNCHHELPER_H

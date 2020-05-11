@@ -22,5 +22,5 @@
 #include "../specials_single.hpp"
 
 namespace sd {
-    BUILD_SINGLE_TEMPLATE(template class SpecialMethods, , LIBND4J_TYPES_4);
+BUILD_SINGLE_TEMPLATE(template class SpecialMethods, , LIBND4J_TYPES_4);
 }

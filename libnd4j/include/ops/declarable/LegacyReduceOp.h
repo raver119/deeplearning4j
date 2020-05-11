@@ -32,16 +32,15 @@ namespace sd {
             LegacyReduceOp();
             LegacyReduceOp(int opNum);
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block);
-            virtual LegacyOp* clone();
+            ShapeList* calculateOutputShape(ShapeList* inputShape,
+sd::graph::Context& block); virtual LegacyOp* clone();
         };
     }
 }
 */
-#include <ops/declarable/LegacyReduceFloatOp.h>
-#include <ops/declarable/LegacyReduceSameOp.h>
 #include <ops/declarable/LegacyReduceBoolOp.h>
+#include <ops/declarable/LegacyReduceFloatOp.h>
 #include <ops/declarable/LegacyReduceLongOp.h>
+#include <ops/declarable/LegacyReduceSameOp.h>
 
-
-#endif //LIBND4J_LEGACYREDUCEOP_H
+#endif  // LIBND4J_LEGACYREDUCEOP_H

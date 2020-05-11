@@ -21,51 +21,48 @@
 #include <memory/MemoryDescriptor.h>
 
 namespace sd {
-    namespace memory {
-        MemoryDescriptor::MemoryDescriptor(void *ptr, MemoryZone zone, uint64_t bytes) : _ptr(ptr), _zone(zone), _bytes(bytes) {
-            //
-        }
-
-        MemoryDescriptor::MemoryDescriptor(const MemoryDescriptor &other) noexcept : _ptr(other._ptr), _zone(other._zone), _bytes(other._bytes) {
-            //
-        }
-
-        MemoryDescriptor &MemoryDescriptor::operator=(const MemoryDescriptor &other) noexcept {
-            if (this == &other)
-                return *this;
-
-            _ptr = other._ptr;
-            _zone = other._zone;
-            _bytes = other._bytes;
-
-            return *this;
-        }
-
-        MemoryDescriptor::MemoryDescriptor(MemoryDescriptor &&other) noexcept : _ptr(other._ptr), _zone(other._zone), _bytes(other._bytes)  {
-            //
-        }
-
-        MemoryDescriptor &MemoryDescriptor::operator=(MemoryDescriptor &&other) noexcept {
-            if (this == &other)
-                return *this;
-
-            _ptr = other._ptr;
-            _zone = other._zone;
-            _bytes = other._bytes;
-
-            return *this;
-        }
-
-        void *MemoryDescriptor::address() const {
-            return _ptr;
-        }
-
-        MemoryZone MemoryDescriptor::zone() const {
-            return _zone;
-        }
-
-        uint64_t MemoryDescriptor::bytes() const {
-            return _bytes;
-        }
-    }
+namespace memory {
+MemoryDescriptor::MemoryDescriptor(void *ptr, MemoryZone zone, uint64_t bytes)
+    : _ptr(ptr), _zone(zone), _bytes(bytes) {
+  //
 }
+
+MemoryDescriptor::MemoryDescriptor(const MemoryDescriptor &other) noexcept
+    : _ptr(other._ptr), _zone(other._zone), _bytes(other._bytes) {
+  //
+}
+
+MemoryDescriptor &MemoryDescriptor::operator=(
+    const MemoryDescriptor &other) noexcept {
+  if (this == &other) return *this;
+
+  _ptr = other._ptr;
+  _zone = other._zone;
+  _bytes = other._bytes;
+
+  return *this;
+}
+
+MemoryDescriptor::MemoryDescriptor(MemoryDescriptor &&other) noexcept
+    : _ptr(other._ptr), _zone(other._zone), _bytes(other._bytes) {
+  //
+}
+
+MemoryDescriptor &MemoryDescriptor::operator=(
+    MemoryDescriptor &&other) noexcept {
+  if (this == &other) return *this;
+
+  _ptr = other._ptr;
+  _zone = other._zone;
+  _bytes = other._bytes;
+
+  return *this;
+}
+
+void *MemoryDescriptor::address() const { return _ptr; }
+
+MemoryZone MemoryDescriptor::zone() const { return _zone; }
+
+uint64_t MemoryDescriptor::bytes() const { return _bytes; }
+}  // namespace memory
+}  // namespace sd

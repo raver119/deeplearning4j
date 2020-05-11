@@ -21,7 +21,7 @@
 #include "../broadcasting_int.hpp"
 
 namespace functions {
-    namespace broadcast {
-        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT BroadcastInt, , INTEGER_TYPES_4);
-    }
+namespace broadcast {
+BUILD_SINGLE_TEMPLATE(template class SD_EXPORT BroadcastInt, , INTEGER_TYPES_4);
 }
+}  // namespace functions

@@ -18,16 +18,15 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#include <graph/logic/LogicScope.h>
 #include <graph/Status.h>
-
+#include <graph/logic/LogicScope.h>
 
 namespace sd {
-    namespace graph {
-        Nd4jStatus LogicScope::processNode(Graph *graph, Node *node) {
-            // this op is basically no-op
-            // we just know it exists
-            return sd::Status::OK();
-        }
-    }
+namespace graph {
+Nd4jStatus LogicScope::processNode(Graph *graph, Node *node) {
+  // this op is basically no-op
+  // we just know it exists
+  return sd::Status::OK();
 }
+}  // namespace graph
+}  // namespace sd

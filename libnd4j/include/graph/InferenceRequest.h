@@ -20,40 +20,42 @@
 #ifndef SD_INFERENCEREQUEST_H
 #define SD_INFERENCEREQUEST_H
 
+#include <graph/Variable.h>
+#include <system/dll.h>
 #include <system/op_boilerplate.h>
 #include <system/pointercast.h>
-#include <system/dll.h>
-#include <graph/Variable.h>
+
 #include "ExecutorConfiguration.h"
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT InferenceRequest {
-        private:
-            Nd4jLong _id;
-            std::vector<std::shared_ptr<Variable>> _variables;
+namespace graph {
+class SD_EXPORT InferenceRequest {
+ private:
+  Nd4jLong _id;
+  std::vector<std::shared_ptr<Variable>> _variables;
 
-            ExecutorConfiguration _configuration;
+  ExecutorConfiguration _configuration;
 
-            void insertVariable(std::shared_ptr<Variable> variable);
-        public:
+  void insertVariable(std::shared_ptr<Variable> variable);
 
-            InferenceRequest(Nd4jLong graphId, const ExecutorConfiguration &configuration);
-            ~InferenceRequest();
+ public:
+  InferenceRequest(Nd4jLong graphId,
+                   const ExecutorConfiguration &configuration);
+  ~InferenceRequest();
 
-            void appendVariable(int id, const NDArray &array);
-            void appendVariable(int id, int index, const NDArray &array);
-            void appendVariable(const std::string &name, const NDArray &array);
-            void appendVariable(const std::string &name, int id, int index, const NDArray &array);
-            void appendVariable(std::shared_ptr<Variable> variable);
+  void appendVariable(int id, const NDArray &array);
+  void appendVariable(int id, int index, const NDArray &array);
+  void appendVariable(const std::string &name, const NDArray &array);
+  void appendVariable(const std::string &name, int id, int index,
+                      const NDArray &array);
+  void appendVariable(std::shared_ptr<Variable> variable);
 
 #ifndef __JAVACPP_HACK__
-            flatbuffers::Offset<FlatInferenceRequest> asFlatInferenceRequest(flatbuffers::FlatBufferBuilder &builder);
+  flatbuffers::Offset<FlatInferenceRequest> asFlatInferenceRequest(
+      flatbuffers::FlatBufferBuilder &builder);
 #endif
-        };
-    }
-}
+};
+}  // namespace graph
+}  // namespace sd
 
-
-
-#endif //SD_INFERENCEREQUEST_H
+#endif  // SD_INFERENCEREQUEST_H

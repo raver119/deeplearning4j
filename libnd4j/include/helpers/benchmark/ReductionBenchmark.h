@@ -20,6 +20,7 @@
 
 #include <helpers/StringUtils.h>
 #include <helpers/TAD.h>
+
 #include "../OpBenchmark.h"
 
 #ifndef SD_REDUCEBENCHMARK_H
@@ -28,124 +29,160 @@
 using namespace sd::graph;
 
 namespace sd {
-    class SD_EXPORT ReductionBenchmark : public OpBenchmark {
-    protected:
-        int _opType;        //0=Float, 1=Same
-    public:
-        ReductionBenchmark() : OpBenchmark() {
-            //
-        }
+class SD_EXPORT ReductionBenchmark : public OpBenchmark {
+ protected:
+  int _opType;  // 0=Float, 1=Same
+ public:
+  ReductionBenchmark() : OpBenchmark() {
+    //
+  }
 
-        ReductionBenchmark(reduce::FloatOps op, const std::string &testName, const NDArray &x, const NDArray &z, std::initializer_list<int> axis) : OpBenchmark(testName, x, z, axis) {
-            _opNum = (int) op;
-            _opType = 0;
-        }
+  ReductionBenchmark(reduce::FloatOps op, const std::string &testName,
+                     const NDArray &x, const NDArray &z,
+                     std::initializer_list<int> axis)
+      : OpBenchmark(testName, x, z, axis) {
+    _opNum = (int)op;
+    _opType = 0;
+  }
 
-        ReductionBenchmark(reduce::SameOps op, const std::string &testName, const NDArray &x, const NDArray &z, std::initializer_list<int> axis) : OpBenchmark(testName, x, z, axis) {
-            _opNum = (int) op;
-            _opType = 1;
-        }
+  ReductionBenchmark(reduce::SameOps op, const std::string &testName,
+                     const NDArray &x, const NDArray &z,
+                     std::initializer_list<int> axis)
+      : OpBenchmark(testName, x, z, axis) {
+    _opNum = (int)op;
+    _opType = 1;
+  }
 
+  ReductionBenchmark(reduce::FloatOps op) : OpBenchmark() {
+    _opNum = (int)op;
+    _opType = 0;
+  }
 
-        ReductionBenchmark(reduce::FloatOps op) : OpBenchmark() {
-            _opNum = (int) op;
-            _opType = 0;
-        }
+  ReductionBenchmark(reduce::FloatOps op, const std::string &testName)
+      : OpBenchmark() {
+    _opNum = (int)op;
+    _opType = 0;
+    _testName = testName;
+  }
 
-        ReductionBenchmark(reduce::FloatOps op, const std::string &testName) : OpBenchmark() {
-            _opNum = (int) op;
-            _opType = 0;
-            _testName = testName;
-        }
+  ReductionBenchmark(reduce::SameOps op) : OpBenchmark() {
+    _opNum = (int)op;
+    _opType = 1;
+  }
 
-        ReductionBenchmark(reduce::SameOps op) : OpBenchmark() {
-            _opNum = (int) op;
-            _opType = 1;
-        }
+  ReductionBenchmark(reduce::SameOps op, const std::string &testName)
+      : OpBenchmark() {
+    _opNum = (int)op;
+    _opType = 1;
+    _testName = testName;
+  }
 
-        ReductionBenchmark(reduce::SameOps op, const std::string &testName) : OpBenchmark() {
-            _opNum = (int) op;
-            _opType = 1;
-            _testName = testName;
-        }
+  ReductionBenchmark(reduce::FloatOps op, const std::string &testName,
+                     const NDArray &x, const NDArray &z,
+                     const std::vector<int> &axis)
+      : OpBenchmark(testName, x, z, axis) {
+    _opNum = (int)op;
+    _opType = 0;
+  }
 
-        ReductionBenchmark(reduce::FloatOps op, const std::string &testName, const NDArray &x, const NDArray &z, const std::vector<int> &axis) : OpBenchmark(testName ,x, z, axis) {
-            _opNum = (int) op;
-            _opType = 0;
-        }
+  ReductionBenchmark(reduce::SameOps op, const std::string &testName,
+                     const NDArray &x, const NDArray &z,
+                     const std::vector<int> &axis)
+      : OpBenchmark(testName, x, z, axis) {
+    _opNum = (int)op;
+    _opType = 1;
+  }
 
-        ReductionBenchmark(reduce::SameOps op, const std::string &testName, const NDArray &x, const NDArray &z, const std::vector<int> &axis) : OpBenchmark(testName ,x, z, axis) {
-            _opNum = (int) op;
-            _opType = 1;
-        }
+  void executeOnce() override {
+    PointersManager manager(LaunchContext::defaultContext(), "reductionBM");
 
-        void executeOnce() override {
-            PointersManager manager(LaunchContext::defaultContext(), "reductionBM");
+    if (_z.isScalar() || _y.shapeInfo() == nullptr)
+      if (_opType == 0)
+        NativeOpExecutioner::execReduceFloatScalar(
+            LaunchContext::defaultContext(), _opNum, _x.buffer(),
+            _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr,
+            _z.buffer(), _z.shapeInfo(), _z.specialBuffer(),
+            _z.specialShapeInfo());
+      else
+        NativeOpExecutioner::execReduceSameScalar(
+            LaunchContext::defaultContext(), _opNum, _x.buffer(),
+            _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr,
+            _z.buffer(), _z.shapeInfo(), _z.specialBuffer(),
+            _z.specialShapeInfo());
+    else {
+      auto pack = ConstantTadHelper::getInstance()->tadForDimensions(
+          _x.shapeInfo(), _axis);
 
-            if (_z.isScalar() || _y.shapeInfo() == nullptr)
-                if (_opType == 0)
-                    NativeOpExecutioner::execReduceFloatScalar(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr, _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo());
-                else
-                    NativeOpExecutioner::execReduceSameScalar(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr, _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo());
-            else {
-                auto pack = ConstantTadHelper::getInstance()->tadForDimensions(_x.shapeInfo(), _axis);
+      auto tadOnlyShapeInfo = Environment::getInstance()->isCPU()
+                                  ? pack.primaryShapeInfo()
+                                  : pack.specialShapeInfo();
+      auto tadOffsets = Environment::getInstance()->isCPU()
+                            ? pack.primaryOffsets()
+                            : pack.specialOffsets();
 
-                auto tadOnlyShapeInfo = Environment::getInstance()->isCPU() ? pack.primaryShapeInfo() : pack.specialShapeInfo();
-                auto tadOffsets = Environment::getInstance()->isCPU() ? pack.primaryOffsets() : pack.specialOffsets();
+      if (_opType == 0)
+        NativeOpExecutioner::execReduceFloat(
+            LaunchContext::defaultContext(), _opNum, _x.buffer(),
+            _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr,
+            _z.buffer(), _z.shapeInfo(), _z.specialBuffer(),
+            _z.specialShapeInfo(), nullptr, _axis.size(), tadOnlyShapeInfo,
+            tadOffsets);
+      else
+        NativeOpExecutioner::execReduceSame(
+            LaunchContext::defaultContext(), _opNum, _x.buffer(),
+            _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr,
+            _z.buffer(), _z.shapeInfo(), _z.specialBuffer(),
+            _z.specialShapeInfo(), nullptr, _axis.size(), tadOnlyShapeInfo,
+            tadOffsets);
+    }
 
-                if (_opType == 0)
-                    NativeOpExecutioner::execReduceFloat(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr, _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), nullptr, _axis.size(), tadOnlyShapeInfo, tadOffsets);
-                else
-                    NativeOpExecutioner::execReduceSame(LaunchContext::defaultContext(), _opNum, _x.buffer(), _x.shapeInfo(), _x.specialBuffer(), _x.specialShapeInfo(), nullptr, _z.buffer(), _z.shapeInfo(), _z.specialBuffer(), _z.specialShapeInfo(), nullptr, _axis.size(), tadOnlyShapeInfo, tadOffsets);
-            }
+    manager.synchronize();
+  }
 
-            manager.synchronize();
-        }
+  std::string orders() override {
+    std::string result;
+    result += _x.ordering();
+    result += "/";
+    result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
+    return result;
+  }
 
-        std::string orders() override {
-            std::string result;
-            result += _x.ordering();
-            result += "/";
-            result += _z.shapeInfo() == nullptr ? _x.ordering() : _z.ordering();
-            return result;
-        }
+  std::string strides() override {
+    std::string result;
+    result += ShapeUtils::strideAsString(_x);
+    return result;
+  }
 
-        std::string strides() override {
-            std::string result;
-            result += ShapeUtils::strideAsString(_x);
-            return result;
-        }
+  std::string inplace() override { return "n/a"; }
 
-        std::string inplace() override {
-            return "n/a";
-        }
+  ~ReductionBenchmark() {
+    //
+  }
 
-        ~ReductionBenchmark(){
-            //
-        }
+  std::string axis() override {
+    if (_axis.empty())
+      return "ALL";
+    else {
+      std::string result;
+      for (auto v : _axis) {
+        auto s = StringUtils::valueToString<int>(v);
+        result += s;
+        result += ",";
+      }
 
-        std::string axis() override {
-            if (_axis.empty())
-                return "ALL";
-            else {
-                std::string result;
-                for (auto v:_axis) {
-                    auto s = StringUtils::valueToString<int>(v);
-                    result += s;
-                    result += ",";
-                }
+      return result;
+    }
+  }
 
-                return result;
-            }
-        }
+  OpBenchmark *clone() override {
+    if (_opType == 0)
+      return new ReductionBenchmark((reduce::FloatOps)_opNum, _testName, _x, _z,
+                                    _axis);
+    else
+      return new ReductionBenchmark((reduce::SameOps)_opNum, _testName, _x, _z,
+                                    _axis);
+  }
+};
+}  // namespace sd
 
-        OpBenchmark* clone() override  {
-            if (_opType == 0)
-                return new ReductionBenchmark((reduce::FloatOps) _opNum, _testName, _x, _z, _axis);
-            else
-                return new ReductionBenchmark((reduce::SameOps) _opNum, _testName, _x, _z, _axis);
-        }
-    };
-}
-
-#endif //SD_SCALARBENCHMARK_H
+#endif  // SD_SCALARBENCHMARK_H

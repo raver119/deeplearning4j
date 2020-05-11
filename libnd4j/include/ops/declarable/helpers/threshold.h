@@ -24,14 +24,14 @@
 #include <ops/declarable/helpers/helpers.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            int32_t thresholdEstimate(const NDArray &updates, float threshold);
+namespace ops {
+namespace helpers {
+int32_t thresholdEstimate(const NDArray &updates, float threshold);
 
-            void thresholdEncode(NDArray &updates, NDArray &encoded, float threshold);
-            void thresholdDecode(const NDArray &encoded, NDArray &updates);
-        }
-    }
-}
+void thresholdEncode(NDArray &updates, NDArray &encoded, float threshold);
+void thresholdDecode(const NDArray &encoded, NDArray &updates);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_THRESHOLD_H
+#endif  // SD_THRESHOLD_H

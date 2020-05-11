@@ -21,38 +21,39 @@
 #ifndef SD_NODEOPTIMIZER_H
 #define SD_NODEOPTIMIZER_H
 
-#include <system/dll.h>
 #include <graph/Node.h>
+#include <system/dll.h>
+
 #include <string>
 
 namespace sd {
-    namespace graph {
-        /**
-         * This abstract class defines basic methods needed for Inputs/Outputs optimizations. I.e. weight format changes or data types changes for a specific backend
-         */
-        class SD_EXPORT NodeOptimizer {
-        protected:
-            std::string _target = {};
+namespace graph {
+/**
+ * This abstract class defines basic methods needed for Inputs/Outputs
+ * optimizations. I.e. weight format changes or data types changes for a
+ * specific backend
+ */
+class SD_EXPORT NodeOptimizer {
+ protected:
+  std::string _target = {};
 
-        public:
-            NodeOptimizer() = default;
-            virtual ~NodeOptimizer() = default;
+ public:
+  NodeOptimizer() = default;
+  virtual ~NodeOptimizer() = default;
 
-            /**
-             * This method applu
-             * @param node
-             */
-            virtual void optimize(Node &node) = 0;
+  /**
+   * This method applu
+   * @param node
+   */
+  virtual void optimize(Node& node) = 0;
 
-            /**
-             * This method returns target Op name for this optimizer
-             * @return
-             */
-            const std::string& targetOp() const;
-        };
-    }
-}
+  /**
+   * This method returns target Op name for this optimizer
+   * @return
+   */
+  const std::string& targetOp() const;
+};
+}  // namespace graph
+}  // namespace sd
 
-
-
-#endif //DEV_TESTS_NODEOPTIMIZER_H
+#endif  // DEV_TESTS_NODEOPTIMIZER_H

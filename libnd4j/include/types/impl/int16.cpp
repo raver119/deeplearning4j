@@ -22,11 +22,11 @@
 
 namespace sd {
 
-    /*
-    template int16::int16(const float& rhs);
-    template int16::int16(const double& rhs);
+/*
+template int16::int16(const float& rhs);
+template int16::int16(const double& rhs);
 
-    template int16& int16::operator=<float>(const float& rhs);
-    template int16& int16::operator=<double>(const double& rhs);
-     */
+template int16& int16::operator=<float>(const float& rhs);
+template int16& int16::operator=<double>(const double& rhs);
+ */
 }

@@ -21,7 +21,7 @@
 #include "../random.hpp"
 
 namespace functions {
-    namespace random {
-        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT RandomFunction, , FLOAT_TYPES_2);
-    }
+namespace random {
+BUILD_SINGLE_TEMPLATE(template class SD_EXPORT RandomFunction, , FLOAT_TYPES_2);
 }
+}  // namespace functions

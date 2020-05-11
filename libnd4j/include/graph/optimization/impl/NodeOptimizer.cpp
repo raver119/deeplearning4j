@@ -21,9 +21,7 @@
 #include <graph/optimization/NodeOptimizer.h>
 
 namespace sd {
-    namespace graph {
-        const std::string &NodeOptimizer::targetOp() const {
-            return _target;
-        }
-    }
-}
+namespace graph {
+const std::string &NodeOptimizer::targetOp() const { return _target; }
+}  // namespace graph
+}  // namespace sd

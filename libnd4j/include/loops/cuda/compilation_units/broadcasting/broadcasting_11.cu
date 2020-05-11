@@ -21,7 +21,8 @@
 #include "../../broadcasting.chpp"
 
 namespace functions {
-    namespace broadcast {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT Broadcast, , PAIRWISE_TYPES_11);
-    }
+namespace broadcast {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT Broadcast, ,
+                        PAIRWISE_TYPES_11);
 }
+}  // namespace functions

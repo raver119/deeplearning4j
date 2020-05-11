@@ -25,18 +25,22 @@ namespace sd {
 namespace ops {
 namespace helpers {
 template <typename T>
-static void applyGradientDescent_(NDArray* input, NDArray* step, double weight, NDArray* output) {
-    auto lambda = LAMBDA_TT(_x, _y, weight) {
-        return _x - (_y * weight);
-    };
+static void applyGradientDescent_(NDArray* input, NDArray* step, double weight,
+                                  NDArray* output) {
+  auto lambda = LAMBDA_TT(_x, _y, weight) { return _x - (_y * weight); };
 
-    input->applyPairwiseLambda<T>(*step, lambda, *output);
+  input->applyPairwiseLambda<T>(*step, lambda, *output);
 }
 
-void applyGradientDescent(sd::LaunchContext* context, NDArray* input, NDArray* step, double weight, NDArray* output) {
-    BUILD_SINGLE_SELECTOR(input->dataType(), applyGradientDescent_, (input, step, weight, output), FLOAT_TYPES);
+void applyGradientDescent(sd::LaunchContext* context, NDArray* input,
+                          NDArray* step, double weight, NDArray* output) {
+  BUILD_SINGLE_SELECTOR(input->dataType(), applyGradientDescent_,
+                        (input, step, weight, output), FLOAT_TYPES);
 }
-BUILD_SINGLE_TEMPLATE(template void applyGradientDescent_, (NDArray* input, NDArray* step, double weight, NDArray* output), FLOAT_TYPES);
-}
-}
-}
+BUILD_SINGLE_TEMPLATE(template void applyGradientDescent_,
+                      (NDArray * input, NDArray* step, double weight,
+                       NDArray* output),
+                      FLOAT_TYPES);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

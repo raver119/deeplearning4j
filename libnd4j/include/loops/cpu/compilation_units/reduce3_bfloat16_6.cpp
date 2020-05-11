@@ -22,7 +22,8 @@
 #include "../reduce3.hpp"
 
 namespace functions {
-    namespace reduce3 {
-        BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT Reduce3, , LIBND4J_TYPES_6, FLOAT_TYPES_3);
-    }
+namespace reduce3 {
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT Reduce3, , LIBND4J_TYPES_6,
+                      FLOAT_TYPES_3);
 }
+}  // namespace functions

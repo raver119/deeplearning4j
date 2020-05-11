@@ -21,23 +21,26 @@
 #ifndef SD_UNRESOLVED_OUTPUT_H
 #define SD_UNRESOLVED_OUTPUT_H
 
-#include <utility>
-#include <string>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace sd {
-    namespace graph {
-        class unresolved_output_exception : public std::runtime_error {
-        public:
-            unresolved_output_exception(const std::string &message);
-            ~unresolved_output_exception() = default;
+namespace graph {
+class unresolved_output_exception : public std::runtime_error {
+ public:
+  unresolved_output_exception(const std::string &message);
+  ~unresolved_output_exception() = default;
 
-            static unresolved_output_exception build(const std::string &message, int nodeId, int outputIndex);
-            static unresolved_output_exception build(const std::string &message, std::pair<int, int> &varIndex);
-            static unresolved_output_exception build(const std::string &message, const std::string &varName, int outputIndex = 0);
-        };
-    }
-}
+  static unresolved_output_exception build(const std::string &message,
+                                           int nodeId, int outputIndex);
+  static unresolved_output_exception build(const std::string &message,
+                                           std::pair<int, int> &varIndex);
+  static unresolved_output_exception build(const std::string &message,
+                                           const std::string &varName,
+                                           int outputIndex = 0);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //SD_UNRESOLVED_INPUT_H
+#endif  // SD_UNRESOLVED_INPUT_H

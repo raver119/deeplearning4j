@@ -23,37 +23,36 @@
 #include <system/dll.h>
 #include <system/pointercast.h>
 
-
 namespace sd {
-    class SD_EXPORT ConstantDataBuffer {
-    private:
-        Nd4jPointer _primaryBuffer = nullptr;
-        Nd4jPointer _specialBuffer = nullptr;
-        Nd4jLong _length = 0;
-        Nd4jLong _sizeOf = 0;
+class SD_EXPORT ConstantDataBuffer {
+ private:
+  Nd4jPointer _primaryBuffer = nullptr;
+  Nd4jPointer _specialBuffer = nullptr;
+  Nd4jLong _length = 0;
+  Nd4jLong _sizeOf = 0;
 
-    public:
-        ConstantDataBuffer(Nd4jPointer primary, Nd4jPointer special, Nd4jLong numEelements, Nd4jLong sizeOf);
-        ConstantDataBuffer(const ConstantDataBuffer &other);
-        ConstantDataBuffer() = default;
-        ~ConstantDataBuffer() = default;
+ public:
+  ConstantDataBuffer(Nd4jPointer primary, Nd4jPointer special,
+                     Nd4jLong numEelements, Nd4jLong sizeOf);
+  ConstantDataBuffer(const ConstantDataBuffer& other);
+  ConstantDataBuffer() = default;
+  ~ConstantDataBuffer() = default;
 
-        Nd4jLong sizeOf() const;
-        Nd4jLong length() const;
+  Nd4jLong sizeOf() const;
+  Nd4jLong length() const;
 
-        Nd4jPointer primary() const;
-        Nd4jPointer special() const;
+  Nd4jPointer primary() const;
+  Nd4jPointer special() const;
 
-        ConstantDataBuffer& operator=(const ConstantDataBuffer& other) = default;
-        ConstantDataBuffer& operator=(ConstantDataBuffer&& other) noexcept = default;
+  ConstantDataBuffer& operator=(const ConstantDataBuffer& other) = default;
+  ConstantDataBuffer& operator=(ConstantDataBuffer&& other) noexcept = default;
 
+  template <typename T>
+  T* primaryAsT();
 
-        template <typename T>
-        T* primaryAsT();
+  template <typename T>
+  T* specialAsT();
+};
+}  // namespace sd
 
-        template <typename T>
-        T* specialAsT();
-    };
-}
-
-#endif //SD_CONSTANTDATABUFFER_H
+#endif  // SD_CONSTANTDATABUFFER_H

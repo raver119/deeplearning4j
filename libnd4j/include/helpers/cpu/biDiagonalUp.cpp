@@ -18,163 +18,170 @@
 // Created by Yurii Shyrma on 18.12.2017
 //
 
-
-#include <helpers/householder.h>
-#include <helpers/biDiagonalUp.h>
 #include <array/NDArrayFactory.h>
-
+#include <helpers/biDiagonalUp.h>
+#include <helpers/householder.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-
 //////////////////////////////////////////////////////////////////////////
-BiDiagonalUp::BiDiagonalUp(const NDArray& matrix): _HHmatrix(sd::NDArrayFactory::create(matrix.ordering(), {matrix.sizeAt(0), matrix.sizeAt(1)}, matrix.dataType(), matrix.getContext())),
-                                                         _HHbidiag(sd::NDArrayFactory::create(matrix.ordering(), {matrix.sizeAt(1), matrix.sizeAt(1)}, matrix.dataType(), matrix.getContext())) {
+BiDiagonalUp::BiDiagonalUp(const NDArray& matrix)
+    : _HHmatrix(sd::NDArrayFactory::create(
+          matrix.ordering(), {matrix.sizeAt(0), matrix.sizeAt(1)},
+          matrix.dataType(), matrix.getContext())),
+      _HHbidiag(sd::NDArrayFactory::create(
+          matrix.ordering(), {matrix.sizeAt(1), matrix.sizeAt(1)},
+          matrix.dataType(), matrix.getContext())) {
+  // input validation
+  if (matrix.rankOf() != 2 || matrix.isScalar())
+    throw std::runtime_error(
+        "ops::helpers::biDiagonalizeUp constructor: input array must be 2D "
+        "matrix !");
 
-	// input validation
-	if(matrix.rankOf() != 2 || matrix.isScalar())
-		throw std::runtime_error("ops::helpers::biDiagonalizeUp constructor: input array must be 2D matrix !");
+  _HHmatrix.assign(&matrix);
+  _HHbidiag.assign(0.);
 
-	_HHmatrix.assign(&matrix);
-	_HHbidiag.assign(0.);
-	
-	evalData();
-
+  evalData();
 }
 
-	template <typename T>
-	void BiDiagonalUp::_evalData() {
+template <typename T>
+void BiDiagonalUp::_evalData() {
+  const auto rows = _HHmatrix.sizeAt(0);
+  const auto cols = _HHmatrix.sizeAt(1);
 
-		const auto rows = _HHmatrix.sizeAt(0);
-		const auto cols = _HHmatrix.sizeAt(1);
+  if (rows < cols)
+    throw std::runtime_error(
+        "ops::helpers::BiDiagonalizeUp::evalData method: this procedure is "
+        "applicable only for input matrix with rows >= cols !");
 
-		if(rows < cols)
-			throw std::runtime_error("ops::helpers::BiDiagonalizeUp::evalData method: this procedure is applicable only for input matrix with rows >= cols !");
+  NDArray *bottomRightCorner(nullptr), *column(nullptr), *row(nullptr);
+  T coeff, normX;
 
-		NDArray* bottomRightCorner(nullptr), *column(nullptr), *row(nullptr);
-		T coeff, normX;
+  T _x, _y;
 
-		T _x, _y;
+  for (Nd4jLong i = 0; i < cols - 1; ++i) {
+    // evaluate Householder matrix nullifying columns
+    column = new NDArray(_HHmatrix({i, rows, i, i + 1}, true));
 
-		for(Nd4jLong i = 0; i < cols-1; ++i ) {
+    _x = _HHmatrix.e<T>(i, i);
+    _y = _HHbidiag.e<T>(i, i);
 
-			// evaluate Householder matrix nullifying columns
-			column = new NDArray(_HHmatrix({i,rows,  i,i+1}, true));
+    Householder<T>::evalHHmatrixDataI(*column, _x, _y);
 
-            _x = _HHmatrix.e<T>(i,i);
-            _y = _HHbidiag.e<T>(i,i);
+    _HHmatrix.p<T>(i, i, _x);
+    _HHbidiag.p<T>(i, i, _y);
 
-			Householder<T>::evalHHmatrixDataI(*column, _x, _y);
+    // multiply corresponding matrix block on householder matrix from the left:
+    // P * bottomRightCorner
+    bottomRightCorner =
+        new NDArray(_HHmatrix({i, rows, i + 1, cols}, true));  // {i, cols}
+    Householder<T>::mulLeft(*bottomRightCorner,
+                            _HHmatrix({i + 1, rows, i, i + 1}, true),
+                            _HHmatrix.e<T>(i, i));
 
-            _HHmatrix.p<T>(i, i, _x);
-            _HHbidiag.p<T>(i, i, _y);
+    delete bottomRightCorner;
+    delete column;
 
-			// multiply corresponding matrix block on householder matrix from the left: P * bottomRightCorner
-			bottomRightCorner =  new NDArray(_HHmatrix({i,rows,  i+1,cols}, true));	// {i, cols}
-			Householder<T>::mulLeft(*bottomRightCorner, _HHmatrix({i+1,rows, i,i+1}, true), _HHmatrix.e<T>(i,i));
+    if (i == cols - 2)
+      continue;  // do not apply right multiplying at last iteration
 
-			delete bottomRightCorner;
-			delete column;
+    // evaluate Householder matrix nullifying rows
+    row = new NDArray(_HHmatrix({i, i + 1, i + 1, cols}, true));
 
-			if(i == cols-2)
-				continue; 										// do not apply right multiplying at last iteration
+    _x = _HHmatrix.e<T>(i, i + 1);
+    _y = _HHbidiag.e<T>(i, i + 1);
 
-			// evaluate Householder matrix nullifying rows
-			row  = new NDArray(_HHmatrix({i,i+1,  i+1,cols}, true));
+    Householder<T>::evalHHmatrixDataI(*row, _x, _y);
 
-            _x = _HHmatrix.e<T>(i,i+1);
-            _y = _HHbidiag.e<T>(i,i+1);
+    _HHmatrix.p<T>(i, i + 1, _x);
+    _HHbidiag.p<T>(i, i + 1, _y);
 
-			Householder<T>::evalHHmatrixDataI(*row, _x, _y);
+    // multiply corresponding matrix block on householder matrix from the right:
+    // bottomRightCorner * P
+    bottomRightCorner =
+        new NDArray(_HHmatrix({i + 1, rows, i + 1, cols}, true));  // {i, rows}
 
-            _HHmatrix.p<T>(i, i+1, _x);
-            _HHbidiag.p<T>(i, i+1, _y);
+    Householder<T>::mulRight(*bottomRightCorner,
+                             _HHmatrix({i, i + 1, i + 2, cols}, true),
+                             _HHmatrix.e<T>(i, i + 1));
 
-			// multiply corresponding matrix block on householder matrix from the right: bottomRightCorner * P
-			bottomRightCorner = new NDArray(_HHmatrix({i+1,rows,  i+1,cols}, true));  // {i, rows}
+    delete bottomRightCorner;
+    delete row;
+  }
 
-			Householder<T>::mulRight(*bottomRightCorner, _HHmatrix({i,i+1, i+2,cols}, true), _HHmatrix.e<T>(i,i+1));
+  row = new NDArray(_HHmatrix({cols - 2, cols - 1, cols - 1, cols}, true));
 
-			delete bottomRightCorner;
-			delete row;
-		}
+  _x = _HHmatrix.e<T>(cols - 2, cols - 1);
+  _y = _HHbidiag.e<T>(cols - 2, cols - 1);
 
-		row  = new NDArray(_HHmatrix({cols-2,cols-1, cols-1,cols}, true));
+  Householder<T>::evalHHmatrixDataI(*row, _x, _y);
 
-		_x = _HHmatrix.e<T>(cols-2,cols-1);
-		_y = _HHbidiag.e<T>(cols-2,cols-1);
+  _HHmatrix.p<T>(cols - 2, cols - 1, _x);
+  _HHbidiag.p<T>(cols - 2, cols - 1, _y);
 
-		Householder<T>::evalHHmatrixDataI(*row, _x, _y);
+  delete row;
 
-        _HHmatrix.p<T>(cols-2,cols-1, _x);
-        _HHbidiag.p<T>(cols-2,cols-1, _y);
+  column = new NDArray(_HHmatrix({cols - 1, rows, cols - 1, cols}, true));
 
-		delete row;
+  _x = _HHmatrix.e<T>(cols - 1, cols - 1);
+  _y = _HHbidiag.e<T>(cols - 1, cols - 1);
 
-		column = new NDArray(_HHmatrix({cols-1,rows, cols-1,cols}, true));
+  Householder<T>::evalHHmatrixDataI(*column, _x, _y);
 
-		_x = _HHmatrix.e<T>(cols-1,cols-1);
-		_y = _HHbidiag.e<T>(cols-1,cols-1);
+  _HHmatrix.p<T>(cols - 1, cols - 1, _x);
+  _HHbidiag.p<T>(cols - 1, cols - 1, _y);
 
-		Householder<T>::evalHHmatrixDataI(*column, _x, _y);
-
-		_HHmatrix.p<T>(cols-1, cols-1, _x);
-        _HHbidiag.p<T>(cols-1, cols-1, _y);
-
-		delete column;
-	}
+  delete column;
+}
 
 //////////////////////////////////////////////////////////////////////////
 void BiDiagonalUp::evalData() {
-	auto xType = _HHmatrix.dataType();
+  auto xType = _HHmatrix.dataType();
 
-	BUILD_SINGLE_SELECTOR(xType, _evalData, ();, FLOAT_TYPES);
+  BUILD_SINGLE_SELECTOR(xType, _evalData, ();, FLOAT_TYPES);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 HHsequence BiDiagonalUp::makeHHsequence_(const char type) const {
+  if (type == 'u') {
+    const int diagSize = _HHbidiag.sizeAt(0);
+    auto colOfCoeffs =
+        NDArrayFactory::create(_HHmatrix.ordering(), {diagSize, 1},
+                               _HHmatrix.dataType(), _HHmatrix.getContext());
 
-	if(type == 'u') {
+    for (int i = 0; i < diagSize; ++i) colOfCoeffs.p(i, _HHmatrix.e<T>(i, i));
 
-    	const int diagSize = _HHbidiag.sizeAt(0);
-    	auto colOfCoeffs = NDArrayFactory::create(_HHmatrix.ordering(),  {diagSize, 1}, _HHmatrix.dataType(), _HHmatrix.getContext());
+    return HHsequence(_HHmatrix, colOfCoeffs, type);
+  } else {
+    const int diagUpSize = _HHbidiag.sizeAt(0) - 1;
+    NDArray colOfCoeffs =
+        NDArrayFactory::create(_HHmatrix.ordering(), {diagUpSize, 1},
+                               _HHmatrix.dataType(), _HHmatrix.getContext());
 
-	    for(int i = 0; i < diagSize; ++i)
-	        colOfCoeffs.p(i, _HHmatrix.e<T>(i,i));
+    for (int i = 0; i < diagUpSize; ++i)
+      colOfCoeffs.p(i, _HHmatrix.e<T>(i, i + 1));
 
-    	return HHsequence(_HHmatrix, colOfCoeffs, type);
-    }
-    else {
+    HHsequence result(_HHmatrix, colOfCoeffs, type);
+    result._diagSize = diagUpSize;
+    result._shift = 1;
 
-    	const int diagUpSize = _HHbidiag.sizeAt(0) - 1;
-		NDArray colOfCoeffs = NDArrayFactory::create(_HHmatrix.ordering(), {diagUpSize, 1}, _HHmatrix.dataType(), _HHmatrix.getContext());
-
-    	for(int i = 0; i < diagUpSize; ++i)
-        	colOfCoeffs.p(i, _HHmatrix.e<T>(i,i+1));
-
-    	HHsequence result(_HHmatrix, colOfCoeffs, type);
-    	result._diagSize = diagUpSize;
-    	result._shift  = 1;
-
-    	return result;
-    }
+    return result;
+  }
 }
 
-	HHsequence BiDiagonalUp::makeHHsequence(const char type) const {
-		auto xType = _HHmatrix.dataType();
+HHsequence BiDiagonalUp::makeHHsequence(const char type) const {
+  auto xType = _HHmatrix.dataType();
 
-		BUILD_SINGLE_SELECTOR(xType, return makeHHsequence_, (type);, FLOAT_TYPES);
-	}
-
-
+  BUILD_SINGLE_SELECTOR(xType, return makeHHsequence_, (type);, FLOAT_TYPES);
+}
 
 BUILD_SINGLE_TEMPLATE(template void BiDiagonalUp::_evalData, (), FLOAT_TYPES);
-BUILD_SINGLE_TEMPLATE(template HHsequence BiDiagonalUp::makeHHsequence_, (const char type) const, FLOAT_TYPES);
+BUILD_SINGLE_TEMPLATE(template HHsequence BiDiagonalUp::makeHHsequence_,
+                      (const char type) const, FLOAT_TYPES);
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

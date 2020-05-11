@@ -25,68 +25,69 @@
 #include <ops/declarable/helpers/axis.h>
 
 namespace sd {
-    namespace ops {
-        CUSTOM_OP_IMPL(moments, 1, 2, false, 0, -2) {
-            auto input = INPUT_VARIABLE(0);
-            auto means = OUTPUT_VARIABLE(0);
-            auto variances = OUTPUT_VARIABLE(1);
+namespace ops {
+CUSTOM_OP_IMPL(moments, 1, 2, false, 0, -2) {
+  auto input = INPUT_VARIABLE(0);
+  auto means = OUTPUT_VARIABLE(0);
+  auto variances = OUTPUT_VARIABLE(1);
 
-            auto axis = block.getIArguments();
-            const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
+  auto axis = block.getIArguments();
+  const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
 
-            // axis might be dynamic (i.e. tf mode)
-            if (block.width() > 1 && axis.size() == 0) {
-                auto axisVector = INPUT_VARIABLE(1);
-                helpers::adjustAxis(input->rankOf(), axisVector, axis);
-//                for (int e = 0; e < axisVector->lengthOf(); e++) {
-//                    int ca = (int) axisVector->e(e);
-//                    if (ca < 0)
-//                        ca += input->rankOf();
-//
-//                    axis.emplace_back(ca);
-//                }
+  // axis might be dynamic (i.e. tf mode)
+  if (block.width() > 1 && axis.size() == 0) {
+    auto axisVector = INPUT_VARIABLE(1);
+    helpers::adjustAxis(input->rankOf(), axisVector, axis);
+    //                for (int e = 0; e < axisVector->lengthOf(); e++) {
+    //                    int ca = (int) axisVector->e(e);
+    //                    if (ca < 0)
+    //                        ca += input->rankOf();
+    //
+    //                    axis.emplace_back(ca);
+    //                }
+  }
 
-            }
+  std::vector<int>& dims = axis;
+  input->varianceAlongDimension(variance::SummaryStatsVariance, *variances,
+                                false, axis);
+  input->reduceAlongDimension(reduce::Mean, *means, axis, keepDims);
 
-            std::vector<int>& dims = axis;
-            input->varianceAlongDimension(variance::SummaryStatsVariance, *variances, false, axis);
-            input->reduceAlongDimension(reduce::Mean, *means, axis, keepDims);
-
-            return Status::OK();
-        }
-
-        DECLARE_SHAPE_FN(moments) {
-            auto axis = block.getIArguments();
-            auto input = INPUT_VARIABLE(0);
-
-            // axis might be dynamic (i.e. tf mode)
-            if (block.width() > 1 && axis.size() == 0) {
-                auto axisVector = INPUT_VARIABLE(1);
-
-                for (int e = 0; e < axisVector->lengthOf(); e++) {
-                    int ca = axisVector->e<int>(e);
-                    if (ca < 0)
-                        ca += input->rankOf();
-
-                    axis.emplace_back(ca);
-                }
-
-            }
-            //std::vector<int> dims = ShapeUtils::evalDimsToExclude(input->rankOf(), {axis});
-            const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
-
-            auto meanShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, keepDims, false, block.workspace());
-            auto varianceShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, keepDims, false, block.workspace());
-            return SHAPELIST(meanShape, varianceShape);
-        }
-
-        DECLARE_TYPES(moments) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(sd::DataType::ANY)
-                    ->setAllowedOutputTypes({ALL_FLOATS});
-        }
-    }
-
+  return Status::OK();
 }
+
+DECLARE_SHAPE_FN(moments) {
+  auto axis = block.getIArguments();
+  auto input = INPUT_VARIABLE(0);
+
+  // axis might be dynamic (i.e. tf mode)
+  if (block.width() > 1 && axis.size() == 0) {
+    auto axisVector = INPUT_VARIABLE(1);
+
+    for (int e = 0; e < axisVector->lengthOf(); e++) {
+      int ca = axisVector->e<int>(e);
+      if (ca < 0) ca += input->rankOf();
+
+      axis.emplace_back(ca);
+    }
+  }
+  // std::vector<int> dims = ShapeUtils::evalDimsToExclude(input->rankOf(),
+  // {axis});
+  const bool keepDims = block.numT() > 0 ? (bool)T_ARG(0) : false;
+
+  auto meanShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, keepDims,
+                                                   false, block.workspace());
+  auto varianceShape = ShapeUtils::evalReduceShapeInfo(
+      'c', axis, *input, keepDims, false, block.workspace());
+  return SHAPELIST(meanShape, varianceShape);
+}
+
+DECLARE_TYPES(moments) {
+  getOpDescriptor()
+      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedOutputTypes({ALL_FLOATS});
+}
+}  // namespace ops
+
+}  // namespace sd
 
 #endif

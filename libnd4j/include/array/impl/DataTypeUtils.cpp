@@ -23,15 +23,11 @@
 #include <types/float16.h>
 
 namespace sd {
-    DataType DataTypeUtils::fromInt(int val) {
-        return (DataType) val;
-    }
+DataType DataTypeUtils::fromInt(int val) { return (DataType)val; }
 
-    DataType DataTypeUtils::fromFlatDataType(sd::graph::DType dtype) {
-        return (DataType) dtype;
-    }
-
-    int DataTypeUtils::asInt(DataType type) {
-        return (int) type;
-    }
+DataType DataTypeUtils::fromFlatDataType(sd::graph::DType dtype) {
+  return (DataType)dtype;
 }
+
+int DataTypeUtils::asInt(DataType type) { return (int)type; }
+}  // namespace sd

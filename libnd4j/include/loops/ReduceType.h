@@ -22,15 +22,7 @@
 #define SD_REDUCETYPE_H
 
 namespace functions {
-    enum ReduceType {
-        SUM,
-        PRODUCT,
-        MAX,
-        MIN,
-        ASUM,
-        AMAX,
-        AMIN
-    };
+enum ReduceType { SUM, PRODUCT, MAX, MIN, ASUM, AMAX, AMIN };
 }
 
-#endif //SD_REDUCETYPE_H
+#endif  // SD_REDUCETYPE_H

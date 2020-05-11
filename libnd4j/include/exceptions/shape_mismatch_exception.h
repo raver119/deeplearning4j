@@ -18,33 +18,35 @@
 // @author raver119@gmail.com
 //
 
-
 #ifndef SD_SHAPE_MISMATCH_EXCEPTION_H
 #define SD_SHAPE_MISMATCH_EXCEPTION_H
 
-#include <system/op_boilerplate.h>
-#include <system/pointercast.h>
-#include <stdexcept>
 #include <exceptions/graph_exception.h>
 #include <system/dll.h>
+#include <system/op_boilerplate.h>
+#include <system/pointercast.h>
+
+#include <stdexcept>
 #include <vector>
 
 #if defined(_MSC_VER)
 
-// we're ignoring warning about non-exportable parent class, since std::runtime_error is a part of Standard C++ Library
-#pragma warning( disable : 4275 )
+// we're ignoring warning about non-exportable parent class, since
+// std::runtime_error is a part of Standard C++ Library
+#pragma warning(disable : 4275)
 
 #endif
 
 namespace sd {
-    class SD_EXPORT shape_mismatch_exception : public std::runtime_error  {
-    public:
-        shape_mismatch_exception(const std::string &message);
-        ~shape_mismatch_exception() = default;
+class SD_EXPORT shape_mismatch_exception : public std::runtime_error {
+ public:
+  shape_mismatch_exception(const std::string &message);
+  ~shape_mismatch_exception() = default;
 
-        static shape_mismatch_exception build(const std::string &message, const std::vector<Nd4jLong> &expected, const std::vector<Nd4jLong> &actual);
-    };
-}
+  static shape_mismatch_exception build(const std::string &message,
+                                        const std::vector<Nd4jLong> &expected,
+                                        const std::vector<Nd4jLong> &actual);
+};
+}  // namespace sd
 
-
-#endif //SD_SHAPE_MISMATCH_EXCEPTION_H
+#endif  // SD_SHAPE_MISMATCH_EXCEPTION_H

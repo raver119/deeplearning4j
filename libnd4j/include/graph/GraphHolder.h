@@ -18,41 +18,45 @@
 //  @author raver119@gmail.com
 //
 
-#include <helpers/logger.h>
-#include <system/pointercast.h>
-#include <unordered_map>
-#include <map>
+#include <exceptions/unknown_graph_exception.h>
 #include <graph/Graph.h>
 #include <helpers/SimpleReadWriteLock.h>
-#include <exceptions/unknown_graph_exception.h>
+#include <helpers/logger.h>
+#include <system/pointercast.h>
+
+#include <map>
+#include <unordered_map>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT GraphHolder {
-        private:
-            static GraphHolder *_INSTANCE;
-            MAP_IMPL<Nd4jLong, Graph> _graphs;
+namespace graph {
+class SD_EXPORT GraphHolder {
+ private:
+  static GraphHolder *_INSTANCE;
+  MAP_IMPL<Nd4jLong, Graph> _graphs;
 
-            std::mutex _mutex;
+  std::mutex _mutex;
 
-            GraphHolder() = default;
-            ~GraphHolder() = default;
-        public:
-            static GraphHolder* getInstance();
+  GraphHolder() = default;
+  ~GraphHolder() = default;
 
-            void registerGraph(Nd4jLong graphId, const Graph &graph);
+ public:
+  static GraphHolder *getInstance();
 
-            Graph& graph(Nd4jLong graphId);
+  void registerGraph(Nd4jLong graphId, const Graph &graph);
 
-            void forgetGraph(Nd4jLong graphId);
+  Graph &graph(Nd4jLong graphId);
 
-            void dropGraph(Nd4jLong graphId);
+  void forgetGraph(Nd4jLong graphId);
 
-            bool hasGraph(Nd4jLong graphId);
+  void dropGraph(Nd4jLong graphId);
 
-            flatbuffers::Offset<FlatResult> execute(Nd4jLong graphId, flatbuffers::FlatBufferBuilder &builder, const FlatInferenceRequest* request);
+  bool hasGraph(Nd4jLong graphId);
 
-            void replaceGraph(Nd4jLong graphId, const Graph &graph);
-        };
-    }
-}
+  flatbuffers::Offset<FlatResult> execute(
+      Nd4jLong graphId, flatbuffers::FlatBufferBuilder &builder,
+      const FlatInferenceRequest *request);
+
+  void replaceGraph(Nd4jLong graphId, const Graph &graph);
+};
+}  // namespace graph
+}  // namespace sd

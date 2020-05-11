@@ -23,5 +23,4 @@
 
 #include <loops/type_conversions.h>
 
-
-#endif //LIBND4J_THRESHOLD_H
+#endif  // LIBND4J_THRESHOLD_H

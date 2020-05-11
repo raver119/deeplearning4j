@@ -17,51 +17,51 @@
 //
 // Created by raver119 on 15.12.17.
 //
-#include "testlayers.h"
 #include <graph/Graph.h>
-#include <chrono>
 #include <graph/Node.h>
 #include <helpers/OpTracker.h>
 #include <ops/declarable/CustomOperations.h>
+
+#include <chrono>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::ops;
 using namespace sd::graph;
 
 class OpTrackerTests : public testing::Test {
-public:
-    int numIterations = 10;
-    int poolSize = 10;
+ public:
+  int numIterations = 10;
+  int poolSize = 10;
 
-    OpTrackerTests() {
-    }
+  OpTrackerTests() {}
 };
 
 TEST_F(OpTrackerTests, Test_Existence_1) {
-    sd::_loader loader;
+  sd::_loader loader;
 
-    // nd4j_printf("Groups: %i; Operations: %i\n", OpTracker::getInstance()->totalGroups(), OpTracker::getInstance()->totalOperations());
+  // nd4j_printf("Groups: %i; Operations: %i\n",
+  // OpTracker::getInstance()->totalGroups(),
+  // OpTracker::getInstance()->totalOperations());
 
-    ASSERT_TRUE(OpTracker::getInstance()->totalGroups() > 0);
-    ASSERT_TRUE(OpTracker::getInstance()->totalOperations() > 0);
+  ASSERT_TRUE(OpTracker::getInstance()->totalGroups() > 0);
+  ASSERT_TRUE(OpTracker::getInstance()->totalOperations() > 0);
 
-    OpTracker::getInstance()->exportOperations();
+  OpTracker::getInstance()->exportOperations();
 }
 
 TEST_F(OpTrackerTests, Test_Ops_List_1) {
-    sd::ops::less op;
-    auto vec = OpRegistrator::getInstance()->getAllHashes();
+  sd::ops::less op;
+  auto vec = OpRegistrator::getInstance()->getAllHashes();
 
-    // nd4j_printf("Total ops: %lld\n", vec.size());
-    // nd4j_printf("Less hash: %lld\n", op.getOpHash());
+  // nd4j_printf("Total ops: %lld\n", vec.size());
+  // nd4j_printf("Less hash: %lld\n", op.getOpHash());
 
-    for (const auto &v: vec) {
-        if (v == 5484196977525668316L) {
-            auto op = OpRegistrator::getInstance()->getOperation(v);
-            // nd4j_printf("OpName: %s\n", op->getOpName()->c_str());
-        }
+  for (const auto &v : vec) {
+    if (v == 5484196977525668316L) {
+      auto op = OpRegistrator::getInstance()->getOperation(v);
+      // nd4j_printf("OpName: %s\n", op->getOpName()->c_str());
     }
+  }
 }
-
-
-

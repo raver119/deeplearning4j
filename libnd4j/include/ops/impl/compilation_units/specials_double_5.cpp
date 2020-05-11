@@ -22,5 +22,6 @@
 #include "../specials_double.hpp"
 
 namespace sd {
-    BUILD_DOUBLE_TEMPLATE(template class DoubleMethods, , LIBND4J_TYPES, LIBND4J_TYPES_5);
+BUILD_DOUBLE_TEMPLATE(template class DoubleMethods, , LIBND4J_TYPES,
+                      LIBND4J_TYPES_5);
 }

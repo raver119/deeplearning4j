@@ -18,41 +18,42 @@
 //  @author  raver119@gmail.com
 //
 
-#include <system/op_boilerplate.h>
 #include <helpers/Loops.h>
-#include <types/types.h>
-#include <loops/transform_same.h>
 #include <loops/legacy_ops.h>
+#include <loops/transform_same.h>
+#include <system/op_boilerplate.h>
+#include <types/types.h>
 
 using namespace simdOps;
 
 namespace functions {
-    namespace transform {
+namespace transform {
 
-        template <typename X>
-        void TransformSame<X>::exec(int opNum,
-                                    const void *x, const Nd4jLong *xShapeInfo,
-                                    void *z, const Nd4jLong *zShapeInfo,
-                                    void *extraParams,
-                                    uint64_t threadId, uint64_t numThreads) {
-                    DISPATCH_BY_OPNUM_T(exec, PARAMS(x, xShapeInfo, z, zShapeInfo, extraParams, threadId, numThreads), TRANSFORM_SAME_OPS);
-		}
-
-        template <typename X>
-        template<typename OpType>
-		void _CUDA_H TransformSame<X>::exec(const void *vx, const Nd4jLong *xShapeInfo,
-                                            void *vz, const Nd4jLong *zShapeInfo,
-                                            void *vextraParams,
-                                            uint64_t threadId, uint64_t numThreads) {
-
-		    auto x = reinterpret_cast<const X *>(vx);
-		    auto z = reinterpret_cast<X *>(vz);
-		    auto extraParams = reinterpret_cast<X *>(vextraParams);
-
-
-            sd::TransformLoops<X,X,X>::template loopTransform<OpType>(x, xShapeInfo, z, zShapeInfo, extraParams, threadId, numThreads);
-        }
-
-        BUILD_SINGLE_TEMPLATE(template class SD_EXPORT TransformSame, , LIBND4J_TYPES);
-    }
+template <typename X>
+void TransformSame<X>::exec(int opNum, const void *x,
+                            const Nd4jLong *xShapeInfo, void *z,
+                            const Nd4jLong *zShapeInfo, void *extraParams,
+                            uint64_t threadId, uint64_t numThreads) {
+  DISPATCH_BY_OPNUM_T(
+      exec,
+      PARAMS(x, xShapeInfo, z, zShapeInfo, extraParams, threadId, numThreads),
+      TRANSFORM_SAME_OPS);
 }
+
+template <typename X>
+template <typename OpType>
+void _CUDA_H TransformSame<X>::exec(const void *vx, const Nd4jLong *xShapeInfo,
+                                    void *vz, const Nd4jLong *zShapeInfo,
+                                    void *vextraParams, uint64_t threadId,
+                                    uint64_t numThreads) {
+  auto x = reinterpret_cast<const X *>(vx);
+  auto z = reinterpret_cast<X *>(vz);
+  auto extraParams = reinterpret_cast<X *>(vextraParams);
+
+  sd::TransformLoops<X, X, X>::template loopTransform<OpType>(
+      x, xShapeInfo, z, zShapeInfo, extraParams, threadId, numThreads);
+}
+
+BUILD_SINGLE_TEMPLATE(template class SD_EXPORT TransformSame, , LIBND4J_TYPES);
+}  // namespace transform
+}  // namespace functions

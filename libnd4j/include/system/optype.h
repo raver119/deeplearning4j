@@ -16,7 +16,7 @@
 
 #pragma once
 
-//TODO convert this into an enum class
+// TODO convert this into an enum class
 // might break JNI though...
 
 typedef int OpType;
@@ -25,9 +25,7 @@ typedef int OpType;
 #define constexpr
 #endif
 
-namespace op_type
-{
-     constexpr OpType Variance = 0;
-     constexpr OpType StandardDeviation = 1;
-}
-
+namespace op_type {
+constexpr OpType Variance = 0;
+constexpr OpType StandardDeviation = 1;
+}  // namespace op_type

@@ -21,29 +21,23 @@
 #include <memory/ColdZoneManager.h>
 
 namespace sd {
-    namespace memory {
-        ColdZoneManager::ColdZoneManager(const char *filename) {
-            //
-        }
-
-        MemoryZone ColdZoneManager::zone() const {
-            return COLD;
-        }
-
-        uint64_t ColdZoneManager::available() const {
-            return 0;
-        }
-
-        uint64_t ColdZoneManager::used() const {
-            return 0;
-        }
-
-        MemoryDescriptor ColdZoneManager::allocate(uint64_t numBytes) {
-            return MemoryDescriptor(nullptr, COLD, numBytes);
-        }
-
-        void ColdZoneManager::release(MemoryDescriptor &descriptor) {
-            //
-        }
-    }
+namespace memory {
+ColdZoneManager::ColdZoneManager(const char *filename) {
+  //
 }
+
+MemoryZone ColdZoneManager::zone() const { return COLD; }
+
+uint64_t ColdZoneManager::available() const { return 0; }
+
+uint64_t ColdZoneManager::used() const { return 0; }
+
+MemoryDescriptor ColdZoneManager::allocate(uint64_t numBytes) {
+  return MemoryDescriptor(nullptr, COLD, numBytes);
+}
+
+void ColdZoneManager::release(MemoryDescriptor &descriptor) {
+  //
+}
+}  // namespace memory
+}  // namespace sd

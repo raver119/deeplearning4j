@@ -21,26 +21,27 @@
 #ifndef SD_ERRORREFERENCE_H
 #define SD_ERRORREFERENCE_H
 
-#include <string>
 #include <system/dll.h>
 
+#include <string>
+
 namespace sd {
-    class SD_EXPORT ErrorReference {
-    private:
-        int _errorCode = 0;
-        std::string _errorMessage;
-    public:
-        ErrorReference() = default;
-        ~ErrorReference() = default;
+class SD_EXPORT ErrorReference {
+ private:
+  int _errorCode = 0;
+  std::string _errorMessage;
 
-        int errorCode();
-        const char* errorMessage();
+ public:
+  ErrorReference() = default;
+  ~ErrorReference() = default;
 
-        void setErrorCode(int errorCode);
-        void setErrorMessage(std::string message);
-        void setErrorMessage(const char* message);
-    };
-}
+  int errorCode();
+  const char* errorMessage();
 
+  void setErrorCode(int errorCode);
+  void setErrorMessage(std::string message);
+  void setErrorMessage(const char* message);
+};
+}  // namespace sd
 
-#endif //SD_ERRORREFERENCE_H
+#endif  // SD_ERRORREFERENCE_H

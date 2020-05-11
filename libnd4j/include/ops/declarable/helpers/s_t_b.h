@@ -27,23 +27,38 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-    void batchToSpace(sd::LaunchContext* context, const NDArray& input, NDArray& output, const uint cropBottom, const uint cropTop, const uint cropLeft, const uint cropRight, const uint blockSize);
+void batchToSpace(sd::LaunchContext* context, const NDArray& input,
+                  NDArray& output, const uint cropBottom, const uint cropTop,
+                  const uint cropLeft, const uint cropRight,
+                  const uint blockSize);
 
-    void spaceToBatch(sd::LaunchContext* context, const NDArray& input, NDArray& output, const uint padBottom, const uint padTop, const uint padLeft, const uint padRight, const uint blockSize);
+void spaceToBatch(sd::LaunchContext* context, const NDArray& input,
+                  NDArray& output, const uint padBottom, const uint padTop,
+                  const uint padLeft, const uint padRight,
+                  const uint blockSize);
 
-    void spaceToBatchND(sd::LaunchContext* context, const NDArray& input, const NDArray& blockShape, const NDArray& padding, NDArray& output);
+void spaceToBatchND(sd::LaunchContext* context, const NDArray& input,
+                    const NDArray& blockShape, const NDArray& padding,
+                    NDArray& output);
 
-    void batchToSpaceND(sd::LaunchContext* context, const NDArray& input, const NDArray& blockShape, const NDArray& crop, NDArray& output);
+void batchToSpaceND(sd::LaunchContext* context, const NDArray& input,
+                    const NDArray& blockShape, const NDArray& crop,
+                    NDArray& output);
 
 /*
     // this method MUST be platform-specific
 
     template <typename T, int NUM_BLOCK_DIMS, bool B2S>
-    void _execute(sd::LaunchContext * context, void *ptrSpace, const Nd4jLong *space_shape, const Nd4jLong *space_strides, const Nd4jLong *block_shape, const Nd4jLong *pad_start, const Nd4jLong *block_offsets, void *ptrBatch, const Nd4jLong *batch_shape, const Nd4jLong *batch_strides);
+    void _execute(sd::LaunchContext * context, void *ptrSpace, const Nd4jLong
+*space_shape, const Nd4jLong *space_strides, const Nd4jLong *block_shape, const
+Nd4jLong *pad_start, const Nd4jLong *block_offsets, void *ptrBatch, const
+Nd4jLong *batch_shape, const Nd4jLong *batch_strides);
 
 
     template <int NUM_BLOCK_DIMS, bool B2S>
-    FORCEINLINE void _prepare(sd::LaunchContext * context, NDArray * space, NDArray *batch, const Nd4jLong block_array[NUM_BLOCK_DIMS], const Nd4jLong padding_array[NUM_BLOCK_DIMS * 2]) {
+    FORCEINLINE void _prepare(sd::LaunchContext * context, NDArray * space,
+NDArray *batch, const Nd4jLong block_array[NUM_BLOCK_DIMS], const Nd4jLong
+padding_array[NUM_BLOCK_DIMS * 2]) {
 
         Nd4jLong pad_start[NUM_BLOCK_DIMS];
         Nd4jLong block_shape[NUM_BLOCK_DIMS];
@@ -69,26 +84,38 @@ namespace helpers {
             const Nd4jLong space_b = batch_b % space_size;
             Nd4jLong block_index = batch_b / space_size;
             Nd4jLong block_offsets[NUM_BLOCK_DIMS];
-            for (Nd4jLong block_dim = NUM_BLOCK_DIMS - 1; block_dim >= 0; --block_dim) {
-                block_offsets[block_dim] = block_dim > 0 ? block_index % block_shape[block_dim] : block_index;
-                block_index /= block_shape[block_dim];
+            for (Nd4jLong block_dim = NUM_BLOCK_DIMS - 1; block_dim >= 0;
+--block_dim) { block_offsets[block_dim] = block_dim > 0 ? block_index %
+block_shape[block_dim] : block_index; block_index /= block_shape[block_dim];
             }
 
             Nd4jLong space_offset = space_b * space_strides[0];
             Nd4jLong batch_offset = batch_b * batch_strides[0];
 
             auto xType = space->dataType();
-            //_execute<T, NUM_BLOCK_DIMS, B2S>(space->buffer() + space_offset, space_shape, &space_strides[1], block_shape, pad_start, block_offsets, batch->buffer() + batch_offset, batch_shape, &batch_strides[1]);
-            BUILD_SINGLE_PARTIAL_SELECTOR(xType, _execute<, (NUM_BLOCK_DIMS, B2S>(context, space->bufferWithOffset(space_offset), space_shape, &space_strides[1], block_shape, pad_start, block_offsets, batch->bufferWithOffset(batch_offset), batch_shape, &batch_strides[1])), LIBND4J_TYPES);
+            //_execute<T, NUM_BLOCK_DIMS, B2S>(space->buffer() + space_offset,
+space_shape, &space_strides[1], block_shape, pad_start, block_offsets,
+batch->buffer() + batch_offset, batch_shape, &batch_strides[1]);
+            BUILD_SINGLE_PARTIAL_SELECTOR(xType, _execute<, (NUM_BLOCK_DIMS,
+B2S>(context, space->bufferWithOffset(space_offset), space_shape,
+&space_strides[1], block_shape, pad_start, block_offsets,
+batch->bufferWithOffset(batch_offset), batch_shape, &batch_strides[1])),
+LIBND4J_TYPES);
         }
     };
 
-    Nd4jStatus _spaceToBatch(sd::LaunchContext * context, int internal_block_dims, NDArray *input, NDArray *output, std::vector<Nd4jLong> &internal_input_shape, std::vector<Nd4jLong> &internal_output_shape, Nd4jLong *block_shape, Nd4jLong *paddings);
+    Nd4jStatus _spaceToBatch(sd::LaunchContext * context, int
+internal_block_dims, NDArray *input, NDArray *output, std::vector<Nd4jLong>
+&internal_input_shape, std::vector<Nd4jLong> &internal_output_shape, Nd4jLong
+*block_shape, Nd4jLong *paddings);
 
-    Nd4jStatus _batchToSpace(sd::LaunchContext * context, int internal_block_dims, NDArray *input, NDArray *output, std::vector<Nd4jLong> &internal_input_shape, std::vector<Nd4jLong> &internal_output_shape, Nd4jLong *block_shape, Nd4jLong *crops);
+    Nd4jStatus _batchToSpace(sd::LaunchContext * context, int
+internal_block_dims, NDArray *input, NDArray *output, std::vector<Nd4jLong>
+&internal_input_shape, std::vector<Nd4jLong> &internal_output_shape, Nd4jLong
+*block_shape, Nd4jLong *crops);
     */
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_S_T_B_H
+#endif  // LIBND4J_S_T_B_H

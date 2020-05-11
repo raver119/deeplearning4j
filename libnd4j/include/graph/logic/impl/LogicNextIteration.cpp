@@ -20,34 +20,34 @@
 
 #include <graph/logic/LogicNextIteration.h>
 
-
 namespace sd {
-    namespace graph {
-        Nd4jStatus LogicNextIeration::processNode(Graph *graph, Node *node) {
-            throw std::runtime_error("LogicNextIeration::processNode - not implemented yet");
-            /*
-            auto __variableSpace = graph->variableSpace();
-            auto __flowPath = __variableSpace->flowPath();
+namespace graph {
+Nd4jStatus LogicNextIeration::processNode(Graph *graph, Node *node) {
+  throw std::runtime_error(
+      "LogicNextIeration::processNode - not implemented yet");
+  /*
+  auto __variableSpace = graph->variableSpace();
+  auto __flowPath = __variableSpace->flowPath();
 
-            auto inputAddr = node->input()->at(0);
+  auto inputAddr = node->input()->at(0);
 
-            auto var = __variableSpace->getVariable(inputAddr);
+  auto var = __variableSpace->getVariable(inputAddr);
 
-            Variable *lvar = nullptr;
-            if (__variableSpace->hasVariable(node->id(), 0))
-                lvar = __variableSpace->getVariable(node->id(), 0);
-            else
-                lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
+  Variable *lvar = nullptr;
+  if (__variableSpace->hasVariable(node->id(), 0))
+      lvar = __variableSpace->getVariable(node->id(), 0);
+  else
+      lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
 
 //            if (lvar->hasNDArray())
 //                delete lvar->getNDArray();
 
-            auto array = var->getNDArray();
-            lvar->setNDArray(array);
-            lvar->markReadOnly(true);
+  auto array = var->getNDArray();
+  lvar->setNDArray(array);
+  lvar->markReadOnly(true);
 
-            return ND4J_STATUS_OK;
-            */
-        }
-    }
+  return ND4J_STATUS_OK;
+  */
 }
+}  // namespace graph
+}  // namespace sd

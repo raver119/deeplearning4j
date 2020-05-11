@@ -21,10 +21,10 @@
 #include <graph/logic/LogicExpose.h>
 
 namespace sd {
-    namespace graph {
-        Nd4jStatus LogicExpose::processNode(Graph *graph, Node *node) {
-            // do we really want this?
-            return ND4J_STATUS_OK;
-        }
-    }
+namespace graph {
+Nd4jStatus LogicExpose::processNode(Graph *graph, Node *node) {
+  // do we really want this?
+  return ND4J_STATUS_OK;
 }
+}  // namespace graph
+}  // namespace sd

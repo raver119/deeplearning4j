@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-/* 
+/*
  * File:   util.h
  * Author: saudet
  *
@@ -34,14 +34,14 @@
 
 static inline Nd4jLong microTime() {
 #ifdef WIN32
-    LARGE_INTEGER freq, count;
-    QueryPerformanceFrequency(&freq);
-    QueryPerformanceCounter(&count);
-    return (Nd4jLong)count.QuadPart/freq.QuadPart;
+  LARGE_INTEGER freq, count;
+  QueryPerformanceFrequency(&freq);
+  QueryPerformanceCounter(&count);
+  return (Nd4jLong)count.QuadPart / freq.QuadPart;
 #else
-    timeval tv;
-    gettimeofday(&tv, NULL);
-    return (Nd4jLong)tv.tv_sec*1000000 + tv.tv_usec;
+  timeval tv;
+  gettimeofday(&tv, NULL);
+  return (Nd4jLong)tv.tv_sec * 1000000 + tv.tv_usec;
 #endif
 }
 

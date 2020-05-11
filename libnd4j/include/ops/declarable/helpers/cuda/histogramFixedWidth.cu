@@ -18,104 +18,115 @@
 // @author Yurii Shyrma (iuriish@yahoo.com), created on 31.08.2018
 //
 
-#include <ops/declarable/helpers/histogramFixedWidth.h>
 #include <exceptions/cuda_exception.h>
 #include <helpers/PointersManager.h>
+#include <ops/declarable/helpers/histogramFixedWidth.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
 ///////////////////////////////////////////////////////////////////
-template<typename X, typename Z>
-__global__ static void histogramFixedWidthCuda( const void* vx, const Nd4jLong* xShapeInfo,
-                                                      void* vz, const Nd4jLong* zShapeInfo,
-                                                const X leftEdge, const X rightEdge) {
+template <typename X, typename Z>
+__global__ static void histogramFixedWidthCuda(
+    const void* vx, const Nd4jLong* xShapeInfo, void* vz,
+    const Nd4jLong* zShapeInfo, const X leftEdge, const X rightEdge) {
+  const auto x = reinterpret_cast<const X*>(vx);
+  auto z = reinterpret_cast<Z*>(vz);
 
-    const auto x  = reinterpret_cast<const X*>(vx);
-    auto z = reinterpret_cast<Z*>(vz);
+  __shared__ Nd4jLong xLen, zLen, totalThreads, nbins;
+  __shared__ X binWidth, secondEdge, lastButOneEdge;
 
-    __shared__ Nd4jLong xLen, zLen, totalThreads, nbins;
-    __shared__ X binWidth, secondEdge, lastButOneEdge;
+  if (threadIdx.x == 0) {
+    xLen = shape::length(xShapeInfo);
+    nbins = shape::length(zShapeInfo);  // nbins = zLen
+    totalThreads = gridDim.x * blockDim.x;
 
-    if (threadIdx.x == 0) {
+    binWidth = (rightEdge - leftEdge) / nbins;
+    secondEdge = leftEdge + binWidth;
+    lastButOneEdge = rightEdge - binWidth;
+  }
 
-        xLen  = shape::length(xShapeInfo);
-        nbins = shape::length(zShapeInfo);          // nbins = zLen
-        totalThreads = gridDim.x * blockDim.x;
+  __syncthreads();
 
-        binWidth       = (rightEdge - leftEdge ) / nbins;
-        secondEdge     = leftEdge + binWidth;
-        lastButOneEdge = rightEdge - binWidth;
-    }
+  const auto tid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    __syncthreads();
+  for (Nd4jLong i = tid; i < xLen; i += totalThreads) {
+    const X value = x[shape::getIndexOffset(i, xShapeInfo)];
 
-    const auto tid = blockIdx.x * blockDim.x + threadIdx.x;
+    Nd4jLong zIndex;
 
-    for (Nd4jLong i = tid; i < xLen; i += totalThreads) {
+    if (value < secondEdge)
+      zIndex = 0;
+    else if (value >= lastButOneEdge)
+      zIndex = nbins - 1;
+    else
+      zIndex = static_cast<Nd4jLong>((value - leftEdge) / binWidth);
 
-        const X value = x[shape::getIndexOffset(i, xShapeInfo)];
-
-        Nd4jLong zIndex;
-
-        if(value < secondEdge)
-            zIndex = 0;
-        else if(value >= lastButOneEdge)
-            zIndex = nbins - 1;
-        else
-            zIndex = static_cast<Nd4jLong>((value - leftEdge) / binWidth);
-
-        sd::math::atomics::nd4j_atomicAdd<Z>(&z[shape::getIndexOffset(zIndex, zShapeInfo)], 1);
-    }
+    sd::math::atomics::nd4j_atomicAdd<Z>(
+        &z[shape::getIndexOffset(zIndex, zShapeInfo)], 1);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////
-template<typename X, typename Z>
-__host__ static void histogramFixedWidthCudaLauncher(const cudaStream_t *stream, const NDArray& input, const NDArray& range, NDArray& output) {
+template <typename X, typename Z>
+__host__ static void histogramFixedWidthCudaLauncher(const cudaStream_t* stream,
+                                                     const NDArray& input,
+                                                     const NDArray& range,
+                                                     NDArray& output) {
+  const X leftEdge = range.e<X>(0);
+  const X rightEdge = range.e<X>(1);
 
-    const X leftEdge  = range.e<X>(0);
-    const X rightEdge = range.e<X>(1);
-
-    histogramFixedWidthCuda<X, Z><<<256, 256, 1024, *stream>>>(input.specialBuffer(), input.specialShapeInfo(), output.specialBuffer(), output.specialShapeInfo(), leftEdge, rightEdge);
+  histogramFixedWidthCuda<X, Z><<<256, 256, 1024, *stream>>>(
+      input.specialBuffer(), input.specialShapeInfo(), output.specialBuffer(),
+      output.specialShapeInfo(), leftEdge, rightEdge);
 }
 
 ////////////////////////////////////////////////////////////////////////
-void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input, const NDArray& range, NDArray& output) {
+void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input,
+                         const NDArray& range, NDArray& output) {
+  // firstly initialize output with zeros
+  output.nullify();
 
-    // firstly initialize output with zeros
-    output.nullify();
+  PointersManager manager(context, "histogramFixedWidth");
 
-    PointersManager manager(context, "histogramFixedWidth");
+  NDArray::prepareSpecialUse({&output}, {&input});
+  BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(),
+                        histogramFixedWidthCudaLauncher,
+                        (context->getCudaStream(), input, range, output),
+                        LIBND4J_TYPES, INDEXING_TYPES);
+  NDArray::registerSpecialUse({&output}, {&input});
 
-    NDArray::prepareSpecialUse({&output}, {&input});
-    BUILD_DOUBLE_SELECTOR(input.dataType(), output.dataType(), histogramFixedWidthCudaLauncher, (context->getCudaStream(), input, range, output), LIBND4J_TYPES, INDEXING_TYPES);
-    NDArray::registerSpecialUse({&output}, {&input});
-
-    manager.synchronize();
+  manager.synchronize();
 }
 
-
 //     template <typename T>
-//     __global__ static void copyBuffers(Nd4jLong* destination, void const* source, Nd4jLong* sourceShape, Nd4jLong bufferLength) {
+//     __global__ static void copyBuffers(Nd4jLong* destination, void const*
+//     source, Nd4jLong* sourceShape, Nd4jLong bufferLength) {
 //         const auto tid = blockIdx.x * gridDim.x + threadIdx.x;
 //         const auto step = gridDim.x * blockDim.x;
 //         for (int t = tid; t < bufferLength; t += step) {
-//             destination[t] = reinterpret_cast<T const*>(source)[shape::getIndexOffset(t, sourceShape)];
+//             destination[t] = reinterpret_cast<T
+//             const*>(source)[shape::getIndexOffset(t, sourceShape)];
 //         }
 //     }
 
 //     template <typename T>
-//     __global__ static void returnBuffers(void* destination, Nd4jLong const* source, Nd4jLong* destinationShape, Nd4jLong bufferLength) {
+//     __global__ static void returnBuffers(void* destination, Nd4jLong const*
+//     source, Nd4jLong* destinationShape, Nd4jLong bufferLength) {
 //         const auto tid = blockIdx.x * gridDim.x + threadIdx.x;
 //         const auto step = gridDim.x * blockDim.x;
 //         for (int t = tid; t < bufferLength; t += step) {
-//             reinterpret_cast<T*>(destination)[shape::getIndexOffset(t, destinationShape)] = source[t];
+//             reinterpret_cast<T*>(destination)[shape::getIndexOffset(t,
+//             destinationShape)] = source[t];
 //         }
 //     }
 
 //     template <typename T>
-//     static __global__ void histogramFixedWidthKernel(void* outputBuffer, Nd4jLong outputLength, void const* inputBuffer, Nd4jLong* inputShape, Nd4jLong inputLength, double const leftEdge, double binWidth, double secondEdge, double lastButOneEdge) {
+//     static __global__ void histogramFixedWidthKernel(void* outputBuffer,
+//     Nd4jLong outputLength, void const* inputBuffer, Nd4jLong* inputShape,
+//     Nd4jLong inputLength, double const leftEdge, double binWidth, double
+//     secondEdge, double lastButOneEdge) {
 
 //         __shared__ T const* x;
 //         __shared__ Nd4jLong* z; // output buffer
@@ -131,7 +142,8 @@ void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input, const
 //         for(auto i = tid; i < inputLength; i += step) {
 
 //             const T value = x[shape::getIndexOffset(i, inputShape)];
-//             Nd4jLong currInd = static_cast<Nd4jLong>((value - leftEdge) / binWidth);
+//             Nd4jLong currInd = static_cast<Nd4jLong>((value - leftEdge) /
+//             binWidth);
 
 //             if(value < secondEdge)
 //                 currInd = 0;
@@ -141,9 +153,9 @@ void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input, const
 //         }
 //     }
 
-
 //     template <typename T>
-//     void histogramFixedWidth_(sd::LaunchContext * context, const NDArray& input, const NDArray& range, NDArray& output) {
+//     void histogramFixedWidth_(sd::LaunchContext * context, const NDArray&
+//     input, const NDArray& range, NDArray& output) {
 //         const int nbins = output.lengthOf();
 //         auto stream = context->getCudaStream();
 //         // firstly initialize output with zeros
@@ -161,16 +173,23 @@ void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input, const
 //         const double secondEdge     = leftEdge + binWidth;
 //         double lastButOneEdge = rightEdge - binWidth;
 //         Nd4jLong* outputBuffer;
-//         cudaError_t err = cudaMalloc(&outputBuffer, output.lengthOf() * sizeof(Nd4jLong));
-//         if (err != 0)
-//             throw cuda_exception::build("helpers::histogramFixedWidth: Cannot allocate memory for output", err);
-//         copyBuffers<Nd4jLong ><<<256, 512, 8192, *stream>>>(outputBuffer, output.specialBuffer(), output.specialShapeInfo(), output.lengthOf());
-//         histogramFixedWidthKernel<T><<<256, 512, 8192, *stream>>>(outputBuffer, output.lengthOf(), input.specialBuffer(), input.specialShapeInfo(), input.lengthOf(), leftEdge, binWidth, secondEdge, lastButOneEdge);
-//         returnBuffers<Nd4jLong><<<256, 512, 8192, *stream>>>(output.specialBuffer(), outputBuffer, output.specialShapeInfo(), output.lengthOf());
+//         cudaError_t err = cudaMalloc(&outputBuffer, output.lengthOf() *
+//         sizeof(Nd4jLong)); if (err != 0)
+//             throw cuda_exception::build("helpers::histogramFixedWidth: Cannot
+//             allocate memory for output", err);
+//         copyBuffers<Nd4jLong ><<<256, 512, 8192, *stream>>>(outputBuffer,
+//         output.specialBuffer(), output.specialShapeInfo(),
+//         output.lengthOf()); histogramFixedWidthKernel<T><<<256, 512, 8192,
+//         *stream>>>(outputBuffer, output.lengthOf(), input.specialBuffer(),
+//         input.specialShapeInfo(), input.lengthOf(), leftEdge, binWidth,
+//         secondEdge, lastButOneEdge); returnBuffers<Nd4jLong><<<256, 512,
+//         8192, *stream>>>(output.specialBuffer(), outputBuffer,
+//         output.specialShapeInfo(), output.lengthOf());
 //         //cudaSyncStream(*stream);
 //         err = cudaFree(outputBuffer);
 //         if (err != 0)
-//             throw cuda_exception::build("helpers::histogramFixedWidth: Cannot deallocate memory for output buffer", err);
+//             throw cuda_exception::build("helpers::histogramFixedWidth: Cannot
+//             deallocate memory for output buffer", err);
 //         output.tickWriteDevice();
 // //#pragma omp parallel for schedule(guided)
 // //        for(Nd4jLong i = 0; i < input.lengthOf(); ++i) {
@@ -182,20 +201,27 @@ void histogramFixedWidth(sd::LaunchContext* context, const NDArray& input, const
 // //                output.p<Nd4jLong>(0, output.e<Nd4jLong>(0) + 1);
 // //            else if(value >= lastButOneEdge)
 // //#pragma omp critical
-// //                output.p<Nd4jLong>(nbins-1, output.e<Nd4jLong>(nbins-1) + 1);
+// //                output.p<Nd4jLong>(nbins-1, output.e<Nd4jLong>(nbins-1) +
+// 1);
 // //            else {
-// //                Nd4jLong currInd = static_cast<Nd4jLong>((value - leftEdge) / binWidth);
+// //                Nd4jLong currInd = static_cast<Nd4jLong>((value - leftEdge)
+// / binWidth);
 // //#pragma omp critical
-// //                output.p<Nd4jLong>(currInd, output.e<Nd4jLong>(currInd) + 1);
+// //                output.p<Nd4jLong>(currInd, output.e<Nd4jLong>(currInd) +
+// 1);
 // //            }
 // //        }
 //     }
 
-//     void histogramFixedWidth(sd::LaunchContext * context, const NDArray& input, const NDArray& range, NDArray& output) {
-//         BUILD_SINGLE_SELECTOR(input.dataType(), histogramFixedWidth_, (context, input, range, output), LIBND4J_TYPES);
+//     void histogramFixedWidth(sd::LaunchContext * context, const NDArray&
+//     input, const NDArray& range, NDArray& output) {
+//         BUILD_SINGLE_SELECTOR(input.dataType(), histogramFixedWidth_,
+//         (context, input, range, output), LIBND4J_TYPES);
 //     }
-//     BUILD_SINGLE_TEMPLATE(template void histogramFixedWidth_, (sd::LaunchContext * context, const NDArray& input, const NDArray& range, NDArray& output), LIBND4J_TYPES);
+//     BUILD_SINGLE_TEMPLATE(template void histogramFixedWidth_,
+//     (sd::LaunchContext * context, const NDArray& input, const NDArray& range,
+//     NDArray& output), LIBND4J_TYPES);
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd

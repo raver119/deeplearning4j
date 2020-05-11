@@ -21,52 +21,45 @@
 #include "../ConstantDataBuffer.h"
 
 namespace sd {
-    ConstantDataBuffer::ConstantDataBuffer(Nd4jPointer primary, Nd4jPointer special, Nd4jLong numEelements, Nd4jLong sizeOf) {
-        _primaryBuffer = primary;
-        _specialBuffer = special;
-        _length = numEelements;
-        _sizeOf = sizeOf;
-    }
-
-    Nd4jPointer ConstantDataBuffer::primary() const {
-        return _primaryBuffer;
-    }
-
-    Nd4jPointer ConstantDataBuffer::special() const {
-        return _specialBuffer;
-    }
-
-    Nd4jLong ConstantDataBuffer::sizeOf() const {
-        return _sizeOf;
-    }
-
-    Nd4jLong ConstantDataBuffer::length() const {
-        return _length;
-    }
-
-    ConstantDataBuffer::ConstantDataBuffer(const ConstantDataBuffer &other) {
-        _primaryBuffer = other._primaryBuffer;
-        _specialBuffer = other._specialBuffer;
-        _length = other._length;
-        _sizeOf = other._sizeOf;
-    }
-
-    template <typename T>
-    T* ConstantDataBuffer::primaryAsT() {
-        return reinterpret_cast<T*>(_primaryBuffer);
-    }
-    template SD_EXPORT float* ConstantDataBuffer::primaryAsT<float>();
-    template SD_EXPORT double* ConstantDataBuffer::primaryAsT<double>();
-    template SD_EXPORT int* ConstantDataBuffer::primaryAsT<int>();
-    template SD_EXPORT Nd4jLong* ConstantDataBuffer::primaryAsT<Nd4jLong>();
-
-    template <typename T>
-    T* ConstantDataBuffer::specialAsT() {
-        return reinterpret_cast<T*>(_specialBuffer);
-    }
-    template SD_EXPORT float* ConstantDataBuffer::specialAsT<float>();
-    template SD_EXPORT double* ConstantDataBuffer::specialAsT<double>();
-    template SD_EXPORT int* ConstantDataBuffer::specialAsT<int>();
-    template SD_EXPORT Nd4jLong* ConstantDataBuffer::specialAsT<Nd4jLong>();
-
+ConstantDataBuffer::ConstantDataBuffer(Nd4jPointer primary, Nd4jPointer special,
+                                       Nd4jLong numEelements, Nd4jLong sizeOf) {
+  _primaryBuffer = primary;
+  _specialBuffer = special;
+  _length = numEelements;
+  _sizeOf = sizeOf;
 }
+
+Nd4jPointer ConstantDataBuffer::primary() const { return _primaryBuffer; }
+
+Nd4jPointer ConstantDataBuffer::special() const { return _specialBuffer; }
+
+Nd4jLong ConstantDataBuffer::sizeOf() const { return _sizeOf; }
+
+Nd4jLong ConstantDataBuffer::length() const { return _length; }
+
+ConstantDataBuffer::ConstantDataBuffer(const ConstantDataBuffer& other) {
+  _primaryBuffer = other._primaryBuffer;
+  _specialBuffer = other._specialBuffer;
+  _length = other._length;
+  _sizeOf = other._sizeOf;
+}
+
+template <typename T>
+T* ConstantDataBuffer::primaryAsT() {
+  return reinterpret_cast<T*>(_primaryBuffer);
+}
+template SD_EXPORT float* ConstantDataBuffer::primaryAsT<float>();
+template SD_EXPORT double* ConstantDataBuffer::primaryAsT<double>();
+template SD_EXPORT int* ConstantDataBuffer::primaryAsT<int>();
+template SD_EXPORT Nd4jLong* ConstantDataBuffer::primaryAsT<Nd4jLong>();
+
+template <typename T>
+T* ConstantDataBuffer::specialAsT() {
+  return reinterpret_cast<T*>(_specialBuffer);
+}
+template SD_EXPORT float* ConstantDataBuffer::specialAsT<float>();
+template SD_EXPORT double* ConstantDataBuffer::specialAsT<double>();
+template SD_EXPORT int* ConstantDataBuffer::specialAsT<int>();
+template SD_EXPORT Nd4jLong* ConstantDataBuffer::specialAsT<Nd4jLong>();
+
+}  // namespace sd

@@ -21,54 +21,58 @@
 #ifndef SD_TADDESCRIPTOR_H
 #define SD_TADDESCRIPTOR_H
 
-#include "ShapeDescriptor.h"
 #include <system/dll.h>
 
+#include "ShapeDescriptor.h"
+
 namespace sd {
-    class SD_EXPORT TadDescriptor {
-    private:
-        ShapeDescriptor _originalShape;
+class SD_EXPORT TadDescriptor {
+ private:
+  ShapeDescriptor _originalShape;
 
-        std::vector<int> _axis;
+  std::vector<int> _axis;
 
-        bool _unitiesInShape;
+  bool _unitiesInShape;
 
-    public:
-        explicit TadDescriptor(const Nd4jLong *originalShape, const int *dimensions, const int length, const bool keepUnitiesInShape = false);
-        explicit TadDescriptor(const ShapeDescriptor &descriptor, const std::vector<int> &dimensions, const bool keepUnitiesInShape = false);
-        explicit TadDescriptor(const TadDescriptor &other);
-        ~TadDescriptor() = default;
+ public:
+  explicit TadDescriptor(const Nd4jLong *originalShape, const int *dimensions,
+                         const int length,
+                         const bool keepUnitiesInShape = false);
+  explicit TadDescriptor(const ShapeDescriptor &descriptor,
+                         const std::vector<int> &dimensions,
+                         const bool keepUnitiesInShape = false);
+  explicit TadDescriptor(const TadDescriptor &other);
+  ~TadDescriptor() = default;
 
-        // we use default copy assignment operator
-        TadDescriptor& operator=(const TadDescriptor& other) = default;
+  // we use default copy assignment operator
+  TadDescriptor &operator=(const TadDescriptor &other) = default;
 
-        // we use default move assignment operator
-        TadDescriptor& operator=(TadDescriptor&& other) noexcept = default;
+  // we use default move assignment operator
+  TadDescriptor &operator=(TadDescriptor &&other) noexcept = default;
 
-        // equal to operator
-        bool operator==(const TadDescriptor &other) const;
+  // equal to operator
+  bool operator==(const TadDescriptor &other) const;
 
-        // less than operator
-        bool operator<(const TadDescriptor &other) const;
+  // less than operator
+  bool operator<(const TadDescriptor &other) const;
 
-        std::vector<int>& axis();
-        ShapeDescriptor& originalShape();
-        ShapeDescriptor const& originalShapeConst() const;
-        bool areUnitiesinShape() const;
-    };
-}
+  std::vector<int> &axis();
+  ShapeDescriptor &originalShape();
+  ShapeDescriptor const &originalShapeConst() const;
+  bool areUnitiesinShape() const;
+};
+}  // namespace sd
 
 #ifndef __JAVACPP_HACK__
 
 namespace std {
-    template<>
-    class SD_EXPORT hash<sd::TadDescriptor> {
-    public:
-        size_t operator()(const sd::TadDescriptor &k) const;
-    };
-}
+template <>
+class SD_EXPORT hash<sd::TadDescriptor> {
+ public:
+  size_t operator()(const sd::TadDescriptor &k) const;
+};
+}  // namespace std
 
 #endif
 
-
-#endif //SD_TADDESCRIPTOR_H
+#endif  // SD_TADDESCRIPTOR_H

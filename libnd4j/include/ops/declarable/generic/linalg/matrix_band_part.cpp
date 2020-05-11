@@ -20,39 +20,44 @@
 
 #include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_matrix_band_part)
-#include <ops/declarable/helpers/matrix_band.h>
 #include <ops/declarable/CustomOperations.h>
+#include <ops/declarable/helpers/matrix_band.h>
 
 namespace sd {
-    namespace ops {
-        CONFIGURABLE_OP_IMPL(matrix_band_part, 1, 1, true, 0, 2) {
+namespace ops {
+CONFIGURABLE_OP_IMPL(matrix_band_part, 1, 1, true, 0, 2) {
+  auto input = INPUT_VARIABLE(0);
 
-            auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
+  Nd4jLong minLower = INT_ARG(0);
+  Nd4jLong maxUpper = INT_ARG(1);
 
-            auto output   = OUTPUT_VARIABLE(0);
-            Nd4jLong minLower = INT_ARG(0);
-            Nd4jLong maxUpper = INT_ARG(1);
+  REQUIRE_TRUE(input->rankOf() >= 2, 0,
+               "matrix_band_part: Input rank should be 2 or greater.");
+  Nd4jLong N = input->sizeAt(-2);
+  Nd4jLong M = input->sizeAt(-1);
+  REQUIRE_TRUE(
+      minLower > -N && minLower < N, 0,
+      "matrix_band_part: lower diagonal count %i should be less than %i.",
+      minLower, N);
+  REQUIRE_TRUE(
+      maxUpper > -M && maxUpper < M, 0,
+      "matrix_band_part: upper diagonal count %i should be less than %i.",
+      maxUpper, M);
 
-            REQUIRE_TRUE(input->rankOf() >= 2, 0, "matrix_band_part: Input rank should be 2 or greater.");
-            Nd4jLong N = input->sizeAt(-2);
-            Nd4jLong M = input->sizeAt(-1);
-            REQUIRE_TRUE(minLower > -N && minLower < N, 0, "matrix_band_part: lower diagonal count %i should be less than %i.",
-                    minLower, N);
-            REQUIRE_TRUE(maxUpper > -M && maxUpper < M, 0, "matrix_band_part: upper diagonal count %i should be less than %i.",
-                    maxUpper, M);
-
-            helpers::matrixBandPart(block.launchContext(), input, output, minLower, maxUpper);
-            return ND4J_STATUS_OK;
-        }
-        DECLARE_SYN(band_part, matrix_band_part);
-    }
-
-    DECLARE_TYPES(matrix_band_part) {
-        getOpDescriptor()
-            ->setAllowedInputTypes({ALL_INTS, ALL_FLOATS})
-            ->setAllowedInputTypes({ALL_INTS, ALL_FLOATS})
-            ->setSameMode(true);
-    }
+  helpers::matrixBandPart(block.launchContext(), input, output, minLower,
+                          maxUpper);
+  return ND4J_STATUS_OK;
 }
+DECLARE_SYN(band_part, matrix_band_part);
+}  // namespace ops
+
+DECLARE_TYPES(matrix_band_part) {
+  getOpDescriptor()
+      ->setAllowedInputTypes({ALL_INTS, ALL_FLOATS})
+      ->setAllowedInputTypes({ALL_INTS, ALL_FLOATS})
+      ->setSameMode(true);
+}
+}  // namespace sd
 
 #endif

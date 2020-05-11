@@ -21,39 +21,40 @@
 #ifndef SD_GRAPHMEMORYMANAGER_H
 #define SD_GRAPHMEMORYMANAGER_H
 
+#include <memory/MemoryDescriptor.h>
 #include <memory/MemoryZone.h>
 #include <memory/ZoneManager.h>
-#include <memory/MemoryDescriptor.h>
+
 #include <map>
 
 using namespace sd::memory;
 
 namespace sd {
-    namespace graph {
-        class GraphMemoryManager {
-        protected:
-            std::map<MemoryZone, ZoneManager*> _zones;
+namespace graph {
+class GraphMemoryManager {
+ protected:
+  std::map<MemoryZone, ZoneManager *> _zones;
 
-        public:
-            GraphMemoryManager();
-            ~GraphMemoryManager();
+ public:
+  GraphMemoryManager();
+  ~GraphMemoryManager();
 
-            /**
-             * This method does allocation (probably) and returns structure that describes it
-             * @param numBytes - number of bytes to be allocated
-             * @param zone - memory zone for allocation
-             * @return
-             */
-            virtual MemoryDescriptor allocate(size_t numBytes, MemoryZone zone);
+  /**
+   * This method does allocation (probably) and returns structure that describes
+   * it
+   * @param numBytes - number of bytes to be allocated
+   * @param zone - memory zone for allocation
+   * @return
+   */
+  virtual MemoryDescriptor allocate(size_t numBytes, MemoryZone zone);
 
-            /**
-             * This method releases (probably) memory chunk described by given descriptor
-             * @param descriptor
-             */
-            virtual void release(MemoryDescriptor &descriptor);
-        };
-    }
-}
+  /**
+   * This method releases (probably) memory chunk described by given descriptor
+   * @param descriptor
+   */
+  virtual void release(MemoryDescriptor &descriptor);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //SD_GRAPHMEMORYMANAGER_H
+#endif  // SD_GRAPHMEMORYMANAGER_H

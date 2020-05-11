@@ -18,24 +18,24 @@
 // @author raver119@gmail.com
 //
 
-#include "testlayers.h"
 #include <array/NDArray.h>
 #include <graph/Context.h>
 #include <graph/Node.h>
 #include <graph/Variable.h>
 #include <graph/VariableSpace.h>
-#include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/convolutions.h>
-#include <ops/declarable/helpers/col2im.h>
 #include <helpers/RandomLauncher.h>
+#include <ops/declarable/CustomOperations.h>
+#include <ops/declarable/helpers/col2im.h>
+#include <ops/declarable/helpers/convolutions.h>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::graph;
 using namespace sd::memory;
 
 class DataBufferTestsCuda : public testing::Test {
-public:
-
+ public:
 };
 
 /*
@@ -50,25 +50,30 @@ TEST_F(DataBufferTestsCuda, test_alloc_limit_1) {
     auto odUse = MemoryCounter::getInstance()->allocatedDevice(deviceId);
 
     auto opUse = MemoryCounter::getInstance()->allocatedGroup(MemoryType::HOST);
-    auto osUse = MemoryCounter::getInstance()->allocatedGroup(MemoryType::DEVICE);
+    auto osUse =
+MemoryCounter::getInstance()->allocatedGroup(MemoryType::DEVICE);
 
     auto limitSize = odUse + 150000000;
     auto allocSize = 100000000;
 
     MemoryCounter::getInstance()->setDeviceLimit(deviceId, odLimit + limitSize);
-    MemoryCounter::getInstance()->setGroupLimit(MemoryType::HOST, opLimit + limitSize);
-    MemoryCounter::getInstance()->setGroupLimit(MemoryType::DEVICE, osLimit + limitSize);
+    MemoryCounter::getInstance()->setGroupLimit(MemoryType::HOST, opLimit +
+limitSize); MemoryCounter::getInstance()->setGroupLimit(MemoryType::DEVICE,
+osLimit + limitSize);
 
     DataBuffer buffer(allocSize, DataType::INT32, nullptr, true);
 
     // separately testing per-device limits and group limits
-    ASSERT_EQ(odUse + allocSize, MemoryCounter::getInstance()->allocatedDevice(deviceId));
-    ASSERT_EQ(opUse + allocSize, MemoryCounter::getInstance()->allocatedGroup(MemoryType::HOST));
-    ASSERT_EQ(osUse + allocSize, MemoryCounter::getInstance()->allocatedGroup(MemoryType::DEVICE));
+    ASSERT_EQ(odUse + allocSize,
+MemoryCounter::getInstance()->allocatedDevice(deviceId)); ASSERT_EQ(opUse +
+allocSize, MemoryCounter::getInstance()->allocatedGroup(MemoryType::HOST));
+    ASSERT_EQ(osUse + allocSize,
+MemoryCounter::getInstance()->allocatedGroup(MemoryType::DEVICE));
 
-    // setting smaller limits, to make sure next allocation fails with OOM exception
-    MemoryCounter::getInstance()->setDeviceLimit(deviceId, allocSize - 100);
-    MemoryCounter::getInstance()->setGroupLimit(MemoryType::DEVICE, allocSize - 100);
+    // setting smaller limits, to make sure next allocation fails with OOM
+exception MemoryCounter::getInstance()->setDeviceLimit(deviceId, allocSize -
+100); MemoryCounter::getInstance()->setGroupLimit(MemoryType::DEVICE, allocSize
+- 100);
 
 
     // this allocation should fail, since we're allocating too much

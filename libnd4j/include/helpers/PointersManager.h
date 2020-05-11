@@ -22,60 +22,56 @@
 #ifndef CUDAMANAGER_H
 #define CUDAMANAGER_H
 
-#include <vector>
-#include <string>
 #include <execution/LaunchContext.h>
-
 #include <types/types.h>
+
+#include <string>
+#include <vector>
 
 namespace sd {
 
 class SD_EXPORT PointersManager {
+ private:
+  sd::LaunchContext* _context;
+  std::vector<void*> _pOnGlobMem;
+  std::string _funcName;
 
-    private:
+ public:
+  PointersManager(const sd::LaunchContext* context,
+                  const std::string& funcName = "");
 
-        sd::LaunchContext  *_context;
-        std::vector<void*> _pOnGlobMem;
-        std::string _funcName;
+  ~PointersManager();
 
-    public:
+  void* replicatePointer(const void* src, const size_t size);
 
-        PointersManager(const sd::LaunchContext* context, const std::string& funcName = "");
+  void synchronize() const;
 
-        ~PointersManager();
-
-        void* replicatePointer(const void* src, const size_t size);
-
-        void synchronize() const;
-
-        template<typename T>
-        void printDevContentOnHost(const void* pDev, const Nd4jLong len) const;
-
+  template <typename T>
+  void printDevContentOnHost(const void* pDev, const Nd4jLong len) const;
 
 #ifdef __CUDABLAS__
-        template<typename T>
-        static void printDevContentOnDevFromHost(const void* pDev, const Nd4jLong len, const int tid = 0);
+  template <typename T>
+  static void printDevContentOnDevFromHost(const void* pDev, const Nd4jLong len,
+                                           const int tid = 0);
 #endif
 
 #ifdef __CUDACC__
-        template<typename T>
-        static FORCEINLINE __device__ void printDevContentOnDev(const void* pDev, const Nd4jLong len, const int tid = 0) {
-            if(blockIdx.x * blockDim.x + threadIdx.x != tid)
-                return;
+  template <typename T>
+  static FORCEINLINE __device__ void printDevContentOnDev(const void* pDev,
+                                                          const Nd4jLong len,
+                                                          const int tid = 0) {
+    if (blockIdx.x * blockDim.x + threadIdx.x != tid) return;
 
-            printf("device print out: \n");
-            for(Nd4jLong i = 0; i < len; ++i)
-                printf("%f, ", (double)reinterpret_cast<const T*>(pDev)[i]);
+    printf("device print out: \n");
+    for (Nd4jLong i = 0; i < len; ++i)
+      printf("%f, ", (double)reinterpret_cast<const T*>(pDev)[i]);
 
-            printf("\n");
-        }
+    printf("\n");
+  }
 
 #endif
-
 };
 
-}
+}  // namespace sd
 
-
-
-#endif // CUDAMANAGER_H
+#endif  // CUDAMANAGER_H

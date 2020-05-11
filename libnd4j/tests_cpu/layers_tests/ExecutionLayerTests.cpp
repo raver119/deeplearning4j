@@ -18,46 +18,47 @@
 // @author raver119@gmail.com
 //
 
-#include "testlayers.h"
-#include <ops/declarable/CustomOperations.h>
 #include <array/NDArray.h>
-#include <legacy/NativeOps.h>
-#include <fstream>
 #include <graph/Graph.h>
+#include <legacy/NativeOps.h>
+#include <ops/declarable/CustomOperations.h>
+
+#include <fstream>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::graph;
 
 class ExecutionLayerTests : public testing::Test {
-public:
-    ExecutionLayerTests() {
-        ///
-    }
+ public:
+  ExecutionLayerTests() {
+    ///
+  }
 };
 
 TEST_F(ExecutionLayerTests, test_reassign_1) {
-    ExecutionLayer layer;
-    OpSequence sequence1, sequence2;
+  ExecutionLayer layer;
+  OpSequence sequence1, sequence2;
 
-    ops::add op1;
-    ops::multiply op2;
-    ops::divide op3;
+  ops::add op1;
+  ops::multiply op2;
+  ops::divide op3;
 
-    Context ctx1(1);
-    Context ctx2(2);
-    Context ctx3(3);
+  Context ctx1(1);
+  Context ctx2(2);
+  Context ctx3(3);
 
-    sequence1.append(&op1, ctx1);
-    sequence2.append(&op2, ctx2);
-    sequence2.append(&op3, ctx3);
+  sequence1.append(&op1, ctx1);
+  sequence2.append(&op2, ctx2);
+  sequence2.append(&op3, ctx3);
 
-    layer.append(sequence1);
-    layer.append(sequence2);
+  layer.append(sequence1);
+  layer.append(sequence2);
 
-    auto seq = layer[0];
-    ASSERT_EQ(1, seq.length());
+  auto seq = layer[0];
+  ASSERT_EQ(1, seq.length());
 
-    seq = layer[1];
-    ASSERT_EQ(2, seq.length());
+  seq = layer[1];
+  ASSERT_EQ(2, seq.length());
 }
-

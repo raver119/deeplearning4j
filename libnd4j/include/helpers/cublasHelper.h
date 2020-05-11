@@ -23,30 +23,32 @@
 
 #include <system/dll.h>
 #include <system/pointercast.h>
-#include <vector>
+
 #include <mutex>
+#include <vector>
 
 namespace sd {
-    class SD_EXPORT CublasHelper {
-    private:
-        static CublasHelper *_INSTANCE;
-        static std::mutex _mutex;
+class SD_EXPORT CublasHelper {
+ private:
+  static CublasHelper* _INSTANCE;
+  static std::mutex _mutex;
 
-        std::vector<void*> _cache;
-        std::vector<void*> _solvers;
-        std::vector<void*> _cudnn;
+  std::vector<void*> _cache;
+  std::vector<void*> _solvers;
+  std::vector<void*> _cudnn;
 
-        CublasHelper();
-        ~CublasHelper();
-    public:
-        static CublasHelper* getInstance();
+  CublasHelper();
+  ~CublasHelper();
 
-        void* cudnn();
-        void* solver();
+ public:
+  static CublasHelper* getInstance();
 
-        void* handle();
-        void* handle(int deviceId);
-    };
-}
+  void* cudnn();
+  void* solver();
 
-#endif //SD_CUBLASHELPER_H
+  void* handle();
+  void* handle(int deviceId);
+};
+}  // namespace sd
+
+#endif  // SD_CUBLASHELPER_H

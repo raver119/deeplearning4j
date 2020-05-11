@@ -21,21 +21,15 @@
 #include <types/triple.h>
 
 namespace sd {
-    int Triple::first() const {
-        return _first;
-    }
+int Triple::first() const { return _first; }
 
-    int Triple::second() const {
-        return _second;
-    }
+int Triple::second() const { return _second; }
 
-    int Triple::third() const {
-        return _third;
-    }
+int Triple::third() const { return _third; }
 
-    Triple::Triple(int first, int second, int third) {
-        _first = first;
-        _second = second;
-        _third = third;
-    }
+Triple::Triple(int first, int second, int third) {
+  _first = first;
+  _second = second;
+  _third = third;
 }
+}  // namespace sd

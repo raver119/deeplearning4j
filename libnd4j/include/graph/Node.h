@@ -21,211 +21,240 @@
 #ifndef LIBND4J_GNODE_H
 #define LIBND4J_GNODE_H
 
-#include <atomic>
-#include <system/pointercast.h>
-#include <string>
 #include <array/NDArray.h>
-#include "Context.h"
-#include <ops/declarable/DeclarableOp.h>
 #include <graph/generated/node_generated.h>
+#include <ops/declarable/DeclarableOp.h>
+#include <system/pointercast.h>
 
+#include <atomic>
+#include <string>
+
+#include "Context.h"
 
 namespace sd {
-    namespace graph {
+namespace graph {
 
+class Graph;
 
-        class Graph;
+class SD_EXPORT Node {
+ protected:
+  // TODO: this field must be removed
+  sd::DataType _dataType;
 
-        class SD_EXPORT Node {
-        protected:
-            // TODO: this field must be removed
-            sd::DataType _dataType;
+  OpType _opType;
+  ContextPrototype _protoContext;
+  Nd4jLong _opNum;
+  int _id = 0;
+  std::vector<std::pair<int, int>> _input;
+  std::vector<std::pair<int, int>> _output;
+  std::vector<int> _dimensions;
 
-            OpType _opType;
-            ContextPrototype _protoContext;
-            Nd4jLong _opNum;
-            int _id = 0;
-            std::vector<std::pair<int, int>> _input;
-            std::vector<std::pair<int, int>> _output;
-            std::vector<int> _dimensions;
+  std::vector<int> _referencedBy;
 
-            std::vector<int> _referencedBy;
+  std::string _name;
 
-            std::string _name;
+  // many ops require extra parameters to run
+  double *_extraParams = nullptr;
 
-            // many ops require extra parameters to run
-            double *_extraParams = nullptr;
+  bool _hasExternalOutputs;
+  bool _hasExternalInputs;
+  bool _hasInternalOutputs;
+  bool _hasInternalInputs;
 
-            bool _hasExternalOutputs;
-            bool _hasExternalInputs;
-            bool _hasInternalOutputs;
-            bool _hasInternalInputs;
+  // this field is used to check, if op should be used in-place (so it can/will
+  // modify its inputs)
+  bool _isInplace = false;
 
-            // this field is used to check, if op should be used in-place (so it can/will modify its inputs)
-            bool _isInplace = false;
+  OpClass _opClass;
 
-            OpClass _opClass;
+  // these fields are used to store embedded CustomOps and Graph in case of
+  // Graph-in-Graph scenario
+  Graph *_graph = nullptr;
+  std::shared_ptr<sd::ops::DeclarableOp> _customOp;
 
-            // these fields are used to store embedded CustomOps and Graph in case of Graph-in-Graph scenario
-            Graph * _graph= nullptr;
-            std::shared_ptr<sd::ops::DeclarableOp> _customOp;
+  // each node can be active or inactive, if used with divergents, like IF
+  // statements
+  bool _active = true;
 
-            // each node can be active or inactive, if used with divergents, like IF statements
-            bool _active = true;
+  // meh
+  mutable bool _removable = true;
 
-            // meh
-            mutable bool _removable = true;
+  // these fields contain information about Scope these ops are related to
+  int _scope_id = 0;
+  std::string _scope_name;
 
-            // these fields contain information about Scope these ops are related to
-            int _scope_id = 0;
-            std::string _scope_name;
+  // TODO: these 3 fields should be removed
+  int _rewindNode = -1;
+  std::pair<int, int> _rewindLayer = {-1, -1};
+  Nd4jLong _frameId = -1;
 
-            // TODO: these 3 fields should be removed
-            int _rewindNode = -1;
-            std::pair<int, int> _rewindLayer = {-1, -1};
-            Nd4jLong _frameId = -1;
+ public:
+  explicit Node(const sd::ops::DeclarableOp &op,
+                const std::string &nodeName = {},
+                const std::vector<double> &tArgs = {},
+                const std::vector<Nd4jLong> &iArgs = {},
+                const std::vector<bool> &bArgs = {},
+                const std::vector<DataType> &dArgs = {});
+  explicit Node(const std::string &opName, const std::string &nodeName = {},
+                const std::vector<double> &tArgs = {},
+                const std::vector<Nd4jLong> &iArgs = {},
+                const std::vector<bool> &bArgs = {},
+                const std::vector<DataType> &dArgs = {});
+  explicit Node(const FlatNode *node);
+  ~Node();
 
-        public:
+  /*
+   * FIXME: deprecated methods, to be removed
+   */
+  explicit Node(const std::string &opName, const std::string &nodeName,
+                const int id, const std::vector<std::string> &inputs = {},
+                const std::vector<double> &tArgs = {},
+                const std::vector<Nd4jLong> &iArgs = {});
+  explicit Node(const std::string &opName, const int id = 0,
+                const std::vector<std::pair<int, int>> &inputs = {},
+                const std::vector<double> &tArgs = {},
+                const std::vector<Nd4jLong> &iArgs = {});
+  explicit Node(sd::ops::DeclarableOp *customOp, int id = 0,
+                std::initializer_list<int> input = {},
+                std::initializer_list<int> output = {},
+                std::initializer_list<int> dimensions = {}, float scalar = 0.0f,
+                std::initializer_list<double> tArgs = {},
+                std::initializer_list<int> iArgs = {});
+  explicit Node(std::shared_ptr<sd::ops::DeclarableOp> customOp, int id = 0,
+                std::initializer_list<int> input = {},
+                std::initializer_list<int> output = {},
+                std::initializer_list<int> dimensions = {}, float scalar = 0.0f,
+                std::initializer_list<double> tArgs = {},
+                std::initializer_list<int> iArgs = {});
+  explicit Node(OpType opType = OpType_TRANSFORM_SAME, int opNum = 0,
+                int id = 0, std::initializer_list<int> input = {},
+                std::initializer_list<int> output = {},
+                std::initializer_list<int> dimensions = {}, float scalar = 0.0f,
+                std::initializer_list<double> tArgs = {},
+                std::initializer_list<int> iArgs = {});
 
-            explicit Node(const sd::ops::DeclarableOp &op, const std::string &nodeName = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
-            explicit Node(const std::string &opName, const std::string &nodeName = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {}, const std::vector<bool> &bArgs = {}, const std::vector<DataType> &dArgs = {});
-            explicit Node(const FlatNode *node);
-            ~Node();
+  Node(const Node &other) noexcept;
 
-            /*
-             * FIXME: deprecated methods, to be removed
-             */
-            explicit Node(const std::string &opName, const std::string &nodeName, const int id, const std::vector<std::string> &inputs = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {});
-            explicit Node(const std::string &opName, const int id = 0, const std::vector<std::pair<int,int>> &inputs = {}, const std::vector<double> &tArgs = {}, const std::vector<Nd4jLong> &iArgs = {});
-            explicit Node(sd::ops::DeclarableOp *customOp, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
-            explicit Node(std::shared_ptr<sd::ops::DeclarableOp> customOp, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
-            explicit Node(OpType opType = OpType_TRANSFORM_SAME, int opNum = 0, int id = 0, std::initializer_list<int> input = {}, std::initializer_list<int> output = {},  std::initializer_list<int> dimensions = {}, float scalar = 0.0f, std::initializer_list<double> tArgs = {}, std::initializer_list<int> iArgs = {});
+  Node &operator=(const Node &other) noexcept;
 
+  // move constructor
+  Node(Node &&other) noexcept;
 
-            Node(const Node& other) noexcept;
+  // move assignment operator
+  Node &operator=(Node &&other) noexcept;
 
-            Node& operator=(const Node& other) noexcept;
+  bool equals(Node *other) const;
 
-            // move constructor
-            Node(Node&& other) noexcept;
+  sd::DataType dataType();
+  const ContextPrototype &protoContext() const;
+  OpType opType() const;
+  Nd4jLong opNum() const;
+  int id() const;
+  const std::vector<std::pair<int, int>> &input() const;
+  const std::vector<std::pair<int, int>> &output() const;
 
-            // move assignment operator
-            Node& operator=(Node&& other) noexcept;
+  Nd4jLong getFrameId();
+  void setFrameId(Nd4jLong frameId);
 
-            bool equals(Node *other) const;
+  int getRewindNode();
+  void setRewindNode(int nodeId);
 
-            sd::DataType dataType();
-            const ContextPrototype& protoContext() const;
-            OpType opType() const;
-            Nd4jLong opNum() const;
-            int id() const;
-            const std::vector<std::pair<int,int>>& input() const;
-            const std::vector<std::pair<int, int>>& output() const;
+  std::pair<int, int> &getRewindLayer();
+  void setRewindLayer(int layerId, int stepId = 0);
 
-            Nd4jLong getFrameId();
-            void setFrameId(Nd4jLong frameId);
+  void setId(int id);
 
-            int getRewindNode();
-            void setRewindNode(int nodeId);
+  double *extraParams();
 
-            std::pair<int, int>& getRewindLayer();
-            void setRewindLayer(int layerId, int stepId = 0);
+  bool isMultiInput();
+  bool isMultiOutput();
 
-            void setId(int id);
+  bool isRemovable() const;
+  void markRemovable(bool reallyRemovable) const;
 
-            double *extraParams();
+  bool isDivergencePoint();
+  void setActive(bool reallyActive);
+  bool isActive();
 
-            bool isMultiInput();
-            bool isMultiOutput();
+  bool hasExternalOutputs();
+  bool hasExternalInputs();
+  bool hasInternalOutputs();
+  bool hasInternalInputs();
 
-            bool isRemovable() const;
-            void markRemovable(bool reallyRemovable) const;
+  void pickOutputOnce(int outputId);
+  void pickOutput(int outputId);
+  void pickOutput(int nodeId, int outputId);
+  void pickExternalOutput(int outputId);
+  void pickInput(int inputId);
+  void pickInput(int nodeId, int outputId);
+  void pickInput(std::pair<int, int> &id);
+  void pickInput(const std::string &id);
 
-            bool isDivergencePoint();
-            void setActive(bool reallyActive);
-            bool isActive();
+  void setName(std::string *name);
+  void setName(const std::string &name);
+  const std::string &getName() const;
+  const std::string &name() const;
 
-            bool hasExternalOutputs();
-            bool hasExternalInputs();
-            bool hasInternalOutputs();
-            bool hasInternalInputs();
+  int totalReferences();
+  void addReference(int nodeId);
 
-            void pickOutputOnce(int outputId);
-            void pickOutput(int outputId);
-            void pickOutput(int nodeId, int outputId);
-            void pickExternalOutput(int outputId);
-            void pickInput(int inputId);
-            void pickInput(int nodeId, int outputId);
-            void pickInput(std::pair<int,int>& id);
-            void pickInput(const std::string &id);
+  void setContextPrototype(const ContextPrototype &block);
+  const ContextPrototype &contextPrototype() const;
+  bool hasBlockAttached();
 
-            void setName(std::string *name);
-            void setName(const std::string& name);
-            const std::string& getName() const;
-            const std::string& name() const;
+  void setCustomOp(std::shared_ptr<sd::ops::DeclarableOp> customOp);
+  std::shared_ptr<sd::ops::DeclarableOp> customOp() const;
+  bool hasCustomOp() const;
 
-            int totalReferences();
-            void addReference(int nodeId);
+  void setGraph(Graph *graph = nullptr);
+  Graph *graph() const;
+  bool hasGraphEmbedded() const;
 
-            void setContextPrototype(const ContextPrototype &block);
-            const ContextPrototype& contextPrototype() const;
-            bool hasBlockAttached();
+  bool isInplace();
+  void markInplace(bool reallyInplace);
 
-            void setCustomOp(std::shared_ptr<sd::ops::DeclarableOp> customOp);
-            std::shared_ptr<sd::ops::DeclarableOp> customOp() const;
-            bool hasCustomOp() const;
+  OpClass getOpClass() const;
 
-            void setGraph(Graph* graph = nullptr);
-            Graph* graph() const;
-            bool hasGraphEmbedded() const;
+  // these methods are used for internal profiling
+  void setOuterTime(Nd4jLong time);
+  void setInnerTime(Nd4jLong time);
 
-            bool isInplace();
-            void markInplace(bool reallyInplace);
+  // methods related to scopes
+  bool isScoped();
+  void setScopeInfo(int id, const char *name = nullptr);
+  int scopeId();
+  std::string *scopeName();
 
+  void setOpType(OpType opType);
 
-            OpClass getOpClass() const;
+  // clone Node
+  Node *clone();
 
-            // these methods are used for internal profiling
-            void setOuterTime(Nd4jLong time);
-            void setInnerTime(Nd4jLong time);
+  template <typename T>
+  Node *asT();
 
-            // methods related to scopes
-            bool isScoped();
-            void setScopeInfo(int id, const char* name = nullptr);
-            int scopeId();
-            std::string* scopeName();
+  FORCEINLINE void pullValues(Node *other) {
+    this->_dataType = other->dataType();
+    this->_protoContext = other->protoContext();
+    this->_hasExternalInputs = other->hasExternalInputs();
+    this->_hasExternalOutputs = other->hasExternalOutputs();
+    this->_hasInternalInputs = other->hasInternalInputs();
+    this->_hasInternalOutputs = other->hasInternalOutputs();
 
-            void setOpType(OpType opType);
+    this->markInplace(other->isInplace());
+    this->setActive(other->isActive());
+    this->setScopeInfo(other->scopeId(), other->scopeName()->c_str());
 
-            // clone Node
-            Node* clone();
+    for (auto &v : other->input()) this->_input.emplace_back(v);
 
-            template <typename T>
-            Node* asT();
+    for (auto &v : other->output()) this->_output.emplace_back(v);
+  }
 
-            FORCEINLINE void pullValues(Node *other) {
-                this->_dataType = other->dataType();
-                this->_protoContext = other->protoContext();
-                this->_hasExternalInputs = other->hasExternalInputs();
-                this->_hasExternalOutputs = other->hasExternalOutputs();
-                this->_hasInternalInputs = other->hasInternalInputs();
-                this->_hasInternalOutputs = other->hasInternalOutputs();
+  static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(
+      OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);
+  static void deleteOpByType(OpType opType, void *op);
+};
+}  // namespace graph
+}  // namespace sd
 
-                this->markInplace(other->isInplace());
-                this->setActive(other->isActive());
-                this->setScopeInfo(other->scopeId(), other->scopeName()->c_str());
-
-                for (auto &v: other->input())
-                    this->_input.emplace_back(v);
-
-                for (auto &v: other->output())
-                    this->_output.emplace_back(v);
-            }
-
-            static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);
-            static void deleteOpByType(OpType opType, void *op);
-        };
-    }
-}
-
-#endif //LIBND4J_GNODE_H
+#endif  // LIBND4J_GNODE_H

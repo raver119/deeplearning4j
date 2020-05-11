@@ -21,131 +21,132 @@
 #ifndef LIBND4J_ENVIRONMENT_H
 #define LIBND4J_ENVIRONMENT_H
 
-#include <atomic>
-#include <vector>
-#include <system/dll.h>
-#include <stdexcept>
 #include <array/DataType.h>
-#include <types/pair.h>
+#include <system/dll.h>
 #include <system/pointercast.h>
+#include <types/pair.h>
 
-namespace sd{
-    class SD_EXPORT Environment {
-    private:
-        std::atomic<int> _tadThreshold;
-        std::atomic<int> _elementThreshold;
-        std::atomic<bool> _verbose;
-        std::atomic<bool> _debug;
-        std::atomic<bool> _leaks;
-        std::atomic<bool> _profile;
-        std::atomic<sd::DataType> _dataType;
-        std::atomic<bool> _precBoost;
-        std::atomic<bool> _useMKLDNN{true};
-        std::atomic<bool> _allowHelpers{true};
+#include <atomic>
+#include <stdexcept>
+#include <vector>
 
-        std::atomic<int> _maxThreads;
-        std::atomic<int> _maxMasterThreads;
+namespace sd {
+class SD_EXPORT Environment {
+ private:
+  std::atomic<int> _tadThreshold;
+  std::atomic<int> _elementThreshold;
+  std::atomic<bool> _verbose;
+  std::atomic<bool> _debug;
+  std::atomic<bool> _leaks;
+  std::atomic<bool> _profile;
+  std::atomic<sd::DataType> _dataType;
+  std::atomic<bool> _precBoost;
+  std::atomic<bool> _useMKLDNN{true};
+  std::atomic<bool> _allowHelpers{true};
 
-        // these fields hold defaults
-        std::atomic<int64_t> _maxTotalPrimaryMemory{-1};
-        std::atomic<int64_t> _maxTotalSpecialMemory{-1};
-        std::atomic<int64_t> _maxDeviceMemory{-1};
+  std::atomic<int> _maxThreads;
+  std::atomic<int> _maxMasterThreads;
 
-        bool _blasFallback = false;
+  // these fields hold defaults
+  std::atomic<int64_t> _maxTotalPrimaryMemory{-1};
+  std::atomic<int64_t> _maxTotalSpecialMemory{-1};
+  std::atomic<int64_t> _maxDeviceMemory{-1};
+
+  bool _blasFallback = false;
 
 #ifdef __ND4J_EXPERIMENTAL__
-        const bool _experimental = true;
+  const bool _experimental = true;
 #else
-        const bool _experimental = false;
+  const bool _experimental = false;
 #endif
 
-        // device compute capability for CUDA
-        std::vector<Pair> _capabilities;
+  // device compute capability for CUDA
+  std::vector<Pair> _capabilities;
 
-        static Environment* _instance;
+  static Environment* _instance;
 
-        Environment();
-        ~Environment();
-    public:
-        /**
-         * These 3 fields are mostly for CUDA/cuBLAS version tracking
-         */
-        int _blasMajorVersion = 0;
-        int _blasMinorVersion = 0;
-        int _blasPatchVersion = 0;
+  Environment();
+  ~Environment();
 
-        static Environment* getInstance();
+ public:
+  /**
+   * These 3 fields are mostly for CUDA/cuBLAS version tracking
+   */
+  int _blasMajorVersion = 0;
+  int _blasMinorVersion = 0;
+  int _blasPatchVersion = 0;
 
-        bool isVerbose();
-        void setVerbose(bool reallyVerbose);
-        bool isDebug();
-        bool isProfiling();
-        bool isDetectingLeaks();
-        bool isDebugAndVerbose();
-        void setDebug(bool reallyDebug);
-        void setProfiling(bool reallyProfile);
-        void setLeaksDetector(bool reallyDetect);
-        bool helpersAllowed();
-        void allowHelpers(bool reallyAllow);
+  static Environment* getInstance();
 
-        bool blasFallback();
-        
-        int tadThreshold();
-        void setTadThreshold(int threshold);
+  bool isVerbose();
+  void setVerbose(bool reallyVerbose);
+  bool isDebug();
+  bool isProfiling();
+  bool isDetectingLeaks();
+  bool isDebugAndVerbose();
+  void setDebug(bool reallyDebug);
+  void setProfiling(bool reallyProfile);
+  void setLeaksDetector(bool reallyDetect);
+  bool helpersAllowed();
+  void allowHelpers(bool reallyAllow);
 
-        int elementwiseThreshold();
-        void setElementwiseThreshold(int threshold);
+  bool blasFallback();
 
-        int maxThreads();
-        void setMaxThreads(int max);
+  int tadThreshold();
+  void setTadThreshold(int threshold);
 
-        int maxMasterThreads();
-        void setMaxMasterThreads(int max);
+  int elementwiseThreshold();
+  void setElementwiseThreshold(int threshold);
 
-        /*
-         * Legacy memory limits API, still used in new API as simplified version
-         */
-        void setMaxPrimaryMemory(uint64_t maxBytes);
-        void setMaxSpecialyMemory(uint64_t maxBytes);
-        void setMaxDeviceMemory(uint64_t maxBytes);
+  int maxThreads();
+  void setMaxThreads(int max);
 
-        uint64_t maxPrimaryMemory();
-        uint64_t maxSpecialMemory();
-        ////////////////////////
+  int maxMasterThreads();
+  void setMaxMasterThreads(int max);
 
-        /*
-         * Methods for memory limits/counters
-         */
-        void setGroupLimit(int group, Nd4jLong numBytes);
-        void setDeviceLimit(int deviceId, Nd4jLong numBytes);
+  /*
+   * Legacy memory limits API, still used in new API as simplified version
+   */
+  void setMaxPrimaryMemory(uint64_t maxBytes);
+  void setMaxSpecialyMemory(uint64_t maxBytes);
+  void setMaxDeviceMemory(uint64_t maxBytes);
 
-        Nd4jLong getGroupLimit(int group);
-        Nd4jLong getDeviceLimit(int deviceId);
+  uint64_t maxPrimaryMemory();
+  uint64_t maxSpecialMemory();
+  ////////////////////////
 
-        Nd4jLong getGroupCounter(int group);
-        Nd4jLong  getDeviceCounter(int deviceId);
-        ////////////////////////
+  /*
+   * Methods for memory limits/counters
+   */
+  void setGroupLimit(int group, Nd4jLong numBytes);
+  void setDeviceLimit(int deviceId, Nd4jLong numBytes);
 
-        bool isUseMKLDNN() { return _useMKLDNN.load(); }
-        void setUseMKLDNN(bool useMKLDNN) { _useMKLDNN.store(useMKLDNN); }
+  Nd4jLong getGroupLimit(int group);
+  Nd4jLong getDeviceLimit(int deviceId);
 
-        sd::DataType defaultFloatDataType();
-        void setDefaultFloatDataType(sd::DataType dtype);
+  Nd4jLong getGroupCounter(int group);
+  Nd4jLong getDeviceCounter(int deviceId);
+  ////////////////////////
 
-        bool precisionBoostAllowed();
-        void allowPrecisionBoost(bool reallyAllow);
+  bool isUseMKLDNN() { return _useMKLDNN.load(); }
+  void setUseMKLDNN(bool useMKLDNN) { _useMKLDNN.store(useMKLDNN); }
 
-        bool isExperimentalBuild();
+  sd::DataType defaultFloatDataType();
+  void setDefaultFloatDataType(sd::DataType dtype);
 
-        bool isCPU();
+  bool precisionBoostAllowed();
+  void allowPrecisionBoost(bool reallyAllow);
 
-        int blasMajorVersion();
-        int blasMinorVersion();
-        int blasPatchVersion();
+  bool isExperimentalBuild();
 
-        std::vector<Pair>& capabilities();
-    };
-}
+  bool isCPU();
 
+  int blasMajorVersion();
+  int blasMinorVersion();
+  int blasPatchVersion();
 
-#endif //LIBND4J_ENVIRONMENT_H
+  std::vector<Pair>& capabilities();
+};
+}  // namespace sd
+
+#endif  // LIBND4J_ENVIRONMENT_H

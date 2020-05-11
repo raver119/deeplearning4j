@@ -24,19 +24,20 @@
 #include <ops/declarable/LegacyOp.h>
 
 namespace sd {
-    namespace ops {
-        class SD_EXPORT LegacyReduceSameOp: public LegacyOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override;
-        public:
-            LegacyReduceSameOp();
-            LegacyReduceSameOp(int opNum);
+namespace ops {
+class SD_EXPORT LegacyReduceSameOp : public LegacyOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
-            LegacyOp* clone() override;
-        };
-    }
-}
+ public:
+  LegacyReduceSameOp();
+  LegacyReduceSameOp(int opNum);
 
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+  LegacyOp* clone() override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_LEGACYREDUCEOP_H
+#endif  // LIBND4J_LEGACYREDUCEOP_H

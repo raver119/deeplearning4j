@@ -19,40 +19,45 @@
 //
 
 #include "graph/logic/LogicReturn.h"
-#include <helpers/EnumUtils.h>
+
 #include <graph/Status.h>
+#include <helpers/EnumUtils.h>
 
 namespace sd {
-    namespace graph {
-        Nd4jStatus LogicReturn::processNode(Graph *graph, Node *node) {
-            throw std::runtime_error("LogicReturn::processNode - not implemented yet");
-            /*
-            auto __variableSpace = graph->variableSpace();
+namespace graph {
+Nd4jStatus LogicReturn::processNode(Graph *graph, Node *node) {
+  throw std::runtime_error("LogicReturn::processNode - not implemented yet");
+  /*
+  auto __variableSpace = graph->variableSpace();
 
-            for (int e = 0; e < node->input()->size(); e++) {
-                auto inputAddr = node->input()->at(e);
-                auto outputAddr = node->output()->at(e);
+  for (int e = 0; e < node->input()->size(); e++) {
+      auto inputAddr = node->input()->at(e);
+      auto outputAddr = node->output()->at(e);
 
-                // FIXME!!
-                outputAddr.second = e;
+      // FIXME!!
+      outputAddr.second = e;
 
-                if (Environment::getInstance()->isDebugAndVerbose())
-                    nd4j_debug("Return input: <%i, %i>; Return output: <%i, %i>\n", inputAddr.first, inputAddr.second, outputAddr.first, outputAddr.second);
+      if (Environment::getInstance()->isDebugAndVerbose())
+          nd4j_debug("Return input: <%i, %i>; Return output: <%i, %i>\n",
+  inputAddr.first, inputAddr.second, outputAddr.first, outputAddr.second);
 
-                auto varIn = __variableSpace->getVariable(inputAddr);
-                auto varOut = __variableSpace->getVariable(outputAddr);
+      auto varIn = __variableSpace->getVariable(inputAddr);
+      auto varOut = __variableSpace->getVariable(outputAddr);
 
-                nd4j_debug("Returning varType: [%s]\n", EnumUtils::_VariableTypeToString(varIn->variableType()));
+      nd4j_debug("Returning varType: [%s]\n",
+  EnumUtils::_VariableTypeToString(varIn->variableType()));
 
-                // FIXME: this is obviously wrong, we should keep depth track for backprop here
-                varOut->getNDArray()->assign(varIn->getNDArray());
+      // FIXME: this is obviously wrong, we should keep depth track for backprop
+  here varOut->getNDArray()->assign(varIn->getNDArray());
 
-                if (Environment::getInstance()->isDebugAndVerbose())
-                    nd4j_debug("In after: [%f]; Out after: [%f]\n", varIn->getNDArray()->meanNumber().e<float>(0), varOut->getNDArray()->meanNumber().e<float>(0));
-            }
+      if (Environment::getInstance()->isDebugAndVerbose())
+          nd4j_debug("In after: [%f]; Out after: [%f]\n",
+  varIn->getNDArray()->meanNumber().e<float>(0),
+  varOut->getNDArray()->meanNumber().e<float>(0));
+  }
 
-            return sd::Status::OK();
-             */
-        }
-    }
+  return sd::Status::OK();
+   */
 }
+}  // namespace graph
+}  // namespace sd

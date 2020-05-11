@@ -25,20 +25,20 @@
 
 namespace sd {
 namespace ops {
-    LIST_OP_IMPL(unstack_list, 1, 1, 0, 0) {
-        auto outputList = INPUT_LIST(0);
-        auto input = INPUT_VARIABLE(int(outputList != nullptr) );
+LIST_OP_IMPL(unstack_list, 1, 1, 0, 0) {
+  auto outputList = INPUT_LIST(0);
+  auto input = INPUT_VARIABLE(int(outputList != nullptr));
 
-        if (outputList == nullptr) {
-            outputList = new NDArrayList(0, true);
-            //block.trackList(outputList);
-            setupResultList(*outputList, block);
-        }
-        outputList->unstack(*input, INT_ARG(0));
+  if (outputList == nullptr) {
+    outputList = new NDArrayList(0, true);
+    // block.trackList(outputList);
+    setupResultList(*outputList, block);
+  }
+  outputList->unstack(*input, INT_ARG(0));
 
-        return Status::OK();
-    }
+  return Status::OK();
 }
-}
+}  // namespace ops
+}  // namespace sd
 
 #endif

@@ -21,18 +21,16 @@
 #ifndef LIBND4J_LOGICLOOPCOND_H
 #define LIBND4J_LOGICLOOPCOND_H
 
-#include <system/pointercast.h>
 #include <graph/Graph.h>
+#include <system/pointercast.h>
 
 namespace sd {
-    namespace graph {
-        class LogicLoopCond {
-        public:
-            static Nd4jStatus processNode(Graph* graph, Node* node);
-        };
-    }
-}
+namespace graph {
+class LogicLoopCond {
+ public:
+  static Nd4jStatus processNode(Graph* graph, Node* node);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-
-#endif //LIBND4J_LOGICLOOPCOND_H
+#endif  // LIBND4J_LOGICLOOPCOND_H

@@ -21,8 +21,8 @@
 #ifndef LIBND4J_JACOBISVD_H
 #define LIBND4J_JACOBISVD_H
 
-#include <helpers/hhSequence.h>
 #include <array/NDArray.h>
+#include <helpers/hhSequence.h>
 
 namespace sd {
 namespace ops {
@@ -30,43 +30,43 @@ namespace helpers {
 
 template <typename T>
 class JacobiSVD {
+ public:
+  NDArray _m;
+  NDArray _s;  // vector with singular values
+  NDArray _u;
+  NDArray _v;
 
-    public:                
+  int _diagSize;
+  int _rows;
+  int _cols;
 
-        NDArray _m;
-        NDArray _s;          // vector with singular values
-        NDArray _u;
-        NDArray _v;
-    
-        int _diagSize;
-        int _rows;
-        int _cols;
+  // bool _transp;
+  bool _calcU;
+  bool _calcV;
+  bool _fullUV;
 
-        // bool _transp;
-        bool _calcU;
-        bool _calcV;
-        bool _fullUV;
+  JacobiSVD(const NDArray& matrix, const bool calcU, const bool calcV,
+            const bool fullUV);
 
-        JacobiSVD(const NDArray& matrix, const bool calcU, const bool calcV, const bool fullUV);
+  bool isBlock2x2NotDiag(NDArray& block, int p, int q, T& maxElem);
 
-        bool isBlock2x2NotDiag(NDArray& block, int p, int q, T& maxElem);
+  static bool createJacobiRotation(const T& x, const T& y, const T& z,
+                                   NDArray& rotation);
 
-        static bool createJacobiRotation(const T& x, const T& y, const T& z, NDArray& rotation);
-        
-        static void svd2x2(const NDArray& block, int p, int q, NDArray& left, NDArray& right);
+  static void svd2x2(const NDArray& block, int p, int q, NDArray& left,
+                     NDArray& right);
 
-        static void mulRotationOnLeft(const int i, const int j, NDArray& block, const NDArray& rotation);
+  static void mulRotationOnLeft(const int i, const int j, NDArray& block,
+                                const NDArray& rotation);
 
-        static void mulRotationOnRight(const int i, const int j, NDArray& block, const NDArray& rotation);
+  static void mulRotationOnRight(const int i, const int j, NDArray& block,
+                                 const NDArray& rotation);
 
-        void evalData(const NDArray& matrix);
+  void evalData(const NDArray& matrix);
 };
 
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-
-}
-}
-}
-
-
-#endif //LIBND4J_JACOBISVD_H
+#endif  // LIBND4J_JACOBISVD_H

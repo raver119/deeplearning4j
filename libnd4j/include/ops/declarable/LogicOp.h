@@ -24,24 +24,27 @@
 #include "DeclarableOp.h"
 
 namespace sd {
-    namespace ops {
+namespace ops {
 
-        /**
-         * Logic ops are unique snowflakes in any Graph. They dramatically change Graph Execution process, by introducing loops, conditions, etc.
-         *
-         * Their code is the part of GraphExecutioner logic. But we still want them to be expressed via Graph
-         * @tparam T
-         */
-        class SD_EXPORT LogicOp : public DeclarableOp {
-        protected:
-            Nd4jStatus validateAndExecute(sd::graph::Context& block) override;
-        public:
-            LogicOp(const char *name);
+/**
+ * Logic ops are unique snowflakes in any Graph. They dramatically change Graph
+ * Execution process, by introducing loops, conditions, etc.
+ *
+ * Their code is the part of GraphExecutioner logic. But we still want them to
+ * be expressed via Graph
+ * @tparam T
+ */
+class SD_EXPORT LogicOp : public DeclarableOp {
+ protected:
+  Nd4jStatus validateAndExecute(sd::graph::Context& block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context &block) override;
-        };
-    }
-}
+ public:
+  LogicOp(const char* name);
 
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_LOGICOP_H
+#endif  // LIBND4J_LOGICOP_H

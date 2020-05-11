@@ -21,91 +21,93 @@
 #ifndef LIBND4J_NODE_PROFILE_H
 #define LIBND4J_NODE_PROFILE_H
 
-#include <system/pointercast.h>
 #include <system/dll.h>
+#include <system/pointercast.h>
+
 #include <string>
 #include <vector>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT NodeProfile {
-        private:
-            int _id;
-            std::string _name;
+namespace graph {
+class SD_EXPORT NodeProfile {
+ private:
+  int _id;
+  std::string _name;
 
-            Nd4jLong _merges = 1L;
+  Nd4jLong _merges = 1L;
 
-            // time spent during deserialization
-            Nd4jLong _buildTime = 0L;
-            
-            // time spent before op execution
-            Nd4jLong _preparationTime = 0L;
+  // time spent during deserialization
+  Nd4jLong _buildTime = 0L;
 
-            // time spent for op execution
-            Nd4jLong _executionTime = 0L;
+  // time spent before op execution
+  Nd4jLong _preparationTime = 0L;
 
-            // total time spent during node execution
-            Nd4jLong _totalTime = 0L;
+  // time spent for op execution
+  Nd4jLong _executionTime = 0L;
 
-            // time spent for output shape creation
-            Nd4jLong _shapeTime = 0L;
+  // total time spent during node execution
+  Nd4jLong _totalTime = 0L;
 
-            // time spent for output arrays creation
-            Nd4jLong _arrayTime = 0L;
+  // time spent for output shape creation
+  Nd4jLong _shapeTime = 0L;
 
-            Nd4jLong _inputTime = 0L;
+  // time spent for output arrays creation
+  Nd4jLong _arrayTime = 0L;
 
-            // amount of memory used for outputs
-            Nd4jLong _memoryActivations = 0L;
+  Nd4jLong _inputTime = 0L;
 
-            // amount of memory used internally for temporary arrays
-            Nd4jLong _memoryTemporary = 0L;
+  // amount of memory used for outputs
+  Nd4jLong _memoryActivations = 0L;
 
-            // amount of memory used internally for objects
-            Nd4jLong _memoryObjects = 0L;
+  // amount of memory used internally for temporary arrays
+  Nd4jLong _memoryTemporary = 0L;
 
-            // total amount of memory used during execution
-            Nd4jLong _memoryTotal = 0L;
+  // amount of memory used internally for objects
+  Nd4jLong _memoryObjects = 0L;
 
-            std::vector<std::string> _inputShapes;
-            std::vector<std::string> _outputShapes;
-        public:
-            NodeProfile() = default;
-            ~NodeProfile() = default;
+  // total amount of memory used during execution
+  Nd4jLong _memoryTotal = 0L;
 
-            explicit NodeProfile(int id, const char *name);
+  std::vector<std::string> _inputShapes;
+  std::vector<std::string> _outputShapes;
 
-            void setBuildTime(Nd4jLong time);
-            void setPreparationTime(Nd4jLong time);
-            void setExecutionTime(Nd4jLong time);
-            void setTotalTime(Nd4jLong time);
-            void setShapeFunctionTime(Nd4jLong time);
-            void setArrayTime(Nd4jLong time);
-            void setInputTime(Nd4jLong time);
+ public:
+  NodeProfile() = default;
+  ~NodeProfile() = default;
 
-            void setActivationsSize(Nd4jLong bytes);
-            void setTemporarySize(Nd4jLong bytes);
-            void setObjectsSize(Nd4jLong bytes);
-            void setTotalSize(Nd4jLong bytes);
+  explicit NodeProfile(int id, const char* name);
 
-            void addInputShape(Nd4jLong const* shapeInfo);
-            void addOutputShape(Nd4jLong const* shapeInfo);
+  void setBuildTime(Nd4jLong time);
+  void setPreparationTime(Nd4jLong time);
+  void setExecutionTime(Nd4jLong time);
+  void setTotalTime(Nd4jLong time);
+  void setShapeFunctionTime(Nd4jLong time);
+  void setArrayTime(Nd4jLong time);
+  void setInputTime(Nd4jLong time);
 
-            Nd4jLong getActivationsSize() const;
-            Nd4jLong getTemporarySize() const;
-            Nd4jLong getObjectsSize() const;
-            Nd4jLong getTotalSize() const;
+  void setActivationsSize(Nd4jLong bytes);
+  void setTemporarySize(Nd4jLong bytes);
+  void setObjectsSize(Nd4jLong bytes);
+  void setTotalSize(Nd4jLong bytes);
 
-            Nd4jLong getExecutionTime() const;
+  void addInputShape(Nd4jLong const* shapeInfo);
+  void addOutputShape(Nd4jLong const* shapeInfo);
 
-            std::string& name();
+  Nd4jLong getActivationsSize() const;
+  Nd4jLong getTemporarySize() const;
+  Nd4jLong getObjectsSize() const;
+  Nd4jLong getTotalSize() const;
 
-            void merge(NodeProfile *other);
-            void assign(NodeProfile *other);
+  Nd4jLong getExecutionTime() const;
 
-            void printOut();
-        };
-    }
-}
+  std::string& name();
+
+  void merge(NodeProfile* other);
+  void assign(NodeProfile* other);
+
+  void printOut();
+};
+}  // namespace graph
+}  // namespace sd
 
 #endif

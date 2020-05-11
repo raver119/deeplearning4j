@@ -23,15 +23,15 @@
 
 #include <ops/declarable/helpers/helpers.h>
 
-namespace sd    {
-namespace ops     {
+namespace sd {
+namespace ops {
 namespace helpers {
 
-	void meshgrid(sd::LaunchContext * context, const std::vector<NDArray*>& inArrs, const std::vector<NDArray*>& outArrs, const bool swapFirst2Dims);
+void meshgrid(sd::LaunchContext* context, const std::vector<NDArray*>& inArrs,
+              const std::vector<NDArray*>& outArrs, const bool swapFirst2Dims);
 
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 
-
-#endif //LIBND4J_SRU_H
+#endif  // LIBND4J_SRU_H

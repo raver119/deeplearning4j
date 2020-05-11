@@ -24,12 +24,13 @@
 #include <array/NDArray.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
+namespace ops {
+namespace helpers {
 
-            void _matmul(sd::LaunchContext * context, NDArray *A, NDArray *B, NDArray *C, int transA, int transB, double alpha = 1., double beta = 0.);
-        }
-    }
+void _matmul(sd::LaunchContext *context, NDArray *A, NDArray *B, NDArray *C,
+             int transA, int transB, double alpha = 1., double beta = 0.);
 }
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_MATMUL_H
+#endif  // LIBND4J_MATMUL_H

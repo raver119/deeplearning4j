@@ -21,32 +21,29 @@
 #ifndef LIBND4J_TIMEHOLDER_H
 #define LIBND4J_TIMEHOLDER_H
 
-#include <map>
-#include <system/pointercast.h>
 #include <system/dll.h>
+#include <system/pointercast.h>
+
+#include <map>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT TimeHolder {
-        private:
-            std::map<int, Nd4jLong> _outer;
-            std::map<int, Nd4jLong> _inner;
+namespace graph {
+class SD_EXPORT TimeHolder {
+ private:
+  std::map<int, Nd4jLong> _outer;
+  std::map<int, Nd4jLong> _inner;
 
+ public:
+  TimeHolder() = default;
+  ~TimeHolder() = default;
 
-        public:
+  void setOuterTime(int nodeId, Nd4jLong time);
+  void setInnerTime(int nodeId, Nd4jLong time);
 
-            TimeHolder() = default;
-            ~TimeHolder() = default;
+  Nd4jLong outerTime(int nodeId);
+  Nd4jLong innerTime(int nodeId);
+};
+}  // namespace graph
+}  // namespace sd
 
-
-            void setOuterTime(int nodeId, Nd4jLong time);
-            void setInnerTime(int nodeId, Nd4jLong time);
-
-
-            Nd4jLong outerTime(int nodeId);
-            Nd4jLong innerTime(int nodeId);
-        };
-    }
-}
-
-#endif //LIBND4J_TIMEHOLDER_H
+#endif  // LIBND4J_TIMEHOLDER_H

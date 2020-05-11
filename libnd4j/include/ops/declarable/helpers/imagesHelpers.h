@@ -16,7 +16,7 @@
 
 //
 // @author Oleh Semeniv (oleg.semeniv@gmail.com)
-// 
+//
 //
 // @author AbdelRauf    (rauf@konduit.ai)
 //
@@ -24,27 +24,34 @@
 #ifndef LIBND4J_HELPERS_IMAGES_H
 #define LIBND4J_HELPERS_IMAGES_H
 
-#include <system/op_boilerplate.h>
-#include <math/templatemath.h>
 #include <array/NDArray.h>
+#include <math/templatemath.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void transformRgbGrs(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC);
+void transformRgbGrs(sd::LaunchContext* context, const NDArray& input,
+                     NDArray& output, const int dimC);
 
-    void transformHsvRgb(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
+void transformHsvRgb(sd::LaunchContext* context, const NDArray* input,
+                     NDArray* output, const int dimC);
 
-    void transformRgbHsv(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
-    void transformYuvRgb(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC);
-    void transformRgbYuv(sd::LaunchContext* context, const NDArray& input, NDArray& output, const int dimC);
+void transformRgbHsv(sd::LaunchContext* context, const NDArray* input,
+                     NDArray* output, const int dimC);
+void transformYuvRgb(sd::LaunchContext* context, const NDArray& input,
+                     NDArray& output, const int dimC);
+void transformRgbYuv(sd::LaunchContext* context, const NDArray& input,
+                     NDArray& output, const int dimC);
 
-    void transformYiqRgb(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
+void transformYiqRgb(sd::LaunchContext* context, const NDArray* input,
+                     NDArray* output, const int dimC);
 
-    void transformRgbYiq(sd::LaunchContext* context, const NDArray* input, NDArray* output, const int dimC);
-}
-}
-}
+void transformRgbYiq(sd::LaunchContext* context, const NDArray* input,
+                     NDArray* output, const int dimC);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
 #endif

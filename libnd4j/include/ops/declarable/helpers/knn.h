@@ -24,11 +24,12 @@
 #include <ops/declarable/helpers/helpers.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void knn_mindistance(const NDArray &input, const NDArray &lowest, const NDArray &highest, NDArray &output);
-        }
-    }
+namespace ops {
+namespace helpers {
+void knn_mindistance(const NDArray &input, const NDArray &lowest,
+                     const NDArray &highest, NDArray &output);
 }
+}  // namespace ops
+}  // namespace sd
 
-#endif //SAMEDIFF_KNN_H
+#endif  // SAMEDIFF_KNN_H

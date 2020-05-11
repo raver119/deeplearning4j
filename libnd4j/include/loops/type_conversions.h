@@ -15,8 +15,8 @@
  ******************************************************************************/
 
 /*
- * This set of methods provides dataType conversions in all possible directions supported:
- *  FP8, FP16, FLOAT, DOUBLE, INT8, UINT8, UINT16,
+ * This set of methods provides dataType conversions in all possible directions
+ * supported: FP8, FP16, FLOAT, DOUBLE, INT8, UINT8, UINT16,
  *
  * @author raver119@gmail.com
  */
@@ -33,118 +33,126 @@
 #define ND4J_FLOAT32 6
 #define ND4J_DOUBLE 7
 #define ND4J_THRESHOLD 8
-#define ND4J_FLOAT24 119 // not supported after all. might want to add support later.
+#define ND4J_FLOAT24 \
+  119  // not supported after all. might want to add support later.
 
-#include <ops/ops.h>
 #include <math/templatemath.h>
+#include <ops/ops.h>
+#include <system/Environment.h>
 #include <types/float16.h>
 #include <types/float8.h>
-#include <types/uint8.h>
-#include <types/int8.h>
 #include <types/int16.h>
+#include <types/int8.h>
 #include <types/uint16.h>
-#include <system/Environment.h>
+#include <types/uint8.h>
 
 #define NUM_BANKS 32
 #define LOG_NUM_BANKS 4
 
-
 namespace sd {
 
-    typedef union {
-        float f_;
-        int i_;
-    } FloatBits;
+typedef union {
+  float f_;
+  int i_;
+} FloatBits;
 
+class TypeCast {
+ public:
+  template <typename S, typename T>
+  static _CUDA_H void convertGeneric(Nd4jPointer *extras, void *dx, Nd4jLong N,
+                                     void *dz);
 
-    class TypeCast {
+  template <typename T>
+  static _CUDA_H void convertToThreshold(Nd4jPointer *extras, void *dx,
+                                         Nd4jLong N, void *dz);
 
-    public:
-        template<typename S, typename T>
-        static _CUDA_H void convertGeneric(Nd4jPointer * extras, void *dx, Nd4jLong N, void *dz);
+  template <typename T>
+  static _CUDA_H void convertFromThreshold(Nd4jPointer *extras, const void *dx,
+                                           Nd4jLong N, void *dz);
 
-        template <typename T>
-        static _CUDA_H void convertToThreshold(Nd4jPointer * extras, void *dx, Nd4jLong N, void *dz);
+  FORCEINLINE static _CUDA_H Nd4jLong estimateQuantizedSize(Nd4jLong rawSize) {
+    if (rawSize <= 0)
+      throw std::runtime_error("Input size for quantization can't be <= 0");
 
-        template <typename T>
-        static _CUDA_H void convertFromThreshold(Nd4jPointer * extras, const void *dx, Nd4jLong N, void *dz);
+    // 2 fp32 values for max/min, and rawSize number of BYTES
+    return 8 + rawSize;
+  }
 
-        FORCEINLINE static _CUDA_H Nd4jLong estimateQuantizedSize(Nd4jLong rawSize) {
-            if (rawSize <= 0)
-                throw std::runtime_error("Input size for quantization can't be <= 0");
+  template <typename T>
+  static _CUDA_H void convertToQuantized(Nd4jPointer *extras, void *dx,
+                                         Nd4jLong N, void *dz);
 
-            // 2 fp32 values for max/min, and rawSize number of BYTES
-            return 8 + rawSize;
-        }
-
-
-        template <typename T>
-        static _CUDA_H void convertToQuantized(Nd4jPointer *extras, void *dx, Nd4jLong N, void *dz);
-
-        template <typename T>
-        static _CUDA_H void convertFromQuantized(Nd4jPointer *extras, void *dx, Nd4jLong N, void *dz);
-
-        #ifdef __CUDACC__
-        template<typename S, typename T>
-        static _CUDA_H void convertGenericCuda(Nd4jPointer * extras, void *dx, Nd4jLong N, void *dz);        
-        #endif
-    };
-
-
-    FORCEINLINE _CUDA_HD bool isPowerOfTwo(int n) {
-        return ((n&(n-1))==0) ;
-    }
-
-    FORCEINLINE _CUDA_HD int floorPow2(int n) {
-#ifdef WIN32
-        // method 2
-    return 1 << static_cast<int>(logb(static_cast<float>(n)));
-#else
-        // method 1
-        // float nf = (float)n;
-        // return 1 << (((*(int*)&nf) >> 23) - 127);
-        int exp;
-        frexp(static_cast<float>(n), &exp);
-        return 1 << (exp - 1);
-#endif
-    }
+  template <typename T>
+  static _CUDA_H void convertFromQuantized(Nd4jPointer *extras, void *dx,
+                                           Nd4jLong N, void *dz);
 
 #ifdef __CUDACC__
-    __device__ __inline__ int pow2i (int e){
-        return 1<<e;
-    }
-
-    template<typename T>
-    __host__ void encoderKernelP1Generic(dim3 &launchDims, cudaStream_t *stream, const void *dx, Nd4jLong N, void *dz, float threshold);
-
-
-    template<typename T>
-    __host__ void encoderKernelP3Generic(dim3 &launchDims, cudaStream_t *stream, void *dx, int *offsets, Nd4jLong N, void *dz);
-
-
-    template<typename T>
-    __host__ void decoderKernelGeneric(dim3 &launchDims, cudaStream_t *stream, const void *dx, Nd4jLong N, void *dz);
-
-    template<typename T>
-    __host__ void cudaEncodeBitmapGeneric(dim3 &launchDims, cudaStream_t *stream, void *vdx, Nd4jLong N, int *dz, int *scalar, int *reductionBuffer, float threshold);
-
-
-    template<typename T>
-    __host__ void cudaDecodeBitmapGeneric(dim3 &launchDims, cudaStream_t *stream, const void *dx, Nd4jLong N, void *vdz);
-
-    __global__ void uniformAdd(int *g_data, int *uniforms, int n, int blockOffset, int baseIndex);
-
-    template <bool storeSum, bool isNP2>
-    __global__ void prescan(int *g_odata, const int *g_idata, int *g_blockSums, int n, int blockIndex, int baseIndex);
-
-
-    template <bool storeSum, bool isNP2>
-    __host__ void prescanLauncher(dim3 &blocks, dim3 &threads, int shmem, cudaStream_t *stream, int *g_odata, const int *g_idata, int *g_blockSums, int n, int blockIndex, int baseIndex);
-
-    template <typename S, typename T>
-    __global__ void convertKernel(void *dx, Nd4jLong N, void *dz);
+  template <typename S, typename T>
+  static _CUDA_H void convertGenericCuda(Nd4jPointer *extras, void *dx,
+                                         Nd4jLong N, void *dz);
 #endif
+};
 
+FORCEINLINE _CUDA_HD bool isPowerOfTwo(int n) { return ((n & (n - 1)) == 0); }
+
+FORCEINLINE _CUDA_HD int floorPow2(int n) {
+#ifdef WIN32
+  // method 2
+  return 1 << static_cast<int>(logb(static_cast<float>(n)));
+#else
+  // method 1
+  // float nf = (float)n;
+  // return 1 << (((*(int*)&nf) >> 23) - 127);
+  int exp;
+  frexp(static_cast<float>(n), &exp);
+  return 1 << (exp - 1);
+#endif
 }
 
-#endif //LIBND4J_TYPE_CONVERSIONS_H
+#ifdef __CUDACC__
+__device__ __inline__ int pow2i(int e) { return 1 << e; }
+
+template <typename T>
+__host__ void encoderKernelP1Generic(dim3 &launchDims, cudaStream_t *stream,
+                                     const void *dx, Nd4jLong N, void *dz,
+                                     float threshold);
+
+template <typename T>
+__host__ void encoderKernelP3Generic(dim3 &launchDims, cudaStream_t *stream,
+                                     void *dx, int *offsets, Nd4jLong N,
+                                     void *dz);
+
+template <typename T>
+__host__ void decoderKernelGeneric(dim3 &launchDims, cudaStream_t *stream,
+                                   const void *dx, Nd4jLong N, void *dz);
+
+template <typename T>
+__host__ void cudaEncodeBitmapGeneric(dim3 &launchDims, cudaStream_t *stream,
+                                      void *vdx, Nd4jLong N, int *dz,
+                                      int *scalar, int *reductionBuffer,
+                                      float threshold);
+
+template <typename T>
+__host__ void cudaDecodeBitmapGeneric(dim3 &launchDims, cudaStream_t *stream,
+                                      const void *dx, Nd4jLong N, void *vdz);
+
+__global__ void uniformAdd(int *g_data, int *uniforms, int n, int blockOffset,
+                           int baseIndex);
+
+template <bool storeSum, bool isNP2>
+__global__ void prescan(int *g_odata, const int *g_idata, int *g_blockSums,
+                        int n, int blockIndex, int baseIndex);
+
+template <bool storeSum, bool isNP2>
+__host__ void prescanLauncher(dim3 &blocks, dim3 &threads, int shmem,
+                              cudaStream_t *stream, int *g_odata,
+                              const int *g_idata, int *g_blockSums, int n,
+                              int blockIndex, int baseIndex);
+
+template <typename S, typename T>
+__global__ void convertKernel(void *dx, Nd4jLong N, void *dz);
+#endif
+
+}  // namespace sd
+
+#endif  // LIBND4J_TYPE_CONVERSIONS_H

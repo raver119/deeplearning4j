@@ -21,99 +21,105 @@
 #ifndef SD_OPSEQUENCE_H
 #define SD_OPSEQUENCE_H
 
-#include <vector>
-#include <ops/declarable/DeclarableOp.h>
 #include <graph/execution/ExecutionTask.h>
+#include <ops/declarable/DeclarableOp.h>
 
+#include <vector>
 
 namespace sd {
-    namespace graph {
-    /**
-    * This class represents independent and immutable sequence of operations
-    */
-    class SD_EXPORT OpSequence : public std::iterator<std::output_iterator_tag, ExecutionTask> {
-        // our internal iterator for OpSequence
-        class iterator;
-        protected:
-            // main thing here. sorted list of operations and their contexts
-            std::vector<ExecutionTask> _ops;
+namespace graph {
+/**
+ * This class represents independent and immutable sequence of operations
+ */
+class SD_EXPORT OpSequence
+    : public std::iterator<std::output_iterator_tag, ExecutionTask> {
+  // our internal iterator for OpSequence
+  class iterator;
 
-            int _deviceId = 0;
-        public:
-            explicit OpSequence(const std::vector<ExecutionTask> &ops, int deviceId = 0);
-            OpSequence(int deviceId = 0);
-            ~OpSequence() = default;
+ protected:
+  // main thing here. sorted list of operations and their contexts
+  std::vector<ExecutionTask> _ops;
 
-            OpSequence(const OpSequence& other) noexcept;
+  int _deviceId = 0;
 
-            OpSequence& operator=(const OpSequence& other) noexcept;
+ public:
+  explicit OpSequence(const std::vector<ExecutionTask>& ops, int deviceId = 0);
+  OpSequence(int deviceId = 0);
+  ~OpSequence() = default;
 
-            // move constructor
-            OpSequence(OpSequence&& other) noexcept;
+  OpSequence(const OpSequence& other) noexcept;
 
-            // move assignment operator
-            OpSequence& operator=(OpSequence&& other) noexcept;
+  OpSequence& operator=(const OpSequence& other) noexcept;
 
+  // move constructor
+  OpSequence(OpSequence&& other) noexcept;
 
-            int deviceId() const;
+  // move assignment operator
+  OpSequence& operator=(OpSequence&& other) noexcept;
 
-            /**
-             * This method blocks until all operations within sequence are processed
-             * @return
-             */
-            Nd4jStatus wait() const;
+  int deviceId() const;
 
-            /**
-             * This method prints out content of the sequence
-             */
-            void printOut() const;
+  /**
+   * This method blocks until all operations within sequence are processed
+   * @return
+   */
+  Nd4jStatus wait() const;
 
-            /**
-             * This method returns number of individual operations within this sequence
-             * @return
-             */
-            uint64_t length() const;
+  /**
+   * This method prints out content of the sequence
+   */
+  void printOut() const;
 
-            /**
-             * This method returns specific Op/ContextPrototype pair for specified index
-             * @param index
-             * @return
-             */
-            const ExecutionTask& at(uint64_t index) const;
-            const ExecutionTask& operator[](uint64_t index) const;
+  /**
+   * This method returns number of individual operations within this sequence
+   * @return
+   */
+  uint64_t length() const;
 
-            /**
-             * This method allows to add DeclarableOp to the end of execution queue
-             * @param op - Op to be executed
-             * @param ctx - ContextPrototype for this operation with inputs/outputs/args defined
-             */
-            void append(const std::shared_ptr<sd::ops::DeclarableOp> &op, const sd::graph::ContextPrototype &ctx);
-            void append(sd::ops::DeclarableOp *op, const sd::graph::ContextPrototype &ctx);
+  /**
+   * This method returns specific Op/ContextPrototype pair for specified index
+   * @param index
+   * @return
+   */
+  const ExecutionTask& at(uint64_t index) const;
+  const ExecutionTask& operator[](uint64_t index) const;
 
-            /**
-             * Iterator functionality for OpSequence
-             * @return
-             */
+  /**
+   * This method allows to add DeclarableOp to the end of execution queue
+   * @param op - Op to be executed
+   * @param ctx - ContextPrototype for this operation with inputs/outputs/args
+   * defined
+   */
+  void append(const std::shared_ptr<sd::ops::DeclarableOp>& op,
+              const sd::graph::ContextPrototype& ctx);
+  void append(sd::ops::DeclarableOp* op,
+              const sd::graph::ContextPrototype& ctx);
 
-            OpSequence::iterator begin();
-            OpSequence::iterator end();
+  /**
+   * Iterator functionality for OpSequence
+   * @return
+   */
 
-            // additional private section
-        private:
-            class iterator : public std::iterator<std::output_iterator_tag, ExecutionTask> {
-            private:
-                uint64_t _position = 0;
-                OpSequence & _container;
-            public:
-                explicit iterator(OpSequence & container, uint64_t index = 0);
-                const ExecutionTask& operator*() const;
-                iterator & operator++();
-                iterator & operator++(int);
-                bool operator!=(const iterator &) const;
-            };
-        };
-    }
-}
+  OpSequence::iterator begin();
+  OpSequence::iterator end();
 
+  // additional private section
+ private:
+  class iterator
+      : public std::iterator<std::output_iterator_tag, ExecutionTask> {
+   private:
+    uint64_t _position = 0;
+    OpSequence& _container;
 
-#endif //SD_OPSEQUENCE_H
+   public:
+    explicit iterator(OpSequence& container, uint64_t index = 0);
+    const ExecutionTask& operator*() const;
+    iterator& operator++();
+    iterator& operator++(int);
+    bool operator!=(const iterator&) const;
+  };
+};
+}  // namespace graph
+}  // namespace sd
+
+#endif  // SD_OPSEQUENCE_H

@@ -21,20 +21,20 @@
 #ifndef SAMEDIFF_BLASVERSIONHELPER_H
 #define SAMEDIFF_BLASVERSIONHELPER_H
 
-#include <system/dll.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <system/dll.h>
 
 namespace sd {
-    class SD_EXPORT BlasVersionHelper {
-    public:
-        int _blasMajorVersion = 0;
-        int _blasMinorVersion = 0;
-        int _blasPatchVersion = 0;
+class SD_EXPORT BlasVersionHelper {
+ public:
+  int _blasMajorVersion = 0;
+  int _blasMinorVersion = 0;
+  int _blasPatchVersion = 0;
 
-        BlasVersionHelper();
-        ~BlasVersionHelper() = default;
-    };
-}
+  BlasVersionHelper();
+  ~BlasVersionHelper() = default;
+};
+}  // namespace sd
 
-#endif //SD_BLASVERSIONHELPER_H
+#endif  // SD_BLASVERSIONHELPER_H

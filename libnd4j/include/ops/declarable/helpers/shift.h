@@ -21,22 +21,26 @@
 #ifndef SD_SHIFT_H
 #define SD_SHIFT_H
 
+#include <array/NDArray.h>
 #include <system/op_boilerplate.h>
 #include <types/types.h>
-#include <array/NDArray.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void rshift_bits(LaunchContext* launchContext, NDArray &x, NDArray &z, uint32_t shift);
+namespace ops {
+namespace helpers {
+void rshift_bits(LaunchContext *launchContext, NDArray &x, NDArray &z,
+                 uint32_t shift);
 
-            void shift_bits(LaunchContext* launchContext, NDArray &x, NDArray &z, uint32_t shift);
+void shift_bits(LaunchContext *launchContext, NDArray &x, NDArray &z,
+                uint32_t shift);
 
-            void cyclic_rshift_bits(LaunchContext* launchContext, NDArray &x, NDArray &z, uint32_t shift);
+void cyclic_rshift_bits(LaunchContext *launchContext, NDArray &x, NDArray &z,
+                        uint32_t shift);
 
-            void cyclic_shift_bits(LaunchContext* launchContext, NDArray &x, NDArray &z, uint32_t shift);
-        }
-    }
-}
+void cyclic_shift_bits(LaunchContext *launchContext, NDArray &x, NDArray &z,
+                       uint32_t shift);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_SHIFT_H
+#endif  // SD_SHIFT_H

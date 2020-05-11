@@ -26,103 +26,92 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <system/dll.h>
-#include <ops/ops.h>
-#include <system/op_boilerplate.h>
-#include <helpers/OmpLaunchHelper.h>
 #include <helpers/DebugHelper.h>
+#include <helpers/OmpLaunchHelper.h>
+#include <ops/ops.h>
+#include <system/dll.h>
+#include <system/op_boilerplate.h>
 
 #ifdef __CUDACC__
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
 
-
 #include <helpers/TAD.h>
 
-
+#include "legacy_ops.h"
 #include "system/pairwise_util.h"
 
-#include "legacy_ops.h"
-
 namespace functions {
-	namespace indexreduce {
+namespace indexreduce {
 
-		template<typename X, typename Z>
-		class IndexReduce {
-		public:
+template <typename X, typename Z>
+class IndexReduce {
+ public:
 #ifdef __CUDABLAS__
 
-	static __device__ void transform(int opNum,
-                                     const void *x, const Nd4jLong *xShapeInfo,
-                                     void *extraParams,
-                                     void *result, const Nd4jLong *resultShapeInfo,
-                                     int *dimension,int dimensionLength,
-                                     int postProcessOrNot,
-                                     int *allocationBuffer, void *reductionBuffer,
-                                     const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffset);
+  static __device__ void transform(
+      int opNum, const void *x, const Nd4jLong *xShapeInfo, void *extraParams,
+      void *result, const Nd4jLong *resultShapeInfo, int *dimension,
+      int dimensionLength, int postProcessOrNot, int *allocationBuffer,
+      void *reductionBuffer, const Nd4jLong *tadShapeInfo,
+      const Nd4jLong *tadOffset);
 
-    template<typename OpType>
-	static __device__ void aggregatePartials(IndexValue<X> **sPartialsRef, Nd4jLong tid, Nd4jLong numElements, void *extraParams);
+  template <typename OpType>
+  static __device__ void aggregatePartials(IndexValue<X> **sPartialsRef,
+                                           Nd4jLong tid, Nd4jLong numElements,
+                                           void *extraParams);
 
+  template <typename OpType>
+  static __device__ void transform(const void *dx, const Nd4jLong *xShapeInfo,
+                                   void *extraParams, void *result,
+                                   const Nd4jLong *resultShapeInfo,
+                                   int *dimension, int dimensionLength,
+                                   int postProcessOrNot, int *allocationBuffer,
+                                   void *reductionBuffer,
+                                   const Nd4jLong *tadOnlyShapeInfo,
+                                   const Nd4jLong *tadOffsets);
 
-    template<typename OpType>
-	static __device__ void transform(const void *dx, const Nd4jLong *xShapeInfo,
-                                     void *extraParams,
-                                     void *result, const Nd4jLong *resultShapeInfo,
-                                     int *dimension, int dimensionLength,
-                                     int postProcessOrNot,
-                                     int *allocationBuffer, void *reductionBuffer,
-                                     const Nd4jLong *tadOnlyShapeInfo, const Nd4jLong *tadOffsets);
+  static _CUDA_H void executeIndexReduceScalar(
+      dim3 launchDims, cudaStream_t *stream, int op, const void *dx,
+      const Nd4jLong *xShapeInfo, int xRank, void *extraParams, void *result,
+      const Nd4jLong *resultShapeInfo, int zRank, int *dimension,
+      int dimensionLength, int postProcessOrNot, int *allocationBuffer,
+      void *reductionBuffer, const Nd4jLong *tadOnlyShapeInfo,
+      const Nd4jLong *tadOffsets);
 
-
-    static _CUDA_H void executeIndexReduceScalar(dim3 launchDims, cudaStream_t *stream,
-                                                 int op,
-                                                 const void *dx, const Nd4jLong *xShapeInfo,
-                                                 int xRank,
-                                                 void *extraParams,
-                                                 void *result, const Nd4jLong *resultShapeInfo,
-                                                 int zRank,
-                                                 int *dimension, int dimensionLength,
-                                                 int postProcessOrNot,
-                                                 int *allocationBuffer, void *reductionBuffer,
-                                                 const Nd4jLong *tadOnlyShapeInfo, const Nd4jLong *tadOffsets);
-
-    static _CUDA_H void executeIndexReduce(dim3 launchDims, cudaStream_t *stream,
-                                           int op,
-                                           const void *dx, const Nd4jLong *xShapeInfo,
-                                           int xRank,
-                                           void *extraParams,
-                                           void *result, const Nd4jLong *resultShapeInfo,
-                                           int zRank,
-                                           int *dimension, int dimensionLength,
-                                           int postProcessOrNot,
-                                           int *allocationBuffer, void *reductionBuffer,
-                                           const Nd4jLong *tadOnlyShapeInfo, const Nd4jLong *tadOffsets);
+  static _CUDA_H void executeIndexReduce(
+      dim3 launchDims, cudaStream_t *stream, int op, const void *dx,
+      const Nd4jLong *xShapeInfo, int xRank, void *extraParams, void *result,
+      const Nd4jLong *resultShapeInfo, int zRank, int *dimension,
+      int dimensionLength, int postProcessOrNot, int *allocationBuffer,
+      void *reductionBuffer, const Nd4jLong *tadOnlyShapeInfo,
+      const Nd4jLong *tadOffsets);
 #else
 
-		static Nd4jLong execScalar(int opNum, const void *x, const Nd4jLong *xShapeInfo, void *extraParams);
+  static Nd4jLong execScalar(int opNum, const void *x,
+                             const Nd4jLong *xShapeInfo, void *extraParams);
 
-		static void exec(int opNum,
-                         const void *x, const Nd4jLong *xShapeInfo,
-                         void *extraParams,
-                         void *result, const Nd4jLong *resultShapeInfoBuffer,
-                         int *dimension, int dimensionLength,
-                         const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffset);
+  static void exec(int opNum, const void *x, const Nd4jLong *xShapeInfo,
+                   void *extraParams, void *result,
+                   const Nd4jLong *resultShapeInfoBuffer, int *dimension,
+                   int dimensionLength, const Nd4jLong *tadShapeInfo,
+                   const Nd4jLong *tadOffset);
 
-		template<typename OpType>
-		static _CUDA_H Nd4jLong execScalar(const void *x, const Nd4jLong *xShapeInfo, void *extraParams);
+  template <typename OpType>
+  static _CUDA_H Nd4jLong execScalar(const void *x, const Nd4jLong *xShapeInfo,
+                                     void *extraParams);
 
-		template<typename OpType>
-		static _CUDA_H void exec(const void *x, const Nd4jLong *xShapeInfo,
-                                 void *extraParams,
-                                 void *result, const Nd4jLong *resultShapeInfoBuffer,
-                                 int *dimension, int dimensionLength,
-                                 const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffset);
+  template <typename OpType>
+  static _CUDA_H void exec(const void *x, const Nd4jLong *xShapeInfo,
+                           void *extraParams, void *result,
+                           const Nd4jLong *resultShapeInfoBuffer,
+                           int *dimension, int dimensionLength,
+                           const Nd4jLong *tadShapeInfo,
+                           const Nd4jLong *tadOffset);
 #endif
-		};
-	}
-}
+};
+}  // namespace indexreduce
+}  // namespace functions
 
 #endif /* INDEXREDUCE_H_ */
-

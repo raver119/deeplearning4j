@@ -22,15 +22,18 @@
 #include <helpers/ShapeUtils.h>
 
 namespace sd {
-    shape_mismatch_exception::shape_mismatch_exception(const std::string &message) : std::runtime_error(message) {
-        //
-    }
-
-    shape_mismatch_exception
-    shape_mismatch_exception::build(const std::string &message, const std::vector<Nd4jLong> &expected, const std::vector<Nd4jLong> &actual) {
-        auto exp = ShapeUtils::shapeAsString(expected);
-        auto act = ShapeUtils::shapeAsString(actual);
-        auto fmessage = message + "; Expected shape: " + exp + "; Actual shape: " + act + ";";
-        return shape_mismatch_exception(fmessage);
-    }
+shape_mismatch_exception::shape_mismatch_exception(const std::string &message)
+    : std::runtime_error(message) {
+  //
 }
+
+shape_mismatch_exception shape_mismatch_exception::build(
+    const std::string &message, const std::vector<Nd4jLong> &expected,
+    const std::vector<Nd4jLong> &actual) {
+  auto exp = ShapeUtils::shapeAsString(expected);
+  auto act = ShapeUtils::shapeAsString(actual);
+  auto fmessage =
+      message + "; Expected shape: " + exp + "; Actual shape: " + act + ";";
+  return shape_mismatch_exception(fmessage);
+}
+}  // namespace sd

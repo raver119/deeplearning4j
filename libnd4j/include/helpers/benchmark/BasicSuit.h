@@ -22,12 +22,10 @@
 #define SD_BASICSUIT_H
 
 namespace sd {
-    class BasicSuit {
-    protected:
+class BasicSuit {
+ protected:
+ public:
+};
+}  // namespace sd
 
-    public:
-
-    };
-}
-
-#endif //SD_BASICSUIT_H
+#endif  // SD_BASICSUIT_H

@@ -21,24 +21,52 @@
 #ifndef LIBND4J_UPDATER_RMS_PROM_H
 #define LIBND4J_UPDATER_RMS_PROM_H
 
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    void updaterRmsProp(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initState, NDArray& update, NDArray& stateG, const double dLr, const double dRmsDecay, const double dEpsilon);
-    void updaterAdaGrad(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initState, NDArray& update, NDArray& stateH, const double dLr, const double dEpsilon);
-    void updaterNesterovs(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initState, NDArray& update, NDArray& stateV, const double dLr, const double bMomentum);
-    void updaterAdaMax(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initStateU, const NDArray& initStateM, NDArray& update, NDArray& stateU, NDArray& stateM, const double dLr, const double dBeta1, const double dBeta2, const double dEpsilon, const int nIteration);
-    void updaterAdam(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initStateU, const NDArray& initStateM, NDArray& update, NDArray& stateU, NDArray& stateM,  const double dLr, const double dBeta1, const double dBeta2, const double dEpsilon, const int nIteration);
-    void updaterAdaDelta(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initStateMsg, const NDArray& initStateMsdx, NDArray& update, NDArray& stateMsg, NDArray& stateMsdx, const double dRho, const double dEpsilon);
-    void updaterNadam(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initStateV, const NDArray& initStateM, NDArray& update, NDArray& stateV, NDArray& stateM, const double dLr, const double dBeta1, const double dBeta2, const double dEpsilon, const int nIteration);
-    void updaterAmsGrad(sd::LaunchContext* context, const NDArray& gradient, const NDArray& initStateV, const NDArray& initStateM, const NDArray& initStateH, NDArray& update, NDArray& stateV, NDArray& stateM, NDArray& stateH, const double dLr, const double dBeta1, const double dBeta2, const double dEpsilon, const int nIteration);
+void updaterRmsProp(sd::LaunchContext* context, const NDArray& gradient,
+                    const NDArray& initState, NDArray& update, NDArray& stateG,
+                    const double dLr, const double dRmsDecay,
+                    const double dEpsilon);
+void updaterAdaGrad(sd::LaunchContext* context, const NDArray& gradient,
+                    const NDArray& initState, NDArray& update, NDArray& stateH,
+                    const double dLr, const double dEpsilon);
+void updaterNesterovs(sd::LaunchContext* context, const NDArray& gradient,
+                      const NDArray& initState, NDArray& update,
+                      NDArray& stateV, const double dLr,
+                      const double bMomentum);
+void updaterAdaMax(sd::LaunchContext* context, const NDArray& gradient,
+                   const NDArray& initStateU, const NDArray& initStateM,
+                   NDArray& update, NDArray& stateU, NDArray& stateM,
+                   const double dLr, const double dBeta1, const double dBeta2,
+                   const double dEpsilon, const int nIteration);
+void updaterAdam(sd::LaunchContext* context, const NDArray& gradient,
+                 const NDArray& initStateU, const NDArray& initStateM,
+                 NDArray& update, NDArray& stateU, NDArray& stateM,
+                 const double dLr, const double dBeta1, const double dBeta2,
+                 const double dEpsilon, const int nIteration);
+void updaterAdaDelta(sd::LaunchContext* context, const NDArray& gradient,
+                     const NDArray& initStateMsg, const NDArray& initStateMsdx,
+                     NDArray& update, NDArray& stateMsg, NDArray& stateMsdx,
+                     const double dRho, const double dEpsilon);
+void updaterNadam(sd::LaunchContext* context, const NDArray& gradient,
+                  const NDArray& initStateV, const NDArray& initStateM,
+                  NDArray& update, NDArray& stateV, NDArray& stateM,
+                  const double dLr, const double dBeta1, const double dBeta2,
+                  const double dEpsilon, const int nIteration);
+void updaterAmsGrad(sd::LaunchContext* context, const NDArray& gradient,
+                    const NDArray& initStateV, const NDArray& initStateM,
+                    const NDArray& initStateH, NDArray& update, NDArray& stateV,
+                    NDArray& stateM, NDArray& stateH, const double dLr,
+                    const double dBeta1, const double dBeta2,
+                    const double dEpsilon, const int nIteration);
 
-}
-}
-}
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 
 #endif

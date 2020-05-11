@@ -21,70 +21,73 @@
 #include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_argmax)
 
-#include <ops/declarable/helpers/axis.h>
-#include <ops/declarable/CustomOperations.h>
 #include <helpers/ConstantTadHelper.h>
+#include <ops/declarable/CustomOperations.h>
+#include <ops/declarable/helpers/axis.h>
 
 namespace sd {
-    namespace ops {
-        DECLARE_TYPES(argmax) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(sd::DataType::ANY)
-                    ->setAllowedOutputTypes({ALL_INTS});
-        }
-
-        CUSTOM_OP_IMPL(argmax, 1, 1, false, 0, -2) {
-            auto input = INPUT_VARIABLE(0);
-            auto output = OUTPUT_VARIABLE(0);
-
-            auto axis = block.getIArguments();
-
-            // axis might be dynamic (i.e. tf mode)
-            if (block.width() > 1 && axis.size() == 0) {
-                auto axisVector = INPUT_VARIABLE(1);
-                helpers::adjustAxis(input->rankOf(), axisVector, axis);
-
-                input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
-            } else {
-                helpers::adjustAxis(input->rankOf(), axis);
-
-                input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
-            }
-
-            STORE_RESULT(output);
-
-            return Status::OK();
-        }
-
-        DECLARE_SHAPE_FN(argmax) {
-            std::vector<int> dims;
-
-            if (block.width() == 1) {
-                dims = block.getIArguments();
-            } else {
-                auto y = INPUT_VARIABLE(1);
-                dims = y->template asVectorT<int>();
-            }
-
-            // we're resolving negative axis here
-            helpers::adjustAxis(shape::rank(inputShape->at(0)), dims);
-
-            if (dims.size() > 1)
-                std::sort(dims.begin(), dims.end());
-
-
-            for (auto d:dims) {
-                REQUIRE_TRUE(inputShape->at(0)[d+1] != 0, 0, "ArgMax: you can't reduce along axis with 0 in shape");
-            }
-
-            // special case - output is scalar
-            if (dims.size() == 0 || (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
-                return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64));
-            }
-
-            return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), DataType::INT64, false, false, block.workspace()));
-        }
-    }
+namespace ops {
+DECLARE_TYPES(argmax) {
+  getOpDescriptor()
+      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedOutputTypes({ALL_INTS});
 }
+
+CUSTOM_OP_IMPL(argmax, 1, 1, false, 0, -2) {
+  auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
+
+  auto axis = block.getIArguments();
+
+  // axis might be dynamic (i.e. tf mode)
+  if (block.width() > 1 && axis.size() == 0) {
+    auto axisVector = INPUT_VARIABLE(1);
+    helpers::adjustAxis(input->rankOf(), axisVector, axis);
+
+    input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
+  } else {
+    helpers::adjustAxis(input->rankOf(), axis);
+
+    input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
+  }
+
+  STORE_RESULT(output);
+
+  return Status::OK();
+}
+
+DECLARE_SHAPE_FN(argmax) {
+  std::vector<int> dims;
+
+  if (block.width() == 1) {
+    dims = block.getIArguments();
+  } else {
+    auto y = INPUT_VARIABLE(1);
+    dims = y->template asVectorT<int>();
+  }
+
+  // we're resolving negative axis here
+  helpers::adjustAxis(shape::rank(inputShape->at(0)), dims);
+
+  if (dims.size() > 1) std::sort(dims.begin(), dims.end());
+
+  for (auto d : dims) {
+    REQUIRE_TRUE(inputShape->at(0)[d + 1] != 0, 0,
+                 "ArgMax: you can't reduce along axis with 0 in shape");
+  }
+
+  // special case - output is scalar
+  if (dims.size() == 0 ||
+      (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
+    return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+        sd::DataType::INT64));
+  }
+
+  return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0),
+                                                   DataType::INT64, false,
+                                                   false, block.workspace()));
+}
+}  // namespace ops
+}  // namespace sd
 
 #endif

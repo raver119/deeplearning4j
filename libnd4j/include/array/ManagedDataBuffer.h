@@ -25,24 +25,25 @@
 #include <memory/GraphMemoryManager.h>
 
 namespace sd {
-    /**
-     * This class provides special DataBuffer implementation for use within Graphs
-     */
-    class SD_EXPORT ManagedDataBuffer : public DataBuffer  {
-    private:
-        graph::GraphMemoryManager &_manager;
+/**
+ * This class provides special DataBuffer implementation for use within Graphs
+ */
+class SD_EXPORT ManagedDataBuffer : public DataBuffer {
+ private:
+  graph::GraphMemoryManager& _manager;
 
-    protected:
-        memory::MemoryZone _zone;
-        MemoryDescriptor _descriptor;
+ protected:
+  memory::MemoryZone _zone;
+  MemoryDescriptor _descriptor;
 
-    public:
-        ManagedDataBuffer(graph::GraphMemoryManager &manager, uint64_t numberOfBytes, DataType dtype, memory::MemoryZone zone);
-        ~ManagedDataBuffer();
+ public:
+  ManagedDataBuffer(graph::GraphMemoryManager& manager, uint64_t numberOfBytes,
+                    DataType dtype, memory::MemoryZone zone);
+  ~ManagedDataBuffer();
 
-        void* primary() override;
-        void* special() override;
-    };
-}
+  void* primary() override;
+  void* special() override;
+};
+}  // namespace sd
 
-#endif //SD_MANAGEDDATABUFFER_H
+#endif  // SD_MANAGEDDATABUFFER_H

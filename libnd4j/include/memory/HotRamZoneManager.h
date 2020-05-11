@@ -24,18 +24,17 @@
 #include <memory/HotZoneManager.h>
 
 namespace sd {
-    namespace memory {
-        class HotRamZoneManager : public HotZoneManager {
-        public:
-            HotRamZoneManager() = default;
-            ~HotRamZoneManager() = default;
+namespace memory {
+class HotRamZoneManager : public HotZoneManager {
+ public:
+  HotRamZoneManager() = default;
+  ~HotRamZoneManager() = default;
 
-            MemoryDescriptor allocate(uint64_t numBytes) override;
+  MemoryDescriptor allocate(uint64_t numBytes) override;
 
-            void release(MemoryDescriptor &descriptor) override;
-        };
-    }
-}
+  void release(MemoryDescriptor &descriptor) override;
+};
+}  // namespace memory
+}  // namespace sd
 
-
-#endif //SD_HOTRAMZONEMANAGER_H
+#endif  // SD_HOTRAMZONEMANAGER_H

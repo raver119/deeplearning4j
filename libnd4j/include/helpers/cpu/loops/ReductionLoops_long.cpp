@@ -22,31 +22,41 @@
 
 using namespace simdOps;
 
-
-#include "ReductionLoops.hpp"
 #include <system/pointercast.h>
 #include <types/types.h>
+
+#include "ReductionLoops.hpp"
 
 using namespace simdOps;
 
 namespace sd {
 
-    template<typename X, typename Z>
-    template <typename OpType>
-    void ReductionLongLoops<X, Z>::innerloopReduce(const X * x, const Nd4jLong* xShapeInfo, Z *z, const Nd4jLong* zShapeInfo, const Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, X* extraParams, int64_t start, int64_t stop) {
+template <typename X, typename Z>
+template <typename OpType>
+void ReductionLongLoops<X, Z>::innerloopReduce(
+    const X *x, const Nd4jLong *xShapeInfo, Z *z, const Nd4jLong *zShapeInfo,
+    const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets, X *extraParams,
+    int64_t start, int64_t stop) {
 #ifndef INLINE_LOOPS
-        ReductionLoops<X,Z,X>::template loopReduce<OpType>(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop);
+  ReductionLoops<X, Z, X>::template loopReduce<OpType>(
+      x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams,
+      start, stop);
 #endif
-    }
-
-    template<typename X, typename Y>
-    void ReductionLongLoops<X, Y>::wrapper(const int opNum, const X *x, const Nd4jLong *xShapeInfo, Y *z,
-                                           const Nd4jLong *zShapeInfo, const Nd4jLong *tadShapeInfo,
-                                           const Nd4jLong *tadOffsets, X *extraParams, int64_t start, int64_t stop) {
-#ifndef INLINE_LOOPS
-        DISPATCH_BY_OPNUM_TT(innerloopReduce, PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop), REDUCE_LONG_OPS);
-#endif
-    }
-
-    BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionLongLoops, , LIBND4J_TYPES, LONG_TYPES);
 }
+
+template <typename X, typename Y>
+void ReductionLongLoops<X, Y>::wrapper(
+    const int opNum, const X *x, const Nd4jLong *xShapeInfo, Y *z,
+    const Nd4jLong *zShapeInfo, const Nd4jLong *tadShapeInfo,
+    const Nd4jLong *tadOffsets, X *extraParams, int64_t start, int64_t stop) {
+#ifndef INLINE_LOOPS
+  DISPATCH_BY_OPNUM_TT(innerloopReduce,
+                       PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo,
+                              tadOffsets, extraParams, start, stop),
+                       REDUCE_LONG_OPS);
+#endif
+}
+
+BUILD_DOUBLE_TEMPLATE(template class SD_EXPORT ReductionLongLoops, ,
+                      LIBND4J_TYPES, LONG_TYPES);
+}  // namespace sd

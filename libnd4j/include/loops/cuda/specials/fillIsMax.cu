@@ -24,22 +24,28 @@
 namespace sd {
 
 ////////////////////////////////////////////////////////////////////////
-    template <typename T>
-    __global__ void execFillIsMax(void *vdZ, const Nd4jLong *xShapeInfo, Nd4jLong length, long idx) {
-        auto dz = reinterpret_cast<T*>(vdZ);
-        int tid = blockIdx.x * blockDim.x + threadIdx.x;
+template <typename T>
+__global__ void execFillIsMax(void *vdZ, const Nd4jLong *xShapeInfo,
+                              Nd4jLong length, long idx) {
+  auto dz = reinterpret_cast<T *>(vdZ);
+  int tid = blockIdx.x * blockDim.x + threadIdx.x;
 
-        for (Nd4jLong i = tid; i < length; i += blockDim.x * gridDim.x)
-            dz[shape::getIndexOffset(i, xShapeInfo)] = (i == idx ? (T) 1 : (T) 0);
-    }
+  for (Nd4jLong i = tid; i < length; i += blockDim.x * gridDim.x)
+    dz[shape::getIndexOffset(i, xShapeInfo)] = (i == idx ? (T)1 : (T)0);
+}
 
 ////////////////////////////////////////////////////////////////////////
-    template <typename T>
-    __host__ void fillIsMaxGeneric(dim3 &launchDims, cudaStream_t *stream, void *dx, const Nd4jLong *xShapeInfo, Nd4jLong length, long idx) {
-        execFillIsMax<T><<<launchDims.x, launchDims.y, launchDims.z, *stream>>>(dx, xShapeInfo, length, idx);
-        sd::DebugHelper::checkErrorCode(stream, "fillIsMax(...) failed");
-    }
-
-
-    BUILD_SINGLE_TEMPLATE(template void SD_EXPORT fillIsMaxGeneric, (dim3& launchDims, cudaStream_t *stream, void* dz, const Nd4jLong *zShapeInfo, Nd4jLong length, long idx), LIBND4J_TYPES);
+template <typename T>
+__host__ void fillIsMaxGeneric(dim3 &launchDims, cudaStream_t *stream, void *dx,
+                               const Nd4jLong *xShapeInfo, Nd4jLong length,
+                               long idx) {
+  execFillIsMax<T><<<launchDims.x, launchDims.y, launchDims.z, *stream>>>(
+      dx, xShapeInfo, length, idx);
+  sd::DebugHelper::checkErrorCode(stream, "fillIsMax(...) failed");
 }
+
+BUILD_SINGLE_TEMPLATE(template void SD_EXPORT fillIsMaxGeneric,
+                      (dim3 & launchDims, cudaStream_t *stream, void *dz,
+                       const Nd4jLong *zShapeInfo, Nd4jLong length, long idx),
+                      LIBND4J_TYPES);
+}  // namespace sd

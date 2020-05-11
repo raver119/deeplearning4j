@@ -21,42 +21,43 @@
 #ifndef SD_BROADCASTOPSTUPLE_H
 #define SD_BROADCASTOPSTUPLE_H
 
-#include <system/op_enums.h>
 #include <system/dll.h>
+#include <system/op_enums.h>
 
 namespace sd {
-    class SD_EXPORT BroadcastOpsTuple {
-    private:
+class SD_EXPORT BroadcastOpsTuple {
+ private:
+ public:
+  sd::scalar::Ops s;
+  sd::pairwise::Ops p;
+  sd::broadcast::Ops b;
 
-    public:
-        sd::scalar::Ops  s;
-        sd::pairwise::Ops p;
-        sd::broadcast::Ops b;
+  BroadcastOpsTuple() = default;
+  ~BroadcastOpsTuple() = default;
 
-        BroadcastOpsTuple() = default;
-        ~BroadcastOpsTuple() = default;
+  BroadcastOpsTuple(sd::scalar::Ops scalar, sd::pairwise::Ops pairwise,
+                    sd::broadcast::Ops broadcast) {
+    s = scalar;
+    p = pairwise;
+    b = broadcast;
+  }
 
-        BroadcastOpsTuple(sd::scalar::Ops scalar, sd::pairwise::Ops pairwise, sd::broadcast::Ops broadcast) {
-            s = scalar;
-            p = pairwise;
-            b = broadcast;
-        }
+  static BroadcastOpsTuple custom(sd::scalar::Ops scalar,
+                                  sd::pairwise::Ops pairwise,
+                                  sd::broadcast::Ops broadcast);
 
-        static BroadcastOpsTuple custom(sd::scalar::Ops scalar, sd::pairwise::Ops pairwise, sd::broadcast::Ops broadcast);
+  static BroadcastOpsTuple Add();
+  static BroadcastOpsTuple Assign();
+  static BroadcastOpsTuple Divide();
+  static BroadcastOpsTuple DivideNoNan();
+  static BroadcastOpsTuple Multiply();
+  static BroadcastOpsTuple Subtract();
+  static BroadcastOpsTuple IGamma();
+  static BroadcastOpsTuple IGammac();
 
-        static BroadcastOpsTuple Add();
-        static BroadcastOpsTuple Assign();
-        static BroadcastOpsTuple Divide();
-        static BroadcastOpsTuple DivideNoNan();
-        static BroadcastOpsTuple Multiply();
-        static BroadcastOpsTuple Subtract();
-        static BroadcastOpsTuple IGamma();
-        static BroadcastOpsTuple IGammac();
+  static BroadcastOpsTuple Pow();
+  static BroadcastOpsTuple PowDerivative();
+};
+}  // namespace sd
 
-        static BroadcastOpsTuple Pow();
-        static BroadcastOpsTuple PowDerivative();
-    };
-}
-
-
-#endif //SD_BROADCASTOPSTUPLE_H
+#endif  // SD_BROADCASTOPSTUPLE_H

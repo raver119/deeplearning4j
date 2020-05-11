@@ -20,37 +20,47 @@
 //
 #ifndef __IMAGE_RESIZE_HELPERS__
 #define __IMAGE_RESIZE_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
 
-    enum ImageResizeMethods {
-        kResizeBilinear = 1,
-        kResizeBicubic,
-        kResizeNearest,
-        kResizeGaussian,
-        kResizeLanczos5,
-        kResizeMitchelcubic,
-        kResizeArea
-    };
+enum ImageResizeMethods {
+  kResizeBilinear = 1,
+  kResizeBicubic,
+  kResizeNearest,
+  kResizeGaussian,
+  kResizeLanczos5,
+  kResizeMitchelcubic,
+  kResizeArea
+};
 
-    int resizeBilinearFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-            bool const alignCorners, bool const halfPixelCenter, NDArray* output);
-    int resizeNeighborFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-            bool const alignCorners, bool const halfPixelCenter, NDArray* output);
-    int resizeBicubicFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-                      bool preserveAspectRatio, bool antialias, NDArray* output);
-    int resizeBicubicFunctorA(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-                             bool const alignCorners, bool const halfPixelAlign, NDArray* output);
-    int resizeAreaFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-                             bool const alignCorners, NDArray* output);
+int resizeBilinearFunctor(sd::LaunchContext* context, NDArray const* image,
+                          int const width, int const height,
+                          bool const alignCorners, bool const halfPixelCenter,
+                          NDArray* output);
+int resizeNeighborFunctor(sd::LaunchContext* context, NDArray const* image,
+                          int const width, int const height,
+                          bool const alignCorners, bool const halfPixelCenter,
+                          NDArray* output);
+int resizeBicubicFunctor(sd::LaunchContext* context, NDArray const* image,
+                         int const width, int const height,
+                         bool preserveAspectRatio, bool antialias,
+                         NDArray* output);
+int resizeBicubicFunctorA(sd::LaunchContext* context, NDArray const* image,
+                          int const width, int const height,
+                          bool const alignCorners, bool const halfPixelAlign,
+                          NDArray* output);
+int resizeAreaFunctor(sd::LaunchContext* context, NDArray const* image,
+                      int const width, int const height,
+                      bool const alignCorners, NDArray* output);
 
-    int resizeFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
-            ImageResizeMethods method, bool preserveAspectRatio, bool antialias, NDArray* output);
-}
-}
-}
+int resizeFunctor(sd::LaunchContext* context, NDArray const* image,
+                  int const width, int const height, ImageResizeMethods method,
+                  bool preserveAspectRatio, bool antialias, NDArray* output);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
 #endif

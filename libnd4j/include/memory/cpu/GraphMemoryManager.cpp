@@ -18,34 +18,34 @@
 // @author raver119@gmail.com
 //
 
+#include <memory/ColdZoneManager.h>
 #include <memory/GraphMemoryManager.h>
 #include <memory/HotRamZoneManager.h>
-#include <memory/ColdZoneManager.h>
 
 namespace sd {
-    namespace graph {
-        GraphMemoryManager::GraphMemoryManager() {
-            // first of all we initialize all memory managers
-            // CPU backend only has two: HOT and COLD
+namespace graph {
+GraphMemoryManager::GraphMemoryManager() {
+  // first of all we initialize all memory managers
+  // CPU backend only has two: HOT and COLD
 
-            _zones[MemoryZone::HOT] = new memory::HotRamZoneManager();
-            _zones[MemoryZone::COLD] = new memory::ColdZoneManager();
-        }
-
-        GraphMemoryManager::~GraphMemoryManager() {
-            delete _zones[MemoryZone::HOT];
-            delete _zones[MemoryZone::COLD];
-        }
-
-        MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes, MemoryZone zone) {
-            if (zone == MemoryZone::WARM)
-                zone = MemoryZone::HOT;
-
-            return _zones[zone]->allocate(numBytes);
-        }
-
-        void GraphMemoryManager::release(MemoryDescriptor &descriptor) {
-            _zones[descriptor.zone()]->release(descriptor);
-        }
-    }
+  _zones[MemoryZone::HOT] = new memory::HotRamZoneManager();
+  _zones[MemoryZone::COLD] = new memory::ColdZoneManager();
 }
+
+GraphMemoryManager::~GraphMemoryManager() {
+  delete _zones[MemoryZone::HOT];
+  delete _zones[MemoryZone::COLD];
+}
+
+MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes,
+                                              MemoryZone zone) {
+  if (zone == MemoryZone::WARM) zone = MemoryZone::HOT;
+
+  return _zones[zone]->allocate(numBytes);
+}
+
+void GraphMemoryManager::release(MemoryDescriptor &descriptor) {
+  _zones[descriptor.zone()]->release(descriptor);
+}
+}  // namespace graph
+}  // namespace sd

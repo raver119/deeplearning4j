@@ -24,11 +24,10 @@
 #include <performance/benchmarking/BenchmarkSuit.h>
 
 namespace sd {
-    class LightBenchmarkSuit : public BenchmarkSuit {
-    public:
-        std::string runSuit() override;
-    };
-}
+class LightBenchmarkSuit : public BenchmarkSuit {
+ public:
+  std::string runSuit() override;
+};
+}  // namespace sd
 
-
-#endif //SD_LIGHTBENCHMARKSUIT_H
+#endif  // SD_LIGHTBENCHMARKSUIT_H

@@ -24,25 +24,22 @@
 #include <ops/declarable/headers/tests.h>
 
 namespace sd {
-    namespace ops {
-        OP_IMPL(test_output_reshape, 1, 1, true) {
-            auto input = INPUT_VARIABLE(0);
-            auto output = OUTPUT_VARIABLE(0);
+namespace ops {
+OP_IMPL(test_output_reshape, 1, 1, true) {
+  auto input = INPUT_VARIABLE(0);
+  auto output = OUTPUT_VARIABLE(0);
 
-            if (!block.isInplace())
-                output->assign(input);
+  if (!block.isInplace()) output->assign(input);
 
-            output->reshapei({-1});
+  output->reshapei({-1});
 
-            return Status::OK();
-        }
-
-        DECLARE_TYPES(test_output_reshape) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(sd::DataType::ANY)
-                    ->setSameMode(true);
-        }
-    }
+  return Status::OK();
 }
+
+DECLARE_TYPES(test_output_reshape) {
+  getOpDescriptor()->setAllowedInputTypes(sd::DataType::ANY)->setSameMode(true);
+}
+}  // namespace ops
+}  // namespace sd
 
 #endif

@@ -24,47 +24,46 @@
 #include "helpers.h"
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            template <typename T>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(T value);
+namespace ops {
+namespace helpers {
+template <typename T>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(T value);
 
-            template <>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(float value) {
-                int intie = *(int *)&value;
-                return static_cast<Nd4jLong>(intie);
-            }
-
-            template <>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(double value) {
-                Nd4jLong longie = *(Nd4jLong *)&value;
-                return longie;
-            }
-
-            template <>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(float16 value) {
-                return longBytes<float>((float) value);
-            }
-
-            template <>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(Nd4jLong value) {
-                return value;
-            }
-
-            template <>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(bfloat16 value) {
-                return longBytes<float>((float) value);
-            }
-
-            template <typename T>
-            FORCEINLINE _CUDA_HD Nd4jLong longBytes(T value) {
-                return longBytes<Nd4jLong>((Nd4jLong) value);
-            }
-
-
-            void hashCode(LaunchContext *context, NDArray &array, NDArray &result);
-        }
-    }
+template <>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(float value) {
+  int intie = *(int *)&value;
+  return static_cast<Nd4jLong>(intie);
 }
 
-#endif //SD_HASHCODE_H
+template <>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(double value) {
+  Nd4jLong longie = *(Nd4jLong *)&value;
+  return longie;
+}
+
+template <>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(float16 value) {
+  return longBytes<float>((float)value);
+}
+
+template <>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(Nd4jLong value) {
+  return value;
+}
+
+template <>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(bfloat16 value) {
+  return longBytes<float>((float)value);
+}
+
+template <typename T>
+FORCEINLINE _CUDA_HD Nd4jLong longBytes(T value) {
+  return longBytes<Nd4jLong>((Nd4jLong)value);
+}
+
+void hashCode(LaunchContext *context, NDArray &array, NDArray &result);
+}  // namespace helpers
+}  // namespace ops
+}  // namespace sd
+
+#endif  // SD_HASHCODE_H

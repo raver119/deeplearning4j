@@ -18,70 +18,84 @@
 // @author raver119@gmail.com
 //
 
-#include "testlayers.h"
-#include <helpers/PointersManager.h>
 #include <array/ExtraArguments.h>
-#include <ops/declarable/CustomOperations.h>
-#include <array>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <helpers/PointersManager.h>
+#include <ops/declarable/CustomOperations.h>
+
+#include <array>
+
+#include "testlayers.h"
 
 using namespace sd;
 using namespace sd::ops;
 
 class JavaInteropCudaTests : public testing::Test {
-public:
-
+ public:
 };
 
 TEST_F(JavaInteropCudaTests, test_DeclarableOp_execution_1) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
-    auto y = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
-    auto e = NDArrayFactory::create<float>('c', {3, 5});
-    x.assign(1.f);
-    e.assign(2.f);
+  auto x = NDArrayFactory::create<float>('c', {3, 5});
+  auto y = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+  auto e = NDArrayFactory::create<float>('c', {3, 5});
+  x.assign(1.f);
+  e.assign(2.f);
 
-    sd::ops::add op;
-    Context context(1);
+  sd::ops::add op;
+  Context context(1);
 
-    context.setCudaContext(LaunchContext::defaultContext()->getCudaStream(), LaunchContext::defaultContext()->getReductionPointer(), LaunchContext::defaultContext()->getAllocationPointer());
-    context.setInputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo());
-    context.setInputArray(1, y.buffer(), y.shapeInfo(), y.specialBuffer(), y.specialShapeInfo());
+  context.setCudaContext(
+      LaunchContext::defaultContext()->getCudaStream(),
+      LaunchContext::defaultContext()->getReductionPointer(),
+      LaunchContext::defaultContext()->getAllocationPointer());
+  context.setInputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(),
+                        x.specialShapeInfo());
+  context.setInputArray(1, y.buffer(), y.shapeInfo(), y.specialBuffer(),
+                        y.specialShapeInfo());
 
-    context.setOutputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo());
+  context.setOutputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(),
+                         x.specialShapeInfo());
 
-    PointersManager pm(LaunchContext::defaultContext(), "test_DeclarableOp_execution_1");
-    execCustomOp2(nullptr, op.getOpHash(), &context);
+  PointersManager pm(LaunchContext::defaultContext(),
+                     "test_DeclarableOp_execution_1");
+  execCustomOp2(nullptr, op.getOpHash(), &context);
 
-    pm.synchronize();
+  pm.synchronize();
 
-    ASSERT_EQ(e, x);
+  ASSERT_EQ(e, x);
 }
 
 TEST_F(JavaInteropCudaTests, test_DeclarableOp_execution_2) {
-    NDArray x('c', {3, 1, 2}, sd::DataType::FLOAT32);
-    NDArray y('c', {2, 2}, sd::DataType::FLOAT32);
-    NDArray z('c', {3, 2, 2}, sd::DataType::BOOL);
-    NDArray e('c', {3, 2, 2}, sd::DataType::BOOL);
+  NDArray x('c', {3, 1, 2}, sd::DataType::FLOAT32);
+  NDArray y('c', {2, 2}, sd::DataType::FLOAT32);
+  NDArray z('c', {3, 2, 2}, sd::DataType::BOOL);
+  NDArray e('c', {3, 2, 2}, sd::DataType::BOOL);
 
-    x.assign(1.f);
-    y.assign(2.f);
-    e.assign(false);
+  x.assign(1.f);
+  y.assign(2.f);
+  e.assign(false);
 
-    sd::ops::equals op;
-    Context context(1);
+  sd::ops::equals op;
+  Context context(1);
 
-    context.setCudaContext(LaunchContext::defaultContext()->getCudaStream(), LaunchContext::defaultContext()->getReductionPointer(), LaunchContext::defaultContext()->getAllocationPointer());
-    context.setInputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo());
-    context.setInputArray(1, y.buffer(), y.shapeInfo(), y.specialBuffer(), y.specialShapeInfo());
+  context.setCudaContext(
+      LaunchContext::defaultContext()->getCudaStream(),
+      LaunchContext::defaultContext()->getReductionPointer(),
+      LaunchContext::defaultContext()->getAllocationPointer());
+  context.setInputArray(0, x.buffer(), x.shapeInfo(), x.specialBuffer(),
+                        x.specialShapeInfo());
+  context.setInputArray(1, y.buffer(), y.shapeInfo(), y.specialBuffer(),
+                        y.specialShapeInfo());
 
-    context.setOutputArray(0, z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo());
+  context.setOutputArray(0, z.buffer(), z.shapeInfo(), z.specialBuffer(),
+                         z.specialShapeInfo());
 
-    PointersManager pm(LaunchContext::defaultContext(), "test_DeclarableOp_execution_2");
-    execCustomOp2(nullptr, op.getOpHash(), &context);
+  PointersManager pm(LaunchContext::defaultContext(),
+                     "test_DeclarableOp_execution_2");
+  execCustomOp2(nullptr, op.getOpHash(), &context);
 
-    pm.synchronize();
+  pm.synchronize();
 
-    ASSERT_EQ(e, z);
+  ASSERT_EQ(e, z);
 }
-

@@ -24,11 +24,12 @@
 #include <ops/declarable/helpers/helpers.h>
 
 namespace sd {
-    namespace ops {
-        namespace helpers {
-            void compat_sparse_to_dense(const NDArray &values, const NDArray &indices, NDArray *def, NDArray &output);
-        }
-    }
+namespace ops {
+namespace helpers {
+void compat_sparse_to_dense(const NDArray &values, const NDArray &indices,
+                            NDArray *def, NDArray &output);
 }
+}  // namespace ops
+}  // namespace sd
 
-#endif //SAMEDIFF_SPARSE_TO_DENSE_H
+#endif  // SAMEDIFF_SPARSE_TO_DENSE_H

@@ -18,16 +18,12 @@
 // @author raver119@gmail.com
 //
 
-
-#include <system/op_boilerplate.h>
-#include <loops/reduce3.h>
 #include <loops/legacy_ops.h>
-#include <types/types.h>
+#include <loops/reduce3.h>
 #include <ops/specials_cuda.h>
+#include <system/op_boilerplate.h>
+#include <types/types.h>
 
 namespace functions {
-    namespace reduce3 {
-
-
-    }
-}
+namespace reduce3 {}
+}  // namespace functions

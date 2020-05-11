@@ -25,8 +25,8 @@
 
 #ifdef _WIN32
 //#include <windows.h>
-#  define SD_EXPORT __declspec(dllexport)
+#define SD_EXPORT __declspec(dllexport)
 #else
-#  define SD_EXPORT
+#define SD_EXPORT
 #endif
-#endif //NATIVEOPERATIONS_DLL_H
+#endif  // NATIVEOPERATIONS_DLL_H

@@ -21,11 +21,7 @@
 #include <array/ManagedDataBuffer.h>
 
 namespace sd {
-    void *ManagedDataBuffer::primary() {
-        return _descriptor.address();
-    }
+void *ManagedDataBuffer::primary() { return _descriptor.address(); }
 
-    void *ManagedDataBuffer::special() {
-        return nullptr;
-    }
-}
+void *ManagedDataBuffer::special() { return nullptr; }
+}  // namespace sd

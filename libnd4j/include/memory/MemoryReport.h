@@ -21,36 +21,34 @@
 #ifndef LIBND4J_MEMORYREPORT_H
 #define LIBND4J_MEMORYREPORT_H
 
-#include <system/pointercast.h>
 #include <system/dll.h>
+#include <system/pointercast.h>
 
 namespace sd {
-    namespace memory {
-        class SD_EXPORT MemoryReport {
-        private:
-            Nd4jLong _vm = 0;
-            Nd4jLong _rss = 0;
+namespace memory {
+class SD_EXPORT MemoryReport {
+ private:
+  Nd4jLong _vm = 0;
+  Nd4jLong _rss = 0;
 
-        public:
-            MemoryReport() = default;
-            ~MemoryReport() = default;
+ public:
+  MemoryReport() = default;
+  ~MemoryReport() = default;
 
-            bool operator < (const MemoryReport& other) const;
-            bool operator <= (const MemoryReport& other) const;
-            bool operator > (const MemoryReport& other) const;
-            bool operator >= (const MemoryReport& other) const;
-            bool operator == (const MemoryReport& other) const;
-            bool operator != (const MemoryReport& other) const;
+  bool operator<(const MemoryReport& other) const;
+  bool operator<=(const MemoryReport& other) const;
+  bool operator>(const MemoryReport& other) const;
+  bool operator>=(const MemoryReport& other) const;
+  bool operator==(const MemoryReport& other) const;
+  bool operator!=(const MemoryReport& other) const;
 
-            Nd4jLong getVM() const;
-            void setVM(Nd4jLong vm);
+  Nd4jLong getVM() const;
+  void setVM(Nd4jLong vm);
 
-            Nd4jLong getRSS() const;
-            void setRSS(Nd4jLong rss);
-        };
-    }
-}
+  Nd4jLong getRSS() const;
+  void setRSS(Nd4jLong rss);
+};
+}  // namespace memory
+}  // namespace sd
 
-
-
-#endif //LIBND4J_MEMORYREPORT_H
+#endif  // LIBND4J_MEMORYREPORT_H

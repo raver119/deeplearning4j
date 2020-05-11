@@ -24,27 +24,37 @@ using namespace simdOps;
 
 namespace sd {
 
-    template<typename X>
-    template <typename OpType>
-    void ReductionSameLoops<X>::innerloopReduce(const X* x, const Nd4jLong* xShapeInfo, X* z, const Nd4jLong* zShapeInfo, const Nd4jLong* tadShapeInfo, const Nd4jLong* tadOffsets, X* extraParams, int64_t start, int64_t stop) {
+template <typename X>
+template <typename OpType>
+void ReductionSameLoops<X>::innerloopReduce(
+    const X *x, const Nd4jLong *xShapeInfo, X *z, const Nd4jLong *zShapeInfo,
+    const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets, X *extraParams,
+    int64_t start, int64_t stop) {
 #ifndef INLINE_LOOPS
-        ReductionLoops<X,X,X>::template loopReduce<OpType>(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop);
+  ReductionLoops<X, X, X>::template loopReduce<OpType>(
+      x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams,
+      start, stop);
 #endif
-    }
-
-    template<typename X>
-    void ReductionSameLoops<X>::wrapper(const int opNum, const X *vx, const Nd4jLong *xShapeInfo, X *vz,
-                                        const Nd4jLong *zShapeInfo, const Nd4jLong *tadShapeInfo,
-                                        const Nd4jLong *tadOffsets,
-                                           X *vextraParams, int64_t start, int64_t stop) {
-#ifndef INLINE_LOOPS
-        auto x = reinterpret_cast<X *>(vx);
-        auto z = reinterpret_cast<X *>(vz);
-        auto extraParams = reinterpret_cast<X *>(vextraParams);
-
-        DISPATCH_BY_OPNUM_T(innerloopReduce, PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo, tadOffsets, extraParams, start, stop), REDUCE_SAME_OPS);
-#endif
-    }
-
-    BUILD_SINGLE_TEMPLATE(template class ReductionSameLoops, , LIBND4J_TYPES);
 }
+
+template <typename X>
+void ReductionSameLoops<X>::wrapper(const int opNum, const X *vx,
+                                    const Nd4jLong *xShapeInfo, X *vz,
+                                    const Nd4jLong *zShapeInfo,
+                                    const Nd4jLong *tadShapeInfo,
+                                    const Nd4jLong *tadOffsets, X *vextraParams,
+                                    int64_t start, int64_t stop) {
+#ifndef INLINE_LOOPS
+  auto x = reinterpret_cast<X *>(vx);
+  auto z = reinterpret_cast<X *>(vz);
+  auto extraParams = reinterpret_cast<X *>(vextraParams);
+
+  DISPATCH_BY_OPNUM_T(innerloopReduce,
+                      PARAMS(x, xShapeInfo, z, zShapeInfo, tadShapeInfo,
+                             tadOffsets, extraParams, start, stop),
+                      REDUCE_SAME_OPS);
+#endif
+}
+
+BUILD_SINGLE_TEMPLATE(template class ReductionSameLoops, , LIBND4J_TYPES);
+}  // namespace sd

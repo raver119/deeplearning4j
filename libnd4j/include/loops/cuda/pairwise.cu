@@ -21,7 +21,5 @@
 #include "../pairwise_transform.h"
 
 namespace functions {
-    namespace pairwise_transforms {
-
-    }
-}
+namespace pairwise_transforms {}
+}  // namespace functions

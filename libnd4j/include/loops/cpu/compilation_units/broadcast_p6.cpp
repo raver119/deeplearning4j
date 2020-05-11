@@ -21,7 +21,7 @@
 #include "../broadcasting.hpp"
 
 namespace functions {
-    namespace broadcast {
-        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT Broadcast, , PAIRWISE_TYPES_6);
-    }
+namespace broadcast {
+BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT Broadcast, , PAIRWISE_TYPES_6);
 }
+}  // namespace functions

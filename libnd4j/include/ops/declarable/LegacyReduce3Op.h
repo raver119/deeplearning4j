@@ -24,22 +24,24 @@
 #include <ops/declarable/LegacyOp.h>
 
 namespace sd {
-    namespace ops {
-        /**
-        *   This class provides wrapper for Reduce3 operations (i.e. dot, cosineDistance etc)
-        */
-        class SD_EXPORT LegacyReduce3Op : public LegacyOp {
-        protected:
-            Nd4jStatus validateAndExecute(Context& block) override;
-        public:
-            LegacyReduce3Op();
-            LegacyReduce3Op(int opNum);
+namespace ops {
+/**
+ *   This class provides wrapper for Reduce3 operations (i.e. dot,
+ * cosineDistance etc)
+ */
+class SD_EXPORT LegacyReduce3Op : public LegacyOp {
+ protected:
+  Nd4jStatus validateAndExecute(Context& block) override;
 
-            ShapeList* calculateOutputShape(ShapeList* inputShape, sd::graph::Context& block) override;
-            LegacyOp* clone() override;
-        };
-    }
-}
+ public:
+  LegacyReduce3Op();
+  LegacyReduce3Op(int opNum);
 
+  ShapeList* calculateOutputShape(ShapeList* inputShape,
+                                  sd::graph::Context& block) override;
+  LegacyOp* clone() override;
+};
+}  // namespace ops
+}  // namespace sd
 
-#endif //LIBND4J_LEGACYREDUCE3OP_H
+#endif  // LIBND4J_LEGACYREDUCE3OP_H

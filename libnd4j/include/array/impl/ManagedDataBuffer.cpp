@@ -21,17 +21,19 @@
 #include <array/ManagedDataBuffer.h>
 
 namespace sd {
-    ManagedDataBuffer::ManagedDataBuffer(graph::GraphMemoryManager &manager, uint64_t numberOfBytes, DataType dtype, memory::MemoryZone zone) :
-            _manager(manager),
-            _zone(zone),
-            _descriptor(manager.allocate(numberOfBytes, zone)) {
-
-        _lenInBytes = numberOfBytes;
-        _dataType = dtype;
-    }
-
-    ManagedDataBuffer::~ManagedDataBuffer() {
-        // if we know that MDB can be released - it means that all NDArrays were released, so it's really safe to release
-        _manager.release(_descriptor);
-    }
+ManagedDataBuffer::ManagedDataBuffer(graph::GraphMemoryManager &manager,
+                                     uint64_t numberOfBytes, DataType dtype,
+                                     memory::MemoryZone zone)
+    : _manager(manager),
+      _zone(zone),
+      _descriptor(manager.allocate(numberOfBytes, zone)) {
+  _lenInBytes = numberOfBytes;
+  _dataType = dtype;
 }
+
+ManagedDataBuffer::~ManagedDataBuffer() {
+  // if we know that MDB can be released - it means that all NDArrays were
+  // released, so it's really safe to release
+  _manager.release(_descriptor);
+}
+}  // namespace sd

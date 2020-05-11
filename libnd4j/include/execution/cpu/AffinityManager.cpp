@@ -21,23 +21,17 @@
 #include <execution/AffinityManager.h>
 
 namespace sd {
-    int AffinityManager::currentDeviceId() {
-        return 0;
-    }
+int AffinityManager::currentDeviceId() { return 0; }
 
-    int AffinityManager::currentNativeDeviceId() {
-        return 0;
-    }
+int AffinityManager::currentNativeDeviceId() { return 0; }
 
-    int AffinityManager::numberOfDevices() {
-        return 1;
-    }
+int AffinityManager::numberOfDevices() { return 1; }
 
-    void AffinityManager::setCurrentDevice(int deviceId) {
-        // no-op
-    }
-
-    void AffinityManager::setCurrentNativeDevice(int deviceId) {
-        // no-op
-    }
+void AffinityManager::setCurrentDevice(int deviceId) {
+  // no-op
 }
+
+void AffinityManager::setCurrentNativeDevice(int deviceId) {
+  // no-op
+}
+}  // namespace sd

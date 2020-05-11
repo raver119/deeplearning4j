@@ -21,121 +21,110 @@
 #ifndef SD_CUDNNUTILS_H
 #define SD_CUDNNUTILS_H
 
-#include <ops/declarable/PlatformHelper.h>
-#include <ops/declarable/OpRegistrator.h>
-#include <system/platform_boilerplate.h>
+#include <cudnn.h>
 #include <exceptions/cuda_exception.h>
 #include <exceptions/datatype_exception.h>
+#include <ops/declarable/OpRegistrator.h>
+#include <ops/declarable/PlatformHelper.h>
 #include <system/dll.h>
+#include <system/platform_boilerplate.h>
 
-#include <cudnn.h>
-
-namespace sd      {
-namespace ops       {
+namespace sd {
+namespace ops {
 namespace platforms {
 
-    DECLARE_PLATFORM(conv2d, ENGINE_CUDA);
-    DECLARE_PLATFORM(conv2d_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(conv2d, ENGINE_CUDA);
+DECLARE_PLATFORM(conv2d_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(conv3dnew, ENGINE_CUDA);
-    DECLARE_PLATFORM(conv3dnew_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(conv3dnew, ENGINE_CUDA);
+DECLARE_PLATFORM(conv3dnew_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(depthwise_conv2d, ENGINE_CUDA);
-    DECLARE_PLATFORM(depthwise_conv2d_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(depthwise_conv2d, ENGINE_CUDA);
+DECLARE_PLATFORM(depthwise_conv2d_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(batchnorm, ENGINE_CUDA);
-    DECLARE_PLATFORM(batchnorm_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(batchnorm, ENGINE_CUDA);
+DECLARE_PLATFORM(batchnorm_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(avgpool2d, ENGINE_CUDA);
-    DECLARE_PLATFORM(avgpool2d_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(avgpool2d, ENGINE_CUDA);
+DECLARE_PLATFORM(avgpool2d_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(maxpool2d, ENGINE_CUDA);
-    DECLARE_PLATFORM(maxpool2d_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(maxpool2d, ENGINE_CUDA);
+DECLARE_PLATFORM(maxpool2d_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(avgpool3dnew, ENGINE_CUDA);
-    DECLARE_PLATFORM(avgpool3dnew_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(avgpool3dnew, ENGINE_CUDA);
+DECLARE_PLATFORM(avgpool3dnew_bp, ENGINE_CUDA);
 
-    DECLARE_PLATFORM(maxpool3dnew, ENGINE_CUDA);
-    DECLARE_PLATFORM(maxpool3dnew_bp, ENGINE_CUDA);
+DECLARE_PLATFORM(maxpool3dnew, ENGINE_CUDA);
+DECLARE_PLATFORM(maxpool3dnew_bp, ENGINE_CUDA);
 
 //////////////////////////////////////////////////////////////////////////
 FORCEINLINE cudnnDataType_t cudnnDataType(sd::DataType dataType) {
-    switch (dataType) {
-        case sd::DataType::FLOAT32:
-            return CUDNN_DATA_FLOAT;
-        case sd::DataType::DOUBLE:
-            return CUDNN_DATA_DOUBLE;
-        case sd::DataType::HALF:
-            return CUDNN_DATA_HALF;
-        case sd::DataType::INT32:
-            return CUDNN_DATA_INT32;
-        case sd::DataType::INT8:
-            return CUDNN_DATA_INT8;
-        default:
-            throw datatype_exception::build("Unsupported data type", dataType);
-    }
+  switch (dataType) {
+    case sd::DataType::FLOAT32:
+      return CUDNN_DATA_FLOAT;
+    case sd::DataType::DOUBLE:
+      return CUDNN_DATA_DOUBLE;
+    case sd::DataType::HALF:
+      return CUDNN_DATA_HALF;
+    case sd::DataType::INT32:
+      return CUDNN_DATA_INT32;
+    case sd::DataType::INT8:
+      return CUDNN_DATA_INT8;
+    default:
+      throw datatype_exception::build("Unsupported data type", dataType);
+  }
 }
 
 //////////////////////////////////////////////////////////////////////////
-void checkConv2dCUDNNPadAsymmetric(NDArray* &input, NDArray* &gradI,
-                                    const int iH, const int iW,
-                                    const int oH, const int oW,
-                                    const int kH, const int kW,
-                                    const int sH, const int sW,
-                                    const int pH, const int pW,
-                                    const int dH, const int dW,
-                                    const bool isNCHW);
+void checkConv2dCUDNNPadAsymmetric(NDArray*& input, NDArray*& gradI,
+                                   const int iH, const int iW, const int oH,
+                                   const int oW, const int kH, const int kW,
+                                   const int sH, const int sW, const int pH,
+                                   const int pW, const int dH, const int dW,
+                                   const bool isNCHW);
 
 //////////////////////////////////////////////////////////////////////////
-void checkConv3dCUDNNPadAsymmetric(NDArray* &input, NDArray* &gradI,
-                                    const int iD, const int iH, const int iW,
-                                    const int oD, const int oH, const int oW,
-                                    const int kD, const int kH, const int kW,
-                                    const int sD, const int sH, const int sW,
-                                    const int pD, const int pH, const int pW,
-                                    const int dD, const int dH, const int dW,
-                                    const bool isNCDHW);
+void checkConv3dCUDNNPadAsymmetric(NDArray*& input, NDArray*& gradI,
+                                   const int iD, const int iH, const int iW,
+                                   const int oD, const int oH, const int oW,
+                                   const int kD, const int kH, const int kW,
+                                   const int sD, const int sH, const int sW,
+                                   const int pD, const int pH, const int pW,
+                                   const int dD, const int dH, const int dW,
+                                   const bool isNCDHW);
 
 //////////////////////////////////////////////////////////////////////////
-void pooling2dCUDNN(const LaunchContext* context,
-                    const NDArray* input, NDArray* output,
-                    const int kH, const int kW,
-                    const int sH, const int sW,
-                    const int pH, const int pW,
-                    const int dH, const int dW,
-                    const bool isNCHW, const cudnnPoolingMode_t mode);
+void pooling2dCUDNN(const LaunchContext* context, const NDArray* input,
+                    NDArray* output, const int kH, const int kW, const int sH,
+                    const int sW, const int pH, const int pW, const int dH,
+                    const int dW, const bool isNCHW,
+                    const cudnnPoolingMode_t mode);
 
 //////////////////////////////////////////////////////////////////////////
-void pooling2dBpCUDNN(const LaunchContext* context,
-                      const NDArray* input, const NDArray* gradO,
-                            NDArray* gradI,
-                      const int kH, const int kW,
-                      const int sH, const int sW,
-                      const int pH, const int pW,
-                      const int dH, const int dW,
+void pooling2dBpCUDNN(const LaunchContext* context, const NDArray* input,
+                      const NDArray* gradO, NDArray* gradI, const int kH,
+                      const int kW, const int sH, const int sW, const int pH,
+                      const int pW, const int dH, const int dW,
                       const bool isNCHW, const cudnnPoolingMode_t mode);
 
 //////////////////////////////////////////////////////////////////////////
-void pooling3dCUDNN(const LaunchContext* context,
-                    const NDArray* input, NDArray* output,
-                    const int kD, const int kH, const int kW,
-                    const int sD, const int sH, const int sW,
-                    const int pD, const int pH, const int pW,
-                    const int dD, const int dH, const int dW,
-                    const bool isNCDHW, const cudnnPoolingMode_t mode);
+void pooling3dCUDNN(const LaunchContext* context, const NDArray* input,
+                    NDArray* output, const int kD, const int kH, const int kW,
+                    const int sD, const int sH, const int sW, const int pD,
+                    const int pH, const int pW, const int dD, const int dH,
+                    const int dW, const bool isNCDHW,
+                    const cudnnPoolingMode_t mode);
 
 //////////////////////////////////////////////////////////////////////////
-void pooling3dBpCUDNN(const LaunchContext* context,
-                    const NDArray* input, const NDArray* gradO,
-                          NDArray* gradI,
-                    const int kD, const int kH, const int kW,
-                    const int sD, const int sH, const int sW,
-                    const int pD, const int pH, const int pW,
-                    const int dD, const int dH, const int dW,
-                    const bool isNCDHW, const cudnnPoolingMode_t mode);
+void pooling3dBpCUDNN(const LaunchContext* context, const NDArray* input,
+                      const NDArray* gradO, NDArray* gradI, const int kD,
+                      const int kH, const int kW, const int sD, const int sH,
+                      const int sW, const int pD, const int pH, const int pW,
+                      const int dD, const int dH, const int dW,
+                      const bool isNCDHW, const cudnnPoolingMode_t mode);
 
-}
-}
-}
+}  // namespace platforms
+}  // namespace ops
+}  // namespace sd
 
-#endif //SD_CUDNNUTILS_H
+#endif  // SD_CUDNNUTILS_H

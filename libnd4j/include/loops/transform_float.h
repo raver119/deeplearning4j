@@ -24,15 +24,16 @@
 
 #ifndef TRANSFORM_FLOAT_H_
 #define TRANSFORM_FLOAT_H_
-#include <vector>
 #include <math/templatemath.h>
 #include <ops/ops.h>
+
+#include <vector>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <system/pairwise_util.h>
 #include <system/dll.h>
+#include <system/pairwise_util.h>
 
 //#include <loops/reduce.h>
 //#include <loops/scalar.h>
@@ -46,70 +47,64 @@
 
 #include "legacy_ops.h"
 
-
 namespace functions {
-    namespace transform {
+namespace transform {
 
-        template<typename X, typename Z>
-        class TransformFloat {
-        public:
-
+template <typename X, typename Z>
+class TransformFloat {
+ public:
 #ifdef __CUDACC__
 
-	template<typename OpType>
-	static  __device__ void transformCuda(const void *dy, const Nd4jLong *shapeInfo,
-                                          void *params,
-                                          void *result, const Nd4jLong *resultShapeInfo,
-                                          int *allocationPointer, void *reductionPointer,
-                                          const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets);
+  template <typename OpType>
+  static __device__ void transformCuda(
+      const void *dy, const Nd4jLong *shapeInfo, void *params, void *result,
+      const Nd4jLong *resultShapeInfo, int *allocationPointer,
+      void *reductionPointer, const Nd4jLong *tadShapeInfo,
+      const Nd4jLong *tadOffsets);
 
-	static  __device__ void transformCudaLegacy(int opNum,
-                                                const void *dy, const Nd4jLong *shapeInfo,
-                                                void *params,
-                                                void *result, const Nd4jLong *resultShapeInfo,
-                                                int *allocationPointer, void *reductionPointer,
-                                                const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets);
+  static __device__ void transformCudaLegacy(
+      int opNum, const void *dy, const Nd4jLong *shapeInfo, void *params,
+      void *result, const Nd4jLong *resultShapeInfo, int *allocationPointer,
+      void *reductionPointer, const Nd4jLong *tadShapeInfo,
+      const Nd4jLong *tadOffsets);
 
-	template<typename OpType>
-	static  __device__ void transformCuda(Nd4jLong n,
-                                          const void *dy, Nd4jLong incy,
-                                          void *params,
-                                          void *result, Nd4jLong resultStride,
-                                          int *allocationPointer, void *reductionPointer);
+  template <typename OpType>
+  static __device__ void transformCuda(Nd4jLong n, const void *dy,
+                                       Nd4jLong incy, void *params,
+                                       void *result, Nd4jLong resultStride,
+                                       int *allocationPointer,
+                                       void *reductionPointer);
 
+  template <typename OpType>
+  static _CUDA_H void intermediateShaped(dim3 launchDims, cudaStream_t *stream,
+                                         const void *x, const Nd4jLong *xShape,
+                                         int xRank, void *extraParams, void *z,
+                                         const Nd4jLong *zShape, int zRank,
+                                         int *allocationPointer,
+                                         void *reductionPointer,
+                                         const Nd4jLong *tadShapeInfo,
+                                         const Nd4jLong *tadOffsets);
 
-	template <typename OpType>
-	static _CUDA_H void intermediateShaped(dim3 launchDims, cudaStream_t *stream,
-                                           const void *x, const Nd4jLong *xShape, int xRank,
-                                           void *extraParams,
-                                           void *z, const Nd4jLong *zShape, int zRank,
-                                           int *allocationPointer, void *reductionPointer,
-                                           const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets);
-
-	static _CUDA_H void executeTransformShaped(dim3 launchDims, cudaStream_t *stream,
-                                               int opNum,
-                                               const void *x, const Nd4jLong *xShape, int xRank,
-                                               void *extraParams,
-                                               void *z, const Nd4jLong *zShape, int zRank,
-                                               int *allocationPointer, void *reductionPointer,
-                                               const Nd4jLong *tadShapeInfo, const Nd4jLong *tadOffsets);
+  static _CUDA_H void executeTransformShaped(
+      dim3 launchDims, cudaStream_t *stream, int opNum, const void *x,
+      const Nd4jLong *xShape, int xRank, void *extraParams, void *z,
+      const Nd4jLong *zShape, int zRank, int *allocationPointer,
+      void *reductionPointer, const Nd4jLong *tadShapeInfo,
+      const Nd4jLong *tadOffsets);
 
 #else
-			static void exec(int opNum,
-                             const void *dx, const Nd4jLong *xShapeInfo,
+  static void exec(int opNum, const void *dx, const Nd4jLong *xShapeInfo,
+                   void *result, const Nd4jLong *resultShapeInfo,
+                   void *extraParams, uint64_t threadId, uint64_t numThreads);
+
+  template <typename OpType>
+  static SD_EXPORT void exec(const void *dx, const Nd4jLong *xShapeInfo,
                              void *result, const Nd4jLong *resultShapeInfo,
-                             void *extraParams,
-                             uint64_t threadId, uint64_t numThreads);
-
-			template<typename OpType>
-			static SD_EXPORT void exec(const void *dx, const Nd4jLong *xShapeInfo,
-                                         void *result, const Nd4jLong *resultShapeInfo,
-                                         void *extraParams,
-                                         uint64_t threadId, uint64_t numThreads);
+                             void *extraParams, uint64_t threadId,
+                             uint64_t numThreads);
 #endif
-        };
-    }
-}
-
+};
+}  // namespace transform
+}  // namespace functions
 
 #endif /* TRANSFORM_H_ */

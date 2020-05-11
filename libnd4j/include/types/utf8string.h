@@ -21,29 +21,30 @@
 #ifndef SD_UTF8STRING_H
 #define SD_UTF8STRING_H
 
-#include <string>
 #include <system/dll.h>
 
+#include <string>
+
 namespace sd {
-    struct SD_EXPORT utf8string {
-    private:
-        bool _allocated = false;
-    public:
-        char *_buffer = nullptr;
-        unsigned int _length = 0;
+struct SD_EXPORT utf8string {
+ private:
+  bool _allocated = false;
 
-        utf8string();
-        ~utf8string();
+ public:
+  char *_buffer = nullptr;
+  unsigned int _length = 0;
 
-        utf8string(const char *string, int length);
-        utf8string(const std::string &string);
-        utf8string(const utf8string &other);
-        utf8string& operator=(const utf8string &other);
+  utf8string();
+  ~utf8string();
 
-    protected:
-        void Swap(utf8string &other);
-    };
-}
+  utf8string(const char *string, int length);
+  utf8string(const std::string &string);
+  utf8string(const utf8string &other);
+  utf8string &operator=(const utf8string &other);
 
+ protected:
+  void Swap(utf8string &other);
+};
+}  // namespace sd
 
-#endif //SD_UTF8STRING_H
+#endif  // SD_UTF8STRING_H

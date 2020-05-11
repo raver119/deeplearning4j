@@ -16,21 +16,23 @@
 
 //
 //  @author sgazeos@gmail.com
-//  @brief helpers common fuctions for segment_* ops (segment_max, segment_min, etc.)
-//  @brief helpers common fuctions for unsorted_segment_* ops (unsorted_segment_max, etc.)
+//  @brief helpers common fuctions for segment_* ops (segment_max, segment_min,
+//  etc.)
+//  @brief helpers common fuctions for unsorted_segment_* ops
+//  (unsorted_segment_max, etc.)
 //
 #ifndef __SEGMENT_COMMON_HELPERS__
 #define __SEGMENT_COMMON_HELPERS__
-#include <system/op_boilerplate.h>
 #include <array/NDArray.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 namespace ops {
 namespace helpers {
-    void fillUpSegments(NDArray* indices, Nd4jLong numClasses, NDArray& classesRangesBegs, NDArray& classesRangesLens);
+void fillUpSegments(NDArray* indices, Nd4jLong numClasses,
+                    NDArray& classesRangesBegs, NDArray& classesRangesLens);
 
-
 }
-}
-}
+}  // namespace ops
+}  // namespace sd
 #endif

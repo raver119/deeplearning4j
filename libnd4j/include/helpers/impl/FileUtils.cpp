@@ -20,20 +20,19 @@
 
 #include <helpers/FileUtils.h>
 #include <helpers/files.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 namespace sd {
-    bool FileUtils::fileExists(const char *filename) {
-        if (filename == nullptr)
-            return false;
+bool FileUtils::fileExists(const char *filename) {
+  if (filename == nullptr) return false;
 
-        return file_exists(filename);
-    }
-
-    int64_t FileUtils::fileSize(const char *filename) {
-        struct stat stat_buf;
-        int rc = stat(filename, &stat_buf);
-        return rc == 0 ? stat_buf.st_size : -1;
-    }
+  return file_exists(filename);
 }
+
+int64_t FileUtils::fileSize(const char *filename) {
+  struct stat stat_buf;
+  int rc = stat(filename, &stat_buf);
+  return rc == 0 ? stat_buf.st_size : -1;
+}
+}  // namespace sd

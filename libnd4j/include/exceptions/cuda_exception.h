@@ -21,27 +21,27 @@
 #ifndef SD_CUDA_EXCEPTION_H
 #define SD_CUDA_EXCEPTION_H
 
-#include <string>
-#include <stdexcept>
 #include <system/dll.h>
+
+#include <stdexcept>
+#include <string>
 
 #if defined(_MSC_VER)
 
-// we're ignoring warning about non-exportable parent class, since std::runtime_error is a part of Standard C++ Library
-#pragma warning( disable : 4275 )
+// we're ignoring warning about non-exportable parent class, since
+// std::runtime_error is a part of Standard C++ Library
+#pragma warning(disable : 4275)
 
 #endif
 
 namespace sd {
-    class SD_EXPORT cuda_exception : public std::runtime_error {
-    public:
-        cuda_exception(std::string message);
-        ~cuda_exception() = default;
+class SD_EXPORT cuda_exception : public std::runtime_error {
+ public:
+  cuda_exception(std::string message);
+  ~cuda_exception() = default;
 
-        static cuda_exception build(std::string message, int errorCode);
-    };
-}
+  static cuda_exception build(std::string message, int errorCode);
+};
+}  // namespace sd
 
-
-
-#endif //SD_CUDA_EXCEPTION_H
+#endif  // SD_CUDA_EXCEPTION_H

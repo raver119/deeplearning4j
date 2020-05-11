@@ -24,35 +24,32 @@
 #include <ops/declarable/CustomOperations.h>
 
 namespace sd {
-    namespace ops {
+namespace ops {
 
+//////////////////////////////////////////////////////////////////////////
+CUSTOM_OP_IMPL(reshapeas, 2, 1, false, 0, 0) {
+  auto x = INPUT_VARIABLE(0);
+  auto y = INPUT_VARIABLE(1);
 
-    //////////////////////////////////////////////////////////////////////////
-    CUSTOM_OP_IMPL(reshapeas, 2, 1, false, 0, 0) {
+  auto z = OUTPUT_VARIABLE(0);
 
-        auto x = INPUT_VARIABLE(0);
-        auto y = INPUT_VARIABLE(1);
+  // FIXME: add validation here?
+  auto tmp = x->reshape(y->ordering(), y->getShapeAsVector());
+  z->assign(tmp);
 
-        auto z = OUTPUT_VARIABLE(0);
-
-        // FIXME: add validation here?
-        auto tmp = x->reshape(y->ordering(), y->getShapeAsVector());
-        z->assign(tmp);
-
-        return Status::OK();
-    }
-    DECLARE_SYN(reshape_as, reshapeas);
-
-    DECLARE_SHAPE_FN(reshapeas) {
-        return SHAPELIST(CONSTANT(ShapeBuilders::copyShapeInfo(INPUT_VARIABLE(1)->shapeInfo(), false, block.workspace())));
-    }
-
-        DECLARE_TYPES(reshapeas) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(sd::DataType::ANY)
-                    ->setSameMode(true);
-        }
+  return Status::OK();
 }
+DECLARE_SYN(reshape_as, reshapeas);
+
+DECLARE_SHAPE_FN(reshapeas) {
+  return SHAPELIST(CONSTANT(ShapeBuilders::copyShapeInfo(
+      INPUT_VARIABLE(1)->shapeInfo(), false, block.workspace())));
 }
+
+DECLARE_TYPES(reshapeas) {
+  getOpDescriptor()->setAllowedInputTypes(sd::DataType::ANY)->setSameMode(true);
+}
+}  // namespace ops
+}  // namespace sd
 
 #endif

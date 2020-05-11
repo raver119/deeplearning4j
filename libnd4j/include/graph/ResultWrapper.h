@@ -21,27 +21,26 @@
 #ifndef LIBND4J_RESULTWRAPPER_H
 #define LIBND4J_RESULTWRAPPER_H
 
+#include <system/dll.h>
 #include <system/op_boilerplate.h>
 #include <system/pointercast.h>
-#include <system/dll.h>
 
 namespace sd {
-    namespace graph {
-        class SD_EXPORT ResultWrapper {
-        private:
-            Nd4jLong _size = 0L;
-            Nd4jPointer _pointer = nullptr;
+namespace graph {
+class SD_EXPORT ResultWrapper {
+ private:
+  Nd4jLong _size = 0L;
+  Nd4jPointer _pointer = nullptr;
 
-        public:
-            ResultWrapper(Nd4jLong size, Nd4jPointer ptr);
-            ~ResultWrapper();
+ public:
+  ResultWrapper(Nd4jLong size, Nd4jPointer ptr);
+  ~ResultWrapper();
 
-            Nd4jLong size();
+  Nd4jLong size();
 
-            Nd4jPointer pointer();
-        };
-    }
-}
+  Nd4jPointer pointer();
+};
+}  // namespace graph
+}  // namespace sd
 
-
-#endif //LIBND4J_RESULTWRAPPER_H
+#endif  // LIBND4J_RESULTWRAPPER_H
