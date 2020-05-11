@@ -921,7 +921,7 @@ public class WordVectorSerializer {
     public static Word2Vec readWord2VecFromText(@NonNull File vectors, @NonNull File hs, @NonNull File h_codes,
                                                 @NonNull File h_points, @NonNull VectorsConfiguration configuration) throws IOException {
         // first we load syn0
-        Pair<InMemoryLookupTable, VocabCache> pair = loadTxt(vectors);
+        Pair<InMemoryLookupTable, VocabCache> pair = loadTxt(new FileInputStream(vectors));     //Note stream is closed in loadTxt
         InMemoryLookupTable lookupTable = pair.getFirst();
         lookupTable.setNegative(configuration.getNegative());
         if (configuration.getNegative() > 0)
@@ -1559,9 +1559,9 @@ public class WordVectorSerializer {
      * @deprecated Use {@link #loadTxt(File)}
      */
     @Deprecated
-    public static WordVectors loadTxtVectors(File vectorsFile)
-            throws IOException {
-        Pair<InMemoryLookupTable, VocabCache> pair = loadTxt(vectorsFile);
+    public static WordVectors loadTxtVectors(File vectorsFile) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(vectorsFile);         //Note stream is closed in loadTxt
+        Pair<InMemoryLookupTable, VocabCache> pair = loadTxt(fileInputStream);
         return fromPair(pair);
     }
 

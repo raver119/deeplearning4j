@@ -49,6 +49,7 @@ import java.io.File;
 import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @Slf4j
@@ -206,6 +207,6 @@ public class Word2VecTestsSmall extends BaseDL4JTest {
         MultiLayerNetwork restored = ModelSerializer.restoreMultiLayerNetwork(bais, true);
 
         assertEquals(net.getLayerWiseConfigurations(), restored.getLayerWiseConfigurations());
-        assertEquals(net.params(), restored.params());
+        assertTrue(net.params().equalsWithEps(restored.params(), 2e-3));
     }
 }
