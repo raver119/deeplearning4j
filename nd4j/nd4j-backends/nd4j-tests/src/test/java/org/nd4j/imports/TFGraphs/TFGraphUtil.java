@@ -53,16 +53,11 @@ public class TFGraphUtil {
         if (!baseDir.endsWith("/"))
             baseDir += "/";
 
-        long start = System.currentTimeMillis();
         List<String> l = ResourceUtils.listClassPathFiles(baseDir, true, false);
-        long end = System.currentTimeMillis();
 
         Set<String> set = new HashSet<>(l);
-
-
         Map<String, TestCase> map = new HashMap<>();
 
-        long start2 = System.currentTimeMillis();
         for (String s : l) {
             String sub = s.substring(baseDir.length());
 
@@ -146,10 +141,6 @@ public class TFGraphUtil {
                 }
             }
         }
-        long end2 = System.currentTimeMillis();
-
-        System.out.println("List duration: " + (end - start));
-        System.out.println("Process duration: " + (end2 - start2));
         return map;
     }
 
