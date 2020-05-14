@@ -39,43 +39,63 @@ void getDims(const NDArray* array, const int rank,
   mklDims = dnnl::memory::dims(vDims);
 }
 //////////////////////////////////////////////////////////////////////
-dnnl::memory::format_tag getFormat(const int rank) {
-  if (2 == rank) {
-    return dnnl::memory::format_tag::ab;
-  } else if (3 == rank) {
-    return dnnl::memory::format_tag::abc;
-  } else if (4 == rank) {
-    return dnnl::memory::format_tag::abcd;
-  } else if (5 == rank) {
-    return dnnl::memory::format_tag::abcde;
-  } else if (6 == rank) {
-    return dnnl::memory::format_tag::abcdef;
-  }
-  return dnnl::memory::format_tag::a;  // 1 == dataSetRank
+dnnl::memory::format_tag getFormat(const NDArray& arr) {
+
+    dnnl::memory::format_tag result;
+
+    switch (arr.rankOf()) {
+        case 1:
+            result = dnnl::memory::format_tag::a;
+            break;
+        case 2:
+            result = arr.ordering() == 'c' ? dnnl::memory::format_tag::ab : dnnl::memory::format_tag::ba;
+            break;
+        case 3:
+            result = arr.ordering() == 'c' ? dnnl::memory::format_tag::abc : dnnl::memory::format_tag::cba;
+            break;
+        case 4:
+            result = dnnl::memory::format_tag::abcd;
+            break;
+        case 5:
+            result = dnnl::memory::format_tag::abcde;
+            break;
+        case 6:
+            result = dnnl::memory::format_tag::abcdef;
+            break;
+        default:
+            throw std::invalid_argument("MKLDNN getFormat: do we really want to use arras with rank > 6 ?");
+    }
+
+    return result;
 }
 
 //////////////////////////////////////////////////////////////////////
-void setBlockStrides(const NDArray* array, dnnl::memory::desc& mklMd) {
-  if (array->ews() != 1 || array->ordering() != 'c') {
-    mklMd.data.format_kind = dnnl_blocked;  // overrides format
-    for (auto i = 0; i < array->rankOf(); ++i) {
-      mklMd.data.format_desc.blocking.strides[i] = array->strideAt(i);
+void setBlockStrides(const NDArray& array, dnnl::memory::desc& mklMd, const std::vector<int>& permut) {
+  if (array.ews() != 1 || (array.rankOf() > 3 && array.ordering() == 'f') || !permut.empty()) {
+    mklMd.data.format_kind = dnnl_blocked;  // overrides formatif(permut.empty())
+            for (auto i = 0; i < array.rankOf(); ++i)
+                mklMd.data.format_desc.blocking.strides[i] = array.strideAt(i);
+        else {
+            if(array.rankOf() != permut.size())
+                throw std::invalid_argument("mkldnnUtils::setBlockStrides: size of permut vector is not equal to array rank !");
+    for (auto i = 0; i < array.rankOf(); ++i)
+      mklMd.data.format_desc.blocking.strides[i] = array.strideAt(permut[i]);
     }
   }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
-void loadDataToMklStream(const NDArray* array, const dnnl::engine& engine,
+dnnl::memory loadDataToMklStream(const NDArray& array, const dnnl::engine& engine,
                          const dnnl::stream& stream,
                          const dnnl::memory::desc& user_md,
                          const dnnl::memory::desc& primitive_md,
                          dnnl::memory& arg) {
   auto user_mem =
-      dnnl::memory(user_md, engine, const_cast<void*>(array->buffer()));
+      dnnl::memory(user_md, engine, const_cast<NDArray&>(array).buffer());
   const bool bReorder = primitive_md != user_mem.get_desc();
   auto mkl_mem = bReorder ? dnnl::memory(primitive_md, engine) : user_mem;
   if (bReorder)
     dnnl::reorder(user_mem, mkl_mem).execute(stream, user_mem, mkl_mem);
-  arg = mkl_mem;
+  arg = mkl_mem;return user_mem;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -127,42 +147,24 @@ void poolingMKLDNN(const NDArray* input, NDArray* output, const int kD,
                      : dnnl::memory::format_tag::ndhwc;
   }
 
-  // memory descriptors for arrays
+  std::vector<int> permut;
+    if(!isNCHW)
+        permut = rank == 4 ? std::vector<int>({0,3,1,2}) : std::vector<int>({0,4,1,2,3});
+
+    // memory descriptors for arrays
 
   // input
   dnnl::memory::desc x_mkl_md = dnnl::memory::desc(xDims, type, xzFrmat);
   dnnl::memory::desc x_user_md = dnnl::memory::desc(xDims, type, xzFrmat);
-  if (input->ews() != 1 || input->ordering() != 'c') {
-    x_user_md.data.format_kind = dnnl_blocked;  // overrides format
-    x_user_md.data.format_desc.blocking.strides[0] = input->strideAt(0);
-    x_user_md.data.format_desc.blocking.strides[1] =
-        input->strideAt(isNCHW ? 1 : -1);
-    x_user_md.data.format_desc.blocking.strides[2] =
-        input->strideAt(isNCHW ? 2 : 1);
-    x_user_md.data.format_desc.blocking.strides[3] =
-        input->strideAt(isNCHW ? 3 : 2);
-    if (rank == 5)
-      x_user_md.data.format_desc.blocking.strides[4] =
-          input->strideAt(isNCHW ? 4 : 3);
-  }
+  mkldnnUtils::setBlockStrides(*input,
+    x_user_md, permut);
 
   // output
   dnnl::memory::desc z_mkl_md =
       dnnl::memory::desc(zDims, type, dnnl::memory::format_tag::any);
   dnnl::memory::desc z_user_md = dnnl::memory::desc(zDims, type, xzFrmat);
-  if (output->ews() != 1 || output->ordering() != 'c') {
-    z_user_md.data.format_kind = dnnl_blocked;  // overrides format
-    z_user_md.data.format_desc.blocking.strides[0] = output->strideAt(0);
-    z_user_md.data.format_desc.blocking.strides[1] =
-        output->strideAt(isNCHW ? 1 : -1);
-    z_user_md.data.format_desc.blocking.strides[2] =
-        output->strideAt(isNCHW ? 2 : 1);
-    z_user_md.data.format_desc.blocking.strides[3] =
-        output->strideAt(isNCHW ? 3 : 2);
-    if (rank == 5)
-      z_user_md.data.format_desc.blocking.strides[4] =
-          output->strideAt(isNCHW ? 4 : 3);
-  }
+  mkldnnUtils::setBlockStrides(*output,
+    z_user_md, permut);
 
   auto engine =
       mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
@@ -181,22 +183,19 @@ void poolingMKLDNN(const NDArray* input, NDArray* output, const int kD,
   // provide memory buffers and check whether reorder is required
 
   // input
-  mkldnnUtils::loadDataToMklStream(input, engine, stream, x_user_md,
+  mkldnnUtils::loadDataToMklStream(*input, engine, stream, x_user_md,
                                    op_prim_desc.src_desc(), args[DNNL_ARG_SRC]);
 
   // output
-  auto z_user_mem = dnnl::memory(z_user_md, engine, output->buffer());
-  const bool zReorder = op_prim_desc.dst_desc() != z_user_mem.get_desc();
-  auto z_mkl_mem =
-      zReorder ? dnnl::memory(op_prim_desc.dst_desc(), engine) : z_user_mem;
-  args[DNNL_ARG_DST] = z_mkl_mem;
+  auto z_user_mem = mkldnnUtils::loadDataToMklStream(*output, engine, stream, z_user_md, op_prim_desc.dst_desc(),
+  args[DNNL_ARG_DST] );
 
   // run calculations
   dnnl::pooling_forward(op_prim_desc).execute(stream, args);
 
   // reorder outputs if necessary
-  if (zReorder)
-    dnnl::reorder(z_mkl_mem, z_user_mem).execute(stream, z_mkl_mem, z_user_mem);
+  if (op_prim_desc.dst_desc() != z_user_mem.get_desc())
+    dnnl::reorder(args[DNNL_ARG_DST], z_user_mem).execute(stream, args[DNNL_ARG_DST], z_user_mem);
 
   stream.wait();
 }
@@ -252,60 +251,32 @@ void poolingBpMKLDNN(const NDArray* input, const NDArray* gradO, NDArray* gradI,
                      : dnnl::memory::format_tag::ndhwc;
   }
 
-  // memory descriptors for arrays
+  std::vector<int> permut;
+    if(!isNCHW)
+        permut = rank == 4 ? std::vector<int>({0,3,1,2}) : std::vector<int>({0,4,1,2,3});
+
+
+    // memory descriptors for arrays
 
   // input
   dnnl::memory::desc x_mkl_md = dnnl::memory::desc(xDims, type, xzFrmat);
   dnnl::memory::desc x_user_md = dnnl::memory::desc(xDims, type, xzFrmat);
-  if (input->ews() != 1 || input->ordering() != 'c') {
-    x_user_md.data.format_kind = dnnl_blocked;  // overrides format
-    x_user_md.data.format_desc.blocking.strides[0] = input->strideAt(0);
-    x_user_md.data.format_desc.blocking.strides[1] =
-        input->strideAt(isNCHW ? 1 : -1);
-    x_user_md.data.format_desc.blocking.strides[2] =
-        input->strideAt(isNCHW ? 2 : 1);
-    x_user_md.data.format_desc.blocking.strides[3] =
-        input->strideAt(isNCHW ? 3 : 2);
-    if (rank == 5)
-      x_user_md.data.format_desc.blocking.strides[4] =
-          input->strideAt(isNCHW ? 4 : 3);
-  }
+  mkldnnUtils::setBlockStrides(*input,
+    x_user_md, permut);
 
   // gradO
   dnnl::memory::desc gradO_mkl_md =
       dnnl::memory::desc(zDims, type, dnnl::memory::format_tag::any);
   dnnl::memory::desc gradO_user_md = dnnl::memory::desc(zDims, type, xzFrmat);
-  if (gradO->ews() != 1 || gradO->ordering() != 'c') {
-    gradO_user_md.data.format_kind = dnnl_blocked;  // overrides format
-    gradO_user_md.data.format_desc.blocking.strides[0] = gradO->strideAt(0);
-    gradO_user_md.data.format_desc.blocking.strides[1] =
-        gradO->strideAt(isNCHW ? 1 : -1);
-    gradO_user_md.data.format_desc.blocking.strides[2] =
-        gradO->strideAt(isNCHW ? 2 : 1);
-    gradO_user_md.data.format_desc.blocking.strides[3] =
-        gradO->strideAt(isNCHW ? 3 : 2);
-    if (rank == 5)
-      gradO_user_md.data.format_desc.blocking.strides[4] =
-          gradO->strideAt(isNCHW ? 4 : 3);
-  }
+  mkldnnUtils::setBlockStrides(*gradO,
+    gradO_user_md, permut);
 
   // gradI
   dnnl::memory::desc gradI_mkl_md =
       dnnl::memory::desc(xDims, type, dnnl::memory::format_tag::any);
   dnnl::memory::desc gradI_user_md = dnnl::memory::desc(xDims, type, xzFrmat);
-  if (gradI->ews() != 1 || gradI->ordering() != 'c') {
-    gradI_user_md.data.format_kind = dnnl_blocked;  // overrides format
-    gradI_user_md.data.format_desc.blocking.strides[0] = gradI->strideAt(0);
-    gradI_user_md.data.format_desc.blocking.strides[1] =
-        gradI->strideAt(isNCHW ? 1 : -1);
-    gradI_user_md.data.format_desc.blocking.strides[2] =
-        gradI->strideAt(isNCHW ? 2 : 1);
-    gradI_user_md.data.format_desc.blocking.strides[3] =
-        gradI->strideAt(isNCHW ? 3 : 2);
-    if (rank == 5)
-      gradI_user_md.data.format_desc.blocking.strides[4] =
-          gradI->strideAt(isNCHW ? 4 : 3);
-  }
+  mkldnnUtils::setBlockStrides(*gradI,
+    gradI_user_md, permut);
 
   auto engine =
       mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
@@ -327,22 +298,18 @@ void poolingBpMKLDNN(const NDArray* input, const NDArray* gradO, NDArray* gradI,
   std::unordered_map<int, dnnl::memory> args;
 
   // gradO
-  mkldnnUtils::loadDataToMklStream(gradO, engine, stream, gradO_user_md,
+  mkldnnUtils::loadDataToMklStream(*gradO, engine, stream, gradO_user_md,
                                    op_bp_prim_desc.diff_dst_desc(),
                                    args[DNNL_ARG_DIFF_DST]);
 
   // gradI
-  auto gradI_user_mem = dnnl::memory(gradI_user_md, engine, gradI->buffer());
-  const bool gradIReorder =
-      op_bp_prim_desc.diff_src_desc() != gradI_user_mem.get_desc();
-  auto gradI_mkl_mem =
-      gradIReorder ? dnnl::memory(op_bp_prim_desc.diff_src_desc(), engine)
-                   : gradI_user_mem;
-  args[DNNL_ARG_DIFF_SRC] = gradI_mkl_mem;
+  auto gradI_user_mem = mkldnnUtils::loadDataToMklStream(*gradI, engine, stream, gradI_user_md,
+      op_bp_prim_desc.diff_src_desc() ,
+  args[DNNL_ARG_DIFF_SRC] );
 
   if (mode == algorithm::pooling_max) {
     // input
-    mkldnnUtils::loadDataToMklStream(input, engine, stream, x_user_md,
+    mkldnnUtils::loadDataToMklStream(*input, engine, stream, x_user_md,
                                      op_ff_prim_desc.src_desc(),
                                      args[DNNL_ARG_SRC]);
 
@@ -362,9 +329,9 @@ void poolingBpMKLDNN(const NDArray* input, const NDArray* gradO, NDArray* gradI,
   dnnl::pooling_backward(op_bp_prim_desc).execute(stream, args);
 
   // reorder gradI if necessary
-  if (gradIReorder)
-    dnnl::reorder(gradI_mkl_mem, gradI_user_mem)
-        .execute(stream, gradI_mkl_mem, gradI_user_mem);
+  if (op_bp_prim_desc.diff_src_desc() != gradI_user_mem.get_desc())
+    dnnl::reorder(args[DNNL_ARG_DIFF_SRC], gradI_user_mem)
+        .execute(stream, args[DNNL_ARG_DIFF_SRC], gradI_user_mem);
 
   stream.wait();
 }

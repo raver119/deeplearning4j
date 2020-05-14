@@ -31,21 +31,6 @@ namespace sd {
 namespace ops {
 namespace platforms {
 
-dnnl::memory::format_tag get_format_tag(const sd::NDArray& array) {
-  switch (array.rankOf()) {
-    case 1:
-      return dnnl::memory::format_tag::ab;
-    case 2:
-      return array.ordering() == 'c' ? dnnl::memory::format_tag::ab
-                                     : dnnl::memory::format_tag::ba;
-    case 3:
-      return array.ordering() == 'c' ? dnnl::memory::format_tag::abc
-                                     : dnnl::memory::format_tag::cba;
-    default:
-      throw std::runtime_error("MKLDNN matmul only supports 2D/3D arrays");
-  }
-}
-
 //////////////////////////////////////////////////////////////////////////
 static void matmulMKLDNN(const NDArray* x, const NDArray* y, NDArray* z,
                          const bool transX, const bool transY,
@@ -146,13 +131,16 @@ static void matmulMKLDNN(const NDArray* x, const NDArray* y, NDArray* z,
   else if (z->dataType() == DataType::INT8)
     zType = dnnl::memory::data_type::s8;
 
-  // memory descriptors for arrays
+const auto xFormat = xRank == 1 ? dnnl::memory::format_tag::ab : mkldnnUtils::getFormat(*xTR);
+    const auto yFormat = yRank == 1 ? dnnl::memory::format_tag::ab : mkldnnUtils::getFormat(*yTR);
+    const auto zFormat = zRank == 1 ? dnnl::memory::format_tag::ab : mkldnnUtils::getFormat(*zR);
+
+    // memory descriptors for arrays
+    dnnl::memory::desc x_mkl_md, x_user_md, y_mkl_md, y_user_md, z_mkl_md, z_user_md;
 
   // x
-  dnnl::memory::desc x_mkl_md =
-      dnnl::memory::desc(xShape, xType, get_format_tag(*xTR));
-  dnnl::memory::desc x_user_md =
-      dnnl::memory::desc(xShape, xType, get_format_tag(*xTR));
+  x_user_md = x_mkl_md =
+      dnnl::memory::desc(xShape, xType, xFormat);
   if (xTR->ews() != 1) {
     x_user_md.data.format_kind = dnnl_blocked;  // overrides format
     x_user_md.data.format_desc.blocking.strides[0] =
@@ -164,10 +152,8 @@ static void matmulMKLDNN(const NDArray* x, const NDArray* y, NDArray* z,
   }
 
   // y
-  dnnl::memory::desc y_mkl_md =
-      dnnl::memory::desc(yShape, yType, get_format_tag(*yTR));
-  dnnl::memory::desc y_user_md =
-      dnnl::memory::desc(yShape, yType, get_format_tag(*yTR));
+  y_user_md = y_mkl_md =
+      dnnl::memory::desc(yShape, yType, yFormat);
   if (yTR->ews() != 1) {
     y_user_md.data.format_kind = dnnl_blocked;  // overrides format
     y_user_md.data.format_desc.blocking.strides[0] =
@@ -179,10 +165,8 @@ static void matmulMKLDNN(const NDArray* x, const NDArray* y, NDArray* z,
   }
 
   // z
-  dnnl::memory::desc z_mkl_md =
-      dnnl::memory::desc(zShape, zType, get_format_tag(*zR));
-  dnnl::memory::desc z_user_md =
-      dnnl::memory::desc(zShape, zType, get_format_tag(*zR));
+  z_user_md = z_mkl_md =
+      dnnl::memory::desc(zShape, zType, zFormat);
   if (zR->ews() != 1) {
     z_user_md.data.format_kind = dnnl_blocked;  // overrides format
     z_user_md.data.format_desc.blocking.strides[0] =
@@ -218,40 +202,25 @@ static void matmulMKLDNN(const NDArray* x, const NDArray* y, NDArray* z,
   // provide memory buffers and check whether reorder is required
 
   // input
-  mkldnnUtils::loadDataToMklStream(xTR, engine, stream, x_user_md,
+  mkldnnUtils::loadDataToMklStream(*xTR, engine, stream, x_user_md,
                                    op_prim_desc.src_desc(), args[DNNL_ARG_SRC]);
-  /*
-  auto x_user_mem = dnnl::memory(x_user_md, engine, xTR->buffer());
-  const bool xReorder = op_prim_desc.src_desc() != x_user_mem.get_desc();
-  auto x_mkl_mem = xReorder ? dnnl::memory(op_prim_desc.src_desc(), engine) :
-  x_user_mem; if (xReorder) dnnl::reorder(x_user_mem, x_mkl_mem).execute(stream,
-  x_user_mem, x_mkl_mem); args[DNNL_ARG_SRC] = x_mkl_mem;
-*/
+
+
   // y
-  mkldnnUtils::loadDataToMklStream(yTR, engine, stream, y_user_md,
+  mkldnnUtils::loadDataToMklStream(*yTR, engine, stream, y_user_md,
                                    op_prim_desc.weights_desc(),
                                    args[DNNL_ARG_WEIGHTS]);
-  /*
-  auto y_user_mem = dnnl::memory(y_user_md, engine, yTR->buffer());
-  const bool yReorder = op_prim_desc.weights_desc() != y_user_mem.get_desc();
-  auto y_mkl_mem = yReorder ? dnnl::memory(op_prim_desc.weights_desc(), engine)
-  : y_user_mem; if (yReorder) dnnl::reorder(y_user_mem,
-  y_mkl_mem).execute(stream, y_user_mem, y_mkl_mem); args[DNNL_ARG_WEIGHTS] =
-  y_mkl_mem;
-*/
+
   // z
-  auto z_user_mem = dnnl::memory(z_user_md, engine, zR->buffer());
-  const bool zReorder = op_prim_desc.dst_desc() != z_user_mem.get_desc();
-  auto z_mkl_mem =
-      zReorder ? dnnl::memory(op_prim_desc.dst_desc(), engine) : z_user_mem;
-  args[DNNL_ARG_DST] = z_mkl_mem;
+  auto z_user_mem = mkldnnUtils::loadDataToMklStream(*zR, engine, stream, z_user_md, op_prim_desc.dst_desc(),
+  args[DNNL_ARG_DST] );
 
   // run calculations
   dnnl::matmul(op_prim_desc).execute(stream, args);
 
   // reorder outputs if necessary
-  if (zReorder)
-    dnnl::reorder(z_mkl_mem, z_user_mem).execute(stream, z_mkl_mem, z_user_mem);
+  if (op_prim_desc.dst_desc() != z_user_mem.get_desc())
+    dnnl::reorder(args[DNNL_ARG_DST], z_user_mem).execute(stream, args[DNNL_ARG_DST], z_user_mem);
 
   stream.wait();
 

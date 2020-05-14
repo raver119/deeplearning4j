@@ -84,21 +84,20 @@ void mergeAddBp(sd::LaunchContext* context, const NDArray& gradient,
 
 void clipByNorm(sd::LaunchContext* context, NDArray& input, NDArray& output,
                 const std::vector<int>& dimensions, const NDArray& clipNorm,
-                const bool isInplace);
+                const bool isInplace, const bool useAverage);
+
 void clipByGlobalNorm(sd::LaunchContext* context,
                       std::vector<NDArray*> const& inputs, double clipNorm,
                       sd::memory::Workspace* workspace,
                       std::vector<NDArray*>& outputs, bool isInplace);
 
-void clipByNormBP(sd::LaunchContext* context, const NDArray& input,
+void clipByNormBp(sd::LaunchContext* context, const NDArray& input,
                   const NDArray& gradO, NDArray& gradI /*output*/,
-                  const std::vector<int>& dimensions, const NDArray& clipNorm);
+                  const std::vector<int>& dimensions, const NDArray& clipNorm, const bool useAverage);
 
-void clipByAveraged(sd::LaunchContext* context, NDArray& input, NDArray& output,
+void clipByAveragedNorm(sd::LaunchContext* context, NDArray& input, NDArray& output,
                     const std::vector<int>& dimensions, const NDArray& clipNorm,
                     const bool isInplace);
-void clipByValue(sd::LaunchContext* context, NDArray& input, double leftBound,
-                 double rightBound, NDArray& output);
 
 void mirrorPad(sd::LaunchContext* context, const NDArray& input,
                const NDArray& paddings, NDArray& output, const int mode);

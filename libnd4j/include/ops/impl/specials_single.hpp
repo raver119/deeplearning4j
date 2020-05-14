@@ -116,6 +116,25 @@ namespace sd {
 //         samediff::Threads::parallel_tad(func, 0, numOfArrs);
 // }
 
+// static Nd4jLong strideOverContigAxis(const int axis, const Nd4jLong* inShapeInfo) {
+
+//     Nd4jLong result = 9223372036854775807LL;
+
+//     for(uint i = 0; i < shape::rank(inShapeInfo); ++i) {
+
+//         const auto currentStride = shape::stride(inShapeInfo)[i];
+
+//         if(i == axis || shape::shapeOf(inShapeInfo)[i] == 1)
+//             continue;
+
+//         if(result > currentStride)
+//             result = currentStride;
+//     }
+
+//     return result == 9223372036854775807LL ? 1 : result;
+// }
+
+
 template <typename T>
 void SpecialMethods<T>::concatCpuGeneric(
     const std::vector<const NDArray *> &inArrs, NDArray &output,
@@ -164,8 +183,8 @@ void SpecialMethods<T>::concatCpuGeneric(
   //         if(!areInputsContin || !allSameOrder)
   //             break;
 
-  //         strideOfContigStride[i] = shape::strideOverContigAxis(axis,
-  //         inArrs[i]->shapeInfo());
+  //         strideOfContigStride[i] = strideOverContigAxis(axis,
+  //         inArrs[i]->getShapeInfo());
   //     }
   // }
 
@@ -174,8 +193,8 @@ void SpecialMethods<T>::concatCpuGeneric(
   // if(luckCase2) {     // for example {2,1,3} + {2,5,3} + {2,10,3} = {2,16,3},
   // here axis 1 shoud have stride = 1 for all inputs arrays and output array
 
-  //     const auto zStep = shape::strideOverContigAxis(axis,
-  //     output.shapeInfo());
+  //     const auto zStep = strideOverContigAxis(axis,
+  //     output.getShapeInfo());
 
   //     for (uint i = 0; i < output.lengthOf() / output.sizeAt(axis); ++i) {
 

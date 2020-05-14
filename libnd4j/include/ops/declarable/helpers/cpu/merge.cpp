@@ -28,7 +28,7 @@ namespace ops {
 namespace helpers {
 
 //////////////////////////////////////////////////////////////////////////
-template <typename T>
+template <typename X, typename Z>
 static void mergeMaxIndex_(const std::vector<const NDArray*>& inArrs,
                            NDArray& output) {
   const Nd4jLong numArgs = inArrs.size();
@@ -36,17 +36,18 @@ static void mergeMaxIndex_(const std::vector<const NDArray*>& inArrs,
 
   auto func = PRAGMA_THREADS_FOR {
     for (auto e = start; e < stop; e++) {
-      T max = -DataTypeUtils::max<T>();
-      Nd4jLong idx = 0;
+      X max = -DataTypeUtils::max<X>();
+      Z idx = static_cast<Z>(0);
 
       for (Nd4jLong i = 0; i < numArgs; i++) {
-        T v = inArrs[i]->e<T>(e);
+        X v = inArrs[i]->t<X>(e);
         if (v > max) {
           max = v;
-          idx = i;
+          idx = static_cast<Z>(i);
         }
       }
-      output.p(e, idx);
+      // FIXME, use .r<Z>(e)
+            output.t<Z>(e) = static_cast<Z>( idx);
     }
   };
 
@@ -55,8 +56,8 @@ static void mergeMaxIndex_(const std::vector<const NDArray*>& inArrs,
 
 void mergeMaxIndex(sd::LaunchContext* context,
                    const std::vector<const NDArray*>& inArrs, NDArray& output) {
-  BUILD_SINGLE_SELECTOR(inArrs[0]->dataType(), mergeMaxIndex_, (inArrs, output),
-                        LIBND4J_TYPES);
+  BUILD_DOUBLE_SELECTOR(inArrs[0]->dataType(), output.dataType(),mergeMaxIndex_, (inArrs, output),
+                        LIBND4J_TYPES, INDEXING_TYPES);
 }
 
 //////////////////////////////////////////////////////////////////////////

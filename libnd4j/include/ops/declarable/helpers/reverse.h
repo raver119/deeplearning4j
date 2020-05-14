@@ -27,9 +27,9 @@ namespace sd {
 namespace ops {
 namespace helpers {
 
-void reverseSequence(sd::LaunchContext* context, const NDArray* input,
-                     const NDArray* seqLengths, NDArray* output, int seqDim,
-                     const int batchDim);
+	void reverseSequence(sd::LaunchContext * context, const NDArray* input, const NDArray* seqLengths, NDArray* output, int seqDim, const int batchDim);
+
+	void reverse(sd::LaunchContext * context, const NDArray* input, NDArray* output, const std::vector<int>* intArgs);
 
 void reverse(sd::LaunchContext* context, const NDArray* input, NDArray* output,
              const std::vector<int>* intArgs, bool isBackProp);

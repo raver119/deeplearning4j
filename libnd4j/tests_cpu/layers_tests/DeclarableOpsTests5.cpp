@@ -2489,6 +2489,7 @@ TEST_F(DeclarableOpsTests5, ZeroFraction_3) {
   ASSERT_TRUE(res.at(0).isScalar());
   ASSERT_EQ(res.at(0).e<double>(0), 0.375);
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, XWPlusB_1) {
   auto x = NDArrayFactory::create<float>('c', {2, 3},
@@ -2510,6 +2511,7 @@ TEST_F(DeclarableOpsTests5, XWPlusB_1) {
   ASSERT_TRUE(exp.isSameShape(output));
   ASSERT_TRUE(exp.equalsTo(output));
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, XWPlusB_2) {
   auto x = NDArrayFactory::create<float>('c', {1, 2}, {1.f, 11.f});

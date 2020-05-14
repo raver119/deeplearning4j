@@ -764,32 +764,44 @@ TEST_F(DeclarableOpsTests6, TestMergeMaxIndex_1) {
 
   auto res = op.evaluate({&x, &y, &z}, {}, {}, {});
 
-  ASSERT_EQ(ND4J_STATUS_OK, res.status());
-  //    res.at(0).printIndexedBuffer("MergeMaxIndex Result is ");
-  //    res.at(0).printShapeInfo("Shape info for MergeMaxIdex");
-  //    x.printIndexedBuffer("Input is");
-  ASSERT_TRUE(res.at(0).equalsTo(exp));
+    ASSERT_EQ(ND4J_STATUS_OK, res.status());
+    ASSERT_TRUE(res.at(0).equalsTo(exp));
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests6, TestMergeMaxIndex_2) {
   auto x = NDArrayFactory::create<double>(
-      'c', {2, 2, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f});
+      'c', {2, 2, 2}, {1.f,  2.f,  3.f,   4.f,  5.f,  60.f,  7.f,  8.f});
   auto y = NDArrayFactory::create<double>(
-      'c', {2, 2, 2}, {10.f, 2.f, 30.f, 4.f, 50.f, 6.f, 70.f, 8.f});
+      'c', {2, 2, 2}, {10.f, 2.f,  30.f,  4.f,  50.f, 6.f,  70.f, 8.f});
   auto z = NDArrayFactory::create<double>(
-      'c', {2, 2, 2}, {1.f, 20.f, 3.f, 40.f, 5.f, 60.f, 7.f, 80.f});
+      'c', {2, 2, 2}, {1.f,  20.f, 3.f,   40.f, 5.f,  6.f, 7.f,  80.f});
   auto exp = NDArrayFactory::create<Nd4jLong>('c', {2, 2, 2},
-                                              {1, 2, 1, 2, 1, 2, 1, 2});
+                                              {1, 2,     1,    2,    1,    0,   1,    2});
   sd::ops::mergemaxindex op;
 
   auto ress = op.evaluate({&x, &y, &z}, {}, {sd::DataType::INT64});
 
-  ASSERT_EQ(ND4J_STATUS_OK, ress.status());
-  //    res.at(0).printIndexedBuffer("MergeMaxIndex2 Result is ");
-  //    res.at(0).printShapeInfo("Shape info for MergeMaxIdex2");
-  //    x.printIndexedBuffer("Input is");
-  ASSERT_TRUE(ress.at(0).equalsTo(exp));
+    ASSERT_EQ(ND4J_STATUS_OK, ress.status());
+    ASSERT_TRUE(ress.at(0).equalsTo(exp));
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests6, TestMergeMaxIndex_3) {
+
+    auto x1 = NDArrayFactory::create<double>('c', {3}, {1.f, 0.f, 0.f});
+    auto x2 = NDArrayFactory::create<double>('c', {3}, {0.f, 1.f, 0.f});
+    auto x3 = NDArrayFactory::create<double>('c', {3}, {0.f, 0.f, 1.f});
+    NDArray z('c', {3}, sd::DataType::INT32);
+    NDArray expZ('c', {3}, {0, 1, 2}, sd::DataType::INT32);
+
+    sd::ops::mergemaxindex op;
+    auto result = op.execute({&x1, &x2, &x3}, {&z}, {}, {}, {});
+
+    ASSERT_EQ(Status::OK(), result);
+    ASSERT_TRUE(z.equalsTo(expZ));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

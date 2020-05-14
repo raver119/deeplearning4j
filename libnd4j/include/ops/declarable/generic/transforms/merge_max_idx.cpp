@@ -42,8 +42,11 @@ CUSTOM_OP_IMPL(mergemaxindex, -1, 1, false, 0, 0) {
 
 DECLARE_SYN(MergeMaxIndex, mergemaxindex);
 
-DECLARE_TYPES(mergemaxindex) {
-  getOpDescriptor()->setAllowedInputTypes({ALL_INTS, ALL_FLOATS});
+    DECLARE_TYPES(mergemaxindex) {
+        getOpDescriptor()
+                ->setAllowedInputTypes({ALL_INTS, ALL_FLOATS})
+                ->setAllowedOutputTypes({ALL_INDICES});
+    }
 }
 }  // namespace ops
 DECLARE_SHAPE_FN(mergemaxindex) {
