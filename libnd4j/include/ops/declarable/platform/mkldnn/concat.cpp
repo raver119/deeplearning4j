@@ -94,7 +94,7 @@ PLATFORM_IMPL(concat, ENGINE_CPU) {
 
     REQUIRE_TRUE(block.width() > 0, 0, "CONCAT MKLDNN op: No input arrays were provided");
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
 
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 
@@ -105,7 +105,7 @@ PLATFORM_IMPL(concat, ENGINE_CPU) {
     int index = 0;
     bool allOfSameType = true;
     auto rankOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->rankOf() : 0;
-    auto typeOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : block.dataType();
+    auto typeOfFirstArr = block.width() > 0 ? INPUT_VARIABLE(0)->dataType() : DataType::FLOAT32;
 
     for(int i = 0; i < numOfInArrs; ++i) {
         auto input = INPUT_VARIABLE(i);

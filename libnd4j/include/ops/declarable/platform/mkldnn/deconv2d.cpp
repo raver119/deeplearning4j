@@ -57,9 +57,9 @@ static void deconv2dMKLDNN(const NDArray* input, const NDArray* weights,
   std::vector<int> permut;
   if (0 == wFormat)
     permut = {2,3,0,1};  // [kH, kW, oC, iC] -> [oC, iC, kH, kW]
-  } else if (1 == wFormat)
+  else if (1 == wFormat)
     permut = {1,0,2,3};  // [iC, oC, kH, kW] -> [oC, iC, kH, kW]
-   else
+  else
     permut = {3,0,1,2};  // [iC, kH, kW, oC] -> [oC, iC, kH, kW]
 
 
@@ -202,9 +202,9 @@ static void deconv2dBpMKLDNN(const NDArray* input, const NDArray* weights,
   std::vector<int> permut;
   if (0 == wFormat)
     permut = {2,3,0,1};  // [kH, kW, oC, iC] -> [oC, iC, kH, kW]
-  } else if (1 == wFormat)
+  else if (1 == wFormat)
     permut = {1,0,2,3};  // [iC, oC, kH, kW] -> [oC, iC, kH, kW]
-   else
+  else
     permut = {3,0,1,2};  // [iC, kH, kW, oC] -> [oC, iC, kH, kW]
 
 

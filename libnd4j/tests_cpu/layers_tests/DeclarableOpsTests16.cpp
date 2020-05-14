@@ -1100,7 +1100,7 @@ TEST_F(DeclarableOpsTests16, clipbynorm_3) {
     auto result = op.evaluate({&x}, {1.0}, {1});
     auto z = result.at(0);
 
-    auto zNorm1 = z->reduceAlongDimension(reduce::Norm2, {1}, true);
+    auto zNorm1 = z.reduceAlongDimension(reduce::Norm2, {1}, true);
     auto exp = NDArrayFactory::create<double>('c', {3, 1}, {1., 1., xNorm1.e<double>(2)});
 
     ASSERT_TRUE(exp.isSameShape(&zNorm1));
@@ -1255,7 +1255,7 @@ TEST_F(DeclarableOpsTests16, clipbynorm_12) {
     sd::ops::clipbynorm op;
     auto result = op.evaluate({&x}, {0.54}, {});
 
-    ASSERT_EQ(e, *result.at(0));
+    ASSERT_EQ(e, result.at(0));
 
 
 }

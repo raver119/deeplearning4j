@@ -241,7 +241,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
   auto enc_result = enc.evaluate({&initial}, {0.5f});
   auto encoded = enc_result.at(1);
 
-  ASSERT_EQ(135079944 + 4, encoded->lengthOf());
+  ASSERT_EQ(135079944 + 4, encoded.lengthOf());
   ASSERT_NE(exp, initial);
 /*
   for (int e = 0; e < initial.lengthOf(); e++) {
@@ -261,7 +261,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
   //}
 
   sd::ops::decode_threshold dec;
-  auto status = dec.execute({&initial, encoded}, {&initial});
+  auto status = dec.execute({&initial, &encoded}, {&initial});
   ASSERT_EQ(Status::OK(), status);
 
   // checking equality of all dedoded bits

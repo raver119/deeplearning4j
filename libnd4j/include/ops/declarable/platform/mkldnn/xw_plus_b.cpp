@@ -233,15 +233,13 @@ static void xwPlusBiasBp(const NDArray* x, const NDArray* weights,
       dnnl::memory::desc(xShape, dataType, mkldnnUtils::getFormat(*dLdx));
   mkldnnUtils::setBlockStrides(*dLdx, dLdx_user_md);
 
-  // create engineauto engine =
-      mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
+  // create engine
+  auto engine = mkldnnUtils::getEngine(LaunchContext::defaultContext()->engine());
   // forward
   // operation primitive description
   dnnl::inner_product_forward::desc op_ff_desc(
-      dnnl::prop_kind::forward_inference, x_mkl_md, weights_mkl_md, bias_mkl_md,
-      dLdz_mkl_md);
-  dnnl::inner_product_forward::primitive_desc op_ff_prim_desc(op_ff_desc,
-                                                              engine);
+      dnnl::prop_kind::forward_inference, x_mkl_md, weights_mkl_md, bias_mkl_md,dLdz_mkl_md);
+  dnnl::inner_product_forward::primitive_desc op_ff_prim_desc(op_ff_desc, engine);
 
   // backprob
   // dLdw

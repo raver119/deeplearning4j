@@ -52,9 +52,9 @@ z = &input;
 
         auto func = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i++) {
-                const NDArray actualNorm = useAverage ? listOfSubArrs.at(i)->reduceAlongDimension(reduce::Norm2, {}) / listOfSubArrs.at(i)->lengthOf() : listOfSubArrs.at(i)->reduceAlongDimension(reduce::Norm2, {});
+                const NDArray actualNorm = useAverage ? listOfSubArrs.at(i).reduceAlongDimension(reduce::Norm2, {}) / listOfSubArrs.at(i).lengthOf() : listOfSubArrs.at(i).reduceAlongDimension(reduce::Norm2, {});
                 if(actualNorm.e<float>(0) > clipNorm.e<float>(0))
-                    *listOfSubArrs.at(i) *= clipNorm / actualNorm;
+                    listOfSubArrs.at(i) *= clipNorm / actualNorm;
             }
         };
         samediff::Threads::parallel_tad(func, 0, listOfSubArrs.size());
@@ -107,7 +107,7 @@ static void clipByNormBp_(const NDArray& input, const NDArray& gradO, NDArray& g
           auto gradOSubArr = gradOSubArrs.at(i);
                 auto gradISubArr = gradISubArrs.at(i);
 
-                const T norm = useAverage ? norm2.e<T>(i) / gradISubArr->lengthOf() : norm2.e<T>(i);
+                const T norm = useAverage ? norm2.e<T>(i) / gradISubArr.lengthOf() : norm2.e<T>(i);
 
                 if (norm > clipVal) {
 
@@ -121,10 +121,10 @@ static void clipByNormBp_(const NDArray& input, const NDArray& gradO, NDArray& g
                         return factor1 * y * (static_cast<T>(1.f) - factor2 * x * sum);
                     };
 
-                    inputSubArr->applyPairwiseLambda<T>(*gradOSubArr, lambda, *gradISubArr);
+                    inputSubArr.applyPairwiseLambda<T>(gradOSubArr, lambda, gradISubArr);
                 }
                 else
-                    gradISubArr->assign(gradOSubArr);
+                    gradISubArr.assign(gradOSubArr);
             }
         };
         samediff::Threads::parallel_tad(func, 0, gradISubArrs.size());

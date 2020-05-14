@@ -58,7 +58,7 @@ CUSTOM_OP_IMPL(clipbyavgnorm_bp, 2, 1, false, 1, 0) {
 
     const auto clipNorm = NDArrayFactory::create(gradI->dataType(), T_ARG(0), block.launchContext());
 
-    helpers::clipByNormBp(block.launchContext(), *input, *gradO, *gradI, *block.getIArguments(), clipNorm, true);
+    helpers::clipByNormBp(block.launchContext(), *input, *gradO, *gradI, block.getIArguments(), clipNorm, true);
 
     return Status::OK();
 }
