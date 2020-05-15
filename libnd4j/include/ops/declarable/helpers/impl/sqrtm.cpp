@@ -43,7 +43,7 @@ static void sqrtm_(const NDArray* x, NDArray* z) {
         auto func = PRAGMA_THREADS_FOR {
 
             for (auto i = start; i < stop; i++)
-                ops::helpers::Sqrtm<T>::calc(*listX.at(i), *listZ.at(i));
+                ops::helpers::Sqrtm<T>::calc(listX.at(i), listZ.at(i));
         };
 
         samediff::Threads::parallel_tad(func, 0, listX.size());

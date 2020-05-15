@@ -146,13 +146,13 @@ static void adjointTriangularMatrix_(sd::LaunchContext* context,
                 if (!lower) {
                     for (Nd4jLong r = 0; r < rows; r++) {
                         for (Nd4jLong c = 0; c <= r; c++) {
-                            outputPart[batch]->r<T>(r, c) = inputPart[batch]->t<T>(c, r);
+                            outputPart[batch].r<T>(r, c) = inputPart[batch].t<T>(c, r);
                         }
                     }
                 } else {
                     for (Nd4jLong r = 0; r < rows; r++) {
                         for (Nd4jLong c = r; c < cols; c++) {
-                            outputPart[batch]->r<T>(r, c) = inputPart[batch]->t<T>(c, r);
+                            outputPart[batch].r<T>(r, c) = inputPart[batch].t<T>(c, r);
                         }
                     }
                 }

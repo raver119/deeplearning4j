@@ -89,13 +89,15 @@ void HHsequence::applyTo_(NDArray& dest) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////void HHsequence::applyTo(NDArray& dest) {
+//////////////////////////////////////////////////////////////////////////
+void HHsequence::applyTo(NDArray& dest) {
   auto xType = _coeffs.dataType();
 
   BUILD_SINGLE_SELECTOR(xType, applyTo_, (dest), FLOAT_TYPES);
 }
 
-//////////////////////////////////////////////////////////////////////////void HHsequence::mulLeft(NDArray& matrix) {
+/////////////////////////////////////////////////////////////////////////
+void HHsequence::mulLeft(NDArray& matrix) {
   auto xType = _coeffs.dataType();
 
   BUILD_SINGLE_SELECTOR(xType, mulLeft_, (matrix), FLOAT_TYPES);

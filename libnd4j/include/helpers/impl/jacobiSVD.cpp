@@ -21,6 +21,7 @@
 #include <helpers/jacobiSVD.h>
 #include <helpers/hhColPivQR.h>
 #include <helpers/MmulHelper.h>
+#include <array/NDArrayFactory.h>
 
 namespace sd {
 namespace ops {
@@ -30,9 +31,9 @@ namespace helpers {
 template <typename T>
 JacobiSVD<T>::JacobiSVD(const NDArray& matrix, const bool calcU,
                         const bool calcV, const bool fullUV) {
-  if (matrix.rankOf() != 2 || matrix.isScalar())
-    throw std::runtime_error(
-        "ops::helpers::JacobiSVD constructor: input array must be 2D matrix !");
+
+  if(matrix.rankOf() != 2 || matrix.isScalar())
+    throw std::runtime_error("ops::helpers::JacobiSVD constructor: input array must be 2D matrix !");
 
   _rows = static_cast<int>(matrix.sizeAt(0));
   _cols = static_cast<int>(matrix.sizeAt(1));
@@ -42,37 +43,27 @@ JacobiSVD<T>::JacobiSVD(const NDArray& matrix, const bool calcU,
   _calcV = calcV;
   _fullUV = fullUV;
 
-  _s = NDArray(matrix.ordering(), {_diagSize, 1},
-                              matrix.dataType(), matrix.getContext());
+  _s = NDArray(matrix.ordering(), {_diagSize, 1}, matrix.dataType(), matrix.getContext());
 
-    if(_calcU) {
-        if(_fullUV)
-            _u = NDArray(matrix.ordering(), {_rows, _rows}, matrix.dataType(), matrix.getContext());
-        else
-            _u = NDArray(matrix.ordering(), {_rows, _diagSize}, matrix.dataType(), matrix.getContext());
-    }
+  if(_calcU) {
+    if(_fullUV)
+      _u = NDArray(matrix.ordering(), {_rows, _rows}, matrix.dataType(), matrix.getContext());
     else
-      _u = NDArrayFactory::create(matrix.ordering(), {_rows, _diagSize},
-                                  matrix.dataType(), matrix.getContext());
-  } else
-    _u = NDArray(matrix.ordering(), {_rows, 1},
-                                matrix.dataType(), matrix.getContext());
+      _u = NDArray(matrix.ordering(), {_rows, _diagSize}, matrix.dataType(), matrix.getContext());
+  }
+  else
+    _u = NDArray(matrix.ordering(), {_rows, 1}, matrix.dataType(), matrix.getContext());
 
-    if(_calcV) {
-        if(_fullUV)
-            _v = NDArray(matrix.ordering(), {_cols, _cols}, matrix.dataType(), matrix.getContext());
-        else
-            _v = NDArray(matrix.ordering(), {_cols, _diagSize}, matrix.dataType(), matrix.getContext());
-    }
+  if(_calcV) {
+    if(_fullUV)
+      _v = NDArray(matrix.ordering(), {_cols, _cols}, matrix.dataType(), matrix.getContext());
     else
-      _v = NDArrayFactory::create(matrix.ordering(), {_cols, _diagSize},
-                                  matrix.dataType(), matrix.getContext());
-  } else
-    _v = NDArray(matrix.ordering(), {_cols, 1},
-                                matrix.dataType(), matrix.getContext());
+      _v = NDArray(matrix.ordering(), {_cols, _diagSize}, matrix.dataType(), matrix.getContext());
+  }
+  else
+    _v = NDArray(matrix.ordering(), {_cols, 1}, matrix.dataType(), matrix.getContext());
 
-  _m = NDArray(matrix.ordering(), {_diagSize, _diagSize},
-                              matrix.dataType(), matrix.getContext());
+  _m = NDArray(matrix.ordering(), {_diagSize, _diagSize}, matrix.dataType(), matrix.getContext());
 
   evalData(matrix);
 }
@@ -193,7 +184,7 @@ bool JacobiSVD<T>::isBlock2x2NotDiag(NDArray& block, int p, int q, T& maxElem) {
 template <typename T>
 bool JacobiSVD<T>::createJacobiRotation(const T& x, const T& y, const T& z,
                                         NDArray& rotation) {
-  T denom = (T)(2. f)* math::nd4j_abs<T>(y);
+  T denom = (T)(2.f)* math::nd4j_abs<T>(y);
 
   if (denom < DataTypeUtils::min<T>()) {
     rotation.r<T>(0, 0) =

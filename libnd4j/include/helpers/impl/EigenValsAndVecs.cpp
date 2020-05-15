@@ -283,10 +283,10 @@ void EigenValsAndVecs<T>::calcEigenVecs(const NDArray& schurMatrixU) {
 }
 
 
-template class ND4J_EXPORT EigenValsAndVecs<float>;
-template class ND4J_EXPORT EigenValsAndVecs<float16>;
-template class ND4J_EXPORT EigenValsAndVecs<bfloat16>;
-template class ND4J_EXPORT EigenValsAndVecs<double>;
+template class SD_EXPORT EigenValsAndVecs<float>;
+template class SD_EXPORT EigenValsAndVecs<float16>;
+template class SD_EXPORT EigenValsAndVecs<bfloat16>;
+template class SD_EXPORT EigenValsAndVecs<double>;
 
 }
 }

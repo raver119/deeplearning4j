@@ -125,7 +125,7 @@ HHsequence BiDiagonalUp::makeHHsequence_(const char type) {
 
 	const int diagSize = type == 'u' ? _HHbidiag.sizeAt(0) : _HHbidiag.sizeAt(0) - 1;
 
-	_hhCoeffs = NDArray(_HHmatrix.ordering(),  {diagSize}, _HHmatrix.dataType(), _HHmatrix.getContext());
+	auto _hhCoeffs = NDArray(_HHmatrix.ordering(),  {diagSize}, _HHmatrix.dataType(), _HHmatrix.getContext());
 
 	if(type == 'u')
 	    for(int i = 0; i < diagSize; ++i)

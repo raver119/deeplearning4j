@@ -368,15 +368,15 @@ void Schur<T>::calcFromHessenberg() {
     }
 }
 
-template class ND4J_EXPORT Hessenberg<float>;
-template class ND4J_EXPORT Hessenberg<float16>;
-template class ND4J_EXPORT Hessenberg<bfloat16>;
-template class ND4J_EXPORT Hessenberg<double>;
+template class SD_EXPORT Hessenberg<float>;
+template class SD_EXPORT Hessenberg<float16>;
+template class SD_EXPORT Hessenberg<bfloat16>;
+template class SD_EXPORT Hessenberg<double>;
 
-template class ND4J_EXPORT Schur<float>;
-template class ND4J_EXPORT Schur<float16>;
-template class ND4J_EXPORT Schur<bfloat16>;
-template class ND4J_EXPORT Schur<double>;
+template class SD_EXPORT Schur<float>;
+template class SD_EXPORT Schur<float16>;
+template class SD_EXPORT Schur<bfloat16>;
+template class SD_EXPORT Schur<double>;
 
 }
 }

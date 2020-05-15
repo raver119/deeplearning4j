@@ -49,6 +49,8 @@
 #include <ops/declarable/helpers/reductions.h>
 #include <helpers/LoopsCoordsHelper.h>
 
+#include "testlayers.h"
+
 using namespace sd;
 using namespace sd::graph;
 

@@ -2118,7 +2118,8 @@ T NDArray::t(const Nd4jLong i, const Nd4jLong j) const {
   return *(reinterpret_cast<const T*>(bufferWithOffset(i * strideAt(0) + j * strideAt(1))));
 }
 
-////////////////////////////////////////////////////////////////////////template <typename T>
+////////////////////////////////////////////////////////////////////////
+template <typename T>
 T NDArray::t(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k) const {
   if (rankOf() != 3 || i >= sizeAt(0) || j >= sizeAt(1) || k >= sizeAt(2))
     throw std::invalid_argument(
@@ -2134,7 +2135,8 @@ T NDArray::t(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k) const {
   return *(reinterpret_cast<const T*>(bufferWithOffset(i * strideAt(0) + j * strideAt(1) + k * strideAt(2))));
 }
 
-////////////////////////////////////////////////////////////////////////template <typename T>
+////////////////////////////////////////////////////////////////////////
+template <typename T>
 T NDArray::t(const Nd4jLong i, const Nd4jLong j, const Nd4jLong k,
              const Nd4jLong w) const {
   if (rankOf() != 4 || i >= sizeAt(0) || j >= sizeAt(1) || k >= sizeAt(2) ||

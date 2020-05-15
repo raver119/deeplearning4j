@@ -39,7 +39,7 @@ namespace sd {
             if (output->isEmpty())
                 return Status::OK();
 
-            auto axis = *block.getIArguments();
+            auto axis = block.getIArguments();
 
             // axis might be dynamic (i.e. tf mode)
             if (block.width() > 1 && axis.size() == 0) {
@@ -60,7 +60,7 @@ namespace sd {
             std::vector<int> dims;
 
             if (block.width() == 1) {
-                dims = *block.getIArguments();
+                dims = block.getIArguments();
             } else {
                 auto y = INPUT_VARIABLE(1);
                 dims = y->template asVectorT<int>();
@@ -87,7 +87,7 @@ namespace sd {
                 return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(dtype));
             }
 
-            return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), dtype, keepDims, false, block.getWorkspace()));
+            return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0), dtype, keepDims, false, block.workspace()));
         }
     }
 }
