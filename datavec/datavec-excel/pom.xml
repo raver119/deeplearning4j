@@ -22,13 +22,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>datavec-parent</artifactId>
         <groupId>org.datavec</groupId>
+        <artifactId>datavec-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>datavec-excel</artifactId>
-    <packaging>jar</packaging>
 
     <name>datavec-excel</name>
 
@@ -49,12 +48,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-common-tests</artifactId>
-            <version>${nd4j.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

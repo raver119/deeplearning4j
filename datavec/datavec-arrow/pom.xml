@@ -22,13 +22,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>datavec-parent</artifactId>
         <groupId>org.datavec</groupId>
+        <artifactId>datavec-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>datavec-arrow</artifactId>
-    <packaging>jar</packaging>
 
     <name>datavec-arrow</name>
 
@@ -52,12 +51,6 @@
             <groupId>org.apache.arrow</groupId>
             <artifactId>arrow-format</artifactId>
             <version>${arrow.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-common-tests</artifactId>
-            <version>${nd4j.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

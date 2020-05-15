@@ -22,8 +22,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>datavec-data</artifactId>
         <groupId>org.datavec</groupId>
+        <artifactId>datavec-data</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
@@ -33,7 +33,6 @@
         <dependency>
             <groupId>org.datavec</groupId>
             <artifactId>datavec-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -102,12 +101,6 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>hdf5-platform</artifactId>
             <version>${hdf5.version}-${javacpp-presets.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-common-tests</artifactId>
-            <version>${nd4j.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
