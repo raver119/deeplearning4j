@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 //
-// Created by Yurii Shyrma on 18.12.2017.
+// @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
 #ifndef LIBND4J_BIDIAGONALUP_H
@@ -30,8 +30,10 @@ namespace helpers {
 
 class BiDiagonalUp {
  public:
-  NDArray _HHmatrix;  // 2D Householder matrix
-  NDArray _HHbidiag;  // vector which contains Householder coefficientsNDArray _hhCoeffs;              // vector of Householder coefficients
+    NDArray _HHmatrix;    // 2D Householder matrix
+    NDArray _HHbidiag;    // vector which contains Householder coefficients
+    NDArray _hhCoeffs;    // vector of Householder coefficients
+
 
   /**
    *  constructor
@@ -41,11 +43,13 @@ class BiDiagonalUp {
   BiDiagonalUp(const NDArray& matrix);
 
   /**
-   *  this method evaluates data (coeff, normX, tail) used in Householder
-   * transformation formula for Householder matrix: P = identity_matrix - coeff
-   * * w * w^T P * x = [normX, 0, 0 , 0, ...] coeff - scalar w = [1, w1, w2, w3,
-   * ...], "tail" is w except first unity element, that is "tail" = [w1, w2, w3,
-   * ...] tail and coeff are stored in _HHmatrix normX are stored in _HHbidiag
+   *  this method evaluates data (coeff, normX, tail) used in Householder transformation
+   *  formula for Householder matrix: P = identity_matrix - coeff * w * w^T
+   *  P * x = [normX, 0, 0 , 0, ...]
+   *  coeff - scalar
+   *  w = [1, w1, w2, w3, ...], "tail" is w except first unity element, that is "tail" = [w1, w2, w3, ...]
+   *  tail and coeff are stored in _HHmatrix
+   *  normX are stored in _HHbidiag
    */
   template <typename T>
   void _evalData();

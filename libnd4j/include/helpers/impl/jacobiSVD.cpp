@@ -79,7 +79,7 @@ void JacobiSVD<T>::mulRotationOnLeft(const int i, const int j, NDArray& block,
           "of array row range !");
 
     auto temp = block({i,j+1,j-i,  0,0,0}, true, true);
-        temp.assign(mmul(rotation, temp));
+    temp.assign(mmul(rotation, temp));
 
         //auto pTemp = block({i, j + 1, j - i, 0, 0, 0}, true, true);
     // auto temp = pTemp.dup();
@@ -157,8 +157,7 @@ bool JacobiSVD<T>::isBlock2x2NotDiag(NDArray& block, int p, int q, T& maxElem) {
   } else {
     T v = block.t<T>(p, p) / n;
 
-    rotation.r<T>(0,0) =
-    rotation.r<T>(1, 1) = v;
+    rotation.r<T>(0,0) = rotation.r<T>(1, 1) = v;
 
     v = block.t<T>(q, p) / n;
     rotation.r<T>(0,1) = v;
@@ -187,10 +186,8 @@ bool JacobiSVD<T>::createJacobiRotation(const T& x, const T& y, const T& z,
   T denom = (T)(2.f)* math::nd4j_abs<T>(y);
 
   if (denom < DataTypeUtils::min<T>()) {
-    rotation.r<T>(0, 0) =
-    rotation.r<T>(1, 1) = (T)1.f;
-    rotation.r<T>(0, 1) =
-    rotation.r<T>(1, 0) = (T)0.f;
+    rotation.r<T>(0, 0) = rotation.r<T>(1, 1) = (T)1.f;
+    rotation.r<T>(0, 1) = rotation.r<T>(1, 0) = (T)0.f;
     return false;
   } else {
     T tau = (x - z) / denom;
@@ -202,16 +199,14 @@ bool JacobiSVD<T>::createJacobiRotation(const T& x, const T& y, const T& z,
     else
       t = (T)1.f / (tau - w);
 
-    T sign = t > (T)0. ? (
-    T )1.f : ( T)-1.f;
+    T sign = t > (T)0. ? (T)1.f : (T)-1.f;
 
     T cos = (T)1.f / math::nd4j_sqrt<T,T>(t*t + (T) 1.f);
-        T sin =
-               -sign * (y / math::nd4j_abs<T>(y)) * math::nd4j_abs<T>(t) * cos;
+    T sin = -sign * (y / math::nd4j_abs<T>(y)) * math::nd4j_abs<T>(t) * cos;
 
-        rotation.r<T>(0,1) = sin;
+    rotation.r<T>(0,1) = sin;
     rotation.r<T>(1, 0) = -sin;
-        rotation.r<T>(0, 0) = rotation.r<T>(1,1) = cos;
+    rotation.r<T>(0, 0) = rotation.r<T>(1,1) = cos;
 
     return true;
   }
@@ -345,7 +340,9 @@ void JacobiSVD<T>::evalData(const NDArray& matrix) {
 
         _m.assign(matrix({0,_diagSize, 0,_diagSize}) / scale);
 
-    if (_calcV) _v.setIdentity();
+    if(_calcU) _u.setIdentity();
+
+    if(_calcV) _v.setIdentity();
   }
 
   T maxDiagElem = 0.;

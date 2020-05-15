@@ -27,8 +27,7 @@ namespace ops {
 namespace helpers {
 
 //////////////////////////////////////////////////////////////////////////
-HHsequence::HHsequence(const NDArray& vectors, const NDArray& coeffs,
-                       const char type)
+HHsequence::HHsequence(const NDArray& vectors, const NDArray& coeffs, const char type)
     : _vectors(vectors), _coeffs(coeffs) {
   _diagSize = sd::math::nd4j_min(_vectors.sizeAt(0), _vectors.sizeAt(1));
   _shift = 0;
@@ -70,6 +69,7 @@ NDArray HHsequence::getTail(const int idx) const {
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
 void HHsequence::applyTo_(NDArray& dest) {
+
   int size = _type == 'u' ? _vectors.sizeAt(0) : _vectors.sizeAt(1);
 
   if (dest.rankOf() != 2 || (dest.sizeAt(0) != size && dest.sizeAt(1) != size))
