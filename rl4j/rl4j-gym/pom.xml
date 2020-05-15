@@ -41,6 +41,7 @@
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>gym-platform</artifactId>
+            <version>${gym.version}-${javacpp-presets.version}</version>
         </dependency>
     </dependencies>
 

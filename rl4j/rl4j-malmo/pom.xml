@@ -41,10 +41,13 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
+            <version>20190722</version>
+<!--            <version>${json.version}</version>-->
         </dependency>
         <dependency>
             <groupId>com.microsoft.msr.malmo</groupId>
             <artifactId>MalmoJavaJar</artifactId>
+            <version>0.30.0</version>
         </dependency>
     </dependencies>
 
