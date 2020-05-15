@@ -54,7 +54,7 @@ public class TF2ImportTestsSameDiff {   //Note: Can't extend BaseNd4jTest here a
     private String baseDir;
 
     private static final TFGraphTestAllHelper.ExecuteWith EXECUTE_WITH = TFGraphTestAllHelper.ExecuteWith.SAMEDIFF;
-    public static final String[] BASE_DIRS = new String[]{"tf_graphs/examples2.1"};        //Add directories for any other TensorFlow versions here
+    public static final String[] BASE_DIRS = new String[]{"tf_graphs/examples2.2.0"};        //Add directories for any other TensorFlow versions here
     public static final String MODEL_FILENAME = "frozen_model.pb";
 
     public static final String[] IGNORE_REGEXES = new String[]{
