@@ -174,7 +174,7 @@ __device__ void IndexReduce<X, Z>::transform(
   auto reductionBuffer = static_cast<X *>(vreductionBuffer);
   auto order = shape::order(xShapeInfo);
   int tid = blockIdx.x * blockDim.x + threadIdx.x;
-  __shared__ volatile int resultScalar;
+  __shared__ volatile bool resultScalar;
 
   // shared memory space for storing intermediate results
   __shared__ IndexValue<X> *sPartials;
@@ -200,15 +200,10 @@ __device__ void IndexReduce<X, Z>::transform(
     else
       zLen = 1;
 
-    if (dimensionLength == 1) {
-      if (zLen == 1 && (dimension == nullptr || dimension[0] == MAX_DIMENSION))
-        resultScalar = 1;
-      else
-        resultScalar = 0;
-    } else
-      resultScalar = 0;
 
-    if (zLen == 1) resultScalar = 1;
+      if (zLen == 1 )
+        resultScalar = true; else
+      resultScalar = false;
 
     xLength = shape::length(xShapeInfo);
   }

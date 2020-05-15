@@ -90,7 +90,8 @@ TEST_F(NDArrayTest, NDArrayOrder1) {
   auto arrayF = new NDArray(arrayC->dup('f'));
   auto arrayC2 = new NDArray(arrayF->dup('c'));
 
-  ASSERT_EQ('c', arrayC->ordering());
+  arrayF->syncToHost();
+    arrayC2->syncToHost();ASSERT_EQ('c', arrayC->ordering());
   ASSERT_EQ('f', arrayF->ordering());
   ASSERT_EQ('c', arrayC2->ordering());
 

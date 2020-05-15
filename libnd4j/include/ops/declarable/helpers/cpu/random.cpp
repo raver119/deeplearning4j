@@ -69,7 +69,7 @@ void fillRandomGamma_(LaunchContext* context, graph::RandomGenerator& rng,
         outputBuf[pos + e] = math::nd4j_igamma<T, T, T>(
             copyAlpha->t<T>(e), beta != nullptr ? copyBeta->t<T>(e) * u : u);
       } else {
-        output->t<T>(pos + e) = math::nd4j_igamma<T, T, T>(
+        output->r<T>(pos + e) = math::nd4j_igamma<T, T, T>(
             copyAlpha->t<T>(e), beta != nullptr ? copyBeta->t<T>(e) * u : u);
       }
   }
@@ -121,7 +121,7 @@ void fillRandomPoisson_(LaunchContext* context, graph::RandomGenerator& rng,
       if (directOut)
         outputBuf[pos + e] = x;
       else
-        output->t<T>(pos + e) = x;
+        output->r<T>(pos + e) = x;
     }
   }
 }
@@ -149,7 +149,7 @@ void fillRandomUniform_(LaunchContext* context, graph::RandomGenerator& rng,
   else {
     PRAGMA_OMP_PARALLEL_FOR
     for (Nd4jLong i = 0; i < output->lengthOf(); i++) {
-      output->t<T>(i) = rng.relativeT<T>(i, minVal, maxVal);
+      output->r<T>(i) = rng.relativeT<T>(i, minVal, maxVal);
     }
   }
 }

@@ -31,7 +31,7 @@ namespace helpers {
 class BiDiagonalUp {
  public:
   NDArray _HHmatrix;  // 2D Householder matrix
-  NDArray _HHbidiag;  // vector which contains Householder coefficients
+  NDArray _HHbidiag;  // vector which contains Householder coefficientsNDArray _hhCoeffs;              // vector of Householder coefficients
 
   /**
    *  constructor
@@ -60,9 +60,9 @@ class BiDiagonalUp {
    * (acting on rows)
    */
   template <typename T>
-  HHsequence makeHHsequence_(const char type) const;
+  HHsequence makeHHsequence_(const char type);
 
-  HHsequence makeHHsequence(const char type) const;
+  HHsequence makeHHsequence(const char type);
 };
 
 }  // namespace helpers

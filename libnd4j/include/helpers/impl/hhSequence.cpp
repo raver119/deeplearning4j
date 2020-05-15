@@ -37,28 +37,24 @@ HHsequence::HHsequence(const NDArray& vectors, const NDArray& coeffs,
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void HHsequence::_mulLeft(NDArray& matrix) {
+void HHsequence::mulLeft_(NDArray& matrix) {
   const int rows = _vectors.sizeAt(0);
   const int cols = _vectors.sizeAt(1);
   const int inRows = matrix.sizeAt(0);
 
-  NDArray block;
+	for(int i = _diagSize - 1; i >= 0; --i) {
 
-  for (int i = _diagSize - 1; i >= 0; --i) {
-    if (_type == 'u') {
-      block = matrix({inRows - rows + _shift + i, inRows, 0, 0}, true);
-      T _x = _coeffs.e<T>(i);
-      Householder<T>::mulLeft(
-          block, _vectors({i + 1 + _shift, rows, i, i + 1}, true), _x);
-      _coeffs.p<T>(i, _x);
-    } else {
-      block = matrix({inRows - cols + _shift + i, inRows, 0, 0}, true);
-      T _x = _coeffs.e<T>(i);
-      Householder<T>::mulLeft(
-          block, _vectors({i, i + 1, i + 1 + _shift, cols}, true), _x);
-      _coeffs.p<T>(i, _x);
+    	if(_type == 'u') {
+
+    		NDArray block = matrix({inRows-rows+_shift+ i,inRows,  0,0}, true);
+    		Householder<T>::mulLeft(block, _vectors({i + 1 + _shift, rows, i, i+1}, true), _coeffs.t<T>(i));
+    	}
+    	else {
+
+    		NDArray block = matrix({inRows-cols+_shift+i,inRows,  0,0}, true);
+    		Householder<T>::mulLeft(block, _vectors({i, i+1, i + 1 + _shift, cols}, true), _coeffs.t<T>(i));
+    	}
     }
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,11 +69,11 @@ NDArray HHsequence::getTail(const int idx) const {
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-void HHsequence::_applyTo(NDArray& dest) {
+void HHsequence::applyTo_(NDArray& dest) {
   int size = _type == 'u' ? _vectors.sizeAt(0) : _vectors.sizeAt(1);
 
   if (dest.rankOf() != 2 || (dest.sizeAt(0) != size && dest.sizeAt(1) != size))
-    dest = NDArrayFactory::create(dest.ordering(), {size, size},
+    dest = NDArray(dest.ordering(), {size, size},
                                   dest.dataType(), dest.getContext());
   dest.setIdentity();
 
@@ -87,30 +83,27 @@ void HHsequence::_applyTo(NDArray& dest) {
     auto block = dest({dest.sizeAt(0) - curNum, dest.sizeAt(0),
                        dest.sizeAt(1) - curNum, dest.sizeAt(1)},
                       true);
-    T _x = _coeffs.e<T>(k);
 
-    Householder<T>::mulLeft(block, getTail(k), _x);
 
-    _coeffs.p<T>(k, _x);
+    Householder<T>::mulLeft(block, getTail(k), _coeffs.t<T>(k));
   }
 }
 
-void HHsequence::applyTo(NDArray& dest) {
+//////////////////////////////////////////////////////////////////////////void HHsequence::applyTo(NDArray& dest) {
   auto xType = _coeffs.dataType();
 
-  BUILD_SINGLE_SELECTOR(xType, _applyTo, (dest), FLOAT_TYPES);
+  BUILD_SINGLE_SELECTOR(xType, applyTo_, (dest), FLOAT_TYPES);
 }
 
-void HHsequence::mulLeft(NDArray& matrix) {
+//////////////////////////////////////////////////////////////////////////void HHsequence::mulLeft(NDArray& matrix) {
   auto xType = _coeffs.dataType();
 
-  BUILD_SINGLE_SELECTOR(xType, _mulLeft, (matrix), FLOAT_TYPES);
+  BUILD_SINGLE_SELECTOR(xType, mulLeft_, (matrix), FLOAT_TYPES);
 }
 
-BUILD_SINGLE_TEMPLATE(template void HHsequence::_applyTo, (sd::NDArray & dest),
-                      FLOAT_TYPES);
-BUILD_SINGLE_TEMPLATE(template void HHsequence::_mulLeft, (NDArray & matrix),
-                      FLOAT_TYPES);
-}  // namespace helpers
-}  // namespace ops
-}  // namespace sd
+BUILD_SINGLE_TEMPLATE(template void HHsequence::applyTo_, (sd::NDArray &dest), FLOAT_TYPES);
+BUILD_SINGLE_TEMPLATE(template void HHsequence::mulLeft_, (NDArray& matrix), FLOAT_TYPES);
+
+}
+}
+}

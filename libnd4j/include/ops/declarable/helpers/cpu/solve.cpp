@@ -42,18 +42,17 @@ static void adjointMatrix_(sd::LaunchContext* context, NDArray const* input,
   auto rows = input->sizeAt(-2);
   output->assign(input);
 
-  auto batchLoop = PRAGMA_THREADS_FOR {
-    for (auto batch = start; batch < stop; batch++) {
-      for (Nd4jLong r = 0; r < rows; r++) {
-        for (Nd4jLong c = 0; c < r; c++) {
-          math::nd4j_swap(outputPart[batch].t<T>(r, c),
-                          outputPart[batch].t<T>(c, r));
-        }
-      }
+        auto batchLoop = PRAGMA_THREADS_FOR {
+            for (auto batch = start; batch < stop; batch++) {
+                for (Nd4jLong r = 0; r < rows; r++) {
+                    for (Nd4jLong c = 0; c < r; c++) {
+                        math::nd4j_swap(outputPart[batch]->r<T>(r, c) , outputPart[batch]->r<T>(c, r));
+                    }
+                }
+            }
+        };
+        samediff::Threads::parallel_tad(batchLoop, 0, inputPart.size(), 1);
     }
-  };
-  samediff::Threads::parallel_tad(batchLoop, 0, inputPart.size(), 1);
-}
 
 // ---------------------------------------------------------------------------------------------------------------------------------------
 // //
@@ -72,27 +71,25 @@ static int solveFunctor_(sd::LaunchContext* context, NDArray* leftInput,
   auto PPart = P.allTensorsAlongDimension({-2, -1});
   auto permutationsPart = permutations.allTensorsAlongDimension({-1});
 
-  for (auto batch = 0; batch < permutationsPart.size(); ++batch) {
-    for (Nd4jLong row = 0; row < PPart[batch].rows(); ++row) {
-      PPart[batch].t<T>(row, permutationsPart[batch].t<int>(row)) = T(1.f);
-    }
-  }
+        for (auto batch = 0; batch < permutationsPart.size(); ++batch) {
+            for (Nd4jLong row = 0; row < PPart[batch]->rows(); ++row) {
+                PPart[batch]->r<T>(row, permutationsPart[batch]->t<int>(row)) = T(1.f);
+            }
+        }
 
-  auto leftLower = leftOutput.dup();
-  auto rightOutput = rightInput->ulike();
-  auto rightPermuted = rightOutput.ulike();
-  MmulHelper::matmul(&P, rightInput, &rightPermuted, 0, 0);
-  ResultSet leftLowerPart = leftLower.allTensorsAlongDimension({-2, -1});
-  for (auto i = 0; i < leftLowerPart.size(); i++) {
-    for (Nd4jLong r = 0; r < leftLowerPart[i].rows(); r++)
-      leftLowerPart[i].t<T>(r, r) = (T)1.f;
-  }
-  // stage 2: triangularSolveFunctor for Lower with given b
-  helpers::triangularSolveFunctor(context, &leftLower, &rightPermuted, true,
-                                  false, &rightOutput);
-  // stage 3: triangularSolveFunctor for Upper with output of previous stage
-  helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, false,
-                                  false, output);
+        auto leftLower = leftOutput.dup();
+        auto rightOutput = rightInput->ulike();
+        auto rightPermuted = rightOutput.ulike();
+        MmulHelper::matmul(&P, rightInput, &rightPermuted, 0, 0);
+        ResultSet leftLowerPart = leftLower.allTensorsAlongDimension({-2, -1});
+        for (auto i = 0; i < leftLowerPart.size(); i++) {
+            for (Nd4jLong r = 0; r < leftLowerPart[i]->rows(); r++)
+                leftLowerPart[i]->r<T>(r,r) = (T)1.f;
+        }
+        // stage 2: triangularSolveFunctor for Lower with given b
+        helpers::triangularSolveFunctor(context, &leftLower, &rightPermuted, true, false, &rightOutput);
+        // stage 3: triangularSolveFunctor for Upper with output of previous stage
+        helpers::triangularSolveFunctor(context, &leftOutput, &rightOutput, false, false, output);
 
   return Status::OK();
 }

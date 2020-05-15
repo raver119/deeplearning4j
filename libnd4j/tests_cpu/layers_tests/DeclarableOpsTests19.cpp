@@ -38,6 +38,19 @@ class DeclarableOpsTests19 : public testing::Test {
   }
 };
 
+
+TEST_F(DeclarableOpsTests19, test_argmax_maxint_vector_1) {
+    auto x = NDArrayFactory::create<float>('c', {3}, {0.1f, 0.5f, 0.7f});
+    auto z = NDArrayFactory::create<Nd4jLong>(0);
+    auto e = NDArrayFactory::create<Nd4jLong>(2);
+
+    sd::ops::argmax op;
+    auto status = op.execute({&x}, {&z}, {DataTypeUtils::max<int>()});
+    ASSERT_EQ(Status::OK(), status);
+    ASSERT_EQ(e, z);
+}
+
+
 TEST_F(DeclarableOpsTests19, test_threshold_encode_1) {
   auto x = NDArrayFactory::create<double>('c', {3}, {1.5, 2.5, -3.5});
   auto exp_encoded =
@@ -229,6 +242,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
   ASSERT_EQ(exp, initial);
 }
 
+#ifdef _RELEASE
 TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
 #ifdef _RELEASE
   // [2,1,135079944,1,1,8192,1,99]
@@ -277,6 +291,8 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
   ASSERT_EQ(exp, initial);
 #endif
 }
+#endif
+
 
 
 TEST_F(DeclarableOpsTests19, test_matmul_ccc) {

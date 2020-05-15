@@ -37,12 +37,13 @@ static void fillRegularizer(NDArray& ioMatrix, double const value) {
   auto rows = ioMatrix.sizeAt(-2);
   // auto cols = ioMatrix.sizeAt(-1);
 
-  for (auto x = 0; x < lastDims.size(); x++) {
-    for (auto r = 0; r < rows; r++) {
-      lastDims[x].t<T>(r, r) = (T)value;
+        for (auto x = 0; x < lastDims.size(); x++) {
+            for (auto r = 0; r < rows; r++) {
+                 lastDims[x]->r<T>(r,r) = (T)value;
+            }
+        }
+
     }
-  }
-}
 
 template <typename T>
 int leastSquaresSolveFunctor_(sd::LaunchContext* context,

@@ -47,7 +47,7 @@ static void segmentMaxFunctor_(NDArray* input, NDArray* indices,
         idx = indices->e<Nd4jLong>(e);
         val = input->t<T>(e);
       }
-      output->t<T>(idx) = val;
+      output->r<T>(idx) = val;
     }
   } else {
     std::vector<int> restDims =
@@ -62,20 +62,22 @@ static void segmentMaxFunctor_(NDArray* input, NDArray* indices,
     // int pos = 0;
     maxT.assign(listOfTensors.at(0));
 
-    for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
-      if (indices->e<int>(i) == idx) {
-        for (Nd4jLong e = 0; e < maxT.lengthOf(); e++) {
-          maxT.t<T>(e) =
-              sd::math::nd4j_max(maxT.t<T>(e), listOfTensors.at(i).t<T>(e));
+            for (Nd4jLong i = 1; i < indices->lengthOf(); i++) {
+                if (indices->e<int>(i) == idx) {
+
+                    for (Nd4jLong e = 0; e < maxT->lengthOf(); e++) {
+                       maxT->r<T>(e) = sd::math::nd4j_max(maxT->t<T>(e), listOfTensors.at(i)->t<T>(e));
+                    }
+                }
+                else {
+                    idx = indices->e<Nd4jLong>(i);
+                    maxT = listOfOutTensors.at(idx);
+                    maxT->assign(listOfTensors.at(i));
+                }
+
+            }
         }
-      } else {
-        idx = indices->e<Nd4jLong>(i);
-        maxT = listOfOutTensors.at(idx);
-        maxT.assign(listOfTensors.at(i));
-      }
     }
-  }
-}
 
 // segmen min
 template <typename T>
@@ -95,7 +97,7 @@ static void segmentMinFunctor_(NDArray* input, NDArray* indices,
         idx = indices->e<Nd4jLong>(e);
         val = input->t<T>(e);
       }
-      output->t<T>(idx) = val;
+      output->r<T>(idx) = val;
     }
   } else {
     auto restDims = ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
@@ -441,7 +443,7 @@ static void unsortedSegmentMinFunctor_(NDArray* input, NDArray* indices,
       for (size_t idx = 1; idx < fi->second.size(); ++idx) {
         val = sd::math::nd4j_min(val, input->t<T>(fi->second.at(idx)));
       }
-      output->t<T>(fi->first) = val;
+      output->r<T>(fi->first) = val;
     }
   } else {
     auto restDims = ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
@@ -458,20 +460,14 @@ static void unsortedSegmentMinFunctor_(NDArray* input, NDArray* indices,
       for (size_t idx = 1; idx < fi->second.size(); ++idx) {
         auto minT = listOfTensors.at(fi->second.at(idx));
 
-        for (Nd4jLong e = 0; e < outputT.lengthOf(); ++e) {
-          outputT.t<T>(e) = sd::math::nd4j_min(minT.t<T>(e), outputT.t<T>(e));
+                    for (Nd4jLong e = 0; e < outputT->lengthOf(); ++e) {
+                        outputT->r<T>(e) = sd::math::nd4j_min(minT->t<T>(e), outputT->t<T>(e));
+                    }
+                }
+                //outputT->assign(maxT);
+            }
         }
-      }
-      // outputT->assign(maxT);
-    }
   }
-}
-void unsortedSegmentMinFunctor(sd::LaunchContext* context, NDArray* input,
-                               NDArray* indices, Nd4jLong numOfClasses,
-                               NDArray* output) {
-  BUILD_SINGLE_SELECTOR(input->dataType(), unsortedSegmentMinFunctor_,
-                        (input, indices, numOfClasses, output), NUMERIC_TYPES);
-}
 
 BUILD_SINGLE_TEMPLATE(template void unsortedSegmentMinFunctor_,
                       (NDArray * input, NDArray* indices, Nd4jLong numOfClasses,
@@ -953,7 +949,7 @@ static int unsortedSegmentMinFunctorBP_(sd::LaunchContext* context,
       for (auto e = start; e < stop; e++) {
         auto classNum = indices->e<Nd4jLong>(e);
         if (sd::math::nd4j_abs(tempRes.t<T>(classNum) - input->t<T>(e)) < 1.e-6)
-          output->t<T>(e) = gradOut->t<T>(classNum);
+          output->r<T>(e) = gradOut->t<T>(classNum);
       }
     };
 
@@ -973,13 +969,12 @@ static int unsortedSegmentMinFunctorBP_(sd::LaunchContext* context,
       auto currentOut = listOfOutTensors.at(i);
       auto currentGradOut = listOfGradOuts.at(classNum);
 
-      for (Nd4jLong e = 0; e < current.lengthOf(); e++) {
-        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum).t<T>(e) -
-                               current.t<T>(e)) < 1.e-6)
-          currentOut.t<T>(e) = currentGradOut.t<T>(e);
-      }
-    }
-    //};
+                    for (Nd4jLong e = 0; e < current->lengthOf(); e++) {
+                        if (sd::math::nd4j_abs(listOfBPTensors.at(classNum)->t<T>(e) - current->t<T>(e)) < 1.e-6)
+                            currentOut->r<T>(e) = currentGradOut->t<T>(e);
+                    }
+                }
+            //};
 
     // samediff::Threads::parallel_for(func, 0, indices->lengthOf());
   }

@@ -78,7 +78,7 @@ void fakeQuantWithMinMaxVarsPerChannel_(NDArray* input, NDArray* min,
       else if (val >= nudged_max)
         val = nudged_max;
       // quantization itself
-      output->t<T>(e + i) =
+      output->r<T>(e + i) =
           math::nd4j_floor<T, T>((val - nudged_min) / scale + T(0.5)) * scale +
           nudged_min;
     }

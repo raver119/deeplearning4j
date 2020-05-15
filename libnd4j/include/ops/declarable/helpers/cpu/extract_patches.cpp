@@ -56,34 +56,33 @@ static void _extractPatches(NDArray* images, NDArray* output, int sizeRow,
       auto patch = listOfMatricies.at(batch);
       auto outMatrix = listOfOutputs.at(batch);
 
-      for (Nd4jLong i = 0; i < outRowDim; i++) {
-        for (Nd4jLong j = 0; j < outColDim; j++) {
-          Nd4jLong pos = 0;
-          // for (Nd4jLong k = 0; k < outputLastDim; k++) {
-          auto rowStart = i * strideRow - (theSame ? rowCast : 0);
-          auto colStart = j * strideCol - (theSame ? colCast : 0);
-          auto rowEnd = rowStart + sizeRow * rateRow;
-          auto colEnd = colStart + sizeCol * rateCol;
-          if (!theSame) {
-            rowEnd = math::nd4j_min(rowStart + sizeRow * rateRow, rowDim);
-            colEnd = math::nd4j_min(colStart + sizeCol * rateCol, colDim);
-          }
-          // auto pixel = 0LL;
-          for (auto row = rowStart; row < rowEnd; row += rateRow)
-            for (auto col = colStart; col < colEnd; col += rateCol)
-              for (auto pixel = 0; pixel < lastDim; pixel++) {
-                bool setUp = (theSame && row >= 0 && col >= 0 && row < rowDim &&
-                              col < colDim) ||
-                             (!theSame);
-                if (setUp) {
-                  outMatrix.t<T>(i, j, pos) = patch.e<T>(row, col, pixel);
-                }
-                pos++;
-              }
-        }
-      }
-    }
-  };
+               for (Nd4jLong i = 0; i < outRowDim; i++) {
+                   for (Nd4jLong j = 0; j < outColDim; j++) {
+                       Nd4jLong pos = 0;
+                       //for (Nd4jLong k = 0; k < outputLastDim; k++) {
+                       auto rowStart = i * strideRow - (theSame ? rowCast : 0);
+                       auto colStart = j * strideCol - (theSame ? colCast : 0);
+                       auto rowEnd = rowStart + sizeRow * rateRow;
+                       auto colEnd = colStart + sizeCol * rateCol;
+                       if (!theSame) {
+                           rowEnd = math::nd4j_min(rowStart + sizeRow * rateRow, rowDim);
+                           colEnd = math::nd4j_min(colStart + sizeCol * rateCol, colDim);
+                       }
+                       //auto pixel = 0LL;
+                       for (auto row = rowStart; row < rowEnd; row += rateRow)
+                           for (auto col = colStart; col < colEnd; col += rateCol)
+                               for (auto pixel = 0; pixel < lastDim; pixel++) {
+                                   bool setUp = (theSame && row >= 0 && col >= 0 && row < rowDim && col < colDim) ||
+                                                (!theSame);
+                                   if (setUp) {
+                                       outMatrix->r<T>(i, j, pos) = patch->e<T>(row, col, pixel);
+                                   }
+                                   pos++;
+                               }
+                   }
+               }
+           }
+       };
 
   samediff::Threads::parallel_tad(func, 0, batchCount);
 }

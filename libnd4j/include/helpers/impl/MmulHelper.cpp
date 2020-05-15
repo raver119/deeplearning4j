@@ -272,7 +272,7 @@ sd::NDArray* MmulHelper::mmul(const sd::NDArray* A, const sd::NDArray* B,
   const bool isBVector = shape::isCommonVector(B->shapeInfo(), lenDim);
 
   // dot product of 2 vectors
-  if (isAVector && isBVector &&
+  if (A->lengthOf() == B->lengthOf() && isAVector && isBVector &&
       (aRank != 2 ||
        aRank == 2 &&
            (A->isSameShape(B) ||

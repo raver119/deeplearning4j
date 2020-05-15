@@ -37,7 +37,7 @@ static void triuBP_(sd::LaunchContext* context, const NDArray& input,
   auto func = PRAGMA_THREADS_FOR {
     for (auto i = start; i < stop; i++) {
       if (dOdI.t<T>(i) != static_cast<T>(0.f))
-        dOdI.t<T>(i) = static_cast<T>(1.f);
+        dOdI.r<T>(i) = static_cast<T>(1.f);
     }
   };
   samediff::Threads::parallel_for(func, 0, dLen);

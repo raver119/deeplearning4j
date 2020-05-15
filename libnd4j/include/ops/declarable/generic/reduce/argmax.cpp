@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
- *
+ * Copyright (c) 2019 Konduit K.K.
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
  * https://www.apache.org/licenses/LICENSE-2.0.
@@ -21,6 +21,8 @@
 #include <system/op_boilerplate.h>
 #if NOT_EXCLUDED(OP_argmax)
 
+#include <ops/declarable/helpers/axis.h>
+#include <ops/declarable/helpers/reductions.h>
 #include <helpers/ConstantTadHelper.h>
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/axis.h>
@@ -29,7 +31,7 @@ namespace sd {
 namespace ops {
 DECLARE_TYPES(argmax) {
   getOpDescriptor()
-      ->setAllowedInputTypes(sd::DataType::ANY)
+      ->setAllowedInputTypes({ ALL_FLOATS,ALL_INTS })
       ->setAllowedOutputTypes({ALL_INTS});
 }
 
@@ -37,18 +39,21 @@ CUSTOM_OP_IMPL(argmax, 1, 1, false, 0, -2) {
   auto input = INPUT_VARIABLE(0);
   auto output = OUTPUT_VARIABLE(0);
 
-  auto axis = block.getIArguments();
+  if (output->isEmpty())
+                return Status::OK();
+
+            auto axis = block.getIArguments();
 
   // axis might be dynamic (i.e. tf mode)
   if (block.width() > 1 && axis.size() == 0) {
     auto axisVector = INPUT_VARIABLE(1);
     helpers::adjustAxis(input->rankOf(), axisVector, axis);
 
-    input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
+    helpers::argMax(*input, *output, axis);
   } else {
-    helpers::adjustAxis(input->rankOf(), axis);
+    helpers::argMax(*input, *output, axis);
 
-    input->applyIndexReduce(indexreduce::IndexMax, *output, axis);
+
   }
 
   STORE_RESULT(output);
@@ -66,25 +71,31 @@ DECLARE_SHAPE_FN(argmax) {
     dims = y->template asVectorT<int>();
   }
 
-  // we're resolving negative axis here
+  auto keepDims = block.numB() ? B_ARG(0) : false;
+            auto dtype = block.numD() ? D_ARG(0) : DataType::INT64;// we're resolving negative axis here
   helpers::adjustAxis(shape::rank(inputShape->at(0)), dims);
 
-  if (dims.size() > 1) std::sort(dims.begin(), dims.end());
+  auto in = inputShape->at(0);
 
   for (auto d : dims) {
-    REQUIRE_TRUE(inputShape->at(0)[d + 1] != 0, 0,
+    // we have special case here
+                if (d == sd::DataTypeUtils::max<int>())
+                    continue;
+
+                REQUIRE_TRUE(d < shape::rank(in), 0, "ArgMax: axis can't be above rank")
+                REQUIRE_TRUE(in[d + 1] != 0, 0,
                  "ArgMax: you can't reduce along axis with 0 in shape");
   }
 
   // special case - output is scalar
-  if (dims.size() == 0 ||
+  if (dims.empty() ||
       (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
     return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
-        sd::DataType::INT64));
+        dtype));
   }
 
   return SHAPELIST(ShapeUtils::evalReduceShapeInfo('c', dims, inputShape->at(0),
-                                                   DataType::INT64, false,
+                                                   dtype, keepDims,
                                                    false, block.workspace()));
 }
 }  // namespace ops

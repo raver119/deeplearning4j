@@ -52,7 +52,7 @@ class JacobiSVD {
 
   static bool createJacobiRotation(const T& x, const T& y, const T& z,
                                    NDArray& rotation);
-
+static void createJacobiRotationGivens(const T& p, const T& q, NDArray& rotation);
   static void svd2x2(const NDArray& block, int p, int q, NDArray& left,
                      NDArray& right);
 

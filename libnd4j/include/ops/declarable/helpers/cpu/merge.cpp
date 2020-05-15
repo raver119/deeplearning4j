@@ -46,8 +46,8 @@ static void mergeMaxIndex_(const std::vector<const NDArray*>& inArrs,
           idx = static_cast<Z>(i);
         }
       }
-      // FIXME, use .r<Z>(e)
-            output.t<Z>(e) = static_cast<Z>( idx);
+
+            output.r<Z>(e) = static_cast<Z>( idx);
     }
   };
 

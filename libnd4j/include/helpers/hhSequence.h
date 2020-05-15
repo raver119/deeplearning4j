@@ -32,12 +32,12 @@ class HHsequence {
   /*
    *  matrix containing the Householder vectors
    */
-  NDArray _vectors;
+  const NDArray& _vectors;
 
   /*
    *  vector containing the Householder coefficients
    */
-  NDArray _coeffs;
+  const NDArray& _coeffs;
 
   /*
    *  shift of the Householder sequence
@@ -67,14 +67,14 @@ class HHsequence {
    *  matrix - input matrix to be multiplied
    */
   template <typename T>
-  void _mulLeft(NDArray& matrix);
+  void mulLeft_(NDArray& matrix);
 
   void mulLeft(NDArray& matrix);
 
   NDArray getTail(const int idx) const;
 
   template <typename T>
-  void _applyTo(NDArray& dest);
+  void applyTo_(NDArray& dest);
 
   void applyTo(NDArray& dest);
 

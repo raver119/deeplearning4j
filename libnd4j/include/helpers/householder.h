@@ -21,7 +21,7 @@
 #ifndef LIBND4J_HOUSEHOLDER_H
 #define LIBND4J_HOUSEHOLDER_H
 
-#include "array/NDArray.h"
+#include <array/NDArray.h>
 
 namespace sd {
 namespace ops {
@@ -37,7 +37,7 @@ class Householder {
    *
    *  x - input vector, remains unaffected
    */
-  static NDArray evalHHmatrix(const NDArray& x);
+  // static NDArray evalHHmatrix(const NDArray& x);
 
   /**
    *  this method evaluates data required for calculation of Householder matrix
@@ -54,7 +54,7 @@ class Householder {
   static void evalHHmatrixData(const NDArray& x, NDArray& tail, T& coeff,
                                T& normX);
 
-  static void evalHHmatrixDataI(const NDArray& x, T& coeff, T& normX);
+  static void evalHHmatrixDataI(NDArray& x, T& coeff, T& normX);  // in-place, x to be affected
 
   /**
    *  this method mathematically multiplies input matrix on Householder from the

@@ -67,7 +67,7 @@ CUSTOM_OP_IMPL(triangular_solve, 2, 1, false, 0, 0) {
   };
 
   auto res = helpers::triangularSolveFunctor(block.launchContext(), input, b,
-                                             isLower, useAdjoint, z);
+                                             isLower, false, z);
   if (input != a) delete input;
 
   return Status::OK();

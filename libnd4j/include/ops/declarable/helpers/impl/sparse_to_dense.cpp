@@ -50,6 +50,7 @@ void compat_sparse_to_dense(const NDArray &values, const NDArray &indices,
   // make sure host buffer is updated
   values.syncToHost();
   indices.syncToHost();
+                output.syncToHost();
 
   auto rank = output.rankOf();
 

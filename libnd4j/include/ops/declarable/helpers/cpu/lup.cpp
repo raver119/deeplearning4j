@@ -32,7 +32,7 @@ template <typename T>
 static void swapRows_(NDArray* matrix, int theFirst, int theSecond) {
   if (theFirst != theSecond)
     for (int i = 0; i < matrix->columns(); i++) {
-      math::nd4j_swap(matrix->t<T>(theFirst, i), matrix->t<T>(theSecond, i));
+      math::nd4j_swap(matrix->r<T>(theFirst, i), matrix->r<T>(theSecond, i));
     }
 }
 BUILD_SINGLE_TEMPLATE(template void swapRows_,
@@ -73,12 +73,12 @@ static void invertLowerMatrix_(NDArray* inputMatrix, NDArray* invertedMatrix) {
 
   auto invertDiagonals = PRAGMA_THREADS_FOR {
     for (int i = start; i < stop; i += increment)
-      invertedMatrix->t<T>(i, i) /= inputMatrix->t<T>(i, i);
+      invertedMatrix->r<T>(i, i) /= inputMatrix->t<T>(i, i);
   };
 
   auto invertSubDiagonals = PRAGMA_THREADS_FOR {
     for (int i = start; i < stop; i += increment)
-      invertedMatrix->t<T>(i, i - 1) -=
+      invertedMatrix->r<T>(i, i - 1) -=
           (inputMatrix->t<T>(i, i - 1) * invertedMatrix->t<T>(i - 1, i - 1) /
            inputMatrix->t<T>(i, i));
   };
@@ -90,7 +90,7 @@ static void invertLowerMatrix_(NDArray* inputMatrix, NDArray* invertedMatrix) {
   for (int i = 1; i < n; i++) {
     for (int j = 0; j < i - 1; j++)
       for (int k = 0; k < i; k++)
-        invertedMatrix->t<T>(i, j) -=
+        invertedMatrix->r<T>(i, j) -=
             ((invertedMatrix->t<T>(k, j) * inputMatrix->t<T>(i, k) /
               inputMatrix->t<T>(i, i)));
   }
@@ -116,14 +116,14 @@ static void _invertUpperMatrix(NDArray* inputMatrix, NDArray* invertedMatrix) {
 
   auto invertDiagonals = PRAGMA_THREADS_FOR {
     for (auto i = start; i < stop; i += increment)
-      invertedMatrix->t<T>(i, i) /= inputMatrix->t<T>(i, i);
+      invertedMatrix->r<T>(i, i) /= inputMatrix->t<T>(i, i);
   };
 
   // PRAGMA_OMP_PARALLEL_FOR_IF(n >
   // Environment::getInstance()->elementwiseThreshold())
   auto invertUpDiagonals = PRAGMA_THREADS_FOR {
     for (auto i = start; i < stop; i += increment)
-      invertedMatrix->t<T>(i, i + 1) -=
+      invertedMatrix->r<T>(i, i + 1) -=
           (inputMatrix->t<T>(i, i + 1) * invertedMatrix->t<T>(i + 1, i + 1) /
            inputMatrix->t<T>(i, i));
   };
@@ -135,7 +135,7 @@ static void _invertUpperMatrix(NDArray* inputMatrix, NDArray* invertedMatrix) {
   for (auto i = n - 2; i >= 0; i--) {
     for (auto j = i + 2; j < n; j++)
       for (auto k = i; k < n; k++)
-        invertedMatrix->t<T>(i, j) -=
+        invertedMatrix->r<T>(i, j) -=
             ((invertedMatrix->t<T>(k, j) * inputMatrix->t<T>(i, k) /
               inputMatrix->t<T>(i, i)));
   }
@@ -183,10 +183,10 @@ static NDArray lup_(LaunchContext* context, NDArray* input, NDArray* compound,
       if (pivot != i) swapCount++;
 
       for (int j = i + 1; j < rowNum; j++) {
-        compoundMatrix.t<T>(j, i) /= compoundMatrix.t<T>(i, i);
+        compoundMatrix.r<T>(j, i) /= compoundMatrix.t<T>(i, i);
         // PRAGMA_OMP_PARALLEL_FOR
         for (int k = i + 1; k < rowNum; k++) {
-          compoundMatrix.t<T>(j, k) -=
+          compoundMatrix.r<T>(j, k) -=
               compoundMatrix.t<T>(j, i) * compoundMatrix.t<T>(i, k);
         }
       }
@@ -205,7 +205,7 @@ static NDArray lup_(LaunchContext* context, NDArray* input, NDArray* compound,
     for (auto i = 0; i < rowNum; i++) {
       for (auto j = 0; j < columnNum; j++) {
         if (permutationMatrix.t<T>(i, j) != 0) {
-          permutaionVector.template t<I>(i) = j;
+          permutaionVector.template r<I>(i) = j;
         }
       }
     }
@@ -287,7 +287,7 @@ static void doolitleLU(LaunchContext* context, NDArray* compound,
         sum += compound->t<T>(i, j) * compound->t<T>(j, k);
 
       // Evaluating U(i, k)
-      compound->t<T>(i, k) = input.t<T>(i, k) - sum;
+      compound->r<T>(i, k) = input.t<T>(i, k) - sum;
     }
 
     // Lower Triangular
@@ -298,7 +298,7 @@ static void doolitleLU(LaunchContext* context, NDArray* compound,
         sum += compound->t<T>(k, j) * compound->t<T>(j, i);
 
       // Evaluating L(k, i)
-      compound->t<T>(k, i) = (input.t<T>(k, i) - sum) / compound->t<T>(i, i);
+      compound->r<T>(k, i) = (input.t<T>(k, i) - sum) / compound->t<T>(i, i);
     }
   }
 }
@@ -457,13 +457,13 @@ static int inverse_(LaunchContext* context, NDArray* input, NDArray* output) {
     for (int k = 1; k < n;
          k++) {  // and then put all values under main diagonal on to it
       for (int j = 0; j < k; j++)
-        lowerMatrix.template t<T>(k, j) = compound.template t<T>(k, j);
+        lowerMatrix.template r<T>(k, j) = compound.template t<T>(k, j);
     }
     upperMatrix.setIdentity();  // set up U to identity matrix
     for (int k = 0; k < n;
          k++) {  // and then put all values under main diagonal on to it
       for (int j = k; j < n; j++)
-        upperMatrix.template t<T>(k, j) = compound.template e<T>(k, j);
+        upperMatrix.template r<T>(k, j) = compound.template t<T>(k, j);
     }
     invertUpperMatrix(&upperMatrix, &matrix);
 
@@ -472,7 +472,7 @@ static int inverse_(LaunchContext* context, NDArray* input, NDArray* output) {
     sd::MmulHelper::mmul(&matrix, &upperMatrix, &compound, 1.0, 0.0);
     sd::MmulHelper::mmul(&compound, &permutation, &matrix, 1.0, 0.0);
     for (int k = e * n2, row = 0; k < (e + 1) * n2; k++) {
-      output->t<T>(k) = matrix.template t<T>(row++);
+      output->r<T>(k) = matrix.template t<T>(row++);
     }
   }
 
@@ -523,7 +523,7 @@ static int lowerInverse_(LaunchContext* context, NDArray* input,
     invertLowerMatrix(&matrix, &lowerMatrix);
 
     for (int k = e * n2, row = 0; k < (e + 1) * n2; k++) {
-      output->t<T>(k) = lowerMatrix.template t<T>(row++);
+      output->r<T>(k) = lowerMatrix.template t<T>(row++);
     }
   }
 
@@ -673,7 +673,7 @@ int logdetFunctor_(LaunchContext* context, NDArray* input, NDArray* output) {
 
   for (Nd4jLong e = 0; e < totalCount; e++) {
     for (size_t i = 0; i < n; ++i)
-      output->t<T>(e) += sd::math::nd4j_log<T, T>(
+      output->r<T>(e) += sd::math::nd4j_log<T, T>(
           sd::math::nd4j_pow<T, T, T>(matricies.at(e).t<T>(i, i), T(2)));
   }
   return ND4J_STATUS_OK;

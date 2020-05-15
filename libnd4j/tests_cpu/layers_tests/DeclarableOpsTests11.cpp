@@ -435,10 +435,10 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test12) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
-  weights.t<double>(3) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
+  weights.r<double>(3) = 0.;
 
   sd::ops::log_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {1e-7}, {3});
@@ -479,9 +479,9 @@ TEST_F(DeclarableOpsTests11, log_loss_grad_test13) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
 
   sd::ops::log_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {1e-7}, {3});
@@ -2867,10 +2867,10 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test12) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
-  weights.t<double>(3) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
+  weights.r<double>(3) = 0.;
 
   sd::ops::mean_sqerr_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {}, {3});
@@ -2905,9 +2905,9 @@ TEST_F(DeclarableOpsTests11, mean_sqerr_loss_grad_test13) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
 
   sd::ops::mean_sqerr_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {}, {3});
@@ -3302,10 +3302,10 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test12) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
-  weights.t<double>(3) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
+  weights.r<double>(3) = 0.;
 
   sd::ops::absolute_difference_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {}, {3});
@@ -3340,9 +3340,9 @@ TEST_F(DeclarableOpsTests11, absolute_difference_loss_grad_test13) {
   predictions.linspace(0.04, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
 
   sd::ops::absolute_difference_loss_grad op;
   auto results = op.evaluate({&predictions, &weights, &labels}, {}, {3});
@@ -3813,10 +3813,10 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test12) {
   logits.linspace(-0.08, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
-  weights.t<double>(3) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
+  weights.r<double>(3) = 0.;
 
   sd::ops::sigm_cross_entropy_loss_grad op;
   auto results = op.evaluate({&logits, &weights, &labels}, {0.3}, {3});
@@ -3863,9 +3863,9 @@ TEST_F(DeclarableOpsTests11, sigm_cross_entropy_loss_grad_test13) {
   logits.linspace(-0.08, 0.04);
   labels.linspace(1);
   weights.assign(0.5);
-  weights.t<double>(0) = 0.;
-  weights.t<double>(1) = 0.;
-  weights.t<double>(2) = 0.;
+  weights.r<double>(0) = 0.;
+  weights.r<double>(1) = 0.;
+  weights.r<double>(2) = 0.;
 
   sd::ops::sigm_cross_entropy_loss_grad op;
   auto results = op.evaluate({&logits, &weights, &labels}, {0.3}, {3});

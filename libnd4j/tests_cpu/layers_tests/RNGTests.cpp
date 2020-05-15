@@ -102,7 +102,7 @@ TEST_F(RNGTests, TestGenerator_SGA_1) {
     float x =
         generator.relativeT(idx, -sd::DataTypeUtils::template max<float>() / 10,
                             sd::DataTypeUtils::template max<float>() / 10);
-    array.t<float>(idx) = x;
+    array.r<float>(idx) = x;
   }
   auto minimum = array.reduceNumber(reduce::AMin);
   minimum.printBuffer("Randomly float min on 1M array");

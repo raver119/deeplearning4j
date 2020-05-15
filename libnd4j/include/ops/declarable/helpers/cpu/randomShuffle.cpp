@@ -49,8 +49,8 @@ void randomShuffle_(NDArray& input, NDArray& output,
         T t0 = input.t<T>(i);
         T t1 = input.t<T>(r);
         // math::nd4j_swap<T>(input(i), input(r));
-        input.t<T>(i) = t1;
-        input.t<T>(r) = t0;
+        input.r<T>(i) = t1;
+        input.r<T>(r) = t0;
       }
     } else {
       std::vector<int> indices(firstDim);
@@ -60,10 +60,10 @@ void randomShuffle_(NDArray& input, NDArray& output,
       // FIXME: parallelism!!
       for (int i = firstDim - 1; i > 0; --i) {
         int r = rng.relativeInt(i) % i;
-        output.t<T>(i) = input.t<T>(indices[r]);
+        output.r<T>(i) = input.t<T>(indices[r]);
         if (i == r) continue;
 
-        output.t<T>(r) = input.t<T>(indices[i]);
+        output.r<T>(r) = input.t<T>(indices[i]);
         math::nd4j_swap<int>(indices[i], indices[r]);
       }
       rng.rewindH(firstDim - 1);

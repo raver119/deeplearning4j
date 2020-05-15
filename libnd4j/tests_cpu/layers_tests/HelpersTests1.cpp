@@ -41,62 +41,47 @@ class HelpersTests1 : public testing::Test {
   HelpersTests1() { std::cout << std::endl << std::flush; }
 };
 
-#ifndef __CUDABLAS__
+// ///////////////////////////////////////////////////////////////////
+// TEST_F(HelpersTests1, evalHHmatrix_test1) {
 
-TEST_F(HelpersTests1, test_binary_search_1) {
-  std::array<int, 10> array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-  auto idx = sd::ops::helpers::binarySearch(array.data(), 2, 10);
-  ASSERT_EQ(2, idx);
-}
-
-TEST_F(HelpersTests1, test_binary_search_2) {
-  std::array<int, 10> array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
-  auto idx = sd::ops::helpers::binarySearch(array.data(), 18, 10);
-  ASSERT_EQ(-1, idx);
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, evalHHmatrix_test1) {
-  auto x = NDArrayFactory::create<double>('c', {1, 4}, {14, 17, 3, 1});
-  auto exp = NDArrayFactory::create<double>(
+//
+  auto x = NDArrayFactory::create<double>('c', { 4}, {14, 17, 3, 1});
+//  auto exp = NDArrayFactory::create<double>(
       'c', {4, 4},
       {-0.629253, -0.764093, -0.13484, -0.0449467, -0.764093, 0.641653,
        -0.0632377, -0.0210792, -0.13484, -0.0632377, 0.98884, -0.00371987,
-       -0.0449467, -0.0210792, -0.00371987, 0.99876});
+       -0.0449467, -0.0210792, -0.00371987, 0.99876});//     auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
+//     ASSERT_TRUE(result.isSameShape(&exp));
+//     ASSERT_TRUE(result.equalsTo(&exp));
 
-  auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
-  ASSERT_TRUE(result.isSameShape(&exp));
-  ASSERT_TRUE(result.equalsTo(&exp));
-}
+  // }
 
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, evalHHmatrix_test2) {
+  // ///////////////////////////////////////////////////////////////////
+// TEST_F(HelpersTests1, evalHHmatrix_test2) {
+
+//
 #ifdef __CUDABLAS__
-  return;
-#endif
-  auto x = NDArrayFactory::create<double>('c', {1, 3}, {14, -4, 3});
-  auto exp = NDArrayFactory::create<double>(
+//  return;
+//#endif
+//     auto x = NDArrayFactory::create<double>('c', { 3}, {14, -4, 3});
+//  auto exp = NDArrayFactory::create<double>(
       'c', {3, 3},
       {-0.941742, 0.269069, -0.201802, 0.269069, 0.962715, 0.0279639, -0.201802,
-       0.0279639, 0.979027});
+       0.0279639, 0.979027});//     auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
 
-  auto result = ops::helpers::Householder<double>::evalHHmatrix(x);
+  //     ASSERT_TRUE(result.isSameShape(&exp));
+//     ASSERT_TRUE(result.equalsTo(&exp));
 
-  ASSERT_TRUE(result.isSameShape(&exp));
-  ASSERT_TRUE(result.equalsTo(&exp));
-}
+  // }
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, evalHHmatrixData_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto x = NDArrayFactory::create<double>('c', {1, 4}, {14, 17, 3, 1});
-  auto tail = NDArrayFactory::create<double>('c', {1, 3});
+
+  auto x = NDArrayFactory::create<double>('c', { 4}, {14, 17, 3, 1});
+  auto tail = NDArrayFactory::create<double>('c', { 3});
   auto expTail = NDArrayFactory::create<double>(
-      'c', {1, 3}, {0.468984, 0.0827618, 0.0275873});
+      'c', { 3}, {0.468984, 0.0827618, 0.0275873});
   const double normXExpected = -22.2486;
   const double coeffExpected = 1.62925;
 
@@ -111,9 +96,7 @@ TEST_F(HelpersTests1, evalHHmatrixData_test1) {
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, Householder_mulLeft_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto x = NDArrayFactory::create<double>(
       'c', {4, 4}, {12, 19, 14, 3, 10, 4, 17, 19, 19, 18, 5, 3, 6, 4, 2, 16});
   auto tail = NDArrayFactory::create<double>('c', {1, 3}, {0.5, 0.5, 0.5});
@@ -123,7 +106,7 @@ TEST_F(HelpersTests1, Householder_mulLeft_test1) {
        4.525, 2.4, 0.7, 14.9});
 
   ops::helpers::Householder<double>::mulLeft(x, tail, 0.1);
-  // expTail.printShapeInfo();
+
 
   ASSERT_TRUE(x.isSameShapeStrict(exp));
   ASSERT_TRUE(x.equalsTo(&exp));
@@ -131,9 +114,7 @@ TEST_F(HelpersTests1, Householder_mulLeft_test1) {
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, Householder_mulLeft_test2) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto x = NDArrayFactory::create<double>(
       'c', {4, 4}, {12, 19, 14, 3, 10, 4, 17, 19, 19, 18, 5, 3, 6, 4, 2, 16});
   auto tail = NDArrayFactory::create<double>('c', {3, 1}, {0.5, 0.5, 0.5});
@@ -150,9 +131,7 @@ TEST_F(HelpersTests1, Householder_mulLeft_test2) {
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, Householder_mulRight_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto x = NDArrayFactory::create<double>(
       'c', {4, 4}, {12, 19, 14, 3, 10, 4, 17, 19, 19, 18, 5, 3, 6, 4, 2, 16});
   auto tail = NDArrayFactory::create<double>('c', {1, 3}, {0.5, 0.5, 0.5});
@@ -169,9 +148,7 @@ TEST_F(HelpersTests1, Householder_mulRight_test1) {
 
 /////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, BiDiagonalizeUp_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {4, 4}, {9, 13, 3, 6, 13, 11, 7, 6, 3, 7, 4, 7, 6, 6, 7, 10});
   auto hhMatrixExp = NDArrayFactory::create<double>(
@@ -195,9 +172,7 @@ TEST_F(HelpersTests1, BiDiagonalizeUp_test1) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, BiDiagonalizeUp_test2) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -212,7 +187,7 @@ TEST_F(HelpersTests1, BiDiagonalizeUp_test2) {
        0, 0, 0, -12.8554});
 
   ops::helpers::BiDiagonalUp object(matrix);
-  // object._HHmatrix.printBuffer();
+
 
   ASSERT_TRUE(hhMatrixExp.isSameShapeStrict(object._HHmatrix));
   ASSERT_TRUE(hhMatrixExp.equalsTo(&object._HHmatrix));
@@ -222,9 +197,7 @@ TEST_F(HelpersTests1, BiDiagonalizeUp_test2) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, BiDiagonalizeUp_test3) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {6, 4}, {9,  -13, 3, 6,  13, 11, 7, -6, 3, 7,   4,  7,
                     -6, 6,   7, 10, 2,  17, 9, 12, 0, -15, 10, 2});
@@ -250,9 +223,7 @@ TEST_F(HelpersTests1, BiDiagonalizeUp_test3) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -287,9 +258,7 @@ TEST_F(HelpersTests1, HHsequence_test1) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test2) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {6, 4}, {9,  -13, 3, 6,  13, 11, 7, -6, 3, 7,   4,  7,
                     -6, 6,   7, 10, 2,  17, 9, 12, 0, -15, 10, 2});
@@ -326,9 +295,7 @@ TEST_F(HelpersTests1, HHsequence_test2) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test3) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {4, 4}, {9, 13, 3, 6, 13, 11, 7, 6, 3, 7, 4, 7, 6, 6, 7, 10});
   auto vectorsUseqExp = NDArrayFactory::create<double>(
@@ -360,9 +327,7 @@ TEST_F(HelpersTests1, HHsequence_test3) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test4) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {4, 4}, {9, 13, 3, 6, 13, 11, 7, 6, 3, 7, 4, 7, 6, 6, 7, 10});
   auto exp = NDArrayFactory::create<double>(
@@ -380,9 +345,7 @@ TEST_F(HelpersTests1, HHsequence_test4) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test5) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -401,9 +364,7 @@ TEST_F(HelpersTests1, HHsequence_test5) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test6) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -426,9 +387,7 @@ TEST_F(HelpersTests1, HHsequence_test6) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test7) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {4, 4}, {9, 13, 3, 6, 13, 11, 7, 6, 3, 7, 4, 7, 6, 6, 7, 10});
   auto exp = NDArrayFactory::create<double>(
@@ -445,9 +404,7 @@ TEST_F(HelpersTests1, HHsequence_test7) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test8) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -466,9 +423,7 @@ TEST_F(HelpersTests1, HHsequence_test8) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test9) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {6, 4}, {9,  -13, 3, 6,  13, 11, 7, -6, 3, 7,   4,  7,
                     -6, 6,   7, 10, 2,  17, 9, 12, 0, -15, 10, 2});
@@ -487,9 +442,7 @@ TEST_F(HelpersTests1, HHsequence_test9) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test10) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {4, 4}, {9, 13, 3, 6, 13, 11, 7, 6, 3, 7, 4, 7, 6, 6, 7, 10});
   auto matrix2 = NDArrayFactory::create<double>(
@@ -511,9 +464,7 @@ TEST_F(HelpersTests1, HHsequence_test10) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test11) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 4},
       {9, -13, 3, 6, 13, 11, 7, -6, 3, 7, 4, 7, -6, 6, 7, 10, 2, 17, 9, 12});
@@ -535,9 +486,7 @@ TEST_F(HelpersTests1, HHsequence_test11) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test12) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 3}, {9, -13, 3, 13, 11, 7, 3, 7, 4, -6, 6, 7, 2, 17, 9});
   auto matrix2 = NDArrayFactory::create<double>(
@@ -558,9 +507,7 @@ TEST_F(HelpersTests1, HHsequence_test12) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test13) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 3}, {9, -13, 3, 13, 11, 7, 3, 7, 4, -6, 6, 7, 2, 17, 9});
   auto matrix2 = NDArrayFactory::create<double>(
@@ -582,9 +529,7 @@ TEST_F(HelpersTests1, HHsequence_test13) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test14) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 3}, {9, -13, 3, 13, 11, 7, 3, 7, 4, -6, 6, 7, 2, 17, 9});
   auto matrix2 = NDArrayFactory::create<double>(
@@ -606,9 +551,7 @@ TEST_F(HelpersTests1, HHsequence_test14) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test15) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 3}, {9, -13, 3, 13, 11, 7, 3, 7, 4, -6, 6, 7, 2, 17, 9});
   auto matrix2 = NDArrayFactory::create<double>(
@@ -630,9 +573,7 @@ TEST_F(HelpersTests1, HHsequence_test15) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test16) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 5}, {9, -1, 3,  9, 10, 11, -7, -5, 3,  2,  4,  7, -1,
                     6, 7,  19, 2, 17, 9,  15, 2,  17, -9, 15, 2});
@@ -654,9 +595,7 @@ TEST_F(HelpersTests1, HHsequence_test16) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test17) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 5}, {9, -1, 3,  9, 10, 11, -7, -5, 3,  2,  4,  7, -1,
                     6, 7,  19, 2, 17, 9,  15, 2,  17, -9, 15, 2});
@@ -678,9 +617,7 @@ TEST_F(HelpersTests1, HHsequence_test17) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test18) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {6, 4}, {9,  -1, 3, 9,  10, 11, -7, -5, 3, 2,  4,  7,
                     -1, 6,  7, 19, 2,  17, 9,  15, 2, 17, -9, 15});
@@ -704,9 +641,7 @@ TEST_F(HelpersTests1, HHsequence_test18) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, HHsequence_test19) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {6, 4}, {9,  -1, 3, 9,  10, 11, -7, -5, 3, 2,  4,  7,
                     -1, 6,  7, 19, 2,  17, 9,  15, 2, 17, -9, 15});
@@ -725,10 +660,348 @@ TEST_F(HelpersTests1, HHsequence_test19) {
 }
 
 ///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, HHcolPivQR_1) {
+
+    auto matrix1 = NDArrayFactory::create<double>('c', {5,6}, {12 ,20 ,19 ,-18 ,-6 ,3 ,6 ,2 ,-7 ,-7 ,14 ,8 ,18 ,-17 ,18 ,-14 ,-15 ,1 ,2 ,2 ,-3 ,-18 ,8 ,-17 ,-19 ,12 ,18 ,6 ,-2 ,-17});
+
+    auto expQR = NDArrayFactory::create<double>('c', {5,6}, {-32.6649659, -4.9594419, -8.2657365, 7.2248659, 16.5927006, 11.7251002, -0.1354883, -29.0586293, 10.9775804, -14.6886248, 4.1884104, 20.7115773, 0.3483986, 0.3236753, 25.5376258, 1.6432380, 9.6395914, -9.0237996, -0.0580664, 0.0798999, -0.0799029, 19.5280665, -4.9773587, 16.0968604, 0.3483986, -0.6667832, 0.0252425, 0.0159188, 10.6978354, -4.6919842});
+    auto expCoeffs = NDArrayFactory::create<double>('c', {1,5}, {1.58166, 1.28555, 1.98605, 1.99949, 0});
+    auto expPermut = NDArrayFactory::create<double>('c', {6,6}, {0,1,0,0,0,0, 0,0,1,0,0,0, 1,0,0,0,0,0, 0,0,0,0,0,1, 0,0,0,0,1,0, 0,0,0,1,0,0});
+
+    ops::helpers::HHcolPivQR qr(matrix1);
+
+    ASSERT_TRUE(expQR.equalsTo(&qr._qr));
+    ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
+    ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
+
+    ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
+    ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
+    ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, HHcolPivQR_2) {
+
+    auto matrix1 = NDArrayFactory::create<double>('c', {6,6}, {-10 ,-16 ,-20 ,13 ,20 ,-10 ,-9 ,-1 ,-7 ,-20 ,-4 ,20 ,-11 ,19 ,-5 ,-18 ,12 ,-19 ,18 ,-18 ,17 ,-10 ,-19 ,14 ,-2 ,-7 ,-17 ,-14 ,-4 ,-16 ,18 ,-6 ,-18 ,1 ,-15 ,-12});
+
+    auto expQR = NDArrayFactory::create<double>('c', {6,6}, {38.1707, -3.03898, 5.16103,  23.0805, -7.57126, -13.885, -0.41519,  34.3623, 3.77403,  2.62327, -8.17784, 9.10312, 0.394431, 0.509952,-30.2179, -6.78341,  12.8421, 28.5491, -0.290633, 0.111912,0.450367,  28.1139,  15.5195, 2.60562, 0.332152, 0.405161,0.308163,0.0468127,   22.294,-2.94931, 0.249114,0.0627956,0.657873,  0.76767,-0.752594,-7.46986});
+    auto expCoeffs = NDArrayFactory::create<double>('c', {1,6}, {1.26198, 1.38824, 1.15567, 1.25667, 1.27682, 0});
+    auto expPermut = NDArrayFactory::create<double>('c', {6,6}, {0,0,1,0,0,0, 0,0,0,0,1,0, 0,0,0,1,0,0, 0,1,0,0,0,0, 0,0,0,0,0,1, 1,0,0,0,0,0});
+
+    ops::helpers::HHcolPivQR qr(matrix1);
+
+    ASSERT_TRUE(expQR.equalsTo(&qr._qr));
+    ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
+    ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
+
+    ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
+    ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
+    ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, HHcolPivQR_3) {
+
+    NDArray matrix1('c', {6,5}, {12 ,20 ,19 ,-18 ,-6 ,3 ,6 ,2 ,-7 ,-7 ,14 ,8 ,18 ,-17 ,18 ,-14 ,-15 ,1 ,2 ,2 ,-3 ,-18 ,8 ,-17 ,-19 ,12 ,18 ,6 ,-2 ,-17});
+
+    auto expQR = NDArrayFactory::create<double>('c', {6,5}, {-37.054 ,  0.323852 , 8.04231 , -22.9395 ,-13.089, 0.105164,    32.6021,  6.42277, -0.262898,-1.58766, 0.140218,  -0.485058,  29.2073,  -9.92301,-23.7111, -0.262909,-0.00866538, 0.103467,   8.55831,-1.86455, -0.315491,   0.539207,  0.40754,-0.0374124,-7.10401, 0.315491,   0.385363,-0.216459, -0.340008,0.628595});
+    auto expCoeffs = NDArrayFactory::create<double>('c', {1,5}, {1.53975, 1.19431, 1.63446, 1.7905, 1.43356});
+    auto expPermut = NDArrayFactory::create<double>('c', {5,5}, {0,0,0,1,0, 1,0,0,0,0, 0,0,0,0,1, 0,0,1,0,0, 0,1,0,0,0});
+
+    ops::helpers::HHcolPivQR qr(matrix1);
+
+    ASSERT_TRUE(expQR.equalsTo(&qr._qr));
+    ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
+    ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
+
+    ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
+    ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
+    ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
+
+}
+
+#ifndef __CUDABLAS__
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test1) {
+
+    auto matrix3 = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto left = NDArrayFactory::create<double>('c',  {2,2});
+    auto right = NDArrayFactory::create<double>('c', {2,2});
+
+    auto expLeft = NDArrayFactory::create<double>('c', {2,2}, {0.972022, 0.23489, -0.23489, 0.972022});
+    auto expRight = NDArrayFactory::create<double>('c', {2,2}, {0.827657, 0.561234, -0.561234, 0.827657});
+
+    ops::helpers::JacobiSVD<double>::svd2x2(matrix3, 1, 3, left, right);
+
+    ASSERT_TRUE(expLeft.equalsTo(&left));
+    ASSERT_TRUE(expRight.equalsTo(&right));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test2) {
+
+    auto matrix3 = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto matrix4 = NDArrayFactory::create<double>('c', {5,5}, {12 ,20 ,19 ,-18 ,-6 ,3 ,6 ,2 ,-7 ,-7 ,14 ,8 ,18 ,-17 ,18 ,-14 ,-15 ,1 ,2 ,2 ,-3 ,-18 ,8 ,-17 ,-19});
+    auto matrix5 = NDArrayFactory::create<double>('c', {5,5}, {3 ,-8 ,5 ,7 ,-8 ,4 ,-19 ,-12 ,-4 ,-5 ,-11 ,19 ,-2 ,-7 ,1 ,16 ,-5 ,10 ,19 ,-19 ,0 ,-20 ,0 ,-8 ,-13});
+
+    auto exp3 = NDArrayFactory::create<double>('c', {5,5}, {-18,      1,      19,      -7,       1, -0.609208,19.6977, 8.63044,-11.9811,-4.67059, -2,    -11,       8,       2,      -6, 3.55371,      0,-12.5903, 7.51356, -5.5844, 16,     15,      -3,       7,       0});
+    auto exp4 = NDArrayFactory::create<double>('c', {5,5}, {12, -10.9657,19,24.5714, -6, 3,  -2.6399, 2,8.83351, -7, 14,-0.406138,18,18.7839, 18, -14,  12.8949, 1,-7.9197,  2, -3,   23.353, 8, 8.2243,-19});
+    auto exp5 = NDArrayFactory::create<double>('c', {5,5}, {3 ,-8 ,5 ,7 ,-8 ,4 ,-19 ,-12 ,-4 ,-5 ,-11 ,19 ,-2 ,-7 ,1 ,16 ,-5 ,10 ,19 ,-19 ,0 ,-20 ,0 ,-8 ,-13});
+
+    ops::helpers::JacobiSVD<double> jac(matrix3, true, true, true);
+    jac._m = matrix3;
+    jac._u = matrix4;
+    jac._v = matrix5;
+
+    double maxElem;
+    bool result = jac.isBlock2x2NotDiag(matrix3, 1, 3, maxElem);
+
+    // ASSERT_NEAR(maxElem, 19.69772, 1e-5);
+    ASSERT_TRUE(exp3.equalsTo(&matrix3));
+    ASSERT_TRUE(exp4.equalsTo(&jac._u));
+    ASSERT_TRUE(exp5.equalsTo(&jac._v));
+
+    ASSERT_TRUE(result);
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test3) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double, double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18,       1,     19,      -7,       1, -1.14919,-12.1206,3.59677, 4.34919,-4.24758, -1.94919, 11.7427,11.6698,-10.4444,-2.74919, -3,      -8,      8,      -2,       7, 16,      15,     -3,       7,       0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnLeft(1, 2, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test4) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double, double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18,       1,      19,     -7,       1, 1.94919, 4.92056,-8.79677,1.25081, 5.04758, 1.14919,-16.1427,-8.46976,11.2444,0.349193, -3,      -8,       8,     -2,       7, 16,      15,      -3,      7,       0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnLeft(2, 1, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test5) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double, double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18,      1,      19,      -7,       1, 2,    -18,     -13,      14,       2, 1.14919,6.32056,-4.59677,-1.14919, 3.44758, -3,     -8,       8,      -2,       7, 16,     15,      -3,       7,       0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnLeft(2, 2, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test6) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double, double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18,-14.5173,  4.5746,-7, 1, 2, 6.46976,-16.5427,14, 2, -2,-8.39677,-6.92056, 2,-6, -3,-7.79677,-4.59677,-2, 7, 16, 5.32379,  11.019, 7, 0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnRight(1, 2, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test7) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double, double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18, 14.9173, 3.0254,-7, 1, 2,-13.6698,11.3427,14, 2, -2, 3.99677,10.1206, 2,-6, -3, 4.59677,7.79677,-2, 7, 16, 0.67621,-12.219, 7, 0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnRight(2, 1, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+//////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test8) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+    auto rotation = NDArrayFactory::create<double>('c', {2,2}, {0.2, math::nd4j_sqrt<double, double>(0.6), -math::nd4j_sqrt<double,double>(0.6), 0.2});
+
+    auto expected = NDArrayFactory::create<double>('c', {5,5}, {-18,  1, 18.5173,-7, 1, 2,-18,-12.6698,14, 2, -2,-11, 7.79677, 2,-6, -3, -8, 7.79677,-2, 7, 16, 15,-2.92379, 7, 0});
+
+    ops::helpers::JacobiSVD<double>::mulRotationOnRight(2, 2, matrix, rotation);
+
+    ASSERT_TRUE(expected.equalsTo(&matrix));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test9) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {35.7975, 29.1924, 11.1935, 9.2846, 6.77071});
+    auto expU = NDArrayFactory::create<double>('c', {5,5}, {0.744855,0.0686476,  0.079663,0.0889877,  0.65285, -0.386297,-0.760021,0.00624688, 0.156774, 0.498522, 0.186491,-0.322427,  0.773083,-0.468826,-0.209299, 0.246053,-0.215594,  0.240942, 0.821793,-0.399475, -0.447933, 0.516928,  0.581295, 0.269001, 0.349106});
+    auto expV = NDArrayFactory::create<double>('c', {5,5}, {-0.627363,   0.23317, 0.501211,  0.160272,  -0.524545, -0.0849394,  0.917171,-0.155876,-0.0124053,   0.356555, 0.66983,  0.182569, 0.696897,  0.179807,0.000864568, -0.387647, -0.264316, 0.416597, 0.0941014,   0.772955, 0.0160818,-0.0351459,-0.255484,  0.965905,  0.0161524});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test10) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {35.7975, 29.1924, 11.1935, 9.2846, 6.77071});
+    auto expU = NDArrayFactory::create<double>('c', {5,5}, {0.744855,0.0686476,  0.079663,0.0889877,  0.65285, -0.386297,-0.760021,0.00624688, 0.156774, 0.498522, 0.186491,-0.322427,  0.773083,-0.468826,-0.209299, 0.246053,-0.215594,  0.240942, 0.821793,-0.399475, -0.447933, 0.516928,  0.581295, 0.269001, 0.349106});
+    auto expV = NDArrayFactory::create<double>('c', {5,5}, {-0.627363,   0.23317, 0.501211,  0.160272,  -0.524545, -0.0849394,  0.917171,-0.155876,-0.0124053,   0.356555, 0.66983,  0.182569, 0.696897,  0.179807,0.000864568, -0.387647, -0.264316, 0.416597, 0.0941014,   0.772955, 0.0160818,-0.0351459,-0.255484,  0.965905,  0.0161524});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test11) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {6,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0, 3, -11, 2, 12, 10});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {36.27, 32.1997, 15.9624, 10.6407, 6.9747});
+    auto expU = NDArrayFactory::create<double>('c', {6,5}, {0.720125,-0.149734,  0.227784,-0.0288531,  0.595353, -0.509487,-0.567298, -0.237169,-0.0469077,   0.38648, 0.120912, -0.32916,-0.0202265,  0.921633, -0.153994, 0.180033,-0.294831,  0.357867, -0.194106, -0.646595, -0.354033, 0.521937,  0.556566,  0.305582,  0.211013, -0.222425,-0.433662,  0.673515, -0.128465,  0.099309});
+    auto expV = NDArrayFactory::create<double>('c', {5,5}, {-0.581609,  0.315327,0.333158,  0.34476, -0.576582, 0.117364,  0.889461,0.175174,-0.166603,  0.369651, 0.643246,-0.0899117,0.613288, 0.442462,-0.0790943, -0.480818, -0.264384,0.395122, 0.223126,  0.702145, -0.0548207, -0.177325,0.571031,-0.779632,   -0.1779});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test12) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {6,5}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0, 3, -11, 2, 12, 10});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {36.27, 32.1997, 15.9624, 10.6407, 6.9747});
+    auto expU = NDArrayFactory::create<double>('c', {6,6}, {0.720125,-0.149734,  0.227784,-0.0288531, 0.595353,-0.227676, -0.509487,-0.567298, -0.237169,-0.0469077,  0.38648,-0.459108, 0.120912, -0.32916,-0.0202265,  0.921633,-0.153994,0.0591992, 0.180033,-0.294831,  0.357867, -0.194106,-0.646595,-0.544823, -0.354033, 0.521937,  0.556566,  0.305582, 0.211013,-0.393155, -0.222425,-0.433662,  0.673515, -0.128465, 0.099309, 0.531485});
+    auto expV = NDArrayFactory::create<double>('c', {5,5}, {-0.581609,  0.315327,0.333158,  0.34476, -0.576582, 0.117364,  0.889461,0.175174,-0.166603,  0.369651, 0.643246,-0.0899117,0.613288, 0.442462,-0.0790943, -0.480818, -0.264384,0.395122, 0.223126,  0.702145, -0.0548207, -0.177325,0.571031,-0.779632,   -0.1779});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test13) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,6}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0, 3, -11, 2, 12, 10});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
+    auto expU = NDArrayFactory::create<double>('c', {5,5}, {0.592324,-0.121832,-0.484064,-0.624878,-0.0975619, 0.651331, 0.367418, 0.117429, 0.370792,  0.538048, -0.272693,-0.138725, 0.249336,-0.540587,  0.742962, 0.263619,-0.903996, 0.179714, 0.276206, 0.0686237, -0.284717,-0.117079,-0.810818, 0.321741,  0.379848});
+    auto expV = NDArrayFactory::create<double>('c', {6,6}, {-0.619634,-0.158345, 0.462262,-0.021009,-0.299779,  0.53571, -0.183441,-0.504296,-0.150804,-0.251078,-0.563079,-0.556052, 0.724925,-0.404744, 0.154104,-0.177039,-0.262604, 0.431988, 0.0335645,-0.501546, 0.221702, 0.797602, 0.186339,-0.165176, -0.0675636,0.0663677,-0.728788, 0.414614,-0.390566, 0.368038, -0.226262, -0.54849,-0.399426,-0.311613, 0.580387, 0.233392});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test14) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,6}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0, 3, -11, 2, 12, 10});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
+    auto expU = NDArrayFactory::create<double>('c', {5,5}, {0.592324,-0.121832,-0.484064,-0.624878,-0.0975619, 0.651331, 0.367418, 0.117429, 0.370792,  0.538048, -0.272693,-0.138725, 0.249336,-0.540587,  0.742962, 0.263619,-0.903996, 0.179714, 0.276206, 0.0686237, -0.284717,-0.117079,-0.810818, 0.321741,  0.379848});
+    auto expV = NDArrayFactory::create<double>('c', {6,5}, {-0.619634,-0.158345, 0.462262,-0.021009,-0.299779, -0.183441,-0.504296,-0.150804,-0.251078,-0.563079, 0.724925,-0.404744, 0.154104,-0.177039,-0.262604, 0.0335645,-0.501546, 0.221702, 0.797602, 0.186339, -0.0675636,0.0663677,-0.728788, 0.414614,-0.390566, -0.226262, -0.54849,-0.399426,-0.311613, 0.580387});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+    ASSERT_TRUE(expU.equalsTo(&jac._u));
+    ASSERT_TRUE(expV.equalsTo(&jac._v));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test15) {
+
+    auto matrix = NDArrayFactory::create<double>('c', {5,6}, {-18 ,1 ,19 ,-7 ,1 ,2 ,-18 ,-13 ,14 ,2 ,-2 ,-11 ,8 ,2 ,-6 ,-3 ,-8 ,8 ,-2 ,7 ,16 ,15 ,-3 ,7 ,0, 3, -11, 2, 12, 10});
+
+    auto expS = NDArrayFactory::create<double>('c', {5,1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
+    auto expU = NDArrayFactory::create<double>('c', {5,5}, {0.592324,-0.121832,-0.484064,-0.624878,-0.0975619, 0.651331, 0.367418, 0.117429, 0.370792,  0.538048, -0.272693,-0.138725, 0.249336,-0.540587,  0.742962, 0.263619,-0.903996, 0.179714, 0.276206, 0.0686237, -0.284717,-0.117079,-0.810818, 0.321741,  0.379848});
+    auto expV = NDArrayFactory::create<double>('c', {6,5}, {-0.619634,-0.158345, 0.462262,-0.021009,-0.299779, -0.183441,-0.504296,-0.150804,-0.251078,-0.563079, 0.724925,-0.404744, 0.154104,-0.177039,-0.262604, 0.0335645,-0.501546, 0.221702, 0.797602, 0.186339, -0.0675636,0.0663677,-0.728788, 0.414614,-0.390566, -0.226262, -0.54849,-0.399426,-0.311613, 0.580387});
+
+    ops::helpers::JacobiSVD<double> jac(matrix, false, false, false);
+
+    ASSERT_TRUE(expS.equalsTo(&jac._s));
+}
+
+///////////////////////////////////////////////////////////////////
+TEST_F(HelpersTests1, JacobiSVD_test16) {
+
+    NDArray rotation('c', {2,2}, sd::DataType::DOUBLE);
+
+    NDArray exp1('c', {2,2}, {1,0,0,1 }, sd::DataType::DOUBLE);
+    NDArray exp2('c', {2,2}, {0,1,-1,0}, sd::DataType::DOUBLE);
+    NDArray exp3('c', {2,2}, {-1,0,0,-1}, sd::DataType::DOUBLE);
+    NDArray exp4('c', {2,2}, {0.983282, 0.182089, -0.182089, 0.983282}, sd::DataType::DOUBLE);
+    NDArray exp5('c', {2,2}, {0.249041, 0.968493, -0.968493, 0.249041}, sd::DataType::DOUBLE);
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(0, 0, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp1));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp1));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(0, -0.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp2));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp2));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(-0.5, 0, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp3));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp3));
+
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(2.7, -0.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp4));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp4));
+
+    ops::helpers::JacobiSVD<double>::createJacobiRotationGivens(2.7, -10.5, rotation);
+    ASSERT_TRUE(rotation.equalsTo(exp5));
+    ASSERT_TRUE(rotation.isSameShapeStrict(exp5));
+}
+
+TEST_F(HelpersTests1, test_binary_search_1) {
+    std::array<int, 10> array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    auto idx = sd::ops::helpers::binarySearch(array.data(), 2, 10);
+    ASSERT_EQ(2, idx);
+}
+
+TEST_F(HelpersTests1, test_binary_search_2) {
+    std::array<int, 10> array = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    auto idx = sd::ops::helpers::binarySearch(array.data(), 18, 10);
+    ASSERT_EQ(-1, idx);
+}
+
+///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 5}, {-17, 14, 9,   -12, -12, 5, -4,  -19, -7, -12, 15,  16, 17,
                     -6,  8,  -10, 14,  -15, 6, -10, -14, 12, -1,  -16, 3});
@@ -756,9 +1029,7 @@ TEST_F(HelpersTests1, SVD_test1) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test2) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 5}, {-17, 14, 9,   -12, -12, 5, -4,  -19, -7, -12, 15,  16, 17,
                     -6,  8,  -10, 14,  -15, 6, -10, -14, 12, -1,  -16, 3});
@@ -786,9 +1057,7 @@ TEST_F(HelpersTests1, SVD_test2) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test3) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix = NDArrayFactory::create<double>(
       'c', {5, 5}, {-17, 14, 9,   -12, -12, 5, -4,  -19, -7, -12, 15,  16, 17,
                     -6,  8,  -10, 14,  -15, 6, -10, -14, 12, -1,  -16, 3});
@@ -813,9 +1082,7 @@ TEST_F(HelpersTests1, SVD_test3) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test4) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5},
       {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
@@ -855,9 +1122,7 @@ TEST_F(HelpersTests1, SVD_test4) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test5) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5},
       {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
@@ -897,9 +1162,7 @@ TEST_F(HelpersTests1, SVD_test5) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test6) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5},
       {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
@@ -935,9 +1198,7 @@ TEST_F(HelpersTests1, SVD_test6) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test7) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5},
       {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
@@ -977,9 +1238,7 @@ TEST_F(HelpersTests1, SVD_test7) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test8) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5},
       {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
@@ -1017,9 +1276,7 @@ TEST_F(HelpersTests1, SVD_test8) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test9) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto col0 = NDArrayFactory::create<double>(
       'c', {10, 1}, {12, 20, 19, -18, -6, 3, 6, 2, -7, 14});
   auto diag = NDArrayFactory::create<double>(
@@ -1053,9 +1310,7 @@ TEST_F(HelpersTests1, SVD_test9) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test10) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto singVals = NDArrayFactory::create<double>('c', {4, 1}, {1, 1, 1, 1});
   auto col0 = NDArrayFactory::create<double>('c', {4, 1}, {1, 1, 1, 1});
   auto diag = NDArrayFactory::create<double>('c', {4, 1}, {5, 7, -13, 14});
@@ -1080,9 +1335,7 @@ TEST_F(HelpersTests1, SVD_test10) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test11) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto singVals = NDArrayFactory::create<double>('c', {4, 1}, {1, 1, 1, 1});
   auto zhat = NDArrayFactory::create<double>('c', {4, 1}, {2, 1, 2, 1});
   auto diag = NDArrayFactory::create<double>('c', {4, 1}, {5, 7, -13, 14});
@@ -1116,9 +1369,7 @@ TEST_F(HelpersTests1, SVD_test11) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test12) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5}, {-2, -3, 2, 1, 0, 0,  -4, 5,  -2, -3, -4, 0,  5,  -1, -5,
                     -3, -5, 3, 3, 3, -5, 5,  -5, 0,  2,  -2, -3, -4, -5, -3});
@@ -1163,550 +1414,8 @@ TEST_F(HelpersTests1, SVD_test12) {
 }
 
 ///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, SVD_test13) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  NDArray matrix1('c', {6, 5}, {12, 20,  19, -18, -6,  3,   6,   2, -7, -7,
-                                14, 8,   18, -17, 18,  -14, -15, 1, 2,  2,
-                                -3, -18, 8,  -17, -19, 12,  18,  6, -2, -17});
-
-  auto expQR = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {-37.054,  0.323852, 8.04231,   -22.9395,  -13.089,     0.105164,
-       32.6021,  6.42277,  -0.262898, -1.58766,  0.140218,    -0.485058,
-       29.2073,  -9.92301, -23.7111,  -0.262909, -0.00866538, 0.103467,
-       8.55831,  -1.86455, -0.315491, 0.539207,  0.40754,     -0.0374124,
-       -7.10401, 0.315491, 0.385363,  -0.216459, -0.340008,   0.628595});
-  auto expCoeffs = NDArrayFactory::create<double>(
-      'c', {1, 5}, {1.53975, 1.19431, 1.63446, 1.7905, 1.43356});
-  auto expPermut = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-                    0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0});
-
-  ops::helpers::HHcolPivQR qr(matrix1);
-
-  ASSERT_TRUE(expQR.equalsTo(&qr._qr));
-  ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
-  ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
-
-  ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
-  ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
-  ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, SVD_test14) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix1 = NDArrayFactory::create<double>(
-      'c', {5, 6},
-      {12,  20,  19, -18, -6, 3,  6,   2, -7,  -7,  14, 8,  18, -17, 18,
-       -14, -15, 1,  2,   2,  -3, -18, 8, -17, -19, 12, 18, 6,  -2,  -17});
-
-  auto expQR = NDArrayFactory::create<double>(
-      'c', {5, 6},
-      {-32.665,    -4.95944,  -8.26574,   7.22487,   16.5927,  11.7251,
-       -0.135488,  -29.0586,  10.9776,    -14.6886,  4.18841,  20.7116,
-       0.348399,   0.323675,  25.5376,    1.64324,   9.63959,  -9.0238,
-       -0.0580664, 0.0798999, -0.0799029, 19.5281,   -4.97736, 16.0969,
-       0.348399,   -0.666783, 0.0252425,  0.0159188, 10.6978,  -4.69198});
-  auto expCoeffs = NDArrayFactory::create<double>(
-      'c', {1, 5}, {1.58166, 1.28555, 1.98605, 1.99949, 0});
-  auto expPermut = NDArrayFactory::create<double>(
-      'c', {6, 6}, {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0});
-
-  ops::helpers::HHcolPivQR qr(matrix1);
-
-  ASSERT_TRUE(expQR.equalsTo(&qr._qr));
-  ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
-  ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
-
-  ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
-  ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
-  ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, SVD_test15) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix1 = NDArrayFactory::create<double>(
-      'c', {6, 6}, {-10, -16, -20, 13,  20, -10, -9, -1,  -7,  -20, -4,  20,
-                    -11, 19,  -5,  -18, 12, -19, 18, -18, 17,  -10, -19, 14,
-                    -2,  -7,  -17, -14, -4, -16, 18, -6,  -18, 1,   -15, -12});
-
-  auto expQR = NDArrayFactory::create<double>(
-      'c', {6, 6},
-      {38.1707,   -3.03898,  5.16103,  23.0805,   -7.57126,  -13.885,
-       -0.41519,  34.3623,   3.77403,  2.62327,   -8.17784,  9.10312,
-       0.394431,  0.509952,  -30.2179, -6.78341,  12.8421,   28.5491,
-       -0.290633, 0.111912,  0.450367, 28.1139,   15.5195,   2.60562,
-       0.332152,  0.405161,  0.308163, 0.0468127, 22.294,    -2.94931,
-       0.249114,  0.0627956, 0.657873, 0.76767,   -0.752594, -7.46986});
-  auto expCoeffs = NDArrayFactory::create<double>(
-      'c', {1, 6}, {1.26198, 1.38824, 1.15567, 1.25667, 1.27682, 0});
-  auto expPermut = NDArrayFactory::create<double>(
-      'c', {6, 6}, {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0,
-                    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0});
-
-  ops::helpers::HHcolPivQR qr(matrix1);
-
-  ASSERT_TRUE(expQR.equalsTo(&qr._qr));
-  ASSERT_TRUE(expCoeffs.equalsTo(&qr._coeffs));
-  ASSERT_TRUE(expPermut.equalsTo(&qr._permut));
-
-  ASSERT_TRUE(expQR.isSameShapeStrict(qr._qr));
-  ASSERT_TRUE(expCoeffs.isSameShapeStrict(qr._coeffs));
-  ASSERT_TRUE(expPermut.isSameShapeStrict(qr._permut));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test1) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix3 = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto left = NDArrayFactory::create<double>('c', {2, 2});
-  auto right = NDArrayFactory::create<double>('c', {2, 2});
-
-  auto expLeft = NDArrayFactory::create<double>(
-      'c', {2, 2}, {0.972022, 0.23489, -0.23489, 0.972022});
-  auto expRight = NDArrayFactory::create<double>(
-      'c', {2, 2}, {0.827657, 0.561234, -0.561234, 0.827657});
-
-  ops::helpers::JacobiSVD<double>::svd2x2(matrix3, 1, 3, left, right);
-
-  ASSERT_TRUE(expLeft.equalsTo(&left));
-  ASSERT_TRUE(expRight.equalsTo(&right));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test2) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix3 = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto matrix4 = NDArrayFactory::create<double>(
-      'c', {5, 5}, {12,  20, 19,  -18, -6, 3, 6, 2,  -7,  -7, 14,  8,  18,
-                    -17, 18, -14, -15, 1,  2, 2, -3, -18, 8,  -17, -19});
-  auto matrix5 = NDArrayFactory::create<double>(
-      'c', {5, 5}, {3,  -8, 5,  7,  -8, 4,  -19, -12, -4,  -5, -11, 19, -2,
-                    -7, 1,  16, -5, 10, 19, -19, 0,   -20, 0,  -8,  -13});
-
-  auto exp3 = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {-18,      1,       19,  -7, 1,  -0.609208, 19.6977, 8.63044, -11.9811,
-       -4.67059, -2,      -11, 8,  2,  -6,        3.55371, 0,       -12.5903,
-       7.51356,  -5.5844, 16,  15, -3, 7,         0});
-  auto exp4 = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {12, -10.9657,  19, 24.5714, -6, 3,   -2.6399, 2, 8.83351, -7,
-       14, -0.406138, 18, 18.7839, 18, -14, 12.8949, 1, -7.9197, 2,
-       -3, 23.353,    8,  8.2243,  -19});
-  auto exp5 = NDArrayFactory::create<double>(
-      'c', {5, 5}, {3,  -8, 5,  7,  -8, 4,  -19, -12, -4,  -5, -11, 19, -2,
-                    -7, 1,  16, -5, 10, 19, -19, 0,   -20, 0,  -8,  -13});
-
-  ops::helpers::JacobiSVD<double> jac(matrix3, true, true, true);
-  jac._m = matrix3;
-  jac._u = matrix4;
-  jac._v = matrix5;
-
-  double maxElem;
-  bool result = jac.isBlock2x2NotDiag(matrix3, 1, 3, maxElem);
-
-  // ASSERT_NEAR(maxElem, 19.69772, 1e-5);
-  ASSERT_TRUE(exp3.equalsTo(&matrix3));
-  ASSERT_TRUE(exp4.equalsTo(&jac._u));
-  ASSERT_TRUE(exp5.equalsTo(&jac._v));
-
-  ASSERT_TRUE(result);
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test3) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {-18,      1,       19,       -7,       1,       -1.14919, -12.1206,
-       3.59677,  4.34919, -4.24758, -1.94919, 11.7427, 11.6698,  -10.4444,
-       -2.74919, -3,      -8,       8,        -2,      7,        16,
-       15,       -3,      7,        0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnLeft(1, 2, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test4) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {-18,      1,       19,      -7,      1,        1.94919,  4.92056,
-       -8.79677, 1.25081, 5.04758, 1.14919, -16.1427, -8.46976, 11.2444,
-       0.349193, -3,      -8,      8,       -2,       7,        16,
-       15,       -3,      7,       0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnLeft(2, 1, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test5) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {-18, 1,       19,      -7,       1,        2,       -18, -13, 14,
-       2,   1.14919, 6.32056, -4.59677, -1.14919, 3.44758, -3,  -8,  8,
-       -2,  7,       16,      15,       -3,       7,       0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnLeft(2, 2, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test6) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5},
-      {-18, -14.5173, 4.5746,   -7, 1,  2,  6.46976,  -16.5427, 14, 2,
-       -2,  -8.39677, -6.92056, 2,  -6, -3, -7.79677, -4.59677, -2, 7,
-       16,  5.32379,  11.019,   7,  0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnRight(1, 2, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test7) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 14.9173, 3.0254,  -7, 1,  2,  -13.6698, 11.3427, 14, 2,
-                    -2,  3.99677, 10.1206, 2,  -6, -3, 4.59677,  7.79677, -2, 7,
-                    16,  0.67621, -12.219, 7,  0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnRight(2, 1, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-//////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test8) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-  auto rotation = NDArrayFactory::create<double>(
-      'c', {2, 2},
-      {0.2, math::nd4j_sqrt<double, double>(0.6),
-       -math::nd4j_sqrt<double, double>(0.6), 0.2});
-
-  auto expected = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,   18.5173,  -7, 1,  2,  -18, -12.6698, 14, 2,
-                    -2,  -11, 7.79677,  2,  -6, -3, -8,  7.79677,  -2, 7,
-                    16,  15,  -2.92379, 7,  0});
-
-  ops::helpers::JacobiSVD<double>::mulRotationOnRight(2, 2, matrix, rotation);
-
-  ASSERT_TRUE(expected.equalsTo(&matrix));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test9) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {35.7975, 29.1924, 11.1935, 9.2846, 6.77071});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0.744855,  0.0686476, 0.079663,   0.0889877, 0.65285,
-                    -0.386297, -0.760021, 0.00624688, 0.156774,  0.498522,
-                    0.186491,  -0.322427, 0.773083,   -0.468826, -0.209299,
-                    0.246053,  -0.215594, 0.240942,   0.821793,  -0.399475,
-                    -0.447933, 0.516928,  0.581295,   0.269001,  0.349106});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-0.627363,  0.23317,    0.501211,  0.160272,   -0.524545,
-                    -0.0849394, 0.917171,   -0.155876, -0.0124053, 0.356555,
-                    0.66983,    0.182569,   0.696897,  0.179807,   0.000864568,
-                    -0.387647,  -0.264316,  0.416597,  0.0941014,  0.772955,
-                    0.0160818,  -0.0351459, -0.255484, 0.965905,   0.0161524});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test10) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2,  -2, -11, 8,
-                    2,   -6, -3, -8, 8, -2, 7,   16,  15, -3, 7,  0});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {35.7975, 29.1924, 11.1935, 9.2846, 6.77071});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0.744855,  0.0686476, 0.079663,   0.0889877, 0.65285,
-                    -0.386297, -0.760021, 0.00624688, 0.156774,  0.498522,
-                    0.186491,  -0.322427, 0.773083,   -0.468826, -0.209299,
-                    0.246053,  -0.215594, 0.240942,   0.821793,  -0.399475,
-                    -0.447933, 0.516928,  0.581295,   0.269001,  0.349106});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-0.627363,  0.23317,    0.501211,  0.160272,   -0.524545,
-                    -0.0849394, 0.917171,   -0.155876, -0.0124053, 0.356555,
-                    0.66983,    0.182569,   0.696897,  0.179807,   0.000864568,
-                    -0.387647,  -0.264316,  0.416597,  0.0941014,  0.772955,
-                    0.0160818,  -0.0351459, -0.255484, 0.965905,   0.0161524});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test11) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2, -2, -11, 8, 2,  -6,
-       -3,  -8, 8,  -2, 7, 16, 15,  -3,  7,  0, 3,  -11, 2, 12, 10});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {36.27, 32.1997, 15.9624, 10.6407, 6.9747});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {0.720125,   -0.149734, 0.227784,   -0.0288531, 0.595353,  -0.509487,
-       -0.567298,  -0.237169, -0.0469077, 0.38648,    0.120912,  -0.32916,
-       -0.0202265, 0.921633,  -0.153994,  0.180033,   -0.294831, 0.357867,
-       -0.194106,  -0.646595, -0.354033,  0.521937,   0.556566,  0.305582,
-       0.211013,   -0.222425, -0.433662,  0.673515,   -0.128465, 0.099309});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-0.581609,  0.315327,   0.333158, 0.34476,   -0.576582,
-                    0.117364,   0.889461,   0.175174, -0.166603, 0.369651,
-                    0.643246,   -0.0899117, 0.613288, 0.442462,  -0.0790943,
-                    -0.480818,  -0.264384,  0.395122, 0.223126,  0.702145,
-                    -0.0548207, -0.177325,  0.571031, -0.779632, -0.1779});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test12) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2, -2, -11, 8, 2,  -6,
-       -3,  -8, 8,  -2, 7, 16, 15,  -3,  7,  0, 3,  -11, 2, 12, 10});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {36.27, 32.1997, 15.9624, 10.6407, 6.9747});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {6, 6},
-      {0.720125,  -0.149734, 0.227784,   -0.0288531, 0.595353,  -0.227676,
-       -0.509487, -0.567298, -0.237169,  -0.0469077, 0.38648,   -0.459108,
-       0.120912,  -0.32916,  -0.0202265, 0.921633,   -0.153994, 0.0591992,
-       0.180033,  -0.294831, 0.357867,   -0.194106,  -0.646595, -0.544823,
-       -0.354033, 0.521937,  0.556566,   0.305582,   0.211013,  -0.393155,
-       -0.222425, -0.433662, 0.673515,   -0.128465,  0.099309,  0.531485});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {5, 5}, {-0.581609,  0.315327,   0.333158, 0.34476,   -0.576582,
-                    0.117364,   0.889461,   0.175174, -0.166603, 0.369651,
-                    0.643246,   -0.0899117, 0.613288, 0.442462,  -0.0790943,
-                    -0.480818,  -0.264384,  0.395122, 0.223126,  0.702145,
-                    -0.0548207, -0.177325,  0.571031, -0.779632, -0.1779});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test13) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 6},
-      {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2, -2, -11, 8, 2,  -6,
-       -3,  -8, 8,  -2, 7, 16, 15,  -3,  7,  0, 3,  -11, 2, 12, 10});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0.592324,  -0.121832, -0.484064, -0.624878, -0.0975619,
-                    0.651331,  0.367418,  0.117429,  0.370792,  0.538048,
-                    -0.272693, -0.138725, 0.249336,  -0.540587, 0.742962,
-                    0.263619,  -0.903996, 0.179714,  0.276206,  0.0686237,
-                    -0.284717, -0.117079, -0.810818, 0.321741,  0.379848});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {6, 6},
-      {-0.619634,  -0.158345, 0.462262,  -0.021009, -0.299779, 0.53571,
-       -0.183441,  -0.504296, -0.150804, -0.251078, -0.563079, -0.556052,
-       0.724925,   -0.404744, 0.154104,  -0.177039, -0.262604, 0.431988,
-       0.0335645,  -0.501546, 0.221702,  0.797602,  0.186339,  -0.165176,
-       -0.0675636, 0.0663677, -0.728788, 0.414614,  -0.390566, 0.368038,
-       -0.226262,  -0.54849,  -0.399426, -0.311613, 0.580387,  0.233392});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, true);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test14) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 6},
-      {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2, -2, -11, 8, 2,  -6,
-       -3,  -8, 8,  -2, 7, 16, 15,  -3,  7,  0, 3,  -11, 2, 12, 10});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0.592324,  -0.121832, -0.484064, -0.624878, -0.0975619,
-                    0.651331,  0.367418,  0.117429,  0.370792,  0.538048,
-                    -0.272693, -0.138725, 0.249336,  -0.540587, 0.742962,
-                    0.263619,  -0.903996, 0.179714,  0.276206,  0.0686237,
-                    -0.284717, -0.117079, -0.810818, 0.321741,  0.379848});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {-0.619634, -0.158345, 0.462262,   -0.021009, -0.299779, -0.183441,
-       -0.504296, -0.150804, -0.251078,  -0.563079, 0.724925,  -0.404744,
-       0.154104,  -0.177039, -0.262604,  0.0335645, -0.501546, 0.221702,
-       0.797602,  0.186339,  -0.0675636, 0.0663677, -0.728788, 0.414614,
-       -0.390566, -0.226262, -0.54849,   -0.399426, -0.311613, 0.580387});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, true, true, false);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-  ASSERT_TRUE(expU.equalsTo(&jac._u));
-  ASSERT_TRUE(expV.equalsTo(&jac._v));
-}
-
-///////////////////////////////////////////////////////////////////
-TEST_F(HelpersTests1, JacobiSVD_test15) {
-#ifdef __CUDABLAS__
-  return;
-#endif
-  auto matrix = NDArrayFactory::create<double>(
-      'c', {5, 6},
-      {-18, 1,  19, -7, 1, 2,  -18, -13, 14, 2, -2, -11, 8, 2,  -6,
-       -3,  -8, 8,  -2, 7, 16, 15,  -3,  7,  0, 3,  -11, 2, 12, 10});
-
-  auto expS = NDArrayFactory::create<double>(
-      'c', {5, 1}, {40.499, 23.5079, 17.8139, 14.4484, 7.07957});
-  auto expU = NDArrayFactory::create<double>(
-      'c', {5, 5}, {0.592324,  -0.121832, -0.484064, -0.624878, -0.0975619,
-                    0.651331,  0.367418,  0.117429,  0.370792,  0.538048,
-                    -0.272693, -0.138725, 0.249336,  -0.540587, 0.742962,
-                    0.263619,  -0.903996, 0.179714,  0.276206,  0.0686237,
-                    -0.284717, -0.117079, -0.810818, 0.321741,  0.379848});
-  auto expV = NDArrayFactory::create<double>(
-      'c', {6, 5},
-      {-0.619634, -0.158345, 0.462262,   -0.021009, -0.299779, -0.183441,
-       -0.504296, -0.150804, -0.251078,  -0.563079, 0.724925,  -0.404744,
-       0.154104,  -0.177039, -0.262604,  0.0335645, -0.501546, 0.221702,
-       0.797602,  0.186339,  -0.0675636, 0.0663677, -0.728788, 0.414614,
-       -0.390566, -0.226262, -0.54849,   -0.399426, -0.311613, 0.580387});
-
-  ops::helpers::JacobiSVD<double> jac(matrix, false, false, false);
-
-  ASSERT_TRUE(expS.equalsTo(&jac._s));
-}
-
-///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test16) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5}, {-2, -3, 2, 1, 0, 0,  -4, 5,  -2, -3, -4, 0,  5,  -1, -5,
                     -3, -5, 3, 3, 3, -5, 5,  -5, 0,  2,  -2, -3, -4, -5, -3});
@@ -1757,9 +1466,7 @@ TEST_F(HelpersTests1, SVD_test16) {
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(HelpersTests1, SVD_test17) {
-#ifdef __CUDABLAS__
-  return;
-#endif
+
   auto matrix1 = NDArrayFactory::create<double>(
       'c', {6, 5}, {-2, -3, 2, 1, 0, 0,  -4, 5,  -2, -3, -4, 0,  5,  -1, -5,
                     -3, -5, 3, 3, 3, -5, 5,  -5, 0,  2,  -2, -3, -4, -5, -3});

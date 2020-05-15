@@ -592,7 +592,7 @@ SD_EXPORT _CUDA_HD Nd4jLong type(const Nd4jLong *shapeInfo);
  * Returns the element wise stride for this information
  * buffer
  */
-SD_EXPORT _CUDA_HD Nd4jLong elementWiseStride(const Nd4jLong *buffer);
+SD_EXPORT _CUDA_HD Nd4jLong elementWiseStride(const Nd4jLong *shapeInfo);
 
 /**
  * Returns the element wise stride for this information
