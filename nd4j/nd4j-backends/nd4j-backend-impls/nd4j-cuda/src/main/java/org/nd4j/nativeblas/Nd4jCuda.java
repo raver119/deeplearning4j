@@ -434,8 +434,8 @@ public class Nd4jCuda extends org.nd4j.nativeblas.Nd4jCudaHelper {
         public native void setDeviceId(int deviceId);
         public native void migrate();
 
-        public native void syncToPrimary(@Const LaunchContext context, @Cast("const bool") boolean forceSync/*=false*/);
-        public native void syncToPrimary(@Const LaunchContext context);
+        public native void syncToPrimary(@Const LaunchContext context/*=LaunchContext::defaultContext()*/, @Cast("const bool") boolean forceSync/*=false*/);
+        public native void syncToPrimary();
         public native void syncToSpecial(@Cast("const bool") boolean forceSync/*=false*/);
         public native void syncToSpecial();
 

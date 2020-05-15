@@ -104,6 +104,16 @@ public class DeallocatorService {
 
         @Override
         public void run() {
+            try{
+                runHelper();
+            } catch (Throwable t){
+                System.out.println("################################### DEALLOCATOR THREAD DIED ###################################");
+                t.printStackTrace();
+                log.error("Deallocator thread died", t);
+            }
+        }
+
+        public void runHelper(){
             Nd4j.getAffinityManager().unsafeSetDevice(deviceId);
             boolean canRun = true;
             long cnt = 0;
@@ -123,8 +133,10 @@ public class DeallocatorService {
                         // invoking deallocator
                         synchronized (DeallocatorService.this.counter) {
                             Deallocatable d = reference.get();
-                            if(d == null)
-                                d = referenceMap.get(reference.getId()).get();
+                            if(d == null ) {
+                                DeallocatableReference ref = referenceMap.get(reference.getId());
+                                d = ref != null ? ref.get() : null;
+                            }
                             log.info("Dealloc1: {} - {} - {}", reference.getClass().getSimpleName(), (d == null ? "" : d.getClass().getSimpleName()), reference.getId());
                             reference.getDeallocator().deallocate();
                             log.info("Dealloc done1");
@@ -140,8 +152,10 @@ public class DeallocatorService {
                         // invoking deallocator
                         synchronized (DeallocatorService.this.counter) {
                             Deallocatable d = reference.get();
-                            if(d == null)
-                                d = referenceMap.get(reference.getId()).get();
+                            if(d == null ) {
+                                DeallocatableReference ref = referenceMap.get(reference.getId());
+                                d = ref != null ? ref.get() : null;
+                            }
                             log.info("Dealloc2: {} - {} - {}", reference.getClass().getSimpleName(), (d == null ? "" : d.getClass().getSimpleName()), reference.getId());
                             reference.getDeallocator().deallocate();
                             log.info("Dealloc done2");

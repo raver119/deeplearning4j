@@ -220,6 +220,11 @@ public abstract class BaseND4JTest {
             }
         }
         log.info(sb.toString());
+
+        System.out.println("About to GC 1");
+        System.gc();
+        System.out.println("About to GC 2");
+        System.gc();
         System.out.println("BaseND4JTest.afterTest() - done");
     }
 }
