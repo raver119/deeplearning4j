@@ -276,34 +276,27 @@ TEST_F(PlaygroundTests, test_one_off_ops_1) {
     op.execute({&x, &y}, {&z});
 }
 
-#if defined(INDEX_REDUCTIONS_BENCH_TESTS)
-//temporarly, testing against the original one
-void original_argmax(const NDArray& input, std::vector<int>& axis, NDArray& output) {
-    sd::ops::helpers::adjustAxis(input.rankOf(), axis);
-    input.applyIndexReduce(sd::indexreduce::IndexMax, output, axis);
-}
-
 template<typename T>
 void fill_random(sd::NDArray& arr) {
     Nd4jLong coords[MAX_RANK] = {};
     std::random_device rd;
     std::mt19937 gen(rd());
     //for floats
-    std::uniform_real_distribution<T> dis((T)-10.0, (T)22.9);
+    std::uniform_real_distribution<T> dis((T)-1000.0, (T)2002.9);
     T* x = arr.bufferAsT<T>();
-    Nd4jLong* shapeInfo = arr.getShapeInfo();
+    auto shapeInfo = arr.shapeInfo();
     Nd4jLong* strides = arr.stridesOf();
     Nd4jLong rank = shapeInfo[0];
-    Nd4jLong* bases = &(shapeInfo[1]);
+    const Nd4jLong* bases = &(shapeInfo[1]);
     size_t t = 1;
-    for (size_t i = 0; i < rank ; i++) {
+    for (size_t i = 0; i < rank; i++) {
         t *= bases[i];
     }
     size_t offset = 0;
     if (arr.ordering() == 'c') {
 
         for (size_t i = 0; i < t; i++) {
-            x[offset] = dis(gen) ;
+            x[offset] = dis(gen);
             offset = sd::inc_coords(bases, strides, coords, offset, rank);
         }
 
@@ -311,12 +304,21 @@ void fill_random(sd::NDArray& arr) {
     else {
 
         for (size_t i = 0; i < t; i++) {
-            x[offset] = dis(gen) ;
+            x[offset] = dis(gen);
             offset = sd::inc_coords<false>(bases, strides, coords, offset, rank);
         }
 
     }
 }
+
+#if defined(INDEX_REDUCTIONS_BENCH_TESTS)
+//temporarly, testing against the original one
+void original_argmax(const NDArray& input, std::vector<int>& axis, NDArray& output) {
+    sd::ops::helpers::adjustAxis(input.rankOf(), axis);
+    input.applyIndexReduce(sd::indexreduce::IndexMax, output, axis);
+}
+
+
  
 void testLegacy(bool random) {
 #if 0
@@ -337,7 +339,7 @@ void testLegacy(bool random) {
      }
 
 #define COMBINATIONS 1
-#if COMBINATIONS
+#if defined(COMBINATIONS)
 //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
 for (int k = N; k >= 1; k--) {
 
@@ -360,6 +362,7 @@ for (int k = N; k >= 1; k--) {
         }
 #else
 std::vector<int> dimension = { 0,1,2,3 };
+std::vector<Nd4jLong> output_bases;
 int k = 4;
 #endif
 auto dim = NDArrayFactory::create<int>(dimension);
@@ -389,7 +392,7 @@ for (int e = 0; e < Loop; e++) {
 std::sort(values.begin(), values.end());
 
 nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-#if COMBINATIONS
+#if defined(COMBINATIONS)
 
     } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
 
@@ -406,6 +409,7 @@ void testNewReduction(bool random, bool checkCorrectness = false , char order ='
     constexpr int Loop = 1;
     constexpr int N = 10;
 #else
+    std::vector<Nd4jLong> output_bases;
     int bases[] = { 8, 32, 64, 32, 64 };
     constexpr int Loop = 10;
     constexpr int N = 5;
@@ -424,7 +428,7 @@ void testNewReduction(bool random, bool checkCorrectness = false , char order ='
     }
 
 #define COMBINATIONS 1
-#if COMBINATIONS
+#if defined(COMBINATIONS)
     //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
     for (int k = N; k >= 1; k--) {
 
@@ -491,7 +495,7 @@ void testNewReduction(bool random, bool checkCorrectness = false , char order ='
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-#if COMBINATIONS
+#if defined(COMBINATIONS)
 
         } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
 
@@ -524,6 +528,317 @@ TEST_F(PlaygroundTests, ArgMaxPerfLegacyRandom) {
 }
 
 #endif
+
+#endif
+
+#if defined(VARIANCE_REDUCTIONS_BENCH_CORRECTNESS_TESTS)
+
+void deviationOp(const NDArray& input, std::vector<int>& axis, NDArray& output, bool biasCorrected) {
+    sd::ops::helpers::adjustAxis(input.rankOf(), axis);
+     sd::ops::helpers::variance(input, output, axis, biasCorrected); 
+}
+
+void deviationOpLegacy(const NDArray& input, std::vector<int>& axis, NDArray& output, bool biasCorrected) {
+    sd::ops::helpers::adjustAxis(input.rankOf(), axis); 
+    input.varianceAlongDimension(variance::SummaryStatsVariance, output, biasCorrected, axis);
+}
+
+
+void testDeviationLegacyBench(bool random, char order = 'c', bool biasCorrected = false) {
+    std::vector<Nd4jLong> arr_dimensions;
+#if defined(DEBUG)
+    int bases[] = { 3, 2, 3, 3, 5 ,4,7,4,7,7 };
+    constexpr int Loop = 1;
+    constexpr int N = 10;
+#else
+    int bases[] = { 8, 32, 64, 32, 69 };
+    constexpr int Loop = 10;
+    constexpr int N = 5;
+
+#endif
+
+    for (int i = 0; i < N; i++) {
+        arr_dimensions.push_back(bases[i]);
+    }
+    auto x = NDArrayFactory::create<float>(order, arr_dimensions);
+    if (!random) {
+        x.linspace(1);
+    }
+    else {
+        fill_random<float>(x);
+    }
+
+    #define COMBINATIONS 1
+#if defined(COMBINATIONS)
+    //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
+    for (int k = N; k >= 1; k--) {
+
+        std::string bitmask(k, 1); // K leading 1's
+        bitmask.resize(N, 0); // N-K trailing 0's
+
+        do {
+
+
+            std::vector<int> dimension;
+
+            std::vector<Nd4jLong> output_bases;
+
+            for (int i = 0; i < N; ++i) // [0..N-1] integers
+            {
+                if (bitmask[i])  dimension.push_back(i);
+                else {
+                    output_bases.push_back(bases[i]);
+                }
+            }
+#else
+    std::vector<int> dimension = { 0,1,2  ,3,4 };// , 5, 6, 7, 8, 9 
+std::vector<Nd4jLong> output_bases;
+int k = N;
+#endif
+auto dim = NDArrayFactory::create<int>(dimension);
+
+#if 1 
+nd4j_printf("C(N:%d K:%d) \n", N, k);
+dim.printIndexedBuffer("Dimension");
+for (int xind : dimension) {
+    nd4j_printf(" %d ,", bases[xind]);
+}
+nd4j_printf("%s", "\n");
+#endif
+
+
+//sd::ops::reduce_variance op;
+std::vector<Nd4jLong> values;
+//sd::ResultSet result; 
+NDArray z;
+for (int e = 0; e < Loop; e++) {
+    auto timeStart = std::chrono::system_clock::now();
+    //result = op.evaluate({ &x, &dim }, {}, {});
+    z = output_bases.size() > 0 ? NDArrayFactory::create<float>(order, output_bases) : NDArrayFactory::create<float>(0);
+    deviationOpLegacy(x, dimension, z, false);
+    //auto exp = result.at(0);
+    auto timeEnd = std::chrono::system_clock::now();
+    auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+    values.emplace_back(outerTime);
+}
+//auto z = result.at(0);
+
+std::sort(values.begin(), values.end());
+
+nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+#if defined(COMBINATIONS)
+
+    } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+}
+#endif
+}
+
+//#define DEBUG 1
+void testDeviationBench(bool random, bool checkCorrectness = false, char order = 'c') {
+    std::vector<Nd4jLong> arr_dimensions;
+#if defined(DEBUG)
+   // int bases[] = { 3, 2, 3, 3, 5 ,4,7,4,4,7 };
+    int bases[] = { 3, 2, 3, 5 }; 
+    constexpr int Loop = 1;
+    constexpr int N = sizeof(bases)/sizeof(int);
+#else
+    int bases[] = { 8, 32, 64, 32, 69 };
+    constexpr int Loop = 40;
+    constexpr int N = 5;
+
+#endif
+
+    for (int i = 0; i < N; i++) {
+        arr_dimensions.push_back(bases[i]);
+    }
+    auto x = NDArrayFactory::create<float>(order, arr_dimensions);
+    if (!random) {
+        x.linspace(1);
+    }
+    else {
+        fill_random<float>(x);
+    }
+
+#define COMBINATIONS 1
+#if defined(COMBINATIONS)
+    //https://www.rosettacode.org/wiki/Combinations#C.2B.2B
+    for (int k = N; k >= 1; k--) {
+
+        std::string bitmask(k, 1); // K leading 1's
+        bitmask.resize(N, 0); // N-K trailing 0's
+
+        do {
+
+
+            std::vector<int> dimension;
+
+            std::vector<Nd4jLong> output_bases;
+
+            for (int i = 0; i < N; ++i) // [0..N-1] integers
+            {
+                if (bitmask[i])  dimension.push_back(i);
+                else {
+                    output_bases.push_back(bases[i]);
+                }
+            }
+#else
+    std::vector<int> dimension = { 0,1,2  ,3,4 };// , 5, 6, 7, 8, 9 
+    std::vector<Nd4jLong> output_bases;
+    int k = N;
+#endif
+    auto dim = NDArrayFactory::create<int>(dimension);
+
+#if 1 
+    nd4j_printf("C(N:%d K:%d) \n", N, k);
+    dim.printIndexedBuffer("Dimension");
+    for (int xind : dimension) {
+        nd4j_printf(" %d ,", bases[xind]);
+    }
+    nd4j_printf("%s", "\n");
+#endif
+
+
+    // sd::ops::reduce_variance op;
+    std::vector<Nd4jLong> values;
+    // sd::ResultSet result;
+    NDArray z;
+    for (int e = 0; e < Loop; e++) {
+        auto timeStart = std::chrono::system_clock::now();
+        // result = op.evaluate({ &x, &dim }, {}, {});
+        z = output_bases.size() > 0 ? NDArrayFactory::create<float>(order, output_bases) : NDArrayFactory::create<float>(0);
+        deviationOp(x, dimension, z, false);
+        auto timeEnd = std::chrono::system_clock::now();
+        auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
+        values.emplace_back(outerTime);
+    }
+    //auto z = result;//result.at(0);
+
+    if (checkCorrectness) {
+        //check for the correctness
+
+       // sd::ops::reduce_variance op;
+        auto exp = output_bases.size() > 0 ? NDArrayFactory::create<float>(order, output_bases) : NDArrayFactory::create<float>(0);
+        //op.execute({ &x, &dim }, { &exp }, {} , {}, 
+        deviationOpLegacy(x, dimension, exp, false);
+#if   defined(DEBUG)
+       //  x.printIndexedBuffer("X");
+        exp.printIndexedBuffer("Expected");
+        z.printIndexedBuffer("Z");
+ 
+#endif
+
+        ASSERT_TRUE(exp.isSameShape(&z));
+        ASSERT_TRUE(exp.equalsTo(&z));
+    }
+    std::sort(values.begin(), values.end());
+
+    nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
+#if defined(COMBINATIONS)
+
+        } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
+
+    }
+#endif
+}
+
+
+void testGeneralScalar(char order='c') {
+
+    constexpr int d0 = 17;
+    constexpr int d1 = 7;
+    constexpr int d2 = 13;
+    constexpr int d3 = 7;
+    constexpr int d4 = 11;
+    constexpr int d5 = 7;
+    auto x = NDArrayFactory::create<float>(order, {d0,d1,d2,d3,d4,d5 });
+    fill_random<float>(x); 
+    auto x_view1 = x.subarray({ NDIndex::all(), NDIndex::all() , NDIndex::point(0)  ,NDIndex::all(), NDIndex::point(0) , NDIndex::all() });
+    x_view1.reshapei({ d0,d1, d3, d5 }, order);
+    auto x_view2 = x.subarray({ NDIndex::all(), NDIndex::point(0) , NDIndex::all()   ,NDIndex::point(0) , NDIndex::all() , NDIndex::point(0) });
+    x_view2.reshapei({ d0,d2,  d4 }, order); 
+
+    std::vector<int> dim1 = { 0,1,2,3 };
+    std::vector<int> dim2 =  { 0,1,2 };
+    //auto ndDim1 = NDArrayFactory::create<int>(dim1);
+    //auto ndDim2 = NDArrayFactory::create<int>(dim2);
+    //new
+    auto z1 = NDArrayFactory::create<float>(0);
+    auto z2 = NDArrayFactory::create<float>(0);
+    deviationOp(x_view1, dim1, z1, false);
+    deviationOp(x_view2, dim2, z2, false);
+
+    //legacy
+    sd::ops::reduce_variance op;
+    auto exp1 = NDArrayFactory::create<float>(0);
+    auto exp2 = NDArrayFactory::create<float>(0);
+
+    //op.execute({ &x_view1, &ndDim1 }, { &exp1 }, {}, {}, {});
+    //op.execute({ &x_view2, &ndDim2 }, { &exp2 }, {}, {}, {});
+    deviationOpLegacy(x_view1, dim1, exp1, false);
+    deviationOpLegacy(x_view2, dim2, exp2, false);
+#if  1
+    z1.printIndexedBuffer("Z1");
+    exp1.printIndexedBuffer("Expected1");
+    z2.printIndexedBuffer("Z2");
+    exp2.printIndexedBuffer("Expected2");
+#endif
+
+    ASSERT_TRUE(exp1.isSameShape(&z1));
+    ASSERT_TRUE(exp2.equalsTo(&z2));
+
+}
+
+
+constexpr bool test_corr = true;
+ 
+TEST_F(PlaygroundTests, Variance) {
+    testDeviationBench(true, test_corr);
+}
+
+#if defined(VarianceFortran)
+TEST_F(PlaygroundTests, VarianceFortran) {
+    testDeviationBench(true, test_corr, 'f');
+}
+#endif
+TEST_F(PlaygroundTests, VarianceLegacy) {
+    testDeviationLegacyBench(true);
+}
+
+TEST_F(PlaygroundTests, VarianceGeneralScalar) {
+    testGeneralScalar( 'c');
+    testGeneralScalar( 'f');
+}
+
+void testOutputOrder() {
+
+    auto x = NDArrayFactory::create<float>('c', { 3, 2, 3, 5 });
+    fill_random<float>(x);
+
+    std::vector<Nd4jLong> output_bases = { 3,5 };
+
+    auto dim = NDArrayFactory::create<int>({ 0,1 });
+
+    sd::ops::reduce_variance op;
+    auto exp1 = NDArrayFactory::create<float>('c', output_bases);
+    auto exp2 = NDArrayFactory::create<float>('f', output_bases);
+
+    op.execute({ &x, &dim }, { &exp1 }, {}, {}, {});
+    op.execute({ &x, &dim }, { &exp2 }, {}, {}, {});
+#if  1
+
+    exp1.printIndexedBuffer("Expected1");
+    exp2.printIndexedBuffer("Expected2");
+#endif
+
+    ASSERT_TRUE(exp1.isSameShape(&exp2));
+    ASSERT_TRUE(exp1.equalsTo(&exp2));
+
+}
+
+TEST_F(PlaygroundTests, VarianceOutputOrder) {
+    testOutputOrder();
+}
 
 #endif
 

@@ -21,6 +21,7 @@
 
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/axis.h>
+#include <ops/declarable/helpers/reductions.h>
 
 namespace sd    {
 namespace ops     {
@@ -55,7 +56,8 @@ CUSTOM_OP_IMPL(reduce_stdev, 1, 1, false, 0, 0) {
     for(const auto& item : dimensions)
         REQUIRE_TRUE(item >= -input->rankOf() && item < input->rankOf(), 0, "REDUCE_STDEV OP: the input dimension to reduce along must be in range [-%i, %i), but got %i instead !" , input->rankOf(), input->rankOf(), item);
 
-    input->varianceAlongDimension(variance::SummaryStatsStandardDeviation, *output, biasCorrected, dimensions);
+    //input->varianceAlongDimension(variance::SummaryStatsStandardDeviation, *output, biasCorrected, dimensions);
+    sd::ops::helpers::standardDeviation(*input, *output, dimensions, biasCorrected);
 
     return Status::OK();
 }

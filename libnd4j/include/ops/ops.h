@@ -4314,6 +4314,7 @@ namespace simdOps {
 	public:
 
         static _CUDA_HD inline Z getValue(const bool biasCorrected, functions::summarystats::SummaryStatsData<X> val) {
+
 			if (biasCorrected) {
 				Z ret = static_cast<Z>(val.varianceBiasCorrected());
 				if (ret < static_cast<Z>(0.0f))
