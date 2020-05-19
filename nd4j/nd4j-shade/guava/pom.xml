@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright (c) 2020 Konduit K.K.
+  ~
+  ~ This program and the accompanying materials are made available under the
+  ~ terms of the Apache License, Version 2.0 which is available at
+  ~ https://www.apache.org/licenses/LICENSE-2.0.
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  ~ License for the specific language governing permissions and limitations
+  ~ under the License.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <artifactId>nd4j-shade</artifactId>
         <groupId>org.nd4j</groupId>
+        <artifactId>nd4j-shade</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>guava</artifactId>
 
@@ -25,17 +43,16 @@
         </dependency>
     </dependencies>
 
-
     <profiles>
         <profile>
             <id>custom-lifecycle</id>
-
             <activation>
-                <property><name>!skip.custom.lifecycle</name></property>
+                <property>
+                    <name>!skip.custom.lifecycle</name>
+                </property>
             </activation>
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.apache.portals.jetspeed-2</groupId>
                         <artifactId>jetspeed-mvn-maven-plugin</artifactId>
@@ -58,7 +75,6 @@
                         </dependencies>
                         <configuration>
                             <targets combine.children="merge">
-
                                 <target>
                                     <id>create-shaded-jars</id>
                                     <dir>@rootdir@/nd4j/nd4j-shade/guava/</dir>
@@ -67,7 +83,6 @@
                                         <skip.custom.lifecycle>true</skip.custom.lifecycle>
                                     </properties>
                                 </target>
-
                             </targets>
                             <defaultTarget>create-shaded-jars</defaultTarget>
                         </configuration>
@@ -79,7 +94,6 @@
 
     <build>
         <plugins>
-
             <!-- Disable Maven Lint plugin in this module. For some reason it chokes on this module (internal NPE) and we don't need it anyway here -->
             <plugin>
                 <groupId>com.lewisd</groupId>
@@ -92,7 +106,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -105,16 +118,18 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>reference.conf</resource>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
                             </transformers>
                         </configuration>
                     </execution>
                 </executions>
-
                 <configuration>
                     <!--
                     Important configuration options here:
@@ -134,13 +149,11 @@
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-
                     <artifactSet>
                         <includes>
                             <include>com.google.*:*</include>
                         </includes>
                     </artifactSet>
-
                     <relocations>
                         <relocation>
                             <pattern>com.google.common</pattern>
@@ -151,7 +164,6 @@
                             <shadedPattern>org.nd4j.shade</shadedPattern>
                         </relocation>
                     </relocations>
-
                 </configuration>
             </plugin>
             <plugin>
@@ -185,7 +197,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -205,7 +216,8 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/classes/</outputDirectory>
+                                    <outputDirectory>${project.build.directory}/classes/
+                                    </outputDirectory>
                                     <includes>**/*.class,**/*.xml</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -215,5 +227,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

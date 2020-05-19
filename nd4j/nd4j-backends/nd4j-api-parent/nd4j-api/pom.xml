@@ -59,20 +59,17 @@
             <artifactId>byteunits</artifactId>
             <version>0.9.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>${commons-math3.version}</version>
         </dependency>
         <!-- Tensorflow import -->
-
         <dependency>
             <groupId>com.google.flatbuffers</groupId>
             <artifactId>flatbuffers-java</artifactId>
             <version>${flatbuffers.version}</version>
         </dependency>
-
         <!-- Note that this is shaded protobuf. We use this instead of google's version mainly due ot other systems packaging
         their own older (incompatible) protobuf versions-->
         <dependency>
@@ -80,21 +77,16 @@
             <artifactId>protobuf</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
         <!-- oshi: Used for collecting system information for system info reporting -->
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>${oshi.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
-
         <!-- Shaded version of Jackson -->
         <dependency>
             <groupId>org.nd4j</groupId>
@@ -121,11 +113,6 @@
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacpp</artifactId>
-            <version>${javacpp.version}</version>
         </dependency>
     </dependencies>
 

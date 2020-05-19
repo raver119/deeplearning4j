@@ -36,6 +36,14 @@
         <module>nd4j-api</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacpp</artifactId>
+            <version>${javacpp.version}</version>
+        </dependency>
+    </dependencies>
+
     <profiles>
         <profile>
             <id>testresources</id>

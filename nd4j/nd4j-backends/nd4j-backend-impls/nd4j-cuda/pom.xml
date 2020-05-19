@@ -28,6 +28,7 @@
     </parent>
 
     <artifactId>nd4j-cuda-10.2</artifactId>
+
     <name>nd4j-cuda</name>
 
     <properties>
@@ -54,12 +55,10 @@
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>${javacpp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>${javacpp.version}</version>
             <classifier>${dependency.platform}</classifier>
         </dependency>
         <dependency>
@@ -86,17 +85,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

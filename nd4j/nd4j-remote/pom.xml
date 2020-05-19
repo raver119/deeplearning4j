@@ -33,11 +33,6 @@
 
     <name>nd4j-remote</name>
 
-    <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
-
     <modules>
         <module>nd4j-json-client</module>
         <module>nd4j-grpc-client</module>

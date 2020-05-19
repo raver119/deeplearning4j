@@ -28,6 +28,7 @@
     </parent>
 
     <artifactId>nd4j-native</artifactId>
+
     <name>nd4j-native</name>
 
     <dependencies>
@@ -41,12 +42,10 @@
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>${javacpp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
-            <version>${javacpp.version}</version>
             <classifier>${dependency.platform}</classifier>
         </dependency>
         <dependency>
@@ -59,16 +58,14 @@
             <artifactId>openblas</artifactId>
             <version>${openblas.version}-${javacpp-presets.version}</version>
             <classifier>${dependency.platform}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-api</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native-api</artifactId>
         </dependency>
     </dependencies>
 
