@@ -29,7 +29,6 @@
 
     <groupId>org.nd4j</groupId>
     <artifactId>nd4s_${scala.binary.version}</artifactId>
-    <packaging>jar</packaging>
 
     <name>nd4s</name>
 
