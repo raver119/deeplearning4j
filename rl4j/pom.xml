@@ -27,20 +27,11 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.deeplearning4j</groupId>
     <artifactId>rl4j</artifactId>
     <packaging>pom</packaging>
 
     <name>rl4j</name>
     <description>Deep Reinforcement Learning for the JVM</description>
-
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
 
     <developers>
         <developer>
