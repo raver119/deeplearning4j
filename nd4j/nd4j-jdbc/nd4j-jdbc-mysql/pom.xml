@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>nd4j-jdbc-mysql</artifactId>
-    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>org.nd4j</groupId>

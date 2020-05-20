@@ -87,11 +87,6 @@
                 <version>${javacpp.version}</version>
                 <classifier>${dependency.platform}</classifier>
             </dependency>
-            <dependency>
-                <groupId>org.nd4j</groupId>
-                <artifactId>nd4j-native-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

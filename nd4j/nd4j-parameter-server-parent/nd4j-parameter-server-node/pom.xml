@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>nd4j-parameter-server-node_2.11</artifactId>
-    <packaging>jar</packaging>
 
     <name>nd4j-parameter-server-node</name>
 
@@ -56,12 +55,10 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-parameter-server</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -72,8 +69,6 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common-tests</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

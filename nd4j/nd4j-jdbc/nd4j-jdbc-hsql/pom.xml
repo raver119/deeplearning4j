@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>nd4j-jdbc-hsql</artifactId>
-    <packaging>jar</packaging>
 
     <name>nd4j-jdbc-hsql</name>
 

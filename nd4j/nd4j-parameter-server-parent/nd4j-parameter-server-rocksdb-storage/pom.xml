@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>nd4j-parameter-server-rocksdb-storage</artifactId>
-    <packaging>jar</packaging>
 
     <name>nd4j-parameter-server-rocksdb-storage</name>
 
@@ -41,7 +40,6 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-parameter-server</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -50,8 +48,6 @@
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-common-tests</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -28,7 +28,6 @@
     </parent>
 
     <artifactId>nd4j-arrow</artifactId>
-    <packaging>jar</packaging>
 
     <name>nd4j-arrow</name>
 
