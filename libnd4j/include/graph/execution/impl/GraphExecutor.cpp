@@ -54,7 +54,7 @@ Nd4jStatus GraphExecutor::execute(
     const ContextPrototype &contextPrototype, const OpSequence &sequence,
     const OptimizedGraph &graph, VariableProxy &proxy,
     const int deviceId) const {
-  auto ctx = prepareContext(contextPrototype, proxy, graph.memoryManager());
+  auto ctx = prepareContext(contextPrototype, proxy,  GraphMemoryManager()/*graph.memoryManager()*/);
   return op->execute(&ctx);
   // throw std::runtime_error("GraphExecutor::execute - Not implemented yet");
 }
@@ -85,20 +85,20 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
    * execute them one by one sequentially
    */
   Nd4jStatus result = Status::OK();
-  for (uint64_t l = 0; l < graph.layers(); l++) {
-    const auto &layer = graph.layer(l);
+  // for (uint64_t l = 0; l < graph.layers(); l++) {
+  //   const auto &layer = graph.layer(l);
 
-    for (uint64_t o = 0; o < layer.width(); o++) {
-      execute(layer[o], graph, proxy, -1);
-    }
+  //   for (uint64_t o = 0; o < layer.width(); o++) {
+  //     execute(layer[o], graph, proxy, -1);
+  //   }
 
-    // optionally block until all sequences in this layer processed
-    if (layer.width() > 0 && numDevices > 1)
-      for (uint64_t o = 0; o < layer.width(); o++) {
-        result = layer[o].wait();
-        if (result != Status::OK()) return result;
-      }
-  }
+  //   // optionally block until all sequences in this layer processed
+  //   if (layer.width() > 0 && numDevices > 1)
+  //     for (uint64_t o = 0; o < layer.width(); o++) {
+  //       result = layer[o].wait();
+  //       if (result != Status::OK()) return result;
+  //     }
+  // }
 
   return result;
 }

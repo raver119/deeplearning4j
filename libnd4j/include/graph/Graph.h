@@ -62,7 +62,7 @@ class SD_EXPORT Graph {
   // we want to know last node id
   int _maxId = 1;
 
-  const GraphMemoryManager &_memoryMaager;
+  const GraphMemoryManager &_memoryManager;
 
   ////////////////////////////////////////
   Nd4jStatus validateNode(Node *node);

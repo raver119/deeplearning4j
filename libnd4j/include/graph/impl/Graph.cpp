@@ -124,9 +124,7 @@ void Graph::addNode(Node &node,
   throw std::runtime_error("Graph::addNode() - Not implemented yet");
 }
 
-Graph::Graph(const FlatGraph *flatGraph,
-             const GraphMemoryManager &memoryManager)
-    : _memoryMaager(memoryManager) {
+Graph::Graph(const FlatGraph *flatGraph, const GraphMemoryManager &memoryManager): _memoryManager(memoryManager) {
   bool trusted = flatGraph != nullptr;
 
   // if there was no exec configuration in flatgraph - create default one
@@ -279,7 +277,7 @@ void Graph::printOut() {
     nd4j_printf("\nPrinting out Nodes...\n", "");
 
     // since we need structure - we'll print out nodes of OptimizedGraph
-    optimizedGraph().printOut();
+    // optimizedGraph().printOut();
   }
 }
 
@@ -641,7 +639,7 @@ std::map<std::string, NDArray> Graph::execute(
   return result;
 }
 
-Graph::Graph(const Graph &other) : _memoryMaager(other._memoryMaager) {
+Graph::Graph(const Graph &other) : _memoryManager(other._memoryManager) {
   _configuration = other._configuration;
   _variableSpace = other._variableSpace;
   _stash = other._stash;
@@ -665,7 +663,7 @@ Graph &Graph::operator=(const Graph &other) noexcept {
   return *this;
 }
 
-Graph::Graph(Graph &&other) : _memoryMaager(other._memoryMaager) {
+Graph::Graph(Graph &&other) : _memoryManager(other._memoryManager) {
   _configuration = other._configuration;
   _variableSpace = other._variableSpace;
   _stash = other._stash;
@@ -693,14 +691,14 @@ Graph &Graph::operator=(Graph &&other) noexcept {
   return *this;
 }
 
-const GraphMemoryManager &Graph::memoryManager() const { return _memoryMaager; }
+const GraphMemoryManager &Graph::memoryManager() const { return _memoryManager; }
 
 const OptimizedGraph &Graph::optimizedGraph() const {
   std::lock_guard<std::mutex> lock(_optimizedLock);
 
   // optionally rebuild optimized graph, if it's out of date
-  if (_optimized.size() != size())
-    _optimized = OptimizedGraph(const_cast<Graph *>(this));
+  // if (_optimized.size() != size())
+  //   _optimized = OptimizedGraph(unmappedNodes());
 
   return _optimized;
 }

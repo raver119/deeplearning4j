@@ -38,42 +38,42 @@ class OpSequenceTests : public testing::Test {
   OpSequenceTests() {}
 };
 
-TEST_F(OpSequenceTests, test_iterator_1) {
-  Graph graph;
-  OpSequence sequence;
+// TEST_F(OpSequenceTests, test_iterator_1) {
+//   Graph graph;
+//   OpSequence sequence;
 
-  ASSERT_EQ(0, sequence.length());
+//   ASSERT_EQ(0, sequence.length());
 
-  ops::add op1;
-  ops::multiply op2;
+//   ops::add op1;
+//   ops::multiply op2;
 
-  Context ctx1(1);
-  Context ctx2(2);
+//   Context ctx1(1);
+//   Context ctx2(2);
 
-  sequence.append(&op1, ctx1);
-  sequence.append(&op2, ctx2);
+//   sequence.append(&op1, ctx1);
+//   sequence.append(&op2, ctx2);
 
-  ASSERT_EQ(2, sequence.length());
+//   ASSERT_EQ(2, sequence.length());
 
-  int cnt = 1;
-  for (const auto &v : sequence) {
-    ASSERT_EQ(cnt++, v.protoContext().nodeId());
-  }
+//   int cnt = 1;
+//   for (const auto &v : sequence) {
+//     ASSERT_EQ(cnt++, v.protoContext().nodeId());
+//   }
 
-  ASSERT_EQ(3, cnt);
+//   ASSERT_EQ(3, cnt);
 
-  OptimizedGraph optimizedGraph;
-  ASSERT_EQ(0, optimizedGraph.layers());
+//   OptimizedGraph optimizedGraph;
+//   ASSERT_EQ(0, optimizedGraph.layers());
 
-  optimizedGraph.append(sequence);
-  ASSERT_EQ(1, optimizedGraph.layers());
+//   optimizedGraph.append(sequence);
+//   ASSERT_EQ(1, optimizedGraph.layers());
 
-  auto layer = optimizedGraph.layer(0);
+//   auto layer = optimizedGraph.layer(0);
 
-  // we expect exactly 1 sequence in this layer
-  ASSERT_EQ(1, layer.width());
+//   // we expect exactly 1 sequence in this layer
+//   ASSERT_EQ(1, layer.width());
 
-  auto seq = layer[0];
+//   auto seq = layer[0];
 
-  ASSERT_EQ(2, seq.length());
-}
+//   ASSERT_EQ(2, seq.length());
+// }

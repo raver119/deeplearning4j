@@ -39,67 +39,67 @@ class GraphExecutorTests : public testing::Test {
  public:
 };
 
-TEST_F(GraphExecutorTests, test_basic_exec_1) {
-  GraphMemoryManager memoryManager;
-  Graph graph;
+// TEST_F(GraphExecutorTests, test_basic_exec_1) {
+//   GraphMemoryManager memoryManager;
+//   Graph graph;
 
-  OptimizedGraph optimizedGraph;
-  OpSequence sequence;
+//   OptimizedGraph optimizedGraph;
+//   OpSequence sequence;
 
-  optimizedGraph.append(sequence);
+//   optimizedGraph.append(sequence);
 
-  VariableProxy proxy(&graph.variableSpace());
-  GraphExecutor executor;
-  executor.execute(optimizedGraph, proxy);
-}
+//   VariableProxy proxy(&graph.variableSpace());
+//   GraphExecutor executor;
+//   executor.execute(optimizedGraph, proxy);
+// }
 
-TEST_F(GraphExecutorTests, test_basic_exec_2) {
-  GraphMemoryManager mgr;
-  Graph graph(nullptr, mgr);
+// TEST_F(GraphExecutorTests, test_basic_exec_2) {
+//   GraphMemoryManager mgr;
+//   Graph graph(nullptr, mgr);
 
-  auto A = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
-  auto B = NDArrayFactory::create<int>('c', {3}, {2, 2, 2});
-  auto C = NDArrayFactory::create<int>('c', {3}, {3, 3, 3});
+//   auto A = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
+//   auto B = NDArrayFactory::create<int>('c', {3}, {2, 2, 2});
+//   auto C = NDArrayFactory::create<int>('c', {3}, {3, 3, 3});
 
-  auto exp = NDArrayFactory::create<int>('c', {3}, {5, 5, 5});
+//   auto exp = NDArrayFactory::create<int>('c', {3}, {5, 5, 5});
 
-  graph.addVariable("A", A);
-  graph.addVariable("B", B);
-  graph.addVariable("C", C);
+//   graph.addVariable("A", A);
+//   graph.addVariable("B", B);
+//   graph.addVariable("C", C);
 
-  Node m(sd::ops::multiply(), "mul");
-  Node a(sd::ops::add(), "add");
+//   Node m(sd::ops::multiply(), "mul");
+//   Node a(sd::ops::add(), "add");
 
-  graph.addNode(m, {"A", "B"});
-  graph.addNode(a, {"mul", "C"});
+//   graph.addNode(m, {"A", "B"});
+//   graph.addNode(a, {"mul", "C"});
 
-  OptimizedGraph optimizedGraph;
-  OpSequence sequence;
+//   OptimizedGraph optimizedGraph;
+//   OpSequence sequence;
 
-  ASSERT_EQ(2, m.protoContext().inputs().size());
-  ASSERT_EQ(2, a.protoContext().inputs().size());
+//   ASSERT_EQ(2, m.protoContext().inputs().size());
+//   ASSERT_EQ(2, a.protoContext().inputs().size());
 
-  sequence.append(m.customOp(), m.protoContext());
-  sequence.append(a.customOp(), a.protoContext());
+//   sequence.append(m.customOp(), m.protoContext());
+//   sequence.append(a.customOp(), a.protoContext());
 
-  optimizedGraph.append(sequence);
+//   optimizedGraph.append(sequence);
 
-  ASSERT_EQ(2, sequence.length());
-  ASSERT_EQ(1, optimizedGraph.layers());
+//   ASSERT_EQ(2, sequence.length());
+//   ASSERT_EQ(1, optimizedGraph.layers());
 
-  VariableProxy proxy(&graph.variableSpace());
-  GraphExecutor executor;
-  executor.execute(optimizedGraph, proxy);
+//   VariableProxy proxy(&graph.variableSpace());
+//   GraphExecutor executor;
+//   executor.execute(optimizedGraph, proxy);
 
-  // checking results by ID
-  ASSERT_TRUE(proxy.hasVariable(m.id()));
-  ASSERT_TRUE(proxy.hasVariable(a.id()));
+//   // checking results by ID
+//   ASSERT_TRUE(proxy.hasVariable(m.id()));
+//   ASSERT_TRUE(proxy.hasVariable(a.id()));
 
-  // checking results by name
-  ASSERT_TRUE(proxy.hasVariable("mul"));
-  ASSERT_TRUE(proxy.hasVariable("add"));
+//   // checking results by name
+//   ASSERT_TRUE(proxy.hasVariable("mul"));
+//   ASSERT_TRUE(proxy.hasVariable("add"));
 
-  // checking if result is valid
-  auto result = proxy.getVariable(a.id())->getNDArray();
-  ASSERT_EQ(exp, *result);
-}
+//   // checking if result is valid
+//   auto result = proxy.getVariable(a.id())->getNDArray();
+//   ASSERT_EQ(exp, *result);
+// }
