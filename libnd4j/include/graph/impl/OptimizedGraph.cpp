@@ -16,6 +16,7 @@
 
 //
 // @author Yurii Shyrma (iuriish@yahoo.com)
+// @author raver119@gmail.com
 //
 
 #include <graph/Graph.h>
@@ -25,6 +26,24 @@
 namespace sd    {
 namespace graph {
 
+///////////////////////////////////////////////////////////////////
+// move constructor
+OptimizedGraph::OptimizedGraph(OptimizedGraph &&other) noexcept: _sortedGraph(std::move(other._sortedGraph)) {
+
+}
+
+///////////////////////////////////////////////////////////////////
+// move assignment operator
+OptimizedGraph& OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
+  if (this == &other)
+    return *this;
+
+  _sortedGraph = std::move(other._sortedGraph);
+
+  return *this;
+}
+
+///////////////////////////////////////////////////////////////////
 OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableSpace& varSpace) {
 
   MAP_IMPL<int, std::forward_list<int>> workMap;  // key is node id, value is vector containing connections (internal inputs, that is nodes, not input arrays)
@@ -40,85 +59,127 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         currList.push_front(i1.first);
   }
 
-  // 2d vector
-  std::vector<std::vector<int>> sortedNodes;    // 0d - layers, 1d - nodes belonging to layer, OpSequence are separated by -1 in current layer
 
-  // searches for of exit node
-  auto findExitNode = [] (const decltype(workMap)& m) {
+  // for (const auto& p : workMap) {
+  //   printf("node %i: ", p.first);
+  //   std::for_each(p.second.begin(), p.second.end(), [] (const int &j) {printf("%i, ", j);});
+  //   printf("\n-----------------\n");
+  // }
+
+
+  // 2d vector
+  std::vector<std::vector<int>> sortedNodes;    // 0d - layers, 1d - nodes of layer, OpSequence are separated by -1 in current layer
+
+  //*** lambda: searches for of start node
+  auto findStartNode = [] (const decltype(workMap)& m) {
       return std::find_if(m.begin(), m.end(), [] (const std::pair<const int, std::forward_list<int>> &p) {return p.second.empty();});
   };
 
-  // searches for next node in current OpSequence
-  auto findNextNodeInOpSeq = [] (const decltype(workMap)& m, const int &currId) {
-      return std::find_if(m.begin(), m.end(), [&currId] (const std::pair<const int, std::forward_list<int>> &p) {return p.second.front() == currId && std::distance(p.second.begin(), p.second.end()) == 1;});
+  //*** lambda: searches for next node in current OpSequence
+  auto findNextNodeInOpSeq = [] (const decltype(workMap)& m, const int &idOfStartNode, int& resultId) {
+      uint count = 0;
+      decltype(workMap)::const_iterator it;
+      for (it = m.cbegin(); it != m.cend(); ++it)
+        if (std::find(it->second.cbegin(), it->second.cend(), idOfStartNode) != it->second.end()) { ++count; if(count > 1) break; }
+
+      if(count == 1 && !it->second.empty() && std::distance(it->second.begin(), it->second.end()) == 1)
+        resultId = it->first;
+      else
+        count = 0;
+      return count;
   };
 
-  decltype(workMap)::const_iterator exitNode(nullptr), nextNodeInSeq(nullptr);
+  decltype(workMap)::const_iterator startNode;
 
   while (!workMap.empty()) {
 
     sortedNodes.emplace_back(std::vector<int>());   // add layer
     auto& currLayer = sortedNodes.back();
 
-    // loop of searching for exit nodes
-    while ((exitNode = findExitNode(workMap)) != workMap.end()) {
+    // loop of searching for start nodes
+    while ((startNode = findStartNode(workMap)) != workMap.end()) {
 
-      int currId = exitNode->first; // id of node under consideration
+      int nextId, currId(startNode->first); // id of node under consideration
 
       currLayer.push_back(currId);
       workMap.erase(currId);
 
       // loop of searching for next nodes in OpSequence
-      while ((nextNodeInSeq = findNextNodeInOpSeq(workMap, currId)) != workMap.end()) {
+      while (findNextNodeInOpSeq(workMap, currId, nextId) == 1) {
 
-        currId = nextNodeInSeq->first;
-
-        sortedNodes.back().push_back(currId);
-        workMap.erase(currId);
+        currLayer.push_back(nextId);
+        workMap.erase(nextId);
+        currId = nextId;
       }
+
       currLayer.push_back(-1); // mark end of OpSequence
+
     }
 
-    // remove connections in all nodes pointing at exit nodes
-    for (uint i = 0; i < currLayer.size(); ++i) {
+    // remove connections in all nodes pointing at start nodes
+    for (int i = 0; i < currLayer.size(); ++i) {
 
       if(currLayer[i] != -1 || i == 0)    // if not at the and of OpSequence
         continue;
 
-      const int idOfExitNode = currLayer[i-1];
+      const int idOfStartNode = currLayer[i-1];
 
-      std::for_each(workMap.begin(), workMap.end(), [&idOfExitNode] (std::pair<const int, std::forward_list<int>> &p) {p.second.remove(idOfExitNode);});
+      std::for_each(workMap.begin(), workMap.end(), [&idOfStartNode] (std::pair<const int, std::forward_list<int>> &p) {p.second.remove(idOfStartNode);});
     }
-
 
   }
 
-
-
-
-
-
-  // auto fi = std::find_if(ops.begin(), ops.end(), [name](ops::OpDescriptor a) { return a.getOpName()->compare(name) == 0;});
-
-
-  // for (const auto& i0 : idVsConnects) {
-
-  //     bool isExitNode = true;
-
-  //     for (const auto& i1 : idVsConnects) {
-
-  //       if (i0.first == i1.first)
-  //         continue;
-
-  //       if (i1.second) {
-  //         isExitNode = false;
-  //         break;
-  //       }
-  //     }
-
+  // int i = 0;
+  // for (const auto& vec : sortedNodes) {
+  //   printf("layer %i: ",i++);
+  //   for (int j = 0; j < vec.size(); ++j) {
+  //     printf("%i, ", vec[j]);
+  //   }
+  //   printf("\n");
   // }
 
+
+
+  //*** fill _sortedGraph *** //
+  // loop through layers
+  for (const auto& vec : sortedNodes) {
+
+    ExecutionLayer layer;
+
+    // loop through OpSequences
+    uint i = 0;
+    while(i < vec.size()) {
+
+      OpSequence seq;
+
+      // loop through OpSequence
+      while(vec[i++] != -1)
+        seq.append(inMap.at(vec[i-1]).customOp(), inMap.at(vec[i-1]).protoContext());
+
+      layer.append(std::move(seq));
+    }
+    _sortedGraph.emplace_back(std::move(layer));
+  }
 }
+
+
+///////////////////////////////////////////////////////////////////
+size_t OptimizedGraph::size() const {
+  // std::lock_guard<std::mutex> lock(_mutex);
+
+  size_t size = 0;
+
+  std::for_each(_sortedGraph.begin(), _sortedGraph.end(), [&size] (const ExecutionLayer &l) {
+      for (int e = 0; e < l.width(); e++) {
+        size += l.at(0).length();
+      }
+  ;});
+
+  return size;
+}
+
+
+
 
 
 // OptimizedGraph::OptimizedGraph(Graph* original) {
@@ -161,25 +222,9 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
 //   return *this;
 // }
 
-// size_t OptimizedGraph::size() const {
-//   std::lock_guard<std::mutex> lock(_mutex);
 
-//   std::vector<OpSequence> seq;
-//   if (_size == 0)
-//     for (const auto& v : _onion) {
-//       for (int e = 0; e < v.second.width(); e++) {
-//         _size += v.second.at(0).length();
-//       }
-//     }
 
-//   return _size;
-// }
 
-// uint64_t OptimizedGraph::layers() const { return _onion.size(); }
-
-// const ExecutionLayer& OptimizedGraph::layer(uint64_t index) const {
-//   return _onion.at(index);
-// }
 
 // void OptimizedGraph::append(const std::vector<OpSequence>& layer) {
 //   std::lock_guard<std::mutex> lock(_mutex);

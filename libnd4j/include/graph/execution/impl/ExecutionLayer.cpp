@@ -36,9 +36,14 @@ const OpSequence &ExecutionLayer::operator[](uint64_t index) const {
   return at(index);
 }
 
-void ExecutionLayer::append(const OpSequence &sequence) {
+
+void ExecutionLayer::append(OpSequence&& sequence) {
+  _sequences.emplace_back(std::move(sequence));
+}
+void ExecutionLayer::append(const OpSequence& sequence) {
   _sequences.emplace_back(sequence);
 }
+
 
 ExecutionLayer::ExecutionLayer(const ExecutionLayer &other) noexcept {
   _sequences = other._sequences;
@@ -53,8 +58,9 @@ ExecutionLayer &ExecutionLayer::operator=(
   return *this;
 }
 
-ExecutionLayer::ExecutionLayer(ExecutionLayer &&other) noexcept {
-  _sequences = std::move(other._sequences);
+// move constructor
+ExecutionLayer::ExecutionLayer(ExecutionLayer &&other) noexcept: _sequences(std::move(other._sequences)) {
+
 }
 
 ExecutionLayer &ExecutionLayer::operator=(ExecutionLayer &&other) noexcept {

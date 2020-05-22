@@ -41,8 +41,8 @@ OpSequence::OpSequence(const OpSequence &other) noexcept {
 
 ////////////////////////////////////////////////////////////////////////
 // move constructor
-OpSequence::OpSequence(OpSequence &&other) noexcept {
-  _ops = std::move(other._ops);
+OpSequence::OpSequence(OpSequence &&other) noexcept: _ops(std::move(other._ops))  {
+
 }
 
 OpSequence &OpSequence::operator=(OpSequence &&other) noexcept {

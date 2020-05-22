@@ -273,12 +273,12 @@ void Graph::printOut() {
 
   fflush(stdout);
 
-  if (size() > 0) {
-    nd4j_printf("\nPrinting out Nodes...\n", "");
+  // if (size() > 0) {
+  //   nd4j_printf("\nPrinting out Nodes...\n", "");
 
-    // since we need structure - we'll print out nodes of OptimizedGraph
-    // optimizedGraph().printOut();
-  }
+  //   // since we need structure - we'll print out nodes of OptimizedGraph
+  //   optimizedGraph().printOut();
+  // }
 }
 
 Nd4jStatus Graph::validateNode(Node *node) {
@@ -697,8 +697,8 @@ const OptimizedGraph &Graph::optimizedGraph() const {
   std::lock_guard<std::mutex> lock(_optimizedLock);
 
   // optionally rebuild optimized graph, if it's out of date
-  // if (_optimized.size() != size())
-  //   _optimized = OptimizedGraph(unmappedNodes());
+  if (_optimized.size() != size())
+    _optimized = OptimizedGraph(unmappedNodes(), variableSpace());
 
   return _optimized;
 }

@@ -35,21 +35,40 @@ class Graph;
 
 class SD_EXPORT OptimizedGraph {
   private:
-    std::vector<std::vector<OpSequence>> _sortedGraph;
+    std::vector<ExecutionLayer> _sortedGraph;
     // const Graph& _originalGraph;
 
   public:
     OptimizedGraph(const MAP_IMPL<int, Node>& map, const VariableSpace& varSpace);
-    OptimizedGraph() {};
+    // move constructor
+    OptimizedGraph(OptimizedGraph&& other) noexcept;
+    // default constructor
+    OptimizedGraph() = default;
+
+    /**
+     * returns number of nodes in this graph instance
+     * @return
+     */
     size_t size() const;
 
+    /**
+     * returns OpSequences stored in a given layer
+     * @param index
+     * @return
+     */
+    const ExecutionLayer& layer(const uint64_t& index) const { return _sortedGraph.at(index); }
 
-  struct NodeInfo {
-    std::vector<int> _connections = std::vector<int>();
-    int _id = -1;
-    NodeInfo(const int id): _id(id), _connections(std::vector<int>()) {}
-    NodeInfo() = delete;
-  };
+
+    /**
+     * returns number of layers within OptimizedGraph
+     * @return
+     */
+    uint64_t numOfLayers() const {  return _sortedGraph.size(); }
+
+
+    // move assignment operator
+    OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
+
 
 };
 
@@ -89,18 +108,8 @@ class SD_EXPORT OptimizedGraph {
 //   // move assignment operator
 //   OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
 
-//   /**
-//    * This method returns number of layers within OptimizedGraph
-//    * @return
-//    */
-//   uint64_t layers() const;
 
-//   /**
-//    * This method returns OpSequences stored in a given layer
-//    * @param index
-//    * @return
-//    */
-//   const ExecutionLayer& layer(uint64_t index) const;
+
 
 //   /**
 //    * This method allows to append layer to this OptimizedGraph instance

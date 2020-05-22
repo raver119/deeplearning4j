@@ -63,6 +63,7 @@ class SD_EXPORT ExecutionLayer {
    * This method appends OpSequence to the end of this layer
    * @param sequence
    */
+  void append(OpSequence&& sequence);
   void append(const OpSequence& sequence);
 };
 }  // namespace graph
