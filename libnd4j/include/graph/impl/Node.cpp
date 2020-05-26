@@ -555,34 +555,34 @@ Node::Node(const FlatNode *node) {
         for (auto v : _dimensions) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
-          for (int e = 0; e < (int)node->extraParams()->size(); e++) {
+          for (int e = 0; e < (int) node->extraParams()->size(); e++) {
             block.appendT(static_cast<double>(node->extraParams()->Get(e)));
           }
 
         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
-          for (int e = 0; e < (int)node->extraBools()->size(); e++) {
+          for (int e = 0; e < (int) node->extraBools()->size(); e++) {
             block.appendB(node->extraBools()->Get(e));
           }
 
         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
-          for (int e = 0; e < (int)node->extraInteger()->size(); e++) {
+          for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
             block.appendI(node->extraInteger()->Get(e));
           }
 
         if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
-          for (int e = 0; e < (int)node->extraTypes()->size(); e++) {
-            block.appendD((sd::DataType)node->extraTypes()->Get(e));
+          for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
+            block.appendD((sd::DataType) node->extraTypes()->Get(e));
           }
         }
 
         this->setContextPrototype(block);
         this->setCustomOp(Node::buildOpByType(
-            _opType, (int)node->input()->size(),
-            (int)block.getIArguments().size(),
-            (int)block.getTArguments().size(), (int)_opNum));
+            _opType, (int) node->input()->size(),
+            (int) block.getIArguments().size(),
+            (int) block.getTArguments().size(), (int) _opNum));
         block.setOpDescriptor(this->customOp()->getOpDescriptor());
       } else if (node->inputPaired() != nullptr &&
-                 node->inputPaired()->size() > 0) {
+          node->inputPaired()->size() > 0) {
         ContextPrototype block(nullptr, this->id(), false);
 
         for (int e = 0; e < this->input().size(); e++) {
@@ -593,34 +593,37 @@ Node::Node(const FlatNode *node) {
         for (auto v : _dimensions) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
-          for (int e = 0; e < (int)node->extraParams()->size(); e++) {
+          for (int e = 0; e < (int) node->extraParams()->size(); e++) {
             block.appendT(static_cast<double>(node->extraParams()->Get(e)));
           }
 
         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
-          for (int e = 0; e < (int)node->extraBools()->size(); e++) {
+          for (int e = 0; e < (int) node->extraBools()->size(); e++) {
             block.appendB(node->extraBools()->Get(e));
           }
 
         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
-          for (int e = 0; e < (int)node->extraInteger()->size(); e++) {
+          for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
             block.appendI(node->extraInteger()->Get(e));
           }
 
         if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
-          for (int e = 0; e < (int)node->extraTypes()->size(); e++) {
-            block.appendD((sd::DataType)node->extraTypes()->Get(e));
+          for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
+            block.appendD((sd::DataType) node->extraTypes()->Get(e));
           }
         }
 
         this->setContextPrototype(block);
 
         this->setCustomOp(Node::buildOpByType(
-            _opType, (int)node->inputPaired()->size(),
-            (int)block.getIArguments().size(),
-            (int)block.getTArguments().size(), (int)_opNum));
+            _opType, (int) node->inputPaired()->size(),
+            (int) block.getIArguments().size(),
+            (int) block.getTArguments().size(), (int) _opNum));
         block.setOpDescriptor(this->customOp()->getOpDescriptor());
       }
+    } else if (this->_opType == OpType_LOGIC) {
+      ContextPrototype block(nullptr, this->id());
+      this->setContextPrototype(block);
     } else if (this->_opType == OpType_CUSTOM) {
       auto op =
           sd::ops::OpRegistrator::getInstance()->getOperation(this->opNum());
@@ -705,6 +708,7 @@ Node::Node(const Node &other) noexcept {
   _scope_id = other._scope_id;
   _scope_name = other._scope_name;
   _rewindNode = other._rewindNode;
+  _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -738,6 +742,7 @@ Node &Node::operator=(const Node &other) noexcept {
   _scope_id = other._scope_id;
   _scope_name = other._scope_name;
   _rewindNode = other._rewindNode;
+  _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -771,6 +776,7 @@ Node::Node(Node &&other) noexcept {
   _name = std::move(other._name);
   _scope_name = std::move(other._scope_name);
   _rewindNode = other._rewindNode;
+  _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -806,6 +812,7 @@ Node &Node::operator=(Node &&other) noexcept {
   _name = std::move(other._name);
   _scope_name = std::move(other._scope_name);
   _rewindNode = other._rewindNode;
+  _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
