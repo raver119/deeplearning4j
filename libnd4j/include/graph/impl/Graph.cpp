@@ -273,12 +273,10 @@ void Graph::printOut() {
 
   fflush(stdout);
 
-  // if (size() > 0) {
-  //   nd4j_printf("\nPrinting out Nodes...\n", "");
-
-  //   // since we need structure - we'll print out nodes of OptimizedGraph
-  //   optimizedGraph().printOut();
-  // }
+  if (size() > 0) {
+    nd4j_printf("\nPrinting out Nodes...\n", "");
+    optimizedGraph().printOut();
+  }
 }
 
 Nd4jStatus Graph::validateNode(Node *node) {

@@ -69,6 +69,11 @@ class SD_EXPORT OptimizedGraph {
     // move assignment operator
     OptimizedGraph& operator=(OptimizedGraph&& other) noexcept;
 
+   /**
+    * prints out graph content
+    */
+    void printOut() const;
+
 
 };
 
@@ -137,10 +142,6 @@ class SD_EXPORT OptimizedGraph {
 //    */
 //   size_t size() const;
 
-//   /**
-//    * This method prints out graph content
-//    */
-//   void printOut() const;
 
 //  protected:
 //   /*

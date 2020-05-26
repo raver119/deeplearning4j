@@ -69,8 +69,8 @@ typedef int Nd4jStatus;
 
 #elif __GNUC__
 
-#include <unordered_map>
-#define MAP_IMPL std::unordered_map
+#include <map>
+#define MAP_IMPL std::map
 
 #else
 

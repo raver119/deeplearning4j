@@ -892,36 +892,38 @@ TEST_F(GraphAnalysisTests, optimizedGraph_11) {
   ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
 }
 
-// TEST_F(GraphAnalysisTests, test_cond_1) {
-//   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
+TEST_F(GraphAnalysisTests, test_cond_1) {
+  auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
-//   auto optimized = graph.optimizedGraph();
-//   /*
-//   some infor that would be useful for implementation
-//   currently on optimization graph is passing next data
+  const auto& optimized = graph.optimizedGraph();
+  // graph.printOut();
+  /*
+  some infor that would be useful for implementation
+  currently on optimization graph is passing next data
 
-//   Node name: cond/switch_f; ID: 11; Input: 9, 0; Operation type: 21;  Operation
-//   class: -1719689536 Node name: cond/switch_t; ID: 10; Input: 9, 1; Operation
-//   type: 21;  Operation class: -1719689536 Node name: cond/Switch;   ID: 9;
-//   Input: 1, 0; Operation type: 119; Operation class: -1719689536 Node name:
-//   cond/Switch;   ID: 9;  Input: 6, 0; Operation type: 119; Operation class:
-//   -1719689536 Node name: cond/Merge;    ID: 8;  Input: 5, 0; Operation type:
-//   119; Operation class: -1719689536 Node name: cond/Merge;    ID: 8;  Input: 7,
-//   0; Operation type: 119; Operation class: -1719689536 Node name: in_0/read; ID:
-//   6;  Input: 1, 0; Operation type: 21;  Operation class: -1719689536 Node name:
-//   cond/LinSpace; ID: 7;  Input: 2, 0; Operation type: 21;  Operation class:
-//   -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 3, 0; Operation type: 21;
-//   Operation class: -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 4, 0;
-//   Operation type: 21;  Operation class: -1719689536
+  Node name: cond/switch_f; ID: 11; Input: 9, 0; Operation type: 21;  Operation
+  class: -1719689536 Node name: cond/switch_t; ID: 10; Input: 9, 1; Operation
+  type: 21;  Operation class: -1719689536 Node name: cond/Switch;   ID: 9;
+  Input: 1, 0; Operation type: 119; Operation class: -1719689536 Node name:
+  cond/Switch;   ID: 9;  Input: 6, 0; Operation type: 119; Operation class:
+  -1719689536 Node name: cond/Merge;    ID: 8;  Input: 5, 0; Operation type:
+  119; Operation class: -1719689536 Node name: cond/Merge;    ID: 8;  Input: 7,
+  0; Operation type: 119; Operation class: -1719689536 Node name: in_0/read; ID:
+  6;  Input: 1, 0; Operation type: 21;  Operation class: -1719689536 Node name:
+  cond/LinSpace; ID: 7;  Input: 2, 0; Operation type: 21;  Operation class:
+  -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 3, 0; Operation type: 21;
+  Operation class: -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 4, 0;
+  Operation type: 21;  Operation class: -1719689536
 
-//   as it can be seen cond/LinSpace is not connected with any switch node(s) that
-//   causes wrong results of optimization. also maybe to cover all conditional
-//   operations will be need "Operation class", but this have to discovered deeper.
+  as it can be seen cond/LinSpace is not connected with any switch node(s) that
+  causes wrong results of optimization. also maybe to cover all conditional
+  operations will be need "Operation class", but this have to discovered deeper.
 
-//   All above is true for test_cond_2
-//   */
-// }
+  All above is true for test_cond_2
+  */
+}
 
-// TEST_F(GraphAnalysisTests, test_cond_2) {
-//   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
-// }
+TEST_F(GraphAnalysisTests, test_cond_2) {
+  auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
+  // graph.printOut();
+}

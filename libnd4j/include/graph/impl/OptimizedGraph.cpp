@@ -61,10 +61,11 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     for (const auto& p : inMap) {
 
         for (const auto& v : p.second.input())
-            if (!varSpace.hasVariable(v.first)) {
+            if (v.first >= inMap.begin()->first) {
                 workMap[p.first]._in.push_back(v.first);
                 workMap[v.first]._out.push_back(p.first);
             }
+
         if(workMap[p.first]._in.empty())
             startNodes.push_back(p.first);
     }
@@ -86,6 +87,7 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         }
     }
 
+
     // delete nodes present in _opSeq, their ids are already stored in nodesToDelete
     for (const auto& i : nodesToDelete)
         workMap.erase(i);
@@ -106,6 +108,7 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         for (const auto& nextId : workMap[id]._out)
             visit(nextId, 1, numOfLayers);
 
+
     // fill _sortedGraph
     _sortedGraph = std::vector<ExecutionLayer>(numOfLayers+1);
     for (const auto& p : workMap) {
@@ -120,8 +123,8 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     }
 
     // sort _sortedGraph
-    for (auto& l : _sortedGraph)
-        l.sortOpSequences();
+    // for (auto& l : _sortedGraph)
+    //     l.sortOpSequences();
 }
 
 
@@ -141,8 +144,30 @@ size_t OptimizedGraph::size() const {
   return size;
 }
 
+void OptimizedGraph::printOut() const {
+
+    for (uint i = 0; i < _sortedGraph.size(); ++i) {
+        printf("Layer [%u]\n", i);
+        for (uint j = 0; j < _sortedGraph[i].width(); ++j)
+             _sortedGraph[i][j].printOut();
+    }
+
+    printf("And simple print:\n");
+    for (int i = 0; i < _sortedGraph.size(); ++i) {
+        printf("layer %i: ", i);
+        for (int j = 0; j < _sortedGraph[i].width(); ++j) {
+            printf("(");
+            for (int k = 0; k < _sortedGraph[i][j].length(); ++k) {
+                printf("%i, ", _sortedGraph[i][j][k].protoContext().nodeId());
+            }
+            printf("), ");
+        }
+        printf("\n");
+    }
+}
 
 
+// std::for_each(inMap.begin(), inMap.end(), [] (const std::pair<int, Node> &p) {printf("node id %i \n", p.first);});
     // _sortedGraph = std::vector<ExecutionLayer>(numOfLayers+1);
     // std::vector<std::vector<int>> printGraph = std::vector<std::vector<int>>(numOfLayers+1);
     // for (const auto& p : workMap) {
@@ -495,13 +520,6 @@ size_t OptimizedGraph::size() const {
 //   return true;
 // }
 
-// void OptimizedGraph::printOut() const {
-//   for (uint64_t o = 0; o < _onion.size(); o++) {
-//     const auto& layer = _onion.at(o);
-//     printf("Layer [%lu]\n", o);
-//     for (uint64_t l = 0; l < layer.width(); l++) layer.at(l).printOut();
-//   }
-// }
 
 
 }  // namespace graph
