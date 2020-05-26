@@ -61,7 +61,7 @@ else()
     endif()
 
     if (SD_CPU AND SD_SANITIZE)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fsanitize=address")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
     else()
         # CUDA?
     endif()
