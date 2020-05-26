@@ -551,6 +551,8 @@ Node::Node(const FlatNode *node) {
 
       if (node->input() != nullptr && node->input()->size() > 0) {
         ContextPrototype block(nullptr, this->id(), false);
+        if (!this->name().empty())
+          block.setName(this->name());
 
         for (auto v : _dimensions) block.appendA(v);
 
@@ -623,6 +625,13 @@ Node::Node(const FlatNode *node) {
       }
     } else if (this->_opType == OpType_LOGIC) {
       ContextPrototype block(nullptr, this->id());
+      if (!this->name().empty())
+        block.setName(this->name());
+
+      for (int e = 0; e < this->input().size(); e++) {
+        block.pickInput(this->input().at(e));
+      }
+
       this->setContextPrototype(block);
     } else if (this->_opType == OpType_CUSTOM) {
       auto op =
@@ -633,6 +642,8 @@ Node::Node(const FlatNode *node) {
       }
 
       ContextPrototype block(nullptr, this->id());
+      if (!this->name().empty())
+        block.setName(this->name());
 
       for (int e = 0; e < this->input().size(); e++) {
         block.pickInput(this->input().at(e));
