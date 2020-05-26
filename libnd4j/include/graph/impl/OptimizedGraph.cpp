@@ -118,6 +118,10 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
 
         _sortedGraph[p.second._layerNum].append(std::move(seq));
     }
+
+    // sort _sortedGraph
+    for (auto& l : _sortedGraph)
+        l.sortOpSequences();
 }
 
 

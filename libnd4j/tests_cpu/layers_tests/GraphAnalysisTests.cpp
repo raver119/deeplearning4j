@@ -181,12 +181,12 @@ TEST_F(GraphAnalysisTests, optimizedGraph_3) {
   // sequence = layer1[0];
 
   ASSERT_EQ(1, layer1[0].length());
-  ASSERT_EQ(/*7*/8, layer1[0].at(0).protoContext().nodeId());
+  ASSERT_EQ(7, layer1[0].at(0).protoContext().nodeId());
 
   // sequence = layer1[1];
 
   ASSERT_EQ(1, layer1[1].length());
-  ASSERT_EQ(/*8*/7, layer1[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(8, layer1[1].at(0).protoContext().nodeId());
 
   // checking last layer
   auto layer2 = optimized.layer(2);
@@ -266,10 +266,10 @@ TEST_F(GraphAnalysisTests, optimizedGraph_4) {
   ASSERT_EQ(9, layer1[0].at(0).protoContext().nodeId());
 
   ASSERT_EQ(1, layer1[1].length());
-  ASSERT_EQ(/*10*/11, layer1[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(10, layer1[1].at(0).protoContext().nodeId());
 
   ASSERT_EQ(1, layer1[2].length());
-  ASSERT_EQ(/*11*/10, layer1[2].at(0).protoContext().nodeId());
+  ASSERT_EQ(11, layer1[2].at(0).protoContext().nodeId());
 
   auto layer2 = optimized.layer(2);
 
@@ -361,12 +361,12 @@ TEST_F(GraphAnalysisTests, optimizedGraph_5) {
   // sequence = layer1[0];
 
   ASSERT_EQ(1, layer1[0].length());
-  ASSERT_EQ(/*7*/8, layer1[0].at(0).protoContext().nodeId());
+  ASSERT_EQ(7, layer1[0].at(0).protoContext().nodeId());
 
   // sequence = layer1[1];
 
   ASSERT_EQ(1, layer1[1].length());
-  ASSERT_EQ(/*8*/7, layer1[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(8, layer1[1].at(0).protoContext().nodeId());
 
   // checking before last layer
   auto layer2 = optimized.layer(2);
@@ -377,29 +377,26 @@ TEST_F(GraphAnalysisTests, optimizedGraph_5) {
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[0].length());
-  ASSERT_EQ(/*9*/10, layer2[0].at(0).protoContext().nodeId());
+  ASSERT_EQ(9, layer2[0].at(0).protoContext().nodeId());
   // sequence = layer2[1];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[1].length());
-  ASSERT_EQ(/*10*/9, layer2[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(10, layer2[1].at(0).protoContext().nodeId());
 
   // checking last layer
   auto layer3 = optimized.layer(3);
 
   // we expect layer has exactly 2 OpSequence
   ASSERT_EQ(2, layer3.width());
-  // sequence = layer3[0];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer3[0].length());
-  ASSERT_EQ(/*11*/12, layer3[0].at(0).protoContext().nodeId());
-
-  // sequence = layer3[1];
+  ASSERT_EQ(11, layer3[0].at(0).protoContext().nodeId());
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer3[1].length());
-  ASSERT_EQ(/*12*/11, layer3[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(12, layer3[1].at(0).protoContext().nodeId());
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_6) {
@@ -466,11 +463,11 @@ TEST_F(GraphAnalysisTests, optimizedGraph_6) {
 
   // sequence = layer1[0];
   ASSERT_EQ(1, layer1[0].length());
-  ASSERT_EQ(/*8*/9, layer1[0].at(0).protoContext().nodeId());
+  ASSERT_EQ(8, layer1[0].at(0).protoContext().nodeId());
 
   // sequence = layer1[1];
   ASSERT_EQ(1, layer1[1].length());
-  ASSERT_EQ(/*9*/8, layer1[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(9, layer1[1].at(0).protoContext().nodeId());
 
   // checking midle layer
   auto layer2 = optimized.layer(2);
@@ -478,27 +475,23 @@ TEST_F(GraphAnalysisTests, optimizedGraph_6) {
   // we expect layer has exactly 2 OpSequence
   ASSERT_EQ(3, layer2.width());
 
-  // sequence = layer2[0];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[0].length());
-  ASSERT_EQ(/*10*/11, layer2[0].at(0).protoContext().nodeId());
+  ASSERT_EQ(10, layer2[0].at(0).protoContext().nodeId());
 
-  // sequence = layer2[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[1].length());
-  ASSERT_EQ(/*11*/12, layer2[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(11, layer2[1].at(0).protoContext().nodeId());
 
-  // sequence = layer2[2];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[2].length());
-  ASSERT_EQ(/*12*/10, layer2[2].at(0).protoContext().nodeId());
+  ASSERT_EQ(12, layer2[2].at(0).protoContext().nodeId());
 
   // checking before last layer
   auto layer3 = optimized.layer(3);
 
   // we expect layer has exactly 2 OpSequence
   ASSERT_EQ(2, layer3.width());
-  // sequence = layer3[0];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer3[0].length());
@@ -514,7 +507,6 @@ TEST_F(GraphAnalysisTests, optimizedGraph_6) {
 
   // we expect layer has exactly 2 OpSequence
   ASSERT_EQ(1, layer4.width());
-  // sequence = layer4[0];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer4[0].length());
@@ -646,21 +638,18 @@ TEST_F(GraphAnalysisTests, optimizedGraph_8) {
 
   // we expect layer has exactly 3 OpSequence
   ASSERT_EQ(3, layer0.width());
-  // auto sequence = layer0[0];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer0[0].length());
   ASSERT_EQ(7, layer0[0].at(0).protoContext().nodeId());
 
-  // sequence = layer0[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer0[1].length());
-  ASSERT_EQ(/*8*/9, layer0[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(8, layer0[1].at(0).protoContext().nodeId());
 
-  // sequence = layer0[2];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer0[2].length());
-  ASSERT_EQ(/*9*/8, layer0[2].at(0).protoContext().nodeId());
+  ASSERT_EQ(9, layer0[2].at(0).protoContext().nodeId());
 
   // checking second layer now
   auto layer1 = optimized.layer(1);
@@ -668,16 +657,12 @@ TEST_F(GraphAnalysisTests, optimizedGraph_8) {
   // we expect layer has exactly 3 OpSequences
   ASSERT_EQ(3, layer1.width());
 
-  // sequence = layer1[0];
   ASSERT_EQ(1, layer1[0].length());
   ASSERT_EQ(10, layer1[0].at(0).protoContext().nodeId());
-
-  // sequence = layer1[1];
 
   ASSERT_EQ(1, layer1[1].length());
   ASSERT_EQ(11, layer1[1].at(0).protoContext().nodeId());
 
-  // sequence = layer1[2];
   ASSERT_EQ(1, layer1[2].length());
   ASSERT_EQ(12, layer1[2].at(0).protoContext().nodeId());
 }
@@ -737,7 +722,6 @@ TEST_F(GraphAnalysisTests, optimizedGraph_9) {
   auto layer = optimized.layer(0);
   // we expect layer has exactly 1 OpSequence
   ASSERT_EQ(1, layer.width());
-  // auto sequence = layer[0];
 
   // we expect that OpSequence has exactly 2 ops
   ASSERT_EQ(1, layer[0].length());
@@ -746,16 +730,14 @@ TEST_F(GraphAnalysisTests, optimizedGraph_9) {
   auto layer1 = optimized.layer(1);
   // we expect layer has exactly 4 OpSequence
   ASSERT_EQ(4, layer1.width());
-  // sequence = layer1[0];
 
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer1[0].length());
   ASSERT_EQ(6, layer1[0].at(0).protoContext().nodeId());
 
-  // sequence = layer1[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer1[1].length());
-  ASSERT_EQ(/*7*/9, layer1[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(7, layer1[1].at(0).protoContext().nodeId());
 
   // sequence = layer1[2];
   // we expect that OpSequence has exactly 1 ops
@@ -765,50 +747,43 @@ TEST_F(GraphAnalysisTests, optimizedGraph_9) {
   // sequence = layer1[3];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer1[3].length());
-  ASSERT_EQ(/*9*/7, layer1[3].at(0).protoContext().nodeId());
+  ASSERT_EQ(9, layer1[3].at(0).protoContext().nodeId());
 
   auto layer2 = optimized.layer(2);
   // we expect layer has exactly 4 OpSequence
   ASSERT_EQ(8, layer2.width());
-  // sequence = layer2[0];
+
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[0].length());
   ASSERT_EQ(10, layer2[0].at(0).protoContext().nodeId());
 
-  // sequence = layer2[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[1].length());
-  ASSERT_EQ(/*14*/11, layer2[1].at(0).protoContext().nodeId());
+  ASSERT_EQ(11, layer2[1].at(0).protoContext().nodeId());
 
-  // sequence = layer2[2];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[2].length());
-  ASSERT_EQ(/*11*/12, layer2[2].at(0).protoContext().nodeId());
+  ASSERT_EQ(12, layer2[2].at(0).protoContext().nodeId());
 
-  // sequence = layer2[3];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[3].length());
-  ASSERT_EQ(/*15*/13, layer2[3].at(0).protoContext().nodeId());
+  ASSERT_EQ(13, layer2[3].at(0).protoContext().nodeId());
 
-  // sequence = layer2[4];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[4].length());
-  ASSERT_EQ(/*12*/14, layer2[4].at(0).protoContext().nodeId());
+  ASSERT_EQ(14, layer2[4].at(0).protoContext().nodeId());
 
-  // sequence = layer2[5];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[5].length());
-  ASSERT_EQ(16, layer2[5].at(0).protoContext().nodeId());
+  ASSERT_EQ(15, layer2[5].at(0).protoContext().nodeId());
 
-  // sequence = layer2[6];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[6].length());
-  ASSERT_EQ(/*13*/17, layer2[6].at(0).protoContext().nodeId());
+  ASSERT_EQ(16, layer2[6].at(0).protoContext().nodeId());
 
-  // sequence = layer2[7];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, layer2[7].length());
-  ASSERT_EQ(/*17*/15, layer2[7].at(0).protoContext().nodeId());
+  ASSERT_EQ(17, layer2[7].at(0).protoContext().nodeId());
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_10) {
@@ -854,11 +829,11 @@ TEST_F(GraphAnalysisTests, optimizedGraph_10) {
   sequence = layer1[0];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*6*/7, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(6, sequence.at(0).protoContext().nodeId());
   sequence = layer1[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*7*/6, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
 
   auto layer2 = optimized.layer(2);
   // we expect layer has exactly 1 OpSequence
@@ -902,19 +877,19 @@ TEST_F(GraphAnalysisTests, optimizedGraph_11) {
   auto sequence = layer[0];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*5*/6, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(5, sequence.at(0).protoContext().nodeId());
   sequence = layer[1];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*6*/5, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(6, sequence.at(0).protoContext().nodeId());
   sequence = layer[2];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*7*/8, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(7, sequence.at(0).protoContext().nodeId());
   sequence = layer[3];
   // we expect that OpSequence has exactly 1 ops
   ASSERT_EQ(1, sequence.length());
-  ASSERT_EQ(/*8*/7, sequence.at(0).protoContext().nodeId());
+  ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
 }
 
 // TEST_F(GraphAnalysisTests, test_cond_1) {

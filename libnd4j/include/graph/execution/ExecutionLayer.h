@@ -65,7 +65,15 @@ class SD_EXPORT ExecutionLayer {
    */
   void append(OpSequence&& sequence);
   void append(const OpSequence& sequence);
+
+  /**
+   * sort OpSequences in increasing order in respect to id of fist node in sequence
+   * @param sequence
+   */
+  void sortOpSequences();
+
 };
+
 }  // namespace graph
 }  // namespace sd
 

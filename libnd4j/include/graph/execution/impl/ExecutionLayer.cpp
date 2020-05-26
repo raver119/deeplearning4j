@@ -70,5 +70,24 @@ ExecutionLayer &ExecutionLayer::operator=(ExecutionLayer &&other) noexcept {
 
   return *this;
 }
+
+////////////////////////////////////////////////////////////////////////
+void ExecutionLayer::sortOpSequences() {  // bubble sort
+
+  const int numOfOpSequences = this->width();
+
+  OpSequence temp;
+
+  for (int i = 0; i < numOfOpSequences - 1; ++i)
+      for (int j = 0; j < numOfOpSequences - 1 - i; ++j)
+          if (_sequences[j][0].protoContext().nodeId() > _sequences[j + 1][0].protoContext().nodeId()) {
+              temp = _sequences[j];
+              _sequences[j] = _sequences[j + 1];
+              _sequences[j + 1] = temp;
+
+          }
+}
+
+
 }  // namespace graph
 }  // namespace sd
