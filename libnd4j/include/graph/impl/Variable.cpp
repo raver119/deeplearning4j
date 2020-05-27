@@ -147,6 +147,19 @@ void sd::graph::Variable::setNDArrayList(
   this->_list = list;
 }
 
+const std::vector<std::pair<int, int>>& Variable::dependencies() const {
+  return _dependencies;
+}
+
+void Variable::actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const {
+  for (const auto &v: _stringDependencies) {
+    if (lookupTable.count(v) == 0)
+      throw std::runtime_error("Unknown Variable dependency found: [" + v + "]");
+
+    const_cast<Variable*>(this)->_dependencies.emplace_back(std::pair<int, int>{lookupTable.at(v), 0});
+  }
+}
+
 void sd::graph::Variable::setNDArray(std::shared_ptr<sd::NDArray> array) {
   this->_variableType = VariableType::NDARRAY;
   this->_ndarray = array;
@@ -166,6 +179,22 @@ sd::graph::Variable::Variable(const sd::graph::FlatVariable *flatVariable) {
   _readOnly = false;
 
   int8_t *buffer = nullptr;
+
+  // reading control deps, and filling _dependencies field
+  if (flatVariable->controlDepsForVar() != nullptr && flatVariable->controlDepsForVar()->size() > 0) {
+    for (int e = 0; e < flatVariable->controlDepsForVar()->size(); e++)
+      _stringDependencies.emplace_back(flatVariable->controlDepsForVar()->Get(e)->str());
+  }
+
+  if (flatVariable->controlDepForOp() != nullptr && flatVariable->controlDepForOp()->size() > 0) {
+    for (int e = 0; e < flatVariable->controlDepForOp()->size(); e++)
+      _stringDependencies.emplace_back(flatVariable->controlDepForOp()->Get(e)->str());
+  }
+
+  if (flatVariable->controlDeps() != nullptr && flatVariable->controlDeps()->size() > 0) {
+    for (int e = 0; e < flatVariable->controlDeps()->size(); e++)
+      _stringDependencies.emplace_back(flatVariable->controlDeps()->Get(e)->str());
+  }
 
   switch (flatVariable->variabletype()) {
     case VarType_VARIABLE: {

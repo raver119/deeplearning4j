@@ -191,6 +191,13 @@ Graph::Graph(const FlatGraph *flatGraph, const GraphMemoryManager &memoryManager
         _symbolicLookupTable[nnode.name()] = nnode.id();
     }
   }
+
+  // now, once everything is deserializerd, time to roll through Variables/Nodes and update dependencies
+  for (const auto &v: _unmapped)
+    v.second.actualizeDependencies(_symbolicLookupTable);
+
+  for (const auto &v:_variableSpace.variables())
+    v->actualizeDependencies(_symbolicLookupTable);
 }
 
 /**

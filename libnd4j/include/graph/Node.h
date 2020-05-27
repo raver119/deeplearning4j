@@ -45,8 +45,12 @@ class SD_EXPORT Node {
   ContextPrototype _protoContext;
   Nd4jLong _opNum;
   int _id = 0;
+
   std::vector<std::pair<int, int>> _input;
   std::vector<std::pair<int, int>> _output;
+  std::vector<std::pair<int, int>> _dependencies;
+  std::vector<std::string> _stringDependencies;
+
   std::vector<int> _dimensions;
 
   std::vector<int> _referencedBy;
@@ -152,6 +156,7 @@ class SD_EXPORT Node {
   int id() const;
   const std::vector<std::pair<int, int>> &input() const;
   const std::vector<std::pair<int, int>> &output() const;
+  const std::vector<std::pair<int, int>> &dependencies() const;
 
   Nd4jLong getFrameId();
   void setFrameId(Nd4jLong frameId);
@@ -232,6 +237,9 @@ class SD_EXPORT Node {
 
   template <typename T>
   Node *asT();
+
+  // this method converts string deps to int deps
+  void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;
 
   FORCEINLINE void pullValues(Node *other) {
     this->_dataType = other->dataType();

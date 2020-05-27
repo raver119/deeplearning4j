@@ -384,6 +384,19 @@ Node::Node(sd::ops::DeclarableOp *customOp, int id,
 
 void Node::setOpType(OpType opType) { this->_opType = opType; }
 
+const std::vector<std::pair<int, int>>& Node::dependencies() const {
+  return _dependencies;
+}
+
+void Node::actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const {
+  for (const auto &v: _stringDependencies) {
+    if (lookupTable.count(v) == 0)
+      throw std::runtime_error("Unknown Node dependency found: [" + v + "]");
+
+    const_cast<Node*>(this)->_dependencies.emplace_back(std::pair<int, int>{lookupTable.at(v), 0});
+  }
+}
+
 Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
            std::initializer_list<int> output,
            std::initializer_list<int> dimensions, float scalar,
@@ -501,6 +514,22 @@ Node::Node(const FlatNode *node) {
           nd4j_debug("Node [%i:<noname>] has no inputs defined\n", this->_id);
         }
       }
+    }
+
+    // reading control deps, and filling _dependencies field
+    if (node->varControlDeps() != nullptr && node->varControlDeps()->size() > 0) {
+      for (int e = 0; e < node->varControlDeps()->size(); e++)
+        _stringDependencies.emplace_back(node->varControlDeps()->Get(e)->str());
+    }
+
+    if (node->controlDepFor() != nullptr && node->controlDepFor()->size() > 0) {
+      for (int e = 0; e < node->controlDepFor()->size(); e++)
+        _stringDependencies.emplace_back(node->controlDepFor()->Get(e)->str());
+    }
+
+    if (node->controlDeps() != nullptr && node->controlDeps()->size() > 0) {
+      for (int e = 0; e < node->controlDeps()->size(); e++)
+        _stringDependencies.emplace_back(node->controlDeps()->Get(e)->str());
     }
 
     /*

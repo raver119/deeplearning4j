@@ -76,6 +76,9 @@ class SD_EXPORT Variable {
 
   VariableType _variableType = VariableType::NDARRAY;
 
+  std::vector<std::pair<int, int>> _dependencies;
+  std::vector<std::string> _stringDependencies;
+
  public:
   explicit Variable(bool placeHolder, DataType dataType = DataType::ANY,
                     const std::vector<Nd4jLong> &shape = {});
@@ -129,6 +132,11 @@ class SD_EXPORT Variable {
 
   const std::vector<Nd4jLong> &shape() const;
   DataType dataType() const;
+
+  const std::vector<std::pair<int, int>>& dependencies() const;
+
+  // this method converts string deps to int deps
+  void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;
 
 #ifndef __JAVACPP_HACK__
   /**
