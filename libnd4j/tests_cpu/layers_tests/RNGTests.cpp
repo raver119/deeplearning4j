@@ -983,6 +983,33 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
 
 }
 
+TEST_F(RNGTests, Test_UniformDistribution_05) {
+    auto x = NDArrayFactory::create<Nd4jLong>('c', {2}, {10000, 10000});
+    auto al = NDArrayFactory::create<float>(0.0f);
+    auto be = NDArrayFactory::create<float>(1.f);
+    auto exp0 = NDArrayFactory::create<float>('c', {10000, 10000});
+
+
+    sd::ops::randomuniform op;
+    auto result = op.evaluate({&x, &al, &be}, {}, {DataType::FLOAT32});
+    ASSERT_EQ(Status::OK(), result.status());
+
+    auto z = result.at(0);
+    ASSERT_TRUE(exp0.isSameShape(z));
+    ASSERT_FALSE(exp0.equalsTo(z));
+    sd::ops::reduce_max checkOp;
+    auto checkRes = checkOp.evaluate({z});
+    checkRes[0]->printIndexedBuffer("Max for uniform with 0. to 1. on 100M cases");
+    RandomGenerator rng;
+    for (auto i = 0; i < 1000000; i++) {
+        auto val = getRandomGeneratorRelativeInt(&rng, i);
+        if (val == DataTypeUtils::max<int>()) {
+            nd4j_printf("Problem random value %i\n", val);
+        }
+    }
+
+}
+
 namespace sd {
     namespace tests {
         static void fillList(Nd4jLong seed, int numberOfArrays, std::vector<Nd4jLong> &shape, std::vector<NDArray*> &list, sd::graph::RandomGenerator *rng) {
