@@ -227,7 +227,7 @@ endif()
 
 file(GLOB_RECURSE COMPILATION_UNITS false ../../include/ops/declarable/helpers/cpu/compilation_units/*.cpp.in)
 foreach(FL_ITEM ${COMPILATION_UNITS})
-    string(REGEX MATCH "^(.*)\\.cpp\.in$" dummy ${FL_ITEM})
+    string(REGEX MATCH "^(.*)\\.cpp\\.in$" dummy ${FL_ITEM})
     set(FL_ITEM_WLE ${CMAKE_MATCH_1})
     foreach(FL_TYPE_INDEX RANGE 0 9)
         #message( "${FL_ITEM_WLE}_${FL_TYPE_INDEX}.cpp")
