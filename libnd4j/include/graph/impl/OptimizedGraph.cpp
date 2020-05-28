@@ -60,11 +60,20 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     std::vector<int> startNodes;
     for (const auto& p : inMap) {
 
-        for (const auto& v : p.second.input())
-            if (v.first >= inMap.begin()->first) {
+        for (const auto& v : p.second.input()) {
+            if (v.first >= inMap.begin()->first) {              // is op
                 workMap[p.first]._in.push_back(v.first);
                 workMap[v.first]._out.push_back(p.first);
             }
+            else {                                              // is variable
+                for (const auto& i : varSpace.getVariable(v.first).get()->dependencies()) {
+                    if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), i.first) == workMap[p.first]._in.end()) {
+                        workMap[p.first]._in.push_back(i.first);
+                        workMap[i.first]._out.push_back(p.first);
+                    }
+                }
+            }
+        }
 
         if(workMap[p.first]._in.empty())
             startNodes.push_back(p.first);
@@ -74,16 +83,11 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     std::vector<int> nodesToDelete;
     for (auto& p : workMap) {
 
-        if(p.second._in.size() != 1) {
-
-            auto& out = p.second._out;
-            while(out.size() == 1 && workMap[out[0]]._in.size() == 1) {
-                nodesToDelete.push_back(out[0]);
-                p.second._opSeq.push_back(out[0]);
-                out = workMap[out[0]]._out;
-            }
-            if(out != p.second._out)
-                p.second._out = std::move(out);
+        auto& out = p.second._out;
+        while(out.size() == 1 && workMap[out[0]]._in.size() == 1) {
+            nodesToDelete.push_back(out[0]);
+            p.second._opSeq.push_back(out[0]);
+            out = std::move(workMap[out[0]]._out);
         }
     }
 

@@ -896,7 +896,7 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
   const auto& optimized = graph.optimizedGraph();
-  graph.printOut();
+  // graph.printOut();
   /*
   some infor that would be useful for implementation
   currently on optimization graph is passing next data
