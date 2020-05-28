@@ -1119,4 +1119,10 @@ public class TensorFlowImportTest extends BaseNd4jTest {
         assertEquals(variables.get("cond/LinSpace/num"), Collections.singletonList("cond/switch_t"));
         assertEquals(variables.get("cond/ones"), Collections.singletonList("cond/switch_f"));
     }
+
+    @Test
+    public void testWhile() throws Exception {
+        SameDiff sd = TFGraphMapper.importGraph(new ClassPathResource("tf_graphs/examples/while1/iter_1/frozen_model.pb").getInputStream());
+        sd.save(new File("../../../libnd4j/tests_cpu/resources/while_iter1.fb"), true);
+    }
 }
