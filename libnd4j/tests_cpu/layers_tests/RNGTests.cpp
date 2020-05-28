@@ -1001,10 +1001,17 @@ TEST_F(RNGTests, Test_UniformDistribution_05) {
     auto checkRes = checkOp.evaluate({z});
     checkRes[0]->printIndexedBuffer("Max for uniform with 0. to 1. on 100M cases");
     RandomGenerator rng;
-    for (auto i = 0; i < 1000000; i++) {
+    for (auto i = 0; i < 100000000; i++) {
         auto val = getRandomGeneratorRelativeInt(&rng, i);
         if (val == DataTypeUtils::max<int>()) {
             nd4j_printf("Problem random value %i\n", val);
+        }
+        if (val == MAX_INT) {
+            nd4j_printf("int Problem random value %i\n", val);
+        }
+        if (MAX_INT - val < 1000) {
+            nd4j_printf("int Problem random value %i too close\n", MAX_INT - val);
+
         }
     }
 
