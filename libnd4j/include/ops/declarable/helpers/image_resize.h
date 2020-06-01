@@ -28,13 +28,16 @@ namespace ops {
 namespace helpers {
 
 enum ImageResizeMethods {
-  kResizeBilinear = 1,
+  kResizeBilinear = 0, // as java require
+        kResizeNearest,
   kResizeBicubic,
-  kResizeNearest,
-  kResizeGaussian,
+  kResizeArea,
+  kResizeGaussian,kResizeLanczos3,
   kResizeLanczos5,
-  kResizeMitchelcubic,
-  kResizeArea
+  kResizeMitchellcubic,
+  kResizeFirst = kResizeBilinear,
+        kResizeLast = kResizeMitchellcubic,
+        kResizeOldLast =kResizeArea
 };
 
 int resizeBilinearFunctor(sd::LaunchContext* context, NDArray const* image,
@@ -59,7 +62,10 @@ int resizeAreaFunctor(sd::LaunchContext* context, NDArray const* image,
 
 int resizeFunctor(sd::LaunchContext* context, NDArray const* image,
                   int const width, int const height, ImageResizeMethods method,
-                  bool preserveAspectRatio, bool antialias, NDArray* output);
+                  bool antialias, NDArray* output);
+
+    int resizeImagesFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,
+                      ImageResizeMethods method, bool alignCorners, NDArray* output);
 }  // namespace helpers
 }  // namespace ops
 }  // namespace sd

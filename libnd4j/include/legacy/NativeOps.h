@@ -1626,17 +1626,14 @@ SD_EXPORT void setGraphContextBArguments(OpaqueContext* ptr, bool* arguments,
                                          int numberOfArguments);
 SD_EXPORT void deleteGraphContext(OpaqueContext* ptr);
 
-SD_EXPORT OpaqueRandomGenerator* createRandomGenerator(Nd4jLong rootSeed = 0,
-                                                       Nd4jLong nodeSeed = 0);
+SD_EXPORT OpaqueRandomGenerator* createRandomGenerator(Nd4jLong rootSeed = 0, Nd4jLong nodeSeed = 0);
 SD_EXPORT Nd4jLong getRandomGeneratorRootState(OpaqueRandomGenerator* ptr);
 SD_EXPORT Nd4jLong getRandomGeneratorNodeState(OpaqueRandomGenerator* ptr);
-SD_EXPORT void setRandomGeneratorStates(OpaqueRandomGenerator* ptr,
-                                        Nd4jLong rootSeed = 0,
-                                        Nd4jLong nodeSeed = 0);
-SD_EXPORT int getRandomGeneratorRelativeInt(OpaqueRandomGenerator* ptr,
-                                            Nd4jLong index);
-SD_EXPORT Nd4jLong getRandomGeneratorRelativeLong(OpaqueRandomGenerator* ptr,
-                                                  Nd4jLong index);
+SD_EXPORT void setRandomGeneratorStates(OpaqueRandomGenerator* ptr, Nd4jLong rootSeed = 0, Nd4jLong nodeSeed = 0);
+SD_EXPORT float getRandomGeneratorRelativeFloat(OpaqueRandomGenerator* ptr, Nd4jLong index);
+SD_EXPORT double getRandomGeneratorRelativeDouble(OpaqueRandomGenerator* ptr, Nd4jLong index);
+SD_EXPORT int getRandomGeneratorRelativeInt(OpaqueRandomGenerator* ptr, Nd4jLong index);
+SD_EXPORT Nd4jLong getRandomGeneratorRelativeLong(OpaqueRandomGenerator* ptr, Nd4jLong index);
 SD_EXPORT void deleteRandomGenerator(OpaqueRandomGenerator* ptr);
 
 SD_EXPORT const char* runLightBenchmarkSuit(bool printOut);

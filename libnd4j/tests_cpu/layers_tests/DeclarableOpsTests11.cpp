@@ -21,6 +21,7 @@
 #include <array/NDArray.h>
 #include <helpers/GradCheck.h>
 #include <helpers/MmulHelper.h>
+#include <ops/declarable/helpers/image_resize.h>
 #include <ops/declarable/CustomOperations.h>
 #include <ops/ops.h>
 
@@ -1295,7 +1296,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test8) {
   ASSERT_TRUE(testData.equalsTo(result));
 }
 
-/*
+
 TEST_F(DeclarableOpsTests11, ImageResizeArea_Test1) {
   NDArray input = NDArrayFactory::create<double>('c', {1, 3, 3, 4});
   NDArray expected = NDArrayFactory::create<float>(
@@ -1549,6 +1550,34 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test8) {
   //    expected.printBuffer("Area Expect for 6x6");
   ASSERT_TRUE(expected.isSameShape(result));
   ASSERT_TRUE(expected.equalsTo(result));
+}
+
+TEST_F(DeclarableOpsTests11, ResizeImages_Test8) {
+
+    NDArray input    = NDArrayFactory::create<int>('c', {1, 3, 3, 1}, {
+            1, 2, 3, 4, 5, 6, 7, 8, 9
+    });
+
+    NDArray expected = NDArrayFactory::create<float>('c', {1, 6, 6, 1}, {
+//            1.f, 1.f, 2.f, 2.f, 3.f, 3.f, 1.f, 1.f, 2.f, 2.f, 3.f, 3.f, 4.f, 4.f, 5.f, 5.f, 6.f, 6.f, 4.f, 4.f, 5.f, 5.f,
+//            6.f, 6.f, 7.f, 7.f, 8.f, 8.f, 9.f, 9.f, 7.f, 7.f, 8.f, 8.f, 9.f, 9.f
+       1.f       , 1.f       , 1.5f, 2.f       , 2.f, 3.f,       1.f      , 1.f       , 1.5f, 2.f       , 2.f, 3.f,
+       2.5f, 2.5f, 3.f, 3.5f, 3.5f, 4.5f,       4.f       , 4.f       , 4.5f      , 5.f, 5.f, 6.f ,
+       4.f, 4.f, 4.5f      , 5.f, 5.f, 6.f,       7.f , 7.f , 7.5f , 8.f , 8.f , 9.f
+    });
+    //input.linspace(1);
+//    auto size = NDArrayFactory::create<int>({6, 6});
+    sd::ops::resize_images op;
+    auto results = op.evaluate({&input}, {}, {6, 8, ops::helpers::kResizeArea}, {true, true}); // resize_area to 6x8 with align corners and preserve aspect ratio of input image
+
+    ASSERT_EQ(ND4J_STATUS_OK, results.status());
+
+    NDArray* result = results.at(0);
+
+//    result->printBuffer("Area Resized to 6x6");
+//    expected.printBuffer("Area Expect for 6x6");
+    ASSERT_TRUE(expected.isSameShape(result));
+    ASSERT_TRUE(expected.equalsTo(result));
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -2052,7 +2081,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test15) {
   ASSERT_TRUE(expected.isSameShape(result));
   ASSERT_TRUE(expected.equalsTo(result));
 }
- */
+
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests11, summaryStatsData_test1) {

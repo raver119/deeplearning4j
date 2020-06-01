@@ -46,6 +46,14 @@ class SD_EXPORT StringUtils {
   }
 
   /**
+         * These methods convert integer values to string with 0s and 1s
+         * @param value
+         * @return
+         */
+        template <typename T>
+        static std::string bitsToString(T value);
+
+        /**
    * This method just concatenates error message with a given graphId
    * @param message
    * @param graphId
@@ -142,7 +150,9 @@ class SD_EXPORT StringUtils {
    * @return boolean status
    */
   static bool u32StringToU8String(const std::u32string& u32, std::string& u8);
-};
-}  // namespace sd
+
+        template <typename T>
+        static std::string vectorToString(const std::vector<T> &vec);
+    };}  // namespace sd
 
 #endif  // LIBND4J_STRINGUTILS_H

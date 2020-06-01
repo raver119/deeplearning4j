@@ -45,7 +45,7 @@ if (APPLE)
     set(CMAKE_CXX_FLAGS  " -fPIC -D__APPLE_OS__=true")
 elseif(WIN32)
     if (SD_CPU)
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIC -march=native -mtune=native -O3")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIC -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -msse4 -mavx -mavx2 -O3")
     endif()
 
 	if (SD_CPU AND LINUX)

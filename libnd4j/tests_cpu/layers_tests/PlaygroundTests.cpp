@@ -60,8 +60,7 @@ class PlaygroundTests : public testing::Test {
   int poolSize = 10;
 
   PlaygroundTests() {
-    printf("\n");
-    fflush(stdout);
+
   }
 };
 

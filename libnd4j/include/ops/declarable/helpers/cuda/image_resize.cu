@@ -34,6 +34,7 @@ limitations under the License.
 //
 
 #include <exceptions/cuda_exception.h>
+#include <array/NDArrayFactory.h>
 #include <ops/declarable/helpers/image_resize.h>
 
 namespace sd {
@@ -1270,8 +1271,7 @@ static __global__ void resizeAreaKernel(
       const Nd4jLong yStart = math::nd4j_floor<float, Nd4jLong>(inY);
       const Nd4jLong yEnd = math::nd4j_ceil<float, Nd4jLong>(inY1);
       auto scalesDim = yEnd - yStart;
-      auto yScaleCache = cachePool + (batch * pSt->outWidth + y) * scalesDim *
-                                         sizeof(ScaleCache<T>);
+      auto yScaleCache = cachePool + (batch * pSt->outHeight + y) * pSt->outWidth;
 
       // auto startPtr = sharedPtr + y * scalesDim * sizeof(float);
       // float* yScales = yScalesShare + y * sizeof(float) *
@@ -1329,18 +1329,32 @@ static void resizeArea(cudaStream_t* stream, ImageResizerState const& st,
                                  // <typename X, typename Z> declaration
   ImageResizerState* pSt;
   auto err = cudaMalloc(&pSt, sizeof(ImageResizerState));
-  err = cudaMemcpyAsync(pSt, &st, sizeof(ImageResizerState),
+  if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: Cannot allocate memory for ImageResizerState", err);
+        }err = cudaMemcpyAsync(pSt, &st, sizeof(ImageResizerState),
                         cudaMemcpyHostToDevice, *stream);
-  ScaleCache<T>* cachePool;
-  err = cudaMalloc(&cachePool, sizeof(ScaleCache<T>) * st.batchSize *
-                                   st.outWidth * st.outHeight);
-  resizeAreaKernel<T><<<128, 2, 2048, *stream>>>(
+  if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: Cannot copy to device memory", err);
+        }ScaleCache<T>* cachePool;
+  auto cachePoolSize = sizeof(ScaleCache<T>) * st.batchSize *
+                                   st.outWidth * st.outHeight;
+  err = cudaMalloc(&cachePool, cachePoolSize);
+        if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: Cannot allocate memory for cache", err);
+        }
+        resizeAreaKernel<T><<<128, 128, 2048, *stream>>>(
       pSt, cache, scale, inputPtr, input->specialShapeInfo(), outputPtr,
       output->specialShapeInfo(), cachePool);
   err = cudaStreamSynchronize(*stream);
-  err = cudaFree(cachePool);
-  err = cudaFree(pSt);
-}
+  if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: An error occured with kernel running", err);
+        }err = cudaFree(cachePool);
+  if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: Cannot deallocate memory for cache", err);
+        }err = cudaFree(pSt);
+if (err != 0) {
+            throw cuda_exception::build("helpers::resizeArea: Cannot deallocate memory for ImageResizeState", err);
+        }}
 // ------------------------------------------------------------------------------------------------------------------
 // //
 template <typename T>
@@ -1353,13 +1367,21 @@ int resizeAreaFunctor_(sd::LaunchContext* context, NDArray const* image,
   if (Status::OK() == res) {
     CachedInterpolation* xCached;
     //(st.outWidth);
-    auto err = cudaMalloc(&xCached, sizeof(CachedInterpolation) * st.outWidth);
+    auto err = cudaMalloc(&xCached, sizeof(CachedInterpolation) * st.outWidth);if (err != 0) {
+                throw cuda_exception::build("helpers::resizeAreaFunctor_: Cannot allocate memory for cached interpolations", err);
+            }
     NDArray::prepareSpecialUse({output}, {image});
     fillInterpolationCache<<<128, 128, 256, *stream>>>(
         xCached, st.outWidth, st.inWidth, st.widthScale);
     resizeArea<T>(stream, st, xCached, image, output);
     err = cudaStreamSynchronize(*stream);
-    err = cudaFree(xCached);
+    if (err != 0) {
+                throw cuda_exception::build("helpers::resizeAreaFunctor_: Error occured when kernel was running", err);
+            }
+            err = cudaFree(xCached);
+            if (err != 0) {
+                throw cuda_exception::build("helpers::resizeAreaFunctor_: Cannot deallocate memory for cached interpolations", err);
+            }
     NDArray::registerSpecialUse({output}, {image});
   }
 
@@ -1405,30 +1427,29 @@ BUILD_SINGLE_TEMPLATE(template int resizeBicubicFunctorA_,
                        bool const halfPixelCenters, NDArray* output),
                       NUMERIC_TYPES);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int resizeFunctor(sd::LaunchContext* context, NDArray const* image, int width,
-                  int height, ImageResizeMethods method,
-                  bool preserveAspectRatio, bool antialias, NDArray* output) {
+
+// ------------------------------------------------------------------------------------------------------------------//
+int resizeImagesFunctor(sd::LaunchContext* context, NDArray const* image, int constwidth,
+                  int constheight, ImageResizeMethods method,
+                  bool alignCorners, NDArray* output) {
   switch (method) {
     case kResizeBilinear:
-      return resizeBilinearFunctor(context, image, width, height, false, false,
+      return resizeBilinearFunctor(context, image, width, height, alignCorners, false,
                                    output);
-      break;
+
     case kResizeNearest:
-      return resizeNeighborFunctor(context, image, width, height, false, false,
+      return resizeNeighborFunctor(context, image, width, height, alignCorners, false,
                                    output);
-      break;
+
     case kResizeBicubic:
       return resizeBicubicFunctor(context, image, width, height,
-                                  preserveAspectRatio, antialias, output);
-      break;
-    case kResizeLanczos5:
-    case kResizeGaussian:
+                                  alignCorners, false, output);
+
     case kResizeArea:
-    case kResizeMitchelcubic:
-      throw std::runtime_error("helper::resizeFunctor: Non implemented yet.");
+    return resizeAreaFunctor(context, image, width, height, alignCorners, output);
+    default:
+      throw std::runtime_error("helper::resizeImagesFunctor: Wrong resize method.");
   }
-  return ND4J_STATUS_OK;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
