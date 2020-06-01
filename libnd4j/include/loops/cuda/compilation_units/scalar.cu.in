@@ -22,6 +22,6 @@
 #cmakedefine PAIRWISE_TYPE_GEN
 namespace functions {
     namespace scalar {
-        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT ScalarTransform, , PAIRWISE_TYPES_@FL_TYPE_INDEX@);
+        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT ScalarTransform, , PAIRWISE_TYPES_@FL_TYPE_INDEX@);
     }
 }

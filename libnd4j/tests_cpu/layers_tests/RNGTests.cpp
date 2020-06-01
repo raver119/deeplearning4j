@@ -1074,8 +1074,8 @@ TEST_F(RNGTests, Test_UniformDistribution_05) {
     ASSERT_FALSE(exp0.equalsTo(z));
 
     sd::ops::reduce_max checkOp;
-    auto checkResult = checkOp.evaluate({z});
-    checkResult[0]->printIndexedBuffer("Max on uniform with 0 to 1 on 100M cases is");
+    auto checkResult = checkOp.evaluate({&z});
+    checkResult[0].printIndexedBuffer("Max on uniform with 0 to 1 on 100M cases is");
 }
 
 namespace sd {

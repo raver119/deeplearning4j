@@ -18,9 +18,9 @@
 // @author raver119@gmail.com
 //
 
+#include <types/types.h>
 #include <helpers/Loops.h>
 #include <system/pointercast.h>
-#include <types/types.h>
 
 using namespace simdOps;
 

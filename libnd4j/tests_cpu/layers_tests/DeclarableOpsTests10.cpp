@@ -1672,7 +1672,7 @@ TEST_F(DeclarableOpsTests10, ResizeImages_Test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray *result = results.at(0);
+    auto result = results.at(0);
 
 //    result->printBuffer("Resized to 7x9");
 //    expected.printBuffer("Expect for 7x9");

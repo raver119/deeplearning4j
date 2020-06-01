@@ -1572,7 +1572,7 @@ TEST_F(DeclarableOpsTests11, ResizeImages_Test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results.status());
 
-    NDArray* result = results.at(0);
+    auto result = results.at(0);
 
 //    result->printBuffer("Area Resized to 6x6");
 //    expected.printBuffer("Area Expect for 6x6");

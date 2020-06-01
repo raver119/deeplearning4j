@@ -22,6 +22,6 @@
 #cmakedefine PAIRWISE_TYPE_GEN
 namespace functions {
     namespace broadcast {
-        BUILD_PAIRWISE_TEMPLATE(template class ND4J_EXPORT Broadcast, , PAIRWISE_TYPES_@FL_TYPE_INDEX@);
+        BUILD_PAIRWISE_TEMPLATE(template class SD_EXPORT Broadcast, , PAIRWISE_TYPES_@FL_TYPE_INDEX@);
     }
 }

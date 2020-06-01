@@ -178,7 +178,7 @@ PLATFORM_CHECK(concat, ENGINE_CPU) {
 
     const auto zType = z->dataType();
 
-    const bool isAxisInLastArr = block.getBArguments()->size() == 0 ? false : B_ARG(0);
+    const bool isAxisInLastArr = block.numB() == 0 ? false : B_ARG(0);
     const int numOfInArrs = isAxisInLastArr ? block.width() - 1 : block.width();
 
     return z->rankOf() < 7 && numOfInArrs <= 3072

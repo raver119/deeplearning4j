@@ -63,7 +63,7 @@ CONFIGURABLE_OP_IMPL(matrix_band_part, 1, 1, true, 0, 0) {
   return ND4J_STATUS_OK;
 }
 DECLARE_SYN(band_part, matrix_band_part);
-}  // namespace ops
+
 
     DECLARE_TYPES(matrix_band_part) {
         getOpDescriptor()
