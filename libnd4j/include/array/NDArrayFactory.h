@@ -43,39 +43,25 @@ namespace sd {
 
         static NDArray empty(sd::DataType dataType, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
-//        template <typename T>
-//        static NDArray* valueOf(const std::initializer_list<Nd4jLong>& shape, T value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//
-//        template <typename T>
-//        static NDArray* valueOf(const std::vector<Nd4jLong>& shape, T value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//
-//        static NDArray* valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//
-//        template <typename T>
-//        static NDArray* linspace(T from, T to, Nd4jLong numElements);
+        template <typename T>
+        static NDArray valueOf(const std::vector<Nd4jLong>& shape, T value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
-//
-//        template <typename T>
-//        static NDArray* create_(const T value, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* create_(sd::DataType dtype, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+
+        template <typename T>
+        static NDArray linspace(T from, T to, Nd4jLong numElements);
+
 
         template <typename T>
         static NDArray create(const T value, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+
         static NDArray create(sd::DataType dtype, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+
         template <typename T>
         static NDArray create(DataType type, const T scalar, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
-
         template <typename T>
-        static NDArray* vector(Nd4jLong length, T startingValue = (T) 0, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-
-//        template <typename T>
-//        static NDArray* create_(char order, const std::vector<Nd4jLong> &shape, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-
-//        static NDArray* create_( char order, const std::vector<Nd4jLong> &shape, sd::DataType dataType, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-
-//        template <typename T>
-//        static NDArray* create_(char order, const std::vector<Nd4jLong> &shape, const std::vector<T> &data, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray vector(Nd4jLong length, T startingValue = (T) 0, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
         static NDArray create(char order, const std::vector<Nd4jLong> &shape, const std::vector<T> &data, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());

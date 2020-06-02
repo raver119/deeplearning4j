@@ -40,9 +40,9 @@ public:
     sd::graph::RandomGenerator _rngA;
     sd::graph::RandomGenerator _rngB;
 
-    NDArray* nexp0 = NDArrayFactory::create_<float>('c', {10, 10});
-    NDArray* nexp1 = NDArrayFactory::create_<float>('c', {10, 10});
-    NDArray* nexp2 = NDArrayFactory::create_<float>('c', {10, 10});
+    NDArray nexp0 = NDArrayFactory::create<float>('c', {10, 10});
+    NDArray nexp1 = NDArrayFactory::create<float>('c', {10, 10});
+    NDArray nexp2 = NDArrayFactory::create<float>('c', {10, 10});
 
     RNGTests() {
         //_bufferA = new Nd4jLong[100000];
@@ -51,20 +51,12 @@ public:
         //_rngB = (sd::random::RandomBuffer *) initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferB);
         _rngA.setStates(_seed, _seed);
         _rngB.setStates(_seed, _seed);
-        nexp0->assign(-1.0f);
-        nexp1->assign(-2.0f);
-        nexp2->assign(-3.0f);
+        nexp0.assign(-1.0f);
+        nexp1.assign(-2.0f);
+        nexp2.assign(-3.0f);
     }
 
     ~RNGTests() {
-        //destroyRandom(_rngA);
-        //destroyRandom(_rngB);
-        //delete[] _bufferA;
-        //delete[] _bufferB;
-
-        delete nexp0;
-        delete nexp1;
-        delete nexp2;
     }
 };
 
@@ -990,13 +982,13 @@ namespace sd {
 
             for (int i = 0; i < numberOfArrays; i++) {
                 auto arrayI = NDArrayFactory::create<Nd4jLong>(shape);
-                auto arrayR = NDArrayFactory::create_<double>('c', shape);
+                auto arrayR = NDArrayFactory::create<double>('c', shape);
                 auto min = NDArrayFactory::create(0.0);
                 auto max = NDArrayFactory::create(1.0);
                 sd::ops::randomuniform op;
                 op.execute(*rng, {&arrayI, &min, &max}, {arrayR}, {}, {DataType::DOUBLE}, {}, {}, false);
 
-                list.emplace_back(arrayR);
+                list.emplace_back(&arrayR);
             }
         };
     }
@@ -1102,12 +1094,9 @@ TEST_F(RNGTests, test_choice_1) {
     auto z = NDArrayFactory::create<double>('c', {1000});
 
     RandomGenerator rng(119, 256);
-    NativeOpExecutioner::execRandom(sd::LaunchContext ::defaultContext(), random::Choice, &rng, x->buffer(), x->shapeInfo(), x->specialBuffer(), x->specialShapeInfo(), prob->buffer(), prob->shapeInfo(), prob->specialBuffer(), prob->specialShapeInfo(), z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo(), nullptr);
+    NativeOpExecutioner::execRandom(sd::LaunchContext ::defaultContext(), random::Choice, &rng, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), prob.buffer(), prob.shapeInfo(), prob.specialBuffer(), prob.specialShapeInfo(), z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo(), nullptr);
 
     // z.printIndexedBuffer("z");
-
-    delete x;
-    delete prob;
 }
 
 TEST_F(RNGTests, test_uniform_119) {
