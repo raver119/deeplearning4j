@@ -35,19 +35,7 @@ public:
     }
 };
 
-TEST_F(EmptyTests, Test_Create_Empty_1) {
-    auto empty = NDArrayFactory::empty_<float>();
-    ASSERT_TRUE(empty->isEmpty());
-
-    ASSERT_EQ(0, empty->lengthOf());
-    ASSERT_TRUE(empty->buffer() == nullptr);
-
-    ASSERT_TRUE(shape::isEmpty(empty->shapeInfo()));
-
-    delete empty;
-}
-
-TEST_F(EmptyTests, Test_Create_Empty_2) {
+TEST_F(EmptyTests, Test_Create_Empty_1 {
     auto empty = NDArrayFactory::empty<float>();
     ASSERT_TRUE(empty.isEmpty());
 
@@ -59,14 +47,13 @@ TEST_F(EmptyTests, Test_Create_Empty_2) {
 }
 
 TEST_F(EmptyTests, Test_Concat_1) {
-//    auto empty = NDArrayFactory::empty_<float>();
-    auto empty = new NDArray('c',  {0}, sd::DataType::FLOAT32);//NDArrayFactory::create_<float>('c', {(Nd4jLong)0}};
-    auto vector = NDArrayFactory::create_<float>('c', {1}, {1.0f});
+    NDArray empty('c',  {0}, sd::DataType::FLOAT32);//NDArrayFactory::create_<float>('c', {(Nd4jLong)0}};
+    auto vector = NDArrayFactory::create<float>('c', {1}, {1.0f});
 
-    ASSERT_TRUE(empty->isEmpty());
+    ASSERT_TRUE(empty.isEmpty());
 
     sd::ops::concat op;
-    auto result = op.evaluate({empty, vector}, {}, {0});
+    auto result = op.evaluate({&empty, &vector}, {}, {0});
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
@@ -75,22 +62,19 @@ TEST_F(EmptyTests, Test_Concat_1) {
 //    z->printIndexedBuffer("z buffr");
 
     ASSERT_EQ(*vector, *z);
-
-    delete empty;
-    delete vector;
 }
 
 
 TEST_F(EmptyTests, Test_Concat_2) {
-    auto empty = new NDArray('c',  {0}, sd::DataType::FLOAT32); //NDArrayFactory::empty_<float>();
-    auto scalar1 =  NDArrayFactory::create_<float>('c', {1}, {1.0f});
-    auto scalar2  = NDArrayFactory::create_<float>('c', {1}, {2.0f});
+    NDArray empty('c',  {0}, sd::DataType::FLOAT32); //NDArrayFactory::empty_<float>();
+    auto scalar1 =  NDArrayFactory::create<float>('c', {1}, {1.0f});
+    auto scalar2  = NDArrayFactory::create<float>('c', {1}, {2.0f});
     auto exp = NDArrayFactory::create<float>('c', {2}, {1.f, 2.f});
 
     ASSERT_TRUE(empty->isEmpty());
 
     sd::ops::concat op;
-    auto result = op.evaluate({empty, scalar1, scalar2}, {}, {0});
+    auto result = op.evaluate({&empty, &scalar1, &scalar2}, {}, {0});
     ASSERT_EQ(Status::OK(), result.status());
 
     auto z = result.at(0);
@@ -100,9 +84,6 @@ TEST_F(EmptyTests, Test_Concat_2) {
 
     ASSERT_EQ(exp, *z);
 
-    delete empty;
-    delete scalar1;
-    delete scalar2;
 }
 
 TEST_F(EmptyTests, Test_Concat_3) {
