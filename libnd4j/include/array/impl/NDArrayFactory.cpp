@@ -436,7 +436,7 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<int8_t> &v
 template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<uint8_t> &values, sd::LaunchContext * context);
 template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<bool> &values, sd::LaunchContext * context);
 
-////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////
     template <typename T>
     NDArray* NDArrayFactory::empty_(sd::LaunchContext * context) {
         auto shapeInfo = ShapeBuilders::createScalarShapeInfo(DataTypeUtils::fromT<T>(), context->getWorkspace());
@@ -461,7 +461,7 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<bool> &val
 
         return result;
     }
-
+*/
     ////////////////////////////////////////////////////////////////////////
     template <typename T>
     NDArray NDArrayFactory::empty(sd::LaunchContext * context) {
@@ -480,7 +480,7 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<bool> &val
         return result;
     }
 
-////////////////////////////////////////////////////////////////////////
+/*///////////////////////////////////////////////////////////////////////
     NDArray* NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, const char order, sd::LaunchContext * context) {
         auto res = NDArrayFactory::create_(order, shape, value.dataType(), context);
         res->assign(const_cast<NDArray&>(value));
@@ -492,7 +492,7 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<bool> &val
 
         return new NDArray(order, shape, dataType, context);
     }
-
+*/
 ////////////////////////////////////////////////////////////////////////
 template <typename T>
 NDArray NDArrayFactory::create(T* buffer, const char order, const std::initializer_list<Nd4jLong>& shape, sd::LaunchContext * context) {
@@ -526,15 +526,15 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return NDArray(u16string, dtype, context); 
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const char16_t* u16string, sd::DataType dtype, sd::LaunchContext* context) {
-          return string_(std::u16string(u16string), dtype, context);
-      }
+//      NDArray* NDArrayFactory::string_(const char16_t* u16string, sd::DataType dtype, sd::LaunchContext* context) {
+//          return string_(std::u16string(u16string), dtype, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const std::u16string& u16string, sd::DataType dtype, sd::LaunchContext* context) {
-          auto res = new NDArray();
-          *res = NDArray(u16string, dtype, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_(const std::u16string& u16string, sd::DataType dtype, sd::LaunchContext* context) {
+//          auto res = new NDArray();
+//          *res = NDArray(u16string, dtype, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string(const std::u16string& u16string, sd::DataType dtype, sd::LaunchContext* context) {
           return NDArray(u16string, dtype, context);
@@ -544,15 +544,15 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return NDArray(u32string, dtype, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const char32_t* u32string, sd::DataType dtype, sd::LaunchContext* context) {
-          return string_(std::u32string(u32string), dtype, context);
-      }
+//      NDArray* NDArrayFactory::string_(const char32_t* u32string, sd::DataType dtype, sd::LaunchContext* context) {
+//          return string_(std::u32string(u32string), dtype, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const std::u32string& u32string, sd::DataType dtype, sd::LaunchContext* context) {
-          auto res = new NDArray();
-          *res = NDArray(u32string, dtype, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_(const std::u32string& u32string, sd::DataType dtype, sd::LaunchContext* context) {
+//          auto res = new NDArray();
+//          *res = NDArray(u32string, dtype, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string(const std::u32string& u32string, sd::DataType dtype, sd::LaunchContext* context) {
           return NDArray(u32string, dtype, context);
@@ -566,11 +566,11 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return string_(std::string(str), dtype, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const std::string& str, sd::DataType dtype, sd::LaunchContext* context) {
-          auto res = new NDArray();
-          *res = NDArray(str, dtype, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_(const std::string& str, sd::DataType dtype, sd::LaunchContext* context) {
+//          auto res = new NDArray();
+//          *res = NDArray(str, dtype, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string(const std::string& str, sd::DataType dtype, sd::LaunchContext* context) {
           return NDArray(str, dtype, context);
@@ -588,32 +588,32 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return NDArray( shape, std::vector<std::string>(string), dataType, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<const char *> &strings, sd::DataType dataType, sd::LaunchContext * context) {
-          return NDArrayFactory::string_( shape, std::vector<const char*>(strings), dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<const char *> &strings, sd::DataType dataType, sd::LaunchContext * context) {
+//          return NDArrayFactory::string_( shape, std::vector<const char*>(strings), dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::vector<const char *> &strings, sd::DataType dataType, sd::LaunchContext * context) {
-          std::vector<std::string> vec(strings.size());
-          int cnt = 0;
-          for (auto s:strings)
-              vec[cnt++] = std::string(s);
-      
-          return NDArrayFactory::string_( shape, vec, dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::vector<const char *> &strings, sd::DataType dataType, sd::LaunchContext * context) {
+//          std::vector<std::string> vec(strings.size());
+//          int cnt = 0;
+//          for (auto s:strings)
+//              vec[cnt++] = std::string(s);
+//      
+//          return NDArrayFactory::string_( shape, vec, dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<std::string> &string, sd::DataType dataType, sd::LaunchContext * context) {
-          return NDArrayFactory::string_( shape, std::vector<std::string>(string), dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<std::string> &string, sd::DataType dataType, sd::LaunchContext * context) {
+//          return NDArrayFactory::string_( shape, std::vector<std::string>(string), dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string( const std::vector<Nd4jLong> &shape, const std::vector<std::string> &string, sd::DataType dataType, sd::LaunchContext * context) {
           return NDArray(shape, string, dataType, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_(const std::vector<Nd4jLong> &shape, const std::vector<std::string> &string, sd::DataType dataType, sd::LaunchContext * context) {
-          auto res = new NDArray();
-          *res = NDArray( shape, string, dataType, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_(const std::vector<Nd4jLong> &shape, const std::vector<std::string> &string, sd::DataType dataType, sd::LaunchContext * context) {
+//          auto res = new NDArray();
+//          *res = NDArray( shape, string, dataType, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string(const std::vector<Nd4jLong>& shape, const std::initializer_list<const char16_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
           return NDArray( shape, std::vector<const char16_t*>(strings), dataType, context);
@@ -627,28 +627,28 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return NDArray( shape, std::vector<std::u16string>(string), dataType, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<const char16_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
-          return NDArrayFactory::string_( shape, std::vector<const char16_t*>(strings), dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<const char16_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
+//          return NDArrayFactory::string_( shape, std::vector<const char16_t*>(strings), dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
-          std::vector<std::u16string> vec(strings.size());
-          int cnt = 0;
-          for (auto s : strings)
-              vec[cnt++] = std::u16string(s);
-      
-          return NDArrayFactory::string_( shape, vec, dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
+//          std::vector<std::u16string> vec(strings.size());
+//          int cnt = 0;
+//          for (auto s : strings)
+//              vec[cnt++] = std::u16string(s);
+//      
+//          return NDArrayFactory::string_( shape, vec, dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u16string>& string, sd::DataType dataType, sd::LaunchContext* context) {
-          return NDArrayFactory::string_( shape, std::vector<std::u16string>(string), dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u16string>& string, sd::DataType dataType, sd::LaunchContext* context) {
+//          return NDArrayFactory::string_( shape, std::vector<std::u16string>(string), dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, sd::DataType dataType, sd::LaunchContext* context) {
-          auto res = new NDArray();
-          *res = NDArray( shape, string, dataType, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, sd::DataType dataType, sd::LaunchContext* context) {
+//          auto res = new NDArray();
+//          *res = NDArray( shape, string, dataType, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string( const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, sd::DataType dtype, sd::LaunchContext* context) {
           return NDArray( shape, string, dtype, context);
@@ -670,23 +670,23 @@ template ND4J_EXPORT NDArray NDArrayFactory::create(int16_t* buffer, const char 
           return NDArrayFactory::string_( shape, std::vector<const char32_t*>(strings), dataType, context);
       }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<const char32_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
-          std::vector<std::u32string> vec(strings.size());
-          int cnt = 0;
-          for (auto s : strings)
-              vec[cnt++] = std::u32string(s);      
-          return NDArrayFactory::string_( shape, vec, dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<const char32_t*>& strings, sd::DataType dataType, sd::LaunchContext* context) {
+//          std::vector<std::u32string> vec(strings.size());
+//          int cnt = 0;
+//          for (auto s : strings)
+//              vec[cnt++] = std::u32string(s);      
+//          return NDArrayFactory::string_( shape, vec, dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u32string>& string, sd::DataType dataType, sd::LaunchContext* context) {
-          return NDArrayFactory::string_( shape, std::vector<std::u32string>(string), dataType, context);
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u32string>& string, sd::DataType dataType, sd::LaunchContext* context) {
+//          return NDArrayFactory::string_( shape, std::vector<std::u32string>(string), dataType, context);
+//      }
       /////////////////////////////////////////////////////////////////////////
-      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, sd::DataType dataType, sd::LaunchContext* context) {
-          auto res = new NDArray();
-          *res = NDArray( shape, string, dataType, context);
-          return res;
-      }
+//      NDArray* NDArrayFactory::string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, sd::DataType dataType, sd::LaunchContext* context) {
+//          auto res = new NDArray();
+//          *res = NDArray( shape, string, dataType, context);
+//          return res;
+//      }
       /////////////////////////////////////////////////////////////////////////
       NDArray NDArrayFactory::string(const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, sd::DataType dtype, sd::LaunchContext* context) {
           return NDArray( shape, string, dtype, context);
