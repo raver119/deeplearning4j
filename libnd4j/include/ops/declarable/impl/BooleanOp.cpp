@@ -73,7 +73,7 @@ namespace sd {
                 auto var = ctx.variable(pair);
 
                 if (!var->hasNDArray()) {
-                    var->setNDArray(NDArrayFactory::create_<bool>(false, ctx.launchContext()));
+                    var->setNDArray(NDArrayFactory::create<bool>(false, ctx.launchContext()).dup());
                     var->markRemovable(true);
                 }
             }

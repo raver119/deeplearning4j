@@ -144,16 +144,16 @@ namespace helpers {
             for (int i = 0; i < input->rankOf() - 1; i++)
                 shapeI[i] = input->sizeAt(i);
             shapeI[input->rankOf() - 1] = k;
-            std::unique_ptr<NDArray> indices(NDArrayFactory::create_<Nd4jLong>(input->ordering(), shapeI, context));
+            auto indices = NDArrayFactory::create<Nd4jLong>(input->ordering(), shapeI, context);
             NDArray* values = nullptr;
-            int status = topKFunctor(context, input, values, indices.get(), k, true);
+            int status = topKFunctor(context, input, values, &indices, k, true);
             result->assign(0);
             if (status == ND4J_STATUS_OK) {
                 auto func = PRAGMA_THREADS_FOR {
                     for (auto e = start; e < stop; e++) {
                         bool found = false;
                         for (uint j = 0; j < k; j++) {
-                            if (target->e<Nd4jLong>(e) == indices->e<Nd4jLong>(e * k + j)) {
+                            if (target->e<Nd4jLong>(e) == indices.e<Nd4jLong>(e * k + j)) {
                                 found = true;
                                 break;
                             }

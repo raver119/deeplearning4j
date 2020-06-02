@@ -546,34 +546,34 @@ template <typename T>
         if (!inplace)
              output->assign(0.f); // fill up output tensor with zeros only inplace=false
 
-        std::unique_ptr<NDArray> matrix(NDArrayFactory::create_('c', {n, n}, input->dataType(), context)); //, block.getWorkspace());
-        std::unique_ptr<NDArray> lowerMatrix(NDArrayFactory::create_('c',{n, n}, input->dataType(), context));
+        auto matrix = NDArrayFactory::create('c', {n, n}, input->dataType(), context); //, block.getWorkspace());
+        auto lowerMatrix = NDArrayFactory::create('c',{n, n}, input->dataType(), context);
 
         for (int e = 0; e < totalCount; e++) {
 
             // fill up matrix
             for (int k = e * n2, l = 0; k < (e + 1) * n2; k++) {
-                matrix->p(l++, input->e<T>(k));
+                matrix.p(l++, input->e<T>(k));
             }
             //if (e) // from the second loop need to zero matrix
-            lowerMatrix->assign(0.f);
+            lowerMatrix.nullify();
 
             for (Nd4jLong col = 0; col < n; col++) {
                 for (Nd4jLong row = 0; row < col; row++) {
                     T rowSum = 0;
                     for (Nd4jLong k = 0; k < row; ++k)
-                        rowSum += (lowerMatrix->e<T>(col, k) * lowerMatrix->e<T>(row, k));
-                    lowerMatrix->p(col, row, (matrix->e<T>(row, col) - rowSum) / lowerMatrix->e<double>(row, row));
+                        rowSum += (lowerMatrix.e<T>(col, k) * lowerMatrix.e<T>(row, k));
+                    lowerMatrix.p(col, row, (matrix.e<T>(row, col) - rowSum) / lowerMatrix.e<double>(row, row));
                 }
                 T diagonalSum = 0;
                 for (Nd4jLong k = 0; k < col;  ++k)
-                    diagonalSum += lowerMatrix->e<T>(col, k) * lowerMatrix->e<T>(col, k);
-                lowerMatrix->p(col, col, sd::math::nd4j_sqrt<T, T>(matrix->e<T>(col, col) - diagonalSum));
+                    diagonalSum += lowerMatrix.e<T>(col, k) * lowerMatrix.e<T>(col, k);
+                lowerMatrix.p(col, col, sd::math::nd4j_sqrt<T, T>(matrix.e<T>(col, col) - diagonalSum));
                 //nd4j_printf("%i: ", col);
                 //lowerMatrix->printIndexedBuffer("Lower matrix");
             }
             for (int k = e * n2, l = 0; k < (e + 1) * n2; k++) {
-                output->p(k, lowerMatrix->e<T>(l++));
+                output->p(k, lowerMatrix.e<T>(l++));
             }
         }
 

@@ -49,7 +49,7 @@ namespace sd {
                 }
             }
 
-            auto result = NDArrayFactory::create_('c', shape, list->dataType());
+            auto result = NDArrayFactory::create('c', shape, list->dataType());
             std::vector<Nd4jLong> indicesList((list->readRaw(0)->rankOf() + 1) * 2, 0);
             int skipPosition = 0;
             for (int e = 0; e < indices->lengthOf(); e++) {
@@ -65,7 +65,7 @@ namespace sd {
             }
 
             //OVERWRITE_RESULT(result);
-            setupResult(result, block);
+            setupResult(result.dup(), block);
             return Status::OK();
         }
         DECLARE_SYN(TensorArrayGatherV3, gather_list);

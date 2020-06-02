@@ -277,18 +277,16 @@ CUSTOM_OP_IMPL(sconv2d_bp, 3, 2, false, 0, 9) {
     if (weightsPoint){
 
         auto resultFFShape = isNCHW ? std::vector<Nd4jLong>({bS, mC*iC, oH, oW}) : std::vector<Nd4jLong>({bS, oH, oW, mC*iC});
-        auto resultFF  = NDArrayFactory::create_(input->ordering(), resultFFShape, input->dataType(), block.launchContext());
-        ConvolutionUtils::sconv2d(block, input, weightsDepth, nullptr, nullptr, resultFF, kH,kW, sH,sW, pH,pW, dH,dW, isSameMode, isNCHW, wFormat);
+        auto resultFF  = NDArrayFactory::create(input->ordering(), resultFFShape, input->dataType(), block.launchContext());
+        ConvolutionUtils::sconv2d(block, input, weightsDepth, nullptr, nullptr, &resultFF, kH,kW, sH,sW, pH,pW, dH,dW, isSameMode, isNCHW, wFormat);
 
         auto gradIDepthShape = ShapeUtils::composeShapeUsingDimsAndIdx({bS,iC*mC,oH,oW,  0,indIOioC,indIiH,indIiH+1});
-        auto gradIDepth  = NDArrayFactory::create_(resultFF->ordering(), gradIDepthShape, resultFF->dataType(), block.launchContext());                 // [bS, oH, oW, iC*mC]  (NHWC) or [bS, iC*mC, oH, oW] (NCHW)
+        auto gradIDepth  = NDArrayFactory::create(resultFF->ordering(), gradIDepthShape, resultFF.dataType(), block.launchContext());                 // [bS, oH, oW, iC*mC]  (NHWC) or [bS, iC*mC, oH, oW] (NCHW)
 
         ConvolutionUtils::conv2dBP(block, resultFF, weightsPoint, bias, gradO, gradIDepth, gradWP, gradB, 1,1, 1,1, 0,0, 1,1, isSameMode, isNCHW, wFormat);    // in this case oH=iH and oW=iW
 
         gradO = gradIDepth;
         bias = gradB = nullptr;                     // if pointwise backprop was done then don't calculate gradB at depthwise_conv2d_bp step
-
-        delete resultFF;
     }
 
     // ----- apply depthwise_conv2d_bp ----- //

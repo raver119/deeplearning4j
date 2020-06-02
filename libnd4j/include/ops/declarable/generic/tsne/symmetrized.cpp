@@ -68,13 +68,13 @@ namespace sd {
             if (block.getIArguments()->size() > 0)
                 N = INT_ARG(0);
             auto dataType = rowP->dataType(); //ArrayOptions::dataType(inputShape->at(0));
-            NDArray* rowCounts = NDArrayFactory::create_<int>('c', { N }, block.launchContext()); //rowP->dup();
+            auto rowCounts = NDArrayFactory::create<int>('c', { N }, block.launchContext()); //rowP->dup();
             //srowCounts->assign(0);
-            Nd4jLong len = helpers::barnes_row_count(rowP, colP, N, *rowCounts);
-            rowCounts->syncToHost();
+            Nd4jLong len = helpers::barnes_row_count(rowP, colP, N, rowCounts);
+            rowCounts.syncToHost();
             //            rowCounts->printBuffer("Row Counts");
             if (len <= 0) throw std::runtime_error("barnes_symmetrized: Cannot allocate shape due non-positive len.");
-            rowCountsPtr = rowCounts;
+            rowCountsPtr = rowCounts.dup();
             //ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
 //            outShapeInfo[1] = 1;
 //            outShapeInfo[2] = len;

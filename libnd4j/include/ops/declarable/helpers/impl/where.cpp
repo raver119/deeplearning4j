@@ -38,11 +38,11 @@ namespace sd {
                     auto offset = shape::getOffset(condition.shapeInfo(), idx);
 
                     if (condition.e<bool>(offset)) {
-                        auto array = NDArrayFactory::create_('c', {1, condition.rankOf()}, output.dataType(), output.getContext());
+                        auto array = NDArrayFactory::create('c', {1, condition.rankOf()}, output.dataType(), output.getContext());
                         for (int f = 0; f < condition.rankOf(); f++)
-                            array->p(f, (T) idx[f]);
+                            array.p(f, (T) idx[f]);
 
-                        list.write(cnt++, array);
+                        list.write(cnt++, array.dup());
                     }
                 }
 
