@@ -60,14 +60,14 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_1) {
     int bS=1, iH=5,iW=4,  iC=2,oC=3,  kH=2,kW=2,  sH=1,sW=1,  pH=0,pW=0,  dH=1,dW=1;
     TypeParam _expB[]{664.0, 700.0, 736.0, 344.0, 808.0, 844.0, 880.0, 408.0, 952.0, 988.0, 1024.0, 472.0, 1096.0, 1132.0, 1168.0, 536.0, 466.0, 480.0, 494.0, 220.0, 1528.0, 1628.0, 1728.0, 856.0, 1928.0, 2028.0, 2128.0, 1048.0, 2328.0, 2428.0, 2528.0, 1240.0, 2728.0, 2828.0, 2928.0, 1432.0, 1346.0, 1392.0, 1438.0, 700.0, 2392.0, 2556.0, 2720.0, 1368.0, 3048.0, 3212.0, 3376.0, 1688.0, 3704.0, 3868.0, 4032.0, 2008.0, 4360.0, 4524.0, 4688.0, 2328.0, 2226.0, 2304.0, 2382.0, 1180.0};
     Nd4jLong _expS[]{4, 1, 3, 5, 4, 60, 20, 4, 1, typeid(TypeParam) == typeid(float) ? 8192 : 16384, 1, 99};
-    auto input = NDArrayFactory::create_<TypeParam>('c', {bS, iC, iH, iW});
-    auto weights = NDArrayFactory::create_<TypeParam>('c', {oC, iC, kH, kW});
+    auto input = NDArrayFactory::create<TypeParam>('c', {bS, iC, iH, iW});
+    auto weights = NDArrayFactory::create<TypeParam>('c', {oC, iC, kH, kW});
     for (int e = 0; e < input->lengthOf(); e++)
-        input->p(e, e + 1);
+        input.p(e, e + 1);
 
     for (int e = 0; e < weights->lengthOf(); e++)
-        weights->p(e, e + 1);
-    weights->permutei({2,3,1,0});
+        weights.p(e, e + 1);
+    weights.permutei({2,3,1,0});
 
     // weights->printShapeInfo("weights");
 
@@ -75,8 +75,8 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_1) {
     auto exp = new NDArray(_expB, _expS);
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, weights);
+    variableSpace->putVariable(-1, input.dup());
+    variableSpace->putVariable(-2, weights.dup());
 
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({-1, -2});
@@ -393,18 +393,18 @@ TEST_F(ConvolutionTests1, sconv2d_1) {
     int iX = 10;
     int B = 2;
 
-    auto input = NDArrayFactory::create_<float>('c', {B, iC, iY, iX});
+    auto input = NDArrayFactory::create<float>('c', {B, iC, iY, iX});
     for (int e = 0; e < input->lengthOf(); e++)
-        input->p(e, e+1);
+        input.p(e, e+1);
 
-    auto weights = NDArrayFactory::create_<float>('c', {oC, iC, kY, kX});
+    auto weights = NDArrayFactory::create<float>('c', {oC, iC, kY, kX});
     for (int e = 0; e < weights->lengthOf(); e++)
-        weights->p(e, e+1);
+        weights.p(e, e+1);
     weights->permutei({2,3,1,0});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, weights);
+    variableSpace->putVariable(-1, input.dup());
+    variableSpace->putVariable(-2, weights.dup());
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1, -2});

@@ -899,7 +899,7 @@ TEST_F(ConvolutionTests2, deconv3d_bp_test6) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, maxpool2d_1) {
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -943,7 +943,7 @@ TEST_F(ConvolutionTests2, maxpool2d_2) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -987,7 +987,7 @@ TEST_F(ConvolutionTests2, maxpool2d_3) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1031,7 +1031,7 @@ TEST_F(ConvolutionTests2, maxpool2d_4) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1075,7 +1075,7 @@ TEST_F(ConvolutionTests2, maxpool2d_5) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -1691,8 +1691,8 @@ TYPED_TEST(TypedConvolutionTests2, maxpool3d_bp_test4) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, maxpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
@@ -1875,8 +1875,8 @@ TEST_F(ConvolutionTests2, maxpool2d_bp_7) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, avgpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
@@ -2046,8 +2046,8 @@ TYPED_TEST(TypedConvolutionTests2, avgpool2d_bp_6) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(ConvolutionTests2, pnormpool2d_bp_1) {
 
-    auto input = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
-    auto epsilon = NDArrayFactory::create_<float>('c', {bS,iD,oH,oW});
+    auto input = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
+    auto epsilon = NDArrayFactory::create<float>('c', {bS,iD,oH,oW});
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();

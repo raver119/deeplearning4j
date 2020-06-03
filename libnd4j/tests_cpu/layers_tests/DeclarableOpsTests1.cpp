@@ -97,17 +97,17 @@ TEST_F(DeclarableOpsTests1, BasicInitialization1) {
     std::string expName("concat");
     ASSERT_EQ(expName, *(concat->getOpName()));
 
-    auto x0 = NDArrayFactory::create_<float>('c', { 1, 5 });
-    auto x1 = NDArrayFactory::create_<float>('c', { 1, 5 });
-    auto x2 = NDArrayFactory::create_<float>('c', { 1, 5 });
-    auto x3 = NDArrayFactory::create_<float>('c', { 1, 5 });
-    auto x4 = NDArrayFactory::create_<float>('c', { 1, 5 });
+    auto x0 = NDArrayFactory::create<float>('c', { 1, 5 });
+    auto x1 = NDArrayFactory::create<float>('c', { 1, 5 });
+    auto x2 = NDArrayFactory::create<float>('c', { 1, 5 });
+    auto x3 = NDArrayFactory::create<float>('c', { 1, 5 });
+    auto x4 = NDArrayFactory::create<float>('c', { 1, 5 });
 
-    x0->assign(1.0f);
-    x1->assign(1.0f);
-    x2->assign(1.0f);
-    x3->assign(1.0f);
-    x4->assign(1.0f);
+    x0.assign(1.0f);
+    x1.assign(1.0f);
+    x2.assign(1.0f);
+    x3.assign(1.0f);
+    x4.assign(1.0f);
 
     auto variableSpace = new VariableSpace();
 
@@ -609,12 +609,12 @@ TEST_F(DeclarableOpsTests1, DivergentCheck1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, AddMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
-    x->assign(2);
-    y->assign(1);
-    exp->assign(3);
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
+    x.assign(2.f);
+    y.assign(1.f);
+    exp.assign(3.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -628,7 +628,6 @@ TEST_F(DeclarableOpsTests1, AddMatrices1) {
 
     ASSERT_TRUE(x->equalsTo(exp));
 
-    delete exp;
     delete block;
     delete variableSpace;
 
@@ -637,9 +636,9 @@ TEST_F(DeclarableOpsTests1, AddMatrices1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, AddVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto exp = NDArrayFactory::create_<float>('c', { 1, 15 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
     x->assign(2);
     y->assign(1);
     exp->assign(3);
@@ -656,7 +655,6 @@ TEST_F(DeclarableOpsTests1, AddVectorVector1) {
 
     ASSERT_TRUE(x->equalsTo(exp));
 
-    delete exp;
     delete block;
     delete variableSpace;
 }
@@ -664,11 +662,11 @@ TEST_F(DeclarableOpsTests1, AddVectorVector1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, AddMatrixScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
-    x->assign(2);
-    y->assign(1);
+    x.assign(2);
+    y.assign(1);
     exp.assign(3);
 
     auto variableSpace = new VariableSpace();
@@ -690,11 +688,11 @@ TEST_F(DeclarableOpsTests1, AddMatrixScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, AddScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 1 });
-    x->assign(2);
-    y->assign(1);
+    x.assign(2);
+    y.assign(1);
     exp.assign(3);
 
     auto variableSpace = new VariableSpace();
@@ -716,11 +714,11 @@ TEST_F(DeclarableOpsTests1, AddScalarScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
-    x->assign(3);
-    y->assign(1);
+    x.assign(3);
+    y.assign(1);
     exp.assign(2);
 
     auto variableSpace = new VariableSpace();
@@ -743,12 +741,12 @@ TEST_F(DeclarableOpsTests1, SubtractMatrices1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractTest_1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 6 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 6 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 6 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 6 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 6 });
-    x->assign(3);
-    y->assign(1);
-    exp.assign(2);
+    x.assign(3.f);
+    y.assign(1.f);
+    exp.assign(2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -826,20 +824,20 @@ TEST_F(DeclarableOpsTests1, TestRng1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MergeSumTest1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 5 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 5 });
-    auto z = NDArrayFactory::create_<float>('c', { 5, 5 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 5 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 5 });
+    auto z = NDArrayFactory::create<float>('c', { 5, 5 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 5 });
-    x->assign(3);
-    y->assign(1);
-    z->assign(2);
-    exp.assign(6);
+    x.assign(3.f);
+    y.assign(1.f);
+    z.assign(2.f);
+    exp.assign(6.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
     variableSpace->putVariable(-3, z);
-    variableSpace->putVariable(1, new Variable(NDArrayFactory::create_<float>('c', { 5, 5 })));
+    variableSpace->putVariable(1, new Variable(NDArrayFactory::create<float>('c', { 5, 5 })));
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2, -3 });
 
@@ -859,14 +857,14 @@ TEST_F(DeclarableOpsTests1, MergeSumTest1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ClipByValue1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 5 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 5 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 5 });
-    x->assign(4);
-    x->p(0, -1);
-    x->p(1, 2);
-    exp.assign(3);
-    exp.p(0, 0);
-    exp.p(1, 2);
+    x.assign(4.f);
+    x.p(0, -1.f);
+    x.p(1, 2.f);
+    exp.assign(3.f);
+    exp.p(0, 0.f);
+    exp.p(1, 2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -890,14 +888,14 @@ TEST_F(DeclarableOpsTests1, ClipByValue1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MergeAvgTest1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 5 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 5 });
-    auto z = NDArrayFactory::create_<float>('c', { 5, 5 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 5 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 5 });
+    auto z = NDArrayFactory::create<float>('c', { 5, 5 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 5 });
-    x->assign(3);
-    y->assign(1);
-    z->assign(2);
-    exp.assign(2);
+    x.assign(3.f);
+    y.assign(1.f);
+    z.assign(2.f);
+    exp.assign(2.f);
 
     auto zu = NDArrayFactory::create<float>('c', { 5, 5 });
 
@@ -905,7 +903,7 @@ TEST_F(DeclarableOpsTests1, MergeAvgTest1) {
     variableSpace->putVariable(-1, x);
     variableSpace->putVariable(-2, y);
     variableSpace->putVariable(-3, z);
-    variableSpace->putVariable(1, new Variable(NDArrayFactory::create_<float>('c', { 5, 5 })));
+    variableSpace->putVariable(1, new Variable(NDArrayFactory::create<float>('c', { 5, 5 })));
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1, -2, -3 });
 
@@ -925,12 +923,12 @@ TEST_F(DeclarableOpsTests1, MergeAvgTest1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
-    x->assign(3);
-    y->assign(1);
-    exp.assign(2);
+    x.assign(3.f);
+    y.assign(1.f);
+    exp.assign(2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -953,8 +951,8 @@ TEST_F(DeclarableOpsTests1, SubtractVectorVector1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(3);
     y->assign(1);
@@ -980,12 +978,12 @@ TEST_F(DeclarableOpsTests1, SubtractMatrixScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, SubtractScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 1 });
-    x->assign(3);
-    y->assign(1);
-    exp.assign(2);
+    x.assign(3.f);
+    y.assign(1.f);
+    exp.assign(2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1006,8 +1004,8 @@ TEST_F(DeclarableOpsTests1, SubtractScalarScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseSubtractMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(3.f);
     y->assign(1.f);
@@ -1146,19 +1144,17 @@ TEST_F(DeclarableOpsTests1, ReverseModTest_2) {
 
     ASSERT_TRUE(res.status() == ND4J_STATUS_OK);
     ASSERT_TRUE(res.at(0)->equalsTo(&exp));
-
-
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseSubtractVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto exp = NDArrayFactory::create_<float>('c', { 1, 15 });
-    x->assign(3);
-    y->assign(1);
-    exp->assign(-2);
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
+    x.assign(3.f);
+    y.assign(1.f);
+    exp.assign(-2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1174,19 +1170,18 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractVectorVector1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseSubtractMatrixScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
-    x->assign(3);
-    y->assign(1);
-    exp->assign(-2);
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
+    x->assign(3.f);
+    y->assign(1.f);
+    exp->assign(-2.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1202,19 +1197,18 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractMatrixScalar1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseSubtractScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto exp = NDArrayFactory::create_<float>('c', { 1, 1 });
-    x->assign(3);
-    y->assign(1);
-    exp->assign(-2);
+    auto x = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto exp = NDArrayFactory::create<float>('c', { 1, 1 });
+    x.assign(3);
+    y.assign(1);
+    exp.assign(-2);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1230,18 +1224,17 @@ TEST_F(DeclarableOpsTests1, ReverseSubtractScalarScalar1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MultiplyMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
-    x->assign(2);
-    y->assign(3);
-    exp->assign(6);
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
+    x.assign(2.f);
+    y.assign(3.f);
+    exp.assign(6.f);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1257,15 +1250,14 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrices1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MultiplyVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto exp = NDArrayFactory::create_<float>('c', { 1, 15 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
     x->assign(2);
     y->assign(3);
     exp->assign(6);
@@ -1284,18 +1276,17 @@ TEST_F(DeclarableOpsTests1, MultiplyVectorVector1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MultiplyMatrixScalar) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
-    x->assign(2);
-    y->assign(3);
-    exp->assign(6);
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
+    x.assign(2);
+    y.assign(3);
+    exp.assign(6);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1311,15 +1302,14 @@ TEST_F(DeclarableOpsTests1, MultiplyMatrixScalar) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, MultiplyScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto exp = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto exp = NDArrayFactory::create<float>('c', { 1, 1 });
     x->assign(2);
     y->assign(3);
     exp->assign(6);
@@ -1338,26 +1328,25 @@ TEST_F(DeclarableOpsTests1, MultiplyScalarScalar1) {
 
     delete block;
     delete variableSpace;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, TestSoftMax_bp_1) {
 
-    auto input = NDArrayFactory::create_<double>('c', { 2, 2 });
+    auto input = NDArrayFactory::create<double>('c', { 2, 2 });
     for (int e = 0; e < input->lengthOf(); e++)
         input->p(e, e + 1);
 
-    auto epsilon = NDArrayFactory::create_<double>('c', { 2, 2 });
+    auto epsilon = NDArrayFactory::create<double>('c', { 2, 2 });
     epsilon->p(0, 0.1f);
     epsilon->p(1, 0.2f);
     epsilon->p(2, 0.3f);
     epsilon->p(3, 0.4f);
 
-    auto output = NDArrayFactory::create_<double>('c', { 2, 2 });
+    auto output = NDArrayFactory::create<double>('c', { 2, 2 });
     output->assign(1.0f);
 
-    auto exp = NDArrayFactory::create_<double>('c', { 2, 2 });
+    auto exp = NDArrayFactory::create<double>('c', { 2, 2 });
     exp->p(0, -0.019661194f);
     exp->p(1, 0.019661194f);
     exp->p(2, -0.019661194f);
@@ -1381,7 +1370,6 @@ TEST_F(DeclarableOpsTests1, TestSoftMax_bp_1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 
 }
 
@@ -1469,9 +1457,9 @@ TEST_F(DeclarableOpsTests1, BroadcastReverseDivideTest_1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, DivideMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto exp = NDArrayFactory::create_<float>('c', { 5, 3 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(6);
     y->assign(2);
     exp->assign(3);
@@ -1490,14 +1478,13 @@ TEST_F(DeclarableOpsTests1, DivideMatrices1) {
 
     delete variableSpace;
     delete block;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, DivideVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
     x->assign(6);
     y->assign(2);
@@ -1522,8 +1509,8 @@ TEST_F(DeclarableOpsTests1, DivideVectorVector1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, DivideMatrixScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(6);
     y->assign(2);
@@ -1549,8 +1536,8 @@ TEST_F(DeclarableOpsTests1, DivideMatrixScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, DivideScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 1 });
     x->assign(6);
     y->assign(2);
@@ -1575,8 +1562,8 @@ TEST_F(DeclarableOpsTests1, DivideScalarScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseDivideMatrices1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 5, 3 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 5, 3 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(2);
     y->assign(6);
@@ -1601,8 +1588,8 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrices1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseDivideVectorVector1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 15 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 15 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 15 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 15 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 15 });
     x->assign(2);
     y->assign(6);
@@ -1627,8 +1614,8 @@ TEST_F(DeclarableOpsTests1, ReverseDivideVectorVector1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseDivideMatrixScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 5, 3 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 5, 3 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 5, 3 });
     x->assign(2);
     y->assign(6);
@@ -1653,8 +1640,8 @@ TEST_F(DeclarableOpsTests1, ReverseDivideMatrixScalar1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, ReverseDivideScalarScalar1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { 1, 1 });
-    auto y = NDArrayFactory::create_<float>('c', { 1, 1 });
+    auto x = NDArrayFactory::create<float>('c', { 1, 1 });
+    auto y = NDArrayFactory::create<float>('c', { 1, 1 });
     auto exp = NDArrayFactory::create<float>('c', { 1, 1 });
     x->assign(2);
     y->assign(6);
@@ -1826,8 +1813,8 @@ TEST_F(DeclarableOpsTests1, TestGemv1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, Transpose1) {
-    auto x = NDArrayFactory::create_<float>('c', { 3,5,2 });
-    auto exp = NDArrayFactory::create_<float>('c', { 2,5,3 });
+    auto x = NDArrayFactory::create<float>('c', { 3,5,2 });
+    auto exp = NDArrayFactory::create<float>('c', { 2,5,3 });
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
@@ -1846,7 +1833,6 @@ TEST_F(DeclarableOpsTests1, Transpose1) {
     ASSERT_TRUE(exp->dataType() == result->dataType());
     ASSERT_TRUE(exp->ordering() == result->ordering());
 
-    delete exp;
     delete block;
     delete variableSpace;
 }
@@ -1883,7 +1869,6 @@ TEST_F(DeclarableOpsTests1, Permute1) {
 
     delete block;
     delete variableSpace;
-    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1910,14 +1895,13 @@ TEST_F(DeclarableOpsTests1, TestArgumentsValidation1) {
 
     ASSERT_TRUE(status != 0);
 
-    delete exp;
     delete block;
     delete variableSpace;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, TestReductionShape1) {
-    auto input = NDArrayFactory::create_<float>('c', { 4, 5, 5, 10, 10 });
+    auto input = NDArrayFactory::create<float>('c', { 4, 5, 5, 10, 10 });
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, input);
@@ -1952,7 +1936,7 @@ TEST_F(DeclarableOpsTests1, TestReductionShape1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, TestReductionShape2) {
-    auto input = NDArrayFactory::create_<float>('c', { 4, 5, 5, 10, 10 });
+    auto input = NDArrayFactory::create<float>('c', { 4, 5, 5, 10, 10 });
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, input);
@@ -1984,7 +1968,7 @@ TEST_F(DeclarableOpsTests1, TestReductionShape2) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, TestCustomShape1) {
-    auto input = NDArrayFactory::create_<float>('c', { 2, 3, 4 });
+    auto input = NDArrayFactory::create<float>('c', { 2, 3, 4 });
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, input);
@@ -2050,7 +2034,7 @@ TEST_F(DeclarableOpsTests1, Sum1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests1, Pnormpool2d1) {
 
-    auto x = NDArrayFactory::create_<float>('c', { bS,iD,iH,iW });
+    auto x = NDArrayFactory::create<float>('c', { bS,iD,iH,iW });
     auto exp = NDArrayFactory::create<float>('c', { bS,iD,oH,oW });
     // auto z('c',{bS,iD,oH,oW});
 
