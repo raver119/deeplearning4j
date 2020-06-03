@@ -809,11 +809,11 @@ TEST_F(DeclarableOpsTests14, matmul_test9) {
 
 TEST_F(DeclarableOpsTests14, matmul_test10) {
 
-    auto x = NDArrayFactory::create_<float>('c', {3, 5});
-    x->linspace(1);
+    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    x.linspace(1);
 
-    auto y = NDArrayFactory::create_<float>('c', {5, 3});
-    y->linspace(1);
+    auto y = NDArrayFactory::create<float>('c', {5, 3});
+    y.linspace(1);
 
     float _expB[]{135.0f, 310.0f, 485.0f, 150.0f, 350.0f, 550.0f, 165.0f, 390.0f, 615.0f};
     Nd4jLong _expS[] {2, 3, 3, 1, 3, 0, 1, 102}; // expected shape
@@ -2064,8 +2064,8 @@ TEST_F(DeclarableOpsTests14, Reshape1) {
     const std::vector<Nd4jLong> xShape = { 5,4,3 };
     const std::vector<Nd4jLong> yShape = { 3,5,4 };
 
-    auto x = NDArrayFactory::create_<float>('f', xShape);
-    auto y = NDArrayFactory::create_<float>('f', yShape);
+    auto x = NDArrayFactory::create<float>('f', xShape);
+    auto y = NDArrayFactory::create<float>('f', yShape);
 
 
     auto variableSpace = new VariableSpace();
@@ -2089,8 +2089,8 @@ TEST_F(DeclarableOpsTests14, Reshape2) {
     const std::vector<Nd4jLong> xShape = { 5,4,3 };
     const std::vector<Nd4jLong> yShape = { 3,5,4 };
 
-    auto x = NDArrayFactory::create_<float>('c', xShape);
-    auto y = NDArrayFactory::create_<float>('c', yShape);
+    auto x = NDArrayFactory::create<float>('c', xShape);
+    auto y = NDArrayFactory::create<float>('c', yShape);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, x);
