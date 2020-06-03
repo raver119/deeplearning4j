@@ -47,17 +47,17 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(arr.dup());
             if(p.getIntParam("inplace") == 1){
                 z.push_back(arr);
             } else {
-                z.push_back(NDArrayFactory::create_<T>('c', {p.getIntParam("length")}));
+                z.push_back(NDArrayFactory::create<T>('c', {p.getIntParam("length")}).dup());
             }
         };
 
         ScalarBenchmark sbRelu(scalar::Ops::RELU, "RELU");
-        sbRelu.setY(NDArrayFactory::create_<T>(0.0));
+        sbRelu.setY(NDArrayFactory::create<T>(0.0).dup());
 
         TransformBenchmark tbSigmoid(transform::StrictOps::Sigmoid, "sigmoid");
         //TransformBenchmark tbSoftmax(transform::StrictOps::SoftMax, "softmax");
@@ -82,9 +82,9 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XZ() {
-            auto arr = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            arr.assign(1.0);
+            x.push_back(arr.dup());
             if(p.getIntParam("inplace") == 1){
                 z.push_back(arr);
             } else {
@@ -122,14 +122,14 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XYZ() {
-            auto arr1 = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
-            auto arr2 = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
-            x.push_back(arr1);
-            y.push_back(arr2);
+            auto arr1 = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            auto arr2 = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            x.push_back(arr1.dup());
+            y.push_back(arr2.dup());
             if(p.getIntParam("inplace") == 1){
                 z.push_back(arr1);
             } else {
-                z.push_back(NDArrayFactory::create_<T>('c', {p.getIntParam("length")}));
+                z.push_back(NDArrayFactory::create<T>('c', {p.getIntParam("length")}).dup());
             }
         };
 
@@ -159,8 +159,8 @@ namespace sd {
 
             auto arr = NDArrayFactory::create_<float>(c ? 'c' : 'f', {rows, cols});
             auto arr2 = NDArrayFactory::create_<float>(c ? 'f' : 'c', {rows, cols});
-            x.push_back(arr);
-            z.push_back(arr2);
+            x.push_back(arr.dup());
+            z.push_back(arr2.dup());
         };
 
         TransformBenchmark tb(transform::AnyOps::Assign, "assign");
@@ -177,14 +177,14 @@ namespace sd {
 
             if(nchw) {
                 auto orig = NDArrayFactory::create_<float>('c', {mb, c, hw, hw});
-                orig->permutei({0,2,3,1});
-                x.push_back(orig);
-                z.push_back(NDArrayFactory::create_<float>('c', {mb, hw, hw, c}));
+                orig.permutei({0,2,3,1});
+                x.push_back(orig.dup());
+                z.push_back(NDArrayFactory::create<float>('c', {mb, hw, hw, c}).dup());
             } else {
                 auto orig = NDArrayFactory::create_<float>('c', {mb, hw, hw, c});
-                orig->permutei({0,3,1,2});
-                x.push_back(orig);
-                z.push_back(NDArrayFactory::create_<float>('c', {mb, c, hw, hw}));
+                orig.permutei({0,3,1,2});
+                x.push_back(orig.dup());
+                z.push_back(NDArrayFactory::create_<float>('c', {mb, c, hw, hw}).dup());
             }
         };
 
@@ -213,13 +213,13 @@ namespace sd {
                 std::vector<Nd4jLong> shapeB;
                 shapeA = {a, b};
                 shapeB = {b, c};
-                auto A = NDArrayFactory::create_<T>('c', shapeA);
-                auto B = NDArrayFactory::create_<T>('c', shapeB);
-                auto C = NDArrayFactory::create_<T>(resultOrder, {a, c});
+                auto A = NDArrayFactory::create<T>('c', shapeA);
+                auto B = NDArrayFactory::create<T>('c', shapeB);
+                auto C = NDArrayFactory::create<T>(resultOrder, {a, c});
 
-                x.push_back(A);
-                y.push_back(B);
-                z.push_back(C);
+                x.push_back(A.dup());
+                y.push_back(B.dup());
+                z.push_back(C.dup());
             };
 
             std::string n;
@@ -246,11 +246,11 @@ namespace sd {
         ParametersBatch batch({&length});
 
         auto generator = PARAMETRIC_XYZ() {
-            auto arr = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
+            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
 
-            x.push_back(arr);
+            x.push_back(arr.dup());
             y.push_back(nullptr);
-            z.push_back(NDArrayFactory::create_<T>(0.0f));
+            z.push_back(NDArrayFactory::create<T>(0.0f).dup());
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "sum");
@@ -267,9 +267,9 @@ namespace sd {
         auto generator3 = PARAMETRIC_D(){
             auto ctx = new Context(1);
 
-            ctx->setInputArray(0, NDArrayFactory::create_<T>('c', {p.getIntParam("length")}), true);
-            ctx->setInputArray(1, NDArrayFactory::create_<Nd4jLong>((Nd4jLong)0), true);
-            ctx->setOutputArray(0, NDArrayFactory::create_<Nd4jLong>(0), true);
+            ctx->setInputArray(0, NDArrayFactory::create<T>('c', {p.getIntParam("length")}).dup(), true);
+            ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong>((Nd4jLong)0), true);
+            ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>(0), true);
 
             return ctx;
         };
@@ -298,19 +298,19 @@ namespace sd {
                 int rows = p.getIntParam("rows");
                 int cols = length[i] / rows;
                 int dim = p.getIntParam("dim");
-                auto arr = NDArrayFactory::create_<T>('c', {rows, cols});
+                auto arr = NDArrayFactory::create<T>('c', {rows, cols});
 
 
-                x.push_back(arr);
-                y.push_back(NDArrayFactory::create_<Nd4jLong>(dim));
+                x.push_back(arr.dup());
+                y.push_back(NDArrayFactory::create<Nd4jLong>(dim).dup());
 
-                NDArray* result;
+                NDArray result;
                 if(dim == 0){
-                    result = NDArrayFactory::create_<T>('c', {cols});
+                    result = NDArrayFactory::create<T>('c', {cols});
                 } else {
-                    result = NDArrayFactory::create_<T>('c', {rows});
+                    result = NDArrayFactory::create<T>('c', {rows});
                 }
-                z.push_back(result);
+                z.push_back(result.dup());
             };
 
             ReductionBenchmark rbSum(reduce::SameOps::Sum, "sum");
@@ -340,13 +340,13 @@ namespace sd {
 
                 ctx->setInputArray(0, arr, true);
 
-                NDArray* result;
+                NDArray result;
                 if(dim == 0){
-                    result = NDArrayFactory::create_<Nd4jLong>('c', {cols});
+                    result = NDArrayFactory::create<Nd4jLong>('c', {cols});
                 } else {
-                    result = NDArrayFactory::create_<Nd4jLong>('c', {rows});
+                    result = NDArrayFactory::create<Nd4jLong>('c', {rows});
                 }
-                ctx->setOutputArray(0, result, true);
+                ctx->setOutputArray(0, result.dup(), true);
                 return ctx;
             };
 
@@ -382,19 +382,19 @@ namespace sd {
             int khw = p.getIntParam("k");
 
             if (n == 0) {
-                auto input = NDArrayFactory::create_<T>('c', {8, 3, hw, hw});
-                auto output = NDArrayFactory::create_<T>('c', {8, 3, hw, hw});
+                auto input = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
+                auto output = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
                 ctx->setInputArray(0, input, true);
                 ctx->setOutputArray(0, output, true);
             } else {
-                auto input = NDArrayFactory::create_<T>('c', {8, hw, hw, 3});
-                auto output = NDArrayFactory::create_<T>('c', {8, hw, hw, 3});
+                auto input = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
+                auto output = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
                 ctx->setInputArray(0, input, true);
                 ctx->setOutputArray(0, output, true);
             }
 
-            auto b = NDArrayFactory::create_<T>('c', {3});
-            auto w = NDArrayFactory::create_<T>('c', {khw, khw, 3, 3});   // [kH, kW, iC, oC] always
+            auto b = NDArrayFactory::create<T>('c', {3});
+            auto w = NDArrayFactory::create<T>('c', {khw, khw, 3, 3});   // [kH, kW, iC, oC] always
 
             ctx->setInputArray(1, w, true);
             ctx->setInputArray(2, b, true);
@@ -437,18 +437,18 @@ namespace sd {
             int khw = p.getIntParam("k");
 
             if (n == 0) {
-                auto input = NDArrayFactory::create_<T>('c', {8, c, hw, hw});
-                auto output = NDArrayFactory::create_<T>('c', {8, c, hw, hw});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                auto input = NDArrayFactory::create<T>('c', {8, c, hw, hw});
+                auto output = NDArrayFactory::create<T>('c', {8, c, hw, hw});
+                ctx->setInputArray(0, input.dup(), true);
+                ctx->setOutputArray(0, output.dup(), true);
             } else {
-                auto input = NDArrayFactory::create_<T>('c', {8, hw, hw, c});
-                auto output = NDArrayFactory::create_<T>('c', {8, hw, hw, c});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                auto input = NDArrayFactory::create<T>('c', {8, hw, hw, c});
+                auto output = NDArrayFactory::create<T>('c', {8, hw, hw, c});
+                ctx->setInputArray(0, input.dup(), true);
+                ctx->setOutputArray(0, output.dup(), true);
             }
 
-            auto args = new Nd4jLong[11];
+            std::vector<Nd4jLong> args(11);// = new Nd4jLong[11];
             args[0] = args[1] = khw; //Kernel
             args[2] = args[3] = 1;//Stride
             args[4] = args[5] = 0;  //Pad
@@ -456,8 +456,7 @@ namespace sd {
             args[8] = 1;     //SAME
             args[9] = 0;     //Divisor mode - 0 = exclude padding in divisor
             args[10] = n;//0-nchw, 1=nhwc
-            ctx->setIArguments(args, 11);
-            delete[] args;
+            ctx->setIArguments(args.data(), 11);
 
             return ctx;
         };
@@ -494,58 +493,56 @@ namespace sd {
             int m = p.getIntParam("mb");
 
             Nd4jLong l = 0;
-            ctx->setInputArray(0, NDArrayFactory::create_<Nd4jLong>(l), true);  //Max TS length (unused)
+            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>(l).dup(), true);  //Max TS length (unused)
 
 
             if (f == 0) {
                 //TNS format
-                ctx->setInputArray(1, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);     //x
-                ctx->setOutputArray(0, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //i
-                ctx->setOutputArray(1, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //c
-                ctx->setOutputArray(2, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //f
-                ctx->setOutputArray(3, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //o
-                ctx->setOutputArray(4, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //z
-                ctx->setOutputArray(5, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //h
-                ctx->setOutputArray(6, NDArrayFactory::create_<T>('c', {seqLength, m, n}), true);    //y
+                ctx->setInputArray(1, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<T>('c', {seqLength, m, n}).dup(), true);    //y
             } else {
                 //NST format
-                ctx->setInputArray(1, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);     //x
-                ctx->setOutputArray(0, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //i
-                ctx->setOutputArray(1, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //c
-                ctx->setOutputArray(2, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //f
-                ctx->setOutputArray(3, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //o
-                ctx->setOutputArray(4, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //z
-                ctx->setOutputArray(5, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //h
-                ctx->setOutputArray(6, NDArrayFactory::create_<T>('f', {m, n, seqLength}), true);    //y
+                ctx->setInputArray(1, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<T>('f', {m, n, seqLength}).dup(), true);    //y
             }
 
-            auto cLast = NDArrayFactory::create_<T>('c', {m, n});
-            auto yLast = NDArrayFactory::create_<T>('c', {m, n});
-            auto W = NDArrayFactory::create_<T>('c', {2 * n, 4 * n});
-            auto Wci = NDArrayFactory::create_<T>('c', {n});
-            auto Wcf = NDArrayFactory::create_<T>('c', {n});
-            auto Wco = NDArrayFactory::create_<T>('c', {n});
-            auto b = NDArrayFactory::create_<T>('c', {4 * n});
+            auto cLast = NDArrayFactory::create<T>('c', {m, n});
+            auto yLast = NDArrayFactory::create<T>('c', {m, n});
+            auto W = NDArrayFactory::create<T>('c', {2 * n, 4 * n});
+            auto Wci = NDArrayFactory::create<T>('c', {n});
+            auto Wcf = NDArrayFactory::create<T>('c', {n});
+            auto Wco = NDArrayFactory::create<T>('c', {n});
+            auto b = NDArrayFactory::create<T>('c', {4 * n});
 
-            ctx->setInputArray(2, cLast, true);
-            ctx->setInputArray(3, yLast, true);
-            ctx->setInputArray(4, W, true);
-            ctx->setInputArray(5, Wci, true);
-            ctx->setInputArray(6, Wcf, true);
-            ctx->setInputArray(7, Wco, true);
-            ctx->setInputArray(8, b, true);
+            ctx->setInputArray(2, cLast.dup(), true);
+            ctx->setInputArray(3, yLast.dup(), true);
+            ctx->setInputArray(4, W.dup(), true);
+            ctx->setInputArray(5, Wci.dup(), true);
+            ctx->setInputArray(6, Wcf.dup(), true);
+            ctx->setInputArray(7, Wco.dup(), true);
+            ctx->setInputArray(8, b.dup(), true);
 
-            auto iargs = new Nd4jLong[2];
+            std::vector<Nd4jLong> iargs(2);
             iargs[0] = 0;   //No peephole
             iargs[1] = f;
-            ctx->setIArguments(iargs, 2);
-            delete[] iargs;
+            ctx->setIArguments(iargs.data(), 2);
 
-            auto targs = new double[2];
+            std::vector<double> targs(2); 
             targs[0] = 1.0; //forget bias
             targs[1] = 0.0; //cell clipping value
-            ctx->setTArguments(targs, 2);
-            delete[] targs;
+            ctx->setTArguments(targs.data(), 2);
             return ctx;
         };
 
@@ -566,20 +563,20 @@ namespace sd {
 
         auto generator = PARAMETRIC_D() {
             auto a = p.getIntParam("axis");
-            auto arr = NDArrayFactory::create_<float>('c', {rows, p.getIntParam("cols")});
+            auto arr = NDArrayFactory::create<float>('c', {rows, p.getIntParam("cols")});
 
             auto ctx = new Context(1);
             ctx->setInputArray(0, arr, true);
             if(a == 0){
-                ctx->setInputArray(1, NDArrayFactory::create_<float>('c', {rows, 1}), true);
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {rows, 1}).dup(), true);
             } else {
-                ctx->setInputArray(1, NDArrayFactory::create_<float>('c', {1, p.getIntParam("cols")}), true);
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {1, p.getIntParam("cols")}).dup(), true);
             }
             if (p.getIntParam("inplace") == 1) {
                 ctx->setOutputArray(0, arr);
                 ctx->markInplace(true);
             } else {
-                ctx->setOutputArray(0, NDArrayFactory::create_<float>('c', {rows, p.getIntParam("cols")}), true);
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {rows, p.getIntParam("cols")}).dup(), true);
             }
             return ctx;
         };
