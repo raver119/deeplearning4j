@@ -124,22 +124,21 @@ TEST_F(ConstantShapeHelperTests, stress_test_1) {
 }
 
 TEST_F(ConstantShapeHelperTests, basic_test_3) {
-    auto array = NDArrayFactory::create_<float>('c', {128});
+    auto array = NDArrayFactory::create<float>('c', {128});
 
-    ASSERT_TRUE(array->shapeInfo() != nullptr);
+    ASSERT_TRUE(array.shapeInfo() != nullptr);
 
 #ifdef __CUDABLAS__
-    ASSERT_TRUE(array->specialShapeInfo() != nullptr);
+    ASSERT_TRUE(array.specialShapeInfo() != nullptr);
 #endif
 
-    delete array;
 }
 
 
 TEST_F(ConstantShapeHelperTests, basic_test_4) {
-    auto array = NDArrayFactory::create_<float>('c', {128, 256});
+    auto array = NDArrayFactory::create<float>('c', {128, 256});
 
-    auto dup = new NDArray(array->dup('f'));
+    auto dup = array.dup('f');
 
     ASSERT_TRUE(dup->shapeInfo() != nullptr);
 
@@ -149,7 +148,6 @@ TEST_F(ConstantShapeHelperTests, basic_test_4) {
     // manager.printDevContentOnDev<Nd4jLong>(dup->specialShapeInfo(), shape::shapeInfoLength(2), 0);
 #endif
 
-    delete array;
     delete dup;
 }
 
@@ -157,15 +155,13 @@ TEST_F(ConstantShapeHelperTests, basic_test_4) {
 TEST_F(ConstantShapeHelperTests, basic_test_5) {
 
     auto arrayA = NDArrayFactory::create<int>(1);
-    auto arrayB = NDArrayFactory::create_<float>('c', {128, 256});
+    auto arrayB = NDArrayFactory::create<float>('c', {128, 256});
 
     //arrayA.printShapeInfo("A");
     //arrayB->printShapeInfo("B");
     ASSERT_EQ(0, arrayA.rankOf());
-    ASSERT_EQ(2, arrayB->rankOf());
-    ASSERT_NE(arrayA.dataType(), arrayB->dataType());
-
-    delete arrayB;
+    ASSERT_EQ(2, arrayB.rankOf());
+    ASSERT_NE(arrayA.dataType(), arrayB.dataType());
 }
 
 TEST_F(ConstantShapeHelperTests, basic_test_6) {
@@ -180,15 +176,13 @@ TEST_F(ConstantShapeHelperTests, basic_test_6) {
 }
 
 TEST_F(ConstantShapeHelperTests, basic_test_7) {
-    auto array = NDArrayFactory::create_<float>('c', {32, 256});
+    auto array = NDArrayFactory::create<float>('c', {32, 256});
 
     IndicesList indices({NDIndex::all(), NDIndex::interval(0,1)});
-    auto strided = array->subarray(indices);
+    auto strided = array.subarray(indices);
     strided.assign(1.0f);
 
     //strided->printIndexedBuffer("column");
-
-    delete array;
 }
 
 TEST_F(ConstantHelperTests, basic_test_1) {

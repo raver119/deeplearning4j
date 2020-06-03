@@ -34,8 +34,8 @@ public:
 TEST_F(ContextTests, Basic_Test_1) {
     VariableSpace variableSpace;
 
-    auto _20 = NDArrayFactory::create_<float>('c', {2, 2});
-    auto _21 = NDArrayFactory::create_<float>('c', {2, 2});
+    auto _20 = NDArrayFactory::create<float>('c', {2, 2});
+    auto _21 = NDArrayFactory::create<float>('c', {2, 2});
 
     _20->assign(1.0f);
     _21->assign(2.0f);
@@ -62,11 +62,11 @@ TEST_F(ContextTests, Basic_Test_1) {
 TEST_F(ContextTests, Basic_Test_2) {
     VariableSpace variableSpace;
 
-    auto _20 = NDArrayFactory::create_<float>('c', {2, 2});
-    auto _21 = NDArrayFactory::create_<float>('c', {2, 2});
+    auto _20 = NDArrayFactory::create<float>('c', {2, 2});
+    auto _21 = NDArrayFactory::create<float>('c', {2, 2});
 
-    _20->assign(1.0f);
-    _21->assign(2.0f);
+    _20.assign(1.0f);
+    _21.assign(2.0f);
 
     variableSpace.putVariable(-1, _20);
     variableSpace.putVariable(-2, _21);
@@ -92,7 +92,7 @@ TEST_F(ContextTests, Basic_Test_3) {
 
     Context ctx(1, &variableSpace);
 
-    auto _20 = NDArrayFactory::create_<float>('c', {2, 2});
+    auto _20 = NDArrayFactory::create<float>('c', {2, 2});
 
     ctx.pushNDArrayToVariableSpace(1, 1, _20);
 
@@ -105,11 +105,11 @@ TEST_F(ContextTests, Basic_Test_4) {
 
     Context ctx(1, &variableSpace);
 
-    auto _20 = NDArrayFactory::create_<float>('c', {2, 2});
-    _20->linspace(1);
+    auto _20 = NDArrayFactory::create<float>('c', {2, 2});
+    _20.linspace(1);
 
-    auto _21 = NDArrayFactory::create_<float>('c', {2, 2});
-    _21->linspace(10);
+    auto _21 = NDArrayFactory::create<float>('c', {2, 2});
+    _21.linspace(10);
 
     ctx.pushNDArrayToVariableSpace(1, 1, _20);
 
@@ -127,10 +127,10 @@ TEST_F(ContextTests, Basic_Test_5) {
 
     Context ctx(1, &variableSpace);
 
-    auto _20 = NDArrayFactory::create_<float>('c', {2, 2});
-    _20->linspace(1);
+    auto _20 = NDArrayFactory::create<float>('c', {2, 2});
+    _20.linspace(1);
 
-    auto exp = new NDArray(_20->dup());
+    auto exp = _20.dup());
 
     ctx.pushNDArrayToVariableSpace(1, 1, _20);
 
@@ -185,11 +185,11 @@ TEST_F(ContextTests, Basic_Test_7) {
     ASSERT_TRUE(v1 == var1);
 
 
-    auto _10 = NDArrayFactory::create_<float>('c', {2, 2});
-    _10->linspace(1);
+    auto _10 = NDArrayFactory::create<float>('c', {2, 2});
+    _10.linspace(1);
 
-    auto _11 = NDArrayFactory::create_<float>('c', {2, 2});
-    _11->linspace(10);
+    auto _11 = NDArrayFactory::create<float>('c', {2, 2});
+    _11.linspace(10);
 
     ctx.pushNDArrayToVariableSpace(1, 0, _10);
     ctx.pushNDArrayToVariableSpace(1, 1, _11);
@@ -206,11 +206,11 @@ TEST_F(ContextTests, Basic_Test_8) {
 
     Context ctx(1, &variableSpace);
 
-    auto _10 = NDArrayFactory::create_<float>('c', {2, 2});
-    _10->linspace(1);
+    auto _10 = NDArrayFactory::create<float>('c', {2, 2});
+    _10.linspace(1);
 
-    auto _11 = NDArrayFactory::create_<float>('c', {2, 2});
-    _11->linspace(10);
+    auto _11 = NDArrayFactory::create<float>('c', {2, 2});
+    _11.linspace(10);
 
     ctx.pushNDArrayToVariableSpace(1, 0, _10);
     ctx.pushNDArrayToVariableSpace(1, 1, _11);

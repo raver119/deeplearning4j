@@ -45,16 +45,13 @@ TEST_F(BooleanOpsTests, LtTest_1) {
 }
 
 TEST_F(BooleanOpsTests, LtTest_2) {
-    auto x = NDArrayFactory::create_(2.0f);
-    auto y = NDArrayFactory::create_(1.0f);
+    auto x = NDArrayFactory::create(2.0f);
+    auto y = NDArrayFactory::create(1.0f);
 
     sd::ops::lt_scalar op;
 
 
-    ASSERT_FALSE(op.verify({x, y}));
-
-    delete x;
-    delete y;
+    ASSERT_FALSE(op.verify({&x, &y}));
 }
 
 TEST_F(BooleanOpsTests, Is_non_decreasing_1) {
