@@ -247,7 +247,7 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
     ////////////////////////////////////////////////////////////////////////
     template <typename T>
     NDArray NDArrayFactory::linspace(const T from, const T to, const Nd4jLong numElements) {
-        NDArray result = NDArrayFactory::vector<T>(numElements);
+        auto result = NDArrayFactory::vector<T>(numElements);
         //TO DO: linspace should be executed on DEVICE, but only CPU version implented!
         for (Nd4jLong e = 0; e < numElements; e++) {
             T step = (T) e / ((T) numElements - (T) 1);
