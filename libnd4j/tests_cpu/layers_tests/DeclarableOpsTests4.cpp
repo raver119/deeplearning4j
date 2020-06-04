@@ -394,7 +394,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_13) {
     const int oH = (iH - kH - (kH-1)*(dH-1) + 2*pH)/sH + 1;     // output height
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -437,7 +437,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_14) {
     const int oW = (iW - kW - (kW-1)*(dW-1) + 2*pW)/sW + 1;     // output width
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 
@@ -480,7 +480,7 @@ TEST_F(DeclarableOpsTests4, Avgpool2d_test15) {
     const int oW = (int) sd::math::nd4j_ceil<float, int>(iW * 1.f / sW);
 
 
-    auto x = NDArrayFactory::create_<float>('c', {bS,iD,iH,iW});
+    auto x = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
     auto exp = NDArrayFactory::create<float>('c',{bS,iD,oH,oW});
     // auto z('c',{bS,iD,oH,oW});
 

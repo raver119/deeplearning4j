@@ -128,9 +128,9 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_4) {
 TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     int z = 0;
     auto matrix = NDArrayFactory::create<double>('c', {1}, {10});
-    auto b = NDArrayFactory::create_<int>('c', {1}, {1});
-    auto e = NDArrayFactory::create_<int>('c', {1}, {z});
-    auto s = NDArrayFactory::create_<int>('c', {1}, {1});
+    auto b = NDArrayFactory::create<int>('c', {1}, {1});
+    auto e = NDArrayFactory::create<int>('c', {1}, {z});
+    auto s = NDArrayFactory::create<int>('c', {1}, {1});
     sd::ops::ones_as opOnes;
     //auto exp = NDArrayFactory::create<double>('c', {2}, {1.0f, 2.0f});
     auto onesRes = opOnes.evaluate({&matrix});

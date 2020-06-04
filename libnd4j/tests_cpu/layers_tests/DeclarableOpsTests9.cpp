@@ -614,8 +614,8 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 2000; e++) {
-        auto array = NDArrayFactory::create_<int>('c', {1, 300});
-        array->assign(e);
+        auto array = NDArrayFactory::create<int>('c', {1, 300});
+        array.assign(e);
         context.setInputArray(e, array, true);
     }
 
@@ -642,8 +642,8 @@ TEST_F(DeclarableOpsTests9, concat_test19) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 10; e++) {
-        auto array = NDArrayFactory::create_<float>('c', {1, 5, 20});
-        array->assign(e);
+        auto array = NDArrayFactory::create<float>('c', {1, 5, 20});
+        array.assign(e);
         context.setInputArray(e, array, true);
     }
 

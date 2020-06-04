@@ -47,8 +47,8 @@ public:
 TEST_F(GraphTests, SingleInput1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0f);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph->getVariableSpace()->putVariable(-1, x);
 
@@ -77,13 +77,13 @@ TEST_F(GraphTests, SingleInput1) {
 TEST_F(GraphTests, DoubleInput1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto y = NDArrayFactory::create_<float>('c', {5, 5});
-    y->assign(-1.0);
+    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    y.assign(-1.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, y);
@@ -102,7 +102,7 @@ TEST_F(GraphTests, DoubleInput1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(3.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -110,11 +110,11 @@ TEST_F(GraphTests, DoubleInput1) {
 TEST_F(GraphTests, SingleInput3) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto v0 = NDArrayFactory::create_<float>('c', {5, 5});
-    auto v1 = NDArrayFactory::create_<float>('c', {5, 5});
+    auto v0 = NDArrayFactory::create<float>('c', {5, 5});
+    auto v1 = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, v0);
@@ -142,11 +142,11 @@ TEST_F(GraphTests, SingleInput3) {
 TEST_F(GraphTests, SingleInput4) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto v0 = NDArrayFactory::create_<float>('c', {5, 5});
-    auto v1 = NDArrayFactory::create_<float>('c', {5, 5});
+    auto v0 = NDArrayFactory::create<float>('c', {5, 5});
+    auto v1 = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, v0);
@@ -180,14 +180,14 @@ TEST_F(GraphTests, SingleInput4) {
 TEST_F(GraphTests, DoubleInput2) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto y = NDArrayFactory::create_<float>('c', {5, 5});
-    y->assign(-1.0);
+    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    y.assign(-1.0);
 
-    auto z0 = NDArrayFactory::create_<float>('c', {5, 5});
-    auto z1 = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z0 = NDArrayFactory::create<float>('c', {5, 5});
+    auto z1 = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, y);
@@ -225,24 +225,22 @@ TEST_F(GraphTests, DoubleInput2) {
 TEST_F(GraphTests, DoubleInput3) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto y = NDArrayFactory::create_<float>('c', {5, 5});
-    y->assign(-1.0);
+    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    y.assign(-1.0);
 
-    auto z0 = NDArrayFactory::create_<float>('c', {5, 5});
-    auto z1 = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z0 = NDArrayFactory::create<float>('c', {5, 5});
+    auto z1 = NDArrayFactory::create<float>('c', {5, 5});
 
-
-    auto w = NDArrayFactory::create_<float>('c', {5, 5});
+    auto w = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, y);
     graph->getVariableSpace()->putVariable(-3, z0);
     graph->getVariableSpace()->putVariable(-4, z1);
     graph->getVariableSpace()->putVariable(-5, w);
-
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -269,10 +267,10 @@ TEST_F(GraphTests, DoubleInput3) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(-1.4142135, z0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.0, z1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, z0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.0, z1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
-    ASSERT_NEAR(2.4142135, w->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.4142135, w.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -281,20 +279,20 @@ TEST_F(GraphTests, DoubleInput3) {
 TEST_F(GraphTests, QuadInput1) {
     auto graph = new Graph();
 
-    auto x0 = NDArrayFactory::create_<float>('c', {5, 5});
-    x0->assign(0.0);
+    auto x0 = NDArrayFactory::create<float>('c', {5, 5});
+    x0.assign(0.0);
 
-    auto x1 = NDArrayFactory::create_<float>('c', {5, 5});
-    x1->assign(-1.0);
+    auto x1 = NDArrayFactory::create<float>('c', {5, 5});
+    x1.assign(-1.0);
 
-    auto x2 = NDArrayFactory::create_<float>('c', {5, 5});
-    x2->assign(-2.0);
+    auto x2 = NDArrayFactory::create<float>('c', {5, 5});
+    x2.assign(-2.0);
 
-    auto x3 = NDArrayFactory::create_<float>('c', {5, 5});
-    x3->assign(-3.0);
+    auto x3 = NDArrayFactory::create<float>('c', {5, 5});
+    x3.assign(-3.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
-    z->assign(119.0);
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    z.assign(119.0);
 
     graph->getVariableSpace()->putVariable(-1, x0);
     graph->getVariableSpace()->putVariable(-2, x1);
@@ -325,7 +323,7 @@ TEST_F(GraphTests, QuadInput1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(6.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(6.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -333,10 +331,10 @@ TEST_F(GraphTests, QuadInput1) {
 TEST_F(GraphTests, InternalBranching1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(0.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(0.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, z);
@@ -373,7 +371,7 @@ TEST_F(GraphTests, InternalBranching1) {
 
     ASSERT_EQ(3, nodeZ->getLayer());
 
-    ASSERT_NEAR(3.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -382,14 +380,14 @@ TEST_F(GraphTests, InternalBranching1) {
 TEST_F(GraphTests, ReductionsTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    for (int r = 0; r < x->rows(); r++) {
-        for (int c = 0; c < x->columns(); c++) {
-            x->p(r, c, -c);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    for (int r = 0; r < x.rows(); r++) {
+        for (int c = 0; c < x.columns(); c++) {
+            x.p(r, c, -c);
         }
     }
 
-    auto z = NDArrayFactory::create_<float>('c', {5});
+    auto z = NDArrayFactory::create<float>('c', {5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, z);
@@ -407,7 +405,7 @@ TEST_F(GraphTests, ReductionsTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(2.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -416,15 +414,15 @@ TEST_F(GraphTests, ReductionsTest1) {
 TEST_F(GraphTests, IndexReductionsTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    for (int r = 0; r < x->rows(); r++) {
-        for (int c = 0; c < x->columns(); c++) {
-            x->p(r, c, -c);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    for (int r = 0; r < x.rows(); r++) {
+        for (int c = 0; c < x.columns(); c++) {
+            x.p(r, c, -c);
         }
     }
 
-    auto z = NDArrayFactory::create_<Nd4jLong>('c', {5, 1});
-    auto axis = NDArrayFactory::create_<Nd4jLong>('c', {1}, {1});
+    auto z = NDArrayFactory::create<Nd4jLong>('c', {5, 1});
+    auto axis = NDArrayFactory::create<Nd4jLong>('c', {1}, {1});
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, z);
     //graph->getVariableSpace()->putVariable(-3, axis);
@@ -441,7 +439,7 @@ TEST_F(GraphTests, IndexReductionsTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(4.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(4.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
     delete axis;
@@ -450,8 +448,8 @@ TEST_F(GraphTests, IndexReductionsTest1) {
 #if 0
 TEST_F(GraphTests, AutoOutput1) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph->getVariableSpace()->putVariable(-1, x);
 
@@ -485,8 +483,8 @@ TEST_F(GraphTests, AutoOutput1) {
 
 TEST_F(GraphTests, AutoOutput2) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph->getVariableSpace()->putVariable(-1, x);
 
@@ -525,15 +523,15 @@ TEST_F(GraphTests, AutoOutput2) {
 
 TEST_F(GraphTests, BroadcastTest1) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(0.f);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(0.f);
 
-    auto y = NDArrayFactory::create_<float>('c', {1, 5});
-    for (int e = 0; e < y->columns(); e++) {
-        y->p(e, (float)e+1);
+    auto y = NDArrayFactory::create<float>('c', {1, 5});
+    for (int e = 0; e < y.columns(); e++) {
+        y.p(e, (float)e+1);
     }
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, y);
@@ -547,7 +545,7 @@ TEST_F(GraphTests, BroadcastTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(3.0, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -556,10 +554,10 @@ TEST_F(GraphTests, BroadcastTest1) {
 TEST_F(GraphTests, ScalarTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, z);
@@ -577,7 +575,7 @@ TEST_F(GraphTests, ScalarTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(2.714213, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.714213, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -585,10 +583,10 @@ TEST_F(GraphTests, ScalarTest1) {
 TEST_F(GraphTests, SymbolicLookupTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -633,7 +631,7 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&p));
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&t));
 
-    ASSERT_NEAR(1.4142135, z->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.4142135, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -643,10 +641,10 @@ TEST_F(GraphTests, OutputValidation1) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -680,10 +678,10 @@ TEST_F(GraphTests, OutputValidation2) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.f);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -722,10 +720,10 @@ TEST_F(GraphTests, OutputValidation3) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_IMPLICIT;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
     x->assign(-2.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -762,10 +760,10 @@ TEST_F(GraphTests, OutputValidation4) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT_AND_IMPLICIT;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -808,10 +806,10 @@ TEST_F(GraphTests, OutputValidation5) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_VARIABLE_SPACE;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -848,10 +846,10 @@ TEST_F(GraphTests, OutputValidation6) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_VARIABLE_SPACE;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
-    auto z = NDArrayFactory::create_<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>('c', {5, 5});
 
     auto vX = new Variable(x);
     auto vZ = new Variable(z);
@@ -894,11 +892,11 @@ TEST_F(GraphTests, TestMultiOutput1) {
     sd::ops::testop2i2o op1;
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
-    auto y = NDArrayFactory::create_<float>('c', {5, 5});
-    y->assign(-3.0);
+    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    y.assign(-3.0f);
 
     graph->getVariableSpace()->putVariable(-1, x);
     graph->getVariableSpace()->putVariable(-2, y);
@@ -964,8 +962,8 @@ TEST_F(GraphTests, TestDivergentNode1) {
 TEST_F(GraphTests, MemoryEstimationTest1) {
     Graph graph;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0);
 
     graph.getVariableSpace()->putVariable(-1, x);
 
@@ -981,14 +979,14 @@ TEST_F(GraphTests, MemoryEstimationTest1) {
 
     auto memReq = graph.estimateRequiredMemory();
 
-    ASSERT_EQ(25 * x->sizeOfT(), memReq);
+    ASSERT_EQ(25 * x.sizeOfT(), memReq);
 }
 
 TEST_F(GraphTests, MemoryEstimationTest2) {
     Graph graph;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph.getVariableSpace()->putVariable(-1, x);
 
@@ -1010,8 +1008,8 @@ TEST_F(GraphTests, MemoryEstimationTest2) {
 TEST_F(GraphTests, MemoryEstimationTest3) {
     Graph graph;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph.getVariableSpace()->putVariable(-1, x);
 
@@ -1029,14 +1027,14 @@ TEST_F(GraphTests, MemoryEstimationTest3) {
 
     auto memReq = graph.estimateRequiredMemory();
 
-    ASSERT_EQ(26 * x->sizeOfT(), memReq);
+    ASSERT_EQ(26 * x.sizeOfT(), memReq);
 }
 
 TEST_F(GraphTests, MemoryEstimationTest4) {
     Graph graph;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph.getVariableSpace()->putVariable(-1, x);
 
@@ -1054,14 +1052,14 @@ TEST_F(GraphTests, MemoryEstimationTest4) {
 
     auto memReq = graph.estimateRequiredMemory();
 
-    ASSERT_EQ(30 * x->sizeOfT(), memReq);
+    ASSERT_EQ(30 * x.sizeOfT(), memReq);
 }
 
 TEST_F(GraphTests, MemoryEstimationTest5) {
     Graph graph;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-2.0f);
 
     graph.getVariableSpace()->putVariable(-1, x);
 
@@ -1084,7 +1082,7 @@ TEST_F(GraphTests, MemoryEstimationTest5) {
 
     auto memReq = graph.estimateRequiredMemory();
 
-    ASSERT_EQ((25 + 100) * x->sizeOfT(), memReq);
+    ASSERT_EQ((25 + 100) * x.sizeOfT(), memReq);
 }
 
 TEST_F(GraphTests, TestGraphInGraph_1) {
@@ -1094,11 +1092,11 @@ TEST_F(GraphTests, TestGraphInGraph_1) {
     // and this ons is embedded
     Graph graphB;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-5.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-5.0f);
 
-    auto modifier = NDArrayFactory::create_<float>('c', {5, 5});
-    modifier->assign(3.0);
+    auto modifier = NDArrayFactory::create<float>('c', {5, 5});
+    modifier.assign(3.0f);
 
     graphA.getVariableSpace()->putVariable(-1, x);
     graphB.getVariableSpace()->putVariable(-2, modifier);
@@ -1160,11 +1158,11 @@ TEST_F(GraphTests, TestGraphInGraph_2) {
     // and this ons is embedded
     Graph graphB;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-5.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-5.0f);
 
-    auto modifier = NDArrayFactory::create_<float>('c', {5, 5});
-    modifier->assign(3.0);
+    auto modifier = NDArrayFactory::create<float>('c', {5, 5});
+    modifier.assign(3.0f);
 
     std::string nameA1("_nodeA1");
     
@@ -1519,8 +1517,8 @@ TEST_F(GraphTests, Test_Inplace_Execution_1) {
 TEST_F(GraphTests, Test_Inplace_Execution_2) {
     Graph graphA;
 
-    auto x = NDArrayFactory::create_<float>('c', {5, 5});
-    x->assign(-5.0);
+    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    x.assign(-5.0f);
 
     graphA.getVariableSpace()->putVariable(-1, x);
 
