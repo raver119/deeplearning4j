@@ -531,17 +531,17 @@ TEST_F(PlaygroundTests, ArgMaxPerfLegacyRandom) {
 
 TEST_F(PlaygroundTests, test_broadcast_1) {
     int pool = 1000;
-    std::vector<NDArray*> aX(pool);
-    std::vector<NDArray*> aY(pool);
-    std::vector<NDArray*> aZ(pool);
+    std::vector<NDArray> aX(pool);
+    std::vector<NDArray> aY(pool);
+    std::vector<NDArray> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create_<float>('c', {3072});
-        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aX[e] = NDArrayFactory::create<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create<float>('c', {3072});
+        aZ[e] = NDArrayFactory::create<float>('c', {512, 3072});
 
-        aX[e]->assign(119 * (e+1));
-        aY[e]->assign(119 * (e+3));
+        aX[e].assign(119 * (e+1));
+        aY[e].assign(119 * (e+3));
     }
 
     std::vector<Nd4jLong> values;
@@ -556,8 +556,8 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
 
         auto timeStart = std::chrono::system_clock::now();
 
-        //op.execute({x, y}, {z});
-        sd::ops::helpers::addBias(ctx, *x, *y, *z, false);
+        //op.execute({&x, &y}, {&z});
+        sd::ops::helpers::addBias(ctx, x, y, z, false);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
@@ -567,29 +567,23 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-
-    for (int e = 0; e < pool; e++) {
-        delete aX[e];
-        delete aY[e];
-        delete aZ[e];
-    }
 }
 
 
 /*
 TEST_F(PlaygroundTests, test_broadcast_1) {
     int pool = 500;
-    std::vector<NDArray*> aX(pool);
-    std::vector<NDArray*> aY(pool);
-    std::vector<NDArray*> aZ(pool);
+    std::vector<NDArray> aX(pool);
+    std::vector<NDArray> aY(pool);
+    std::vector<NDArray> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create_<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create_<float>('c', {768});
-        aZ[e] = NDArrayFactory::create_<float>('c', {512, 3072});
+        aX[e] = NDArrayFactory::create<float>('c', {512, 3072});
+        aY[e] = NDArrayFactory::create<float>('c', {768});
+        aZ[e] = NDArrayFactory::create<float>('c', {512, 3072});
 
-        aX[e]->assign( (e+1) / 119);
-        aY[e]->assign( (e+3) / 119);
+        aX[e].assign( (e+1) / 119);
+        aY[e].assign( (e+3) / 119);
     }
 
 
@@ -604,7 +598,7 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
         auto timeStart = std::chrono::system_clock::now();
 
         //x->applyTrueBroadcast(BroadcastOpsTuple::Multiply(), *y, *z);
-        x->applyTransform(transform::Tanh, *z, nullptr);
+        x.applyTransform(transform::Tanh, z, nullptr);
 
         auto timeEnd = std::chrono::system_clock::now();
         auto outerTime = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeStart).count();
@@ -614,12 +608,6 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::sort(values.begin(), values.end());
 
     nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
-
-    for (int e = 0; e < pool; e++) {
-        delete aX[e];
-        delete aY[e];
-        delete aZ[e];
-    }
 }
 
 */

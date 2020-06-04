@@ -62,8 +62,8 @@ TEST_F(SessionLocalTests, BasicTests_2) {
     if (omp_get_max_threads() <= 1)
         return;
 
-    auto alpha = sd::NDArrayFactory::create_<float>('c',{5,5});
-    alpha->assign(0.0);
+    auto alpha = sd::NDArrayFactory::create<float>('c',{5,5});
+    alpha.assign(0.0);
 
     variableSpace.putVariable(-1, alpha);
 

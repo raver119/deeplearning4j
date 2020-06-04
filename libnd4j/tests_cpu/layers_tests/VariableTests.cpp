@@ -35,8 +35,8 @@ public:
 };
 
 TEST_F(VariableTests, TestClone_1) {
-    auto array1 = NDArrayFactory::create_<float>('c', {5, 5});
-    array1->assign(1.0);
+    auto array1 = NDArrayFactory::create<float>('c', {5, 5});
+    array1.assign(1.0f);
 
     auto var1 = new Variable(array1, "alpha");
     var1->setId(119);
@@ -203,7 +203,7 @@ TEST_F(VariableTests, Test_FlatVariableDataType_4) {
 }
 */
 TEST_F(VariableTests, Test_Dtype_Conversion_1) {
-    auto x = NDArrayFactory::create_<float>('c', {2, 3}, {1, 2, 3, 4, 5, 6});
+    auto x = NDArrayFactory::create<float>('c', {2, 3}, {1, 2, 3, 4, 5, 6});
     Variable v(x, "alpha", 12, 3);
 
     auto vd = v.template asT<double>();

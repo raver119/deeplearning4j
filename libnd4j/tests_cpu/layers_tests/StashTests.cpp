@@ -36,14 +36,14 @@ public:
 TEST_F(StashTests, BasicTests_1) {
     Stash stash;
 
-    auto alpha = NDArrayFactory::create_<float>('c',{5, 5});
-    alpha->assign(1.0);
+    auto alpha = NDArrayFactory::create<float>('c',{5, 5});
+    alpha.assign(1.0f);
 
-    auto beta = NDArrayFactory::create_<float>('c',{5, 5});
-    beta->assign(2.0);
+    auto beta = NDArrayFactory::create<float>('c',{5, 5});
+    beta.assign(2.0f);
 
-    auto cappa = NDArrayFactory::create_<float>('c',{5, 5});
-    cappa->assign(3.0);
+    auto cappa = NDArrayFactory::create<float>('c',{5, 5});
+    cappa.assign(3.0f);
 
     stash.storeArray(1, "alpha", alpha);
     stash.storeArray(2, "alpha", beta);
@@ -62,14 +62,14 @@ TEST_F(StashTests, BasicTests_1) {
 TEST_F(StashTests, BasicTests_2) {
     Stash stash;
 
-    auto alpha = NDArrayFactory::create_<float>('c',{5, 5});
-    alpha->assign(1.0);
+    auto alpha = NDArrayFactory::create<float>('c',{5, 5});
+    alpha.assign(1.0f);
 
-    auto beta = NDArrayFactory::create_<float>('c',{5, 5});
-    beta->assign(2.0);
+    auto beta = NDArrayFactory::create<float>('c',{5, 5});
+    beta.assign(2.0f);
 
-    auto cappa = NDArrayFactory::create_<float>('c',{5, 5});
-    cappa->assign(3.0);
+    auto cappa = NDArrayFactory::create<float>('c',{5, 5});
+    cappa.assign(3.0f);
 
     stash.storeArray(1, "alpha", alpha);
     stash.storeArray(1, "beta", beta);
