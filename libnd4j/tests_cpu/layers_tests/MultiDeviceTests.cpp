@@ -35,14 +35,14 @@ public:
 
 };
 
-void createArrays(int limit, std::vector<NDArray*> &arrays) {
+void createArrays(int limit, std::vector<NDArray> &arrays) {
     auto deviceId = AffinityManager::currentDeviceId();
     auto numDevices = AffinityManager::numberOfDevices();
 
     for (int e = 0; e < limit; e++) {
         auto value = deviceId * limit + e;
-        arrays[value] = NDArrayFactory::create_<float>('c', {10});
-        arrays[value]->assign(value);
+        arrays[value] = NDArrayFactory::create<float>('c', {10});
+        arrays[value].assign(value);
         //nd4j_printf("device_%i; value: [%i]; mean: [%f]\n", deviceId, value, arrays[value]->meanNumber().e<float>(0));
     }
 }
@@ -51,7 +51,7 @@ TEST_F(MultiDeviceTests, test_multi_device_migration_1) {
     auto deviceId = AffinityManager::currentDeviceId();
     auto numDevices = AffinityManager::numberOfDevices();
     auto numArrays = 10;
-    std::vector<NDArray*> arrays(numDevices * numArrays);
+    std::vector<NDArray> arrays(numDevices * numArrays);
 
     // filling list of arrays on multiple threads
     for (int e = 0; e < numDevices; e++) {

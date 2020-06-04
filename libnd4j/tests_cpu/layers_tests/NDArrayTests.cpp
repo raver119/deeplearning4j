@@ -67,15 +67,13 @@ TEST_F(NDArrayTest, TestDup1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, AssignScalar1) {
-    auto array = NDArrayFactory::create_<float>('c', {1, 10});
+    auto array = NDArrayFactory::create<float>('c', {1, 10});
 
-    array->assign(2.0f);
+    array.assign(2.0f);
 
-    for (int i = 0; i < array->lengthOf(); i++) {
-        ASSERT_EQ(2.0f, array->e<float>(i));
+    for (int i = 0; i < array.lengthOf(); i++) {
+        ASSERT_EQ(2.0f, array.e<float>(i));
     }
-
-    delete array;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -153,48 +151,43 @@ TEST_F(NDArrayTest, TestGetScalar1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, EqualityTest1) {
-    auto arrayA = NDArrayFactory::create_<float>('f', {3, 5});
-    auto arrayB = NDArrayFactory::create_<float>('f', {3, 5});
-    auto arrayC = NDArrayFactory::create_<float>('f', {3, 5});
+    auto arrayA = NDArrayFactory::create<float>('f', {3, 5});
+    auto arrayB = NDArrayFactory::create<float>('f', {3, 5});
+    auto arrayC = NDArrayFactory::create<float>('f', {3, 5});
 
-    auto arrayD = NDArrayFactory::create_<float>('f', {2, 4});
-    auto arrayE = NDArrayFactory::create_<float>('f', {1, 15});
+    auto arrayD = NDArrayFactory::create<float>('f', {2, 4});
+    auto arrayE = NDArrayFactory::create<float>('f', {1, 15});
 
-    for (int i = 0; i < arrayA->rows(); i++) {
-        for (int k = 0; k < arrayA->columns(); k++) {
-            arrayA->p(i, k, (float) i);
+    for (int i = 0; i < arrayA.rows(); i++) {
+        for (int k = 0; k < arrayA.columns(); k++) {
+            arrayA.p(i, k, (float) i);
         }
     }
 
-    for (int i = 0; i < arrayB->rows(); i++) {
-        for (int k = 0; k < arrayB->columns(); k++) {
-            arrayB->p(i, k, (float) i);
+    for (int i = 0; i < arrayB.rows(); i++) {
+        for (int k = 0; k < arrayB.columns(); k++) {
+            arrayB.p(i, k, (float) i);
         }
     }
 
-    for (int i = 0; i < arrayC->rows(); i++) {
-        for (int k = 0; k < arrayC->columns(); k++) {
-            arrayC->p(i, k, (float) i+1);
+    for (int i = 0; i < arrayC.rows(); i++) {
+        for (int k = 0; k < arrayC.columns(); k++) {
+            arrayC.p(i, k, (float) i+1);
         }
     }
 
     //nd4j_printf("A B\n","");
-    ASSERT_TRUE(arrayA->equalsTo(arrayB, 1e-5));
+    ASSERT_TRUE(arrayA.equalsTo(arrayB, 1e-5));
 
     //nd4j_printf("C B\n","");
-    ASSERT_FALSE(arrayC->equalsTo(arrayB, 1e-5));
+    ASSERT_FALSE(arrayC.equalsTo(arrayB, 1e-5));
 
     //nd4j_printf("D B\n","");
-    ASSERT_FALSE(arrayD->equalsTo(arrayB, 1e-5));
+    ASSERT_FALSE(arrayD.equalsTo(arrayB, 1e-5));
 
     //nd4j_printf("E B\n","");
-    ASSERT_FALSE(arrayE->equalsTo(arrayB, 1e-5));
+    ASSERT_FALSE(arrayE.equalsTo(arrayB, 1e-5));
 
-    delete arrayA;
-    delete arrayB;
-    delete arrayC;
-    delete arrayD;
-    delete arrayE;
 }
 
 TEST_F(NDArrayTest, TestTad1) {
@@ -301,16 +294,16 @@ TEST_F(NDArrayTest, TestRepeat1) {
 TEST_F(NDArrayTest, TestRepeat2) {
     auto eBuffer = new float[8] {1.0,2.0,1.0,2.0,3.0,4.0,3.0,4.0};
     auto eShape = new Nd4jLong[8]{2, 4, 2, 2, 1, 8192, 1, 99};
-    auto array = NDArrayFactory::create_<float>('c', {2, 2});
+    auto array = NDArrayFactory::create<float>('c', {2, 2});
     auto exp = new NDArray(eBuffer, eShape);
-    for (int e = 0; e < array->lengthOf(); e++)
-        array->p(e, e + 1);
+    for (int e = 0; e < array.lengthOf(); e++)
+        array.p(e, e + 1);
 
     //array->printBuffer();
 
     auto rep = new NDArray(exp->dup());
     rep->assign(0.);
-    array->repeat(0, {2}, *rep);
+    array.repeat(0, {2}, *rep);
     //rep->printIndexedBuffer("Repeated");
 
     ASSERT_EQ(4, rep->sizeAt(0));
@@ -322,20 +315,17 @@ TEST_F(NDArrayTest, TestRepeat2) {
 
     delete[] eBuffer;
     delete[] eShape;
-    delete array;
     delete exp;
     delete rep;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, TestIndexedPut1) {
-    auto array = NDArrayFactory::create_<float>('f', {3, 3});
+    auto array = NDArrayFactory::create<float>('f', {3, 3});
 
-    array->p(4, 1.0f);
+    array.p(4, 1.0f);
     ASSERT_EQ(1.0f, array->e<float>(4));
     //array->printBuffer();
-
-    delete array;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -358,11 +348,11 @@ TEST_F(NDArrayTest, TestAddiRowVector) {
     float *e = new float[4] {2, 3, 4, 5};
 
     auto array = new NDArray(c, cShape);
-    auto row = NDArrayFactory::create_<float>('c', {1, 2});
+    auto row = NDArrayFactory::create<float>('c', {1, 2});
     auto exp = new NDArray(e, cShape);
-    row->assign(1.0f);
+    row.assign(1.0f);
 
-    array->addiRowVector(*row);
+    array->addiRowVector(row);
 
     ASSERT_TRUE(exp->equalsTo(array));
 
@@ -370,7 +360,6 @@ TEST_F(NDArrayTest, TestAddiRowVector) {
     delete[] e;
 
     delete array;
-    delete row;
     delete exp;
 }
 
@@ -410,53 +399,49 @@ TEST_F(NDArrayTest, TestMuliColumnVector) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, Test3D_1) {
-    auto arrayC = NDArrayFactory::create_<double>('c', {2, 5, 10});
-    auto arrayF = NDArrayFactory::create_<double>('f', {2, 5, 10});
+    auto arrayC = NDArrayFactory::create<double>('c', {2, 5, 10});
+    auto arrayF = NDArrayFactory::create<double>('f', {2, 5, 10});
 
-    ASSERT_EQ(100, arrayC->lengthOf());
-    ASSERT_EQ(100, arrayF->lengthOf());
+    ASSERT_EQ(100, arrayC.lengthOf());
+    ASSERT_EQ(100, arrayF.lengthOf());
 
-    ASSERT_EQ('c', arrayC->ordering());
-    ASSERT_EQ('f', arrayF->ordering());
+    ASSERT_EQ('c', arrayC.ordering());
+    ASSERT_EQ('f', arrayF.ordering());
 
-    delete arrayC;
-    delete arrayF;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, TestTranspose1) {
-    auto arrayC = NDArrayFactory::create_<double>('c', {2, 5, 10});
+    auto arrayC = NDArrayFactory::create<double>('c', {2, 5, 10});
 
     auto expC = new Nd4jLong[10] {3, 2, 5, 10, 50, 10, 1, 16384, 1, 99};
     auto expT = new Nd4jLong[10] {3, 10, 5, 2, 1, 10, 50, 16384, 1, 102};
 
-    auto arrayT = arrayC->transpose();
+    auto arrayT = arrayC.transpose();
 
-    for (int e = 0; e < arrayC->rankOf(); e++) {
-        ASSERT_EQ(shape::shapeOf(expC)[e], arrayC->sizeAt(e));
+    for (int e = 0; e < arrayC.rankOf(); e++) {
+        ASSERT_EQ(shape::shapeOf(expC)[e], arrayC.sizeAt(e));
         ASSERT_EQ(shape::shapeOf(expT)[e], arrayT.sizeAt(e));
     }
 
-    delete arrayC;
     delete[] expC;
     delete[] expT;
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayTest, TestTranspose2) {
-    auto arrayC = NDArrayFactory::create_<double>('c', {2, 5, 10});
-
+    auto arrayC = NDArrayFactory::create<double>('c', {2, 5, 10});
+   
     auto expC = new Nd4jLong[10] {3, 2, 5, 10, 50, 10, 1, 16384, 1, 99};
     auto expT = new Nd4jLong[10] {3, 10, 5, 2, 1, 10, 50, 16384, 1, 102};
 
-    arrayC->transposei();
+    arrayC.transposei();
 
 
-    for (int e = 0; e < arrayC->rankOf(); e++) {
-        ASSERT_EQ(shape::shapeOf(expT)[e], arrayC->sizeAt(e));
+    for (int e = 0; e < arrayC.rankOf(); e++) {
+        ASSERT_EQ(shape::shapeOf(expT)[e], arrayC.sizeAt(e));
     }
 
-    delete arrayC;
     delete[] expC;
     delete[] expT;
 }
@@ -947,22 +932,21 @@ TEST_F(NDArrayTest, TestMmulHelper2) {
     Nd4jLong yShape[8] = {2, 3, 1, 1, 1, 8192, 1, 99};
     auto y = new NDArray(yBuffer, yShape, sd::LaunchContext ::defaultContext(), true);
 
-    auto z = NDArrayFactory::create_<float>('f', {5, 1});
+    auto z = NDArrayFactory::create<float>('f', {5, 1});
 
     auto expBuffer = new float[5]{28.00f,  64.00f,  100.00f,  136.00f,  172.00f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo(), sd::LaunchContext ::defaultContext(), true);
+    auto exp = new NDArray(expBuffer, z.shapeInfo(), sd::LaunchContext ::defaultContext(), true);
 
-    //sd::blas::GEMV<float>::op('f',  x->rows(), x->columns(), 1.0f, x->buffer(), y->rows(), y->buffer(), 1, 0.0, z->buffer(), 1);
+    //sd::blas::GEMV<float>::op('f',  x->rows(), x->columns(), 1.0f, x->buffer(), y->rows(), y->buffer(), 1, 0.0, z.buffer(), 1);
 
-    MmulHelper::mmul(x, y, z);
+    MmulHelper::mmul(x, y, &z);
 
     //z->printBuffer();
 
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     delete x;
     delete y;
-    delete z;
     delete exp;
 }
 
@@ -976,18 +960,18 @@ TEST_F(NDArrayTest, TestMmulHelper3) {
     auto yShape = new Nd4jLong[8] {2, 3, 1, 1, 1, 8192, 1, 99};
     auto y = new NDArray(yBuffer, yShape);
 
-    auto z = NDArrayFactory::create_<float>('f', {5, 1});
+    auto z = NDArrayFactory::create<float>('f', {5, 1});
 
     auto expBuffer = new float[5]{92.00f,  104.00f,  116.00f,  128.00f,  140.00f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo());
+    auto exp = new NDArray(expBuffer, z.shapeInfo());
 
-    //sd::blas::GEMV<float>::op('f',  x->rows(), x->columns(), 1.0f, x->buffer(), y->rows(), y->buffer(), 1, 0.0, z->buffer(), 1);
+    //sd::blas::GEMV<float>::op('f',  x->rows(), x->columns(), 1.0f, x->buffer(), y->rows(), y->buffer(), 1, 0.0, z.buffer(), 1);
 
-    MmulHelper::mmul(x, y, z);
+    MmulHelper::mmul(x, y, &z);
 
     //z->printBuffer();
 
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     delete[] expBuffer;
     delete[] xBuffer;
@@ -997,7 +981,6 @@ TEST_F(NDArrayTest, TestMmulHelper3) {
 
     delete x;
     delete y;
-    delete z;
     delete exp;
 }
 
@@ -1011,13 +994,13 @@ TEST_F(NDArrayTest, TestMmulHelper4) {
     auto yShape = new Nd4jLong[8] {2, 2, 3, 3, 1, 8192, 1, 99};
     auto y = new NDArray(yBuffer, yShape);
 
-    auto z = NDArrayFactory::create_<float>('f', {3, 3});
+    auto z = NDArrayFactory::create<float>('f', {3, 3});
 
     auto expBuffer = new float[9]{7.0f, 21.0f, 35.0f, 10.0f, 28.0f, 46.0f, 13.0f, 35.0f, 57.0f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo());
+    auto exp = new NDArray(expBuffer, z.shapeInfo());
 
     MmulHelper::mmul(x, y, z);
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     delete[] expBuffer;
     delete[] xBuffer;
@@ -1027,7 +1010,6 @@ TEST_F(NDArrayTest, TestMmulHelper4) {
 
     delete x;
     delete y;
-    delete z;
     delete exp;
 }
 
@@ -1041,13 +1023,13 @@ TEST_F(NDArrayTest, TestMmulHelper5) {
     auto yShape = new Nd4jLong[8] {2, 2, 3, 3, 1, 8192, 1, 99};
     auto y = new NDArray(yBuffer, yShape);
 
-    auto z = NDArrayFactory::create_<float>('f', {3, 3});
+    auto z = NDArrayFactory::create<float>('f', {3, 3});
 
     auto expBuffer = new float[9]{7.0f, 14.0f, 21.0f, 12.0f, 21.0f, 30.0f, 17.0f, 28.0f, 39.0f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo());
+    auto exp = new NDArray(expBuffer, z.shapeInfo());
 
-    MmulHelper::mmul(x, y, z);
-    ASSERT_TRUE(z->equalsTo(exp));
+    MmulHelper::mmul(x, y, &z);
+    ASSERT_TRUE(z.equalsTo(exp));
 
     delete[] expBuffer;
     delete[] xBuffer;
@@ -1057,7 +1039,6 @@ TEST_F(NDArrayTest, TestMmulHelper5) {
 
     delete x;
     delete y;
-    delete z;
     delete exp;
 }
 
@@ -1071,13 +1052,13 @@ TEST_F(NDArrayTest, TestMmulHelper6) {
     auto yShape = new Nd4jLong[8] {2, 2, 3, 1, 2, 8192, 1, 102};
     auto y = new NDArray(yBuffer, yShape);
 
-    auto z = NDArrayFactory::create_<float>('f', {3, 3});
+    auto z = NDArrayFactory::create<float>('f', {3, 3});
 
     auto expBuffer = new float[9]{39.0f, 54.0f, 69.0f, 9.0f, 18.0f, 27.0f, 9.0f, 12.0f, 15.0f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo());
+    auto exp = new NDArray(expBuffer, z.shapeInfo());
 
-    MmulHelper::mmul(x, y, z);
-    ASSERT_TRUE(z->equalsTo(exp));
+    MmulHelper::mmul(x, y, &z);
+    ASSERT_TRUE(z.equalsTo(exp));
 
 
     delete[] expBuffer;
@@ -1102,15 +1083,15 @@ TEST_F(NDArrayTest, TestMmulHelper7) {
     auto yShape = new Nd4jLong[8] {2, 1, 5, 1, 1, 8192, 1, 99};
     auto y = new NDArray(yBuffer, yShape);
 
-    auto z = NDArrayFactory::create_<float>('f', {1, 3});
+    auto z = NDArrayFactory::create<float>('f', {1, 3});
 
     auto expBuffer = new float[9]{110.00f,  260.00f,  410.00f};
-    auto exp = new NDArray(expBuffer, z->shapeInfo());
+    auto exp = new NDArray(expBuffer, z.shapeInfo());
 
-    MmulHelper::mmul(y, x, z);
+    MmulHelper::mmul(y, x, &z);
 
     //z->printBuffer();
-    ASSERT_TRUE(z->equalsTo(exp));
+    ASSERT_TRUE(z.equalsTo(exp));
 
     delete[] expBuffer;
     delete[] xBuffer;
@@ -1120,7 +1101,6 @@ TEST_F(NDArrayTest, TestMmulHelper7) {
 
     delete x;
     delete y;
-    delete z;
     delete exp;
 }
 
@@ -1402,18 +1382,18 @@ TEST_F(NDArrayTest, TestIndexing4) {
 }
 
 TEST_F(NDArrayTest, TestReshapeNegative1) {
-    std::unique_ptr<NDArray> array(NDArrayFactory::create_<float>('c', {2, 3, 4, 64}));
+    auto array = NDArrayFactory::create<float>('c', {2, 3, 4, 64});
 
-    array->reshapei('c', {-1, 64});
+    array.reshapei('c', {-1, 64});
 
-    ASSERT_EQ(24, array->sizeAt(0));
-    ASSERT_EQ(64, array->sizeAt(1));
+    ASSERT_EQ(24, array.sizeAt(0));
+    ASSERT_EQ(64, array.sizeAt(1));
 }
 
 TEST_F(NDArrayTest, TestReshapeNegative2) {
-    std::unique_ptr<NDArray> array(NDArrayFactory::create_<float>('c', {2, 3, 4, 64}));
+    auto array = NDArrayFactory::create<float>('c', {2, 3, 4, 64});
 
-    auto reshaped = array->reshape('c', {-1, 64});
+    auto reshaped = array.reshape('c', {-1, 64});
 
     ASSERT_EQ(24, reshaped.sizeAt(0));
     ASSERT_EQ(64, reshaped.sizeAt(1));
