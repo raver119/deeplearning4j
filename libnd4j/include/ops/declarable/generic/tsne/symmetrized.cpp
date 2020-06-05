@@ -74,7 +74,7 @@ namespace sd {
             rowCounts.syncToHost();
             //            rowCounts->printBuffer("Row Counts");
             if (len <= 0) throw std::runtime_error("barnes_symmetrized: Cannot allocate shape due non-positive len.");
-            rowCountsPtr = rowCounts.dup();
+            rowCountsPtr = new NDArray(rowCounts);
             //ALLOCATE(outShapeInfo, block.workspace(), shape::shapeInfoLength(2), Nd4jLong);
 //            outShapeInfo[1] = 1;
 //            outShapeInfo[2] = len;

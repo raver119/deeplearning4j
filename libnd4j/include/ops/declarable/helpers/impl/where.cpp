@@ -42,7 +42,7 @@ namespace sd {
                         for (int f = 0; f < condition.rankOf(); f++)
                             array.p(f, (T) idx[f]);
 
-                        list.write(cnt++, array.dup());
+                        list.write(cnt++, new NDArray(array));
                     }
                 }
 
