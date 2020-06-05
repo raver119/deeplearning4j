@@ -60,7 +60,7 @@ namespace sd {
                 indicesList[0] = skipPosition;
                 indicesList[1] = skipPosition++ + 1;                
 
-                auto subarray = (*result)(indicesList, true);
+                auto subarray = result(indicesList, true);
                 subarray.assign(array);
             }
 

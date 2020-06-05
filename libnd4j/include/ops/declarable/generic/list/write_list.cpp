@@ -41,10 +41,10 @@ namespace sd {
                 //input->printIndexedBuffer("input buffer");
                 Nd4jStatus result = list->write(idx->e<int>(0), new NDArray(input->dup()));
 
-                auto res = NDArrayFactory::create_(list->counter(), block.launchContext());
+                auto res = NDArrayFactory::create(list->counter(), block.launchContext());
                 //res->printShapeInfo("Write_list 2 output shape");
 
-                setupResult(res, block);
+                setupResult(new NDArray(res), block);
 //                OVERWRITE_RESULT(res);
 
                 return result;
@@ -54,10 +54,10 @@ namespace sd {
 
                 Nd4jStatus result = list->write(idx, new NDArray(input->dup()));
 
-                auto res = NDArrayFactory::create_(list->counter(), block.launchContext());
+                auto res = NDArrayFactory::create(list->counter(), block.launchContext());
                 //res->printShapeInfo("Write_list 1 output shape");
                 //OVERWRITE_RESULT(res);
-                setupResult(res, block);
+                setupResult(new NDArray(res), block);
                 return result;
             } else
                 return ND4J_STATUS_BAD_INPUT;
