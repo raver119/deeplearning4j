@@ -80,8 +80,8 @@ namespace sd {
                     } else {
                         auto v = y->getShapeAsVector();
                         auto tZ = NDArrayFactory::valueOf(v, y, y->ordering());
-                        tZ->applyPairwiseTransform(op.p, *y, extraArgs);
-                        return tZ;
+                        tZ.applyPairwiseTransform(op.p, *y, extraArgs);
+                        return new NDArray(tZ);
                     }
                 } else if (x->isScalar() && y->isScalar()) { // x->isScalar() && y->isScalar()
 				    x->applyScalarArr(op.s, const_cast<const NDArray&>(*y), *z);
@@ -122,7 +122,7 @@ namespace sd {
                         auto v = y->getShapeAsVector();
                         auto tZ = NDArrayFactory::valueOf(v, y, y->ordering());
                         //tZ->applyPairwiseTransform(op.p, *y, extraArgs);
-                        return tZ;
+                        return new NDArray(tZ);
                     }
                 } else if (x->isScalar() && y->isScalar()) { // x->isScalar() && y->isScalar()
                     x->applyScalarArr(op.s, const_cast<const NDArray&>(*y), *z);
