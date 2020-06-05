@@ -74,7 +74,7 @@ CUSTOM_OP_IMPL(fused_batch_norm, 3, 3, false, 0, 2) {
         std::vector<Nd4jLong> shape = {iD};
         auto meanV = NDArrayFactory::create(scale->ordering(), shape, scale->dataType(), block.launchContext());
         auto varianceV = NDArrayFactory::create(scale->ordering(), shape, scale->dataType(), block.launchContext());
-        mean = meanV.dup(); variance = varianceV.dup();
+        mean = new NDArray(meanV); variance = new NDArray(varianceV);
     }
 
     // FIXME: double?

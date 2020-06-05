@@ -179,11 +179,11 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
     auto wiR = (*wi)({0,0,  2*K,3*K, 0,0}, true);           // reset gate [bS x K x N]
     auto bF  = (*b) ({0,0,  0,K  }, true);                  // biases for forget gate [1 x K]
     auto bR  = (*b) ({0,0,  K,2*K}, true);                  // biases for reset gate [1 x K]
-    auto gradBF = (*gradBias)({0,0,  0,K,     0,0}, true);  // [bS x K x N]
-    auto gradBR = (*gradBias)({0,0,  K,2*K,   0,0}, true);  // [bS x K x N]
-    auto gradUZ = (*gradU)   ({0,0,  0,K,     0,0}, true ); // [bS x K x N]
-    auto gradUF = (*gradU)   ({0,0,  K,2*K,   0,0}, true ); // [bS x K x N]
-    auto gradUR = (*gradU)   ({0,0,  2*K,3*K, 0,0}, true ); // [bS x K x N]
+    auto gradBF = gradBias({0,0,  0,K,     0,0}, true);  // [bS x K x N]
+    auto gradBR = gradBias({0,0,  K,2*K,   0,0}, true);  // [bS x K x N]
+    auto gradUZ = gradU   ({0,0,  0,K,     0,0}, true ); // [bS x K x N]
+    auto gradUF = gradU   ({0,0,  K,2*K,   0,0}, true ); // [bS x K x N]
+    auto gradUR = gradU   ({0,0,  2*K,3*K, 0,0}, true ); // [bS x K x N]
 
     NDArray*  ct_1 = nullptr;
 
@@ -201,7 +201,7 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
         auto inGradHt = (*inGradH)(idx);    // [bS x K x N] -> [bS x K x 1] -> [bS x K]
         auto gradBRt  = gradBR(idx);        // [bS x K x N] -> [bS x K x 1] -> [bS x K]
         auto gradBFt  = gradBF(idx);        // [bS x K x N] -> [bS x K x 1] -> [bS x K]
-        auto gradHXt  = (*gradHX)(idx);     // [bS x K x N] -> [bS x K x 1] -> [bS x K]
+        auto gradHXt  = gradHX(idx);     // [bS x K x N] -> [bS x K x 1] -> [bS x K]
         auto gradUZt  = gradUZ(idx);        // [bS x K x N] -> [bS x K x 1] -> [bS x K]
         auto gradUFt  = gradUF(idx);        // [bS x K x N] -> [bS x K x 1] -> [bS x K]
         auto gradURt  = gradUR(idx);        // [bS x K x N] -> [bS x K x 1] -> [bS x K]
@@ -230,7 +230,7 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
         ///////////////// backward
         // bR, *grad_brt_ptr = inGradHt * (g_ct - xt) * (1.0f - rt) * rt;
         gct.applyPairwiseTransform(pairwise::Subtract, xt, temp1);                 // temp1 = (g_ct - xt)
-        rtMinus->applyPairwiseTransform(pairwise::Multiply, rt, temp2);             // temp2 = (1.0f - rt) * rt;
+        rtMinus.applyPairwiseTransform(pairwise::Multiply, rt, temp2);             // temp2 = (1.0f - rt) * rt;
         temp1.applyPairwiseTransform(pairwise::Multiply, temp2);                   // temp1 = (g_ct - xt) * (1.0f - rt) * rt;
         inGradHt.applyPairwiseTransform(pairwise::Multiply, temp1, gradBRt);       // = inGradHt * (g_ct - xt) * (1.0f - rt) * rt;
 
@@ -242,7 +242,7 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
         rt.applyPairwiseTransform(pairwise::Multiply, gradTanh, gradCt);           // gradCt = rt * gradTanh
         inGradHt.applyPairwiseTransform(pairwise::Multiply, gradCt, gradCt);       // gradCt = inGradHt * rt * gradTanh
         // gradBFt = (gradCt + inGradCt) * (ct_1 - zt) * (1 - ft) * ft;
-        gradCt->applyPairwiseTransform(pairwise::Add, inGradCt, temp1);              // temp1 = (gradCt + inGradCt)
+        gradCt.applyPairwiseTransform(pairwise::Add, *inGradCt, temp1);              // temp1 = (gradCt + inGradCt)
         ct_1->applyPairwiseTransform(pairwise::Subtract, zt, temp2);                // temp2 = (ct_1 - zt)
         temp1.applyPairwiseTransform(pairwise::Multiply, ftMinus, temp1);          // temp1 = (gradCt + inGradCt)*(1-ft)
         temp1.applyPairwiseTransform(pairwise::Multiply, ft, temp1);               // temp1 = (gradCt + inGradCt)*(1-ft)*ft
@@ -254,14 +254,14 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
         // U_t, gradUZt = (inGradHt * rt * grad_tanh + inGradCt) * (1.0f - ft);
         rt.applyPairwiseTransform(pairwise::Multiply, gradTanh, temp1);        // temp1 = rt * grad_tanh
         inGradHt.applyPairwiseTransform(pairwise::Multiply, temp1, temp1);     // temp1 = inGradHt * rt * grad_tanh
-        temp1->applyPairwiseTransform(pairwise::Add, *inGradCt, temp1);         // temp1 = inGradHt * rt * grad_tanh + inGradCt
-        temp1->applyPairwiseTransform(pairwise::Multiply, ftMinus, gradUZt);    // gradUZt = (inGradHt * rt * grad_tanh + inGradCt) * (1.0f - ft);
+        temp1.applyPairwiseTransform(pairwise::Add, *inGradCt, temp1);         // temp1 = inGradHt * rt * grad_tanh + inGradCt
+        temp1.applyPairwiseTransform(pairwise::Multiply, ftMinus, gradUZt);    // gradUZt = (inGradHt * rt * grad_tanh + inGradCt) * (1.0f - ft);
         gradUFt.assign(&gradBFt);
         gradURt.assign(&gradBRt);
 
         // c_{t-1}, inGradCt = (gradCt + inGradCt) * ft;
-        gradCt.applyPairwiseTransform(pairwise::Add, inGradCt, temp1);         // temp1 = (gradCt + inGradCt)
-        temp1.applyPairwiseTransform(pairwise::Multiply, ft, inGradCt);       // inGradCt = (gradCt + inGradCt) * ft;
+        gradCt.applyPairwiseTransform(pairwise::Add, *inGradCt, temp1);         // temp1 = (gradCt + inGradCt)
+        temp1.applyPairwiseTransform(pairwise::Multiply, ft, *inGradCt);       // inGradCt = (gradCt + inGradCt) * ft;
 
         if(t != 0)
             delete ct_1;
@@ -278,7 +278,7 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
         gradX->applyBroadcast(broadcast::Multiply, {0,1}, *mask, *gradX);  // apply mask
 
     // gradB
-    auto temp3 = gradBias->reduceAlongDimension(reduce::Sum, {0,2}, false, true);    // [1 x 2K]
+    auto temp3 = gradBias.reduceAlongDimension(reduce::Sum, {0,2}, false, true);    // [1 x 2K]
     gradB->assign(temp3);
 
     // gradW [bS x 3K x K]
