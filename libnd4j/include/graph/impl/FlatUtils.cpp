@@ -47,7 +47,8 @@ namespace sd {
             // empty arrays is special case, nothing to restore here
             if (shape::isEmpty(newShape)) {
                 delete[] newShape;
-                return NDArrayFactory::empty_(dtype, nullptr);
+                auto empty = NDArrayFactory::empty(dtype, nullptr);
+                return new NDArray(empty);
             }
             // TODO fix UTF16 and UTF32
             if (dtype == UTF8) {
@@ -88,7 +89,8 @@ namespace sd {
                 delete[] offsets;
                 delete[] newShape;
                 // string order always 'c'
-                return NDArrayFactory::string_(shapeVector, substrings);
+                auto stringV = NDArrayFactory::string(shapeVector, substrings);
+                return new NDArray(stringV);
             }
 
 

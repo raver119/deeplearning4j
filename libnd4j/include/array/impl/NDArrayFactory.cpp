@@ -120,20 +120,20 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
 
 #ifndef __JAVACPP_HACK__
     ////////////////////////////////////////////////////////////////////////
-    template <typename T>
-    NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const T value, const char order, sd::LaunchContext * context) {
-        return valueOf(std::vector<Nd4jLong>(shape), value, order);
-    }
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const double value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const float value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const float16 value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const bfloat16 value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const Nd4jLong value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const uint8_t value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int8_t value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int16_t value, const char order, sd::LaunchContext * context);
-    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const bool value, const char order, sd::LaunchContext * context);
+//    template <typename T>
+//    NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const T value, const char order, sd::LaunchContext * context) {
+//        return valueOf(std::vector<Nd4jLong>(shape), value, order);
+//    }
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const double value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const float value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const float16 value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const bfloat16 value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const Nd4jLong value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const uint8_t value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int8_t value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const int16_t value, const char order, sd::LaunchContext * context);
+//    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::initializer_list<Nd4jLong>& shape, const bool value, const char order, sd::LaunchContext * context);
 
 ////////////////////////////////////////////////////////////////////////
     template <typename T>

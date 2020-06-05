@@ -101,18 +101,14 @@ namespace sd {
          * This factory create array from utf8 string
          * @return NDArray default dataType UTF8
          */
-//        static NDArray string(const char *string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_(const char *string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_(const std::string &string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray string(const char *string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
         static NDArray string(const std::string& string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
 
         /**
          * This factory create array from utf16 string
          * @return NDArray default dataType UTF16
          */
-//        static NDArray string(const char16_t* u16string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_(const char16_t* u16string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_(const std::u16string& u16string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
+        static NDArray string(const char16_t* u16string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string(const std::u16string& u16string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         
         /**
@@ -120,8 +116,6 @@ namespace sd {
          * @return NDArray default dataType UTF32
          */
         static NDArray string(const char32_t* u32string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_(const char32_t* u32string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_(const std::u32string& u32string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string(const std::u32string& u32string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
 
         /**
@@ -132,10 +126,6 @@ namespace sd {
         static NDArray string( const std::vector<Nd4jLong> &shape, const std::initializer_list<std::string> &string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
         static NDArray string( const std::vector<Nd4jLong> &shape, const std::vector<const char *> &strings, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
         static NDArray string( const std::vector<Nd4jLong> &shape, const std::vector<std::string> &string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<const char *> &strings, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong> &shape, const std::initializer_list<std::string> &string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong> &shape, const std::vector<const char *> &strings, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong> &shape, const std::vector<std::string> &string, sd::DataType dtype = sd::DataType::UTF8, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         /**
          * This factory create array from vector of utf16 strings
@@ -145,10 +135,6 @@ namespace sd {
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u16string>& string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& strings, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<const char16_t*>& strings, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u16string>& string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::vector<const char16_t*>& strings, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u16string>& string, sd::DataType dtype = sd::DataType::UTF16, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
 
         /**
          * This factory create array from vector of utf32 strings
@@ -158,10 +144,6 @@ namespace sd {
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u32string>& string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::vector<const char32_t*>& strings, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
         static NDArray string( const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<const char32_t*>& strings, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::initializer_list<std::u32string>& string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::vector<const char32_t*>& strings, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
-//        static NDArray* string_( const std::vector<Nd4jLong>& shape, const std::vector<std::u32string>& string, sd::DataType dtype = sd::DataType::UTF32, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
 
 
         static ResultSet createSetOfArrs(const Nd4jLong numOfArrs, const void* buffer, const Nd4jLong* shapeInfo, const Nd4jLong* offsets, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
