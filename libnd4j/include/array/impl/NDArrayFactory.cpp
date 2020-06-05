@@ -247,11 +247,11 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
     ////////////////////////////////////////////////////////////////////////
     template <typename T>
     NDArray NDArrayFactory::linspace(const T from, const T to, const Nd4jLong numElements) {
-        auto result = NDArrayFactory::vector<T>(numElements);
+        auto result = NDArrayFactory::vector<T>(numElements, from);
         //TO DO: linspace should be executed on DEVICE, but only CPU version implented!
         for (Nd4jLong e = 0; e < numElements; e++) {
             T step = (T) e / ((T) numElements - (T) 1);
-            result.p<T >(e, (from * ((T) 1 - step) + step * to));
+            result. template r<T>(e) = (from * ((T) 1 - step) + step * to);
         }
         result.syncToDevice();
 
@@ -342,12 +342,6 @@ NDArray NDArrayFactory::create(sd::DataType dtype, sd::LaunchContext * context) 
     res.nullify();
 
     return res;
-}
-
-NDArray* NDArrayFactory::create_(sd::DataType dtype, sd::LaunchContext * context) {
-    auto result = new NDArray();
-    *result = NDArrayFactory::create(dtype, context);
-    return result;
 }
 
 ////////////////////////////////////////////////////////////////////////
