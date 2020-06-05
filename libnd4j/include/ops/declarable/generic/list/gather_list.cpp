@@ -65,7 +65,7 @@ namespace sd {
             }
 
             //OVERWRITE_RESULT(result);
-            setupResult(result.dup(), block);
+            setupResult(new NDArray(result), block);
             return Status::OK();
         }
         DECLARE_SYN(TensorArrayGatherV3, gather_list);

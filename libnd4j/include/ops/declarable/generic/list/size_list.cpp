@@ -37,7 +37,7 @@ namespace sd {
             result.printIndexedBuffer("actual height");
 
             //OVERWRITE_RESULT(result);
-            setupResult(result.dup(), block);
+            setupResult(new NDArray(result), block);
             return Status::OK();
         }
         DECLARE_SYN(TensorArraySizeV3, size_list);
