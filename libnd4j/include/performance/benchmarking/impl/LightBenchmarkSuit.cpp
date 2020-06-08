@@ -46,13 +46,14 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XZ() {
-            auto arr = NDArrayFactory::create_<T>('c', {p.getIntParam("length")});
+            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
             arr.assign(1.0);
-            x.push_back(arr.dup());
+            x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
                 z.push_back(arr);
             } else {
-                z.push_back(NDArrayFactory::create<T>('c', {p.getIntParam("length")}).dup());
+                auto arrV = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+                z.push_back(new NDArray(arrV));
             }
         };
 
@@ -86,9 +87,10 @@ namespace sd {
             arr.assign(1.0);
             x.push_back(arr.dup());
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create_<T>('c', {p.getIntParam("length")}));
+                auto zArr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+                z.push_back(new NDArray(zArr));
             }
         };
 

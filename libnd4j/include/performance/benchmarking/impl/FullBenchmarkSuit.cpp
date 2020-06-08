@@ -105,19 +105,19 @@ namespace sd {
                 //nchw
                 auto input = NDArrayFactory::create<float>('c', {16, c, hw, hw});
                 auto output = NDArrayFactory::create<float>('c', {16, c, hw, hw});
-                ctx->setInputArray(0, input.dup(), true);
-                ctx->setOutputArray(0, output.dup(), true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
                 axis = 1;
             } else {
                 auto input = NDArrayFactory::create<float>('c', {32, hw, hw, c});
                 auto output = NDArrayFactory::create<float>('c', {32, hw, hw, c});
-                ctx->setInputArray(0, input.dup(), true);
-                ctx->setOutputArray(0, output.dup(), true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
                 axis = 3;
             }
 
             auto bias = NDArrayFactory::create<float>('c', {c});
-            ctx->setInputArray(1, bias.dup(), true);
+            ctx->setInputArray(1, bias);
             auto iargs = new Nd4jLong[1];
             iargs[0] = axis;
             ctx->setIArguments(iargs, 1);
@@ -164,12 +164,12 @@ namespace sd {
             //Same mode + stride 1: output is same shape as input
             if(format == 1) {
                 //NDHWC
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}).dup(), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}).dup(), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}));
             } else {
                 //NCDHW
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}).dup(), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}).dup(), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}));
             }
 
             auto iargs = new Nd4jLong[15];
@@ -230,17 +230,17 @@ namespace sd {
             //Same mode + stride 1: output is same shape as input
             if(format == 1) {
                 //NDHWC
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}).dup(), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}).dup(), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, dhw, dhw, dhw, chIn}));
             } else {
                 //NCDHW
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}).dup(), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}).dup(), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {mb, chIn, dhw, dhw, dhw}));
             }
 
             //Weights and bias:
-            ctx->setInputArray(1, NDArrayFactory::create<float>('c', {3, 3, 3, chIn, chOut}).dup(), true);
-            ctx->setInputArray(2, NDArrayFactory::create<float>('c', {chOut}).dup(), true);
+            ctx->setInputArray(1, NDArrayFactory::create<float>('c', {3, 3, 3, chIn, chOut}));
+            ctx->setInputArray(2, NDArrayFactory::create<float>('c', {chOut}));
 
 
             auto iargs = new Nd4jLong[14];
@@ -296,29 +296,29 @@ namespace sd {
             int n = p.getIntParam("nInOut");
 
             Nd4jLong l = 0;
-            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>(l).dup(), true);  //Max TS length (unused)
+            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>(l));  //Max TS length (unused)
 
 
             if (f == 0) {
                 //TNS format
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);     //x
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //i
-                ctx->setOutputArray(1, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //c
-                ctx->setOutputArray(2, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //f
-                ctx->setOutputArray(3, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //o
-                ctx->setOutputArray(4, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //z
-                ctx->setOutputArray(5, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //h
-                ctx->setOutputArray(6, NDArrayFactory::create<float>('c', {seqLength, m, n}).dup(), true);    //y
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {seqLength, m, n}));     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<float>('c', {seqLength, m, n}));    //y
             } else {
                 //NST format
-                ctx->setInputArray(1, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);     //x
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //i
-                ctx->setOutputArray(1, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //c
-                ctx->setOutputArray(2, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //f
-                ctx->setOutputArray(3, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //o
-                ctx->setOutputArray(4, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //z
-                ctx->setOutputArray(5, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //h
-                ctx->setOutputArray(6, NDArrayFactory::create<float>('f', {m, n, seqLength}).dup(), true);    //y
+                ctx->setInputArray(1, NDArrayFactory::create<float>('f', {m, n, seqLength}));     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<float>('f', {m, n, seqLength}));    //y
             }
 
             auto cLast = NDArrayFactory::create<float>('c', {m, n});
@@ -329,13 +329,13 @@ namespace sd {
             auto Wco = NDArrayFactory::create<float>('c', {n});
             auto b = NDArrayFactory::create<float>('c', {4 * n});
 
-            ctx->setInputArray(2, cLast.dup(), true);
-            ctx->setInputArray(3, yLast.dup(), true);
-            ctx->setInputArray(4, W.dup(), true);
-            ctx->setInputArray(5, Wci.dup(), true);
-            ctx->setInputArray(6, Wcf.dup(), true);
-            ctx->setInputArray(7, Wco.dup(), true);
-            ctx->setInputArray(8, b.dup(), true);
+            ctx->setInputArray(2, cLast);
+            ctx->setInputArray(3, yLast);
+            ctx->setInputArray(4, W);
+            ctx->setInputArray(5, Wci);
+            ctx->setInputArray(6, Wcf);
+            ctx->setInputArray(7, Wco);
+            ctx->setInputArray(8, b);
 
             auto iargs = new Nd4jLong[2];
             iargs[0] = 0;   //No peephole
@@ -382,29 +382,29 @@ namespace sd {
             if (n == 0) {
                 auto input = NDArrayFactory::create<float>('c', {32, ch, hw, hw});
                 auto output = NDArrayFactory::create<float>('c', {32, ch, hw, hw});
-                ctx->setInputArray(0, input.dup(), true);
-                ctx->setOutputArray(0, output.dup(), true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
                 args[2] = 1;    //axis
             } else {
                 auto input = NDArrayFactory::create<float>('c', {32, hw, hw, ch});
                 auto output = NDArrayFactory::create<float>('c', {32, hw, hw, ch});
-                ctx->setInputArray(0, input.dup(), true);
-                ctx->setOutputArray(0, output.dup(), true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
                 args[2] = 3;    //axis
             }
             ctx->setIArguments(args, 3);
             delete[] args;
 
-            ctx->setInputArray(1, NDArrayFactory::create<float>('c', {ch}).dup(), true);   //mean
+            ctx->setInputArray(1, NDArrayFactory::create<float>('c', {ch}));   //mean
             auto v = NDArrayFactory::create<float>('c', {ch});
             v.assign(1.0f);
-            ctx->setInputArray(2, v.dup(), true);   //variance
+            ctx->setInputArray(2, v);   //variance
             auto g = NDArrayFactory::create<float>('c', {ch});
             g.assign(1.0);
-            ctx->setInputArray(3, g.dup(), true);   //gamma
+            ctx->setInputArray(3, g);   //gamma
             auto b = NDArrayFactory::create<float>('c', {ch});
             b.assign(1.0f);
-            ctx->setInputArray(4, b.dup(), true);   //beta
+            ctx->setInputArray(4, b);   //beta
 
             auto targs = new double[1];
             targs[0] = 1e-5;
