@@ -930,5 +930,5 @@ TEST_F(GraphAnalysisTests, test_cond_2) {
 
 TEST_F(GraphAnalysisTests, test_while_iter_1_1) {
   auto graph = Graph::fromFlatBuffers("resources/while_iter1.fb");
-  graph.printOut();
+  //graph.printOut();
 }

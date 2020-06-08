@@ -650,7 +650,7 @@ Graph::Graph(const Graph &other) : _memoryManager(other._memoryManager) {
   _unmapped = other._unmapped;
   _symbolicLookupTable = other._symbolicLookupTable;
   _built = false;
-  _maxId = _maxId;
+  _maxId = other._maxId;
 }
 
 Graph &Graph::operator=(const Graph &other) noexcept {
@@ -662,7 +662,7 @@ Graph &Graph::operator=(const Graph &other) noexcept {
   _unmapped = other._unmapped;
   _symbolicLookupTable = other._symbolicLookupTable;
   _built = false;
-  _maxId = _maxId;
+  _maxId = other._maxId;
 
   return *this;
 }
@@ -676,7 +676,7 @@ Graph::Graph(Graph &&other) : _memoryManager(other._memoryManager) {
   _symbolicLookupTable = std::move(other._symbolicLookupTable);
 
   _built = false;
-  _maxId = _maxId;
+  _maxId = other._maxId;
 }
 
 Graph &Graph::operator=(Graph &&other) noexcept {
@@ -690,7 +690,7 @@ Graph &Graph::operator=(Graph &&other) noexcept {
   _symbolicLookupTable = std::move(other._symbolicLookupTable);
 
   _built = false;
-  _maxId = _maxId;
+  _maxId = other._maxId;
 
   return *this;
 }

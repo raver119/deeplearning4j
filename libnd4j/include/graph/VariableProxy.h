@@ -34,7 +34,7 @@ class SD_EXPORT VariableProxy : public VariableSpace {
   explicit VariableProxy(const VariableSpace* reference);
   ~VariableProxy();
 
-  virtual VariableSpace& operator=(const VariableSpace& other);
+  virtual VariableSpace& operator=(const VariableSpace& other) override;
 
   virtual int numberOfPlaceholders() const override;
   virtual const std::vector<std::shared_ptr<Variable>>& placeholders()

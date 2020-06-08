@@ -125,7 +125,7 @@ DECLARE_SHAPE_FN(random_multinomial) {
 DECLARE_TYPES(random_multinomial) {
   getOpDescriptor()
       ->setAllowedInputTypes(0, {ALL_FLOATS, ALL_INTS})
-      ->setAllowedInputTypes(1, {sd::DataType::INT32})
+      ->setAllowedInputTypes(1, sd::DataType::INT32)
       ->setAllowedOutputTypes(0, {ALL_INDICES});
 }
 }  // namespace ops

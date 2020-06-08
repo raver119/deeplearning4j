@@ -42,9 +42,9 @@ class SD_EXPORT HotZoneManager : public ZoneManager {
 
   uint64_t used() const override;
 
-  virtual MemoryDescriptor allocate(uint64_t numBytes) = 0;
+  virtual MemoryDescriptor allocate(uint64_t numBytes) override = 0;
 
-  virtual void release(MemoryDescriptor &descriptor) = 0;
+  virtual void release(MemoryDescriptor &descriptor) override = 0;
 };
 }  // namespace memory
 }  // namespace sd

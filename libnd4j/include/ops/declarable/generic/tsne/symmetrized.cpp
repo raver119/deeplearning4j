@@ -50,11 +50,11 @@ CUSTOM_OP_IMPL(barnes_symmetrized, 3, 3, false, 0, -1) {
 
 DECLARE_TYPES(barnes_symmetrized) {
   getOpDescriptor()
-      ->setAllowedInputTypes(0, {DataType::INT32})
-      ->setAllowedInputTypes(1, {DataType::INT32})
+      ->setAllowedInputTypes(0, DataType::INT32)
+      ->setAllowedInputTypes(1, DataType::INT32)
       ->setAllowedInputTypes(2, {ALL_INTS, ALL_FLOATS})
-      ->setAllowedOutputTypes(1, {DataType::INT32})
-      ->setAllowedOutputTypes(1, {DataType::INT32})
+      ->setAllowedOutputTypes(1, DataType::INT32)
+      ->setAllowedOutputTypes(1, DataType::INT32)
       ->setAllowedOutputTypes(2, {ALL_INTS, ALL_FLOATS})
       ->setSameMode(false);
 }

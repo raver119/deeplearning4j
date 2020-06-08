@@ -130,9 +130,6 @@ template SD_EXPORT NDArray NDArrayFactory::create(
 template SD_EXPORT NDArray NDArrayFactory::create(
     const char order, const std::vector<Nd4jLong>& shape,
     const std::vector<uint8_t>& data, sd::LaunchContext* context);
-template SD_EXPORT NDArray NDArrayFactory::create(
-    const char order, const std::vector<Nd4jLong>& shape,
-    const std::vector<bool>& data, sd::LaunchContext* context);
 
 ////////////////////////////////////////////////////////////////////////
 template <typename T>

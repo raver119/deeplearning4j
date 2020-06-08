@@ -220,7 +220,9 @@ static void barnes_gains_(NDArray* input, NDArray* gradX, NDArray* epsilon,
     T res = sd::math::nd4j_sign<T, T>(grad) != sd::math::nd4j_sign<T, T>(eps)
                 ? x + T(.2)
                 : x * T(.8);
+
     if (res < .01) res = .01;
+
     return res;
   };
 
@@ -233,7 +235,7 @@ void barnes_gains(NDArray* input, NDArray* gradX, NDArray* epsilon,
   //        gains.add(.2).muli(sign(yGrads)).neq(sign(yIncs)).castTo(Nd4j.defaultFloatingPointType())
   //                .addi(gains.mul(0.8).muli(sign(yGrads)).neq(sign(yIncs)));
   BUILD_SINGLE_SELECTOR(input->dataType(), barnes_gains_,
-                        (input, gradX, epsilon, output), NUMERIC_TYPES);
+                        (input, gradX, epsilon, output), FLOAT_TYPES);
   //        auto signGradX = *gradX;
   //        auto signEpsilon = *epsilon;
   //        gradX->applyTransform(transform::Sign, &signGradX, nullptr);
@@ -254,10 +256,6 @@ void barnes_gains(NDArray* input, NDArray* gradX, NDArray* epsilon,
   //        leftPart.applyPairwiseTransform(pairwise::Add, &rightPart, output,
   //        nullptr);
 }
-BUILD_SINGLE_TEMPLATE(template void barnes_gains_,
-                      (NDArray * input, NDArray* gradX, NDArray* epsilon,
-                       NDArray* output),
-                      NUMERIC_TYPES);
 
 bool cell_contains(NDArray* corner, NDArray* width, NDArray* point,
                    Nd4jLong dimension) {

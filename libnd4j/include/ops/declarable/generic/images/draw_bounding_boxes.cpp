@@ -62,19 +62,16 @@ OP_IMPL(draw_bounding_boxes, 3, 1, true) {
                "draw_bounding_boxes: Batches for images and boxes "
                "should be the same, but %lld and %lld occured.",
                images->sizeAt(0), boxes->sizeAt(0));
-  helpers::drawBoundingBoxesFunctor(block.launchContext(), images, boxes,
-                                    colors, output);
-  return ND4J_STATUS_OK;
+  helpers::drawBoundingBoxesFunctor(block.launchContext(), images, boxes, colors, output);
+  return Status::OK();
 }
 
 DECLARE_TYPES(draw_bounding_boxes) {
   getOpDescriptor()
-      ->setAllowedInputTypes(
-          0, {HALF, FLOAT32})               // TF allows HALF and FLOAT32 only
-      ->setAllowedInputTypes(1, {FLOAT32})  // as TF
-      ->setAllowedInputTypes(2, {FLOAT32})  // as TF
-      ->setAllowedOutputTypes(
-          {HALF, FLOAT32});  // TF allows HALF and FLOAT32 only
+      ->setAllowedInputTypes(0, {HALF, FLOAT32})  // TF allows HALF and FLOAT32 only
+      ->setAllowedInputTypes(1, sd::DataType::FLOAT32)  // as TF
+      ->setAllowedInputTypes(2, sd::DataType::FLOAT32)  // as TF
+      ->setAllowedOutputTypes({HALF, FLOAT32});  // TF allows HALF and FLOAT32 only
 }
 }  // namespace ops
 }  // namespace sd

@@ -89,9 +89,8 @@ unsigned maxpathlen(char *path[], const char *base) {
   return blen + n + 1;
 }
 bool file_exists(const char *name) {
-  // printf("Trying file: [%s]\n", name);
   FILE *file;
-  if (file = fopen(name, "r")) {
+  if ((file = fopen(name, "r"))) {
     fclose(file);
     return true;
   }

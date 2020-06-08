@@ -1441,9 +1441,10 @@ int resizeAreaFunctor(sd::LaunchContext* context, NDArray const* image,
                 return resizeBicubicFunctor(context, image, width, height, alignCorners, false, output);
             case kResizeArea:
                 return resizeAreaFunctor(context, image, width, height, alignCorners, output);
+          default:
+            nd4j_printf("helper::resizeImagesFunctor: Wrong resize method %i\n", (int)method);
+            return Status::CODE(ND4J_STATUS_BAD_INPUT, "helper::resizeImagesFunctor: Wrong resize method");
         }
-        nd4j_printf("helper::resizeImagesFunctor: Wrong resize method %i\n", (int)method);
-        return Status::CODE(ND4J_STATUS_BAD_INPUT, "helper::resizeImagesFunctor: Wrong resize method");
     }
 // ------------------------------------------------------------------------------------------------------------------ //
     int resizeFunctor(sd::LaunchContext * context, NDArray const* image, int const width, int const height,

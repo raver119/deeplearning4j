@@ -36,7 +36,7 @@ static void onehot_(void* voutput, Nd4jLong const* zShapeInfo,
   auto indices = reinterpret_cast<I const*>(vindices);
 
   auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      zShapeInfo, {axis});
+      zShapeInfo, axis);
 
   auto iLen = static_cast<unsigned int>(shape::length(iShapeInfo));
   auto tLen =

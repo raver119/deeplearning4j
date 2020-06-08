@@ -209,7 +209,7 @@ void lstmBlockCell(const NDArray* xt, const NDArray* cLast,
                     xt->dataType(), xt->getContext());
   helpers::concat(xt->getContext(),
                   {const_cast<NDArray*>(xt), const_cast<NDArray*>(yLast)},
-                  concatOut, {1});
+                  concatOut, 1);
 
   auto m =
       mmul(concatOut,
