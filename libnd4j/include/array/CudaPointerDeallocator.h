@@ -26,7 +26,7 @@
 #include <array/PointerDeallocator.h>
 
 namespace sd {
-class ND4J_EXPORT CudaPointerDeallocator : public PointerDeallocator {
+class SD_EXPORT CudaPointerDeallocator : public PointerDeallocator {
  public:
   CudaPointerDeallocator() = default;
   ~CudaPointerDeallocator() = default;

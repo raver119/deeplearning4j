@@ -135,14 +135,14 @@ Nd4jStatus LegacyReduceFloatOp::validateAndExecute(Context &block) {
           x->shapeInfo(), dims);
 
       auto pTadShape =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryShapeInfo()
               : packX
                     .specialShapeInfo();  //(Nd4jLong *)
                                           // manager.replicatePointer(tad.tadOnlyShapeInfo,
                                           // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
       auto pTadOffsets =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryOffsets()
               : packX
                     .specialOffsets();  //(Nd4jLong *)

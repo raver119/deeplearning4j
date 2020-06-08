@@ -499,7 +499,7 @@ Graph Graph::importFromTensorFlow(const char *fileName) {
   node.name().c_str(), node.op().c_str());
 
           sd::ops::DeclarableOp *op =
-  sd::ops::OpRegistrator::getInstance()->getOperationFloat(node.op().c_str());
+  sd::ops::OpRegistrator::getInstance().getOperationFloat(node.op().c_str());
 
           if (op == nullptr) {
               nd4j_verbose("Op wasn't found: %s\n", node.op().c_str());

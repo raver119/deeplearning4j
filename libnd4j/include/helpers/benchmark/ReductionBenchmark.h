@@ -21,7 +21,7 @@
 #include <helpers/StringUtils.h>
 #include <helpers/TAD.h>
 
-#include <helpers/benchmark/OpBenchmark.h>
+#include <helpers/OpBenchmark.h>
 
 #ifndef SD_REDUCEBENCHMARK_H
 #define SD_REDUCEBENCHMARK_H

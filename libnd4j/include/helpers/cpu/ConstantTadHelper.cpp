@@ -72,7 +72,8 @@ TadPack ConstantTadHelper::tadForDimensions(TadDescriptor &descriptor) {
 
   std::lock_guard<std::mutex> lock(_mutex);
   if (_cache[deviceId].count(descriptor) == 0) {
-// if there's no TadPack matching this descriptor - create one    const auto shapeInfo = descriptor.originalShape().toShapeInfo();
+// if there's no TadPack matching this descriptor - create one
+    const auto shapeInfo = descriptor.originalShape().toShapeInfo();
     const int rank = shape::rank(shapeInfo);
     const std::vector<int> dimsToExclude =
         ShapeUtils::evalDimsToExclude(rank, descriptor.axis());

@@ -223,7 +223,7 @@ NDArray::NDArray(sd::DataType dtype, sd::LaunchContext* context,
                                            getContext()->getWorkspace());
     _buffer->setToZeroBuffers();
   } else
-    setShapeInfo(ConstantShapeHelper::getInstance()->emptyShapeInfo(dtype));
+    setShapeInfo(ConstantShapeHelper::getInstance().emptyShapeInfo(dtype));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1227,14 +1227,15 @@ void NDArray::streamline(char o) {
   syncToDevice();
   std::shared_ptr<DataBuffer> newBuffer = std::make_shared<DataBuffer>(
       this->lengthOf() * sizeOfT(), dataType(), getContext()->getWorkspace());
-  auto shapeBuffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(
+  auto shapeBuffer = ConstantShapeHelper::getInstance().bufferForShapeInfo(
       dataType(), order, rankOf(), shapeOf());
   NativeOpExecutioner::execTransformSame(
       getContext(), transform::Copy, buffer(), shapeInfo(), specialBuffer(),
       specialShapeInfo(), newBuffer->primary(),
-      static_cast<Nd4jLong*>(shapeBuffer.primary()), newBuffer->special(),
-      static_cast<Nd4jLong*>(shapeBuffer.special()), nullptr, nullptr, nullptr);
-  setShapeInfo(static_cast<Nd4jLong*>(shapeBuffer.primary()));
+      shapeBuffer.primary(), newBuffer->special(),
+      shapeBuffer.special(), nullptr, nullptr, nullptr);
+
+  setShapeInfo(shapeBuffer);
   _buffer = newBuffer;
   _offset = 0;
   tickWriteDevice();
@@ -1558,7 +1559,7 @@ NDArray NDArray::reduceAlongDimension(sd::reduce::FloatOps op,
 
   auto newShape = ShapeUtils::evalReduceShapeInfo(
       'c', copy, *this,
-      isR() ? dataType() : Environment::getInstance()->defaultFloatDataType(),
+      isR() ? dataType() : Environment::getInstance().defaultFloatDataType(),
       keepDims, supportOldShapes, getContext()->getWorkspace());
 
   NDArray result(newShape, true, getContext());
@@ -1665,7 +1666,7 @@ NDArray NDArray::reduceNumber(sd::reduce::FloatOps op,
         "NDArray::reduceNumber FloatOps: you can't use this method on String "
         "array!");
 
-  auto shape = ConstantShapeHelper::getInstance()->scalarShapeInfo(
+  auto shape = ConstantShapeHelper::getInstance().scalarShapeInfo(
       DataTypeUtils::pickFloatingType(dataType()));
   NDArray result(shape, true, this->getContext());
 
@@ -1706,7 +1707,7 @@ NDArray NDArray::reduceNumber(sd::reduce::BoolOps op, void* extraParams) const {
         "array!");
 
   auto shape =
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::BOOL);
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::BOOL);
   NDArray result(shape, true, this->getContext());
 
   NDArray::prepareSpecialUse({&result}, {this});
@@ -1727,7 +1728,7 @@ NDArray NDArray::reduceNumber(sd::reduce::LongOps op, void* extraParams) const {
         "array!");
 
   auto shape =
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT64);
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::INT64);
   NDArray result(shape, true, this->getContext());
 
   NDArray::prepareSpecialUse({&result}, {this});
@@ -2129,8 +2130,7 @@ void NDArray::setAttached(bool reallyAttached) {
 //////////////////////////////////////////////////////////////////////////
 // calculate strides
 void NDArray::updateStrides(const char order) {
-  shape::updateStrides(_shapeInfo, order);
-  syncShape();
+  throw std::runtime_error("Very bad method was invoked");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2755,7 +2755,7 @@ void NDArray::operator+=(const NDArray& other) {
   if (isS())
     throw std::runtime_error(
         "NDArray::operator+=: you can't use this method on String array!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       this->dataType() != other.dataType() &&
       (this->dataType() != DataType::BOOL || other.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -2805,7 +2805,7 @@ void NDArray::operator-=(const NDArray& other) {
     throw std::runtime_error(
         "NDArray::operator-=: you can't use this method on String array!");
 
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       this->dataType() != other.dataType() &&
       (this->dataType() != DataType::BOOL || other.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -2854,7 +2854,7 @@ void NDArray::operator*=(const NDArray& other) {
   if (isS())
     throw std::runtime_error(
         "NDArray::operator*=: you can't use this method on String array!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       this->dataType() != other.dataType() &&
       (this->dataType() != DataType::BOOL || other.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -2907,7 +2907,7 @@ void NDArray::operator/=(const NDArray& other) {
     throw std::runtime_error(
         "NDArray::operator/=: you can't divide by bool array!");
 
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       this->dataType() != other.dataType()) {
     throw sd::datatype_exception::build(
         "NDArray operator/=: Cannot divide different types", this->dataType(),
@@ -3245,16 +3245,13 @@ void NDArray::applyTrueBroadcast(sd::BroadcastOpsTuple op, const NDArray& other,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack =
-        ConstantShapeHelper::getInstance()
-            ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                 target.shapeInfo(), shapeInfo(), getContext()->getWorkspace());
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace());
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3319,16 +3316,13 @@ void NDArray::applyTrueBroadcast(sd::BroadcastBoolOpsTuple op,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack =
-        ConstantShapeHelper::getInstance()
-            ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                 target.shapeInfo(), shapeInfo(), getContext()->getWorkspace());
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace());
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3393,16 +3387,14 @@ void NDArray::applyTrueBroadcast(sd::BroadcastIntOpsTuple op,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack =
-        ConstantShapeHelper::getInstance()
-            ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                 target.shapeInfo(), shapeInfo(), getContext()->getWorkspace());
+
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace());
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3595,16 +3587,14 @@ void NDArray::applyBroadcast(sd::broadcast::Ops op,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), shapeInfo(),
                          getContext()->getWorkspace(), copy);
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace(), copy);
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3673,16 +3663,14 @@ void NDArray::applyBroadcast(sd::broadcast::BoolOps op,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), shapeInfo(),
                          getContext()->getWorkspace(), copy);
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace(), copy);
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3751,16 +3739,14 @@ void NDArray::applyBroadcast(sd::broadcast::IntOps op,
   Nd4jLong const* yShapeInfoD = other.specialShapeInfo();
 
   if (!isSameShape(target)) {
-    auto xPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto xPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), shapeInfo(),
                          getContext()->getWorkspace(), copy);
     xShapeInfoH = reinterpret_cast<Nd4jLong const*>(xPack.primary());
     xShapeInfoD = reinterpret_cast<Nd4jLong const*>(xPack.special());
   }
   if (!other.isSameShape(target)) {
-    auto yPack = ConstantShapeHelper::getInstance()
-                     ->createShapeInfoWithUnitiesForBroadcast(
+    auto yPack = ConstantShapeHelper::getInstance().createShapeInfoWithUnitiesForBroadcast(
                          target.shapeInfo(), other.shapeInfo(),
                          other.getContext()->getWorkspace(), copy);
     yShapeInfoH = reinterpret_cast<Nd4jLong const*>(yPack.primary());
@@ -3787,9 +3773,9 @@ void NDArray::applyBroadcast(sd::broadcast::Ops op,
 
 ////////////////////////////////////////////////////////////////////////
 void* NDArray::operator new(size_t i) {
-  if (sd::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached()) {
+  if (sd::memory::MemoryRegistrator::getInstance().hasWorkspaceAttached()) {
     sd::memory::Workspace* ws =
-        sd::memory::MemoryRegistrator::getInstance()->getWorkspace();
+        sd::memory::MemoryRegistrator::getInstance().getWorkspace();
     return ws->allocateBytes((Nd4jLong)i);
   } else {
     auto p = malloc(i);
@@ -3800,7 +3786,7 @@ void* NDArray::operator new(size_t i) {
 
 ////////////////////////////////////////////////////////////////////////
 void NDArray::operator delete(void* p) {
-  if (!sd::memory::MemoryRegistrator::getInstance()->hasWorkspaceAttached())
+  if (!sd::memory::MemoryRegistrator::getInstance().hasWorkspaceAttached())
     free(p);
 }
 
@@ -4072,8 +4058,8 @@ void NDArray::varianceAlongDimension(sd::variance::Ops op, NDArray& target,
   else {
     std::vector<int> copy(dimensions);
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         this->shapeInfo(), dimensions);
     NativeOpExecutioner::execSummaryStats(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5021,8 +5007,8 @@ void NDArray::applyIndexReduce(sd::indexreduce::Ops op, NDArray& target,
     std::vector<int> copy = dimensions;
     shape::checkDimensions(rankOf(), copy);
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         shapeInfo(), copy);
     NativeOpExecutioner::execIndexReduce(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5134,11 +5120,11 @@ NDArray NDArray::applyReduce3(sd::reduce3::Ops op, const NDArray& other,
         result.shapeInfo(), result.specialBuffer(), result.specialShapeInfo());
   } else {
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
 
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         shapeInfo(), copy);
-    auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
         other.shapeInfo(), copy);
 
     if (!shape::equalsSoft(packX.primaryShapeInfo(),
@@ -5183,8 +5169,8 @@ NDArray NDArray::applyAllReduce3(sd::reduce3::Ops op, const NDArray& other,
   shape::checkDimensions(other.rankOf(), copy);
 
   auto packX =
-      ConstantTadHelper::getInstance()->tadForDimensions(shapeInfo(), copy);
-  auto packY = ConstantTadHelper::getInstance()->tadForDimensions(
+      ConstantTadHelper::getInstance().tadForDimensions(shapeInfo(), copy);
+  auto packY = ConstantTadHelper::getInstance().tadForDimensions(
       other.shapeInfo(), copy);
 
   // check tads shapes
@@ -5194,7 +5180,7 @@ NDArray NDArray::applyAllReduce3(sd::reduce3::Ops op, const NDArray& other,
         "different !");
 
   // set newShape for output array
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       DataTypeUtils::pickFloatingType(dataType()), 'c',
       {packX.numberOfTads(), packY.numberOfTads()});
 
@@ -5208,7 +5194,7 @@ NDArray NDArray::applyAllReduce3(sd::reduce3::Ops op, const NDArray& other,
           ? const_cast<ExtraArguments*>(extraParams)->argumentsAsT(dataType())
           : nullptr;
 
-  auto pDims = sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
+  auto pDims = sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
 
   NDArray::prepareSpecialUse({&result}, {this, &other});
   NativeOpExecutioner::execReduce3All(
@@ -5259,7 +5245,7 @@ void NDArray::reduceAlongDimension(sd::reduce::FloatOps op, NDArray& target,
         specialShapeInfo(), nullptr, target.buffer(), target.shapeInfo(),
         target.specialBuffer(), target.specialShapeInfo());
   } else {
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         shapeInfo(), copy);
     NativeOpExecutioner::execReduceFloat(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5309,8 +5295,8 @@ void NDArray::reduceAlongDimension(sd::reduce::SameOps op, NDArray& target,
         target.specialBuffer(), target.specialShapeInfo());
   } else {  // if (!isEmpty()) {
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         this->shapeInfo(), copy);
     NativeOpExecutioner::execReduceSame(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5360,8 +5346,8 @@ void NDArray::reduceAlongDimension(sd::reduce::LongOps op, NDArray& target,
         target.specialBuffer(), target.specialShapeInfo());
   } else {
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         this->shapeInfo(), copy);
     NativeOpExecutioner::execReduceLong(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5411,8 +5397,8 @@ void NDArray::reduceAlongDimension(sd::reduce::BoolOps op, NDArray& target,
         target.specialBuffer(), target.specialShapeInfo());
   } else {
     auto pDims =
-        sd::Environment::getInstance()->isCPU() ? copy.data() : nullptr;
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        sd::Environment::getInstance().isCPU() ? copy.data() : nullptr;
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         this->shapeInfo(), copy);
     NativeOpExecutioner::execReduceBool(
         getContext(), op, buffer(), shapeInfo(), specialBuffer(),
@@ -5668,7 +5654,7 @@ void NDArray::addRowVector(const NDArray& row, NDArray& target) const {
 
   int dimension = 1;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({&target}, {this, &row});
@@ -5699,7 +5685,7 @@ void NDArray::subRowVector(const NDArray& row, NDArray& target) const {
 
   int dimension = 1;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({&target}, {this, &row});
@@ -5729,7 +5715,7 @@ void NDArray::mulRowVector(const NDArray& row, NDArray& target) const {
 
   int dimension = 1;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({&target}, {this, &row});
@@ -5762,7 +5748,7 @@ void NDArray::divRowVector(const NDArray& row, NDArray& target) const {
 
   int dimension = 1;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({&target}, {this, &row});
@@ -5788,7 +5774,7 @@ void NDArray::addiRowVector(const NDArray& row) {
 
   int dimension = 1;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({this}, {&row});
@@ -5818,7 +5804,7 @@ void NDArray::addColumnVector(const NDArray& column, NDArray& target) const {
 
   int dimension = 0;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({&target}, {this, &column});
@@ -5845,7 +5831,7 @@ void NDArray::addiColumnVector(const NDArray& column) {
 
   int dimension = 0;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({this}, {&column});
@@ -5872,7 +5858,7 @@ void NDArray::muliColumnVector(const NDArray& column) {
 
   int dimension = 0;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       this->shapeInfo(), dimension);
 
   NDArray::prepareSpecialUse({this}, {&column});
@@ -5925,7 +5911,7 @@ ResultSet NDArray::multipleTensorsAlongDimension(
 
   if (indices.size() == 0) return result;
 
-  auto pack = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto pack = ConstantTadHelper::getInstance().tadForDimensions(
       shapeInfo(), const_cast<int*>(dimensions.data()), dimensions.size());
 
   auto tadLength = shape::length(pack.primaryShapeInfo());
@@ -6043,7 +6029,7 @@ ResultSet NDArray::allTensorsAlongDimension(
         "NDArray::allTensorsAlongDimension static function: all input "
         "dimensions must be smaller than rank of input array !");
 
-  auto pack = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto pack = ConstantTadHelper::getInstance().tadForDimensions(
       _shapeInfo, const_cast<int*>(dimensions.data()), dimensions.size());
   auto numTads = pack.numberOfTads();
 
@@ -6176,12 +6162,10 @@ void NDArray::setShapeInfo(const Nd4jLong* shapeInfo) {
   if (shapeInfo != nullptr) {
     ShapeDescriptor descriptor(shapeInfo);
     auto shapeBuffer =
-        ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor);
+        ConstantShapeHelper::getInstance().bufferForShapeInfo(descriptor);
 
-    _shapeInfo = reinterpret_cast<Nd4jLong*>(shapeBuffer.primary());
-#ifdef __CUDABLAS__
-    _shapeInfoD = reinterpret_cast<Nd4jLong*>(shapeBuffer.special());
-#endif
+    _shapeInfo = shapeBuffer.primary();
+    _shapeInfoD = shapeBuffer.special();
 
     if (ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
       _length = 0;
@@ -6203,12 +6187,10 @@ void NDArray::setShapeInfo(const Nd4jLong* shapeInfo,
         shapeInfo, dtype, true, getContext()->getWorkspace());
     ShapeDescriptor descriptor(shapeInfoTemp);
     auto shapeBuffer =
-        ConstantShapeHelper::getInstance()->bufferForShapeInfo(descriptor);
+        ConstantShapeHelper::getInstance().bufferForShapeInfo(descriptor);
 
-    _shapeInfo = reinterpret_cast<Nd4jLong*>(shapeBuffer.primary());
-#ifdef __CUDABLAS__
-    _shapeInfoD = reinterpret_cast<Nd4jLong*>(shapeBuffer.special());
-#endif
+    _shapeInfo = shapeBuffer.primary();
+    _shapeInfoD = shapeBuffer.special();
 
     if (ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
       _length = 0;
@@ -6224,13 +6206,12 @@ void NDArray::setShapeInfo(const Nd4jLong* shapeInfo,
 
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(const ShapeDescriptor& descriptor) {
-  auto shapeBuffer = ConstantShapeHelper::getInstance()->bufferForShapeInfo(
+  auto shapeBuffer = ConstantShapeHelper::getInstance().bufferForShapeInfo(
       const_cast<ShapeDescriptor&>(descriptor));
 
-  _shapeInfo = reinterpret_cast<Nd4jLong*>(shapeBuffer.primary());
-#ifdef __CUDABLAS__
-  _shapeInfoD = reinterpret_cast<Nd4jLong*>(shapeBuffer.special());
-#endif
+  _shapeInfo = shapeBuffer.primary();
+  _shapeInfoD = shapeBuffer.special();
+
 
   if (ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
     _length = 0;
@@ -6241,13 +6222,10 @@ void NDArray::setShapeInfo(const ShapeDescriptor& descriptor) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void NDArray::setShapeInfo(const ConstantDataBuffer& shapeBuffer) {
-  _shapeInfo = reinterpret_cast<Nd4jLong*>(
-      const_cast<ConstantDataBuffer&>(shapeBuffer).primary());
-#ifdef __CUDABLAS__
-  _shapeInfoD = reinterpret_cast<Nd4jLong*>(
-      const_cast<ConstantDataBuffer&>(shapeBuffer).special());
-#endif
+void NDArray::setShapeInfo(const ConstantShapeBuffer& shapeBuffer) {
+  _shapeInfo = shapeBuffer.primary();
+  _shapeInfoD = shapeBuffer.special();
+
 
   if (ArrayOptions::arrayType(_shapeInfo) == ArrayType::EMPTY)
     _length = 0;
@@ -6709,7 +6687,7 @@ NDArray operator+(T1&& arr1, T2&& arr2) {
     throw std::runtime_error(
         "operator+(T&& arr1, T&& arr2): you can't use this method on String "
         "arrays!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       arr1.dataType() != arr2.dataType() &&
       (arr1.dataType() != DataType::BOOL || arr2.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -6783,7 +6761,7 @@ NDArray operator-(T1&& arr1, T2&& arr2) {
     throw std::runtime_error(
         "operator-(T&& arr1, T&& arr2): you can't use this method on String "
         "arrays!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       arr1.dataType() != arr2.dataType() &&
       (arr1.dataType() != DataType::BOOL || arr2.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -6857,7 +6835,7 @@ NDArray operator*(T1&& arr1, T2&& arr2) {
     throw std::runtime_error(
         "operator*(T&& arr1, T&& arr2): you can't use this method on String "
         "arrays!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       arr1.dataType() != arr2.dataType() &&
       (arr1.dataType() != DataType::BOOL || arr2.dataType() != BOOL))
     throw sd::datatype_exception::build(
@@ -6931,7 +6909,7 @@ NDArray operator/(T1&& arr1, T2&& arr2) {
     throw std::runtime_error(
         "operator/(T&& arr1, T&& arr2): you can't use this method on String "
         "arrays!");
-  if (!Environment::getInstance()->isExperimentalBuild() &&
+  if (!Environment::getInstance().isExperimentalBuild() &&
       arr1.dataType() != arr2.dataType() &&
       (arr1.dataType() != DataType::BOOL || arr2.dataType() != BOOL))
     throw sd::datatype_exception::build(

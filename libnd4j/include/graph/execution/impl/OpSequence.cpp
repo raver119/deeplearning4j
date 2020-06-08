@@ -87,7 +87,7 @@ void OpSequence::append(const std::shared_ptr<sd::ops::DeclarableOp> &op,
 void OpSequence::append(sd::ops::DeclarableOp *op,
                         const ContextPrototype &ctx) {
   auto rop =
-      sd::ops::OpRegistrator::getInstance()->getOperation(op->getOpHash());
+      sd::ops::OpRegistrator::getInstance().getOperation(op->getOpHash());
   append(rop, ctx);
 }
 

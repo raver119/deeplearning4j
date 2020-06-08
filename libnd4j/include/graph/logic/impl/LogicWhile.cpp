@@ -98,7 +98,7 @@ Nd4jStatus LogicWhile::processNode(Graph *graph, Node *node) {
       // now we should take result of the Scope run, and evaluate it
       auto result = __variableSpace->getVariable(lastNode)->getNDArray();
 
-      if (Environment::getInstance()->isDebugAndVerbose())
+      if (Environment::getInstance().isDebugAndVerbose())
           result->printBuffer("Result of the last node:");
 
       // if result evaluates to 0.0 - condition returned FALSE

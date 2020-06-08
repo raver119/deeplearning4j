@@ -28,7 +28,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT ConstantOffsetsBuffer {
+class SD_EXPORT ConstantOffsetsBuffer {
  private:
   std::shared_ptr<PointerWrapper> _primaryOffsets;
   std::shared_ptr<PointerWrapper> _specialOffsets;

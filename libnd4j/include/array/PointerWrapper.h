@@ -27,7 +27,7 @@
 #include <memory>
 
 namespace sd {
-class ND4J_EXPORT PointerWrapper {
+class SD_EXPORT PointerWrapper {
  private:
   void* _pointer = nullptr;
   std::shared_ptr<PointerDeallocator> _deallocator;

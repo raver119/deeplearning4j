@@ -28,7 +28,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT ConstantShapeBuffer {
+class SD_EXPORT ConstantShapeBuffer {
  private:
   std::shared_ptr<PointerWrapper> _primaryShapeInfo;
   std::shared_ptr<PointerWrapper> _specialShapeInfo;

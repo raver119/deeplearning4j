@@ -48,7 +48,7 @@ Node::Node(const ops::DeclarableOp &opName, const std::string &nodeName,
            const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs,
            const std::vector<bool> &bArgs, const std::vector<DataType> &dArgs) {
   auto customOp =
-      ops::OpRegistrator::getInstance()->getOperation(opName.getOpHash());
+      ops::OpRegistrator::getInstance().getOperation(opName.getOpHash());
 
   this->_name = nodeName;
   this->_opType = OpType_CUSTOM;
@@ -77,7 +77,7 @@ Node::Node(const ops::DeclarableOp &opName, const std::string &nodeName,
 Node::Node(const std::string &opName, const std::string &nodeName,
            const std::vector<double> &tArgs, const std::vector<Nd4jLong> &iArgs,
            const std::vector<bool> &bArgs, const std::vector<DataType> &dArgs) {
-  auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
+  auto customOp = ops::OpRegistrator::getInstance().getOperation(opName);
 
   this->_name = nodeName;
   this->_opType = OpType_CUSTOM;
@@ -287,7 +287,7 @@ Node::Node(const std::string &opName, const std::string &nodeName, const int id,
            const std::vector<std::string> &inputs,
            const std::vector<double> &tArgs,
            const std::vector<Nd4jLong> &iArgs) {
-  auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
+  auto customOp = ops::OpRegistrator::getInstance().getOperation(opName);
 
   this->_opType = OpType_CUSTOM;
   this->_id = id;
@@ -316,7 +316,7 @@ Node::Node(const std::string &opName, const int id,
            const std::vector<std::pair<int, int>> &inputs,
            const std::vector<double> &tArgs,
            const std::vector<Nd4jLong> &iArgs) {
-  auto customOp = ops::OpRegistrator::getInstance()->getOperation(opName);
+  auto customOp = ops::OpRegistrator::getInstance().getOperation(opName);
 
   this->_opType = OpType_CUSTOM;
   this->_id = id;
@@ -354,9 +354,9 @@ Node::Node(sd::ops::DeclarableOp *customOp, int id,
 
   // if custom op is a registered one - pull it from cache, otherwise - clone
   // locally
-  if (sd::ops::OpRegistrator::getInstance()->hasOperation(_opNum))
+  if (sd::ops::OpRegistrator::getInstance().hasOperation(_opNum))
     this->_customOp =
-        sd::ops::OpRegistrator::getInstance()->getOperation(_opNum);
+        sd::ops::OpRegistrator::getInstance().getOperation(_opNum);
   else
     throw std::runtime_error(
         "Can't create a node with custom operation within");

@@ -33,11 +33,11 @@ class GraphHolderTests : public testing::Test {
 TEST_F(GraphHolderTests, SimpleTests_1) {
   Graph graph;
   Nd4jLong graphId = 119;
-  GraphHolder::getInstance()->registerGraph(graphId, graph);
+  GraphHolder::getInstance().registerGraph(graphId, graph);
 
   ASSERT_TRUE(GraphHolder::getInstance().hasGraph(graphId));
 
-  GraphHolder::getInstance()->forgetGraph(graphId);
+  GraphHolder::getInstance().forgetGraph(graphId);
 
-  ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(graphId));
+  ASSERT_FALSE(GraphHolder::getInstance().hasGraph(graphId));
 }

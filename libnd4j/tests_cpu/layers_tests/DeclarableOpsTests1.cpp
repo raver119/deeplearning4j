@@ -1758,7 +1758,7 @@ TEST_F(DeclarableOpsTests1, TestRegistrator1) {
 //     std::string opName("add");
 
 //     auto hash =
-//     sd::ops::HashHelper::getInstance().getInstance()->getLongHash(opName);
+//     sd::ops::HashHelper::getInstance().getInstance().getLongHash(opName);
 
 //     auto inputBuffers = new Nd4jPointer[2];
 //     auto inputShapes = new Nd4jPointer[2];
@@ -1810,7 +1810,7 @@ TEST_F(DeclarableOpsTests1, TestRegistrator1) {
 //     std::string opName("add");
 
 //     auto hash =
-//     sd::ops::HashHelper::getInstance().getInstance()->getLongHash(opName);
+//     sd::ops::HashHelper::getInstance().getInstance().getLongHash(opName);
 
 //     auto inputBuffers = new Nd4jPointer[2];
 //     auto inputShapes = new Nd4jPointer[2];

@@ -26,7 +26,7 @@
 
 namespace sd {
 
-class ND4J_EXPORT PointerDeallocator {
+class SD_EXPORT PointerDeallocator {
  public:
   PointerDeallocator() = default;
   ~PointerDeallocator() = default;

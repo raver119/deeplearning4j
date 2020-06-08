@@ -26,7 +26,7 @@
 #include <array/PointerDeallocator.h>
 
 namespace sd {
-class ND4J_EXPORT PrimaryPointerDeallocator : public PointerDeallocator {
+class SD_EXPORT PrimaryPointerDeallocator : public PointerDeallocator {
  public:
   PrimaryPointerDeallocator() = default;
   ~PrimaryPointerDeallocator() = default;

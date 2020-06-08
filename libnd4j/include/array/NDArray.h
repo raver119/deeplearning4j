@@ -192,8 +192,8 @@ class SD_EXPORT NDArray {
    *  contains shape info:  matrix rank, numbers of elements per each dimension,
    * dimensions strides, element-wise-stride, c-like or fortan-like order
    */
-  constNd4jLong* _shapeInfo = nullptr;
-  constNd4jLong* _shapeInfoD = nullptr;
+  const Nd4jLong* _shapeInfo = nullptr;
+  const Nd4jLong* _shapeInfoD = nullptr;
 
   /**
    *  pointer on device launch context (with all data needed there).
