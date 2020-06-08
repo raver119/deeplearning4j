@@ -407,6 +407,15 @@ namespace sd {
                 _handles.emplace_back(array);
         }
 
+        void Context::setInputArray(int index, NDArray const& array) {
+            if (_fastpath_in.size() < index + 1)
+                _fastpath_in.resize(index + 1);
+            auto pArr = new NDArray(array);
+            _fastpath_in[index] = pArr;
+            _handles.emplace_back(pArr);
+        }
+
+
         void Context::setInputArray(int index, void *buffer, void * shapeInfo, void *specialBuffer, void * specialShapeInfo) {
             this->setInputArray(index, buffer, const_cast<const void*>(shapeInfo), specialBuffer, const_cast<const void *>(specialShapeInfo));
         }
@@ -423,6 +432,15 @@ namespace sd {
             if (_context != nullptr)
                 array->setContext(_context);
         }
+
+        void Context::setOutputArray(int index, NDArray const& array) {
+            if (_fastpath_out.size() < index + 1)
+                _fastpath_out.resize(index + 1);
+            auto pArray = new NDArray(array);
+            _fastpath_out[index] = pArray;
+            _handles.emplace_back(pArray);
+        }
+
 
         void Context::setOutputArray(int index, NDArray *array, bool removable) {
             if (_fastpath_out.size() < index + 1)
