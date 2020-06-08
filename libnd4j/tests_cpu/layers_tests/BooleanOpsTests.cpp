@@ -32,16 +32,13 @@ public:
 
 
 TEST_F(BooleanOpsTests, LtTest_1) {
-    auto x = NDArrayFactory::create_(1.0f);
-    auto y = NDArrayFactory::create_(2.0f);
+    auto x = NDArrayFactory::create(1.0f);
+    auto y = NDArrayFactory::create(2.0f);
 
     sd::ops::lt_scalar op;
 
 
-    ASSERT_TRUE(op.verify({x, y}));
-
-    delete x;
-    delete y;
+    ASSERT_TRUE(op.verify({&x, &y}));
 }
 
 TEST_F(BooleanOpsTests, LtTest_2) {

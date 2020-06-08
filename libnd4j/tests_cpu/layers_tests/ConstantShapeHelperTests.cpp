@@ -140,15 +140,13 @@ TEST_F(ConstantShapeHelperTests, basic_test_4) {
 
     auto dup = array.dup('f');
 
-    ASSERT_TRUE(dup->shapeInfo() != nullptr);
+    ASSERT_TRUE(dup.shapeInfo() != nullptr);
 
 #ifdef __CUDABLAS__
     ASSERT_TRUE(dup->specialShapeInfo() != nullptr);
     PointersManager manager(sd::LaunchContext ::defaultContext(), "test");
     // manager.printDevContentOnDev<Nd4jLong>(dup->specialShapeInfo(), shape::shapeInfoLength(2), 0);
 #endif
-
-    delete dup;
 }
 
 

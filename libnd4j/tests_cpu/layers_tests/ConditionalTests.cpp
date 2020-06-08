@@ -51,10 +51,10 @@ TEST_F(ConditionalTests, BasicTests_1) {
 
     auto variableSpace = graph.getVariableSpace();
 
-    variableSpace->putVariable(-1, x);
-    variableSpace->putVariable(-2, y0);
-    variableSpace->putVariable(-3, y1);
-    variableSpace->putVariable(-4, scalar);
+    variableSpace->putVariable(-1, new NDArray(x));
+    variableSpace->putVariable(-2, new NDArray(y0));
+    variableSpace->putVariable(-3, new NDArray(y1));
+    variableSpace->putVariable(-4, new NDArray(scalar));
 
 
     auto scopeCondition = new Node(OpType_LOGIC, logic::Scope, 1);

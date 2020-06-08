@@ -904,7 +904,7 @@ TEST_F(ConvolutionTests2, maxpool2d_1) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -948,7 +948,7 @@ TEST_F(ConvolutionTests2, maxpool2d_2) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -992,7 +992,7 @@ TEST_F(ConvolutionTests2, maxpool2d_3) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -1036,7 +1036,7 @@ TEST_F(ConvolutionTests2, maxpool2d_4) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -1080,7 +1080,7 @@ TEST_F(ConvolutionTests2, maxpool2d_5) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -1696,8 +1696,8 @@ TEST_F(ConvolutionTests2, maxpool2d_bp_1) {
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, epsilon);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(epsilon));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -1880,8 +1880,8 @@ TEST_F(ConvolutionTests2, avgpool2d_bp_1) {
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, epsilon);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(epsilon));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -2051,8 +2051,8 @@ TEST_F(ConvolutionTests2, pnormpool2d_bp_1) {
     auto exp     = NDArrayFactory::create<float>('c', {bS,iD,iH,iW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, epsilon);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(epsilon));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);

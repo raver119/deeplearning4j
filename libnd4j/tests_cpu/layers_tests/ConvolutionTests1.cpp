@@ -62,21 +62,21 @@ TYPED_TEST(TypedConvolutionTests1, conv2d_1) {
     Nd4jLong _expS[]{4, 1, 3, 5, 4, 60, 20, 4, 1, typeid(TypeParam) == typeid(float) ? 8192 : 16384, 1, 99};
     auto input = NDArrayFactory::create<TypeParam>('c', {bS, iC, iH, iW});
     auto weights = NDArrayFactory::create<TypeParam>('c', {oC, iC, kH, kW});
-    for (int e = 0; e < input->lengthOf(); e++)
+    for (int e = 0; e < input.lengthOf(); e++)
         input.p(e, e + 1);
 
-    for (int e = 0; e < weights->lengthOf(); e++)
+    for (int e = 0; e < weights.lengthOf(); e++)
         weights.p(e, e + 1);
     weights.permutei({2,3,1,0});
 
     // weights->printShapeInfo("weights");
 
-    ArrayOptions::setDataType(_expS, input->dataType());
+    ArrayOptions::setDataType(_expS, input.dataType());
     auto exp = new NDArray(_expB, _expS);
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input.dup());
-    variableSpace->putVariable(-2, weights.dup());
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(weights));
 
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({-1, -2});
@@ -394,17 +394,17 @@ TEST_F(ConvolutionTests1, sconv2d_1) {
     int B = 2;
 
     auto input = NDArrayFactory::create<float>('c', {B, iC, iY, iX});
-    for (int e = 0; e < input->lengthOf(); e++)
+    for (int e = 0; e < input.lengthOf(); e++)
         input.p(e, e+1);
 
     auto weights = NDArrayFactory::create<float>('c', {oC, iC, kY, kX});
-    for (int e = 0; e < weights->lengthOf(); e++)
+    for (int e = 0; e < weights.lengthOf(); e++)
         weights.p(e, e+1);
-    weights->permutei({2,3,1,0});
+    weights.permutei({2,3,1,0});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, input.dup());
-    variableSpace->putVariable(-2, weights.dup());
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(weights));
 
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({-1, -2});
