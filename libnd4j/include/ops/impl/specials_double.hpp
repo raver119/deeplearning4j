@@ -258,9 +258,9 @@ void DoubleMethods<X, Y>::sortTadByKey(void *vx, Nd4jLong const *xShapeInfo,
   auto x = reinterpret_cast<X *>(vx);
   auto y = reinterpret_cast<Y *>(vy);
 
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       xShapeInfo, dimension, dimensionLength);
-  auto packY = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = ConstantTadHelper::getInstance().tadForDimensions(
       yShapeInfo, dimension, dimensionLength);
 
   auto xLength = shape::length(xShapeInfo);
@@ -289,9 +289,9 @@ void DoubleMethods<X, Y>::sortTadByValue(void *vx, Nd4jLong const *xShapeInfo,
   auto x = reinterpret_cast<X *>(vx);
   auto y = reinterpret_cast<Y *>(vy);
 
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       xShapeInfo, dimension, dimensionLength);
-  auto packY = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = ConstantTadHelper::getInstance().tadForDimensions(
       yShapeInfo, dimension, dimensionLength);
 
   auto xLength = shape::length(xShapeInfo);

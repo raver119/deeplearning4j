@@ -134,7 +134,7 @@ void SummaryStatsReduce<X, Z>::exec(const bool biasCorrected, const void *vx,
   // no-op
   if (dimensionLength < 1) return;
 
-  auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       xShapeInfo, dimension, dimensionLength);
 
   // pre squeezed: this is for keeping the pointer to the original

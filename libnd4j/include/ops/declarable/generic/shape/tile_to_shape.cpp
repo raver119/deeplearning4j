@@ -48,7 +48,7 @@ DECLARE_SHAPE_FN(tile_to_shape) {
 
   auto conv = ArrayUtils::toLongVector(block.getIArguments());
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(in), shape::order(in), conv);
 
   return SHAPELIST(newShape);

@@ -41,10 +41,10 @@ MemoryTracker::MemoryTracker() {
   //
 }
 
-MemoryTracker *MemoryTracker::getInstance() {
-  if (_INSTANCE == 0) _INSTANCE = new MemoryTracker();
+MemoryTracker &MemoryTracker::getInstance() {
+  static MemoryTracker instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 #if defined(__GNUC__) && !defined(__MINGW64__) &&           \
@@ -99,7 +99,7 @@ void MemoryTracker::countIn(MemoryType type, Nd4jPointer ptr,
 #if defined(__GNUC__) && !defined(__MINGW64__) &&           \
     !defined(SD_ANDROID_BUILD) && !defined(SD_IOS_BUILD) && \
     !defined(SD_APPLE_BUILD)
-  if (Environment::getInstance()->isDetectingLeaks()) {
+  if (Environment::getInstance().isDetectingLeaks()) {
     auto lptr = reinterpret_cast<Nd4jLong>(ptr);
 
     _locker.lock();
@@ -136,7 +136,7 @@ void MemoryTracker::countOut(Nd4jPointer ptr) {
 #if defined(__GNUC__) && !defined(__MINGW64__) &&           \
     !defined(SD_ANDROID_BUILD) && !defined(SD_IOS_BUILD) && \
     !defined(SD_APPLE_BUILD)
-  if (Environment::getInstance()->isDetectingLeaks()) {
+  if (Environment::getInstance().isDetectingLeaks()) {
     auto lptr = reinterpret_cast<Nd4jLong>(ptr);
 
     _locker.lock();
@@ -177,6 +177,5 @@ void MemoryTracker::reset() {
   _released.clear();
 }
 
-MemoryTracker *MemoryTracker::_INSTANCE = 0;
 }  // namespace memory
 }  // namespace sd

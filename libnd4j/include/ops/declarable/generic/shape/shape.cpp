@@ -44,7 +44,7 @@ DECLARE_SHAPE_FN(shape_of) {
   auto dtype = DataType::INT64;
   if (block.numI() > 0) dtype = DataTypeUtils::fromInt(INT_ARG(0));
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(
       shape::rank(inShape), dtype));
 };
 

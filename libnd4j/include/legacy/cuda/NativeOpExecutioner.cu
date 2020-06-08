@@ -269,7 +269,7 @@ void NativeOpExecutioner::execBroadcastBool(
         "NativeOpExecutioner::execBroadcastBool requires both X & Y operands "
         "to have same type");
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("F3B opNum:[%i]\n", opNum);
 
   dim3 launchDims(256, 256, 1024);
@@ -473,7 +473,7 @@ void NativeOpExecutioner::execInverseBroadcastInt(
         "NativeOpExecutioner::execBroadcastInt requires both X & Y operands to "
         "have same type");
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("F3BI opNum:[%i]\n", opNum);
 
   dim3 launchDims(256, 256, 1024);
@@ -638,7 +638,7 @@ void NativeOpExecutioner::execReduceSame(
   auto stream = lc->getCudaStream();
   auto reductionPointer = lc->getReductionPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("SF7 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -677,7 +677,7 @@ void NativeOpExecutioner::execReduceLong(
   auto stream = lc->getCudaStream();
   auto reductionPointer = lc->getReductionPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("LF7 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -715,7 +715,7 @@ void NativeOpExecutioner::execReduceBool(
   auto stream = lc->getCudaStream();
   auto reductionPointer = lc->getReductionPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("BF7 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -765,7 +765,7 @@ void NativeOpExecutioner::execIndexReduce(
   auto reductionPointer = lc->getReductionPointer();
   auto allocationPointer = lc->getAllocationPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("F2 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -814,7 +814,7 @@ void NativeOpExecutioner::execReduceFloat(
   auto stream = lc->getCudaStream();
   auto reductionPointer = lc->getReductionPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("F8 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -850,7 +850,7 @@ void NativeOpExecutioner::execIndexReduceScalar(
     Nd4jLong const* hXShapeInfo, void const* dX, Nd4jLong const* dXShapeInfo,
     void* extraParams, void* hZ, Nd4jLong const* hZShapeInfo, void* dZ,
     Nd4jLong const* dZShapeInfo) {
-  if (sd::Environment::getInstance()->isDebug())
+  if (sd::Environment::getInstance().isDebug())
     printf("F1 opNum:[%i]\n", opNum);
 
   auto stream = lc->getCudaStream();
@@ -862,7 +862,7 @@ void NativeOpExecutioner::execIndexReduceScalar(
   auto numBlocks = CudaLaunchHelper::getReductionBlocks(xLength, blockWidth);
   dim3 launchDims(numBlocks == 0 ? 1 : numBlocks, blockWidth, 32768);
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose() && launchDims.x == 1)
+  if (sd::Environment::getInstance().isDebugAndVerbose() && launchDims.x == 1)
     printf("AF1 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
@@ -1791,12 +1791,12 @@ void NativeOpExecutioner::execReduce3All(
   auto allocationPointer = lc->getAllocationPointer();
   auto reductionPointer = lc->getReductionPointer();
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("D119 opNum:[%i]\n", opNum);
 
   dim3 launchDims(shape::length(hZShapeInfo), 256, 32768);
 
-  if (sd::Environment::getInstance()->isVerbose() && launchDims.x == 1)
+  if (sd::Environment::getInstance().isVerbose() && launchDims.x == 1)
     printf("AD119 opNum:[%i]\n", opNum);
 
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);

@@ -27,6 +27,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(histogram, 1, 1, false, 0, 1) {
   auto input = INPUT_VARIABLE(0);
   auto numBins = INT_ARG(0);
@@ -44,7 +45,7 @@ CUSTOM_OP_IMPL(histogram, 1, 1, false, 0, 1) {
 DECLARE_SHAPE_FN(histogram) {
   auto numBins = INT_ARG(0);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(
       numBins, sd::DataType::INT64));
 }
 

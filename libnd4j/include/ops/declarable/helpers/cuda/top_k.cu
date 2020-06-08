@@ -94,7 +94,7 @@ int inTopKFunctor(sd::LaunchContext* context, const NDArray* predictions,
                   const NDArray* targets, NDArray* output, const uint k) {
   PointersManager manager(context, "in_top_k");
 
-  const auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  const auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       predictions->shapeInfo(), {1});
 
   const int threadsPerBlock = MAX_NUM_THREADS;
@@ -265,11 +265,11 @@ template <typename X, typename Y>
 static int topKFunctor_(sd::LaunchContext* context, const NDArray* input,
                         NDArray* values, NDArray* indices, const uint k,
                         bool needSort) {
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {input->rankOf() - 1});
-  auto packI = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packI = ConstantTadHelper::getInstance().tadForDimensions(
       indices->shapeInfo(), {input->rankOf() - 1});
-  auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
       values->shapeInfo(), {input->rankOf() - 1});
 
   auto tadLength = shape::length(packX.primaryShapeInfo());

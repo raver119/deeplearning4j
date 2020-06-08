@@ -38,7 +38,7 @@ class SD_EXPORT DeclarableBenchmark : public OpBenchmark {
   DeclarableBenchmark(sd::ops::DeclarableOp &op, std::string name = 0)
       : OpBenchmark() {
     _op =
-        &op;  // ops::OpRegistrator::getInstance()->getOperation(op.getOpHash());
+        &op;  // ops::OpRegistrator::getInstance().getOperation(op.getOpHash());
     _testName = name;
   }
 

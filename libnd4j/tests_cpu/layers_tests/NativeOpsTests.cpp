@@ -94,7 +94,7 @@ TEST_F(NativeOpsTests, ThresholdTests_1) {
   printf("Unsupported for cuda now.\n");
 #else
   ::setElementThreshold(4);
-  ASSERT_TRUE(4 == sd::Environment::getInstance()->elementwiseThreshold());
+  ASSERT_TRUE(4 == sd::Environment::getInstance().elementwiseThreshold());
 #endif
 }
 
@@ -105,7 +105,7 @@ TEST_F(NativeOpsTests, ThresholdTests_2) {
   printf("Unsupported for cuda now.\n");
 #else
   ::setTADThreshold(4);
-  ASSERT_TRUE(4 == sd::Environment::getInstance()->tadThreshold());
+  ASSERT_TRUE(4 == sd::Environment::getInstance().tadThreshold());
 #endif
 }
 
@@ -575,9 +575,9 @@ TEST_F(NativeOpsTests, Reduce3Test_4) {
   x.syncToDevice();
   dimension.syncToHost();
   int *dimensions = reinterpret_cast<int *>(dimension.buffer());
-  auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dimensions, dimension.lengthOf());
-  auto tadPackY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), dimensions, dimension.lengthOf());
 
   auto hTADShapeInfoX = tadPackX.primaryShapeInfo();
@@ -900,9 +900,9 @@ TEST_F(NativeOpsTests, ScalarTadTest_1) {
   z.syncToDevice();
   auto dimension = NDArrayFactory::create<int>({0, 1});
   auto dimensions = reinterpret_cast<int *>(dimension.buffer());
-  auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dimensions, dimension.lengthOf());
-  auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dimensions, dimension.lengthOf());
 
   OpaqueDataBuffer xBuf(x.dataBuffer());
@@ -946,9 +946,9 @@ TEST_F(NativeOpsTests, ScalarTadTest_2) {
   z.syncToDevice();
   auto dimension = NDArrayFactory::create<int>({0, 1});
   auto dimensions = reinterpret_cast<int *>(dimension.buffer());
-  auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dimensions, dimension.lengthOf());
-  auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dimensions, dimension.lengthOf());
   z.assign(true);
 
@@ -994,9 +994,9 @@ TEST_F(NativeOpsTests, ConcatTest_2) {
   auto dimension = NDArrayFactory::create<int>('c', {1}, {d});
   auto dimensions = reinterpret_cast<int *>(dimension.buffer());
   // auto tadPackX =
-  // sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(),
+  // sd::ConstantTadHelper::getInstance().tadForDimensions(x.shapeInfo(),
   // dimensions, dimension.lengthOf());
-  auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPackZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dimensions, dimension.lengthOf());
   exp.linspace(1);
   Nd4jPointer datas[] = {x.buffer(), y.buffer()};
@@ -1068,9 +1068,9 @@ TEST_F(NativeOpsTests, PullRowsTest_1) {
 
   std::vector<int> dims = {1};
 
-  auto xTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto xTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dims);
-  auto zTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto zTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dims);
 
   Nd4jPointer nativeStart[2];
@@ -1168,7 +1168,7 @@ TEST_F(NativeOpsTests, ShuffleTest_1) {
   Nd4jPointer dzShapeList[] = {(Nd4jPointer)z.specialShapeInfo(),
                                (Nd4jPointer)z.specialShapeInfo()};
   int shuffleMap[] = {1, 0, 4, 3, 2};
-  auto zTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto zTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {1});
   Nd4jPointer zListOffset[] = {(Nd4jPointer)zTadPack.platformOffsets(),
                                (Nd4jPointer)zTadPack.platformOffsets()};
@@ -1364,7 +1364,7 @@ TEST_F(NativeOpsTests, SortTest_4) {
       {1, 5, 5, 10, 34, 120, 3, 29, 78, 111, 138, 331, 4, 50, 56, 71, 73, 91});
 
   std::vector<int> dims({1});
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       sortedVals.shapeInfo(), {1});
   ::sortTad(nullptr, sortedVals.buffer(), sortedVals.shapeInfo(),
             sortedVals.specialBuffer(), sortedVals.specialShapeInfo(),

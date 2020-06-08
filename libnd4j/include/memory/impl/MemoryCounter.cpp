@@ -38,19 +38,19 @@ MemoryCounter::MemoryCounter() {
 
   // setting initial values for limits
   _groupLimits[sd::memory::MemoryType::HOST] =
-      sd::Environment::getInstance()->maxPrimaryMemory();
+      sd::Environment::getInstance().maxPrimaryMemory();
   _groupLimits[sd::memory::MemoryType::DEVICE] =
-      sd::Environment::getInstance()->maxSpecialMemory();
+      sd::Environment::getInstance().maxSpecialMemory();
 
   // setting initial counter values
   _groupCounters[sd::memory::MemoryType::HOST] = 0;
   _groupCounters[sd::memory::MemoryType::DEVICE] = 0;
 }
 
-MemoryCounter* MemoryCounter::getInstance() {
-  if (_INSTANCE == 0) _INSTANCE = new MemoryCounter();
+MemoryCounter& MemoryCounter::getInstance() {
+  static MemoryCounter instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 void MemoryCounter::countIn(int deviceId, Nd4jLong numBytes) {
@@ -130,6 +130,5 @@ Nd4jLong MemoryCounter::groupLimit(sd::memory::MemoryType group) {
   return _groupLimits[group];
 }
 
-MemoryCounter* MemoryCounter::_INSTANCE = 0;
 }  // namespace memory
 }  // namespace sd

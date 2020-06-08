@@ -18,44 +18,43 @@
 //  @author raver119@gmail.com
 //
 
-#include "../TadPack.h"
-
+#include <array/TadPack.h>
 #include <helpers/shape.h>
 #include <system/Environment.h>
 
 namespace sd {
-TadPack::TadPack(ConstantDataBuffer& shapes, ConstantDataBuffer& offets,
-                 Nd4jLong numTads) {
-  _tadShape = shapes;
-  _tadOffsets = offets;
+TadPack::TadPack(const ConstantShapeBuffer& shapes, const ConstantOffsetsBuffer& offets,
+                 Nd4jLong numTads) :
+  _tadShape (shapes),
+  _tadOffsets (offets) {
   _numTads = numTads;
 }
 
 const Nd4jLong* TadPack::primaryShapeInfo() const {
-  return reinterpret_cast<Nd4jLong*>(_tadShape.primary());
+  return _tadShape.primary();
 }
 
 const Nd4jLong* TadPack::primaryOffsets() const {
-  return reinterpret_cast<Nd4jLong*>(_tadOffsets.primary());
+  return _tadOffsets.primary();
 }
 
 const Nd4jLong* TadPack::specialShapeInfo() const {
-  return reinterpret_cast<Nd4jLong*>(_tadShape.special());
+  return _tadShape.special();
 }
 
 const Nd4jLong* TadPack::specialOffsets() const {
-  return reinterpret_cast<Nd4jLong*>(_tadOffsets.special());
+  return _tadOffsets.special();
 }
 
 Nd4jLong TadPack::numberOfTads() const { return _numTads; }
 
 const Nd4jLong* TadPack::platformShapeInfo() const {
-  return sd::Environment::getInstance()->isCPU() ? primaryShapeInfo()
+  return sd::Environment::getInstance().isCPU() ? primaryShapeInfo()
                                                  : specialShapeInfo();
 }
 
 const Nd4jLong* TadPack::platformOffsets() const {
-  return sd::Environment::getInstance()->isCPU() ? primaryOffsets()
+  return sd::Environment::getInstance().isCPU() ? primaryOffsets()
                                                  : specialOffsets();
 }
 

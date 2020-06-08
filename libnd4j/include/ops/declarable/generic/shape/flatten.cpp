@@ -67,7 +67,7 @@ DECLARE_SHAPE_FN(flatten) {
   }
 
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->vectorShapeInfo(length, dtype));
+      ConstantShapeHelper::getInstance().vectorShapeInfo(length, dtype));
 }
 }  // namespace ops
 }  // namespace sd

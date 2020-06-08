@@ -364,7 +364,7 @@ _CUDA_H void SummaryStatsReduce<X, Z>::execSummaryStatsReduceScalar(
   auto z = reinterpret_cast<Z*>(vz);
   auto reductionPointerA = reinterpret_cast<Z*>(reductionBuffer);
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("D16 opNum:[%i]\n", opNum);
 
   summaryStatsReduceT<X, Z>
@@ -388,7 +388,7 @@ _CUDA_H void SummaryStatsReduce<X, Z>::execSummaryStatsReduce(
   auto z = static_cast<Z*>(vz);
   auto extraParams = static_cast<Z*>(vextraParams);
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("F17 opNum:[%i]\n", opNum);
 
   auto reductionPointerA = reinterpret_cast<Z*>(reductionBuffer);
@@ -413,7 +413,7 @@ _CUDA_H void SummaryStatsReduce<X, Z>::execSummaryStatsReduce(
   auto z = static_cast<Z*>(vz);
   auto extraParams = static_cast<Z*>(vextraParams);
 
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("D18 opNum:[%i]\n", opNum);
 
   summaryStatsReduceT<X, Z>

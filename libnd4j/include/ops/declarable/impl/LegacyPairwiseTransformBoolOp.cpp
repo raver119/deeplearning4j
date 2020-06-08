@@ -23,6 +23,7 @@
 
 namespace sd {
 namespace ops {
+
 LegacyPairwiseTransformBoolOp::LegacyPairwiseTransformBoolOp()
     : LegacyOp::LegacyOp(2) {
   // just a no-op
@@ -77,7 +78,7 @@ Nd4jStatus LegacyPairwiseTransformBoolOp::validateAndExecute(Context &block) {
 ShapeList *LegacyPairwiseTransformBoolOp::calculateOutputShape(
     ShapeList *inputShape, sd::graph::Context &block) {
   auto inShape = inputShape->at(0);
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(inShape, DataType::BOOL)));
 }
 }  // namespace ops

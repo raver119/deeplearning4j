@@ -24,10 +24,10 @@
 
 namespace sd {
 namespace graph {
-GraphHolder* GraphHolder::getInstance() {
-  if (_INSTANCE == nullptr) _INSTANCE = new GraphHolder();
 
-  return _INSTANCE;
+GraphHolder& GraphHolder::getInstance() {
+  static GraphHolder instance;
+  return instance;
 };
 
 void GraphHolder::registerGraph(Nd4jLong graphId, const Graph& graph) {
@@ -91,6 +91,5 @@ flatbuffers::Offset<FlatResult> GraphHolder::execute(
   throw std::runtime_error("GraphHolder::execute - not implemented yet");
 }
 
-GraphHolder* GraphHolder::_INSTANCE = 0;
 }  // namespace graph
 }  // namespace sd

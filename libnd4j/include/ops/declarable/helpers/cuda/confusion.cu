@@ -75,7 +75,7 @@ void _confusionFunctor(sd::LaunchContext* context, NDArray* labels,
                        NDArray* output) {
   auto stream = context->getCudaStream();
 
-  auto pack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto pack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), 1);
 
   PointersManager manager(context, "helpers::confusion");

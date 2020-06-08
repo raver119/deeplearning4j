@@ -82,7 +82,7 @@ DECLARE_SHAPE_FN(randomuniform) {
                  "be the same");
 
   auto newShape =
-      ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', shape);
+      ConstantShapeHelper::getInstance().createShapeInfo(dtype, 'c', shape);
   return SHAPELIST(newShape);
 }
 

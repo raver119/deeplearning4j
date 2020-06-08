@@ -116,13 +116,13 @@ DECLARE_SHAPE_FN(lstsq) {
   if (shape::isEmpty(in0) || shape::isEmpty(in1)) {
     shapeOf[rank - 1] = 0;  // set output shape to empty
   }
-  auto resShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto resShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(in0), shape::order(in1),
       shapeOf);  // ShapeBuilders::copyShapeInfoAndType(in1, in0, true,
                  // block.workspace());
   if (shapeOf[rank - 1] == 0) {
     //                ArrayOptions::setPropertyBit(resShape, ARRAY_EMPTY);
-    resShape = ConstantShapeHelper::getInstance()->emptyShapeInfo(
+    resShape = ConstantShapeHelper::getInstance().emptyShapeInfo(
         ArrayOptions::dataType(in0));
   }
   return SHAPELIST(resShape);
@@ -144,12 +144,12 @@ DECLARE_SHAPE_FN(solve_ls) {
   if (shape::isEmpty(in0) || shape::isEmpty(in1)) {
     shapeOf[rank - 1] = 0;  // set output shape to empty
   }
-  auto resShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto resShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(in0), shape::order(in1),
       shapeOf);  // ShapeBuilders::copyShapeInfoAndType(in1, in0, true,
                  // block.workspace());
   if (shapeOf[rank - 1] == 0) {
-    resShape = ConstantShapeHelper::getInstance()->emptyShapeInfo(
+    resShape = ConstantShapeHelper::getInstance().emptyShapeInfo(
         ArrayOptions::dataType(in1));
     //                ArrayOptions::setPropertyBit(resShape, ARRAY_EMPTY);
   }

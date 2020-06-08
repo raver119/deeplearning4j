@@ -132,12 +132,12 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
   */
 
-  sd::Environment::getInstance()->setProfiling(true);
+  sd::Environment::getInstance().setProfiling(true);
   auto profile = GraphProfilingHelper::profile(graph, 1);
 
   profile->printOut();
 
-  sd::Environment::getInstance()->setProfiling(false);
+  sd::Environment::getInstance().setProfiling(false);
   delete profile;
 
   /*
@@ -204,12 +204,12 @@ TEST_F(PlaygroundTests, test_bert_1) {
       ASSERT_EQ(z, *array);
 
   */
-  sd::Environment::getInstance()->setProfiling(true);
+  sd::Environment::getInstance().setProfiling(true);
   auto profile = GraphProfilingHelper::profile(graph, 1);
 
   profile->printOut();
 
-  sd::Environment::getInstance()->setProfiling(false);
+  sd::Environment::getInstance().setProfiling(false);
   delete profile;
 
   /*
@@ -260,12 +260,12 @@ TEST_F(PlaygroundTests, test_bert_2) {
       ASSERT_EQ(z, *array);
   */
 
-  sd::Environment::getInstance()->setProfiling(true);
+  sd::Environment::getInstance().setProfiling(true);
   auto profile = GraphProfilingHelper::profile(graph, 1);
 
   profile->printOut();
 
-  sd::Environment::getInstance()->setProfiling(false);
+  sd::Environment::getInstance().setProfiling(false);
   delete profile;
 
   /*
@@ -657,7 +657,7 @@ TEST_F(PlaygroundTests, test_s_0) {
 
     for (auto shape: shapes) {
         for (auto t: threads) {
-            sd::Environment::getInstance()->setMaxMasterThreads(t);
+            sd::Environment::getInstance().setMaxMasterThreads(t);
 
             auto x = NDArrayFactory::create<float>('c', shape);
             auto y = NDArrayFactory::create<float>('c', {shape[3]});
@@ -699,7 +699,7 @@ TEST_F(PlaygroundTests, test_s_1) {
 
     for (auto shape: shapes) {
         for (auto t: threads) {
-            sd::Environment::getInstance()->setMaxMasterThreads(t);
+            sd::Environment::getInstance().setMaxMasterThreads(t);
 
             auto x = NDArrayFactory::create<float>('c', shape);
             auto y = NDArrayFactory::create<float>('c', {shape[1]});

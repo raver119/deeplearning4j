@@ -41,7 +41,7 @@ DECLARE_SHAPE_FN(random_exponential) {
   auto in = INPUT_VARIABLE(0);
   auto shape = in->template asVectorT<Nd4jLong>();
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       DataType::FLOAT32, 'c', shape);
   return SHAPELIST(newShape);
 }

@@ -144,11 +144,11 @@ DECLARE_SHAPE_FN(where_np) {
     // output shape - a tuple of rank(inShape) 1D tensors with numOfTrue len
     if (numOfTrue) {
       for (Nd4jLong e = 0; e < condition->rankOf(); ++e) {
-        shapes->push_back(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+        shapes->push_back(ConstantShapeHelper::getInstance().vectorShapeInfo(
             numOfTrue, sd::DataType::INT64));
       }
     } else {
-      shapes->push_back(ConstantShapeHelper::getInstance()->emptyShapeInfo(
+      shapes->push_back(ConstantShapeHelper::getInstance().emptyShapeInfo(
           sd::DataType::INT64));
     }
   }

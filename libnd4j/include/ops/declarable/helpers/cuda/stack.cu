@@ -93,7 +93,7 @@ static void stack_(sd::LaunchContext* context,
 
     manager.synchronize();
   } else {
-    auto zTadPack = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto zTadPack = ConstantTadHelper::getInstance().tadForDimensions(
         output.shapeInfo(),
         ShapeUtils::evalDimsToExclude(output.rankOf(), {dim}));
     auto zTadShapeInfo = zTadPack.primaryShapeInfo();
@@ -192,7 +192,7 @@ static void unstack_(sd::LaunchContext* context, const NDArray& input,
 
     manager.synchronize();
   } else {
-    auto xTadPack = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto xTadPack = ConstantTadHelper::getInstance().tadForDimensions(
         input.shapeInfo(),
         ShapeUtils::evalDimsToExclude(input.rankOf(), {dim}));
     auto xTadShapeInfo = xTadPack.primaryShapeInfo();
@@ -304,7 +304,7 @@ BUILD_SINGLE_TEMPLATE(template void unstack_,
 //     BUILD_SINGLE_SELECTOR(input.dataType(), unstackCudaLauncher,
 //     (blocksPerGrid, threadsPerBlock, context->getCudaStream(),
 //     input.specialBuffer(), input.specialShapeInfo(), dOutBuffers,
-//     outArrs[0]->specialShapeInfo(), axis), LIBND4J_TYPES);
+//     outArrs[0]->special(), axis), LIBND4J_TYPES);
 
 //     manager.synchronize();
 
@@ -394,7 +394,7 @@ BUILD_SINGLE_TEMPLATE(template void unstack_,
 //     BUILD_SINGLE_SELECTOR(output.dataType(), stackCudaLauncher,
 //     (blocksPerGrid, threadsPerBlock, context->getCudaStream(), dInBuffers,
 //     inArrs[0]->specialShapeInfo(), output.specialBuffer(),
-//     output.specialShapeInfo(), axis), LIBND4J_TYPES);
+//     output.special(), axis), LIBND4J_TYPES);
 
 //     manager.synchronize();
 

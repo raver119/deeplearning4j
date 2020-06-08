@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -15,7 +16,7 @@
  ******************************************************************************/
 
 //
-// Created by raver119 on 30.11.17.
+// @author raver119@gmail.com
 //
 
 #include <exceptions/cuda_exception.h>
@@ -89,8 +90,8 @@ LaunchContext* LaunchContext::defaultContext() {
    */
   auto deviceId = AffinityManager::currentDeviceId();
 
-  // we need this block synchronous, to avoid double initialization etc
-  _mutex.lock();
+  {// we need this block synchronous, to avoid double initialization etc
+  std::lock_guard<std::mutex> lock(_mutex);
   if (LaunchContext::_contexts.empty()) {
     // create one context per device
     auto numDevices = AffinityManager::numberOfDevices();
@@ -107,7 +108,7 @@ LaunchContext* LaunchContext::defaultContext() {
     // don't forget to restore device back again
     AffinityManager::setCurrentNativeDevice(deviceId);
   }
-  _mutex.unlock();
+  }
 
   // return context for current device
   return LaunchContext::_contexts[deviceId].get();
@@ -126,11 +127,11 @@ int* LaunchContext::getAllocationPointer() const {
 };
 
 void* LaunchContext::getCublasHandle() const {
-  return CublasHelper::getInstance()->handle();
+  return CublasHelper::getInstance().handle();
 };
 
 void* LaunchContext::getCusolverHandle() const {
-  return CublasHelper::getInstance()->solver();
+  return CublasHelper::getInstance().solver();
 };
 
 cudaStream_t* LaunchContext::getCudaStream() const {
@@ -176,7 +177,7 @@ void LaunchContext::releaseBuffers() {
 bool LaunchContext::isInitialized() { return contextBuffers.isInitialized(); }
 
 void* LaunchContext::getCuDnnHandle() const {
-  return CublasHelper::getInstance()->cudnn();
+  return CublasHelper::getInstance().cudnn();
 }
 
 sd::ErrorReference* LaunchContext::errorReference() {

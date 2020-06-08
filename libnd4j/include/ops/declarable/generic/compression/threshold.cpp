@@ -71,7 +71,7 @@ DECLARE_SHAPE_FN(encode_threshold) {
 
   // result array must have 4 additional int elements for header
   return SHAPELIST(x->shapeInfo(),
-                   sd::ConstantShapeHelper::getInstance()->vectorShapeInfo(
+                   sd::ConstantShapeHelper::getInstance().vectorShapeInfo(
                        elements + 4, DataType::INT32));
 }
 

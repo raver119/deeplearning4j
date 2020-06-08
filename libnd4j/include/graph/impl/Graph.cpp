@@ -625,8 +625,7 @@ std::map<std::string, NDArray> Graph::execute(
   // execute optimized version of this graph
   auto status = executor.execute(optimizedGraph(), proxy);
   if (status != Status::OK())
-    throw graph_execution_exception("Graph execution failed, error code: ",
-                                    status);
+    throw graph_execution_exception("Graph execution failed, error code: ", status);
 
   // fetch outputs from our VariableProxy
   std::map<std::string, NDArray> result;

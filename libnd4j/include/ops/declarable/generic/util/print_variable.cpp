@@ -25,6 +25,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(print_variable, 1, 1, true, 0, 0) {
   // TODO: make this op compatible with ArrayList etc
   auto input = INPUT_VARIABLE(0);
@@ -42,7 +43,7 @@ CUSTOM_OP_IMPL(print_variable, 1, 1, true, 0, 0) {
   bool printSpecial = false;
   if (block.numB() > 0) printSpecial = B_ARG(0);
 
-  if (printSpecial && !sd::Environment::getInstance()->isCPU()) {
+  if (printSpecial && !sd::Environment::getInstance().isCPU()) {
     // only specific backends support special printout. for cpu-based backends
     // it's the same as regular print
 
@@ -71,7 +72,7 @@ DECLARE_TYPES(print_variable) {
 
 DECLARE_SHAPE_FN(print_variable) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT32));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::INT32));
 }
 }  // namespace ops
 }  // namespace sd

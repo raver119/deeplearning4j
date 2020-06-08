@@ -84,9 +84,9 @@ static _CUDA_H void adjustHueCudaLauncher(
 ////////////////////////////////////////////////////////////////////////
 void adjustHue(sd::LaunchContext* context, const NDArray* input,
                const NDArray* deltaScalarArr, NDArray* output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {dimC});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {dimC});
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -185,12 +185,12 @@ NDArray *output, float delta, bool isNHWC) {
     if (isNHWC) {
         adjustHueSingleNHWCKernel<T><<<256, 256, 1024,
 *context->getCudaStream()>>>(array->specialBuffer(), array->specialShapeInfo(),
-output->specialBuffer(), output->specialShapeInfo(), tuples, delta); } else {
+output->specialBuffer(), output->special(), tuples, delta); } else {
         // TODO: check this one
         auto packX =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(array->shapeInfo(), {1,
+sd::ConstantTadHelper::getInstance().tadForDimensions(array->shapeInfo(), {1,
 2}); auto packZ =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {1,
+sd::ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {1,
 2});
 
         auto tadLength = shape::length(packX.primaryShapeInfo());
@@ -216,17 +216,17 @@ still bunch of RGB values BUILD_SINGLE_SELECTOR(xType, _adjust_hue_single,
 (context, array, output, delta, isNHWC);, FLOAT_TYPES); } else {
         // TODO: check this one
         auto packX =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(array->shapeInfo(), {0,
+sd::ConstantTadHelper::getInstance().tadForDimensions(array->shapeInfo(), {0,
 2, 3}); auto packZ =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {0,
+sd::ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {0,
 2, 3});
 
-        auto tadLength = shape::length(packX.primaryShapeInfo());
+        auto tadLength = shape::length(packX.primary());
 
         adjustHueSingleNCHWKernel<T><<<256, 256, 1024,
 *context->getCudaStream()>>>(array->specialBuffer(), packX.platformShapeInfo(),
-packX.platformOffsets(), output->specialBuffer(), packZ.platformShapeInfo(),
-packZ.platformOffsets(), tadLength, tuples, delta);
+packX.platformOffsets(), output->specialBuffer(), packZ.platform(),
+packZ.platform(), tadLength, tuples, delta);
     }
 }
 

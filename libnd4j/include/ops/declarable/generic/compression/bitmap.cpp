@@ -76,10 +76,10 @@ DECLARE_SHAPE_FN(encode_bitmap) {
   auto input = inputShape->at(0);
 
   auto outputLength = shape::length(input) / 16 + 5;
-  auto encodedShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto encodedShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       outputLength, DataType::INT32);
   auto encodedCounter =
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT32);
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::INT32);
   return SHAPELIST(input, encodedShape, encodedCounter);
 }
 

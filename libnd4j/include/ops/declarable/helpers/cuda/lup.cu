@@ -632,9 +632,9 @@ static void lu_(LaunchContext *context, NDArray *input, NDArray *output,
   permutationVectors->applyTrueBroadcast(sd::BroadcastOpsTuple::Assign(), iota,
                                          *permutationVectors, true, nullptr);
   //        permutationVectors->tickWriteDevice();
-  auto tads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tads = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {-2, -1});
-  auto permutaionTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto permutaionTads = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {-1});
   auto batchNum = tads.numberOfTads();
   luBatchedKernel<T, I><<<batchNum, 256, 1024, *stream>>>(
@@ -662,10 +662,10 @@ static int determinant_(sd::LaunchContext *context, NDArray *input,
   Nd4jLong n = input->sizeAt(-1);
   Nd4jLong n2 = n * n;
   std::vector<int> dims();
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
   // auto packZ =
-  // ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(),
+  // ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(),
   // {output->rankOf() - 1});
   //        DataType dtype = input->dataType();
   //        if (dtype != DataType::DOUBLE)
@@ -688,7 +688,7 @@ static int determinant_(sd::LaunchContext *context, NDArray *input,
     //                fillMatrix<T, float><<<launchDims.x, launchDims.y,
     //                launchDims.z, *stream>>>(matrix.specialBuffer(),
     //                matrix.specialShapeInfo(), input->specialBuffer(),
-    //                input->specialShapeInfo(), pos, n);
+    //                input->special(), pos, n);
     lup_<T, int>(context, &matrix, nullptr, nullptr);
     //            else
     //                lup_<float>(context, &matrix, nullptr, nullptr);
@@ -720,10 +720,10 @@ int logAbsDeterminant_(LaunchContext *context, NDArray *input,
   Nd4jLong n = input->sizeAt(-1);
   Nd4jLong n2 = n * n;
   std::vector<int> dims();
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
   // auto packZ =
-  // ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(),
+  // ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(),
   // {output->rankOf() - 1});
   DataType dtype = input->dataType();
   if (dtype != DataType::DOUBLE) dtype = DataType::FLOAT32;
@@ -745,7 +745,7 @@ int logAbsDeterminant_(LaunchContext *context, NDArray *input,
     //                fillMatrix<T, float><<<launchDims.x, launchDims.y,
     //                launchDims.z, *stream>>>(matrix.specialBuffer(),
     //                matrix.specialShapeInfo(), input->specialBuffer(),
-    //                input->specialShapeInfo(), pos, n);
+    //                input->special(), pos, n);
 
     //            if (matrix.dataType() == input->dataType())
     lup_<T, int>(context, &matrix, nullptr, nullptr);
@@ -825,9 +825,9 @@ static int inverse_(sd::LaunchContext *context, NDArray *input,
   NDArray lower = NDArrayFactory::create('c', {n, n}, dtype, context);
   NDArray compound = NDArrayFactory::create('c', {n, n}, dtype, context);
   NDArray permutation = NDArrayFactory::create('c', {n, n}, dtype, context);
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {output->rankOf() - 2, output->rankOf() - 1});
   auto stream = context->getCudaStream();
 
@@ -925,7 +925,7 @@ int cholesky__(LaunchContext *context, NDArray *input, NDArray *output,
         "helpers::cholesky_: Cannot create solver handle", status);
   }
   F **dArrayBatch = nullptr;
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       tempOutput.shapeInfo(),
       {tempOutput.rankOf() - 2, tempOutput.rankOf() - 1});
   const Nd4jLong batchSize = packX.numberOfTads();
@@ -1071,7 +1071,7 @@ int logdetFunctor_(sd::LaunchContext *context, NDArray *input,
           ->specialAsT<
               T>();  // reinterpret_cast<T*>(tempOutput.specialBuffer());
   output->nullify();
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       tempOutput.shapeInfo(),
       {tempOutput.rankOf() - 2, tempOutput.rankOf() - 1});
   logDetKernel<T><<<128, 512, 256, *stream>>>(

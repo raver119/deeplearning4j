@@ -51,7 +51,7 @@ static __global__ void fillRegularizerKernel(T* ioMatrixData,
 template <typename T>
 static void fillRegularizer(sd::LaunchContext* context, NDArray& ioMatrix,
                             double const value) {
-  auto lastDimsTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto lastDimsTads = ConstantTadHelper::getInstance().tadForDimensions(
       ioMatrix.shapeInfo(), {-2, -1});
   auto stream = context->getCudaStream();
   auto rows = ioMatrix.sizeAt(-2);

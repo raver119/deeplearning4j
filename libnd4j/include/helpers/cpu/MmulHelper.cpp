@@ -160,7 +160,7 @@ static void usualDot(const Nd4jLong length, const double alpha, const void* vX,
 
   T3 sum = 0;
   PRAGMA_OMP_PARALLEL_FOR_ARGS(
-      OMP_IF(length > Environment::getInstance()->elementwiseThreshold())
+      OMP_IF(length > Environment::getInstance().elementwiseThreshold())
           schedule(guided) reduction(OMP_SUMT
                                      : sum))
   for (Nd4jLong i = 0; i < length; ++i) sum += X[i * incx] * Y[i * incy];
@@ -223,7 +223,7 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C,
   const auto cType = C->dataType();
 
   const bool AB(aType == bType), AC(aType == cType), ABC(AB && AC);
-  const bool hasGemm = BlasHelper::getInstance()->hasGEMM(aType);
+  const bool hasGemm = BlasHelper::getInstance().hasGEMM(aType);
 
   const bool typeDouble = hasGemm && ABC && aType == DataType::DOUBLE;
   const bool typeFloat = hasGemm && ABC && aType == DataType::FLOAT32;
@@ -279,12 +279,12 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C,
         (cMcont && cNcont) ? M : !cMcont ? pC->strideAt(0) : pC->strideAt(1);
 
     if (typeFloat) {
-      BlasHelper::getInstance()->sgemm()(
+      BlasHelper::getInstance().sgemm()(
           blasOrder, transAblas, transBblas, M, N, K, (float)alpha,
           pA->bufferAsT<float>(), lda, pB->bufferAsT<float>(), ldb, (float)beta,
           pC->bufferAsT<float>(), ldc);
     } else if (typeDouble) {
-      BlasHelper::getInstance()->dgemm()(
+      BlasHelper::getInstance().dgemm()(
           blasOrder, transAblas, transBblas, M, N, K, (double)alpha,
           pA->bufferAsT<double>(), lda, pB->bufferAsT<double>(), ldb,
           (double)beta, pC->bufferAsT<double>(), ldc);
@@ -351,7 +351,7 @@ NDArray* MmulHelper::mmulMxV(const NDArray* A, const NDArray* X, sd::NDArray* Y,
   const auto yType = Y->dataType();
 
   const bool AX(aType == xType), AY(aType == yType), AXY(AX && AY);
-  const bool hasGemv = BlasHelper::getInstance()->hasGEMV(aType);
+  const bool hasGemv = BlasHelper::getInstance().hasGEMV(aType);
 
   const bool typeDouble = hasGemv && AXY && aType == DataType::DOUBLE;
   const bool typeFloat = hasGemv && AXY && aType == DataType::FLOAT32;
@@ -378,11 +378,11 @@ NDArray* MmulHelper::mmulMxV(const NDArray* A, const NDArray* X, sd::NDArray* Y,
 
     // choose appropriate cuda gemm api depending on data types
     if (typeDouble) {
-      BlasHelper::getInstance()->dgemv()(
+      BlasHelper::getInstance().dgemv()(
           blasOrder, CblasNoTrans, M, N, alpha, (double*)pA->buffer(), lda,
           (double*)X->buffer(), incx, beta, (double*)Y->buffer(), incy);
     } else if (typeFloat) {
-      BlasHelper::getInstance()->sgemv()(
+      BlasHelper::getInstance().sgemv()(
           blasOrder, CblasNoTrans, M, N, (float)alpha, (float*)pA->buffer(),
           lda, (float*)X->buffer(), incx, (float)beta, (float*)Y->buffer(),
           incy);
@@ -689,7 +689,7 @@ ldc) {
     const bool flagB = (flagC && transB) || (!flagC && !transB);
 
     // PRAGMA_OMP_PARALLEL_FOR_ARGS(OMP_IF(M*N >
-Environment::getInstance()->elementwiseThreshold()) schedule(guided))
+Environment::getInstance().elementwiseThreshold()) schedule(guided))
     // for(uint row = 0; row < M; ++row) {
 
     //     T3* c = flagC ? (C + row) : (C + row * ldc);

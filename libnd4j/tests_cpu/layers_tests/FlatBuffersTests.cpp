@@ -39,15 +39,15 @@ class FlatBuffersTest : public testing::Test {
   Nd4jLong *fShape = new Nd4jLong[8]{2, 2, 2, 1, 2, 8192, 1, 102};
 
   FlatBuffersTest() {
-    Environment::getInstance()->setDebug(false);
-    Environment::getInstance()->setVerbose(false);
-    Environment::getInstance()->setProfiling(false);
+    Environment::getInstance().setDebug(false);
+    Environment::getInstance().setVerbose(false);
+    Environment::getInstance().setProfiling(false);
   }
 
   ~FlatBuffersTest() {
-    Environment::getInstance()->setDebug(false);
-    Environment::getInstance()->setVerbose(false);
-    Environment::getInstance()->setProfiling(false);
+    Environment::getInstance().setDebug(false);
+    Environment::getInstance().setVerbose(false);
+    Environment::getInstance().setProfiling(false);
 
     delete[] cShape;
     delete[] fShape;
@@ -710,8 +710,8 @@ TEST_F(FlatBuffersTest, Test_Stitches) {
 }
 
 TEST_F(FlatBuffersTest, Test_GruDynamicMnist) {
-  sd::Environment::getInstance()->setDebug(false);
-  sd::Environment::getInstance()->setVerbose(false);
+  sd::Environment::getInstance().setDebug(false);
+  sd::Environment::getInstance().setVerbose(false);
 
   auto graph = GraphExecutioner::importFromFlatBuffers(
       "./resources/gru_dynamic_mnist.fb");
@@ -733,8 +733,8 @@ TEST_F(FlatBuffersTest, Test_GruDynamicMnist) {
 }
 
 TEST_F(FlatBuffersTest, Test_Non2D_2) {
-  sd::Environment::getInstance()->setDebug(false);
-  sd::Environment::getInstance()->setVerbose(false);
+  sd::Environment::getInstance().setDebug(false);
+  sd::Environment::getInstance().setVerbose(false);
   sd::ops::realdiv op0;
 
   auto graph =
@@ -748,8 +748,8 @@ TEST_F(FlatBuffersTest, Test_Non2D_2) {
 }
 
 TEST_F(FlatBuffersTest, Test_TensorDotMisc) {
-  Environment::getInstance()->setVerbose(false);
-  Environment::getInstance()->setDebug(false);
+  Environment::getInstance().setVerbose(false);
+  Environment::getInstance().setDebug(false);
 
   auto e = NDArrayFactory::create<float>(
       'c', {1, 3, 16, 20},

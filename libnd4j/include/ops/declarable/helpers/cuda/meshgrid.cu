@@ -110,7 +110,7 @@ static void meshgrid_(sd::LaunchContext *context,
 
     hOutBuffers[i] = outArrs[i]->specialBuffer();
 
-    auto pack = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto pack = ConstantTadHelper::getInstance().tadForDimensions(
         outArrs[i]->shapeInfo(), {inIndices[i]});
     hOutTadShapes[i] = pack.specialShapeInfo();
     hOutTadOffsets[i] = pack.specialOffsets();

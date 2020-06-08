@@ -71,19 +71,19 @@ DECLARE_SHAPE_FN(qr) {
   if (!fullMatricies) {  // outputs are: Q is MxN and R is NxN
     shape[targetRank - 1] = shape::sizeAt(inShape, -1);
     shape[targetRank - 2] = shape[targetRank - 1];
-    shapeQ = ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeQ = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), shape::order(inShape), targetRank,
         shape::shapeOf(inShape));
-    shapeR = ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeR = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), shape::order(inShape), shape);
 
   } else {  // otherwise outputs are Q is MxM and R is MxN with zero filled rows
     shape[targetRank - 1] = shape::sizeAt(inShape, -2);
     shape[targetRank - 2] = shape[targetRank - 1];
-    shapeR = ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeR = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), shape::order(inShape), targetRank,
         shape::shapeOf(inShape));
-    shapeQ = ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeQ = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), shape::order(inShape), shape);
   }
 

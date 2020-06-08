@@ -82,7 +82,7 @@ Nd4jStatus LegacyScalarOp::validateAndExecute(Context &block) {
     // NativeOpExecutioner::execScalar(block.launchContext(), opNum,
     // x->buffer(), x->shapeInfo(), x->specialBuffer(), x->specialShapeInfo(),
     // z->buffer(), z->shapeInfo(), z->specialBuffer(), z->specialShapeInfo(),
-    // y.buffer(), y.shapeInfo(), y.specialBuffer(), y.specialShapeInfo(),
+    // y.buffer(), y.shapeInfo(), y.specialBuffer(), y.special(),
     // extras.argumentsAsT(z->dataType(), 1));
 
     manager.synchronize();

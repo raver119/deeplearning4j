@@ -18,7 +18,7 @@
 // @author raver119@gmail.com
 //
 
-#include "../cublasHelper.h"
+#include <helpers/cublasHelper.h>
 
 namespace sd {
 static void* handle_() { return nullptr; }
@@ -29,10 +29,10 @@ CublasHelper::CublasHelper() {}
 
 CublasHelper::~CublasHelper() {}
 
-CublasHelper* CublasHelper::getInstance() {
-  if (!_INSTANCE) _INSTANCE = new sd::CublasHelper();
+CublasHelper& CublasHelper::getInstance() {
+  static CublasHelper instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 void* CublasHelper::handle() { return nullptr; }
@@ -40,6 +40,4 @@ void* CublasHelper::handle() { return nullptr; }
 void* CublasHelper::solver() { return nullptr; }
 
 void* CublasHelper::handle(int deviceId) { return nullptr; }
-
-sd::CublasHelper* sd::CublasHelper::_INSTANCE = 0;
 }  // namespace sd

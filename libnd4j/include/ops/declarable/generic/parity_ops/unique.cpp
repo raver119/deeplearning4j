@@ -49,14 +49,14 @@ DECLARE_SHAPE_FN(unique) {
 
   if (uniqueCount == 0) {  // empty value Shape
     valuesShape =
-        ConstantShapeHelper::getInstance()->emptyShapeInfo(source->dataType());
+        ConstantShapeHelper::getInstance().emptyShapeInfo(source->dataType());
   } else {
     // all output shapes are 1D arrays (vectors)
-    valuesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+    valuesShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
         uniqueCount, ArrayOptions::dataType(in));
   }
   // second output is always LONG
-  indicesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  indicesShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       shape::length(in), sd::DataType::INT64);
 
   // COPY_SHAPE_EX(in, indicesShape, block.workspace());
@@ -81,15 +81,15 @@ DECLARE_SHAPE_FN(unique_with_counts) {
   int uniqueCount = helpers::uniqueCount(block.launchContext(), source);
   // all output shapes are 1D arrays (vectors)
   // all output shapes are 1D arrays (vectors)
-  auto valuesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto valuesShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       uniqueCount, source->dataType());
 
   // second output is always LONG
-  auto indicesShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto indicesShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       source->lengthOf(), sd::DataType::INT64);
 
   // third one as well
-  auto countsShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto countsShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       uniqueCount, sd::DataType::INT64);
 
   return SHAPELIST(valuesShape, indicesShape, countsShape);

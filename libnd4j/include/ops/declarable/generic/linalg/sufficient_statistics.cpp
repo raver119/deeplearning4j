@@ -69,7 +69,7 @@ DECLARE_SHAPE_FN(sufficient_statistics) {
 
   // std::vector<int> dims = ShapeUtils::evalDimsToExclude(input->rankOf(),
   // {axis});
-  auto scalarShape = ConstantShapeHelper::getInstance()->scalarShapeInfo(
+  auto scalarShape = ConstantShapeHelper::getInstance().scalarShapeInfo(
       ArrayOptions::dataType(inputShape->at(0)));
   auto sumShape = ShapeUtils::evalReduceShapeInfo('c', axis, *input, false,
                                                   false, block.workspace());
@@ -79,7 +79,7 @@ DECLARE_SHAPE_FN(sufficient_statistics) {
 
   auto shapeList = SHAPELIST(scalarShape, sumShape, squareShape);
   if (block.numT() > 0)
-    shapeList->push_back(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().scalarShapeInfo(
         ArrayOptions::dataType(inputShape->at(0))));
 
   return shapeList;

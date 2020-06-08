@@ -82,9 +82,9 @@ int _matrixDiagPart(sd::LaunchContext* context, const NDArray* input,
   // tadOutputOffsets;
   std::vector<int> outputDims({output->rankOf() - 1});
   std::vector<int> inputDims({input->rankOf() - 2, input->rankOf() - 1});
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), inputDims);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), outputDims);
 
   if (!output->isActualOnDeviceSide()) input->syncToDevice();

@@ -150,7 +150,7 @@ std::shared_ptr<Variable> Context::getVariable(int idx) const {
 
   auto v = variable(p);
 
-  if (Environment::getInstance()->isDebugAndVerbose() && v != nullptr &&
+  if (Environment::getInstance().isDebugAndVerbose() && v != nullptr &&
       v->getNDArray() != nullptr) {
     auto array = v->getNDArray();
     std::string shape_ = ShapeUtils::shapeAsString(array.get());

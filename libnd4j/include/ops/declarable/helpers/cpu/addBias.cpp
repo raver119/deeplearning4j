@@ -513,7 +513,7 @@ return;
         // we can choose other inc and index for that case
         // but for now lets choose all till the last one
         uint32_t req_numThreads =
-            sd::Environment::getInstance()->maxMasterThreads();
+            sd::Environment::getInstance().maxMasterThreads();
         isContinuous = false;
         if (rank > 2) {
           if (req_numThreads < 2 || bases[rank - 1] >= req_numThreads) {
@@ -631,7 +631,7 @@ return;
       // using unfair partitioning so we will do it only when inc is smaller our
       // value or multithreading turned off
       uint32_t req_numThreads =
-          sd::Environment::getInstance()->maxMasterThreads();
+          sd::Environment::getInstance().maxMasterThreads();
       if (req_numThreads < 2 || numNC >= req_numThreads || inc <= 2 * 8196 ||
           rank == 3) {
         inc = numHW;

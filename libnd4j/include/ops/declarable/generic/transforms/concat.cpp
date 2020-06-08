@@ -153,10 +153,10 @@ DECLARE_SHAPE_FN(concat) {
   for (int i = 0; i < numOfInArrs; ++i) {
     if (inputShape->at(i)[0] == 0) {
       if (shape::isEmpty(inputShape->at(i)))
-        arrShapes.push_back(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+        arrShapes.push_back(ConstantShapeHelper::getInstance().vectorShapeInfo(
             0, INPUT_VARIABLE(0)->dataType()));
       else
-        arrShapes.push_back(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+        arrShapes.push_back(ConstantShapeHelper::getInstance().vectorShapeInfo(
             1, INPUT_VARIABLE(0)->dataType()));
     } else {
       arrShapes.push_back(inputShape->at(i));
@@ -213,7 +213,7 @@ DECLARE_SHAPE_FN(concat) {
   //    for(int index : shapesToDelete)
   //        RELEASE(arrShapes[index], block.workspace());
 
-  auto result = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto result = ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(outShapeInfo));
   RELEASE(outShapeInfo, block.workspace());
   return SHAPELIST(result);
@@ -267,7 +267,7 @@ DECLARE_SHAPE_FN(concat) {
 //     if (_dimension < 0)
 //         _dimension += first->rankOf();
 
-//     if (sd::Environment::getInstance()->isDebugAndVerbose()) {
+//     if (sd::Environment::getInstance().isDebugAndVerbose()) {
 //         printf("Shape %i: ", 0);
 //         shape::printShapeInfoLinear((Nd4jLong *) shapes[0]);
 //     }
@@ -285,12 +285,12 @@ DECLARE_SHAPE_FN(concat) {
 
 //         oldScalars &= array->rankOf() == 2 && array->isScalar();
 
-//         if (sd::Environment::getInstance()->isDebugAndVerbose()) {
+//         if (sd::Environment::getInstance().isDebugAndVerbose()) {
 //             printf("Shape %i: ", e);
 //             shape::printShapeInfoLinear(array->shapeInfo());
 //         }
 //     }
-//     if (sd::Environment::getInstance()->isDebugAndVerbose())
+//     if (sd::Environment::getInstance().isDebugAndVerbose())
 //         fflush(stdout);
 
 //     if (oldScalars) {
@@ -303,7 +303,7 @@ DECLARE_SHAPE_FN(concat) {
 
 //     STORE_RESULT(*output);
 
-//     if (sd::Environment::getInstance()->isDebugAndVerbose())
+//     if (sd::Environment::getInstance().isDebugAndVerbose())
 //         output->printShapeInfo("Concat result shape");
 
 //     delete[] buffers;
@@ -456,7 +456,7 @@ DECLARE_SHAPE_FN(concat_bp) {
 
   for (int e = 0; e < numOfInArrs - 1; e++) {
     auto inShape = inputShape->at(e);
-    shapeList->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
         ShapeDescriptor(ArrayOptions::dataType(inShape), shape::order(inShape),
                         shape::shapeOf(inShape), shape::rank(inShape))));
   }

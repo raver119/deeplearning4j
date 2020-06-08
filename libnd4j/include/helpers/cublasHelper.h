@@ -30,7 +30,6 @@
 namespace sd {
 class SD_EXPORT CublasHelper {
  private:
-  static CublasHelper* _INSTANCE;
   static std::mutex _mutex;
 
   std::vector<void*> _cache;
@@ -38,10 +37,9 @@ class SD_EXPORT CublasHelper {
   std::vector<void*> _cudnn;
 
   CublasHelper();
-  ~CublasHelper();
 
- public:
-  static CublasHelper* getInstance();
+ public:~CublasHelper();
+  static CublasHelper& getInstance();
 
   void* cudnn();
   void* solver();

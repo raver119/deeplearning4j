@@ -86,11 +86,11 @@ DECLARE_SHAPE_FN(choose) {
                                  nullptr, &numResults);
   }
 
-  auto newShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       numResults.e<Nd4jLong>(0), ArrayOptions::dataType(inputShape->at(0)));
 
   auto shapeScalar =
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64);
+      ConstantShapeHelper::getInstance().scalarShapeInfo(sd::DataType::INT64);
   return SHAPELIST(newShape, shapeScalar);
 }
 

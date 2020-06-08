@@ -35,7 +35,7 @@
 namespace sd {
 class SD_EXPORT ConstantTadHelper {
  private:
-  static ConstantTadHelper *_INSTANCE;
+
 
   std::mutex _mutex;
   std::vector<MAP_IMPL<TadDescriptor, TadPack>> _cache;
@@ -45,7 +45,7 @@ class SD_EXPORT ConstantTadHelper {
  public:
   ~ConstantTadHelper() = default;
 
-  static ConstantTadHelper *getInstance();
+  static ConstantTadHelper &getInstance();
 
   /**
    * These methods calculate Tensor-Along-Dimension(s) shape and offsets

@@ -175,10 +175,10 @@ DECLARE_SHAPE_FN(multi_head_dot_product_attention) {
   auto numHeads = shape::sizeAt(WkShape, 0);
   auto timeSteps = shape::sizeAt(keysShape, 2);
 
-  auto weightsShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto weightsShape = ConstantShapeHelper::getInstance().createShapeInfo(
       sd::ArrayOptions::dataType(valuesShape), 'c',
       {batchSize, numHeads, timeSteps, queryCount});
-  auto outputShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto outputShape = ConstantShapeHelper::getInstance().createShapeInfo(
       sd::ArrayOptions::dataType(valuesShape), 'c',
       {batchSize, outSize, queryCount});
 

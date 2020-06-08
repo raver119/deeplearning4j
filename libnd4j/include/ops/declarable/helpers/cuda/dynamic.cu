@@ -135,7 +135,7 @@ static void _dynamicPartitionFunctor(sd::LaunchContext *context,
     for (int i = sourceDimsLen; i > 0; i--)
       sourceDims[sourceDimsLen - i] = input->rankOf() - i;
     // compute tad array for given dimensions
-    auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), sourceDims);
 
     std::vector<void *> outBuffers(outSize);
@@ -151,7 +151,7 @@ static void _dynamicPartitionFunctor(sd::LaunchContext *context,
 
       for (int k = 1; k < r; k++) outDims[k - 1] = k;
 
-      auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+      auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
           outputList.at(i)->shapeInfo(), outDims);
 
       outBuffers[i] = outputList.at(i)->specialBuffer();
@@ -304,7 +304,7 @@ static int _dynamicStitchFunctor(sd::LaunchContext *context,
     for (int i = restDims.size(); i > 0; i--)
       restDims[restDims.size() - i] = output->rankOf() - i;
 
-    auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), restDims);
 
     std::vector<const void *> inputBuffers(inputSize);
@@ -319,7 +319,7 @@ static int _dynamicStitchFunctor(sd::LaunchContext *context,
       for (int i = sourceDims.size(); i > 0; i--)
         sourceDims[sourceDims.size() - i] = inputs[e]->rankOf() - i;
 
-      auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+      auto packX = ConstantTadHelper::getInstance().tadForDimensions(
           inputs[e]->shapeInfo(), sourceDims);
 
       indicesBuffers[e] = indices[e]->specialBuffer();

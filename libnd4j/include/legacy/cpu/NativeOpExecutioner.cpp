@@ -228,7 +228,7 @@ void NativeOpExecutioner::execInverseBroadcast(
 
   if (shape::isEmpty(hXShapeInfo) || shape::isEmpty(hYShapeInfo)) return;
 
-  if (!sd::Environment::getInstance()->isExperimentalBuild())
+  if (!sd::Environment::getInstance().isExperimentalBuild())
     if ((yType != xType && yType != sd::DataType::BOOL) || xType != zType)
       throw sd::datatype_exception::build(
           "NativeOps::execBroadcast both operands must have same data type",
@@ -323,7 +323,7 @@ void NativeOpExecutioner::execInverseBroadcastBool(
 
   if (shape::isEmpty(hXShapeInfo) || shape::isEmpty(hYShapeInfo)) return;
 
-  if (!sd::Environment::getInstance()->isExperimentalBuild())
+  if (!sd::Environment::getInstance().isExperimentalBuild())
     if (yType != xType || sd::DataType::BOOL != zType)
       throw sd::datatype_exception::build(
           "NativeOps::execInverseBroadcastBool both operands must have same "
@@ -500,7 +500,7 @@ void NativeOpExecutioner::execPairwiseTransform(
       sd::math::nd4j_max<int>(
           1, sd::math::nd4j_min<int>(
                  zLen / 1024,
-                 sd::Environment::getInstance()->maxMasterThreads())));
+                 sd::Environment::getInstance().maxMasterThreads())));
 
 #endif
 }
@@ -541,7 +541,7 @@ void NativeOpExecutioner::execPairwiseBoolTransform(
       sd::math::nd4j_max<int>(
           1, sd::math::nd4j_min<int>(
                  zLen / 1024,
-                 sd::Environment::getInstance()->maxMasterThreads())));
+                 sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -580,7 +580,7 @@ void NativeOpExecutioner::execPairwiseIntTransform(
       sd::math::nd4j_max<int>(
           1, sd::math::nd4j_min<int>(
                  zLen / 1024,
-                 sd::Environment::getInstance()->maxMasterThreads())));
+                 sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -620,7 +620,7 @@ void NativeOpExecutioner::execReduceFloat(
       func, 0, shape::length(hZShapeInfo), 1,
       kindOfLoop == sd::LoopKind::Kind::SMALLARR2DX
           ? 1
-          : sd::Environment::getInstance()->maxMasterThreads());
+          : sd::Environment::getInstance().maxMasterThreads());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -651,7 +651,7 @@ void NativeOpExecutioner::execReduceSame(
       func, 0, shape::length(hZShapeInfo), 1,
       kindOfLoop == sd::LoopKind::Kind::SMALLARR2DX
           ? 1
-          : sd::Environment::getInstance()->maxMasterThreads());
+          : sd::Environment::getInstance().maxMasterThreads());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -682,7 +682,7 @@ void NativeOpExecutioner::execReduceBool(
       func, 0, shape::length(hZShapeInfo), 1,
       kindOfLoop == sd::LoopKind::Kind::SMALLARR2DX
           ? 1
-          : sd::Environment::getInstance()->maxMasterThreads());
+          : sd::Environment::getInstance().maxMasterThreads());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -713,7 +713,7 @@ void NativeOpExecutioner::execReduceLong(
       func, 0, shape::length(hZShapeInfo), 1,
       kindOfLoop == sd::LoopKind::Kind::SMALLARR2DX
           ? 1
-          : sd::Environment::getInstance()->maxMasterThreads());
+          : sd::Environment::getInstance().maxMasterThreads());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -860,13 +860,13 @@ void NativeOpExecutioner::execReduce3(
   sd::TadPack tadPack;
 
   if (xLen == yLen) {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
   } else if (yLen > xLen) {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hYShapeInfo, dimension, dimensionLength);
   } else {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
   }
 
@@ -894,7 +894,7 @@ void NativeOpExecutioner::execReduce3All(
   auto xType = sd::ArrayOptions::dataType(hXShapeInfo);
   auto zType = sd::ArrayOptions::dataType(hZShapeInfo);
 
-  auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       hXShapeInfo, dimension, dimensionLength);
 
   // TODO: make it 2d
@@ -929,13 +929,13 @@ void NativeOpExecutioner::execReduce3TAD(
   sd::TadPack tadPack;
 
   if (xLen == yLen) {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
   } else if (yLen > xLen) {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hYShapeInfo, dimension, dimensionLength);
   } else {
-    tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
   }
 
@@ -1004,7 +1004,7 @@ void NativeOpExecutioner::execScalar(
           : sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        zLen / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 
 #endif
 }
@@ -1050,7 +1050,7 @@ void NativeOpExecutioner::execScalar(
   samediff::Threads::parallel_tad(
       func, 0, yLen, 1,
       sd::math::nd4j_min<int>(
-          yLen, sd::Environment::getInstance()->maxMasterThreads()));
+          yLen, sd::Environment::getInstance().maxMasterThreads()));
 
 #endif
 }
@@ -1093,7 +1093,7 @@ void NativeOpExecutioner::execScalarBool(
           : sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        zLen / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1133,7 +1133,7 @@ void NativeOpExecutioner::execScalarBool(
   samediff::Threads::parallel_tad(
       func, 0, yLen, 1,
       sd::math::nd4j_min<int>(
-          yLen, sd::Environment::getInstance()->maxMasterThreads()));
+          yLen, sd::Environment::getInstance().maxMasterThreads()));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1174,7 +1174,7 @@ void NativeOpExecutioner::execScalarInt(
           : sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        zLen / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1214,7 +1214,7 @@ void NativeOpExecutioner::execScalarInt(
   samediff::Threads::parallel_tad(
       func, 0, yLen, 1,
       sd::math::nd4j_min<int>(
-          yLen, sd::Environment::getInstance()->maxMasterThreads()));
+          yLen, sd::Environment::getInstance().maxMasterThreads()));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1329,7 +1329,7 @@ void NativeOpExecutioner::execTransformFloat(
       func, sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        shape::length(hZShapeInfo) / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1355,7 +1355,7 @@ void NativeOpExecutioner::execTransformBool(
       func, sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        shape::length(hZShapeInfo) / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1391,7 +1391,7 @@ void NativeOpExecutioner::execTransformAny(
         func, sd::math::nd4j_max<int>(
                   1, sd::math::nd4j_min<int>(
                          shape::length(hZShapeInfo) / 1024,
-                         sd::Environment::getInstance()->maxMasterThreads())));
+                         sd::Environment::getInstance().maxMasterThreads())));
   }
 }
 
@@ -1418,7 +1418,7 @@ void NativeOpExecutioner::execTransformSame(
       func, sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        shape::length(hZShapeInfo) / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1444,7 +1444,7 @@ void NativeOpExecutioner::execTransformStrict(
       func, sd::math::nd4j_max<int>(
                 1, sd::math::nd4j_min<int>(
                        shape::length(hZShapeInfo) / 1024,
-                       sd::Environment::getInstance()->maxMasterThreads())));
+                       sd::Environment::getInstance().maxMasterThreads())));
 }
 
 ////////////////////////////////////////////////////////////////////////

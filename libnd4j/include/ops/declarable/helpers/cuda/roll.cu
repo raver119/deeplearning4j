@@ -279,7 +279,7 @@ static void rollFunctorFull_(NDArray *input, NDArray *output,
       std::vector<int> dims(input->rankOf() - axe - 1);
       for (int i = 0; i < dims.size(); ++i) dims[i] = axe + 1 + i;
 
-      auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+      auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
           output->shapeInfo(), dims);
 
       int numTads = packZ.numberOfTads();

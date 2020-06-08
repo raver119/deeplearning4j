@@ -45,7 +45,7 @@ grpc::Status GraphInferenceServerImpl::RegisterGraph(
     auto graph = new Graph<float>(flat_graph);
 
     // single data type for now
-    GraphHolder::getInstance()->registerGraph<float>(flat_graph->id(), graph);
+    GraphHolder::getInstance().registerGraph<float>(flat_graph->id(), graph);
 
     // sending out OK response
     auto response_offset = CreateFlatResponse(mb_, 0);
@@ -71,7 +71,7 @@ grpc::Status GraphInferenceServerImpl::ReplaceGraph(
     auto graph = new Graph<float>(flat_graph);
 
     // single data type for now
-    GraphHolder::getInstance()->replaceGraph(flat_graph->id(), graph);
+    GraphHolder::getInstance().replaceGraph(flat_graph->id(), graph);
 
     // sending out OK response
     auto response_offset = CreateFlatResponse(mb_, 0);
@@ -98,7 +98,7 @@ grpc::Status GraphInferenceServerImpl::ForgetGraph(
     auto request = request_msg->GetRoot();
 
     // dropping out graph (any datatype)
-    GraphHolder::getInstance()->dropGraphAny(request->id());
+    GraphHolder::getInstance().dropGraphAny(request->id());
 
     // sending out OK response
     auto response_offset = CreateFlatResponse(mb_, 0);
@@ -122,7 +122,7 @@ grpc::Status GraphInferenceServerImpl::InferenceRequest(
   try {
     // GraphHolder
     auto response_offset =
-        GraphHolder::getInstance()->execute(request->id(), mb_, request);
+        GraphHolder::getInstance().execute(request->id(), mb_, request);
 
     mb_.Finish(response_offset);
     *response_msg = mb_.ReleaseMessage<FlatResult>();
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
   if (cmdOptionExists(argv, argv + argc, "-f")) {
     auto file = getCmdOption(argv, argv + argc, "-f");
     auto graph = GraphExecutioner<float>::importFromFlatBuffers(file);
-    sd::graph::GraphHolder::getInstance()->registerGraph<float>(0L, graph);
+    sd::graph::GraphHolder::getInstance().registerGraph<float>(0L, graph);
   }
 
   RunServer(port);

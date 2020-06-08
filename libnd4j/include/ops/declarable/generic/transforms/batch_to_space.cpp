@@ -156,7 +156,7 @@ DECLARE_SHAPE_FN(batch_to_space) {
                "negative output width dimension !");
 
   // we always give out C order here
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inputShapeInfo), 'c',
       {dim0 / (blockSize * blockSize), oH, oW, inputShapeInfo[4]}));
 }

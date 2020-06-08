@@ -97,7 +97,7 @@ DECLARE_SHAPE_FN(embedding_lookup) {
     for (int e = 1; e < outRank; e++)
       shapeInfo[e] = shape::sizeAt(inShapeInfo, e);
 
-    auto outShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto outShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShapeInfo), shape::order(inShapeInfo),
         shapeInfo);
     return SHAPELIST(outShapeInfo);
@@ -110,7 +110,7 @@ DECLARE_SHAPE_FN(embedding_lookup) {
   for (int e = 1; e < outRank; e++)
     shapeInfo[e] = shape::sizeAt(inShapeInfo, e);
 
-  auto outShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto outShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inShapeInfo), shape::order(inShapeInfo),
       shapeInfo);
   return SHAPELIST(outShapeInfo);

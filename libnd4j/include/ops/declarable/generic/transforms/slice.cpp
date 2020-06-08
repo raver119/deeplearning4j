@@ -106,16 +106,16 @@ CUSTOM_OP_IMPL(slice, 1, 1, false, 0, -2) {
                                       subArrShapeInfo, offset, true);
 
   auto subArrShapeInfoPack =
-      ConstantShapeHelper::getInstance()->bufferForShapeInfo(subArrShapeInfo);
+      ConstantShapeHelper::getInstance().bufferForShapeInfo(subArrShapeInfo);
 
   NDArray::prepareSpecialUse({output}, {input});
 
   NativeOpExecutioner::execTransformAny(
       block.launchContext(), sd::transform::Assign,
       input->bufferWithOffset(offset),
-      reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.primary()),
+      subArrShapeInfoPack.primary(),
       input->specialBufferWithOffset(offset),
-      reinterpret_cast<Nd4jLong *>(subArrShapeInfoPack.special()),
+      subArrShapeInfoPack.special(),
       output->buffer(), output->shapeInfo(), output->specialBuffer(),
       output->specialShapeInfo(), nullptr, nullptr, nullptr, true);
 
@@ -199,7 +199,7 @@ DECLARE_SHAPE_FN(slice) {
     shape.emplace_back(size);
   }
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inShape), 'c', shape);
   return SHAPELIST(newShape);
 }

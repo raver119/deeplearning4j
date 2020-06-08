@@ -92,9 +92,9 @@ FORCEINLINE static void rgbToFromYuv_(const NDArray& input, NDArray& output,
     return;
   }
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), dimC);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output.shapeInfo(), dimC);
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -158,9 +158,9 @@ FORCEINLINE static void tripleTransformer(const NDArray* input, NDArray* output,
 
     samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
   } else {
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimC);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimC);
 
     const Nd4jLong numOfTads = packX.numberOfTads();
@@ -208,9 +208,9 @@ FORCEINLINE static void tripleTransformer(const NDArray* input, NDArray* output,
 
     samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
   } else {
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimC);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimC);
 
     const Nd4jLong numOfTads = packX.numberOfTads();

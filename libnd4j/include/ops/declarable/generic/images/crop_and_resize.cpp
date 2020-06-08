@@ -27,6 +27,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(crop_and_resize, 4, 1, false, 0, 0) {
   auto image = INPUT_VARIABLE(0);
   auto boxes = INPUT_VARIABLE(1);
@@ -84,7 +85,7 @@ DECLARE_SHAPE_FN(crop_and_resize) {
   outputShape[3] = in[4];
 
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(
           ArrayOptions::dataType(in), shape::order(in), outputShape, 4)));
 }
 

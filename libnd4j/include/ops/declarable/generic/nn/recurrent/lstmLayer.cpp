@@ -476,7 +476,7 @@ DECLARE_SHAPE_FN(lstmLayer) {
       hShape = {sL, 2, bS, nOut};
     }
 
-    shapes->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapes->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
         type, x->ordering(), hShape));
   }
 
@@ -489,7 +489,7 @@ DECLARE_SHAPE_FN(lstmLayer) {
     else
       hLShape = {2, bS, nOut};
 
-    shapes->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapes->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
         type, x->ordering(), hLShape));
 
     if (retLastC)  // cL and hL have same shapes
@@ -505,7 +505,7 @@ DECLARE_SHAPE_FN(lstmLayer) {
     else
       cLShape = {2, bS, nOut};
 
-    shapes->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapes->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
         type, x->ordering(), cLShape));
   }
 

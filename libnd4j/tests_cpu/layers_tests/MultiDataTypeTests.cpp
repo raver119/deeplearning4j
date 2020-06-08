@@ -56,7 +56,7 @@ TEST_F(MultiDataTypeTests, DataTypeUtils_Test_3) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<float>('c', {2, 3},
                                          {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
@@ -72,7 +72,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<float>('c', {2, 3},
                                          {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
@@ -87,7 +87,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_3) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
   auto y = NDArrayFactory::create<double>(2.0);
@@ -101,7 +101,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_3) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_4) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<double>('c', {2, 3},
                                           {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
@@ -116,7 +116,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_4) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_5) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
   auto y = NDArrayFactory::create<Nd4jLong>(2);
@@ -128,7 +128,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_5) {
 }
 
 TEST_F(MultiDataTypeTests, Basic_Test_7) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
   auto y = NDArrayFactory::create<float>('c', {2, 3},
@@ -147,7 +147,7 @@ TEST_F(MultiDataTypeTests, Basic_Test_7) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, Basic_Test_6) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto x = NDArrayFactory::create<Nd4jLong>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
   auto y = NDArrayFactory::create<int>(2);
@@ -311,7 +311,7 @@ TEST_F(MultiDataTypeTests, ndarray_varianceNumber_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorPlus_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {-1, -2, -1, -2}, sd::DataType::FLOAT32);
@@ -325,7 +325,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorPlus_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorPlus_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
@@ -348,7 +348,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorPlus_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMinus_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {-1, -2, -1, -2}, sd::DataType::HALF);
@@ -362,7 +362,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMinus_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMinus_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
@@ -389,7 +389,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMinus_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 /// multiply
 TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {-1, -2, -1, -2}, sd::DataType::DOUBLE);
@@ -403,7 +403,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
@@ -427,7 +427,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMultiply_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 /// multiply
 TEST_F(MultiDataTypeTests, ndarray_operatorDivide_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {4, 1, 2, 3}, sd::DataType::HALF);
   NDArray x2('c', {2, 2}, {-1, -2, -1, -9}, sd::DataType::DOUBLE);
@@ -442,7 +442,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorDivide_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorDivide_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {1, 2, 3, 4}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {1, 2, 3, 4}, sd::DataType::FLOAT32);
@@ -473,7 +473,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorDivide_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorPlusEqual_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray scalar1('c', {0}, std::vector<double>{4}, sd::DataType::INT32);
   NDArray scalar2('c', {0}, std::vector<double>{1.5}, sd::DataType::HALF);
@@ -514,7 +514,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorPlusEqual_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorPlusEqual_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT32);
@@ -551,7 +551,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorPlusEqual_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMinusEqual_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray scalar1('c', {0}, std::vector<double>{4}, sd::DataType::INT32);
   NDArray scalar2('c', {0}, std::vector<double>{1.5}, sd::DataType::HALF);
@@ -592,7 +592,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMinusEqual_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMinusEqual_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT32);
@@ -629,7 +629,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMinusEqual_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMultiplyEqual_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray scalar1('c', {0}, std::vector<double>{3}, sd::DataType::INT32);
   NDArray scalar2('c', {0}, std::vector<double>{2.5}, sd::DataType::HALF);
@@ -670,7 +670,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMultiplyEqual_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorMultiplyEqual_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT32);
@@ -707,7 +707,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorMultiplyEqual_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorDivideEqual_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray scalar1('c', {0}, std::vector<double>{3}, sd::DataType::INT32);
   NDArray scalar2('c', {0}, std::vector<double>{2.5}, sd::DataType::HALF);
@@ -749,7 +749,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorDivideEqual_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_operatorDivideEqual_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 2, 4, 6}, sd::DataType::FLOAT32);
   NDArray x2('c', {2, 2}, {0, 2, 4, 6}, sd::DataType::INT32);
@@ -787,7 +787,7 @@ TEST_F(MultiDataTypeTests, ndarray_operatorDivideEqual_test2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_reduceNumberFloat_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0.5, 1.5, 2.5, 3.5}, sd::DataType::HALF);
@@ -822,7 +822,7 @@ TEST_F(MultiDataTypeTests, ndarray_reduceNumberFloat_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_reduceNumberSame_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0.5, 1.5, 2.5, 3.5}, sd::DataType::HALF);
@@ -857,7 +857,7 @@ TEST_F(MultiDataTypeTests, ndarray_reduceNumberSame_test1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_reduceNumberBool_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, -1, 2, -3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0.5, -1.5, 2.5, -3.5}, sd::DataType::HALF);
@@ -889,7 +889,7 @@ TEST_F(MultiDataTypeTests, ndarray_reduceNumberBool_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_reduceNumberLong_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0.5, 1.5, 2.5, 3.5}, sd::DataType::HALF);
@@ -924,7 +924,7 @@ TEST_F(MultiDataTypeTests, ndarray_reduceNumberLong_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_indexReduceNumber_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT32);
   NDArray x2('c', {2, 2}, {0.5, 1.5, -4.5, 3.5}, sd::DataType::HALF);
@@ -946,7 +946,7 @@ TEST_F(MultiDataTypeTests, ndarray_indexReduceNumber_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTransformFloat_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 4, 9, 16}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 2.25, 6.25, 12.25}, sd::DataType::HALF);
@@ -983,7 +983,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTransformFloat_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTransformSame_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1.5, 2.5, 3.5}, sd::DataType::HALF);
@@ -1028,7 +1028,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTransformSame_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTransformBool_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1.5, 2.5, 3.5}, sd::DataType::HALF);
@@ -1063,7 +1063,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTransformBool_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTransformStrict_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::HALF);
   NDArray x2('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::FLOAT32);
@@ -1108,7 +1108,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTransformStrict_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyPairwiseTransform_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 3}, {0, 1, 2, 3, 4, 5}, sd::DataType::INT32);
   NDArray x2('c', {2, 3}, {0, 1, 2, 3, 4, 5}, sd::DataType::FLOAT32);
@@ -1143,7 +1143,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyPairwiseTransform_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyPairwiseTransform_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 3}, {1, 1, 2, 3, 4, 5}, sd::DataType::INT32);
   NDArray x2('c', {3, 2}, {1, 0, 2, 0, 4, 0}, sd::DataType::INT32);
@@ -1171,7 +1171,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyPairwiseTransform_test2) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyBroadcast_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 3}, {10, 20, 30, 40, 50, 60}, sd::DataType::INT32);
   NDArray x2('c', {2}, {1, 2}, sd::DataType::INT64);
@@ -1215,7 +1215,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyBroadcast_test2) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTrueBroadcast_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {10, 20, 30, 40}, sd::DataType::INT32);
   NDArray x2('c', {2}, {1, 2}, sd::DataType::HALF);
@@ -1272,7 +1272,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTrueBroadcast_test1) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyTrueBroadcast_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {10, 20, 30, 40}, sd::DataType::HALF);
   NDArray x2('c', {2}, {10, 40}, sd::DataType::HALF);
@@ -1312,7 +1312,7 @@ TEST_F(MultiDataTypeTests, ndarray_applyTrueBroadcast_test2) {
 
 //////////////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, ndarray_applyScalar_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 2}, {0, 1, 2, 3}, sd::DataType::INT64);
   NDArray x2('c', {2, 2}, {0, 1.5, 2.5, 3.5}, sd::DataType::FLOAT32);
@@ -1703,7 +1703,7 @@ TEST_F(MultiDataTypeTests, applyAllReduce3_test1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, RowCol_test1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 3}, {1, 2, 3, 4, 5, 6}, sd::DataType::INT32);
   NDArray x2('c', {2}, {0.5, 0.6}, sd::DataType::FLOAT32);
@@ -1732,7 +1732,7 @@ TEST_F(MultiDataTypeTests, RowCol_test1) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(MultiDataTypeTests, RowCol_test2) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   NDArray x1('c', {2, 3}, {1, 2, 3, 4, 5, 6}, sd::DataType::INT32);
   NDArray x2('c', {2}, {0.5, 0.6}, sd::DataType::FLOAT32);

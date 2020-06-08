@@ -73,7 +73,7 @@ DECLARE_SHAPE_FN(lin_space) {
                                  : static_cast<Nd4jLong>(I_ARG(0));
 
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->vectorShapeInfo(steps, dataType));
+      ConstantShapeHelper::getInstance().vectorShapeInfo(steps, dataType));
 }
 
 DECLARE_TYPES(lin_space) {

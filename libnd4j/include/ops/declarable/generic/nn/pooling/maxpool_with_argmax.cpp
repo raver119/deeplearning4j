@@ -54,8 +54,8 @@ DECLARE_TYPES(max_pool_with_argmax) {
 DECLARE_SHAPE_FN(max_pool_with_argmax) {
   auto in = inputShape->at(0);
   auto valuesShape =
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(in));
-  auto indicesShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(in));
+  auto indicesShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(in, DataType::INT64));
 
   return SHAPELIST(valuesShape, indicesShape);

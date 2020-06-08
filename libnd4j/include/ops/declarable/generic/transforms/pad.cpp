@@ -131,7 +131,7 @@ DECLARE_SHAPE_FN(pad) {
   ShapeDescriptor descriptor(outShapeInfo);
   RELEASE(outShapeInfo, block.workspace());
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->createShapeInfo(descriptor));
+      ConstantShapeHelper::getInstance().createShapeInfo(descriptor));
 }
 
 }  // namespace ops

@@ -31,30 +31,34 @@
 #include <map>
 #include <mutex>
 #include <vector>
+#include <array/ShapeDescriptor.h>
+#include <array/ConstantShapeBuffer.h>
+#include <memory/Workspace.h>
+#include <system/op_boilerplate.h>
 
 namespace sd {
 
 class SD_EXPORT ConstantShapeHelper {
  private:
-  static ConstantShapeHelper* _INSTANCE;
+
 
   std::mutex _mutex;
-  std::vector<MAP_IMPL<ShapeDescriptor, ConstantDataBuffer>> _cache;
+  std::vector<MAP_IMPL<ShapeDescriptor, ConstantShapeBuffer>> _cache;
 
   ConstantShapeHelper();
 
  public:
   ~ConstantShapeHelper() = default;
 
-  static ConstantShapeHelper* getInstance();
+  static ConstantShapeHelper & getInstance();
 
-  ConstantDataBuffer bufferForShapeInfo(sd::DataType dataType, char order,
+  ConstantShapeBuffer& bufferForShapeInfo(sd::DataType dataType, char order,
                                         const std::vector<Nd4jLong>& shape);
-  ConstantDataBuffer bufferForShapeInfo(const ShapeDescriptor& descriptor);
-  ConstantDataBuffer bufferForShapeInfo(const Nd4jLong* shapeInfo);
-  ConstantDataBuffer bufferForShapeInfo(sd::DataType dataType, char order,
+  ConstantShapeBuffer& bufferForShapeInfo(const ShapeDescriptor& descriptor);
+  ConstantShapeBuffer& bufferForShapeInfo(const Nd4jLong* shapeInfo);
+  ConstantShapeBuffer& bufferForShapeInfo(sd::DataType dataType, char order,
                                         int rank, const Nd4jLong* shape);
-  ConstantDataBuffer createShapeInfoWithUnitiesForBroadcast(
+  ConstantShapeBuffer& createShapeInfoWithUnitiesForBroadcast(
       const Nd4jLong* maxShapeInfo, const Nd4jLong* minShapeInfo,
       sd::memory::Workspace* workspace = nullptr,
       const std::vector<int>& dimensions = {});

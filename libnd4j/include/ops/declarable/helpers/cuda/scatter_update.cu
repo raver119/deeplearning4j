@@ -114,9 +114,9 @@ void scatterUpdate(sd::LaunchContext* context, NDArray& input, NDArray& updates,
   std::vector<int> tadDimensions(numOfDims);
   for (int e = 2; e < 2 + numOfDims; e++) tadDimensions[e - 2] = (*intArgs)[e];
 
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), tadDimensions);
-  auto packY = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = ConstantTadHelper::getInstance().tadForDimensions(
       updates.shapeInfo(), tadDimensions);
 
   NDArray indices(const_cast<int*>(intArgs->data()) + numOfDims + 3, 'c',

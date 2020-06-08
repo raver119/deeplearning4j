@@ -162,7 +162,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
 
   auto fp = ctx.isFastPath();
 
-  if (Environment::getInstance()->isProfiling()) {
+  if (Environment::getInstance().isProfiling()) {
     /*
     if (ctx.getVariableSpace() != nullptr && ctx.getVariableSpace()->flowPath()
     != nullptr) { prof = ctx.getVariableSpace()->flowPath()->profile(); node =
@@ -174,7 +174,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
   }
 
   if (ctx.isInplace()) {
-    if (Environment::getInstance()->isProfiling() && node != nullptr) {
+    if (Environment::getInstance().isProfiling() && node != nullptr) {
       if (fp) {
         //
       } else {
@@ -233,7 +233,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
     ShapeList inSha;
     int results = 0;
 
-    if (Environment::getInstance()->isProfiling() && node != nullptr)
+    if (Environment::getInstance().isProfiling() && node != nullptr)
       inputStart = std::chrono::system_clock::now();
 
     int cntIn = 0;
@@ -269,7 +269,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
     }
 
     // optionally saving input time
-    if (Environment::getInstance()->isProfiling() && node != nullptr) {
+    if (Environment::getInstance().isProfiling() && node != nullptr) {
       inputEnd = std::chrono::system_clock::now();
       auto inputTime = std::chrono::duration_cast<std::chrono::nanoseconds>(
                            inputEnd - inputStart)
@@ -286,7 +286,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
     results = outSha->size();
 
     // optionally saving shapeTime
-    if (Environment::getInstance()->isProfiling() && node != nullptr) {
+    if (Environment::getInstance().isProfiling() && node != nullptr) {
       shapeEnd = std::chrono::system_clock::now();
       auto prepTime = std::chrono::duration_cast<std::chrono::nanoseconds>(
                           shapeEnd - shapeStart)
@@ -308,7 +308,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
         std::pair<int, int> pair(ctx.nodeId(), cnt++);
 
         if (!ctx.isValueAvailable(ctx.name(), ctx.nodeId(), pair.second)) {
-          if (Environment::getInstance()->isDebugAndVerbose())
+          if (Environment::getInstance().isDebugAndVerbose())
             shape::printShapeInfoLinear("Going to create variable with shape",
                                         out);
 
@@ -385,7 +385,7 @@ int DeclarableOp::prepareOutputs(Context &ctx) {
     delete outSha;
 
     // saving arrayTime
-    if (Environment::getInstance()->isProfiling() && node != nullptr) {
+    if (Environment::getInstance().isProfiling() && node != nullptr) {
       arrayEnd = std::chrono::system_clock::now();
       auto arrayTime = std::chrono::duration_cast<std::chrono::nanoseconds>(
                            arrayEnd - arrayStart)
@@ -630,7 +630,7 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
                               ? 0L
                               : block->workspace()->getSpilledSize() +
                                     block->workspace()->getUsedSize();
-  if (Environment::getInstance()->isProfiling())
+  if (Environment::getInstance().isProfiling())
     timeEnter = std::chrono::system_clock::now();
 
   // make sure we're not trying to call non-inpace op inplace
@@ -650,7 +650,7 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
   // this method will allocate output NDArrays for this op
   auto numOutputs = this->prepareOutputs(*block);
 
-  if (Environment::getInstance()->isProfiling()) {
+  if (Environment::getInstance().isProfiling()) {
     timeStart = std::chrono::system_clock::now();
     prepTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeStart -
                                                                     timeEnter)
@@ -663,11 +663,11 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
   // platform helpers use might be forbidden for various reasons, so we'll check
   // it out first
   if (block->helpersAllowed() &&
-      sd::Environment::getInstance()->helpersAllowed()) {
+      sd::Environment::getInstance().helpersAllowed()) {
     // if we have platform-specific helper for this op - invoke it
-    if (OpRegistrator::getInstance()->hasHelper(this->getOpHash(),
+    if (OpRegistrator::getInstance().hasHelper(this->getOpHash(),
                                                 block->engine())) {
-      auto helper = OpRegistrator::getInstance()->getPlatformHelper(
+      auto helper = OpRegistrator::getInstance().getPlatformHelper(
           this->getOpHash(), block->engine());
       if (helper->isUsable(*block)) {
         status = helper->invokeHelper(*block);
@@ -680,7 +680,7 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
   if (!hasHelper) status = this->validateAndExecute(*block);
 
   // optionally saving execution time
-  if (Environment::getInstance()->isProfiling()) {
+  if (Environment::getInstance().isProfiling()) {
     timeEnd = std::chrono::system_clock::now();
     outerTime = std::chrono::duration_cast<std::chrono::nanoseconds>(timeEnd -
                                                                      timeStart)
@@ -688,7 +688,7 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
     block->setInnerTime(outerTime);
   }
 
-  if (Environment::getInstance()->isProfiling() &&
+  if (Environment::getInstance().isProfiling() &&
       block->getVariableSpace() != nullptr) {
     /*
     auto fp = block->getVariableSpace()->flowPath();
@@ -708,7 +708,7 @@ Nd4jStatus DeclarableOp::execute(Context *block) {
   }
 
   // now we print out all outputs for this node
-  if (sd::Environment::getInstance()->isDebugAndVerbose()) {
+  if (sd::Environment::getInstance().isDebugAndVerbose()) {
     auto vs = block->getVariableSpace();
 
     for (int e = 0; e < numOutputs; e++) {

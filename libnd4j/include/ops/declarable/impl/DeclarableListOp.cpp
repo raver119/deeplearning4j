@@ -51,7 +51,7 @@ ShapeList* DeclarableListOp::calculateOutputShape(ShapeList* inputShape,
                                                   sd::graph::Context& block) {
   // TODO: ensure this method isn't ever called
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       DataType::FLOAT32, 'c', {1, 1});
   return SHAPELIST(newShape);
 }

@@ -396,11 +396,11 @@ DECLARE_SHAPE_FN(batchnorm_bp) {
   auto shapes = SHAPELIST();
 
   // dLdI shapeInfo
-  shapes->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+  shapes->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
       outType, inShapeInfo));
 
   // dLdM shapeInfo
-  shapes->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+  shapes->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
       outType, meanShapeInfo));
 
   // dLdV shapeInfo (same as dLdM)

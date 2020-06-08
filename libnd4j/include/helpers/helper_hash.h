@@ -20,8 +20,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef LIBND4J_HELPER_HASH_H
-#define LIBND4J_HELPER_HASH_H
+#ifndef SD_HELPER_HASH_H
+#define SD_HELPER_HASH_H
 
 #include <system/dll.h>
 #include <system/pointercast.h>
@@ -33,7 +33,7 @@ namespace sd {
 namespace ops {
 class SD_EXPORT HashHelper {
  private:
-  static HashHelper* _INSTANCE;
+
 
   Nd4jLong _byteTable[256];
   const Nd4jLong HSTART = 0xBB40E64DA205B064L;
@@ -43,10 +43,11 @@ class SD_EXPORT HashHelper {
   std::mutex _locker;
 
  public:
-  static HashHelper* getInstance();
+  static HashHelper& getInstance();
   Nd4jLong getLongHash(const std::string& str);
 };
+
 }  // namespace ops
 }  // namespace sd
 
-#endif  // LIBND4J_HELPER_HASH_H
+#endif  // SD_HELPER_HASH_H

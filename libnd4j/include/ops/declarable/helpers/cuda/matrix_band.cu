@@ -99,9 +99,9 @@ void matrixBandPart_(sd::LaunchContext* context, NDArray* input,
   std::vector<int> dimsToExclude =
       ShapeUtils::evalDimsToExclude(input->rankOf(), lastDims);
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), lastDims);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), lastDims);
 
   const Nd4jLong numTads = packX.numberOfTads();

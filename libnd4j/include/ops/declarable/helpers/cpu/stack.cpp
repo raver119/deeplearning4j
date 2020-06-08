@@ -41,7 +41,7 @@ static void stack_(const std::vector<const NDArray*>& inArrs, NDArray& output,
 
     samediff::Threads::parallel_for(func, 0, numOfSubArrs);
   } else {
-    auto zTadPack = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto zTadPack = ConstantTadHelper::getInstance().tadForDimensions(
         output.shapeInfo(),
         ShapeUtils::evalDimsToExclude(output.rankOf(), {dim}));
     auto zTadShapeInfo = zTadPack.primaryShapeInfo();
@@ -53,9 +53,9 @@ static void stack_(const std::vector<const NDArray*>& inArrs, NDArray& output,
         NativeOpExecutioner::execTransformAny(
             inArrs[0]->getContext(), transform::Assign, inArrs[i]->buffer(),
             inArrs[i]->shapeInfo(), nullptr /*input specialBuffer*/,
-            nullptr /*input specialShapeInfo*/, zBuff, zTadShapeInfo,
+            nullptr /*input special*/, zBuff, zTadShapeInfo,
             nullptr /*output specialBuffer*/,
-            nullptr /*output specialShapeInfo*/, nullptr, nullptr, nullptr,
+            nullptr /*output special*/, nullptr, nullptr, nullptr,
             false /*allowParallelism*/);
       }
     };
@@ -89,7 +89,7 @@ static void unstack_(const NDArray& input, const std::vector<NDArray*>& outArrs,
 
     samediff::Threads::parallel_for(func, 0, numOfSubArrs);
   } else {
-    auto xTadPack = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto xTadPack = ConstantTadHelper::getInstance().tadForDimensions(
         input.shapeInfo(),
         ShapeUtils::evalDimsToExclude(input.rankOf(), {dim}));
     auto xTadShapeInfo = xTadPack.primaryShapeInfo();
@@ -100,10 +100,10 @@ static void unstack_(const NDArray& input, const std::vector<NDArray*>& outArrs,
 
         NativeOpExecutioner::execTransformAny(
             input.getContext(), transform::Assign, xBuff, xTadShapeInfo,
-            nullptr /*input specialBuffer*/, nullptr /*input specialShapeInfo*/,
+            nullptr /*input specialBuffer*/, nullptr /*input special*/,
             outArrs[i]->buffer(), outArrs[i]->shapeInfo(),
             nullptr /*output specialBuffer*/,
-            nullptr /*output specialShapeInfo*/, nullptr, nullptr, nullptr,
+            nullptr /*output special*/, nullptr, nullptr, nullptr,
             false /*allowParallelism*/);
       }
     };

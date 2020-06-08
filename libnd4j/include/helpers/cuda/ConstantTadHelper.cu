@@ -23,9 +23,10 @@
 #include <execution/LaunchContext.h>
 #include <helpers/ConstantHelper.h>
 #include <helpers/ShapeUtils.h>
+#include <array/PrimaryPointerDeallocator.h>
+#include <array/CudaPointerDeallocator.h>
 #include <helpers/TAD.h>
-
-#include "../ConstantTadHelper.h"
+#include <helpers/ConstantTadHelper.h>
 
 namespace sd {
 ConstantTadHelper::ConstantTadHelper() {
@@ -37,10 +38,10 @@ ConstantTadHelper::ConstantTadHelper() {
   }
 }
 
-ConstantTadHelper *ConstantTadHelper::getInstance() {
-  if (!_INSTANCE) _INSTANCE = new ConstantTadHelper();
+ConstantTadHelper &ConstantTadHelper::getInstance() {
+  static ConstantTadHelper instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 TadPack ConstantTadHelper::tadForDimensions(const Nd4jLong *originalShape,
@@ -88,13 +89,13 @@ TadPack ConstantTadHelper::tadForDimensions(TadDescriptor &descriptor) {
             ? rank
             : rank - dimsToExclude.size();
 
-    auto sPtr = new Nd4jLong[shape::shapeInfoLength(subArrRank)];
-    auto oPtr = new Nd4jLong[numOfSubArrs];
+    auto sPtr = std::make_shared<PointerWrapper>(new Nd4jLong[shape::shapeInfoLength(subArrRank)], std::make_shared<PrimaryPointerDeallocator>());
+    auto oPtr = std::make_shared<PointerWrapper>(new Nd4jLong[numOfSubArrs], std::make_shared<PrimaryPointerDeallocator>());
 
     if (numOfSubArrs > 0)
       shape::calcSubArrsShapeInfoAndOffsets(
           shapeInfo, numOfSubArrs, dimsToExclude.size(), dimsToExclude.data(),
-          sPtr, oPtr, descriptor.areUnitiesinShape());
+          sPtr->pointerAsT<Nd4jLong>(), oPtr->pointerAsT<Nd4jLong>(), descriptor.areUnitiesinShape());
 
     Nd4jPointer soPtr;
     auto res = cudaMalloc(reinterpret_cast<void **>(&soPtr),
@@ -103,18 +104,18 @@ TadPack ConstantTadHelper::tadForDimensions(TadDescriptor &descriptor) {
       throw cuda_exception::build("Memory allocation for tadOffsets failed",
                                   res);
 
-    res = cudaMemcpy(soPtr, oPtr, numOfSubArrs * sizeof(Nd4jLong),
+    res = cudaMemcpy(soPtr, oPtr->pointer(), numOfSubArrs * sizeof(Nd4jLong),
                      cudaMemcpyHostToDevice);
     if (res != 0) throw cuda_exception::build("tadOffsets copy failed", res);
 
-    auto ssPtr = ConstantHelper::getInstance()->replicatePointer(
-        sPtr, shape::shapeInfoByteLength(subArrRank));
+    // TODO: add deallocator here?
+            auto ssPtr = std::make_shared<PointerWrapper>(ConstantHelper::getInstance().replicatePointer(
+        sPtr->pointer(), shape::shapeInfoByteLength(subArrRank)));
 
-    ConstantDataBuffer shapesBuffer(
-        sPtr, ssPtr, shape::shapeInfoLength(subArrRank) * sizeof(Nd4jLong),
-        DataType::INT64);
-    ConstantDataBuffer offsetsBuffer(
-        oPtr, soPtr, numOfSubArrs * sizeof(Nd4jLong), DataType::INT64);
+    ConstantShapeBuffer shapesBuffer(
+        sPtr, ssPtr);
+    ConstantOffsetsBuffer offsetsBuffer(
+        oPtr, std::make_shared<PointerWrapper>(soPtr, std::make_shared<CudaPointerDeallocator>()));
 
     TadPack t(shapesBuffer, offsetsBuffer, numOfSubArrs);
     _cache[deviceId][descriptor] = t;
@@ -131,5 +132,5 @@ TadPack ConstantTadHelper::tadForDimensions(TadDescriptor &descriptor) {
   }
 }
 
-sd::ConstantTadHelper *sd::ConstantTadHelper::_INSTANCE = 0;
+
 }  // namespace sd

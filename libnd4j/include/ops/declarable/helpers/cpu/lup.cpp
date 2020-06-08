@@ -120,7 +120,7 @@ static void _invertUpperMatrix(NDArray* inputMatrix, NDArray* invertedMatrix) {
   };
 
   // PRAGMA_OMP_PARALLEL_FOR_IF(n >
-  // Environment::getInstance()->elementwiseThreshold())
+  // Environment::getInstance().elementwiseThreshold())
   auto invertUpDiagonals = PRAGMA_THREADS_FOR {
     for (auto i = start; i < stop; i += increment)
       invertedMatrix->r<T>(i, i + 1) -=

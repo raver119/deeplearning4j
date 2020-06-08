@@ -129,9 +129,9 @@ static void lrnBP_(sd::graph::Context& block, const NDArray& input,
                    const NDArray& gradO, NDArray& gradI, const int depth,
                    const float bias, const float alpha, const float beta) {
   auto rank = input.rankOf();
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), {rank - 1});
-  auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
       gradI.shapeInfo(), {rank - 1});
 
   const auto tadLength = shape::length(packX.primaryShapeInfo());
@@ -171,9 +171,9 @@ static void lrnFunctor_(sd::graph::Context& block, NDArray* input,
                         NDArray* output, int depth, double bias, double alpha,
                         double beta) {
   auto rank = input->rankOf();
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {rank - 1});
-  auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {rank - 1});
 
   const auto tadLength = shape::length(packX.primaryShapeInfo());

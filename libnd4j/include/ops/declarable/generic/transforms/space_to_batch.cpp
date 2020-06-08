@@ -119,7 +119,7 @@ DECLARE_SHAPE_FN(space_to_batch) {
                "SpaceToBatch: after padding, second and third dimensions of "
                "input array must be divisible by blockSize !");
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inputShapeInfo), 'c',
       {inputShapeInfo[1] * blockSize * blockSize,
        (inputShapeInfo[2] + padBottom + padTop) / blockSize,

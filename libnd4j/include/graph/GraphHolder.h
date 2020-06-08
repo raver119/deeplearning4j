@@ -31,7 +31,7 @@ namespace sd {
 namespace graph {
 class SD_EXPORT GraphHolder {
  private:
-  static GraphHolder *_INSTANCE;
+
   MAP_IMPL<Nd4jLong, Graph> _graphs;
 
   std::mutex _mutex;
@@ -40,7 +40,7 @@ class SD_EXPORT GraphHolder {
   ~GraphHolder() = default;
 
  public:
-  static GraphHolder *getInstance();
+  static GraphHolder &getInstance();
 
   void registerGraph(Nd4jLong graphId, const Graph &graph);
 

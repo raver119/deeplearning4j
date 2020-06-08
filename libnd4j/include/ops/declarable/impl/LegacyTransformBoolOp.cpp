@@ -68,7 +68,7 @@ Nd4jStatus LegacyTransformBoolOp::validateAndExecute(Context &block) {
 ShapeList *LegacyTransformBoolOp::calculateOutputShape(
     ShapeList *inputShape, sd::graph::Context &block) {
   auto inShape = inputShape->at(0);
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(inShape, DataType::BOOL)));
 }
 }  // namespace ops

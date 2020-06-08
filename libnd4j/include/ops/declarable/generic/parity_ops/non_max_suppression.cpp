@@ -117,7 +117,7 @@ DECLARE_SHAPE_FN(non_max_suppression) {
     }
     if (actualIndicesCount < maxOutputSize) maxOutputSize = actualIndicesCount;
   }
-  outputShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  outputShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       maxOutputSize, DataType::INT32);
 
   return SHAPELIST(outputShape);
@@ -236,7 +236,7 @@ DECLARE_SHAPE_FN(non_max_suppression_v3) {
                                        scoreThreshold, nullptr);
 
   auto outputShape =
-      ConstantShapeHelper::getInstance()->vectorShapeInfo(len, DataType::INT32);
+      ConstantShapeHelper::getInstance().vectorShapeInfo(len, DataType::INT32);
 
   return SHAPELIST(outputShape);
 }

@@ -38,7 +38,7 @@ CUSTOM_OP_IMPL(rank, 1, 1, false, 0, 0) {
 }
 DECLARE_SHAPE_FN(rank) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT32));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(sd::DataType::INT32));
 }
 
 DECLARE_TYPES(rank) {

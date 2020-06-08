@@ -43,7 +43,7 @@ class BroadcastHelper {
     }
 
     std::unique_ptr<NDArray> ptr;
-    if (!Environment::getInstance()->isExperimentalBuild()) {
+    if (!Environment::getInstance().isExperimentalBuild()) {
       if (y->dataType() != x->dataType()) {
         y = new NDArray(y->cast(x->dataType()));
         std::unique_ptr<NDArray> ptr2(y);

@@ -201,7 +201,7 @@ DECLARE_SHAPE_FN(softmax_cross_entropy_loss) {
   Nd4jLong const* outShapeInfo = nullptr;
 
   if (INT_ARG(0) != 0)  // in this case output is scalar
-    outShapeInfo = ConstantShapeHelper::getInstance()->scalarShapeInfo(outType);
+    outShapeInfo = ConstantShapeHelper::getInstance().scalarShapeInfo(outType);
   else {  // in this case output has the shape as labels and logits minus last
           // dimension
     std::vector<int> dimensions = {-1};
@@ -505,15 +505,15 @@ DECLARE_SHAPE_FN(softmax_cross_entropy_loss_grad) {
       DataTypeUtils::pickFloatingType(ArrayOptions::dataType(logitsShapeInfo));
 
   auto dLdpShapeInfo =
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(
           outType, shape::order(logitsShapeInfo),
           shape::shapeOf(logitsShapeInfo), shape::rank(logitsShapeInfo)));
   auto dLdwShapeInfo =
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(
           outType, shape::order(weightsShapeInfo),
           shape::shapeOf(weightsShapeInfo), shape::rank(weightsShapeInfo)));
   auto dLdlShapeInfo =
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(
           outType, shape::order(labelsShapeInfo),
           shape::shapeOf(labelsShapeInfo), shape::rank(labelsShapeInfo)));
 

@@ -124,7 +124,7 @@ DECLARE_SHAPE_FN(gru) {
                ShapeUtils::shapeAsString(bCorrectShape).c_str(),
                ShapeUtils::shapeAsString(b).c_str());
 
-  auto hShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto hShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       hI->dataType(), hI->ordering(), {time, bS, nOut});
 
   return SHAPELIST(hShapeInfo);
@@ -250,15 +250,15 @@ DECLARE_SHAPE_FN(gru_bp) {
                ShapeUtils::shapeAsString(hCorrectShape).c_str(),
                ShapeUtils::shapeAsString(dLdh).c_str());
 
-  auto dLdxShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto dLdxShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       dLdh->dataType(), x->shapeInfo());
-  auto dLdhIShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto dLdhIShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       dLdh->dataType(), hI->shapeInfo());
-  auto dLdWxShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto dLdWxShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       dLdh->dataType(), Wx->shapeInfo());
-  auto dLdWhShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto dLdWhShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       dLdh->dataType(), Wh->shapeInfo());
-  auto dLdbShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto dLdbShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       dLdh->dataType(), b->shapeInfo());
 
   return SHAPELIST(dLdxShapeInfo, dLdhIShapeInfo, dLdWxShapeInfo,

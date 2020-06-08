@@ -417,8 +417,8 @@ TEST_F(JavaInteropTests, TestInplace_1) {
 }
 
 TEST_F(JavaInteropTests, Test_Synonyms_1) {
-  auto op = OpRegistrator::getInstance()->getOperation("RDiv");
-  auto opRef = OpRegistrator::getInstance()->getOperation("reversedivide");
+  auto op = OpRegistrator::getInstance().getOperation("RDiv");
+  auto opRef = OpRegistrator::getInstance().getOperation("reversedivide");
   std::string nameExp("reversedivide");
 
   ASSERT_TRUE(op != nullptr);
@@ -432,8 +432,8 @@ TEST_F(JavaInteropTests, Test_Synonyms_1) {
 }
 
 TEST_F(JavaInteropTests, Test_Synonyms_2) {
-  auto op = OpRegistrator::getInstance()->getOperation("RDiv");
-  auto opRef = OpRegistrator::getInstance()->getOperation("reversedivide");
+  auto op = OpRegistrator::getInstance().getOperation("RDiv");
+  auto opRef = OpRegistrator::getInstance().getOperation("reversedivide");
   std::string nameExp("reversedivide");
 
   ASSERT_TRUE(op != nullptr);
@@ -447,8 +447,8 @@ TEST_F(JavaInteropTests, Test_Synonyms_2) {
 }
 
 TEST_F(JavaInteropTests, Test_Synonyms_3) {
-  auto op = OpRegistrator::getInstance()->getOperation("RDiv");
-  auto opRef = OpRegistrator::getInstance()->getOperation("reversedivide");
+  auto op = OpRegistrator::getInstance().getOperation("RDiv");
+  auto opRef = OpRegistrator::getInstance().getOperation("reversedivide");
   std::string nameExp("reversedivide");
 
   ASSERT_TRUE(op != nullptr);
@@ -562,7 +562,7 @@ x.specialShapeInfo()};
 
     Nd4jPointer ptrsOutBuffers[] = {(Nd4jPointer) z.buffer(),
 z.specialBuffer()}; Nd4jPointer ptrsOutShapes[] = {(Nd4jPointer) z.shapeInfo(),
-z.specialShapeInfo()};
+z.special()};
 
     auto result = execCustomOp(nullptr, op.getOpHash(), ptrsInBuffer,
 ptrsInShapes, 1, ptrsOutBuffers, ptrsOutShapes, 1, nullptr, 0, exp, 11, nullptr,
@@ -642,19 +642,19 @@ sd::graph::readFlatBuffers("./resources/reduce_dim_false.fb");
 
     registerGraph(nullptr, 119, (Nd4jPointer) data);
 
-    ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(119));
+    ASSERT_TRUE(GraphHolder::getInstance().hasGraph(119));
 
     unregisterGraph(nullptr, 119);
 
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(119));
+    ASSERT_FALSE(GraphHolder::getInstance().hasGraph(119));
 
 
     delete[] data;
 }
 
 TEST_F(JavaInteropTests, Test_GraphReuse_2) {
-    //Environment::getInstance()->setDebug(true);
-    //Environment::getInstance()->setVerbose(true);
+    //Environment::getInstance().setDebug(true);
+    //Environment::getInstance().setVerbose(true);
 
     auto exp0 = NDArrayFactory::create<float>('c', {3}, {3, 3, 3});
     auto exp1 = NDArrayFactory::create<float>('c', {3}, {6, 6, 6});
@@ -665,13 +665,13 @@ buffer ready uint8_t* data =
 sd::graph::readFlatBuffers("./resources/reduce_dim_false.fb");
 
     // we ensure that there's no such a graph stored earlier
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(119));
+    ASSERT_FALSE(GraphHolder::getInstance().hasGraph(119));
 
     // register the graph, to call for it later
     registerGraph(nullptr, 119, (Nd4jPointer) data);
 
     // and ensure we're ok
-    ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(119));
+    ASSERT_TRUE(GraphHolder::getInstance().hasGraph(119));
 
 
 
@@ -726,7 +726,7 @@ variable auto res_0 = executeStoredGraph(nullptr, 119, inputs_0, shapes_0, idx,
     //////// clean out
     unregisterGraph(nullptr, 119);
 
-    ASSERT_FALSE(GraphHolder::getInstance()->hasGraph(119));
+    ASSERT_FALSE(GraphHolder::getInstance().hasGraph(119));
 
 
     delete[] data;
@@ -957,9 +957,9 @@ TEST_F(JavaInteropTests, Test_Reduce3_EdgeCase) {
       nullptr, context->getCudaSpecialStream(), context->getReductionPointer()};
 #endif
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {0, 1});
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {0, 1});
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dims});
@@ -982,14 +982,14 @@ TEST_F(JavaInteropTests, Test_Reduce3_EdgeCase) {
 
 /*
 TEST_F(JavaInteropTests, Test_SimpleIf_Output) {
-    Environment::getInstance()->setDebug(true);
-    Environment::getInstance()->setVerbose(false);
+    Environment::getInstance().setDebug(true);
+    Environment::getInstance().setVerbose(false);
 
     auto pl = sd::graph::readFlatBuffers("./resources/simpleif_0_1.fb");
     auto ptr = executeFlatGraph(nullptr, pl);
 
-    Environment::getInstance()->setDebug(false);
-    Environment::getInstance()->setVerbose(false);
+    Environment::getInstance().setDebug(false);
+    Environment::getInstance().setVerbose(false);
 
     delete[] pl;
     delete ptr;
@@ -1696,7 +1696,7 @@ TEST_F(JavaInteropTests, Test_AveragePooling_FF_TF_float) {
 }
 
 TEST_F(JavaInteropTests, Test_Mixed_Add_1) {
-  if (!Environment::getInstance()->isExperimentalBuild()) return;
+  if (!Environment::getInstance().isExperimentalBuild()) return;
 
   auto arrayX = NDArrayFactory::create<int>({1, 2, 3, 4});
   auto arrayY = NDArrayFactory::create<double>({1, 2, 3, 4});
@@ -1990,7 +1990,7 @@ TEST_F(JavaInteropTests, Test_Fastpath_7) {
 }
 
 TEST_F(JavaInteropTests, test_bfloat16_rng) {
-  if (!Environment::getInstance()->isCPU()) return;
+  if (!Environment::getInstance().isCPU()) return;
 
   auto z = NDArrayFactory::create<bfloat16>('c', {10});
   RandomGenerator rng(119, 323841120L);
@@ -2077,7 +2077,7 @@ TEST_F(JavaInteropTests, test_expandable_array_op_1) {
 }
 
 TEST_F(JavaInteropTests, test_workspace_backed_arrays_1) {
-  if (!Environment::getInstance()->isCPU()) return;
+  if (!Environment::getInstance().isCPU()) return;
 
   auto x = NDArrayFactory::create<double>('c', {4, 3, 4, 4});
   auto y = NDArrayFactory::create<double>('c', {4, 3, 3, 3});
@@ -2107,7 +2107,7 @@ TEST_F(JavaInteropTests, test_workspace_backed_arrays_1) {
 }
 
 TEST_F(JavaInteropTests, test_linspace_shape_1) {
-  if (!Environment::getInstance()->isCPU()) return;
+  if (!Environment::getInstance().isCPU()) return;
 
   sd::ops::lin_space op;
   double tArgs[2] = {1.0, 10.0};

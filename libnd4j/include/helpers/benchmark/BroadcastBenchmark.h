@@ -54,22 +54,22 @@ class SD_EXPORT BroadcastBenchmark : public OpBenchmark {
   void executeOnce() override {
     PointersManager manager(LaunchContext::defaultContext(), "BroadcastBM");
 
-    auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = ConstantTadHelper::getInstance().tadForDimensions(
         _x.shapeInfo(), _axis);
-    auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = ConstantTadHelper::getInstance().tadForDimensions(
         _z.shapeInfo(), _axis);
 
-    auto tadOnlyShapeInfo = Environment::getInstance()->isCPU()
+    auto tadOnlyShapeInfo = Environment::getInstance().isCPU()
                                 ? packX.primaryShapeInfo()
                                 : packX.specialShapeInfo();
-    auto tadOffsets = Environment::getInstance()->isCPU()
+    auto tadOffsets = Environment::getInstance().isCPU()
                           ? packX.primaryOffsets()
                           : packX.specialOffsets();
 
-    auto tadOnlyShapeInfoZ = Environment::getInstance()->isCPU()
+    auto tadOnlyShapeInfoZ = Environment::getInstance().isCPU()
                                  ? packZ.primaryShapeInfo()
                                  : packZ.specialShapeInfo();
-    auto tadOffsetsZ = Environment::getInstance()->isCPU()
+    auto tadOffsetsZ = Environment::getInstance().isCPU()
                            ? packZ.primaryOffsets()
                            : packZ.specialOffsets();
 

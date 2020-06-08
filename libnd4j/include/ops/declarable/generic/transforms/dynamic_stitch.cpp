@@ -85,7 +85,7 @@ DECLARE_SHAPE_FN(dynamic_stitch) {
   outShape[0] = maxValue + 1;
   for (int i = 1; i < outRank; ++i) outShape[i] = shape::sizeAt(restShape, i);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(ArrayOptions::dataType(restShape),
                       shape::order(firstShape), outShape)));
 }

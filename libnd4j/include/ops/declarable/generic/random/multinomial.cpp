@@ -118,7 +118,7 @@ DECLARE_SHAPE_FN(random_multinomial) {
   nShape[dimA] = numOfSamples;
 
   DataType nType = block.numD() ? D_ARG(0) : sd::DataType::INT64;
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       nType, input->ordering(), nShape));
 }
 

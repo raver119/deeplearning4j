@@ -44,7 +44,7 @@ CUSTOM_OP_IMPL(hashcode, 1, 1, false, 0, 0) {
 
 DECLARE_SHAPE_FN(hashcode) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(sd::DataType::INT64));
 }
 
 DECLARE_TYPES(hashcode) {

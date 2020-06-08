@@ -144,8 +144,8 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(
     ShapeDescriptor descriptor(outShapeInfo, dataType);
     RELEASE(outShapeInfo, workspace);
     return ConstantShapeHelper::getInstance()
-        ->bufferForShapeInfo(descriptor)
-        .primaryAsT<Nd4jLong>();
+        .bufferForShapeInfo(descriptor)
+        .primary();
   }
 
   const int rank = shape::rank(shapeInfo);
@@ -183,8 +183,8 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfoEmpty(
   ShapeDescriptor descriptor(outShapeInfo, dataType);
   RELEASE(outShapeInfo, workspace);
   return ConstantShapeHelper::getInstance()
-      ->bufferForShapeInfo(descriptor)
-      .primaryAsT<Nd4jLong>();
+      .bufferForShapeInfo(descriptor)
+      .primary();
 }
 
 const Nd4jLong* ShapeUtils::evalReduceShapeInfo(
@@ -242,23 +242,23 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfo(
       ShapeDescriptor descriptor(newShapeInfo, dataType);
       RELEASE(newShapeInfo, workspace);
       return ConstantShapeHelper::getInstance()
-          ->bufferForShapeInfo(descriptor)
-          .primaryAsT<Nd4jLong>();
+          .bufferForShapeInfo(descriptor)
+          .primary();
     } else if (supportOldShapes) {
       ALLOCATE(newShapeInfo, workspace, shape::shapeInfoLength(2), Nd4jLong);
       shape::shapeOldScalar(dataType, newShapeInfo, 'c');
       ShapeDescriptor descriptor(newShapeInfo, dataType);
       RELEASE(newShapeInfo, workspace);
       return ConstantShapeHelper::getInstance()
-          ->bufferForShapeInfo(descriptor)
-          .primaryAsT<Nd4jLong>();
+          .bufferForShapeInfo(descriptor)
+          .primary();
     } else {
       newShapeInfo = ShapeBuilders::createScalarShapeInfo(dataType, workspace);
       ShapeDescriptor descriptor(newShapeInfo, dataType);
       RELEASE(newShapeInfo, workspace);
       return ConstantShapeHelper::getInstance()
-          ->bufferForShapeInfo(descriptor)
-          .primaryAsT<Nd4jLong>();
+          .bufferForShapeInfo(descriptor)
+          .primary();
     }
   }
 
@@ -281,8 +281,8 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfo(
     ShapeDescriptor descriptor(newShapeInfo, dataType);
     RELEASE(newShapeInfo, workspace);
     return ConstantShapeHelper::getInstance()
-        ->bufferForShapeInfo(descriptor)
-        .primaryAsT<Nd4jLong>();
+        .bufferForShapeInfo(descriptor)
+        .primary();
   }
 
   int newRank = rank - dimSize;
@@ -298,16 +298,16 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfo(
       ShapeDescriptor descriptor(newShapeInfo, dataType);
       RELEASE(newShapeInfo, workspace);
       return ConstantShapeHelper::getInstance()
-          ->bufferForShapeInfo(descriptor)
-          .primaryAsT<Nd4jLong>();
+          .bufferForShapeInfo(descriptor)
+          .primary();
     } else {
       newShapeInfo = ShapeBuilders::createScalarShapeInfo(
           ArrayOptions::dataType(shapeInfo), workspace);
       ShapeDescriptor descriptor(newShapeInfo, dataType);
       RELEASE(newShapeInfo, workspace);
       return ConstantShapeHelper::getInstance()
-          ->bufferForShapeInfo(descriptor)
-          .primaryAsT<Nd4jLong>();
+          .bufferForShapeInfo(descriptor)
+          .primary();
     }
   }
 
@@ -341,8 +341,8 @@ const Nd4jLong* ShapeUtils::evalReduceShapeInfo(
   ShapeDescriptor descriptor(newShapeInfo, dataType);
   RELEASE(newShapeInfo, workspace);
   return ConstantShapeHelper::getInstance()
-      ->bufferForShapeInfo(descriptor)
-      .primaryAsT<Nd4jLong>();
+      .bufferForShapeInfo(descriptor)
+      .primary();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -402,8 +402,8 @@ const Nd4jLong* ShapeUtils::evalPermShapeInfo(const int* dimensions,
   RELEASE(shapeInfoNew, workspace);
 
   return ConstantShapeHelper::getInstance()
-      ->bufferForShapeInfo(descriptor)
-      .primaryAsT<Nd4jLong>();
+      .bufferForShapeInfo(descriptor)
+      .primary();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -573,8 +573,8 @@ bool ShapeUtils::evalBroadcastShapeInfo(const Nd4jLong* max,
   ShapeDescriptor descriptor(tmpShapeInfo);
   RELEASE(tmpShapeInfo, workspace);
   resultShapeInfo = ConstantShapeHelper::getInstance()
-                        ->bufferForShapeInfo(descriptor)
-                        .primaryAsT<Nd4jLong>();
+                        .bufferForShapeInfo(descriptor)
+                        .primary();
 
   return true;
 }
@@ -616,7 +616,7 @@ bool ShapeUtils::evalCommonBroadcastShapeInfo(
   ShapeDescriptor descriptor(tmpShapeInfo);
   RELEASE(tmpShapeInfo, workspace);
   resultShapeInfo = const_cast<Nd4jLong*>(
-      ConstantShapeHelper::getInstance()->createShapeInfo(descriptor));
+      ConstantShapeHelper::getInstance().createShapeInfo(descriptor));
 
   return true;
 }
@@ -700,8 +700,8 @@ const Nd4jLong* ShapeUtils::evalTileShapeInfo(
   ShapeDescriptor descriptor(newShapeInfo);
   RELEASE(newShapeInfo, workspace);
   return ConstantShapeHelper::getInstance()
-      ->bufferForShapeInfo(descriptor)
-      .primaryAsT<Nd4jLong>();
+      .bufferForShapeInfo(descriptor)
+      .primary();
 }
 
 std::vector<Nd4jLong> ShapeUtils::pullShapeFromShapeInfo(
@@ -862,7 +862,7 @@ const Nd4jLong* ShapeUtils::evalDiagShapeInfo(
                                    shape::order(shapeInfo));
 
   auto result =
-      ConstantShapeHelper::getInstance()->createShapeInfo(outputShapeInfo);
+      ConstantShapeHelper::getInstance().createShapeInfo(outputShapeInfo);
   RELEASE(outputShapeInfo, workspace);
   return result;
 }
@@ -955,7 +955,7 @@ const Nd4jLong* ShapeUtils::matrixProductShape(
   }
 
   auto newShape =
-      ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'f', 2, shape);
+      ConstantShapeHelper::getInstance().createShapeInfo(dtype, 'f', 2, shape);
 
   RELEASE(shape, workspace);
 

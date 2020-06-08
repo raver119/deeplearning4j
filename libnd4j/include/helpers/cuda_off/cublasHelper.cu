@@ -24,7 +24,7 @@
 #include <execution/AffinityManager.h>
 #include <helpers/logger.h>
 
-#include "../cublasHelper.h"
+#include <helpers/cublasHelper.h>
 #include "config.h"
 
 #ifdef HAVE_CUDNN
@@ -101,12 +101,10 @@ CublasHelper::~CublasHelper() {
   for (int e = 0; e < numDevices; e++) destroyHandle_(_cache[e]);
 }
 
-CublasHelper* CublasHelper::getInstance() {
-  _mutex.lock();
-  if (!_INSTANCE) _INSTANCE = new sd::CublasHelper();
-  _mutex.unlock();
+CublasHelper& CublasHelper::getInstance() {
+  static CublasHelper instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 void* CublasHelper::cudnn() {
@@ -140,5 +138,5 @@ void* CublasHelper::handle(int deviceId) {
   return _cache[deviceId];
 }
 
-sd::CublasHelper* sd::CublasHelper::_INSTANCE = 0;
+
 }  // namespace sd

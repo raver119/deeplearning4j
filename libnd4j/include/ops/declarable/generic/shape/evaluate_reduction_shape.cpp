@@ -34,7 +34,7 @@ CUSTOM_OP_IMPL(evaluate_reduction_shape, 2, 1, false, 0, 0) {
 
   auto shape = inputShape->asVectorT<Nd4jLong>();
 
-  auto tempShapeInfo = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto tempShapeInfo = ConstantShapeHelper::getInstance().createShapeInfo(
       sd::DataType::INT64, 'c', shape);
   auto tempReductionShapeInfo = ShapeUtils::evalReduceShapeInfo(
       'c', axis, tempShapeInfo, keepDims, oldFormat, block.workspace());
@@ -78,7 +78,7 @@ DECLARE_SHAPE_FN(evaluate_reduction_shape) {
     }
   }
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(
       length, sd::DataType::INT64));
 }
 }  // namespace ops

@@ -76,18 +76,18 @@ Nd4jStatus LegacyReduceSameOp::validateAndExecute(Context &block) {
       REQUIRE_TRUE(dims.size() > 0, 0,
                    "Some dimensions required for reduction!");
 
-      auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+      auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
           x->shapeInfo(), dims);
 
       auto pTadShape =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryShapeInfo()
               : packX
                     .specialShapeInfo();  //(Nd4jLong *)
                                           // manager.replicatePointer(tad.tadOnlyShapeInfo,
                                           // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
       auto pTadOffsets =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryOffsets()
               : packX
                     .specialOffsets();  //(Nd4jLong *)
@@ -129,18 +129,18 @@ Nd4jStatus LegacyReduceSameOp::validateAndExecute(Context &block) {
       REQUIRE_TRUE(dims.size() > 0, 0,
                    "Some dimensions required for reduction!");
 
-      auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+      auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
           x->shapeInfo(), dims);
 
       auto pTadShape =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryShapeInfo()
               : packX
                     .specialShapeInfo();  //(Nd4jLong *)
                                           // manager.replicatePointer(tad.tadOnlyShapeInfo,
                                           // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
       auto pTadOffsets =
-          Environment::getInstance()->isCPU()
+          Environment::getInstance().isCPU()
               ? packX.primaryOffsets()
               : packX
                     .specialOffsets();  //(Nd4jLong *)

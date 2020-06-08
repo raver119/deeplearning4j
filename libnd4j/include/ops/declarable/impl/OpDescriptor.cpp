@@ -33,7 +33,7 @@ OpDescriptor::OpDescriptor(int numInputs, const char* opName, bool isScalar) {
   _numOutputs = 1;
 
   _opName = opName;
-  _hash = sd::ops::HashHelper::getInstance()->getLongHash(_opName);
+  _hash = sd::ops::HashHelper::getInstance().getLongHash(_opName);
   _opClass = sd::graph::OpClass_CONDITIONAL;
 
   _scalar = isScalar;
@@ -44,7 +44,7 @@ OpDescriptor::OpDescriptor(int numInputs, std::string opName, bool isScalar) {
   _numOutputs = 1;
 
   _opName = opName;
-  _hash = sd::ops::HashHelper::getInstance()->getLongHash(_opName);
+  _hash = sd::ops::HashHelper::getInstance().getLongHash(_opName);
   _opClass = sd::graph::OpClass_CONDITIONAL;
 
   _scalar = isScalar;
@@ -79,7 +79,7 @@ OpDescriptor::OpDescriptor(int numInputs, int numOutputs, const char* opName,
   std::string tmp(opName);
   _opName = tmp;
   _allowsInplace = allowsInplace;
-  _hash = sd::ops::HashHelper::getInstance()->getLongHash(tmp);
+  _hash = sd::ops::HashHelper::getInstance().getLongHash(tmp);
   _divergent = false;
 
   // just default value

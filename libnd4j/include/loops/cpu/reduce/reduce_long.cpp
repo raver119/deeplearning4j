@@ -65,7 +65,7 @@ void _CUDA_H ReduceLongFunction<X, Z>::execScalar(const void *vx,
     const bool canCastX =
         sd::DataTypeUtils::castShapeInfo(xShapeInfo, xShapeInfoCast);
     int maxThreads = sd::math::nd4j_min<int>(
-        64, sd::Environment::getInstance()->maxThreads());
+        64, sd::Environment::getInstance().maxThreads());
     Z intermediate[64];
 
     PRAGMA_OMP_SIMD
@@ -201,7 +201,7 @@ void _CUDA_H ReduceLongFunction<X, Z>::exec(
   if (tadOnlyShapeInfo == nullptr || tadOffsets == nullptr) {
     if (dimensionLength < 1) return;
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         xShapeInfo, dimension, dimensionLength);
     tadOnlyShapeInfo = tadPack.primaryShapeInfo();
     tadOffsets = tadPack.primaryOffsets();
@@ -236,7 +236,7 @@ Z _CUDA_H ReduceLongFunction<X, Z>::execScalar(const void *vx, Nd4jLong xEws,
   auto x = reinterpret_cast<const X *>(vx);
   auto extraParams = reinterpret_cast<X *>(vextraParams);
   int maxThreads =
-      sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxThreads());
+      sd::math::nd4j_min<int>(64, sd::Environment::getInstance().maxThreads());
   Z intermediate[64];
 
   PRAGMA_OMP_SIMD

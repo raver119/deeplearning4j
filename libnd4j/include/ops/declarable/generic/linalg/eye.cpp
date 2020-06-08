@@ -99,7 +99,7 @@ DECLARE_SHAPE_FN(eye) {
   }
 
   shape::updateStrides(outShapeInfo, static_cast<char>(-params[0]));
-  auto result = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto result = ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(outShapeInfo, dtype));
   RELEASE(outShapeInfo, block.workspace());
   return SHAPELIST(result);

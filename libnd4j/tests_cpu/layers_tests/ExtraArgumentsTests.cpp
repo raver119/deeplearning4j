@@ -29,13 +29,11 @@ using namespace sd;
 class ExtraArgumentsTests : public testing::Test {
  public:
   ExtraArgumentsTests() {
-    printf("\n");
-    fflush(stdout);
   }
 };
 
 TEST_F(ExtraArgumentsTests, Basic_Test_1) {
-  if (!Environment::getInstance()->isCPU()) return;
+  if (!Environment::getInstance().isCPU()) return;
 
   ExtraArguments args({1.0, 2.0, 3.0});
 

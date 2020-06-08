@@ -26,6 +26,7 @@
 
 namespace sd {
 namespace ops {
+
 Nd4jStatus LegacyReduce3Op::validateAndExecute(Context &block) {
   auto x = INPUT_VARIABLE(0);
   auto y = INPUT_VARIABLE(1);
@@ -55,23 +56,23 @@ Nd4jStatus LegacyReduce3Op::validateAndExecute(Context &block) {
     for (int e = 0; e < dims.size(); e++)
       if (dims[e] < 0) dims[e] += x->rankOf();
 
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         x->shapeInfo(), dims);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         z->shapeInfo(), dims);
 
     REQUIRE_TRUE(dims.size() > 0, 0,
                  "Some dimensions requuired for reduction!");
 
     auto xTadShape =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packX.primaryShapeInfo()
             : packX
                   .specialShapeInfo();  //(Nd4jLong *)
                                         // manager.replicatePointer(tadX.tadOnlyShapeInfo,
                                         // shape::shapeInfoByteLength(tadX.tadOnlyShapeInfo));
     auto xTadOffsets =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packX.primaryOffsets()
             : packX
                   .specialOffsets();  //(Nd4jLong *)
@@ -79,14 +80,14 @@ Nd4jStatus LegacyReduce3Op::validateAndExecute(Context &block) {
                                       // tadX.numTads * sizeof(Nd4jLong));
 
     auto yTadShape =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packZ.primaryShapeInfo()
             : packZ
                   .specialOffsets();  //(Nd4jLong *)
                                       // manager.replicatePointer(tadY.tadOnlyShapeInfo,
                                       // shape::shapeInfoByteLength(tadY.tadOnlyShapeInfo));
     auto yTadOffsets =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packZ.primaryOffsets()
             : packZ
                   .specialOffsets();  //(Nd4jLong *)

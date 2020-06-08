@@ -146,7 +146,7 @@ DECLARE_SHAPE_FN(pnormpool2d) {
     newShape[3] = iC;
   }
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(ArrayOptions::dataType(inShape), order, newShape, 4)));
 }
 
@@ -285,7 +285,7 @@ DECLARE_SHAPE_FN(pnormpool2d_bp) {
                inputShape->at(1)[0]);
 
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->createShapeInfo(ShapeDescriptor(
+      ConstantShapeHelper::getInstance().createShapeInfo(ShapeDescriptor(
           inputShape->at(0), ArrayOptions::dataType(inputShape->at(1)))));
 }
 

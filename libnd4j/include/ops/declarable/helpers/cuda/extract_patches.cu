@@ -125,9 +125,9 @@ static void _extractPatches(sd::LaunchContext* context, NDArray* images,
   if (sizeRow * rateRow < 3) rowCast = 0;
   if (sizeCol * rateCol < 3) colCast = 0;
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       images->shapeInfo(), restDims.data(), restDims.size());
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), restDims.data(), restDims.size());
   int batchCount = packX.numberOfTads();
 

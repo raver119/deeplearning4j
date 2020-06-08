@@ -349,7 +349,7 @@ TEST_F(LegacyOpsTests, BroadcastingTests_2) {
   int axis = 1;
 
   // shape::printShapeInfoLinear("tad shape", tad.tadOnlyShapeInfo);
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {axis});
 
   NDArray::prepareSpecialUse({&y}, {&x});
@@ -438,9 +438,9 @@ TEST_F(LegacyOpsTests, Reduce3_2) {
                                      context->getAllocationPointer()};
 #endif
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {1});
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {1});
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
@@ -493,9 +493,9 @@ TEST_F(LegacyOpsTests, Reduce3_3) {
                                      context->getAllocationPointer()};
 #endif
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {1});
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {1});
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
@@ -548,9 +548,9 @@ TEST_F(LegacyOpsTests, Reduce3_4) {
                                      context->getAllocationPointer()};
 #endif
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {1});
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {1});
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
@@ -605,9 +605,9 @@ TEST_F(LegacyOpsTests, Reduce3_5) {
                                      context->getAllocationPointer()};
 #endif
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), {1});
-  auto packY = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
       y.shapeInfo(), {1});
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
@@ -637,9 +637,9 @@ TEST_F(LegacyOpsTests, test_Reduce3_All_1) {
   auto dim = NDArrayFactory::create<int>('c', {1}, {-1});
 
   auto tadPackX =
-      sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), -1);
+      sd::ConstantTadHelper::getInstance().tadForDimensions(x.shapeInfo(), -1);
   auto tadPackY =
-      sd::ConstantTadHelper::getInstance()->tadForDimensions(y.shapeInfo(), -1);
+      sd::ConstantTadHelper::getInstance().tadForDimensions(y.shapeInfo(), -1);
 
   sd::LaunchContext* context = sd::LaunchContext::defaultContext();
 
@@ -681,7 +681,7 @@ TEST_F(LegacyOpsTests, test_inverse_broadcast_1) {
   e.assign(2.0f);
 
   auto tadPackY =
-      sd::ConstantTadHelper::getInstance()->tadForDimensions(y.shapeInfo(), 1);
+      sd::ConstantTadHelper::getInstance().tadForDimensions(y.shapeInfo(), 1);
 
   y.tickWriteDevice();
 
@@ -710,7 +710,7 @@ TEST_F(LegacyOpsTests, test_inverse_broadcast_2) {
   erow.assign(true);
 
   auto tadPackY =
-      sd::ConstantTadHelper::getInstance()->tadForDimensions(y.shapeInfo(), 1);
+      sd::ConstantTadHelper::getInstance().tadForDimensions(y.shapeInfo(), 1);
 
   z.tickWriteDevice();
 
@@ -776,7 +776,7 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_3) {
 }
 
 TEST_F(LegacyOpsTests, test_legacy_reduce_empty_4) {
-  if (!Environment::getInstance()->isCPU()) return;
+  if (!Environment::getInstance().isCPU()) return;
   int a = 0;
 
   auto x = NDArrayFactory::create<float>('c', {1, 0, 2});

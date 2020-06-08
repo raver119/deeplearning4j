@@ -168,7 +168,7 @@ DECLARE_SHAPE_FN(gather) {
     ArrayOptions::setPropertyBit(outputShapeInfo, ARRAY_EMPTY);
   }
 
-  auto result = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto result = ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(outputShapeInfo));
   RELEASE(outputShapeInfo, block.workspace());
   return SHAPELIST(result);

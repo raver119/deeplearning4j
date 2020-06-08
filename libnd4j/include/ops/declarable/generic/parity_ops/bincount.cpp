@@ -110,7 +110,7 @@ DECLARE_SHAPE_FN(bincount) {
   }
 
   auto newshape =
-      ConstantShapeHelper::getInstance()->vectorShapeInfo(outLength, dtype);
+      ConstantShapeHelper::getInstance().vectorShapeInfo(outLength, dtype);
 
   shapeList->push_back(newshape);
   return shapeList;

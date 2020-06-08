@@ -100,7 +100,7 @@ DECLARE_SHAPE_FN(squeeze) {
   auto length = shape::length(in);
 
   if (rank == 0 || (rank == 1 && length == 1)) {
-    shapeList->push_back(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().scalarShapeInfo(
         ArrayOptions::dataType(in)));
     return shapeList;
   }
@@ -143,12 +143,12 @@ DECLARE_SHAPE_FN(squeeze) {
   }
 
   if (shape.size() == 0) {
-    shapeList->push_back(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().scalarShapeInfo(
         ArrayOptions::dataType(in)));
     return shapeList;
   }
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(in), order, shape);
   shapeList->push_back(newShape);
   return shapeList;

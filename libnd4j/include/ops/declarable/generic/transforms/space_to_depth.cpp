@@ -84,7 +84,7 @@ DECLARE_SHAPE_FN(space_to_depth) {
   else
     shape = {{bS, oD, oH, oW}};
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(in), 'c', 4, shape.data());
   return SHAPELIST(newShape);
 }

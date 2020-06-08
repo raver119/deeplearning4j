@@ -814,9 +814,9 @@ ShapeUtils::evalDimsToExclude(output.rankOf(), {0});
         std::iota(yTadDims.begin(), yTadDims.end(), 0);
 
         auto packY =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(updates.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(updates.shapeInfo(),
 ShapeUtils::evalDimsToExclude(updates.rankOf(), yTadDims)); auto packZ =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(output.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(output.shapeInfo(),
 zTadDims);
 
         const Nd4jLong zTadLen = shape::length(packZ.primaryShapeInfo());
@@ -1053,24 +1053,24 @@ NDArray& indices, const NDArray& updates, NDArray& output, const bool lock) {
 dims);
 
                 auto packX =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(output.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(output.shapeInfo(),
 inverted); auto packY =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(updates.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(updates.shapeInfo(),
 inverted);
 
                 auto psX = packX.specialShapeInfo();
-                auto psY = packY.specialShapeInfo();
+                auto psY = packY.special();
 
                 PointersManager manager(context, "scatter");
 
                 auto poX = packX.specialOffsets();
-                auto poY = packY.specialOffsets();
+                auto poY = packY.special();
 
                 NDArray::prepareSpecialUse({&output}, {&updates, &indices});
 
                 unsigned int tadLengthX =
 shape::length(packX.primaryShapeInfo()); unsigned int tadLengthY =
-shape::length(packY.primaryShapeInfo()); if (tadLengthX != tadLengthY) throw
+shape::length(packY.primary()); if (tadLengthX != tadLengthY) throw
 std::runtime_error("scatter: Lengths of TADs must be equal");
 
                 auto blockSize = sd::math::nd4j_max<int>(32,
@@ -1115,11 +1115,11 @@ const int xLastDim = indices.sizeAt(-1);
         }
 
         auto packX =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(indices.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(indices.shapeInfo(),
 {xRank - 1}); auto packY =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(updates.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(updates.shapeInfo(),
 yTadDims); auto packZ =
-sd::ConstantTadHelper::getInstance()->tadForDimensions(output.shapeInfo(),
+sd::ConstantTadHelper::getInstance().tadForDimensions(output.shapeInfo(),
 zTadDims);
 
         const int threadsPerBlock = MAX_NUM_THREADS / 4;
@@ -1256,24 +1256,24 @@ yTad[yOffset]) zTad[zOffset] = yTad[yOffset]; break; default: continue;
 
 // manager.printDevContentOnHost<int>(indices.specialBuffer(),
 // indices.lengthOf());
-// manager.printDevContentOnHost<Nd4jLong>(indices.specialShapeInfo(),
+// manager.printDevContentOnHost<Nd4jLong>(indices.special(),
 // shape::shapeInfoLength(indices.rankOf()));
 // manager.printDevContentOnHost<float>(updates.specialBuffer(),
 // updates.lengthOf());
-// manager.printDevContentOnHost<Nd4jLong>(updates.specialShapeInfo(),
+// manager.printDevContentOnHost<Nd4jLong>(updates.special(),
 // shape::shapeInfoLength(updates.rankOf()));
-// manager.printDevContentOnHost<Nd4jLong>(output.specialShapeInfo(),
+// manager.printDevContentOnHost<Nd4jLong>(output.special(),
 // shape::shapeInfoLength(output.rankOf())); printf("!!!!!!!\n");
-// manager.printDevContentOnHost<Nd4jLong>(packX.specialShapeInfo(),
-// 2*shape::rank(packX.primaryShapeInfo()) + 4);
-// manager.printDevContentOnHost<Nd4jLong>(packX.specialOffsets(),
+// manager.printDevContentOnHost<Nd4jLong>(packX.special(),
+// 2*shape::rank(packX.primary()) + 4);
+// manager.printDevContentOnHost<Nd4jLong>(packX.special(),
 // packX.numberOfTads());
-// manager.printDevContentOnHost<Nd4jLong>(packY.specialShapeInfo(),
-// 2*shape::rank(packY.primaryShapeInfo()) + 4);
-// manager.printDevContentOnHost<Nd4jLong>(packY.specialOffsets(),
+// manager.printDevContentOnHost<Nd4jLong>(packY.special(),
+// 2*shape::rank(packY.primary()) + 4);
+// manager.printDevContentOnHost<Nd4jLong>(packY.special(),
 // packY.numberOfTads());
-// manager.printDevContentOnHost<Nd4jLong>(packZ.specialShapeInfo(),
-// 2*shape::rank(packZ.primaryShapeInfo()) + 4);
-// manager.printDevContentOnHost<Nd4jLong>(packZ.specialOffsets(),
+// manager.printDevContentOnHost<Nd4jLong>(packZ.special(),
+// 2*shape::rank(packZ.primary()) + 4);
+// manager.printDevContentOnHost<Nd4jLong>(packZ.special(),
 // packZ.numberOfTads()); printf("dddddddd\n");
-// shape::printShapeInfoLinear(packY.primaryShapeInfo());
+// shape::printShapeInfoLinear(packY.primary());

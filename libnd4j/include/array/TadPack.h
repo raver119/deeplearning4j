@@ -21,18 +21,19 @@
 #ifndef SD_TADPACK_H
 #define SD_TADPACK_H
 
-#include "ConstantDataBuffer.h"
+#include <array/ConstantOffsetsBuffer.h>
+#include <array/ConstantShapeBuffer.h>
 
 namespace sd {
 class SD_EXPORT TadPack {
  private:
-  ConstantDataBuffer _tadShape;
-  ConstantDataBuffer _tadOffsets;
+  ConstantShapeBuffer _tadShape;
+  ConstantOffsetsBuffer _tadOffsets;
   Nd4jLong _numTads = 0;
   int _shapeInfoLength = 0;
 
  public:
-  explicit TadPack(ConstantDataBuffer& shapes, ConstantDataBuffer& offets,
+  explicit TadPack(const ConstantShapeBuffer& shapes, const ConstantOffsetsBuffer& offets,
                    Nd4jLong numTads);
   TadPack() = default;
   ~TadPack() = default;

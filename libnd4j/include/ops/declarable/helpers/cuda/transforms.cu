@@ -361,7 +361,7 @@ static __global__ void fillShuffleKernel(T* input, Nd4jLong const* inputShape,
                                          Nd4jLong firstDim, int* indices,
                                          sd::graph::RandomGenerator* rng) {
   //        PRAGMA_OMP_PARALLEL_FOR_IF((firstDim-1) >
-  //        Environment::getInstance()->tadThreshold())
+  //        Environment::getInstance().tadThreshold())
   auto tid = blockIdx.x * blockDim.x;
   auto step = blockDim.x * gridDim.x;
 

@@ -52,7 +52,7 @@ DECLARE_SHAPE_FN(matrix_diag_part) {
       sd::math::nd4j_min(shape::sizeAt(in, -1), shape::sizeAt(in, -2));
   if (outRank == 1) {
     // output shape is a vector with size min(sizeAt(0), sizeAt(1))
-    outShapeInfo = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+    outShapeInfo = ConstantShapeHelper::getInstance().vectorShapeInfo(
         lastDimension, ArrayOptions::dataType(in));
   } else {
     Nd4jLong* anShapeInfo;

@@ -153,9 +153,9 @@ static void prefixPerBlockCudaLauncher(
 void prefix(sd::LaunchContext* context, scalar::Ops op, const NDArray* x,
             NDArray* z, const std::vector<int>& dims, bool exclusive,
             bool reverse) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x->shapeInfo(), dims);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z->shapeInfo(), dims);
 
   const Nd4jLong numTads = packX.numberOfTads();

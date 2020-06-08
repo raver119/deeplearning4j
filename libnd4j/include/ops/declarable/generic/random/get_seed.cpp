@@ -38,7 +38,7 @@ CUSTOM_OP_IMPL(get_seed, -2, 1, false, 0, 0) {
 
 DECLARE_SHAPE_FN(get_seed) {
   auto newshape =
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT64);
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::INT64);
   return SHAPELIST(newshape);
 }
 

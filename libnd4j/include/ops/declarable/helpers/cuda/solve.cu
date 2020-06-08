@@ -81,7 +81,7 @@ static int solveFunctor_(sd::LaunchContext* context, NDArray* leftInput,
   helpers::lu(context, leftInput, &leftOutput, &permutations);
   auto leftLower = leftOutput.dup();
   auto rightOutput = rightInput->ulike();
-  auto leftLowerTad = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto leftLowerTad = ConstantTadHelper::getInstance().tadForDimensions(
       leftLower.shapeInfo(), {-2, -1});
   auto stream = context->getCudaStream();
   oneOnDiagonalKernel<T><<<128, 256, 256, *stream>>>(
@@ -90,9 +90,9 @@ static int solveFunctor_(sd::LaunchContext* context, NDArray* leftInput,
       leftLowerTad.numberOfTads(), leftLower.sizeAt(-1));
   auto P = leftOutput.ulike();
   P.nullify();
-  auto PTad = ConstantTadHelper::getInstance()->tadForDimensions(P.shapeInfo(),
+  auto PTad = ConstantTadHelper::getInstance().tadForDimensions(P.shapeInfo(),
                                                                  {-2, -1});
-  auto permutationsTad = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto permutationsTad = ConstantTadHelper::getInstance().tadForDimensions(
       permutations.shapeInfo(), {-1});
   restorePermutationsKernel<T><<<128, 256, 256, *stream>>>(
       P.dataBuffer()->specialAsT<T>(), P.specialShapeInfo(),
@@ -145,9 +145,9 @@ template <typename T>
 static void adjointMatrix_(sd::LaunchContext* context, NDArray const* input,
                            NDArray* output) {
   NDArray::prepareSpecialUse({output}, {input});
-  auto inputTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto inputTads = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {-2, -1});
-  auto outputTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto outputTads = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {-2, -1});
   auto stream = context->getCudaStream();
   auto outputBuf = reinterpret_cast<T*>(output->specialBuffer());

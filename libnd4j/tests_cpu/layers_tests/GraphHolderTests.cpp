@@ -35,7 +35,7 @@ TEST_F(GraphHolderTests, SimpleTests_1) {
   Nd4jLong graphId = 119;
   GraphHolder::getInstance()->registerGraph(graphId, graph);
 
-  ASSERT_TRUE(GraphHolder::getInstance()->hasGraph(graphId));
+  ASSERT_TRUE(GraphHolder::getInstance().hasGraph(graphId));
 
   GraphHolder::getInstance()->forgetGraph(graphId);
 

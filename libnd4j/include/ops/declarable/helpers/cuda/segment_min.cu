@@ -181,9 +181,9 @@ static void segmentMinFunctor_(LaunchContext* context, NDArray* input,
   } else {
     std::vector<int> dimensions =
         ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimensions);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimensions);
     auto inputTads = packX.specialShapeInfo();
     auto inputTadOffsets = packX.specialOffsets();
@@ -246,9 +246,9 @@ static void unsortedSegmentMinFunctor_(sd::LaunchContext* context,
     output->assign(DataTypeUtils::max<T>());
     std::vector<int> dimensions =
         ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimensions);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimensions);
     auto inputTads = packX.specialShapeInfo();
     auto inputTadOffsets = packX.specialOffsets();
@@ -393,13 +393,13 @@ int segmentMinFunctorBP_(sd::LaunchContext* context, NDArray* input,
   } else {
     std::vector<int> dimensions =
         ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimensions);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimensions);
-    auto packGradIn = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packGradIn = sd::ConstantTadHelper::getInstance().tadForDimensions(
         tempRes.shapeInfo(), dimensions);
-    auto packGradOut = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packGradOut = sd::ConstantTadHelper::getInstance().tadForDimensions(
         gradOut->shapeInfo(), dimensions);
     auto inputTads = packX.specialShapeInfo();
     auto inputTadOffsets = packX.specialOffsets();
@@ -462,13 +462,13 @@ static int unsortedSegmentMinFunctorBP_(sd::LaunchContext* context,
   } else {
     std::vector<int> dimensions =
         ShapeUtils::evalDimsToExclude(input->rankOf(), {0});
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimensions);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimensions);
-    auto packGradIn = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packGradIn = sd::ConstantTadHelper::getInstance().tadForDimensions(
         tempRes.shapeInfo(), dimensions);
-    auto packGradOut = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packGradOut = sd::ConstantTadHelper::getInstance().tadForDimensions(
         gradOut->shapeInfo(), dimensions);
     auto inputTads = packX.specialShapeInfo();
     auto inputTadOffsets = packX.specialOffsets();

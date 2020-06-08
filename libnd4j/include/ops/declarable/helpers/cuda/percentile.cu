@@ -99,7 +99,7 @@ static void _percentile(sd::LaunchContext* context, const NDArray& input,
     shape::checkDimensions(inputRank, axis);
 
   auto tempArray = input.dup();
-  auto packX = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = ConstantTadHelper::getInstance().tadForDimensions(
       tempArray.shapeInfo(), axis);
 
   auto tadLength = shape::length(packX.primaryShapeInfo());

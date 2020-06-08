@@ -51,7 +51,7 @@ TEST_F(LegacyOpsCudaTests, test_sortTad_1) {
 
   int axis = 1;
   auto packX =
-      ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), axis);
+      ConstantTadHelper::getInstance().tadForDimensions(x.shapeInfo(), axis);
 
   Nd4jPointer extras[2] = {nullptr,
                            LaunchContext::defaultContext()->getCudaStream()};
@@ -61,6 +61,58 @@ TEST_F(LegacyOpsCudaTests, test_sortTad_1) {
           x.specialShapeInfo(), &axis, 1, packX.platformShapeInfo(),
           packX.platformOffsets(), false);
   x.tickWriteDevice();
+
+  ASSERT_EQ(e, x);
+}
+
+TEST_F(LegacyOpsCudaTests, test_sort_1) {
+  auto x = NDArrayFactory::create<float>('c', {4}, {4.f, 2.f, 1.f, 3.f});
+  auto e = NDArrayFactory::create<float>('c', {4}, {1.f, 2.f, 3.f, 4.f});
+
+  Nd4jPointer extras[2] = {nullptr, LaunchContext::defaultContext()->getCudaStream()};
+
+  NDArray::prepareSpecialUse({&x}, {&x});
+  ::sort(extras, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), false);
+  NDArray::registerSpecialUse({&x});
+
+  ASSERT_EQ(e, x);
+}
+
+TEST_F(LegacyOpsCudaTests, test_sort_2) {
+  auto x = NDArrayFactory::create<float>('c', {4}, {4.f, 2.f, 1.f, 3.f});
+  auto e = NDArrayFactory::create<float>('c', {4}, {4.f, 3.f, 2.f, 1.f});
+
+  Nd4jPointer extras[2] = {nullptr, LaunchContext::defaultContext()->getCudaStream()};
+
+  NDArray::prepareSpecialUse({&x}, {&x});
+  ::sort(extras, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), true);
+  NDArray::registerSpecialUse({&x});
+
+  ASSERT_EQ(e, x);
+}
+
+TEST_F(LegacyOpsCudaTests, test_sort_3) {
+  auto x = NDArrayFactory::create<double>('c', {4}, {0.5, 0.4, 0.1, 0.2});
+  auto e = NDArrayFactory::create<double>('c', {4}, {0.1, 0.2, 0.4, 0.5});
+
+  Nd4jPointer extras[2] = {nullptr, LaunchContext::defaultContext()->getCudaStream()};
+
+  NDArray::prepareSpecialUse({&x}, {&x});
+  ::sort(extras, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), false);
+  NDArray::registerSpecialUse({&x});
+
+  ASSERT_EQ(e, x);
+}
+
+TEST_F(LegacyOpsCudaTests, test_sort_4) {
+  auto x = NDArrayFactory::create<double>('c', {4}, {7, 4, 9, 2});
+  auto e = NDArrayFactory::create<double>('c', {4}, {2, 4, 7, 9});
+
+  Nd4jPointer extras[2] = {nullptr, LaunchContext::defaultContext()->getCudaStream()};
+
+  NDArray::prepareSpecialUse({&x}, {&x});
+  ::sort(extras, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), false);
+  NDArray::registerSpecialUse({&x});
 
   ASSERT_EQ(e, x);
 }

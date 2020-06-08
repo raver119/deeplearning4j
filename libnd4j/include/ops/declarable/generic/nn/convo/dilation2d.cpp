@@ -111,7 +111,7 @@ DECLARE_SHAPE_FN(dilation2d) {
     rates = r->template asVectorT<int>();
   } else {
     if (block.numI() < 9) {
-      auto newShape = ConstantShapeHelper::getInstance()->scalarShapeInfo(
+      auto newShape = ConstantShapeHelper::getInstance().scalarShapeInfo(
           ArrayOptions::dataType(input));
       return SHAPELIST(newShape);
     }
@@ -131,7 +131,7 @@ DECLARE_SHAPE_FN(dilation2d) {
                        isSameShape, &sH, &sW, &pH, &pW, &dH, &dW, &oH, &oW);
 
   std::array<Nd4jLong, 4> shape = {{bS, oH, oW, iC}};
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(weights), 'c', 4, shape.data());
   return SHAPELIST(newShape);
 }

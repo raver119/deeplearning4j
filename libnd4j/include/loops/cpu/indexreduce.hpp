@@ -73,7 +73,7 @@ Nd4jLong IndexReduce<X, Y>::execScalar(const void *vx,
   uint xShapeInfoCast[MAX_RANK];
   bool canCastX = sd::DataTypeUtils::castShapeInfo(xShapeInfo, xShapeInfoCast);
   int maxThreads =
-      sd::math::nd4j_min<int>(64, sd::Environment::getInstance()->maxThreads());
+      sd::math::nd4j_min<int>(64, sd::Environment::getInstance().maxThreads());
   IndexValue<X> intermediatery[64];
   for (int e = 0; e < maxThreads; e++) intermediatery[e].index = -1;
 
@@ -150,7 +150,7 @@ void IndexReduce<X, Z>::exec(const void *vx, const Nd4jLong *xShapeInfo,
   if (tadOnlyShapeInfo == nullptr || tadOffsets == nullptr) {
     if (dimensionLength < 1) return;
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         xShapeInfo, dimension, dimensionLength);
 
     tadOnlyShapeInfo = tadPack.primaryShapeInfo();

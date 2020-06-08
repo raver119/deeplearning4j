@@ -123,7 +123,7 @@ DECLARE_SHAPE_FN(split) {
   // if(INPUT_VARIABLE(inputVar)->isEmpty()){
   // 	for (int e = 0; e < num_splits; e++) {
   //               auto empty =
-  //               ConstantShapeHelper::getInstance()->emptyShapeInfo(dataType);
+  //               ConstantShapeHelper::getInstance().emptyShapeInfo(dataType);
   // 		shapes->push_back(empty);
   // 	}
   // 	return shapes;
@@ -142,7 +142,7 @@ DECLARE_SHAPE_FN(split) {
       shape[e] = shape::sizeAt(input, e);
 
   for (int e = 0; e < num_splits; e++) {
-    auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
         dataType, shape::order(input), shape);
     shapes->push_back(newShape);
   }

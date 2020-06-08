@@ -86,7 +86,7 @@ DECLARE_SHAPE_FN(argmin) {
   if (dims.empty() ||
       (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
     return SHAPELIST(
-        ConstantShapeHelper::getInstance()->scalarShapeInfo(dtype));
+        ConstantShapeHelper::getInstance().scalarShapeInfo(dtype));
   }
 
   return SHAPELIST( ShapeUtils::evalReduceShapeInfo(

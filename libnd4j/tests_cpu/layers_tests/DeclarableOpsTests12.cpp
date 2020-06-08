@@ -35,8 +35,6 @@ using namespace sd;
 class DeclarableOpsTests12 : public testing::Test {
  public:
   DeclarableOpsTests12() {
-    printf("\n");
-    fflush(stdout);
   }
 };
 
@@ -800,9 +798,9 @@ TEST_F(DeclarableOpsTests12, pullRows_1) {
 
   std::vector<int> dims = {1};
 
-  auto xTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto xTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dims);
-  auto zTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto zTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dims);
 
   Nd4jPointer nativeStart[2];
@@ -838,9 +836,9 @@ TEST_F(DeclarableOpsTests12, pullRows_2) {
 
   std::vector<int> dims = {1};
 
-  auto xTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto xTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x.shapeInfo(), dims);
-  auto zTadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto zTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       z.shapeInfo(), dims);
 
   Nd4jPointer nativeStart[2];

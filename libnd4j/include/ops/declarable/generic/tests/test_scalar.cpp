@@ -51,7 +51,7 @@ DECLARE_SHAPE_FN(test_scalar) {
   ArrayOptions::setDataType(newShape,
                             ArrayOptions::dataType(inputShape->at(0)));
 
-  auto shape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto shape = ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(newShape));
   RELEASE(newShape, block.workspace());
   return SHAPELIST(shape);

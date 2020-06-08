@@ -58,7 +58,7 @@ DECLARE_SHAPE_FN(expose) {
     auto var = block.getVariable(e);
     if (var->variableType() == VariableType::NDARRAY) {
       auto inShape = inputShape->at(e);
-      shapeList->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+      shapeList->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
           ShapeDescriptor(inShape)));
     }
   }

@@ -26,6 +26,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(knn_mindistance, 3, 1, false, 0, 0) {
   auto input = INPUT_VARIABLE(0);
   auto lowest = INPUT_VARIABLE(1);
@@ -50,7 +51,7 @@ DECLARE_SHAPE_FN(knn_mindistance) {
   auto input = inputShape->at(0);
 
   // always return scalar here
-  return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().scalarShapeInfo(
       ArrayOptions::dataType(input)));
 }
 

@@ -222,8 +222,8 @@ DECLARE_SHAPE_FN(lstmCell) {
                                    shape::order(ct_1ShapeInfo));
 
   auto result = SHAPELIST(
-      ConstantShapeHelper::getInstance()->createShapeInfo(hShapeInfo),
-      ConstantShapeHelper::getInstance()->createShapeInfo(cShapeInfo));
+      ConstantShapeHelper::getInstance().createShapeInfo(hShapeInfo),
+      ConstantShapeHelper::getInstance().createShapeInfo(cShapeInfo));
   RELEASE(hShapeInfo, block.workspace());
   RELEASE(cShapeInfo, block.workspace());
   return result;

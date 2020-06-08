@@ -90,7 +90,7 @@ DECLARE_SHAPE_FN(argmax) {
   // special case - output is scalar
   if (dims.empty() ||
       (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
-    return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+    return SHAPELIST(ConstantShapeHelper::getInstance().scalarShapeInfo(
         dtype));
   }
 

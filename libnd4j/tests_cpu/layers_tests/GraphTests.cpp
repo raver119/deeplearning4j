@@ -41,8 +41,8 @@ class GraphTests : public testing::Test {
   int fShape[] = {2, 2, 2, 1, 2, 0, 1, 102};
    */
   GraphTests() {
-    // Environment::getInstance()->setDebug(true);
-    // Environment::getInstance()->setVerbose(true);
+    // Environment::getInstance().setDebug(true);
+    // Environment::getInstance().setVerbose(true);
   }
 };
 

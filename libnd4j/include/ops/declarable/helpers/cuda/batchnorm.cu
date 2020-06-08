@@ -216,10 +216,10 @@ void batchnorm(const NDArray* input, const NDArray* mean,
   // ShapeUtils::evalDimsToExclude(input->rankOf(), axes);
 
   // auto packX =
-  // sd::ConstantTadHelper::getInstance()->tadForDimensions(input->shapeInfo(),
+  // sd::ConstantTadHelper::getInstance().tadForDimensions(input->shapeInfo(),
   // dimsToExclude);
   //    auto packZ =
-  //    sd::ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(),
+  //    sd::ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(),
   //    dimsToExclude);
 
   //    const int threadsPerBlock = MAX_NUM_THREADS / 2;
@@ -237,9 +237,9 @@ void batchnorm(const NDArray* input, const NDArray* mean,
   //    gamma->specialBuffer() : nullptr, gamma ? gamma->specialShapeInfo() :
   //    nullptr, beta ? beta->specialBuffer() : nullptr, beta ?
   //    beta->specialShapeInfo() : nullptr, output->specialBuffer(),
-  //    output->specialShapeInfo(), packX.platformShapeInfo(),
-  //    packX.platformOffsets(), packZ.platformShapeInfo(),
-  //    packZ.platformOffsets(), epsilon), FLOAT_TYPES);
+  //    output->special(), packX.platformShapeInfo(),
+  //    packX.platformOffsets(), packZ.platform(),
+  //    packZ.platform(), epsilon), FLOAT_TYPES);
   //    NDArray::registerSpecialUse({output}, {input, mean, variance, gamma,
   //    beta});
 

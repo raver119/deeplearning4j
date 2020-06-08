@@ -68,7 +68,7 @@ void GEMM<X, Y, Z>::op(int Order, int TransA, int TransB, int M, int N, int K,
   if (beta == 0.0) {
     Z z = 0.f;
     int length = M * N;
-    if (length <= Environment::getInstance()->elementwiseThreshold()) {
+    if (length <= Environment::getInstance().elementwiseThreshold()) {
       for (int r = 0; r < length; r++) C[r] = z;
     } else {
       auto func = PRAGMA_THREADS_FOR {

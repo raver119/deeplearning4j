@@ -40,7 +40,7 @@ DECLARE_SHAPE_FN(testcustom) {
   for (int e = 0; e < shape::rank(inputShape->at(0)); e++)
     shapeOf[e] = inputShape->at(0)[e + 1] * 2;
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       DataType::FLOAT32, 'c', shape::rank(inputShape->at(0)), shapeOf);
   RELEASE(shapeOf, block.workspace());
   return SHAPELIST(newShape);

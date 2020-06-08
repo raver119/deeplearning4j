@@ -119,7 +119,7 @@ static void gather_(NDArray* input, const NDArray* indices, NDArray* output,
       } else {
         auto dimensions =
             ShapeUtils::evalDimsToExclude(input->rankOf(), {axis});
-        auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+        auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
             input->shapeInfo(), dimensions);
 
         auto tadArr =

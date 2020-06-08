@@ -126,7 +126,7 @@ DECLARE_SHAPE_FN(Where) {
 
       theNewShape = CONSTANT(newShape);
     } else {
-      theNewShape = ConstantShapeHelper::getInstance()->emptyShapeInfo(
+      theNewShape = ConstantShapeHelper::getInstance().emptyShapeInfo(
           sd::DataType::INT64);
     }
 

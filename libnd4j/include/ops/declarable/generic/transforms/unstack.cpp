@@ -78,7 +78,7 @@ DECLARE_SHAPE_FN(unstack) {
 
     auto result = SHAPELIST();
     for (uint i = 0; i < numTads; ++i)
-      result->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+      result->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
           ArrayOptions::dataType(inShapeInfo), shape::order(inShapeInfo),
           outShape));
 
@@ -92,7 +92,7 @@ DECLARE_SHAPE_FN(unstack) {
 
     auto result = SHAPELIST();
     for (Nd4jLong e = 0; e < shape::length(inShapeInfo); e++)
-      result->push_back(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+      result->push_back(ConstantShapeHelper::getInstance().scalarShapeInfo(
           ArrayOptions::dataType(inShapeInfo)));
 
     return result;
@@ -113,7 +113,7 @@ DECLARE_SHAPE_FN(unstack) {
 
   auto result = SHAPELIST();
   for (int e = 0; e < shape::shapeOf(inShapeInfo)[dim]; e++) {
-    auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShapeInfo), shape::order(inShapeInfo),
         subArrShape);
     result->push_back(newShape);

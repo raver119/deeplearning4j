@@ -96,7 +96,7 @@ DECLARE_SHAPE_FN(broadcast_dynamic_shape) {
 
   const int maxRank = xRank > yRank ? xRank : yRank;
 
-  auto outputShapeInfo = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto outputShapeInfo = ConstantShapeHelper::getInstance().vectorShapeInfo(
       maxRank, ArrayOptions::dataType(inputShape->at(0)));
 
   return SHAPELIST(outputShapeInfo);

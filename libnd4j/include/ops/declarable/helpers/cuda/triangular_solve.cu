@@ -148,11 +148,11 @@ static int triangularSolveFunctor_(sd::LaunchContext* context,
                                    NDArray* leftInput, NDArray* rightInput,
                                    bool lower, bool unitsOnDiag, NDArray* output) {
   NDArray::prepareSpecialUse({output}, {leftInput, rightInput});
-  auto leftTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto leftTads = ConstantTadHelper::getInstance().tadForDimensions(
       leftInput->shapeInfo(), {-2, -1});
-  auto rightTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto rightTads = ConstantTadHelper::getInstance().tadForDimensions(
       rightInput->shapeInfo(), {-2, -1});
-  auto outputTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto outputTads = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {-2, -1});
 
   auto stream = context->getCudaStream();
@@ -255,9 +255,9 @@ template <typename T>
 static void adjointTriangularMatrix_(sd::LaunchContext* context,
                                      NDArray const* input, bool const lower,
                                      NDArray* output) {
-  auto inputTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto inputTads = ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {-2, -1});
-  auto outputTads = ConstantTadHelper::getInstance()->tadForDimensions(
+  auto outputTads = ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {-2, -1});
   auto stream = context->getCudaStream();
   auto inputBuf = reinterpret_cast<T const*>(input->specialBuffer());

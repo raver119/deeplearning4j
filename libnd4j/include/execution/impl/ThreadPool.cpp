@@ -81,7 +81,7 @@ ThreadPool::ThreadPool() {
   // TODO: number of threads must reflect number of cores for UMA system. In
   // case of NUMA it should be per-device pool
   // FIXME: on mobile phones this feature must NOT be used
-  _available = sd::Environment::getInstance()->maxThreads();
+  _available = sd::Environment::getInstance().maxThreads();
 
   _queues.resize(_available.load());
   _threads.resize(_available.load());
@@ -92,7 +92,7 @@ ThreadPool::ThreadPool() {
     _queues[e] = new BlockingQueue<CallableWithArguments *>(2);
     _interfaces[e] = new CallableInterface();
     _threads[e] =
-        new std::thread(executionLoopWithInterface_, e, _interfaces[e]);
+         std::thread(executionLoopWithInterface_, e, _interfaces[e]);
     _tickets.push(new Ticket());
     // _threads[e] = new std::thread(executionLoop_, e, _queues[e]);
 
@@ -129,18 +129,21 @@ ThreadPool::~ThreadPool() {
     // stop each and every thread
 
     // release queue and thread
-    // delete _queues[e];
-    // delete _threads[e];
+     delete _queues[e];
+    _threads[e].detach();// delete _interfaces[e];
   }
+while (!_tickets.empty()) {
+          auto t = _tickets.front();
+          _tickets.pop();
+          delete t;
+        }
+
 }
 
-static std::mutex _lmutex;
+ThreadPool &ThreadPool::getInstance() {
+  static ThreadPool instance;
 
-ThreadPool *ThreadPool::getInstance() {
-  std::unique_lock<std::mutex> lock(_lmutex);
-  if (!_INSTANCE) _INSTANCE = new ThreadPool();
-
-  return _INSTANCE;
+  return instance;
 }
 
 void ThreadPool::release(int numThreads) { _available += numThreads; }
@@ -191,5 +194,5 @@ void ThreadPool::release(samediff::Ticket *ticket) {
   _tickets.push(ticket);
 }
 
-ThreadPool *ThreadPool::_INSTANCE = 0;
+
 }  // namespace samediff

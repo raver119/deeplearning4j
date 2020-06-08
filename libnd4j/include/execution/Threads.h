@@ -126,7 +126,7 @@ class SD_EXPORT Threads {
    */
   static int parallel_for(
       FUNC_1D function, int64_t start, int64_t stop, int64_t increment = 1,
-      uint32_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint32_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   /**
    * This function executes 1 dimensional loop for a given number of threads
@@ -140,7 +140,7 @@ class SD_EXPORT Threads {
    */
   static int parallel_tad(
       FUNC_1D function, int64_t start, int64_t stop, int64_t increment = 1,
-      uint32_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint32_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   /**
    * This method will execute function splitting 2 nested loops space with
@@ -159,7 +159,7 @@ class SD_EXPORT Threads {
   static int parallel_for(
       FUNC_2D function, int64_t start_x, int64_t stop_x, int64_t inc_x,
       int64_t start_y, int64_t stop_y, int64_t inc_y,
-      uint64_t numThreads = sd::Environment::getInstance()->maxMasterThreads(),
+      uint64_t numThreads = sd::Environment::getInstance().maxMasterThreads(),
       bool debug = false);
 
   /**
@@ -183,7 +183,7 @@ class SD_EXPORT Threads {
       FUNC_3D function, int64_t start_x, int64_t stop_x, int64_t inc_x,
       int64_t start_y, int64_t stop_y, int64_t inc_y, int64_t start_z,
       int64_t stop_z, int64_t inc_z,
-      uint64_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint64_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   /**
    *
@@ -193,17 +193,17 @@ class SD_EXPORT Threads {
    */
   static int parallel_do(
       FUNC_DO function,
-      uint64_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint64_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   static int64_t parallel_long(
       FUNC_RL function, FUNC_AL aggregator, int64_t start, int64_t stop,
       int64_t increment = 1,
-      uint64_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint64_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   static double parallel_double(
       FUNC_RD function, FUNC_AD aggregator, int64_t start, int64_t stop,
       int64_t increment = 1,
-      uint64_t numThreads = sd::Environment::getInstance()->maxMasterThreads());
+      uint64_t numThreads = sd::Environment::getInstance().maxMasterThreads());
 
   /**
    * This method will execute function in parallel preserving the parts to be
@@ -215,7 +215,7 @@ class SD_EXPORT Threads {
       FUNC_1D function, int64_t start, int64_t stop, int64_t increment,
       size_t type_size = sizeof(float),
       uint32_t req_numThreads =
-          sd::Environment::getInstance()->maxMasterThreads());
+          sd::Environment::getInstance().maxMasterThreads());
 };
 }  // namespace samediff
 

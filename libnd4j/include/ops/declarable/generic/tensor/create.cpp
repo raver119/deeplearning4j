@@ -44,7 +44,7 @@ DECLARE_SHAPE_FN(create) {
 
   auto shape = shapeInput->getBufferAsVector<Nd4jLong>();
 
-  return SHAPELIST(sd::ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(sd::ConstantShapeHelper::getInstance().createShapeInfo(
       dtype, order, shape));
 }
 

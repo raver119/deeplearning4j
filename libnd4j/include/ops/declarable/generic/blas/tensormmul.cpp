@@ -81,7 +81,7 @@ DECLARE_SHAPE_FN(tensormmul) {
       aShapeInfo, bShapeInfo, axes_0, axes_1, permutAt, permutBt, shapeAt,
       shapeBt);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(ArrayOptions::dataType(aShapeInfo), 'c', outShape)));
 }
 

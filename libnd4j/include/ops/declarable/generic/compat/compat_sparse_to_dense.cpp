@@ -58,7 +58,7 @@ DECLARE_SHAPE_FN(compat_sparse_to_dense) {
 
   // basically output shape is defined by the type of input, and desired shape
   // input
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       dtype, 'c', shape->getBufferAsVector<Nd4jLong>()));
 }
 

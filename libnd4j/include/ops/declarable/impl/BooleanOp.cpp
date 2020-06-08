@@ -38,7 +38,7 @@ BooleanOp::BooleanOp(const char *name, int numInputs, bool scalar)
 ShapeList *BooleanOp::calculateOutputShape(ShapeList *inputShape,
                                            sd::graph::Context &block) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::BOOL));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::BOOL));
 }
 
 bool BooleanOp::verify(sd::graph::Context &block) {

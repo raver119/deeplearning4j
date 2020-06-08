@@ -33,8 +33,6 @@ using namespace sd;
 class DeclarableOpsTests13 : public testing::Test {
  public:
   DeclarableOpsTests13() {
-    // printf("\n");
-    // fflush(stdout);
   }
 };
 
@@ -3209,7 +3207,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test9) {
       dimensions.data(), dimensions.size() * sizeof(int)));
   input.reduceAlongDimension(sd::reduce::Mean, mean, dimensions);
   NDArray::prepareSpecialUse({&variance}, {&input});
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), dimensions);
   NativeOpExecutioner::execSummaryStats(
       input.getContext(), 0, input.buffer(), input.shapeInfo(),
@@ -3274,7 +3272,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test10) {
       dimensions.data(), dimensions.size() * sizeof(int)));
   input.reduceAlongDimension(sd::reduce::Mean, mean, dimensions);
   NDArray::prepareSpecialUse({&variance}, {&input});
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), dimensions);
   NativeOpExecutioner::execSummaryStats(
       input.getContext(), 0, input.buffer(), input.shapeInfo(),
@@ -3371,7 +3369,7 @@ TEST_F(DeclarableOpsTests13, batchnorm_bp_test11) {
       dimensions.data(), dimensions.size() * sizeof(int)));
   input.reduceAlongDimension(sd::reduce::Mean, mean, dimensions, true);
   NDArray::prepareSpecialUse({&variance}, {&input});
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), dimensions);
   NativeOpExecutioner::execSummaryStats(
       input.getContext(), 0, input.buffer(), input.shapeInfo(),

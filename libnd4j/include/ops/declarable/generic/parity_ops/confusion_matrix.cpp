@@ -89,7 +89,7 @@ DECLARE_SHAPE_FN(confusion_matrix) {
   }
 
   std::array<Nd4jLong, 2> shape = {{numClasses, numClasses}};
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       dtype, 'c', 2, shape.data());
   return SHAPELIST(newShape);
 }

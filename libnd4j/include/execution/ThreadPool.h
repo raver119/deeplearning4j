@@ -36,9 +36,9 @@
 namespace samediff {
 class SD_EXPORT ThreadPool {
  private:
-  static ThreadPool* _INSTANCE;
 
-  std::vector<std::thread*> _threads;
+
+  std::vector<std::thread> _threads;
   std::vector<BlockingQueue<CallableWithArguments*>*> _queues;
   std::vector<CallableInterface*> _interfaces;
 
@@ -51,7 +51,7 @@ class SD_EXPORT ThreadPool {
   ~ThreadPool();
 
  public:
-  static ThreadPool* getInstance();
+  static ThreadPool& getInstance();
 
   /**
    * This method returns list of pointers to threads ONLY if num_threads of

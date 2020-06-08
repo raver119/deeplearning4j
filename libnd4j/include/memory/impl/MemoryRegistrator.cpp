@@ -25,10 +25,10 @@ namespace memory {
 
 MemoryRegistrator::MemoryRegistrator() { _workspace = nullptr; };
 
-MemoryRegistrator* MemoryRegistrator::getInstance() {
-  if (_INSTANCE == 0) _INSTANCE = new MemoryRegistrator();
+MemoryRegistrator& MemoryRegistrator::getInstance() {
+  static MemoryRegistrator instance;
 
-  return _INSTANCE;
+  return instance;
 }
 
 bool MemoryRegistrator::hasWorkspaceAttached() { return _workspace != nullptr; }
@@ -73,8 +73,6 @@ Nd4jLong MemoryRegistrator::getGraphMemoryFootprint(Nd4jLong hash) {
 
   return result;
 }
-
-MemoryRegistrator* MemoryRegistrator::_INSTANCE = 0;
 
 }  // namespace memory
 }  // namespace sd

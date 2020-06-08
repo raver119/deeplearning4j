@@ -38,7 +38,7 @@ CUSTOM_OP_IMPL(size, 1, 1, false, 0, 0) {
 }
 DECLARE_SHAPE_FN(size) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(sd::DataType::INT64));
 }
 
 DECLARE_TYPES(size) {

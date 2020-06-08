@@ -77,7 +77,7 @@ DECLARE_SHAPE_FN(top_k) {
     aShape[shapeRank] = k;
 
     shape::updateStrides(aShape, shape::order(in));
-    shapeList->push_back(ConstantShapeHelper::getInstance()->createShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().createShapeInfo(
         ShapeDescriptor(aShape, (e == 0 ? ArrayOptions::dataType(in)
                                         : sd::DataType::INT64))));
 

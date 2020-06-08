@@ -270,7 +270,7 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C,
   if (C->isEmpty()) return C;
 
   const int major = Environment::getInstance()
-                        ->capabilities()[AffinityManager::currentDeviceId()]
+                        .capabilities()[AffinityManager::currentDeviceId()]
                         .first();
 
   const auto aType = A->dataType();
@@ -309,7 +309,7 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C,
     // BUILD_TRIPLE_SELECTOR(aType, bType, cType, usualGemm, (blocksPerGrid,
     // threadsPerBlock, sharedMem, stream, A->specialBuffer(),
     // A->specialShapeInfo(), B->specialBuffer(), B->specialShapeInfo(),
-    // C->specialBuffer(), C->specialShapeInfo(), 0, 1, 0, 1, 0, 1, alpha,
+    // C->specialBuffer(), C->special(), 0, 1, 0, 1, 0, 1, alpha,
     // beta), NUMERIC_TYPES, NUMERIC_TYPES, FLOAT_TYPES);
     BUILD_SINGLE_SELECTOR_THRICE(
         aType, usualGemm,
@@ -482,7 +482,7 @@ NDArray* MmulHelper::mmulMxV(const NDArray* A, const NDArray* X, sd::NDArray* Y,
     // BUILD_TRIPLE_SELECTOR(aType, xType, yType, usualGemv, (blocksPerGrid,
     // threadsPerBlock, stream, A->specialBuffer(), A->specialShapeInfo(),
     // X->specialBuffer(), X->specialShapeInfo(), Y->specialBuffer(),
-    // Y->specialShapeInfo(), incx, incy, 0, alpha, beta), NUMERIC_TYPES,
+    // Y->special(), incx, incy, 0, alpha, beta), NUMERIC_TYPES,
     // NUMERIC_TYPES, FLOAT_TYPES);
     BUILD_SINGLE_SELECTOR_THRICE(
         xType, usualGemv,
@@ -796,7 +796,7 @@ NDArray* MmulHelper::mmulNxN(const NDArray* A, const NDArray* B, NDArray* C,
   // batchedGemm, (blocksPerGrid, threadsPerBlock,
   // A->getContext()->getCudaStream(), A->specialBuffer(),
   // A->specialShapeInfo(), B->specialBuffer(), B->specialShapeInfo(),
-  // C->specialBuffer(), C->specialShapeInfo(), aMaxis, aKaxis, bKaxis, bNaxis,
+  // C->specialBuffer(), C->special(), aMaxis, aKaxis, bKaxis, bNaxis,
   // cMaxis, cNaxis, alpha, beta), NUMERIC_TYPES, NUMERIC_TYPES, FLOAT_TYPES);
   BUILD_SINGLE_SELECTOR_THRICE(
       A->dataType(), batchedGemm,

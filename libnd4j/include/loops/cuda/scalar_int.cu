@@ -207,7 +207,7 @@ void ScalarIntTransform<X>::executeCudaShaped(
     dim3& launchDims, cudaStream_t* stream, int opNum, void const* vx,
     Nd4jLong const* xShapeInfo, void* vz, Nd4jLong const* zShapeInfo,
     void const* vscalar, void* vextraParams) {
-  if (sd::Environment::getInstance()->isDebugAndVerbose())
+  if (sd::Environment::getInstance().isDebugAndVerbose())
     printf("H14 opNum:[%i]\n", opNum);
 
   DISPATCH_BY_OPNUM_T(intermediateShaped,

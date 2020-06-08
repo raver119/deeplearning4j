@@ -28,6 +28,7 @@
 #include <types/types.h>
 
 #include <cstring>
+#include <array/PrimaryPointerDeallocator.h>
 
 namespace sd {
 
@@ -43,10 +44,17 @@ ConstantHelper::ConstantHelper() {
   }
 }
 
-ConstantHelper *ConstantHelper::getInstance() {
-  if (!_INSTANCE) _INSTANCE = new sd::ConstantHelper();
+ConstantHelper ::~ConstantHelper() {
+  for (const auto &v:_cache) {
+    for (const auto &c:v) {
+      delete c.second;
+  }
+  }
+}
 
-  return _INSTANCE;
+ConstantHelper& ConstantHelper::getInstance() {
+      static ConstantHelper instance;
+      return instance;
 }
 
 void *ConstantHelper::replicatePointer(void *src, size_t numBytes,
@@ -96,7 +104,7 @@ ConstantDataBuffer *ConstantHelper::constantBuffer(
     result = holder->getConstantDataBuffer(dataType);
   else {
     auto size = descriptor.length() * DataTypeUtils::sizeOf(dataType);
-    auto cbuff = new int8_t[size];
+    auto cbuff = std::make_shared<PointerWrapper>(new int8_t[size], std::make_shared<PrimaryPointerDeallocator>());
     _counters[deviceId] += size;
 
     // create buffer with this dtype
@@ -104,18 +112,18 @@ ConstantDataBuffer *ConstantHelper::constantBuffer(
       BUILD_DOUBLE_SELECTOR(
           sd::DataType::DOUBLE, dataType, sd::TypeCast::convertGeneric,
           (nullptr, const_cast<double *>(descriptor.floatValues().data()),
-           descriptor.length(), cbuff),
+           descriptor.length(), cbuff->pointer()),
           (sd::DataType::DOUBLE, double), LIBND4J_TYPES);
     } else if (descriptor.isInteger()) {
       BUILD_DOUBLE_SELECTOR(
           sd::DataType::INT64, dataType, sd::TypeCast::convertGeneric,
           (nullptr, const_cast<Nd4jLong *>(descriptor.integerValues().data()),
-           descriptor.length(), cbuff),
+           descriptor.length(), cbuff->pointer()),
           (sd::DataType::INT64, Nd4jLong), LIBND4J_TYPES);
     }
 
-    ConstantDataBuffer dataBuffer(cbuff, nullptr, descriptor.length(),
-                                  DataTypeUtils::sizeOf(dataType));
+    ConstantDataBuffer dataBuffer(cbuff,  descriptor.length(),
+                                  dataType);
     holder->addBuffer(dataBuffer, dataType);
 
     result = holder->getConstantDataBuffer(dataType);
@@ -133,7 +141,7 @@ Nd4jLong ConstantHelper::getCachedAmount(int deviceId) {
     return _counters[deviceId];
 }
 
-sd::ConstantHelper *sd::ConstantHelper::_INSTANCE = 0;
+
 }  // namespace sd
 
 #endif

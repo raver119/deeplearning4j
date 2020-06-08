@@ -26,6 +26,7 @@
 
 namespace sd {
 namespace ops {
+
 LegacyIndexReduceOp::LegacyIndexReduceOp() : LegacyOp::LegacyOp(1) {
   //
 }
@@ -55,7 +56,7 @@ ShapeList *LegacyIndexReduceOp::calculateOutputShape(
     newShape[6] = 1;
     newShape[7] = 99;
 
-    auto result = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto result = ConstantShapeHelper::getInstance().createShapeInfo(
         ShapeDescriptor(newShape, DataType::INT64));
     RELEASE(newShape, block.workspace());
     return SHAPELIST(result);
@@ -93,7 +94,7 @@ ShapeList *LegacyIndexReduceOp::calculateOutputShape(
       newShape[6] = 1;
       newShape[7] = 99;
 
-      auto result = ConstantShapeHelper::getInstance()->createShapeInfo(
+      auto result = ConstantShapeHelper::getInstance().createShapeInfo(
           ShapeDescriptor(newShape, DataType::INT64));
       RELEASE(newShape, block.workspace());
       return SHAPELIST(result);
@@ -147,7 +148,7 @@ Nd4jStatus LegacyIndexReduceOp::validateAndExecute(Context &block) {
       }
       if (dims.size() > 1) std::sort(dims.begin(), dims.end());
 
-      auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+      auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
           x->shapeInfo(), dims);
 
       NativeOpExecutioner::execIndexReduce(
@@ -156,9 +157,9 @@ Nd4jStatus LegacyIndexReduceOp::validateAndExecute(Context &block) {
           extras.argumentsAsT(x->dataType()),
           reinterpret_cast<Nd4jLong *>(z->buffer()), z->shapeInfo(),
           z->specialBuffer(), z->specialShapeInfo(), nullptr, (int)dims.size(),
-          Environment::getInstance()->isCPU() ? tadPack.primaryShapeInfo()
+          Environment::getInstance().isCPU() ? tadPack.primaryShapeInfo()
                                               : tadPack.specialShapeInfo(),
-          Environment::getInstance()->isCPU() ? tadPack.primaryOffsets()
+          Environment::getInstance().isCPU() ? tadPack.primaryOffsets()
                                               : tadPack.specialOffsets());
     }
   } else {
@@ -186,7 +187,7 @@ Nd4jStatus LegacyIndexReduceOp::validateAndExecute(Context &block) {
       REQUIRE_TRUE(axis.size() > 0, 0,
                    "Some dimensions required for reduction!");
 
-      auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+      auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
           x->shapeInfo(), axis);
 
       NativeOpExecutioner::execIndexReduce(
@@ -195,9 +196,9 @@ Nd4jStatus LegacyIndexReduceOp::validateAndExecute(Context &block) {
           extras.argumentsAsT(x->dataType()),
           reinterpret_cast<Nd4jLong *>(z->buffer()), z->shapeInfo(),
           z->specialBuffer(), z->specialShapeInfo(), nullptr, (int)axis.size(),
-          Environment::getInstance()->isCPU() ? tadPack.primaryShapeInfo()
+          Environment::getInstance().isCPU() ? tadPack.primaryShapeInfo()
                                               : tadPack.specialShapeInfo(),
-          Environment::getInstance()->isCPU() ? tadPack.primaryOffsets()
+          Environment::getInstance().isCPU() ? tadPack.primaryOffsets()
                                               : tadPack.specialOffsets());
     }
   }

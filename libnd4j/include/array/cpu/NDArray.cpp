@@ -366,7 +366,7 @@ void NDArray::tile(const std::vector<Nd4jLong>& reps, NDArray& target) const {
   const auto targetLen = target.lengthOf();
   if (target.ordering() == 'c' && ews == 1) {  //  ews == 1 always here
     //#pragma omp parallel for simd if(targetLen >
-    // Environment::getInstance()->elementwiseThreshold()) schedule(guided)
+    // Environment::getInstance().elementwiseThreshold()) schedule(guided)
     for (Nd4jLong i = 0; i < targetLen; ++i) {
       auto yOffset = shape::subArrayOffset(i, target.shapeInfo(), shapeInfo());
       BUILD_DOUBLE_SELECTOR(target.dataType(), dataType(),

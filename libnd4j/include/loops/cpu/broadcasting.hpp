@@ -84,7 +84,7 @@ void Broadcast<X, Y, Z>::exec(
   auto tadOffsets = xTadOffset;
 
   if (xTadShapeInfo == nullptr || tadOffsets == nullptr) {
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         xShapeInfo, dimension, dimensionLength);
 
     xTadShapeShapeInfo = tadPack.primaryShapeInfo();
@@ -395,7 +395,7 @@ void Broadcast<X, Y, Z>::execInverse(
   auto tadOffsets = yTadOffset;
 
   if (yTadShapeInfo == nullptr || tadOffsets == nullptr) {
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         yShapeInfo, dimension, dimensionLength);
 
     yTadShapeShapeInfo = tadPack.primaryShapeInfo();
@@ -417,7 +417,7 @@ void Broadcast<X, Y, Z>::execInverse(
   int tadsPerThread = tads / TAD_THRESHOLD;
   int threads = sd::math::nd4j_max<int>(1, tadsPerThread);
   threads = sd::math::nd4j_min<int>(
-      threads, sd::Environment::getInstance()->maxThreads());
+      threads, sd::Environment::getInstance().maxThreads());
 
   auto yEws = shape::elementWiseStride(yTadShapeShapeInfo);
   auto xEws = shape::elementWiseStride(xShapeInfo);

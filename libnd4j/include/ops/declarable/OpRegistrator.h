@@ -104,7 +104,7 @@ class SD_EXPORT OpRegistrator {
  public:
   ~OpRegistrator();
 
-  static OpRegistrator* getInstance();
+  static OpRegistrator& getInstance();
 
   static void exitHandler();
   static void sigIntHandler(int sig);

@@ -56,9 +56,9 @@ static void adjustHue_(const NDArray *input, const NDArray *deltaScalarArr,
 
     samediff::Threads::parallel_for(func, 0, input->lengthOf(), 3);
   } else {
-    auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         input->shapeInfo(), dimC);
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         output->shapeInfo(), dimC);
 
     const Nd4jLong numOfTads = packX.numberOfTads();

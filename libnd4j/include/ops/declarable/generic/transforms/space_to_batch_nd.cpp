@@ -125,7 +125,7 @@ DECLARE_SHAPE_FN(space_to_batch_nd) {
                        INPUT_VARIABLE(2)->e<uint>(i, 1)) /
                       INPUT_VARIABLE(1)->e<Nd4jLong>(i);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inputShapeInfo), 'c', outShape));
 }
 

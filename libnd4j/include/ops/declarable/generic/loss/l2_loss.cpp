@@ -25,6 +25,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(l2_loss, 1, 1, false, 0, 0) {
   auto input = INPUT_VARIABLE(0);
   auto output = OUTPUT_VARIABLE(0);
@@ -38,7 +39,7 @@ CUSTOM_OP_IMPL(l2_loss, 1, 1, false, 0, 0) {
   return Status::OK();
 }
 DECLARE_SHAPE_FN(l2_loss) {
-  return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().scalarShapeInfo(
       ArrayOptions::dataType(inputShape->at(0))));
 }
 
@@ -47,6 +48,7 @@ DECLARE_TYPES(l2_loss) {
       ->setAllowedInputTypes(sd::DataType::ANY)
       ->setAllowedOutputTypes({ALL_FLOATS});
 }
+
 }  // namespace ops
 }  // namespace sd
 

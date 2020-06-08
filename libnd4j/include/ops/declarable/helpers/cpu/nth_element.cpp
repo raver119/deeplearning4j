@@ -50,7 +50,7 @@ void nthElementFunctor_(NDArray* input, Nd4jLong n, NDArray* output,
          1});  // = ShapeUtils::evalDimsToExclude(input->rankOf(),
                // {input->rankOf() - 1});
 
-    auto pack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto pack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         sortedVals.shapeInfo(), lastDims);
 
     SpecialMethods<T>::sortTadGeneric(sortedVals.buffer(),

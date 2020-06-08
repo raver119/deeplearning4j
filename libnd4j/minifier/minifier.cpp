@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
   std::vector<OpDescriptor> descriptors;
   nd4j_printf("Total available operations: %i\n",
-              OpRegistrator::getInstance()->numberOfOperations());
+              OpRegistrator::getInstance().numberOfOperations());
 
   for (auto file : opt.files()) {
     // all files will be checked for accessibility & size

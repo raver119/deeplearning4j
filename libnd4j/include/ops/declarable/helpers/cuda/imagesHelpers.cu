@@ -75,9 +75,9 @@ linkage void rgbToYuvCudaLauncher(
 ///////////////////////////////////////////////////////////////////
 void transformRgbYuv(sd::LaunchContext* context, const NDArray& input,
                      NDArray& output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), {dimC});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output.shapeInfo(), {dimC});
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -146,9 +146,9 @@ linkage void yuvToRgbCudaLauncher(
 ///////////////////////////////////////////////////////////////////
 void transformYuvRgb(sd::LaunchContext* context, const NDArray& input,
                      NDArray& output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input.shapeInfo(), {dimC});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output.shapeInfo(), {dimC});
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -339,9 +339,9 @@ static _CUDA_H void rgbToHsvCudaLauncher(
 ///////////////////////////////////////////////////////////////////
 void transformHsvRgb(sd::LaunchContext* context, const NDArray* input,
                      NDArray* output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {dimC});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {dimC});
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -367,9 +367,9 @@ void transformHsvRgb(sd::LaunchContext* context, const NDArray* input,
 ///////////////////////////////////////////////////////////////////
 void transformRgbHsv(sd::LaunchContext* context, const NDArray* input,
                      NDArray* output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), {dimC});
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), {dimC});
 
   const Nd4jLong numOfTads = packX.numberOfTads();
@@ -464,9 +464,9 @@ __global__ void tripleTransformerCuda(
 template <typename T>
 static void rgbYiq(sd::LaunchContext* context, const NDArray* input,
                    NDArray* output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), dimC);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), dimC);
 
   NDArray::prepareSpecialUse({output}, {input});
@@ -483,9 +483,9 @@ static void rgbYiq(sd::LaunchContext* context, const NDArray* input,
 template <typename T>
 FORCEINLINE static void yiqRgb(sd::LaunchContext* context, const NDArray* input,
                                NDArray* output, const int dimC) {
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       input->shapeInfo(), dimC);
-  auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
       output->shapeInfo(), dimC);
 
   NDArray::prepareSpecialUse({output}, {input});

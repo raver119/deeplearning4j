@@ -42,7 +42,7 @@ DECLARE_SHAPE_FN(shapes_of) {
 
   for (int e = 0; e < inputShape->size(); e++) {
     auto inShape = inputShape->at(e);
-    shapeList->push_back(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+    shapeList->push_back(ConstantShapeHelper::getInstance().vectorShapeInfo(
         shape::rank(inShape), sd::DataType::INT64));
   }
 

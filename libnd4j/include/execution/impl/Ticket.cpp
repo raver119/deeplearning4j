@@ -33,7 +33,7 @@ Ticket::Ticket(
 
 Ticket::Ticket() {
   _acquired = true;
-  _interfaces.resize(sd::Environment::getInstance()->maxThreads());
+  _interfaces.resize(sd::Environment::getInstance().maxThreads());
 }
 
 bool Ticket::acquired() { return _acquired; }
@@ -94,11 +94,11 @@ void Ticket::waitAndRelease() {
     _interfaces[e]->markAvailable();
 
     // increment availability counter
-    ThreadPool::getInstance()->release();
+    ThreadPool::getInstance().release();
   }
 
   // return this ticket back to the pool
-  ThreadPool::getInstance()->release(this);
+  ThreadPool::getInstance().release(this);
 }
 
 void Ticket::attach(uint32_t thread_id,

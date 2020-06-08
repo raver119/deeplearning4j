@@ -56,7 +56,7 @@ sd::ShapeList* DeclarableReductionOp::calculateOutputShape(
   if (dims.size() == 0 ||
       (dims.size() == 1 && dims.at(0) == sd::DataTypeUtils::max<int>())) {
     auto newShape =
-        ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::FLOAT32);
+        ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::FLOAT32);
     return SHAPELIST(newShape);
   }
 

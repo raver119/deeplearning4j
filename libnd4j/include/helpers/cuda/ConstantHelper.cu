@@ -29,6 +29,8 @@
 #include <helpers/logger.h>
 #include <helpers/shape.h>
 #include <ops/specials.h>
+#include <helpers/logger.h>
+#include <array/PrimaryPointerDeallocator.h>
 
 #define CONSTANT_LIMIT 49152
 
@@ -82,10 +84,17 @@ ConstantHelper::ConstantHelper() {
   if (res != 0) throw cuda_exception::build("Final cudaSetDevice failed", res);
 }
 
-ConstantHelper *ConstantHelper::getInstance() {
-  if (!_INSTANCE) _INSTANCE = new sd::ConstantHelper();
+ConstantHelper ::~ConstantHelper() {
+  for (const auto &v:_cache) {
+    for (const auto &c:v) {
+      delete c.second;
+  }
+  }
+}
 
-  return _INSTANCE;
+  ConstantHelper& ConstantHelper::getInstance() {
+      static ConstantHelper instance;
+      return instance;
 }
 
 void *ConstantHelper::replicatePointer(void *src, size_t numBytes,
@@ -154,7 +163,7 @@ ConstantDataBuffer *ConstantHelper::constantBuffer(
     result = holder->getConstantDataBuffer(dataType);
   } else {
     auto numBytes = descriptor.length() * DataTypeUtils::sizeOf(dataType);
-    auto cbuff = new int8_t[numBytes];
+    auto cbuff = std::make_shared<PointerWrapper>(new int8_t[numBytes], std::make_shared<PrimaryPointerDeallocator>());
     _counters[deviceId] += numBytes;
 
     // create buffer with this dtype
@@ -163,22 +172,24 @@ ConstantDataBuffer *ConstantHelper::constantBuffer(
           sd::DataType::DOUBLE, dataType,
           sd::SpecialTypeConverter::convertGeneric,
           (nullptr, const_cast<double *>(descriptor.floatValues().data()),
-           descriptor.length(), cbuff),
+           descriptor.length(), cbuff->pointer()),
           (sd::DataType::DOUBLE, double), LIBND4J_TYPES);
     } else if (descriptor.isInteger()) {
       BUILD_DOUBLE_SELECTOR(
           sd::DataType::INT64, dataType,
           sd::SpecialTypeConverter::convertGeneric,
           (nullptr, const_cast<Nd4jLong *>(descriptor.integerValues().data()),
-           descriptor.length(), cbuff),
+           descriptor.length(), cbuff->pointer()),
           (sd::DataType::INT64, Nd4jLong), LIBND4J_TYPES);
     }
 
-    auto dbuff = replicatePointer(
-        cbuff, descriptor.length() * DataTypeUtils::sizeOf(dataType));
+    // we don't have deallocator here.
+            // TODO: we probably want to make use deallocator here, if we're not using constant memory
+            auto dbuff = std::make_shared<PointerWrapper>(replicatePointer(
+        cbuff->pointer(), descriptor.length() * DataTypeUtils::sizeOf(dataType)));
 
     ConstantDataBuffer dataBuffer(cbuff, dbuff, descriptor.length(),
-                                  DataTypeUtils::sizeOf(dataType));
+                                  dataType);
 
     holder->addBuffer(dataBuffer, dataType);
     result = holder->getConstantDataBuffer(dataType);
@@ -195,5 +206,5 @@ Nd4jLong ConstantHelper::getCachedAmount(int deviceId) {
     return _counters[deviceId];
 }
 
-sd::ConstantHelper *sd::ConstantHelper::_INSTANCE = 0;
+
 }  // namespace sd

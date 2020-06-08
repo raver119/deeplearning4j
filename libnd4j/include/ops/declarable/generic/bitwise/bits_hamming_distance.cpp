@@ -46,7 +46,7 @@ CUSTOM_OP_IMPL(bits_hamming_distance, 2, 1, true, 0, 0) {
 
 DECLARE_SHAPE_FN(bits_hamming_distance) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(sd::DataType::INT64));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(sd::DataType::INT64));
 }
 
 DECLARE_TYPES(bits_hamming_distance) {

@@ -1560,8 +1560,9 @@ SD_EXPORT void inspectArray(Nd4jPointer* extraPointers, Nd4jPointer buffer,
                             Nd4jLong* specialShapeInfo, Nd4jPointer debugInfo);
 
 typedef sd::ConstantDataBuffer OpaqueConstantDataBuffer;
+typedef sd::ConstantShapeBuffer OpaqueConstantShapeBuffer;
 
-SD_EXPORT OpaqueConstantDataBuffer* shapeBuffer(int rank, Nd4jLong* shape,
+SD_EXPORT OpaqueConstantShapeBuffer* shapeBuffer(int rank, Nd4jLong* shape,
                                                 Nd4jLong* strides,
                                                 sd::DataType dtype, char order,
                                                 Nd4jLong ews, bool empty);
@@ -1583,6 +1584,11 @@ SD_EXPORT Nd4jLong getConstantDataBufferLength(OpaqueConstantDataBuffer* dbf);
 SD_EXPORT Nd4jLong getConstantDataBufferSizeOf(OpaqueConstantDataBuffer* dbf);
 
 SD_EXPORT void deleteShapeBuffer(OpaqueConstantDataBuffer* ptr);
+SD_EXPORT Nd4jPointer getConstantShapeBufferPrimary(OpaqueConstantShapeBuffer* dbf);
+SD_EXPORT Nd4jPointer getConstantShapeBufferSpecial(OpaqueConstantShapeBuffer* dbf);
+
+SD_EXPORT void deleteConstantShapeBuffer(OpaqueConstantShapeBuffer* ptr);
+SD_EXPORT void deleteConstantDataBuffer(OpaqueConstantDataBuffer* ptr);
 
 typedef sd::graph::Context OpaqueContext;
 typedef sd::graph::RandomGenerator OpaqueRandomGenerator;

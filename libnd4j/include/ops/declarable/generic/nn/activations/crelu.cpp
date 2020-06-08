@@ -24,6 +24,7 @@
 #include <ops/declarable/CustomOperations.h>
 #include <ops/declarable/helpers/legacy_helpers.h>
 #include <ops/declarable/helpers/transforms.h>
+
 namespace sd {
 namespace ops {
 CUSTOM_OP_IMPL(crelu, 1, 1, false, 0, 0) {
@@ -59,7 +60,7 @@ DECLARE_SHAPE_FN(crelu) {
     shape.emplace_back(shape::shapeOf(inShape)[e]);
 
   shape[shape.size() - 1] *= 2;
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inShape), shape::order(inShape), shape);
 
   return SHAPELIST(newShape);
@@ -105,7 +106,7 @@ DECLARE_TYPES(crelu_bp) {
 
 DECLARE_SHAPE_FN(crelu_bp) {
   auto inShape = inputShape->at(0);
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(inShape)));
 }
 }  // namespace ops

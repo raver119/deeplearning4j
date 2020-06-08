@@ -63,12 +63,10 @@ class SD_EXPORT Environment {
   // device compute capability for CUDA
   std::vector<Pair> _capabilities;
 
-  static Environment* _instance;
-
-  Environment();
+   Environment();
+    public:
   ~Environment();
 
- public:
   /**
    * These 3 fields are mostly for CUDA/cuBLAS version tracking
    */
@@ -76,7 +74,7 @@ class SD_EXPORT Environment {
   int _blasMinorVersion = 0;
   int _blasPatchVersion = 0;
 
-  static Environment* getInstance();
+  static Environment& getInstance();
 
   bool isVerbose();
   void setVerbose(bool reallyVerbose);

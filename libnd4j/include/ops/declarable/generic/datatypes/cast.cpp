@@ -49,7 +49,7 @@ DECLARE_SHAPE_FN(cast) {
   auto it = INT_ARG(0);
   DataType newType = DataTypeUtils::fromInt(it);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(inShape, newType)));
 }
 

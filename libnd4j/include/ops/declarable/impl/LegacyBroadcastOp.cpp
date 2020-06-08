@@ -27,6 +27,7 @@
 
 namespace sd {
 namespace ops {
+
 Nd4jStatus LegacyBroadcastOp::validateAndExecute(Context &block) {
   auto x = INPUT_VARIABLE(0);
   auto y = INPUT_VARIABLE(1);
@@ -45,7 +46,7 @@ Nd4jStatus LegacyBroadcastOp::validateAndExecute(Context &block) {
 
   int opNum = block.opNum() < 0 ? this->_opNum : block.opNum();
 
-  auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
       x->shapeInfo(), dims);
 
   auto tadLen = shape::length(packX.primaryShapeInfo());
@@ -56,14 +57,14 @@ Nd4jStatus LegacyBroadcastOp::validateAndExecute(Context &block) {
 
   PointersManager manager(block.launchContext(), "LegacyBroadcastOp");
   auto pTadShape =
-      Environment::getInstance()->isCPU()
+      Environment::getInstance().isCPU()
           ? packX.primaryShapeInfo()
           : packX
                 .specialShapeInfo();  //(Nd4jLong *)
                                       // manager.replicatePointer(tad.tadOnlyShapeInfo,
                                       // shape::shapeInfoByteLength(tad.tadOnlyShapeInfo));
   auto pTadOffsets =
-      Environment::getInstance()->isCPU()
+      Environment::getInstance().isCPU()
           ? packX.primaryOffsets()
           : packX.specialOffsets();  //(Nd4jLong *)
                                      // manager.replicatePointer(tad.tadOffsets,
@@ -79,18 +80,18 @@ Nd4jStatus LegacyBroadcastOp::validateAndExecute(Context &block) {
   else {
     // this is rare, but possible use case - X and Z might have different
     // shapes/strides/orders. In this case we prepare and pass separate TAD info
-    auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         z->shapeInfo(), dims);
 
     auto zTadShape =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packZ.primaryShapeInfo()
             : packZ
                   .specialShapeInfo();  //(Nd4jLong *)
                                         // manager.replicatePointer(tadZ.tadOnlyShapeInfo,
                                         // shape::shapeInfoByteLength(tadZ.tadOnlyShapeInfo));
     auto zTadOffsets =
-        Environment::getInstance()->isCPU()
+        Environment::getInstance().isCPU()
             ? packZ.primaryOffsets()
             : packZ
                   .specialOffsets();  //(Nd4jLong *)

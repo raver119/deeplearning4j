@@ -172,7 +172,7 @@ class Choice {
     int elementsPerThread = zLength / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     if (zEWS >= 1 && xEWS >= 1 && yEWS >= 1) {
       auto func = PRAGMA_THREADS_FOR {
@@ -330,7 +330,7 @@ class GaussianDistribution {
     int elementsPerThread = middle / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     int span = (middle / _threads) + 8;
 
@@ -460,7 +460,7 @@ class BinomialDistribution {
     int elementsPerThread = zLength / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     T prob = extraArguments[1];
 
@@ -570,7 +570,7 @@ class BinomialDistributionEx {
     int elementsPerThread = zLength / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     T prob = extraArguments[1];
 
@@ -729,7 +729,7 @@ class TruncatedNormalDistribution {
     int elementsPerThread = middle / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     const T epsilon = static_cast<T>(1e-5);
 
@@ -860,7 +860,7 @@ class LogNormalDistribution {
     int elementsPerThread = middle / TAD_THRESHOLD;
     int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
     _threads = sd::math::nd4j_min<int>(
-        _threads, sd::Environment::getInstance()->maxThreads());
+        _threads, sd::Environment::getInstance().maxThreads());
 
     int span = (zLength / _threads) + 8;
 

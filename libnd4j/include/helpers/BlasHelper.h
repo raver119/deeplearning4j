@@ -247,7 +247,7 @@ enum BlasFunctions {
 
 class BlasHelper {
  private:
-  static BlasHelper *_instance;
+
 
   bool _hasHgemv = false;
   bool _hasHgemm = false;
@@ -287,7 +287,7 @@ class BlasHelper {
   CusolverDnDgesvd cusolverDnDgesvd;
 
  public:
-  static BlasHelper *getInstance();
+  static BlasHelper &getInstance();
 
   void initializeFunctions(Nd4jPointer *functions);
   void initializeDeviceFunctions(Nd4jPointer *functions);

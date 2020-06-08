@@ -50,7 +50,7 @@ CUSTOM_OP_IMPL(zero_fraction, 1, 1, false, 0, 0) {
   return Status::OK();
 }
 DECLARE_SHAPE_FN(zero_fraction) {
-  return SHAPELIST(ConstantShapeHelper::getInstance()->scalarShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().scalarShapeInfo(
       sd::DataType::DOUBLE));
 }
 

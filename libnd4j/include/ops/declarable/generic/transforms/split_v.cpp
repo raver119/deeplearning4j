@@ -115,7 +115,7 @@ DECLARE_SHAPE_FN(split_v) {
         shape[d] = c_size;
     }
 
-    auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(input), shape::order(input), shape);
     shapeList->push_back(newShape);
   }

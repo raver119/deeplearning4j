@@ -79,11 +79,11 @@ bool experimentalSupport = false;
 using namespace sd;
 
 void setElementThreshold(int num) {
-  if (num > 0) sd::Environment::getInstance()->setElementwiseThreshold(num);
+  if (num > 0) sd::Environment::getInstance().setElementwiseThreshold(num);
 }
 
 void setTADThreshold(int num) {
-  if (num > 0) sd::Environment::getInstance()->setTadThreshold(num);
+  if (num > 0) sd::Environment::getInstance().setTadThreshold(num);
 }
 
 /**
@@ -132,7 +132,7 @@ void execIndexReduce(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     int dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPack.primaryShapeInfo();
@@ -175,9 +175,9 @@ void execBroadcast(Nd4jPointer *extraPointers, int opNum, OpaqueDataBuffer *dbX,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     auto dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
-    auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPackZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hZShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPackX.primaryShapeInfo();
@@ -211,9 +211,9 @@ void execBroadcastBool(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     auto dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
-    auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPackZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hZShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPackX.primaryShapeInfo();
@@ -382,7 +382,7 @@ void execReduceFloat2(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     auto dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPackX = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPackX.primaryShapeInfo();
@@ -410,7 +410,7 @@ void execReduceBool2(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     auto dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPack.primaryShapeInfo();
@@ -438,7 +438,7 @@ void execReduceSame2(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     int dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPack.primaryShapeInfo();
@@ -466,7 +466,7 @@ void execReduceLong2(Nd4jPointer *extraPointers, int opNum,
     auto dimension = reinterpret_cast<int *>(dbDimension->primary());
     int dimensionLength = static_cast<int>(shape::length(hDimensionShape));
 
-    auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
 
     auto hTADShapeInfo = tadPack.primaryShapeInfo();
@@ -575,7 +575,7 @@ void execReduce3Tad(
           tadOnlyShapeInfo, tadOffsets, yTadOnlyShapeInfo, yTadOffsets);
     } else {
       // going tad-way
-      auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+      auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
           hXShapeInfo, dimension, dimensionLength);
 
       auto hTADShapeInfo = tadPack.primaryShapeInfo();
@@ -885,7 +885,7 @@ void specialConcat(Nd4jPointer *extraPointers, int dimension, int numArrays,
 void initializeDevicesAndFunctions() {}
 
 void initializeFunctions(Nd4jPointer *functions) {
-  sd::BlasHelper::getInstance()->initializeFunctions(functions);
+  sd::BlasHelper::getInstance().initializeFunctions(functions);
 }
 
 /**
@@ -1004,11 +1004,11 @@ int eventSynchronize(Nd4jPointer event) { return 0L; }
 int getAvailableDevices() { return 0L; }
 
 void enableDebugMode(bool reallyEnable) {
-  sd::Environment::getInstance()->setDebug(reallyEnable);
+  sd::Environment::getInstance().setDebug(reallyEnable);
 }
 
 void enableVerboseMode(bool reallyEnable) {
-  sd::Environment::getInstance()->setVerbose(reallyEnable);
+  sd::Environment::getInstance().setVerbose(reallyEnable);
 }
 
 void setGridLimit(int gridSize) {
@@ -1019,7 +1019,7 @@ sd::TadPack *tadOnlyShapeInfo(Nd4jLong const *hXShapeInfo, int *dimension,
                               int dimensionLength) {
   auto pack = new TadPack();
   try {
-    *pack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+    *pack = sd::ConstantTadHelper::getInstance().tadForDimensions(
         hXShapeInfo, dimension, dimensionLength);
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
@@ -1077,7 +1077,7 @@ void pullRowsGeneric(void *vx, Nd4jLong const *hXShapeInfo, void *vz,
   int elementsPerThread = n / TAD_THRESHOLD;
   int _threads = sd::math::nd4j_max<int>(1, elementsPerThread);
   _threads = sd::math::nd4j_min<int>(
-      _threads, sd::Environment::getInstance()->maxThreads());
+      _threads, sd::Environment::getInstance().maxThreads());
 
   auto func = PRAGMA_THREADS_FOR {
     for (auto idx = start; idx < stop; idx++) {
@@ -1353,7 +1353,7 @@ void shuffle(Nd4jPointer *extras, Nd4jPointer *hX, Nd4jPointer *hXShapeInfo,
 }
 
 bool isExperimentalEnabled() {
-  return sd::Environment::getInstance()->isExperimentalBuild();
+  return sd::Environment::getInstance().isExperimentalBuild();
 }
 
 void setOmpMinThreads(int threads) {
@@ -1661,7 +1661,7 @@ Nd4jPointer getResultWrapperPointer(sd::graph::ResultWrapper *ptr) {
 }
 
 const char *getAllCustomOps() {
-  return sd::ops::OpRegistrator::getInstance()->getAllCustomOperations();
+  return sd::ops::OpRegistrator::getInstance().getAllCustomOperations();
 }
 
 template <typename T>
@@ -1764,7 +1764,7 @@ sd::ShapeList *calculateOutputShapes2(Nd4jPointer *extraPointers, Nd4jLong hash,
                                       int numIArgs, bool *bArgs, int numBArgs,
                                       int *dArgs, int numDArgs) {
   try {
-    auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
+    auto op = sd::ops::OpRegistrator::getInstance().getOperation(hash);
 
     return _calculateOutputShapes(
         extraPointers, op.get(), inputBuffers, inputShapes, numInputShapes,
@@ -1805,7 +1805,7 @@ sd::ShapeList *calculateOutputShapes(Nd4jPointer *extraPointers, Nd4jLong hash,
                                      int numTArgs, Nd4jLong *iArgs,
                                      int numIArgs) {
   try {
-    auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
+    auto op = sd::ops::OpRegistrator::getInstance().getOperation(hash);
 
     return _calculateOutputShapes(extraPointers, op.get(), inputShapes,
                                   numInputShapes, tArgs, numTArgs, iArgs,
@@ -1821,7 +1821,7 @@ sd::ShapeList *calculateOutputShapes(Nd4jPointer *extraPointers, Nd4jLong hash,
 int execCustomOp2(Nd4jPointer *extraPointers, Nd4jLong hash,
                   Nd4jPointer opContext) {
   try {
-    auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
+    auto op = sd::ops::OpRegistrator::getInstance().getOperation(hash);
     auto context = reinterpret_cast<Context *>(opContext);
 
     return op->execute(context);
@@ -1934,7 +1934,7 @@ int execCustomOp(Nd4jPointer *extraPointers, Nd4jLong hash,
                  int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs,
                  int numBArgs, bool isInplace) {
   try {
-    auto op = sd::ops::OpRegistrator::getInstance()->getOperation(hash);
+    auto op = sd::ops::OpRegistrator::getInstance().getOperation(hash);
     return realExec(op.get(), extraPointers, hash, inputBuffers, inputShapes,
                     numInputs, outputBuffers, outputShapes, numOutputs, tArgs,
                     numTArgs, iArgs, numIArgs, bArgs, numBArgs, isInplace);
@@ -1951,7 +1951,7 @@ int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId,
   try {
     auto graph = sd::graph::Graph::fromFlatPointer(flatBufferPointer);
 
-    // sd::graph::GraphHolder::getInstance()->registerGraph(graphId, graph);
+    // sd::graph::GraphHolder::getInstance().registerGraph(graphId, graph);
 
     return ND4J_STATUS_OK;
   } catch (std::exception &e) {
@@ -2001,7 +2001,7 @@ void *getVariableBuffer(sd::graph::Variable *variable) {
 }
 
 int unregisterGraph(Nd4jPointer *extraPointers, Nd4jLong graphId) {
-  sd::graph::GraphHolder::getInstance()->forgetGraph(graphId);
+  sd::graph::GraphHolder::getInstance().forgetGraph(graphId);
   return Status::OK();
 }
 
@@ -2028,7 +2028,7 @@ void deleteLongArray(Nd4jPointer pointer) {
 void deleteVariablesSet(sd::graph::VariablesSet *pointer) { delete pointer; }
 
 const char *getAllOperations() {
-  return sd::OpTracker::getInstance()->exportOperations();
+  return sd::OpTracker::getInstance().exportOperations();
 }
 
 Nd4jStatus execCustomOpWithScope(Nd4jPointer *extraPointers, Nd4jPointer state,
@@ -2394,12 +2394,12 @@ void tryPointer(Nd4jPointer extra, Nd4jPointer p, int len) {
   }
 }
 
-sd::ConstantDataBuffer *shapeBuffer(int rank, Nd4jLong *shape,
+sd::ConstantShapeBuffer *shapeBuffer(int rank, Nd4jLong *shape,
                                     Nd4jLong *strides, sd::DataType dtype,
                                     char order, Nd4jLong ews, bool empty) {
   try {
-    auto buffer = new ConstantDataBuffer();
-    *buffer = sd::ConstantShapeHelper::getInstance()->bufferForShapeInfo(
+    auto buffer = new ConstantShapeBuffer();
+    *buffer = sd::ConstantShapeHelper::getInstance().bufferForShapeInfo(
         ShapeDescriptor(dtype, order, shape, strides, rank, ews, empty));
     return buffer;
   } catch (std::exception &e) {
@@ -2410,7 +2410,11 @@ sd::ConstantDataBuffer *shapeBuffer(int rank, Nd4jLong *shape,
   }
 }
 
-void deleteShapeBuffer(sd::ConstantDataBuffer *ptr) { delete ptr; }
+void deleteConstantShapeBuffer(sd::ConstantShapeBuffer *ptr) { delete ptr; }
+
+void deleteConstantDataBuffer(sd::ConstantDataBuffer* ptr) {
+  delete ptr;
+}
 
 void deleteTadPack(sd::TadPack *ptr) { delete ptr; }
 
@@ -2427,7 +2431,7 @@ sd::ConstantDataBuffer *constantBufferDouble(sd::DataType dtype, double *data,
 sd::ConstantDataBuffer *constantBuffer(sd::DataType dtype,
                                        sd::ConstantDescriptor *descriptor) {
   try {
-    return sd::ConstantHelper::getInstance()->constantBuffer(*descriptor,
+    return sd::ConstantHelper::getInstance().constantBuffer(*descriptor,
                                                              dtype);
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
@@ -2435,6 +2439,14 @@ sd::ConstantDataBuffer *constantBuffer(sd::DataType dtype,
         e.what());
     return nullptr;
   }
+}
+
+Nd4jPointer getConstantShapeBufferPrimary(sd::ConstantShapeBuffer* dbf) {
+  return const_cast<Nd4jLong*>(dbf->primary());
+}
+
+Nd4jPointer getConstantShapeBufferSpecial(sd::ConstantShapeBuffer* dbf) {
+  return const_cast<Nd4jLong*>(dbf->special());
 }
 
 Nd4jPointer getConstantDataBufferPrimary(sd::ConstantDataBuffer *dbf) {
@@ -2602,7 +2614,7 @@ Nd4jPointer shapeBufferForNumpy(Nd4jPointer npyArray) {
           dtype, arr.fortranOrder ? 'f' : 'c', shape);
     }
     return const_cast<Nd4jLong *>(
-        sd::ConstantShapeHelper::getInstance()->createFromExisting(shapeBuffer,
+        sd::ConstantShapeHelper::getInstance().createFromExisting(shapeBuffer,
                                                                    true));
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
@@ -2715,7 +2727,7 @@ const char *runLightBenchmarkSuit(bool printOut) {
 }
 
 Nd4jLong getCachedMemory(int deviceId) {
-  return sd::ConstantHelper::getInstance()->getCachedAmount(deviceId);
+  return sd::ConstantHelper::getInstance().getCachedAmount(deviceId);
 }
 
 const char *runFullBenchmarkSuit(bool printOut) {

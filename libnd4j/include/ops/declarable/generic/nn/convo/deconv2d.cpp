@@ -223,7 +223,7 @@ DECLARE_SHAPE_FN(deconv2d) {
     outputShape[3] = oC;
   }
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       ShapeDescriptor(ArrayOptions::dataType(weightsShapeInfo),
                       shape::order(inputShapeInfo), outputShape, 4)));
 }

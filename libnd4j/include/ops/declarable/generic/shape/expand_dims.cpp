@@ -72,14 +72,14 @@ DECLARE_SHAPE_FN(expand_dims) {
   // 0D scalar edge case
   if (shape::rank(inShape) == 0) {
     Nd4jLong x = 1;
-    auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), 'c', 1, &x);
     return SHAPELIST(newShape);
   }
 
   // FIXME: temp workaround for TF
   if (shape::isScalar(inShape)) {
-    auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+    auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
         ArrayOptions::dataType(inShape), 'c', 2, shape::shapeOf(inShape));
     return SHAPELIST(newShape);
   }
@@ -97,7 +97,7 @@ DECLARE_SHAPE_FN(expand_dims) {
 
   shape.insert(shape.begin() + axis, 1);
 
-  auto newShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto newShape = ConstantShapeHelper::getInstance().createShapeInfo(
       ArrayOptions::dataType(inShape), order, shape);
   return SHAPELIST(newShape);
 }

@@ -27,6 +27,7 @@
 
 namespace sd {
 namespace ops {
+
 CUSTOM_OP_IMPL(in_top_k, 2, 1, true, 0, 1) {
   auto predictions = INPUT_VARIABLE(0);
   auto target = INPUT_VARIABLE(1);
@@ -55,7 +56,7 @@ DECLARE_SHAPE_FN(in_top_k) {
   auto in = inputShape->at(1);
   int shapeRank = shape::rank(in);
 
-  auto aShape = ConstantShapeHelper::getInstance()->createShapeInfo(
+  auto aShape = ConstantShapeHelper::getInstance().createShapeInfo(
       sd::DataType::BOOL, shape::order(in), shape::rank(in),
       shape::shapeOf(in));
   shapeList->push_back(aShape);

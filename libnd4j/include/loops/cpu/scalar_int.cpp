@@ -69,7 +69,7 @@ void ScalarIntTransform<X>::transform(
   }
 
   int num_threads = sd::math::nd4j_min<int>(
-      numTads, sd::Environment::getInstance()->maxThreads());
+      numTads, sd::Environment::getInstance().maxThreads());
 
   if (kindOfLoop == sd::LoopKind::EWS1) {
     for (auto r = start; r < stop; r++) {

@@ -45,6 +45,9 @@
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#include <array/InteropDataBuffer.h>
+#include <memory/MemoryCounter.h>
+#include <array/ConstantShapeBuffer.h>
 
 #include "legacy/NativeOpExecutioner.h"
 
@@ -189,8 +192,8 @@ class SD_EXPORT NDArray {
    *  contains shape info:  matrix rank, numbers of elements per each dimension,
    * dimensions strides, element-wise-stride, c-like or fortan-like order
    */
-  Nd4jLong* _shapeInfo = nullptr;
-  Nd4jLong* _shapeInfoD = nullptr;
+  constNd4jLong* _shapeInfo = nullptr;
+  constNd4jLong* _shapeInfoD = nullptr;
 
   /**
    *  pointer on device launch context (with all data needed there).
@@ -445,15 +448,15 @@ class SD_EXPORT NDArray {
    * @param readList
    */
   static void registerSpecialUse(const std::vector<const NDArray*>& writeList,
-                                 const std::vector<const NDArray*>& readList);
+                                 const std::vector<const NDArray*>& readList = {});
   static void prepareSpecialUse(const std::vector<const NDArray*>& writeList,
-                                const std::vector<const NDArray*>& readList,
+                                const std::vector<const NDArray*>& readList = {},
                                 bool synchronizeWritables = false);
 
   static void registerPrimaryUse(const std::vector<const NDArray*>& writeList,
-                                 const std::vector<const NDArray*>& readList);
+                                 const std::vector<const NDArray*>& readList = {});
   static void preparePrimaryUse(const std::vector<const NDArray*>& writeList,
-                                const std::vector<const NDArray*>& readList,
+                                const std::vector<const NDArray*>& readList = {},
                                 bool synchronizeWritables = false);
 
   /**
@@ -1487,7 +1490,7 @@ class SD_EXPORT NDArray {
   void setShapeInfo(const Nd4jLong* shapeInfo);
   void setShapeInfo(const Nd4jLong* shapeInfo, const sd::DataType dtype);
   void setShapeInfo(const ShapeDescriptor& descriptor);
-  void setShapeInfo(const ConstantDataBuffer& shapeBuffer);
+  void setShapeInfo(const ConstantShapeBuffer& shapeBuffer);
 
   /**
    *  returns absolute offset which corresponds to given sequential index
@@ -1792,9 +1795,9 @@ FORCEINLINE R NDArray::templatedGet(void const* buffer, Nd4jLong index) const {
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(Nd4jLong* shapeInfo) {
   auto buffer =
-      ConstantShapeHelper::getInstance()->bufferForShapeInfo(shapeInfo);
-  _shapeInfo = buffer.primaryAsT<Nd4jLong>();
-  _shapeInfoD = buffer.specialAsT<Nd4jLong>();
+      ConstantShapeHelper::getInstance().bufferForShapeInfo(shapeInfo);
+  _shapeInfo = buffer.primary();
+  _shapeInfoD = buffer.special();
 
   if (shapeInfo != nullptr) {
     _dataType = ArrayOptions::dataType(_shapeInfo);
@@ -1811,9 +1814,9 @@ void NDArray::setShapeInfo(Nd4jLong* shapeInfo) {
 //////////////////////////////////////////////////////////////////////////
 void NDArray::setShapeInfo(Nd4jLong* shapeInfo, const sd::DataType dtype) {
   auto buffer =
-      ConstantShapeHelper::getInstance()->bufferForShapeInfo(shapeInfo);
-  _shapeInfo = buffer.primaryAsT<Nd4jLong>();
-  _shapeInfoD = buffer.specialAsT<Nd4jLong>();
+      ConstantShapeHelper::getInstance().bufferForShapeInfo(shapeInfo);
+  _shapeInfo = buffer.primary();
+  _shapeInfoD = buffer.special();
 
   if (shapeInfo != nullptr) {
     _dataType = dtype;
@@ -1882,7 +1885,7 @@ Nd4jLong NDArray::ews() const {
 bool NDArray::nonNull() const {
   if (isEmpty()) return true;
 
-  if (!Environment::getInstance()->isCPU())
+  if (!Environment::getInstance().isCPU())
     return getDataBuffer()->special() != nullptr &&
            specialShapeInfo() != nullptr;
 

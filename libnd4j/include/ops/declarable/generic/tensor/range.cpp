@@ -147,7 +147,7 @@ DECLARE_SHAPE_FN(range) {
       if (limit == start) {
         // Return [0] to match TF
         return SHAPELIST(
-            ConstantShapeHelper::getInstance()->vectorShapeInfo(0, dtype));
+            ConstantShapeHelper::getInstance().vectorShapeInfo(0, dtype));
       }
 
       REQUIRE_TRUE(delta != 0, 0,
@@ -180,7 +180,7 @@ DECLARE_SHAPE_FN(range) {
       if (limit == start) {
         // Return [0] to match TF
         return SHAPELIST(
-            ConstantShapeHelper::getInstance()->vectorShapeInfo(0, dtype));
+            ConstantShapeHelper::getInstance().vectorShapeInfo(0, dtype));
       }
 
       REQUIRE_TRUE(delta != 0, 0,
@@ -210,7 +210,7 @@ DECLARE_SHAPE_FN(range) {
 
     if (limit == start) {
       // Return [0] to match TF
-      return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(
+      return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(
           0, sd::DataType::INT32));
     }
 
@@ -245,8 +245,8 @@ DECLARE_SHAPE_FN(range) {
 
     if (limit == start) {
       // Return [0] to match TF
-      return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(
-          0, Environment::getInstance()->defaultFloatDataType()));
+      return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(
+          0, Environment::getInstance().defaultFloatDataType()));
     }
 
     REQUIRE_TRUE(delta != 0, 0,
@@ -255,10 +255,10 @@ DECLARE_SHAPE_FN(range) {
     steps = static_cast<Nd4jLong>((limit - start) / delta);
 
     if (!block.numD()) {
-      if (Environment::getInstance()->precisionBoostAllowed())
+      if (Environment::getInstance().precisionBoostAllowed())
         dataType = sd::DataType::DOUBLE;
       else
-        dataType = Environment::getInstance()->defaultFloatDataType();
+        dataType = Environment::getInstance().defaultFloatDataType();
     }
 
     if (math::nd4j_abs<double>(start + steps * delta) <
@@ -275,7 +275,7 @@ DECLARE_SHAPE_FN(range) {
       "CUSTOM RANGE OP: value of (limit-start)/delta should be positive !");
 
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->vectorShapeInfo(steps, dataType));
+      ConstantShapeHelper::getInstance().vectorShapeInfo(steps, dataType));
 }
 
 DECLARE_TYPES(range) {

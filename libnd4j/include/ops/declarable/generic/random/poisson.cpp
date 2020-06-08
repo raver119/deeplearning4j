@@ -51,7 +51,7 @@ DECLARE_SHAPE_FN(random_poisson) {
     shape.emplace_back(shape::sizeAt(lambdaShape, d));
   }
   auto newShape =
-      ConstantShapeHelper::getInstance()->createShapeInfo(dtype, 'c', shape);
+      ConstantShapeHelper::getInstance().createShapeInfo(dtype, 'c', shape);
   return SHAPELIST(newShape);
 }
 

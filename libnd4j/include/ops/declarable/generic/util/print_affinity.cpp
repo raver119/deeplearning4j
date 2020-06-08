@@ -51,7 +51,7 @@ DECLARE_TYPES(print_affinity) {
 
 DECLARE_SHAPE_FN(print_affinity) {
   return SHAPELIST(
-      ConstantShapeHelper::getInstance()->scalarShapeInfo(DataType::INT32));
+      ConstantShapeHelper::getInstance().scalarShapeInfo(DataType::INT32));
 }
 }  // namespace ops
 }  // namespace sd

@@ -30,15 +30,13 @@ using namespace sd;
 class DeclarableOpsTests14 : public testing::Test {
  public:
   DeclarableOpsTests14() {
-    printf("\n");
-    fflush(stdout);
   }
 };
 
 TEST_F(DeclarableOpsTests14, Test_Validation_Edge_1) {
   auto x = NDArrayFactory::create<int>('c', {2}, {2, 2});
   auto exp = NDArrayFactory::create(
-      'c', {2, 2}, Environment::getInstance()->defaultFloatDataType());
+      'c', {2, 2}, Environment::getInstance().defaultFloatDataType());
   exp.assign(4.0f);
 
   sd::ops::fill op;

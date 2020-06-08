@@ -132,7 +132,7 @@ class SD_EXPORT DataTypeUtils {
 FORCEINLINE sd::DataType DataTypeUtils::pickFloatingType(sd::DataType typeX) {
   // if proposed dataType is already floating point - return it
   if (isR(typeX)) return typeX;
-  return Environment::getInstance()->defaultFloatDataType();
+  return Environment::getInstance().defaultFloatDataType();
 }
 
 FORCEINLINE bool DataTypeUtils::isR(sd::DataType dataType) {
@@ -178,7 +178,7 @@ FORCEINLINE sd::DataType DataTypeUtils::pickPairwiseResultType(
   // if both data types are float - return biggest one
   if (rX && rY) {
     // if we allow precision boost, then we pick bigger data type
-    if (sd::Environment::getInstance()->precisionBoostAllowed()) {
+    if (sd::Environment::getInstance().precisionBoostAllowed()) {
       return nd4j_max(typeX, typeY);
     } else {
       // and we return first operand otherwise
@@ -188,7 +188,7 @@ FORCEINLINE sd::DataType DataTypeUtils::pickPairwiseResultType(
 
   // if that's not real type, we apply same rules
   if (!rX && !rY) {
-    if (sd::Environment::getInstance()->precisionBoostAllowed()) {
+    if (sd::Environment::getInstance().precisionBoostAllowed()) {
       return nd4j_max(typeX, typeY);
     } else {
       // and we return first operand otherwise

@@ -89,7 +89,7 @@ DECLARE_SHAPE_FN(non_max_suppression_overlaps) {
       nullptr);  // shape::sizeAt(in, 0);
   if (boxSize < maxOutputSize) maxOutputSize = boxSize;
 
-  auto outputShape = ConstantShapeHelper::getInstance()->vectorShapeInfo(
+  auto outputShape = ConstantShapeHelper::getInstance().vectorShapeInfo(
       maxOutputSize, DataType::INT32);
 
   return SHAPELIST(outputShape);

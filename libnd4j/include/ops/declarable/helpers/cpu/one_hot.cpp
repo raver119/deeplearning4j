@@ -18,7 +18,7 @@
 // @author raver119@gmail.com
 //
 
-#include "../one_hot.h"
+#include <ops/declarable/helpers/one_hot.h>
 
 #include <execution/Threads.h>
 #include <helpers/ConstantTadHelper.h>
@@ -27,6 +27,7 @@
 namespace sd {
 namespace ops {
 namespace helpers {
+
 template <typename Z, typename I>
 static void onehot_(void* voutput, Nd4jLong const* zShapeInfo,
                     void const* vindices, Nd4jLong const* iShapeInfo, int axis,
@@ -34,7 +35,7 @@ static void onehot_(void* voutput, Nd4jLong const* zShapeInfo,
   auto output = reinterpret_cast<Z*>(voutput);
   auto indices = reinterpret_cast<I const*>(vindices);
 
-  auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(
+  auto tadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
       zShapeInfo, {axis});
 
   auto iLen = static_cast<unsigned int>(shape::length(iShapeInfo));

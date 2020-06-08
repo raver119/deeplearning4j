@@ -18,8 +18,8 @@
 //  @author raver119@gmail.com
 //
 
-#ifndef LIBND4J_OP_TRACKER_H
-#define LIBND4J_OP_TRACKER_H
+#ifndef SD_OP_TRACKER_H
+#define SD_OP_TRACKER_H
 
 #include <graph/generated/utils_generated.h>
 #include <ops/declarable/OpDescriptor.h>
@@ -33,7 +33,7 @@
 namespace sd {
 class SD_EXPORT OpTracker {
  private:
-  static OpTracker* _INSTANCE;
+
 
   std::string _export;
 
@@ -47,7 +47,7 @@ class SD_EXPORT OpTracker {
   std::string local_to_string(T value);
 
  public:
-  static OpTracker* getInstance();
+  static OpTracker& getInstance();
 
   int totalGroups();
   int totalOperations();

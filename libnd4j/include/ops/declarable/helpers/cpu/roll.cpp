@@ -43,7 +43,7 @@ static void rollFunctorLinear_(NDArray* input, NDArray* output, int shift,
 
     // stage 1) swap last actualShift elements with first ones.
     // PRAGMA_OMP_PARALLEL_FOR //_IF(actualShift >
-    // Environment::getInstance()->elementwiseThreshold())
+    // Environment::getInstance().elementwiseThreshold())
     for (int e = 0; e < actualShift; ++e) {
       int sourceIndex = fullLen - actualShift + e;
 
@@ -58,7 +58,7 @@ static void rollFunctorLinear_(NDArray* input, NDArray* output, int shift,
     // stage 2) swap swapped actualShift elements with rest remainShiftCount
     // times.
     // PRAGMA_OMP_PARALLEL_FOR //_IF(shiftCount >
-    // Environment::getInstance()->tadThreshold())
+    // Environment::getInstance().tadThreshold())
     for (int count = 1; count < shiftCount; ++count) {
       for (int e = 0; e < actualShift; ++e) {
         int destinationIndex = fullLen - (count + 1) * actualShift + e;

@@ -27,6 +27,7 @@
 
 namespace sd {
 namespace ops {
+
 LegacyRandomOp::LegacyRandomOp() : LegacyOp::LegacyOp(1) {
   // just a no-op
 }
@@ -388,7 +389,7 @@ ShapeList* LegacyRandomOp::calculateOutputShape(ShapeList* inputShape,
     auto zShapeVector = zShapeArr->asVectorT<Nd4jLong>();
     auto dtype = block.numD() > 0 ? D_ARG(0) : sd::DataType::FLOAT32;
 
-    return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+    return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
         dtype, 'c', zShapeVector));
   } else
     throw std::runtime_error("LegacyRandomOp: Unknown input data type!");

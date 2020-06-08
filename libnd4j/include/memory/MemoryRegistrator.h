@@ -18,8 +18,8 @@
 // Created by raver119 on 12.09.17.
 //
 
-#ifndef LIBND4J_MEMORYREGISTRATOR_H
-#define LIBND4J_MEMORYREGISTRATOR_H
+#ifndef SD_MEMORYREGISTRATOR_H
+#define SD_MEMORYREGISTRATOR_H
 
 #include <system/dll.h>
 #include <system/op_boilerplate.h>
@@ -34,7 +34,7 @@ namespace sd {
 namespace memory {
 class SD_EXPORT MemoryRegistrator {
  protected:
-  static MemoryRegistrator* _INSTANCE;
+
   Workspace* _workspace;
   MAP_IMPL<Nd4jLong, Nd4jLong> _footprint;
   std::mutex _lock;
@@ -43,7 +43,7 @@ class SD_EXPORT MemoryRegistrator {
   ~MemoryRegistrator() = default;
 
  public:
-  static MemoryRegistrator* getInstance();
+  static MemoryRegistrator& getInstance();
   bool hasWorkspaceAttached();
   Workspace* getWorkspace();
   void attachWorkspace(Workspace* workspace);
@@ -68,4 +68,4 @@ class SD_EXPORT MemoryRegistrator {
 }  // namespace memory
 }  // namespace sd
 
-#endif  // LIBND4J_MEMORYREGISTRATOR_H
+#endif  // SD_MEMORYREGISTRATOR_H

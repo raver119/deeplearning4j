@@ -45,7 +45,7 @@ CUSTOM_OP_IMPL(reshape, 1, 1, false, 0, -2) {
                "got %i vs %i",
                x->lengthOf(), z->lengthOf());
 
-  if (Environment::getInstance()->isDebugAndVerbose())
+  if (Environment::getInstance().isDebugAndVerbose())
     nd4j_printv("Reshape: new shape", z->getShapeAsVector());
 
   z->assign(x->reshape(z->ordering(), z->getShapeAsVector()));
@@ -163,7 +163,7 @@ DECLARE_SHAPE_FN(reshape) {
                "got %i vs %i",
                x->lengthOf(), len);
 
-  return SHAPELIST(ConstantShapeHelper::getInstance()->createShapeInfo(
+  return SHAPELIST(ConstantShapeHelper::getInstance().createShapeInfo(
       x->dataType(), orderNew, shapeNew));
 }
 

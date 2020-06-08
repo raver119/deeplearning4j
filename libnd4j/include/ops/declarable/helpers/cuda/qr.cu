@@ -62,11 +62,11 @@ NDArray matrixMinor(LaunchContext* context, NDArray& in, Nd4jLong col) {
 
   //        auto stream = context->getCudaStream();
   //        matrixMinorKernel<T><<<128, 128, 256,
-  //        *stream>>>(m.dataBuffer()->specialAsT<T>(), m.specialShapeInfo(),
+  //        *stream>>>(m.dataBuffer()->specialAsT<T>(), m.special(),
   //        matrixMinorKernel<T><<<128, 128, 256,
-  //        *stream>>>(m.dataBuffer()->specialAsT<T>(), m.specialShapeInfo(),
+  //        *stream>>>(m.dataBuffer()->specialAsT<T>(), m.special(),
   //                reinterpret_cast<T*>(in.specialBuffer()),
-  //                in.specialShapeInfo(), col, in.rows(), in.columns());
+  //                in.special(), col, in.rows(), in.columns());
   //
   m.tickWriteDevice();
   return m;

@@ -59,7 +59,7 @@ class SD_EXPORT ContextPrototype {
   RandomGenerator _randomGenerator;
 
   sd::ops::OpDescriptor* _opDescriptor;
-  bool _useMKLDNN = sd::Environment::getInstance()->isUseMKLDNN();
+  bool _useMKLDNN = sd::Environment::getInstance().isUseMKLDNN();
 
   // target engine for execution
   samediff::Engine _engine = DEFAULT_ENGINE;

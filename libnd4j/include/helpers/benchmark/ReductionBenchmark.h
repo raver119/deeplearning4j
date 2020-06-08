@@ -21,7 +21,7 @@
 #include <helpers/StringUtils.h>
 #include <helpers/TAD.h>
 
-#include "../OpBenchmark.h"
+#include <helpers/benchmark/OpBenchmark.h>
 
 #ifndef SD_REDUCEBENCHMARK_H
 #define SD_REDUCEBENCHMARK_H
@@ -110,13 +110,13 @@ class SD_EXPORT ReductionBenchmark : public OpBenchmark {
             _z.buffer(), _z.shapeInfo(), _z.specialBuffer(),
             _z.specialShapeInfo());
     else {
-      auto pack = ConstantTadHelper::getInstance()->tadForDimensions(
+      auto pack = ConstantTadHelper::getInstance().tadForDimensions(
           _x.shapeInfo(), _axis);
 
-      auto tadOnlyShapeInfo = Environment::getInstance()->isCPU()
+      auto tadOnlyShapeInfo = Environment::getInstance().isCPU()
                                   ? pack.primaryShapeInfo()
                                   : pack.specialShapeInfo();
-      auto tadOffsets = Environment::getInstance()->isCPU()
+      auto tadOffsets = Environment::getInstance().isCPU()
                             ? pack.primaryOffsets()
                             : pack.specialOffsets();
 
