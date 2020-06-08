@@ -60,7 +60,8 @@ else()
         set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -march=native -mtune=native")
     endif()
 
-    if (SD_CPU AND SD_SANITIZE)
+    # Use ASAN for GCC only
+    if (SD_CPU AND SD_SANITIZE AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
     else()
         # CUDA?
