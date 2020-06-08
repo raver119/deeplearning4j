@@ -69,7 +69,15 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
   for (int e = 0; e < seq.length(); e++) {
     auto v = seq[e];
     // only Ops can be executed this way :(
-    auto result = execute(v.op(), v.protoContext(), seq, graph, proxy, deviceId >= 0 ? deviceId : seq.deviceId());
+    Nd4jStatus result = Status::OK();
+
+    if (v.node().hasCustomOp())
+      result = execute(v.node().customOp(), v.protoContext(), seq, graph, proxy, deviceId >= 0 ? deviceId : seq.deviceId());
+    else {
+      nd4j_printf("Node <%i:%s> has no customOp set\n",
+                  v.node().id(),
+                  v.node().name().empty() ? "" : v.node().name().c_str());
+    }
 
     // if any one op fails - there will be no sense in executing other ops
     if (result != Status::OK()) return result;

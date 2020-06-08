@@ -21,6 +21,7 @@
 #ifndef SD_EXECUTIONTASK_H
 #define SD_EXECUTIONTASK_H
 
+#include <graph/Node.h>
 #include <ops/declarable/DeclarableOp.h>
 #include <system/dll.h>
 
@@ -30,11 +31,12 @@ namespace sd {
 namespace graph {
 class SD_EXPORT ExecutionTask {
  protected:
-  std::shared_ptr<sd::ops::DeclarableOp> _op;
+  // FIXME: do we really want references here? smart pointers would work better
+  const Node& _node;
   const ContextPrototype& _context;
 
  public:
-  ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp>& op,
+  ExecutionTask(const Node& node,
                 const ContextPrototype& ctx);
 
   ~ExecutionTask() = default;
@@ -51,7 +53,7 @@ class SD_EXPORT ExecutionTask {
 
   void printOut() const;
 
-  std::shared_ptr<sd::ops::DeclarableOp> op() const;
+  const Node& node() const;
 
   const ContextPrototype& protoContext() const;
 };

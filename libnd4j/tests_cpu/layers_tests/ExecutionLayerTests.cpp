@@ -41,17 +41,17 @@ TEST_F(ExecutionLayerTests, test_reassign_1) {
   ExecutionLayer layer;
   OpSequence sequence1, sequence2;
 
-  ops::add op1;
-  ops::multiply op2;
-  ops::divide op3;
+  Node a(sd::ops::add(), "add");
+  Node m(sd::ops::multiply(), "mul");
+  Node d(sd::ops::divide(), "div");
 
   Context ctx1(1);
   Context ctx2(2);
   Context ctx3(3);
 
-  sequence1.append(&op1, ctx1);
-  sequence2.append(&op2, ctx2);
-  sequence2.append(&op3, ctx3);
+  sequence1.append(a, ctx1);
+  sequence2.append(m, ctx2);
+  sequence2.append(d, ctx3);
 
   layer.append(sequence1);
   layer.append(sequence2);

@@ -90,10 +90,9 @@ class SD_EXPORT OpSequence
    * @param ctx - ContextPrototype for this operation with inputs/outputs/args
    * defined
    */
-  void append(const std::shared_ptr<sd::ops::DeclarableOp>& op,
+  void append(const Node& node,
               const sd::graph::ContextPrototype& ctx);
-  void append(sd::ops::DeclarableOp* op,
-              const sd::graph::ContextPrototype& ctx);
+
 
   /**
    * Iterator functionality for OpSequence

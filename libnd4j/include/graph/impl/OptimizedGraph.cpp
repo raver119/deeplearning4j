@@ -118,10 +118,10 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     for (const auto& p : workMap) {
 
         OpSequence seq;
-        seq.append(inMap.at(p.first).customOp(), inMap.at(p.first).protoContext());
+        seq.append(inMap.at(p.first), inMap.at(p.first).protoContext());
 
         for (const auto& id : p.second._opSeq)
-            seq.append(inMap.at(id).customOp(), inMap.at(id).protoContext());
+            seq.append(inMap.at(id), inMap.at(id).protoContext());
 
         _sortedGraph[p.second._layerNum].append(std::move(seq));
     }

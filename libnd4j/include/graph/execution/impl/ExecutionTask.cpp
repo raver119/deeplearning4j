@@ -22,40 +22,33 @@
 
 namespace sd {
 namespace graph {
-ExecutionTask::ExecutionTask(const std::shared_ptr<sd::ops::DeclarableOp> &op,
+ExecutionTask::ExecutionTask(const Node& node,
                              const ContextPrototype &ctx)
-    : _op(op), _context(ctx) {
-  //
-}
+    : _node(node), _context(ctx) { }
 
-std::shared_ptr<sd::ops::DeclarableOp> ExecutionTask::op() const { return _op; }
+const Node& ExecutionTask::node() const { return _node; }
 
 const ContextPrototype &ExecutionTask::protoContext() const { return _context; }
 
 ExecutionTask::ExecutionTask(const ExecutionTask &other)
-    : _op(other._op), _context(other._context) {
-  //
-}
+    : _node(other._node), _context(other._context) { }
 
 ExecutionTask &ExecutionTask::operator=(const ExecutionTask &other) noexcept {
   if (this == &other) return *this;
 
-  _op = other._op;
+  const_cast<Node&>(_node) = other._node;
   const_cast<ContextPrototype &>(_context) = other._context;
 
   return *this;
 }
 
 ExecutionTask::ExecutionTask(ExecutionTask &&other)
-    : _op(other._op), _context(other._context) {
-  //
-}
+    : _node(other._node), _context(other._context) { }
 
 void ExecutionTask::printOut() const {
   if (_context.name().empty()) {
-    if (_op != nullptr)
-      printf("   <%i:0>: {Op: %s}; ", _context.nodeId(),
-             _op->getOpName().c_str());
+    if (_node.hasCustomOp())
+      printf("   <%i:0>: {Op: %s}; ", _context.nodeId(), _node.customOp()->getOpName().c_str());
     else
       printf("   <%i:0>: ", _context.nodeId());
   } else {
@@ -85,7 +78,7 @@ void ExecutionTask::printOut() const {
 ExecutionTask &ExecutionTask::operator=(ExecutionTask &&other) noexcept {
   if (this == &other) return *this;
 
-  _op = std::move(other._op);
+  const_cast<Node&>(_node) = other._node;
   const_cast<ContextPrototype &>(_context) = std::move(other._context);
 
   return *this;

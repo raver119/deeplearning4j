@@ -78,17 +78,10 @@ const ExecutionTask &OpSequence::operator[](uint64_t index) const {
 
 uint64_t OpSequence::length() const { return _ops.size(); }
 
-void OpSequence::append(const std::shared_ptr<sd::ops::DeclarableOp> &op,
+void OpSequence::append(const Node &node,
                         const sd::graph::ContextPrototype &ctx) {
-  ExecutionTask task(op, ctx);
+  ExecutionTask task(node, ctx);
   _ops.emplace_back(task);
-}
-
-void OpSequence::append(sd::ops::DeclarableOp *op,
-                        const ContextPrototype &ctx) {
-  auto rop =
-      sd::ops::OpRegistrator::getInstance().getOperation(op->getOpHash());
-  append(rop, ctx);
 }
 
 OpSequence::iterator OpSequence::begin() {
