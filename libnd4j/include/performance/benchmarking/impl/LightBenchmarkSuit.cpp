@@ -50,7 +50,7 @@ namespace sd {
             arr.assign(1.0);
             x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
                 auto arrV = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
                 z.push_back(new NDArray(arrV));
@@ -58,7 +58,7 @@ namespace sd {
         };
 
         ScalarBenchmark sbRelu(scalar::Ops::RELU, "RELU");
-        sbRelu.setY(NDArrayFactory::create<T>(0.0));
+        sbRelu.setY(new NDArray(NDArrayFactory::create<T>(0.0)));
 
         TransformBenchmark tbSigmoid(transform::StrictOps::Sigmoid, "sigmoid");
         //TransformBenchmark tbSoftmax(transform::StrictOps::SoftMax, "softmax");
@@ -99,9 +99,9 @@ namespace sd {
         ScalarBenchmark sbPow(scalar::Ops::Pow, "sPow");
 
 
-        sbAdd.setY(NDArrayFactory::create<T>(3.14159265359));
-        sbDiv.setY(NDArrayFactory::create<T>(3.14159265359));
-        sbPow.setY(NDArrayFactory::create<T>(3.14159265359));
+        sbAdd.setY(new NDArray(NDArrayFactory::create<T>(3.14159265359)));
+        sbDiv.setY(new NDArray(NDArrayFactory::create<T>(3.14159265359)));
+        sbPow.setY(new NDArray(NDArrayFactory::create<T>(3.14159265359)));
 
 
         output += helper.runOperationSuit(&sbAdd, generator, batch, "Scalar Addition - x.add(3.14159265359)");
@@ -253,7 +253,7 @@ namespace sd {
 
             x.push_back(new NDArray(arr));
             y.push_back(nullptr);
-            z.push_back(NDArray(NDArrayFactory::create<T>(0.0f)));
+            z.push_back(new NDArray(NDArrayFactory::create<T>(0.0f)));
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "sum");
@@ -387,20 +387,20 @@ namespace sd {
             if (n == 0) {
                 auto input = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
                 auto output = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             } else {
                 auto input = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
                 auto output = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             }
 
             auto b = NDArrayFactory::create<T>('c', {3});
             auto w = NDArrayFactory::create<T>('c', {khw, khw, 3, 3});   // [kH, kW, iC, oC] always
 
-            ctx->setInputArray(1, w, true);
-            ctx->setInputArray(2, b, true);
+            ctx->setInputArray(1, w);
+            ctx->setInputArray(2, b);
 
             auto args = new Nd4jLong[10];
             args[0] = args[1] = khw; //Kernel
@@ -569,7 +569,7 @@ namespace sd {
             auto arr = NDArrayFactory::create<float>('c', {rows, p.getIntParam("cols")});
 
             auto ctx = new Context(1);
-            ctx->setInputArray(0, arr, true);
+            ctx->setInputArray(0, arr);
             if(a == 0){
                 ctx->setInputArray(1, NDArrayFactory::create<float>('c', {rows, 1}));
             } else {

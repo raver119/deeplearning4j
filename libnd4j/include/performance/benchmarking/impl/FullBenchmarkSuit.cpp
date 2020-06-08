@@ -509,30 +509,29 @@ namespace sd {
             if (n == 0) {
                 auto input = NDArrayFactory::create<float>('c', {32, p.getIntParam("c"), hw, hw});
                 auto output = NDArrayFactory::create<float>('c', {32, p.getIntParam("c"), hw, hw});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             } else {
                 auto input = NDArrayFactory::create<float>('c', {32, hw, hw, p.getIntParam("c")});
                 auto output = NDArrayFactory::create<float>('c', {32, hw, hw, p.getIntParam("c")});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             }
 
             auto b = NDArrayFactory::create<float>('c', {p.getIntParam("c")});
             auto w = NDArrayFactory::create<float>('c', {khw, khw, p.getIntParam("c"), p.getIntParam("c")});   // [kH, kW, iC, oC] always
 
-            ctx->setInputArray(1, w, true);
-            ctx->setInputArray(2, b, true);
+            ctx->setInputArray(1, w);
+            ctx->setInputArray(2, b);
 
-            auto args = new Nd4jLong[10];
+            std::vector<Nd4jLong> args(10);
             args[0] = args[1] = khw; //Kernel
             args[2] = args[3] = 1;//Stride
             args[4] = args[5] = 0;  //Pad
             args[6] = args[7] = 1;  //Dilation
             args[8] = 1;     //SAME
             args[9] = n;//0-nchw, 1=nhwc
-            ctx->setIArguments(args, 10);
-            delete[] args;
+            ctx->setIArguments(args.data(), 10);
 
             return ctx;
         };
@@ -552,8 +551,8 @@ namespace sd {
 
         auto gen01 = PARAMETRIC_D() {
             auto ctx = new Context(1);
-            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>('c', {2},{1, p.getIntParam("length")}), true);   //Shape as NDArray
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {1, p.getIntParam("length")}), true);
+            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>('c', {2},{1, p.getIntParam("length")}));   //Shape as NDArray
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {1, p.getIntParam("length")}));
             auto d = new double[2];
             d[0] = 0.0;
             d[1] = 1.0;
@@ -564,8 +563,8 @@ namespace sd {
 
         auto gen05 = PARAMETRIC_D() {
             auto ctx = new Context(1);
-            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>('c', {2},{1, p.getIntParam("length")}), true);   //Shape as NDArray
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {1, p.getIntParam("length")}), true);
+            ctx->setInputArray(0, NDArrayFactory::create<Nd4jLong>('c', {2},{1, p.getIntParam("length")}));   //Shape as NDArray
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {1, p.getIntParam("length")}));
             auto d = new double[1];
             d[0] = 0.5;
             ctx->setTArguments(d, 1);
@@ -642,9 +641,9 @@ namespace sd {
                     auto B = NDArrayFactory::create<float>('c', shapeB);
                     auto C = NDArrayFactory::create<float>('f', {a, c});
 
-                    x.push_back(A);
-                    y.push_back(B);
-                    z.push_back(C);
+                    x.push_back(new NDArray(A));
+                    y.push_back(new NDArray(B));
+                    z.push_back(new NDArray(C));
                 };
 
                 std::string n;
@@ -678,9 +677,9 @@ namespace sd {
                     auto B = NDArrayFactory::create<float>('c', shapeB);
                     auto C = NDArrayFactory::create<float>('f', {a, c});
 
-                    x.push_back(A);
-                    y.push_back(B);
-                    z.push_back(C);
+                    x.push_back(new NDArray(A));
+                    y.push_back(new NDArray(B));
+                    z.push_back(new NDArray(C));
                 };
 
                 std::string n2;
@@ -714,9 +713,9 @@ namespace sd {
                     auto B = NDArrayFactory::create<float>('c', shapeB);
                     auto C = NDArrayFactory::create<float>('f', {a, c});
 
-                    x.push_back(A);
-                    y.push_back(B);
-                    z.push_back(C);
+                    x.push_back(new NDArray(A));
+                    y.push_back(new NDArray(B));
+                    z.push_back(new NDArray(C));
                 };
 
                 std::string n3;
@@ -752,13 +751,13 @@ namespace sd {
             auto ctx = new Context(1);
 
             if(rank == 3){
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {32, 1024, 1024}), true);
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {32, 1024, 1024}), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {32, 1024, 1024}), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {32, 1024, 1024}));
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {32, 1024, 1024}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {32, 1024, 1024}));
             } else {
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}), true);
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}));
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {4, 8, 1024, 1024}));
             }
 
             return ctx;
@@ -791,9 +790,9 @@ namespace sd {
                         auto B = NDArrayFactory::create<float>('c', {s, s});
                         auto C = NDArrayFactory::create<float>(resultOrder, {s, s});
 
-                        x.push_back(A);
-                        y.push_back(B);
-                        z.push_back(C);
+                        x.push_back(new NDArray(A));
+                        y.push_back(new NDArray(B));
+                        z.push_back(new NDArray(C));
                     };
 
                     std::string n;
@@ -838,13 +837,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + length-1));
             for( int i=0; i<length; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setInputArray(2, updates, true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setInputArray(2, updates);
             ctx->setOutputArray(0, in);         //Needs to be inplace to avoid copy!
             ctx->markInplace(true);
             return ctx;
@@ -873,13 +872,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + rows-1));
             for( int i=0; i<rows; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setInputArray(2, updates, true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setInputArray(2, updates);
             ctx->setOutputArray(0, in);         //Needs to be inplace to avoid copy!
             ctx->markInplace(true);
             return ctx;
@@ -908,13 +907,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + sz0-1));
             for( int i=0; i<sz0; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setInputArray(2, updates, true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setInputArray(2, updates);
             ctx->setOutputArray(0, in);         //Needs to be inplace to avoid copy!
             ctx->markInplace(true);
             return ctx;
@@ -946,13 +945,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + length-1));
             for( int i=0; i<length; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {length}), true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {length}));
             return ctx;
         };
 
@@ -978,13 +977,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + rows-1));
             for( int i=0; i<rows; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {rows, cols}), true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {rows, cols}));
             return ctx;
         };
 
@@ -1010,13 +1009,13 @@ namespace sd {
             srand(12345);
             std::random_shuffle(a, (a + sz0-1));
             for( int i=0; i<sz0; i++ ){
-                indices->p(i, a[i]);
+                indices.p(i, a[i]);
             }
             delete[] a;
 
-            ctx->setInputArray(0, in, true);
-            ctx->setInputArray(1, indices, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {sz0, sz1, 512/sz1}), true);
+            ctx->setInputArray(0, in);
+            ctx->setInputArray(1, indices);
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {sz0, sz1, 512/sz1}));
             return ctx;
         };
 
@@ -1042,8 +1041,8 @@ namespace sd {
 
             auto arr = NDArrayFactory::create<float>(c ? 'c' : 'f', {rows, cols});
             auto arr2 = NDArrayFactory::create<float>(c ? 'f' : 'c', {rows, cols});
-            x.push_back(arr);
-            z.push_back(arr2);
+            x.push_back(new NDArray(arr));
+            z.push_back(new NDArray(arr2));
         };
 
         TransformBenchmark tb(transform::AnyOps::Assign, "assign");
@@ -1057,14 +1056,14 @@ namespace sd {
 
             if(nchw) {
                 auto orig = NDArrayFactory::create<float>('c', {16, 32, 64, 64});
-                orig->permutei({0,2,3,1});
-                x.push_back(orig);
-                z.push_back(NDArrayFactory::create<float>('c', {16, 64, 64, 32}));
+                orig.permutei({0,2,3,1});
+                x.push_back(new NDArray(orig.dup()));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {16, 64, 64, 32})));
             } else {
                 auto orig = NDArrayFactory::create<float>('c', {16, 64, 64, 32});
-                orig->permutei({0,3,1,2});
-                x.push_back(orig);
-                z.push_back(NDArrayFactory::create<float>('c', {16, 32, 64, 64}));
+                orig.permutei({0,3,1,2});
+                x.push_back(new NDArray(orig));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {16, 32, 64, 64})));
             }
         };
 
@@ -1156,9 +1155,9 @@ namespace sd {
                 }
 
                 auto ctx = new Context(1);
-                ctx->setInputArray(0, NDArrayFactory::create<float>('c', shape), true);
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', toBcShape), true);
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', shape), true);
+                ctx->setInputArray(0, NDArrayFactory::create<float>('c', shape));
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', toBcShape));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', shape));
                 return ctx;
             };
 
@@ -1191,17 +1190,17 @@ namespace sd {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")});
 
             auto ctx = new Context(1);
-            ctx->setInputArray(0, arr, true);
+            ctx->setInputArray(0, arr);
             if(a == 0){
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {p.getIntParam("rows"), 1}), true);
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {p.getIntParam("rows"), 1}));
             } else {
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {1, p.getIntParam("cols")}), true);
+                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {1, p.getIntParam("cols")}));
             }
             if (p.getIntParam("inplace") == 1) {
                 ctx->setOutputArray(0, arr);
                 ctx->markInplace(true);
             } else {
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")}), true);
+                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")}));
             }
             return ctx;
         };
@@ -1227,16 +1226,16 @@ namespace sd {
 
             auto generator = PARAMETRIC_XYZ() {
                 auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")});
-                x.push_back(arr);
+                x.push_back(new NDArray(arr));
                 if(axis == 0){
-                    y.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("rows")}));
+                    y.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("rows")})));
                 } else {
-                    y.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("cols")}));
+                    y.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("cols")})));
                 }
                 if (p.getIntParam("inplace") == 1) {
-                    z.push_back(arr);
+                    z.push_back(new NDArray(arr));
                 } else {
-                    z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")}));
+                    z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")})));
                 }
             };
 
@@ -1265,9 +1264,9 @@ namespace sd {
                 //Note: always inplace here
                 auto generator = PARAMETRIC_XYZ() {
                     auto arr = NDArrayFactory::create<float>('c', shape);
-                    x.push_back(arr);
-                    y.push_back(NDArrayFactory::create<float>('c', {vectorLength}));
-                    z.push_back(arr);
+                    x.push_back(new NDArray(arr));
+                    y.push_back(new NDArray(NDArrayFactory::create<float>('c', {vectorLength})));
+                    z.push_back(new NDArray(arr));
                 };
 
                 std::string name("bArr-r"); name += std::to_string(rank); name += "a"; name += std::to_string(axis);
@@ -1295,17 +1294,16 @@ namespace sd {
 
             NDArray* strided;
             if(stride == 1){
-                strided = arr;
+                strided = new NDArray(arr);
             } else {
                 IndicesList indices({NDIndex::interval(0,131072), NDIndex::interval(0,1)});
-                strided = new NDArray(arr->subarray(indices));        //All rows, first column
-                delete arr;
+                strided = new NDArray(arr.subarray(indices));        //All rows, first column
             }
 
             strided->assign(1.0);
             x.push_back(strided);
             y.push_back(nullptr);
-            z.push_back(NDArrayFactory::create<float>(0.0f));
+            z.push_back(new NDArray(NDArrayFactory::create<float>(0.0f)));
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "stridedSum");
@@ -1319,17 +1317,16 @@ namespace sd {
 
             NDArray* strided;
             if(stride == 1){
-                strided = arr;
+                strided = new NDArray(arr);
             } else {
                 IndicesList indices({NDIndex::interval(0,2*1024,2), NDIndex::all(), NDIndex::interval(0,1)});
-                strided = new NDArray(arr->subarray(indices));
-                delete arr;
+                strided = new NDArray(arr.subarray(indices));
             }
 
             strided->assign(1.0);
             x.push_back(strided);
             y.push_back(nullptr);
-            z.push_back(NDArrayFactory::create<float>(0.0f));
+            z.push_back(new NDArray(NDArrayFactory::create<float>(0.0f)));
         };
 
         ReductionBenchmark rbSum2(reduce::SameOps::Sum, "stridedSumNoEWS");
@@ -1355,17 +1352,16 @@ namespace sd {
 
             NDArray* strided;
             if(stride == 1){
-                strided = arr;
+                strided = new NDArray(arr);
             } else {
                 IndicesList indices({NDIndex::all(), NDIndex::interval(0,1)});
-                strided = new NDArray(arr->subarray(indices));        //All rows, first column
-                delete arr;
+                strided = new NDArray(arr.subarray(indices));        //All rows, first column
             }
 
             strided->assign(1.0);
             x.push_back(strided);
             y.push_back(nullptr);
-            z.push_back(NDArrayFactory::create<float>(0.0f));
+            z.push_back(new NDArray(NDArrayFactory::create<float>(0.0f)));
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "stridedSum");
@@ -1390,18 +1386,16 @@ namespace sd {
 
             NDArray* strided;
             if(stride == 1){
-                strided = arr;
+                strided = new NDArray(arr);
             } else {
                 IndicesList indices({NDIndex::all(), NDIndex::point(0)});
-                strided = new NDArray(arr->subarray(indices));        //All rows, first column
-                delete arr;
+                strided = new NDArray(arr.subarray(indices));        //All rows, first column
             }
 
             strided->assign(1.0);
             x.push_back(strided);
             y.push_back(nullptr);
-//            z.push_back(NDArrayFactory::create<float>(0.0f));
-            z.push_back(NDArrayFactory::create<float>('c', {1}));
+            z.push_back(new NDArray(NDArrayFactory::create<float>('c', {1})));
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "Strided Sum");
@@ -1415,16 +1409,15 @@ namespace sd {
 
             NDArray* strided;
             if(stride == 1){
-                strided = arr;
+                strided = new NDArray(arr);
             } else {
                 IndicesList indices({NDIndex::all(), NDIndex::point(0)});
-                strided = new NDArray(arr->subarray(indices));        //All rows, first column
-                delete arr;
+                strided = new NDArray(arr.subarray(indices));        //All rows, first column
             }
 
             strided->assign(1.0);
             ctx->setInputArray(0, strided, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>('c', {1}), true);
+            ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>('c', {1}));
             auto iargs = new Nd4jLong[1];
             iargs[0] = 0;
             ctx->setIArguments(iargs, 1);
@@ -1460,16 +1453,16 @@ namespace sd {
                 auto arr = NDArrayFactory::create<float>('c', {rows, cols});
 
 
-                x.push_back(arr);
-                y.push_back(NDArrayFactory::create<Nd4jLong>(dim));
+                x.push_back(new NDArray(arr));
+                y.push_back(new NDArray(NDArrayFactory::create<Nd4jLong>(dim)));
 
-                NDArray* result;
+                NDArray result;
                 if(dim == 0){
                     result = NDArrayFactory::create<float>('c', {cols});
                 } else {
                     result = NDArrayFactory::create<float>('c', {rows});
                 }
-                z.push_back(result);
+                z.push_back(new NDArray(result));
             };
 
             ReductionBenchmark rbSum(reduce::SameOps::Sum, "sum");
@@ -1493,15 +1486,15 @@ namespace sd {
                 ctx->setIArguments(dimArg, 1);
                 delete[] dimArg;
 
-                ctx->setInputArray(0, arr, true);
+                ctx->setInputArray(0, arr);
 
-                NDArray* result;
+                NDArray result;
                 if(dim == 0){
                     result = NDArrayFactory::create<Nd4jLong>('c', {cols});
                 } else {
                     result = NDArrayFactory::create<Nd4jLong>('c', {rows});
                 }
-                ctx->setOutputArray(0, result, true);
+                ctx->setOutputArray(0, result);
                 return ctx;
             };
 
@@ -1527,9 +1520,9 @@ namespace sd {
         auto generator = PARAMETRIC_XYZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
 
-            x.push_back(arr);
+            x.push_back(new NDArray(arr));
             y.push_back(nullptr);
-            z.push_back(NDArrayFactory::create<float>(0.0f));
+            z.push_back(new NDArray(NDArrayFactory::create<float>(0.0f)));
         };
 
         ReductionBenchmark rbSum(reduce::SameOps::Sum, "sum");
@@ -1542,9 +1535,9 @@ namespace sd {
         auto generator3 = PARAMETRIC_D(){
             auto ctx = new Context(1);
 
-            ctx->setInputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}), true);
-            ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong>((Nd4jLong)0), true);
-            ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>(0), true);
+            ctx->setInputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+            ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong>((Nd4jLong)0));
+            ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>(0));
 
             return ctx;
         };
@@ -1563,21 +1556,20 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             int r = p.getIntParam("rowcol");
-            auto arr = NDArrayFactory::create<float>('c', {r, r+1});
+            auto arr = NDArrayFactory::create<float>('c', {r, r + 1});
             IndicesList indices({NDIndex::all(), NDIndex::interval(0,r-1)});
-            auto view = new NDArray(arr->subarray(indices));
+            auto view = new NDArray(arr.subarray(indices));
             //nd4j_printf("VIEW ARRAY: rows=%lld, columns=%lld", view->sizeAt(0), view->sizeAt(1));
             x.push_back(view);
             if(p.getIntParam("inplace") == 1){
                 z.push_back(view);
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {view->sizeAt(0),view->sizeAt(1)}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {view->sizeAt(0),view->sizeAt(1)})));
             }
-            delete arr;
         };
 
         ScalarBenchmark sbLRelu(scalar::Ops::LeakyRELU, "LeakyRELU_View");
-        sbLRelu.setY(NDArrayFactory::create<float>(0.0));
+        sbLRelu.setY(new NDArray(NDArrayFactory::create<float>(0.0)));
 
         TransformBenchmark tbExp(transform::StrictOps::Exp, "exp view");
 
@@ -1598,12 +1590,12 @@ namespace sd {
         auto generator = PARAMETRIC_XYZ() {
             auto arr1 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
             auto arr2 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            x.push_back(arr1);
-            y.push_back(arr2);
+            x.push_back(new NDArray(arr1));
+            y.push_back(new NDArray(arr2));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr1);
+                z.push_back(new NDArray(arr1));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("length")})));
             }
         };
 
@@ -1626,12 +1618,12 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(new NDArray(arr));
             if (p.getIntParam("inplace") == 1) {
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("length")})));
             }
         };
 
@@ -1645,12 +1637,12 @@ namespace sd {
         auto generator2 = PARAMETRIC_D() {
             auto ctx = new Context(1);
             auto in0 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            in0->assign(0.25);
+            in0.assign(0.25);
             auto in1 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            in1->assign(0.5);
-            ctx->setInputArray(0, in0, true);
-            ctx->setInputArray(1, in1, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}), true);
+            in1.assign(0.5);
+            ctx->setInputArray(0, in0);
+            ctx->setInputArray(1, in1);
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
             return ctx;
         };
 
@@ -1662,15 +1654,15 @@ namespace sd {
         auto generator3 = PARAMETRIC_D() {
             auto ctx = new Context(1);
             auto in0 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            in0->assign(0.25);
+            in0.assign(0.25);
             auto in1 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            in1->assign(0.5);
+            in1.assign(0.5);
             auto in2 = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            in2->assign(0.75);
-            ctx->setInputArray(0, in0, true);
-            ctx->setInputArray(1, in1, true);
-            ctx->setInputArray(2, in2, true);
-            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}), true);
+            in2.assign(0.75);
+            ctx->setInputArray(0, in0);
+            ctx->setInputArray(1, in1);
+            ctx->setInputArray(2, in2);
+            ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
             return ctx;
         };
 
@@ -1692,12 +1684,12 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("length")})));
             }
         };
 
@@ -1716,12 +1708,12 @@ namespace sd {
 
         auto generator2 = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("rows"), p.getIntParam("cols")})));
             }
         };
 
@@ -1742,17 +1734,17 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("length")})));
             }
         };
 
         ScalarBenchmark sbLRelu(scalar::Ops::LeakyRELU, "LeakyRELU");
-        sbLRelu.setY(NDArrayFactory::create<float>(0.0));
+        sbLRelu.setY(new NDArray(NDArrayFactory::create<float>(0.0)));
 
         TransformBenchmark tbAbs(transform::SameOps::Abs, "abs");
         TransformBenchmark tbExp(transform::StrictOps::Exp, "exp");
@@ -1775,12 +1767,12 @@ namespace sd {
 
         auto generator = PARAMETRIC_XZ() {
             auto arr = NDArrayFactory::create<float>('c', {p.getIntParam("length")});
-            arr->assign(1.0);
-            x.push_back(arr);
+            arr.assign(1.0);
+            x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
-                z.push_back(arr);
+                z.push_back(new NDArray(arr));
             } else {
-                z.push_back(NDArrayFactory::create<float>('c', {p.getIntParam("length")}));
+                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {p.getIntParam("length")})));
             }
         };
 
@@ -1789,9 +1781,9 @@ namespace sd {
         ScalarBenchmark sbPow(scalar::Ops::Pow, "sPow");
 
 
-        sbAdd.setY(NDArrayFactory::create<float>(3.14159265359));
-        sbDiv.setY(NDArrayFactory::create<float>(3.14159265359));
-        sbPow.setY(NDArrayFactory::create<float>(3.14159265359));
+        sbAdd.setY(new NDArray(NDArrayFactory::create<float>(3.14159265359)));
+        sbDiv.setY(new NDArray(NDArrayFactory::create<float>(3.14159265359)));
+        sbPow.setY(new NDArray(NDArrayFactory::create<float>(3.14159265359)));
 
 
         output += helper.runOperationSuit(&sbAdd, generator, batch, "Scalar Addition - x.add(3.14159265359) - F32");
