@@ -131,7 +131,9 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     //     l.sortOpSequences();
 }
 
-
+void OptimizedGraph::append(const OpSequence &sequence) {
+  _sortedGraph.emplace_back(ExecutionLayer({sequence}));
+}
 
 ///////////////////////////////////////////////////////////////////
 size_t OptimizedGraph::size() const {

@@ -74,7 +74,17 @@ class SD_EXPORT OptimizedGraph {
     */
     void printOut() const;
 
+    /**
+     * Returns number of layers within OptimizedGraph
+     * @return
+     */
+    uint64_t layers() const { return _sortedGraph.size(); }
 
+    /**
+     * This method adds given OpSequence to execution queue
+     * @param sequence
+     */
+    void append(const OpSequence &sequence);
 };
 
 
