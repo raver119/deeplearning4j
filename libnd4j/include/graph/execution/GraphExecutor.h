@@ -69,13 +69,14 @@ class SD_EXPORT GraphExecutor {
 
   /**
    * This method executes OpSequence
-   * @param sequence
+   * @param seq
    * @param deviceId - this argument allows to override device affinity
    * specified in OpSequence, keep it < 0 to follow OpSequence
    * @return
    */
-  virtual Nd4jStatus execute(const OpSequence &sequence,
-                             const OptimizedGraph &graph, VariableProxy &proxy,
+  virtual Nd4jStatus execute(const OpSequence &seq,
+                             const OptimizedGraph &graph,
+                             VariableProxy &proxy,
                              int deviceId) const;
 
   /**
@@ -87,7 +88,8 @@ class SD_EXPORT GraphExecutor {
   virtual Nd4jStatus execute(const std::shared_ptr<sd::ops::DeclarableOp> &op,
                              const ContextPrototype &contextPrototype,
                              const OpSequence &sequence,
-                             const OptimizedGraph &graph, VariableProxy &proxy,
+                             const OptimizedGraph &graph,
+                             VariableProxy &proxy,
                              const int deviceId) const;
 };
 }  // namespace graph

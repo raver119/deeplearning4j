@@ -59,17 +59,19 @@ Nd4jStatus GraphExecutor::execute(
   // throw std::runtime_error("GraphExecutor::execute - Not implemented yet");
 }
 
-Nd4jStatus GraphExecutor::execute(const OpSequence &sequence,
+Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
                                   const OptimizedGraph &graph,
                                   VariableProxy &proxy,
                                   const int deviceId) const {
   /*
    * this is a basic implementation that works without dispatching etc
    */
-  for (int e = 0; e < sequence.length(); e++) {
-    auto v = sequence[e];
-    auto result = execute(v.op(), v.protoContext(), sequence, graph, proxy,
-                          deviceId >= 0 ? deviceId : sequence.deviceId());
+  for (int e = 0; e < seq.length(); e++) {
+    auto v = seq[e];
+    // only Ops can be executed this way :(
+    auto result = execute(v.op(), v.protoContext(), seq, graph, proxy, deviceId >= 0 ? deviceId : seq.deviceId());
+
+    // if any one op fails - there will be no sense in executing other ops
     if (result != Status::OK()) return result;
   }
 
@@ -78,24 +80,29 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &sequence,
 
 Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
                                   VariableProxy &proxy) const {
-  const auto numDevices = AffinityManager::numberOfDevices();
-
   /*
    * this is a basic exection logic: roll through layers and sequences and
    * execute them one by one sequentially
    */
+  const auto numDevices = AffinityManager::numberOfDevices();
   Nd4jStatus result = Status::OK();
-  for (uint64_t l = 0; l < graph.numOfLayers(); l++) {
+  for (uint64_t l = 0; l < graph.layers(); l++) {
     const auto &layer = graph.layer(l);
 
+    //TODO: this loop is executable in parallel, so we should do this eventually
     for (uint64_t o = 0; o < layer.width(); o++) {
-      execute(layer[o], graph, proxy, -1);
+      result = execute(layer[o], graph, proxy, -1);
     }
+
+    // early termination
+    if (result != Status::OK()) return result;
 
     // optionally block until all sequences in this layer processed
     if (layer.width() > 0 && numDevices > 1)
       for (uint64_t o = 0; o < layer.width(); o++) {
         result = layer[o].wait();
+
+        // early termination
         if (result != Status::OK()) return result;
       }
   }
