@@ -1607,7 +1607,7 @@ Nd4jLong encodeBitmap(Nd4jPointer *extraPointers, void *hX,
 
 Nd4jLong *mmapFile(Nd4jPointer *extraPointers, const char *fileName,
                    Nd4jLong length) {
-  auto hZ = new Nd4jLong[2];
+  auto hZ = new Nd4jLong[3];
   errno = 0;
   try {
 #if defined(_WIN32) || defined(_WIN64)
@@ -1627,6 +1627,7 @@ Nd4jLong *mmapFile(Nd4jPointer *extraPointers, const char *fileName,
     hZ[1] = fd;
 
 #endif
+    hZ[2] = length;
 
     return hZ;
   } catch (std::exception &e) {

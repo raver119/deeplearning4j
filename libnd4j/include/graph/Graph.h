@@ -77,6 +77,9 @@ class SD_EXPORT Graph {
 
   mutable std::mutex _optimizedLock;
 
+
+  std::vector<void*> _handles;
+
  public:
   Graph(const FlatGraph *flatGraph = nullptr,
         const GraphMemoryManager &memoryManager = GraphMemoryManager());

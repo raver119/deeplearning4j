@@ -24,8 +24,10 @@
 #include <memory/MemoryDescriptor.h>
 #include <memory/MemoryZone.h>
 #include <memory/ZoneManager.h>
-
+#include <memory>
 #include <map>
+#include <array/PointerWrapper.h>
+#include <vector>
 
 using namespace sd::memory;
 
@@ -35,6 +37,7 @@ class GraphMemoryManager {
  protected:
   std::map<MemoryZone, ZoneManager *> _zones;
 
+  mutable std::vector<std::shared_ptr<PointerWrapper>> _attached;
  public:
   GraphMemoryManager();
   ~GraphMemoryManager();
@@ -53,6 +56,12 @@ class GraphMemoryManager {
    * @param descriptor
    */
   virtual void release(MemoryDescriptor &descriptor);
+
+  /**
+   * This method allows to store reference to certain memory regions and keep them alive as long as Graph is alive
+   * @param ptr
+   */
+  virtual void track(const std::shared_ptr<PointerWrapper> &ptr) const;
 };
 }  // namespace graph
 }  // namespace sd

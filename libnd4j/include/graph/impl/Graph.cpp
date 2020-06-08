@@ -35,6 +35,7 @@
 #include <ops/declarable/OpRegistrator.h>
 
 #include <vector>
+#include <memory/MmapDeallocator.h>
 
 namespace sd {
 namespace graph {
@@ -54,7 +55,9 @@ VariableSpace &Graph::variableSpace() const {
   return const_cast<VariableSpace &>(_variableSpace);
 }
 
-Graph::~Graph() {}
+Graph::~Graph() {
+
+}
 
 int Graph::idByName(const std::string &nodeName) const {
   if (_symbolicLookupTable.count(nodeName) == 0)
@@ -335,6 +338,7 @@ Graph Graph::fromFlatBuffers(const char *fileName,
     // mmap this file
     ref = ::mmapFile(nullptr, fileName, fsize);
     ptrGraph = reinterpret_cast<void *>(ref[0]);
+    memoryManager.track(std::make_shared<PointerWrapper>(ref, std::make_shared<MmapDeallocator>()));
   } else {
     // if mmap is not supported - load it directly
 

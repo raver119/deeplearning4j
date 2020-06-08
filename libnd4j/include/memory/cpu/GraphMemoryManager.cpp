@@ -47,5 +47,10 @@ MemoryDescriptor GraphMemoryManager::allocate(size_t numBytes,
 void GraphMemoryManager::release(MemoryDescriptor &descriptor) {
   _zones[descriptor.zone()]->release(descriptor);
 }
+
+void GraphMemoryManager::track(const std::shared_ptr<PointerWrapper> &ptr) const {
+  _attached.emplace_back(ptr);
+}
+
 }  // namespace graph
 }  // namespace sd
