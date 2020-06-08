@@ -66,15 +66,15 @@ TEST_F(LaunchContextCudaTests, basic_test_1) {
         ASSERT_NE(deviceA, deviceB);
 }
 
-void fillArray(int tid, std::vector<NDArray*> &arrays) {
-    auto array = NDArrayFactory::create_<int>('c', {3, 10});
+void fillArray(int tid, std::vector<NDArray> &arrays) {
+    auto array = NDArrayFactory::create<int>('c', {3, 10});
     nd4j_printf("Array created on device [%i]\n", AffinityManager::currentDeviceId());
-    array->assign(tid);
+    array.assign(tid);
     arrays[tid] = array;
 }
 
 TEST_F(LaunchContextCudaTests, basic_test_2) {
-    std::vector<NDArray*> arrays(2);
+    std::vector<NDArray> arrays(2);
 
     std::thread threadA(fillArray, 0, std::ref(arrays));
     std::thread threadB(fillArray, 1, std::ref(arrays));
@@ -84,9 +84,7 @@ TEST_F(LaunchContextCudaTests, basic_test_2) {
 
     for (int e = 0; e < 2; e++) {
         auto array = arrays[e];
-        ASSERT_EQ(e, array->e<int>(0));
-
-        delete array;
+        ASSERT_EQ(e, array.e<int>(0));
     }
 }
 

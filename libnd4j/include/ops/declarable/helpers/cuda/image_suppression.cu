@@ -188,16 +188,16 @@ namespace helpers {
     static void nonMaxSuppressionV2_(sd::LaunchContext* context, NDArray* boxes, NDArray* scales, int maxSize, double threshold, double scoreThreshold, NDArray* output) {
         auto stream = context->getCudaStream();
         NDArray::prepareSpecialUse({output}, {boxes, scales});
-        std::unique_ptr<NDArray> indices(NDArrayFactory::create_<I>('c', {scales->lengthOf()}, context)); // - 1, scales->lengthOf()); //, scales->getContext());
+        auto indices = NDArrayFactory::create<I>('c', {scales->lengthOf()}, context); // - 1, scales->lengthOf()); //, scales->getContext());
 
         NDArray scores(*scales);
         Nd4jPointer extras[2] = {nullptr, stream};
-        auto indexBuf = indices->dataBuffer()->specialAsT<I>();///reinterpret_cast<I*>(indices->specialBuffer());
+        auto indexBuf = indices.dataBuffer()->specialAsT<I>();///reinterpret_cast<I*>(indices->specialBuffer());
         auto scoreBuf = scores.dataBuffer()->specialAsT<T>();
         suppressScores<T,I><<<128, 128, 128, *stream>>>(scoreBuf, indexBuf, scores.lengthOf(), T(scoreThreshold));
-        indices->tickWriteDevice();
-        sortByValue(extras, indices->buffer(), indices->shapeInfo(), indices->specialBuffer(), indices->specialShapeInfo(), scores.buffer(), scores.shapeInfo(), scores.specialBuffer(), scores.specialShapeInfo(), true);
-        indices->tickWriteDevice();
+        indices.tickWriteDevice();
+        sortByValue(extras, indices.buffer(), indices.shapeInfo(), indices.specialBuffer(), indices.specialShapeInfo(), scores.buffer(), scores.shapeInfo(), scores.specialBuffer(), scores.specialShapeInfo(), true);
+        indices.tickWriteDevice();
         NDArray selectedIndices = NDArrayFactory::create<I>('c', {output->lengthOf()}, context);
         int numSelected = 0;
         int numBoxes = boxes->sizeAt(0);

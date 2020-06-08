@@ -446,15 +446,15 @@ namespace sd {
             int khw = p.getIntParam("k");
 
             if (n == 0) {
-                auto input = NDArrayFactory::create_<float>('c', {32, p.getIntParam("c"), hw, hw});
+                auto input = NDArrayFactory::create<float>('c', {32, p.getIntParam("c"), hw, hw});
                 auto output = NDArrayFactory::create<float>('c', {32, p.getIntParam("c"), hw, hw});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             } else {
                 auto input = NDArrayFactory::create<float>('c', {32, hw, hw, p.getIntParam("c")});
                 auto output = NDArrayFactory::create<float>('c', {32, hw, hw, p.getIntParam("c")});
-                ctx->setInputArray(0, input, true);
-                ctx->setOutputArray(0, output, true);
+                ctx->setInputArray(0, input);
+                ctx->setOutputArray(0, output);
             }
 
             auto args = new Nd4jLong[11];

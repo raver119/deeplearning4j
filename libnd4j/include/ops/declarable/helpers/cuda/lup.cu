@@ -922,11 +922,10 @@ namespace helpers {
             else if (input->dataType() == DataType::FLOAT32)
                 cholesky__<float>(context, input, output, inplace);
             else {
-                std::unique_ptr<NDArray> tempOutput(
-                        NDArrayFactory::create_('c', input->getShapeAsVector(), DataType::FLOAT32, context));
+                auto tempOutput = NDArrayFactory::create_('c', input->getShapeAsVector(), DataType::FLOAT32, context);
                 tempOutput->assign(input);
-                cholesky__<float>(context, tempOutput.get(), tempOutput.get(), true);
-                output->assign(tempOutput.get());
+                cholesky__<float>(context, &tempOutput, &tempOutput, true);
+                output->assign(tempOutput);
             }
             NDArray::registerSpecialUse({output}, {input});
             return Status::OK();

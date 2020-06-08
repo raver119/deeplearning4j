@@ -98,62 +98,54 @@ TEST_F(NDArrayCudaBasicsTests, Test_Registration_3) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_01) {
-    auto x = NDArrayFactory::create_<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create_<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
-    delete x;
-    delete y;
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_02) {
-    auto x = NDArrayFactory::create_<int>('c', {5});
-    auto y = NDArrayFactory::create_<int>('c', {5});
+    auto x = NDArrayFactory::create<int>('c', {5});
+    auto y = NDArrayFactory::create<int>('c', {5});
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
-    delete x;
-    delete y;
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_03) {
-    auto x = NDArrayFactory::create_<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create_<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 
-    NDArray::registerSpecialUse({y}, {x});
-    x->applyTransform(transform::Neg, *y);
-    //ASSERT_TRUE(x->isActualOnDeviceSide());
-    //ASSERT_FALSE(x->isActualOnHostSide());
+    NDArray::registerSpecialUse({&y}, {&x});
+    x.applyTransform(transform::Neg, y);
+    //ASSERT_TRUE(x.isActualOnDeviceSide());
+    //ASSERT_FALSE(x.isActualOnHostSide());
 
-    //ASSERT_TRUE(y->isActualOnDeviceSide());
-    //ASSERT_TRUE(y->isActualOnHostSide());
+    //ASSERT_TRUE(y.isActualOnDeviceSide());
+    //ASSERT_TRUE(y.isActualOnHostSide());
     //y->syncToHost();
     // y->printBuffer("Negatives");
-    delete x;
-    delete y;
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Cosine_1) {
-    auto x = NDArrayFactory::create_<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create_<double>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>('c', {5}, {5, 4, 3, 2, 1});
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 
-    NDArray::registerSpecialUse({y}, {x});
-    x->applyTransform(transform::Cosine, *y);
-    //ASSERT_TRUE(x->isActualOnDeviceSide());
-    //ASSERT_FALSE(x->isActualOnHostSide());
+    NDArray::registerSpecialUse({&y}, {&x});
+    x.applyTransform(transform::Cosine, y);
+    //ASSERT_TRUE(x.isActualOnDeviceSide());
+    //ASSERT_FALSE(x.isActualOnHostSide());
 
     //ASSERT_TRUE(y->isActualOnDeviceSide());
     //ASSERT_TRUE(y->isActualOnHostSide());
     //y->syncToHost();
-    delete x;
-    delete y;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1432,44 +1424,38 @@ TEST_F(NDArrayCudaBasicsTests, reduceAlongDimension_float_test2) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, EqualityTest1) {
-    auto arrayA = NDArrayFactory::create_<float>('f', {3, 5});
-    auto arrayB = NDArrayFactory::create_<float>('f', {3, 5});
-    auto arrayC = NDArrayFactory::create_<float>('f', {3, 5});
+    auto arrayA = NDArrayFactory::create<float>('f', {3, 5});
+    auto arrayB = NDArrayFactory::create<float>('f', {3, 5});
+    auto arrayC = NDArrayFactory::create<float>('f', {3, 5});
 
-    auto arrayD = NDArrayFactory::create_<float>('f', {2, 4});
-    auto arrayE = NDArrayFactory::create_<float>('f', {1, 15});
+    auto arrayD = NDArrayFactory::create<float>('f', {2, 4});
+    auto arrayE = NDArrayFactory::create<float>('f', {1, 15});
 
-    for (int i = 0; i < arrayA->rows(); i++) {
-        for (int k = 0; k < arrayA->columns(); k++) {
-            arrayA->p(i, k, (float) i);
+    for (int i = 0; i < arrayA.rows(); i++) {
+        for (int k = 0; k < arrayA.columns(); k++) {
+            arrayA.p(i, k, (float) i);
         }
     }
 
     for (int i = 0; i < arrayB->rows(); i++) {
         for (int k = 0; k < arrayB->columns(); k++) {
-            arrayB->p(i, k, (float) i);
+            arrayB.p(i, k, (float) i);
         }
     }
 
-    for (int i = 0; i < arrayC->rows(); i++) {
-        for (int k = 0; k < arrayC->columns(); k++) {
-            arrayC->p(i, k, (float) i+1);
+    for (int i = 0; i < arrayC.rows(); i++) {
+        for (int k = 0; k < arrayC.columns(); k++) {
+            arrayC.p(i, k, (float) i+1);
         }
     }
 
-    ASSERT_TRUE(arrayA->equalsTo(arrayB, 1e-5));
+    ASSERT_TRUE(arrayA.equalsTo(arrayB, 1e-5));
 
-    ASSERT_FALSE(arrayC->equalsTo(arrayB, 1e-5));
+    ASSERT_FALSE(arrayC.equalsTo(arrayB, 1e-5));
 
-    ASSERT_FALSE(arrayD->equalsTo(arrayB, 1e-5));
+    ASSERT_FALSE(arrayD.equalsTo(arrayB, 1e-5));
 
-    ASSERT_FALSE(arrayE->equalsTo(arrayB, 1e-5));
-
-    delete arrayA;
-    delete arrayB;
-    delete arrayC;
-    delete arrayD;
-    delete arrayE;
+    ASSERT_FALSE(arrayE.equalsTo(arrayB, 1e-5));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2092,17 +2078,17 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_02) {
     auto x = NDArrayFactory::linspace<float>(1.f, 60.f, 60); //('c', {1, 60});
     //x.linspace(1);
     auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
-    x->reshapei('c', {3, 4, 5});
+    x.reshapei('c', {3, 4, 5});
 
-    x->permutei({0, 1, 2});
-    x->streamline();
+    x.permutei({0, 1, 2});
+    x.streamline();
 
 //    x.printShapeInfo("{0, 1, 2} shape");
 //    x.printBuffer("{0, 1, 2} data");
 
     ASSERT_TRUE(exp.isSameShape(x));
     ASSERT_TRUE(exp.equalsTo(x));
-    delete x;
+//    delete x;
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_0) {
@@ -2178,9 +2164,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_Empty_1) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Empty_2) {
-    auto x = NDArrayFactory::empty_<float>();
+    auto x = NDArrayFactory::empty<float>();
 
-    ASSERT_TRUE(x->isEmpty());
+    ASSERT_TRUE(x.isEmpty());
     delete x;
 }
 
@@ -2190,9 +2176,3 @@ TEST_F(NDArrayCudaBasicsTests, Test_Empty_3) {
     ASSERT_TRUE(x.isEmpty());
 }
 
-TEST_F(NDArrayCudaBasicsTests, Test_Empty_4) {
-    auto x = NDArrayFactory::empty_(sd::DataType::FLOAT32);
-
-    ASSERT_TRUE(x->isEmpty());
-    delete x;
-}

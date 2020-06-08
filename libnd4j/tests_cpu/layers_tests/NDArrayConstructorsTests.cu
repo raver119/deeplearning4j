@@ -137,33 +137,29 @@ TEST_F(NDArrayConstructorsTests, test_constructor_7) {
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_8) {
-    auto x = NDArrayFactory::create_<double>('c',{2, 2}, {1, 2, 3, 4});
+    auto x = NDArrayFactory::create<double>('c',{2, 2}, {1, 2, 3, 4});
 
-    ASSERT_TRUE(x->buffer() == nullptr);
-    ASSERT_FALSE(x->specialBuffer() == nullptr);
+    ASSERT_TRUE(x.buffer() == nullptr);
+    ASSERT_FALSE(x.specialBuffer() == nullptr);
 
-    ASSERT_FALSE(x->shapeInfo() == nullptr);
-    ASSERT_FALSE(x->specialShapeInfo() == nullptr);
+    ASSERT_FALSE(x.shapeInfo() == nullptr);
+    ASSERT_FALSE(x.specialShapeInfo() == nullptr);
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
-
-    delete x;
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_9) {
-    auto x = NDArrayFactory::create_<double>('c',{2, 2});
+    auto x = NDArrayFactory::create<double>('c',{2, 2});
 
-    ASSERT_TRUE(x->buffer() == nullptr);
-    ASSERT_FALSE(x->specialBuffer() == nullptr);
+    ASSERT_TRUE(x.buffer() == nullptr);
+    ASSERT_FALSE(x.specialBuffer() == nullptr);
 
-    ASSERT_FALSE(x->shapeInfo() == nullptr);
-    ASSERT_FALSE(x->specialShapeInfo() == nullptr);
+    ASSERT_FALSE(x.shapeInfo() == nullptr);
+    ASSERT_FALSE(x.specialShapeInfo() == nullptr);
 
-    ASSERT_TRUE(x->isActualOnDeviceSide());
-    ASSERT_FALSE(x->isActualOnHostSide());
-
-    delete x;
+    ASSERT_TRUE(x.isActualOnDeviceSide());
+    ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayConstructorsTests, test_linspace_1) {
