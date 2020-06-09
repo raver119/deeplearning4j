@@ -283,6 +283,7 @@ DECLARE_TYPES(range) {
       ->setAllowedInputTypes(sd::DataType::ANY)
       ->setAllowedOutputTypes({ALL_FLOATS, ALL_INTS});
 }
+
 }  // namespace ops
 }  // namespace sd
 

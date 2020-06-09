@@ -892,11 +892,41 @@ TEST_F(GraphAnalysisTests, optimizedGraph_11) {
   ASSERT_EQ(8, sequence.at(0).protoContext().nodeId());
 }
 
+TEST_F(GraphAnalysisTests, optimizedGraph_12) {
+  Graph graph;
+
+  graph.addVariable("start", NDArrayFactory::create<int>(0));
+  graph.addVariable("step", NDArrayFactory::create<int>(1));
+
+  graph.addVariable("const_1", NDArrayFactory::create<int>(0));
+  graph.addVariable("const_2", NDArrayFactory::create<int>(2));
+
+  // generating "stop" argument for Range op
+  graph.addNode(Node(sd::ops::add(), "add"), {"const_1", "const_2"});
+
+  // generating axis, should be equal to {0}
+  graph.addNode(Node(sd::ops::range(), "range_1"), {"start", "add", "step"});
+
+  graph.addNode(Node(sd::ops::range(), "range_2"), {"range_1", "add", "step"});
+
+  auto &optimized = graph.optimizedGraph();
+
+  graph.printOut();
+
+  // we expect exactly 1 layer
+  ASSERT_EQ(1, optimized.layers());
+  auto layer = optimized.layer(0);
+
+  // we expect exactly 1 OpSequence wihtin this layer
+  ASSERT_EQ(1, layer.width());
+}
+
 TEST_F(GraphAnalysisTests, test_cond_1) {
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
   const auto& optimized = graph.optimizedGraph();
-  // graph.printOut();
+  graph.printOut();
+  graph.execute();
   /*
   some infor that would be useful for implementation
   currently on optimization graph is passing next data
@@ -925,7 +955,8 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
 
 TEST_F(GraphAnalysisTests, test_cond_2) {
   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
-  // graph.printOut();
+  graph.printOut();
+  graph.execute();
 }
 
 TEST_F(GraphAnalysisTests, test_while_iter_1_1) {
