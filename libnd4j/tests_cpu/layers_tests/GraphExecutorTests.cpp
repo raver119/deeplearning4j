@@ -76,11 +76,11 @@ TEST_F(GraphExecutorTests, test_basic_exec_2) {
   OptimizedGraph optimizedGraph;
   OpSequence sequence;
 
-  ASSERT_EQ(2, m.protoContext().inputs().size());
-  ASSERT_EQ(2, a.protoContext().inputs().size());
+  ASSERT_EQ(2, m.contextPrototype().inputs().size());
+  ASSERT_EQ(2, a.contextPrototype().inputs().size());
 
-  sequence.append(m, m.protoContext());
-  sequence.append(a, a.protoContext());
+  sequence.append(m, m.contextPrototype());
+  sequence.append(a, a.contextPrototype());
 
   optimizedGraph.append(sequence);
 

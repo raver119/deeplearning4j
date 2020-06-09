@@ -283,8 +283,6 @@ Node::Node(sd::ops::DeclarableOp *customOp, int id,
   this->setContextPrototype(block);
 }
 
-void Node::setOpType(OpType opType) { this->_opType = opType; }
-
 const std::vector<std::pair<int, int>>& Node::dependencies() const {
   return _dependencies;
 }
@@ -563,7 +561,7 @@ Node::Node(const FlatNode *node) {
 }
 
 
-const ContextPrototype &Node::protoContext() const { return _protoContext; }
+const ContextPrototype &Node::contextPrototype() const { return _protoContext; }
 
 Node::~Node() { }
 

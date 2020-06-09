@@ -28,7 +28,7 @@ Nd4jStatus LogicLoopCond::processNode(Graph *graph, Node *node) {
   auto __variableSpace = graph->variableSpace();
   auto __flowPath = __variableSpace->flowPath();
 
-  Context ctx(node->protoContext(), __variableSpace);
+  Context ctx(node->contextPrototype(), __variableSpace);
   auto input = ctx.variable(0)->getNDArray();
 
   std::pair<int, int> pair0(node->id(), 0);

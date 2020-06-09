@@ -225,7 +225,7 @@ void Graph::printOutNode(const Node &node) const {
   }
 
   if (node.opType() == OpType_CUSTOM) {
-    auto ctx = node.protoContext();
+    auto ctx = node.contextPrototype();
     if (ctx.numI() > 0) {
       printf("]; iArgs: [");
 

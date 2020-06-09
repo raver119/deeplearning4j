@@ -130,13 +130,15 @@ class SD_EXPORT Node {
   bool equals(const Node *other) const;
   bool equals(const Node &other) const;
 
-  const ContextPrototype &protoContext() const;
-
   OpType opType() const { return _opType; };
   OpClass opClass() const { return _opClass;};
 
-  Nd4jLong opNum() const;
   int id() const;
+  const std::string &name() const;
+
+  void setName(const std::string &name);
+
+  Nd4jLong opNum() const;
 
   const std::vector<std::pair<int, int>> &input() const;
   const std::vector<std::pair<int, int>> &output() const;
@@ -165,17 +167,13 @@ class SD_EXPORT Node {
   void pickInput(const std::pair<int, int> &id);
   void pickInput(const std::string &id);
 
-  void setName(const std::string &name);
-  const std::string &name() const;
-
+  const ContextPrototype &contextPrototype() const;
   void setContextPrototype(const ContextPrototype &block);
 
   void setCustomOp(const std::shared_ptr<sd::ops::DeclarableOp> &customOp);
   std::shared_ptr<sd::ops::DeclarableOp> customOp() const;
 
   bool hasCustomOp() const;
-
-  void setOpType(OpType opType);
 
   // this method converts string deps to int deps
   void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;

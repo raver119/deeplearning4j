@@ -57,7 +57,7 @@ class OpSequenceTests : public testing::Test {
 
 //   int cnt = 1;
 //   for (const auto &v : sequence) {
-//     ASSERT_EQ(cnt++, v.protoContext().nodeId());
+//     ASSERT_EQ(cnt++, v.contextPrototype().nodeId());
 //   }
 
 //   ASSERT_EQ(3, cnt);
