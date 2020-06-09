@@ -887,6 +887,75 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
   ASSERT_EQ(std::string("range_2"), seq[2].node().name());
 }
 
+TEST_F(GraphAnalysisTests, optimizedGraph_13) {
+  Graph graph;
+
+  graph.addPlaceholder("input", sd::DataType::FLOAT32, {-1, 3, 244, 244});
+  graph.addVariable("weights_1", NDArrayFactory::create<float>(0.1f));
+  graph.addVariable("weights_2", NDArrayFactory::create<float>(0.1f));
+  graph.addVariable("weights_3", NDArrayFactory::create<float>(0.1f));
+  graph.addVariable("weights_4", NDArrayFactory::create<float>(0.1f));
+
+  graph.addVariable("axis", NDArrayFactory::create<int>(1));
+
+  graph.addNode(Node(sd::ops::tanh(), "conv_1"), {"input", "weights_1"});
+  graph.addNode(Node(sd::ops::tanh(), "pooling_1"), {"conv_1"});
+
+  // branch 1
+  graph.addNode(Node(sd::ops::tanh(), "conv_2"), {"pooling_1", "weights_2"});
+  graph.addNode(Node(sd::ops::tanh(), "pooling_2"), {"conv_2"});
+
+  // branch 2
+  graph.addNode(Node(sd::ops::tanh(), "conv_3"), {"pooling_1", "weights_3"});
+  graph.addNode(Node(sd::ops::tanh(), "pooling_3"), {"conv_3"});
+
+  // branch 3
+  graph.addNode(Node(sd::ops::tanh(), "conv_4"), {"pooling_1", "weights_4"});
+  graph.addNode(Node(sd::ops::tanh(), "pooling_4"), {"conv_4"});
+
+  // merge branch
+  graph.addNode(Node(sd::ops::concat(), "concat"), {"pooling_2", "pooling_3", "pooling_4", "axis"});
+
+  auto &optimized = graph.optimizedGraph();
+
+  // we expect exactly 2 layers
+  ASSERT_EQ(3, optimized.layers());
+  auto layer = optimized.layer(0);
+
+  // layer 0 must have exactly 1 sequence of 2 ops: conv_1 and pooling_1
+  ASSERT_EQ(1, layer.width());
+  auto seq = layer[0];
+
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("conv_1"),     seq[0].node().name());
+  ASSERT_EQ(std::string("pooling_1"), seq[1].node().name());
+
+  layer = optimized.layer(1);
+  ASSERT_EQ(3, layer.width());
+
+  seq = layer[0];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("conv_2"),     seq[0].node().name());
+  ASSERT_EQ(std::string("pooling_2"), seq[1].node().name());
+
+  seq = layer[1];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("conv_3"),     seq[0].node().name());
+  ASSERT_EQ(std::string("pooling_3"), seq[1].node().name());
+
+  seq = layer[2];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("conv_4"),     seq[0].node().name());
+  ASSERT_EQ(std::string("pooling_4"), seq[1].node().name());
+
+  layer = optimized.layer(2);
+  ASSERT_EQ(1, layer.width());
+
+  seq = layer[0];
+  ASSERT_EQ(1, seq.length());
+  ASSERT_EQ(std::string("concat"),     seq[0].node().name());
+}
+
 TEST_F(GraphAnalysisTests, test_cond_1) {
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
