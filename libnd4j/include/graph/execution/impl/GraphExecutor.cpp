@@ -63,16 +63,21 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
                                   const OptimizedGraph &graph,
                                   VariableProxy &proxy,
                                   const int deviceId) const {
+  // we either follow or override target deviceId specified in OpSequence
+  auto targetDevice = deviceId >= 0
+      ? deviceId
+      : seq.deviceId();
+
   /*
    * this is a basic implementation that works without dispatching etc
    */
+  auto result = Status::OK();
   for (int e = 0; e < seq.length(); e++) {
-    auto v = seq[e];
-    // only Ops can be executed this way :(
-    Nd4jStatus result = Status::OK();
+    auto &v = seq[e];
 
+    // only Ops can be executed this way :(
     if (v.node().hasCustomOp())
-      result = execute(v.node().customOp(), v.protoContext(), seq, graph, proxy, deviceId >= 0 ? deviceId : seq.deviceId());
+      result = execute(v.node().customOp(), v.protoContext(), seq, graph, proxy, targetDevice);
     else {
       nd4j_printf("Node <%i:%s> has no customOp set\n",
                   v.node().id(),
