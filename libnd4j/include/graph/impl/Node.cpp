@@ -369,8 +369,7 @@ Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
 };
 
 Node::Node(const FlatNode *node) {
-  // temporary holders for _extras and _dimensions, for transferring those into ContextPrototype
-  std::vector<double> extras;
+  // temporary holders _dimensions, for transferring axis into ContextPrototype
   std::vector<int> axis;
 
   if (node->scalar() != nullptr)
@@ -397,8 +396,7 @@ Node::Node(const FlatNode *node) {
     } else {
       if (this->opType() != OpType_LOGIC) {
         if (this->_name.size() > 0) {
-          nd4j_debug("Node [%i:<%s>] has no inputs defined\n", this->_id,
-                     this->_name.c_str());
+          nd4j_debug("Node [%i:<%s>] has no inputs defined\n", this->_id, this->_name.c_str());
         } else {
           nd4j_debug("Node [%i:<noname>] has no inputs defined\n", this->_id);
         }
@@ -406,28 +404,18 @@ Node::Node(const FlatNode *node) {
     }
 
     // reading control deps, and filling _dependencies field
-    if (node->varControlDeps() != nullptr && node->varControlDeps()->size() > 0) {
+    if (node->varControlDeps() != nullptr && node->varControlDeps()->size() > 0)
       for (int e = 0; e < node->varControlDeps()->size(); e++)
         _stringDependencies.emplace_back(node->varControlDeps()->Get(e)->str());
-    }
 
-    if (node->controlDepFor() != nullptr && node->controlDepFor()->size() > 0) {
+    if (node->controlDepFor() != nullptr && node->controlDepFor()->size() > 0)
       for (int e = 0; e < node->controlDepFor()->size(); e++)
         _stringDependencies.emplace_back(node->controlDepFor()->Get(e)->str());
-    }
 
-    if (node->controlDeps() != nullptr && node->controlDeps()->size() > 0) {
+    if (node->controlDeps() != nullptr && node->controlDeps()->size() > 0)
       for (int e = 0; e < node->controlDeps()->size(); e++)
         _stringDependencies.emplace_back(node->controlDeps()->Get(e)->str());
-    }
 
-    // transferring extraParams. Used for legacy ops only
-    if (node->extraParams() != nullptr && node->extraParams()->size() > 0) {
-      extras.resize(node->extraParams()->size());
-
-      for (int e = 0; e < (int)node->extraParams()->size(); e++)
-        extras[e] = static_cast<double>(node->extraParams()->Get(e));
-    }
 
     // transferring dimensions. Used for legacy ops only
     if (node->dimensions() != nullptr && node->dimensions()->size() > 0) {
@@ -463,25 +451,20 @@ Node::Node(const FlatNode *node) {
         for (auto v : axis) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
-          for (int e = 0; e < (int) node->extraParams()->size(); e++) {
+          for (int e = 0; e < (int) node->extraParams()->size(); e++)
             block.appendT(static_cast<double>(node->extraParams()->Get(e)));
-          }
 
         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
-          for (int e = 0; e < (int) node->extraBools()->size(); e++) {
+          for (int e = 0; e < (int) node->extraBools()->size(); e++)
             block.appendB(node->extraBools()->Get(e));
-          }
 
         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
-          for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
+          for (int e = 0; e < (int) node->extraInteger()->size(); e++)
             block.appendI(node->extraInteger()->Get(e));
-          }
 
-        if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
-          for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
+        if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0)
+          for (int e = 0; e < (int) node->extraTypes()->size(); e++)
             block.appendD((sd::DataType) node->extraTypes()->Get(e));
-          }
-        }
 
         this->setContextPrototype(block);
         this->setCustomOp(Node::buildOpByType(
@@ -501,25 +484,20 @@ Node::Node(const FlatNode *node) {
         for (auto v : axis) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
-          for (int e = 0; e < (int) node->extraParams()->size(); e++) {
+          for (int e = 0; e < (int) node->extraParams()->size(); e++)
             block.appendT(static_cast<double>(node->extraParams()->Get(e)));
-          }
 
         if (node->extraBools() != nullptr && node->extraBools()->size() > 0)
-          for (int e = 0; e < (int) node->extraBools()->size(); e++) {
+          for (int e = 0; e < (int) node->extraBools()->size(); e++)
             block.appendB(node->extraBools()->Get(e));
-          }
 
         if (node->extraInteger() != nullptr && node->extraInteger()->size() > 0)
-          for (int e = 0; e < (int) node->extraInteger()->size(); e++) {
+          for (int e = 0; e < (int) node->extraInteger()->size(); e++)
             block.appendI(node->extraInteger()->Get(e));
-          }
 
-        if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0) {
-          for (int e = 0; e < (int) node->extraTypes()->size(); e++) {
+        if (node->extraTypes() != nullptr && node->extraTypes()->size() > 0)
+          for (int e = 0; e < (int) node->extraTypes()->size(); e++)
             block.appendD((sd::DataType) node->extraTypes()->Get(e));
-          }
-        }
 
         this->setContextPrototype(block);
 
@@ -534,26 +512,22 @@ Node::Node(const FlatNode *node) {
       if (!this->name().empty())
         block.setName(this->name());
 
-      for (int e = 0; e < this->input().size(); e++) {
+      for (int e = 0; e < this->input().size(); e++)
         block.pickInput(this->input().at(e));
-      }
 
       this->setContextPrototype(block);
     } else if (this->_opType == OpType_CUSTOM) {
       auto op =
           sd::ops::OpRegistrator::getInstance().getOperation(this->opNum());
-      if (op == nullptr) {
-        nd4j_verbose("Can't find operation: %lld\n", this->opNum());
-        throw std::runtime_error("Can't find requested operation");
-      }
+      if (op == nullptr)
+        throw std::runtime_error("Can't find requested operation [" + StringUtils::valueToString(this->opNum()) + "]");
 
       ContextPrototype block(nullptr, this->id());
       if (!this->name().empty())
         block.setName(this->name());
 
-      for (int e = 0; e < this->input().size(); e++) {
+      for (int e = 0; e < this->input().size(); e++)
         block.pickInput(this->input().at(e));
-      }
 
       if (node->extraInteger() != nullptr)
         for (uint32_t e = 0; e < node->extraInteger()->size(); e++) {
