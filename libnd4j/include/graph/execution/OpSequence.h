@@ -92,6 +92,8 @@ class SD_EXPORT OpSequence
    */
   void append(const Node& node,
               const sd::graph::ContextPrototype& ctx);
+  void append(const ExecutionTask& task);
+  void append(ExecutionTask&& task);
 
 
   /**
