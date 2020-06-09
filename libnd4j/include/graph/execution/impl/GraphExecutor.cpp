@@ -92,7 +92,8 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
 }
 
 Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
-                                  VariableProxy &proxy) const {
+                                  VariableProxy &proxy,
+                                  bool isInference) const {
   /*
    * this is a basic exection logic: roll through layers and sequences and
    * execute them one by one sequentially

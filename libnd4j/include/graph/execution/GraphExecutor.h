@@ -65,7 +65,8 @@ class SD_EXPORT GraphExecutor {
    * @return
    */
   virtual Nd4jStatus execute(const OptimizedGraph &graph,
-                             VariableProxy &proxy) const;
+                             VariableProxy &proxy,
+                             bool isInference = true) const;
 
   /**
    * This method executes OpSequence
