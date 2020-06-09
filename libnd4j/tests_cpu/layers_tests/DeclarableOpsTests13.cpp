@@ -104,9 +104,9 @@ TEST_F(DeclarableOpsTests13, test_argmax_edge_1) {
     auto ctx = new Context(1);
     auto arr = NDArrayFactory::create<float>('c', {1024,1});
 
-    ctx->setInputArray(0, arr, true);
-    ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong >('c', {1}), true);
-    ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong >(0), true);   //Axis 0
+    ctx->setInputArray(0, arr);
+    ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong >('c', {1}));
+    ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong >(0));   //Axis 0
 
 
     sd::ops::argmax op;
