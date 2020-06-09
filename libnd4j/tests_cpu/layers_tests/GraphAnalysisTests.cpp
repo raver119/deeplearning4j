@@ -918,7 +918,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_13) {
 
   auto &optimized = graph.optimizedGraph();
 
-  // we expect exactly 2 layers
+  // we expect exactly 3 layers
   ASSERT_EQ(3, optimized.layers());
   auto layer = optimized.layer(0);
 
