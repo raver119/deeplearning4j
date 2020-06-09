@@ -919,6 +919,12 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
 
   // we expect exactly 1 OpSequence wihtin this layer
   ASSERT_EQ(1, layer.width());
+  auto seq = layer.at(0);
+
+  // this Graph doesn't allow any variance here. Order must be exactly the same as below
+  ASSERT_EQ(std::string("add"),     seq[0].node().name());
+  ASSERT_EQ(std::string("range_1"), seq[1].node().name());
+  ASSERT_EQ(std::string("range_2"), seq[2].node().name());
 }
 
 TEST_F(GraphAnalysisTests, test_cond_1) {
