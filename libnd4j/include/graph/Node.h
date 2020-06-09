@@ -38,59 +38,39 @@ class Graph;
 
 class SD_EXPORT Node {
  protected:
-  // TODO: this field must be removed
-  sd::DataType _dataType;
-
-  OpType _opType;
-  ContextPrototype _protoContext;
-  Nd4jLong _opNum;
+  // int and string IDs
   int _id = 0;
+  std::string _name;
 
+  // Node state, basically
+  ContextPrototype _protoContext;
+
+  // these 2 fields are used for Logic ops only
+  OpType _opType;
+  OpClass _opClass;
+  Nd4jLong _opNum;
+
+  // Inputs are stored in <Producer Node ID: Producer Node output index> format
   std::vector<std::pair<int, int>> _input;
+
+  // Outputs are stored in <Producer Node output index: Consumer Node ID> format
   std::vector<std::pair<int, int>> _output;
+
+  // Control flow dependencies for Node
   std::vector<std::pair<int, int>> _dependencies;
   std::vector<std::string> _stringDependencies;
 
-  std::vector<int> _dimensions;
+  // service state fields
+  bool _hasExternalOutputs = false;
+  bool _hasExternalInputs = false;
+  bool _hasInternalOutputs = false;
+  bool _hasInternalInputs = false;
 
-  std::vector<int> _referencedBy;
-
-  std::string _name;
-
-  // many ops require extra parameters to run
-  double *_extraParams = nullptr;
-
-  bool _hasExternalOutputs;
-  bool _hasExternalInputs;
-  bool _hasInternalOutputs;
-  bool _hasInternalInputs;
-
-  // this field is used to check, if op should be used in-place (so it can/will
-  // modify its inputs)
-  bool _isInplace = false;
-
-  OpClass _opClass;
-
-  // these fields are used to store embedded CustomOps and Graph in case of
-  // Graph-in-Graph scenario
-  Graph *_graph = nullptr;
   std::shared_ptr<sd::ops::DeclarableOp> _customOp;
 
   // each node can be active or inactive, if used with divergents, like IF
   // statements
   bool _active = true;
-
-  // meh
-  mutable bool _removable = true;
-
-  // these fields contain information about Scope these ops are related to
-  int _scope_id = 0;
-  std::string _scope_name;
-
-  // TODO: these 3 fields should be removed
-  int _rewindNode = -1;
-  std::pair<int, int> _rewindLayer = {-1, -1};
-  Nd4jLong _frameId = -1;
 
  public:
   explicit Node(const sd::ops::DeclarableOp &op,
@@ -147,120 +127,61 @@ class SD_EXPORT Node {
   // move assignment operator
   Node &operator=(Node &&other) noexcept;
 
-  bool equals(Node *other) const;
+  bool equals(const Node *other) const;
+  bool equals(const Node &other) const;
 
-  sd::DataType dataType();
   const ContextPrototype &protoContext() const;
-  OpType opType() const;
+
+  OpType opType() const { return _opType; };
+  OpClass opClass() const { return _opClass;};
+
   Nd4jLong opNum() const;
   int id() const;
+
   const std::vector<std::pair<int, int>> &input() const;
   const std::vector<std::pair<int, int>> &output() const;
   const std::vector<std::pair<int, int>> &dependencies() const;
 
-  Nd4jLong getFrameId();
-  void setFrameId(Nd4jLong frameId);
-
-  int getRewindNode();
-  void setRewindNode(int nodeId);
-
-  std::pair<int, int> &getRewindLayer();
-  void setRewindLayer(int layerId, int stepId = 0);
-
   void setId(int id);
-
-  double *extraParams();
 
   bool isMultiInput();
   bool isMultiOutput();
 
-  bool isRemovable() const;
-  void markRemovable(bool reallyRemovable) const;
-
   bool isDivergencePoint();
-  void setActive(bool reallyActive);
-  bool isActive();
 
-  bool hasExternalOutputs();
-  bool hasExternalInputs();
-  bool hasInternalOutputs();
-  bool hasInternalInputs();
+  bool hasExternalOutputs() const;
+  bool hasExternalInputs() const;
+  bool hasInternalOutputs() const;
+  bool hasInternalInputs() const;
 
   void pickOutputOnce(int outputId);
   void pickOutput(int outputId);
   void pickOutput(int nodeId, int outputId);
+
   void pickExternalOutput(int outputId);
+
   void pickInput(int inputId);
   void pickInput(int nodeId, int outputId);
-  void pickInput(std::pair<int, int> &id);
+  void pickInput(const std::pair<int, int> &id);
   void pickInput(const std::string &id);
 
-  void setName(std::string *name);
   void setName(const std::string &name);
-  const std::string &getName() const;
   const std::string &name() const;
 
-  int totalReferences();
-  void addReference(int nodeId);
-
   void setContextPrototype(const ContextPrototype &block);
-  const ContextPrototype &contextPrototype() const;
-  bool hasBlockAttached();
 
-  void setCustomOp(std::shared_ptr<sd::ops::DeclarableOp> customOp);
+  void setCustomOp(const std::shared_ptr<sd::ops::DeclarableOp> &customOp);
   std::shared_ptr<sd::ops::DeclarableOp> customOp() const;
+
   bool hasCustomOp() const;
 
-  void setGraph(Graph *graph = nullptr);
-  Graph *graph() const;
-  bool hasGraphEmbedded() const;
-
-  bool isInplace();
-  void markInplace(bool reallyInplace);
-
-  OpClass getOpClass() const;
-
-  // these methods are used for internal profiling
-  void setOuterTime(Nd4jLong time);
-  void setInnerTime(Nd4jLong time);
-
-  // methods related to scopes
-  bool isScoped();
-  void setScopeInfo(int id, const char *name = nullptr);
-  int scopeId();
-  std::string *scopeName();
-
   void setOpType(OpType opType);
-
-  // clone Node
-  Node *clone();
-
-  template <typename T>
-  Node *asT();
 
   // this method converts string deps to int deps
   void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;
 
-  FORCEINLINE void pullValues(Node *other) {
-    this->_dataType = other->dataType();
-    this->_protoContext = other->protoContext();
-    this->_hasExternalInputs = other->hasExternalInputs();
-    this->_hasExternalOutputs = other->hasExternalOutputs();
-    this->_hasInternalInputs = other->hasInternalInputs();
-    this->_hasInternalOutputs = other->hasInternalOutputs();
-
-    this->markInplace(other->isInplace());
-    this->setActive(other->isActive());
-    this->setScopeInfo(other->scopeId(), other->scopeName()->c_str());
-
-    for (auto &v : other->input()) this->_input.emplace_back(v);
-
-    for (auto &v : other->output()) this->_output.emplace_back(v);
-  }
-
-  static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(
-      OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);
-  static void deleteOpByType(OpType opType, void *op);
+  // utility method that generates legacy ops out of OpType and OpNum
+  static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);
 };
 }  // namespace graph
 }  // namespace sd

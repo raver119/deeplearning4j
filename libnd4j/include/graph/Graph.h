@@ -29,7 +29,6 @@
 #include <graph/ExecutorConfiguration.h>
 #include <graph/Node.h>
 #include <graph/OptimizedGraph.h>
-#include <graph/Scope.h>
 #include <graph/Stash.h>
 #include <graph/Variable.h>
 #include <graph/VariableSpace.h>
@@ -48,6 +47,8 @@ class SD_EXPORT Graph {
  protected:
   ExecutorConfiguration _configuration;
   VariableSpace _variableSpace;
+
+  // TODO: these 2 fields should be deleted
   memory::Workspace _workspace;
   Stash _stash;
 
@@ -134,12 +135,10 @@ class SD_EXPORT Graph {
    * These methods add given node to the graph
    * @param node
    */
-  void addNode(Node &&node, const std::initializer_list<std::string> &inputs);
+  void addNode(Node &&node, const std::vector<std::string> &inputs);
 
-  void addNode(Node &node, const std::initializer_list<std::string> &inputs);
-  void addNode(Node &node, const std::initializer_list<int> &inputs);
-  void addNode(Node &node,
-               const std::initializer_list<std::pair<int, int>> &inputs);
+  void addNode(Node &node, const std::vector<std::string> &inputs);
+
 
   void addVariable(const std::string &name, NDArray &array);
   void addVariable(const std::string &name, NDArray &&array);

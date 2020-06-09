@@ -41,6 +41,7 @@
 #include <ops/declarable/LegacyTransformSameOp.h>
 #include <ops/declarable/LegacyTransformStrictOp.h>
 #include <ops/declarable/OpRegistrator.h>
+#include <helpers/StringUtils.h>
 
 namespace sd {
 namespace graph {
@@ -53,8 +54,6 @@ Node::Node(const ops::DeclarableOp &opName, const std::string &nodeName,
   this->_name = nodeName;
   this->_opType = OpType_CUSTOM;
   this->_opNum = customOp->getOpHash();
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
   this->_customOp = customOp;
 
   _hasExternalInputs = false;
@@ -82,8 +81,6 @@ Node::Node(const std::string &opName, const std::string &nodeName,
   this->_name = nodeName;
   this->_opType = OpType_CUSTOM;
   this->_opNum = customOp->getOpHash();
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
   this->_customOp = customOp;
 
   _hasExternalInputs = false;
@@ -103,37 +100,6 @@ Node::Node(const std::string &opName, const std::string &nodeName,
   this->setContextPrototype(block);
 }
 
-void Node::setOuterTime(Nd4jLong time) {
-  //            if (hasBlockAttached())
-  //                _block->setOuterTime(time);
-}
-
-void Node::setInnerTime(Nd4jLong time) {
-  //            if (hasBlockAttached())
-  //                _block->setInnerTime(time);
-}
-
-void Node::setGraph(Graph *graph) { _graph = graph; }
-
-Graph *Node::graph() const { return _graph; }
-
-void Node::markInplace(bool reallyInplace) {
-  _isInplace = reallyInplace;
-  _protoContext.markInplace(reallyInplace);
-}
-
-bool Node::isRemovable() const { return _removable; }
-
-void Node::markRemovable(bool reallyRemovable) const {
-  _removable = reallyRemovable;
-}
-
-OpClass Node::getOpClass() const { return _opClass; }
-
-bool Node::hasBlockAttached() { return true; }
-
-bool Node::isInplace() { return _isInplace; }
-
 bool Node::isDivergencePoint() {
   if (hasCustomOp()) {
     return _customOp->getOpDescriptor()->isDivergent();
@@ -142,16 +108,6 @@ bool Node::isDivergencePoint() {
   else
     return false;
 }
-
-void Node::setActive(bool reallyActive) { _active = reallyActive; }
-
-bool Node::isActive() { return _active; }
-
-Nd4jLong Node::getFrameId() { return _frameId; }
-
-void Node::setFrameId(Nd4jLong frameId) { _frameId = frameId; }
-
-const ContextPrototype &Node::contextPrototype() const { return _protoContext; }
 
 void Node::setContextPrototype(const ContextPrototype &block) {
   _protoContext = block;
@@ -166,25 +122,18 @@ std::shared_ptr<sd::ops::DeclarableOp> Node::customOp() const {
   return _customOp;
 }
 
-void Node::setCustomOp(std::shared_ptr<sd::ops::DeclarableOp> customOp) {
+void Node::setCustomOp(const std::shared_ptr<sd::ops::DeclarableOp>& customOp) {
   _customOp = customOp;
-
-  // divergent ops (Switch etc) are always inplace, they don't allocate anything
-  if (_customOp.get() != nullptr && _customOp->getOpDescriptor()->isDivergent())
-    _isInplace = true;
 }
 
 bool Node::hasCustomOp() const { return _customOp != nullptr; }
 
-const std::string &Node::name() const { return this->getName(); }
+const std::string &Node::name() const { return _name; }
 
-const std::string &Node::getName() const { return _name; }
 
 void Node::setName(const std::string &name) { _name = name; }
 
-void Node::setName(std::string *name) { _name = *name; }
-
-void Node::pickInput(std::pair<int, int> &pair) {
+void Node::pickInput(const std::pair<int, int> &pair) {
   _input.push_back(pair);
   _protoContext.pickInput(pair);
 }
@@ -235,25 +184,17 @@ void Node::pickOutput(int outputId) {
     _hasInternalOutputs = true;
 }
 
-bool Node::hasExternalOutputs() { return _hasExternalOutputs; }
+bool Node::hasExternalOutputs() const { return _hasExternalOutputs; }
 
-bool Node::hasExternalInputs() { return _hasExternalInputs; }
+bool Node::hasExternalInputs() const { return _hasExternalInputs; }
 
-bool Node::hasInternalOutputs() { return _hasInternalOutputs; }
+bool Node::hasInternalOutputs() const { return _hasInternalOutputs; }
 
-bool Node::hasInternalInputs() { return _hasInternalInputs; }
+bool Node::hasInternalInputs() const { return _hasInternalInputs; }
 
 bool Node::isMultiInput() { return _input.size() > 1; }
 
 bool Node::isMultiOutput() { return _output.size() > 1; }
-
-double *Node::extraParams() { return _extraParams; }
-
-int Node::totalReferences() { return _referencedBy.size(); }
-
-void Node::addReference(int nodeId) { _referencedBy.emplace_back(nodeId); }
-
-OpType Node::opType() const { return _opType; }
 
 int Node::id() const { return _id; }
 
@@ -262,26 +203,6 @@ Nd4jLong Node::opNum() const { return _opNum; }
 const std::vector<std::pair<int, int>> &Node::input() const { return _input; }
 
 const std::vector<std::pair<int, int>> &Node::output() const { return _output; }
-
-bool Node::isScoped() { return _scope_id != 0; }
-
-void Node::setScopeInfo(int id, const char *name) {
-  _scope_id = id;
-
-  if (name != nullptr) _scope_name = name;
-}
-
-int Node::scopeId() { return _scope_id; }
-
-std::string *Node::scopeName() { return &_scope_name; }
-
-template <typename T>
-Node *Node::asT() {
-  auto node = this->clone();
-  node->_dataType = DataTypeUtils::fromT<T>();
-  return node;
-}
-BUILD_SINGLE_TEMPLATE(template SD_EXPORT Node *Node::asT, (), LIBND4J_TYPES);
 
 Node::Node(const std::string &opName, const std::string &nodeName, const int id,
            const std::vector<std::string> &inputs,
@@ -292,14 +213,7 @@ Node::Node(const std::string &opName, const std::string &nodeName, const int id,
   this->_opType = OpType_CUSTOM;
   this->_id = id;
   this->_opNum = customOp->getOpHash();
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
   this->_customOp = customOp;
-
-  _hasExternalInputs = false;
-  _hasExternalOutputs = false;
-  _hasInternalInputs = false;
-  _hasInternalOutputs = false;
 
   for (auto i : inputs) pickInput(i);
 
@@ -321,14 +235,8 @@ Node::Node(const std::string &opName, const int id,
   this->_opType = OpType_CUSTOM;
   this->_id = id;
   this->_opNum = customOp->getOpHash();
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
   this->_customOp = customOp;
 
-  _hasExternalInputs = false;
-  _hasExternalOutputs = false;
-  _hasInternalInputs = false;
-  _hasInternalOutputs = false;
 
   for (auto i : inputs) pickInput(i);
 
@@ -349,8 +257,6 @@ Node::Node(sd::ops::DeclarableOp *customOp, int id,
   this->_opType = OpType_CUSTOM;
   this->_id = id;
   this->_opNum = customOp->getOpHash();
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
 
   // if custom op is a registered one - pull it from cache, otherwise - clone
   // locally
@@ -360,11 +266,6 @@ Node::Node(sd::ops::DeclarableOp *customOp, int id,
   else
     throw std::runtime_error(
         "Can't create a node with custom operation within");
-
-  _hasExternalInputs = false;
-  _hasExternalOutputs = false;
-  _hasInternalInputs = false;
-  _hasInternalOutputs = false;
 
   for (auto i : input) pickInput(i);
 
@@ -405,8 +306,6 @@ Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
   this->_opType = opType;
   this->_id = id;
   this->_opNum = opNum;
-  this->_extraParams = nullptr;
-  this->_dataType = sd::DataType::FLOAT32;  // float as default
 
   _hasExternalInputs = false;
   _hasExternalOutputs = false;
@@ -421,9 +320,7 @@ Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
   if (opType == OpType_TRANSFORM_SAME || opType == OpType_TRANSFORM_FLOAT ||
       opType == OpType_TRANSFORM_STRICT || opType == OpType_TRANSFORM_BOOL ||
       opType == OpType_SCALAR || opType == OpType_BROADCAST) {
-    if (_output.size() <= 1) {
-      _isInplace = true;
-    }
+
     _opClass = OpClass_TRANSFORM;
   } else if (opType == OpType_REDUCE_SAME || opType == OpType_REDUCE_FLOAT ||
              opType == OpType_REDUCE_BOOL || opType == OpType_REDUCE_LONG ||
@@ -472,17 +369,9 @@ Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
 };
 
 Node::Node(const FlatNode *node) {
-  _hasExternalInputs = false;
-  _hasExternalOutputs = false;
-  _hasInternalInputs = false;
-  _hasInternalOutputs = false;
-  _extraParams = nullptr;
-
-  _dataType = sd::DataType::FLOAT32;  // float as default
-  if (node->scope_id() != 0) this->_scope_id = node->scope_id();
-
-  if (node->scope_name() != nullptr && node->scope_name()->size() > 0)
-    this->_scope_name = node->scope_name()->str();
+  // temporary holders for _extras and _dimensions, for transferring those into ContextPrototype
+  std::vector<double> extras;
+  std::vector<int> axis;
 
   if (node->scalar() != nullptr)
     throw std::runtime_error("FlatNode has scalar defined, it's deprecated");
@@ -532,36 +421,27 @@ Node::Node(const FlatNode *node) {
         _stringDependencies.emplace_back(node->controlDeps()->Get(e)->str());
     }
 
-    /*
-    if (node->output() != nullptr)
-        for (int e = 0; e < (int) node->output()->size(); e++) {
-            auto oid = node->output()->Get(e);
-            if (oid != this->_id && oid != 0) {
-                nd4j_verbose("Picking output: %i\n", node->output()->Get(e));
-                pickOutput(oid);
-            }
-        }
-    */
-
+    // transferring extraParams. Used for legacy ops only
     if (node->extraParams() != nullptr && node->extraParams()->size() > 0) {
-      _extraParams = new double[node->extraParams()->size()];
-      for (int e = 0; e < (int)node->extraParams()->size(); e++) {
-        _extraParams[e] = static_cast<double>(node->extraParams()->Get(e));
-      }
+      extras.resize(node->extraParams()->size());
+
+      for (int e = 0; e < (int)node->extraParams()->size(); e++)
+        extras[e] = static_cast<double>(node->extraParams()->Get(e));
     }
 
-    // if (node->dimensions() != nullptr && node->dimensions()->size() > 0)
-    //    throw std::runtime_error("FlatNode has dimensions defined. Graph is
-    //    outdated");
+    // transferring dimensions. Used for legacy ops only
+    if (node->dimensions() != nullptr && node->dimensions()->size() > 0) {
+      axis.resize(node->dimensions()->size());
+
+      for (int e = 0; e < (int) node->dimensions()->size(); e++)
+        axis[e] = node->dimensions()->Get(e);
+    }
 
     if (this->opType() == OpType_LOGIC && this->opNum() == 100L) {
-      if (node->extraInteger()->size() < 1) {
-        nd4j_printf("Node_%i is type of Enter, but has no FrameID defined\n",
-                    this->id());
-        throw std::runtime_error("Enter node must have FrameID specified");
-      }
+      if (node->extraInteger()->size() < 1)
+        throw std::runtime_error("Enter Node [" + StringUtils::valueToString(this->id()) + "] must have FrameID specified");
 
-      this->setFrameId(node->extraInteger()->Get(0));
+      //this->setFrameId(node->extraInteger()->Get(0));
     }
 
     // these ops allow in-place execution by design
@@ -574,16 +454,13 @@ Node::Node(const FlatNode *node) {
         _opType == OpType_TRANSFORM_BOOL || _opType == OpType_RANDOM ||
         _opType == OpType_PAIRWISE || _opType == OpType_PAIRWISE_BOOL ||
         _opType == OpType_SCALAR_BOOL || _opType == OpType_SCALAR) {
-      if (_output.size() <= 1) {
-        _isInplace = true;
-      }
 
       if (node->input() != nullptr && node->input()->size() > 0) {
         ContextPrototype block(nullptr, this->id(), false);
         if (!this->name().empty())
           block.setName(this->name());
 
-        for (auto v : _dimensions) block.appendA(v);
+        for (auto v : axis) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
           for (int e = 0; e < (int) node->extraParams()->size(); e++) {
@@ -621,7 +498,7 @@ Node::Node(const FlatNode *node) {
         }
 
         // there's no other IArgs in legacy options, actually
-        for (auto v : _dimensions) block.appendA(v);
+        for (auto v : axis) block.appendA(v);
 
         if (node->extraParams() != nullptr && node->extraParams()->size() > 0)
           for (int e = 0; e < (int) node->extraParams()->size(); e++) {
@@ -700,7 +577,7 @@ Node::Node(const FlatNode *node) {
         }
       }
 
-      for (auto v : _dimensions) block.appendA(v);
+      for (auto v : axis) block.appendA(v);
 
       this->setContextPrototype(block);
       this->setCustomOp(op);
@@ -711,131 +588,88 @@ Node::Node(const FlatNode *node) {
   }
 }
 
-sd::DataType Node::dataType() { return _dataType; }
 
 const ContextPrototype &Node::protoContext() const { return _protoContext; }
 
-Node::~Node() {
-  if (_extraParams != nullptr) delete[] _extraParams;
-}
+Node::~Node() { }
 
-int Node::getRewindNode() { return _rewindNode; }
-
-void Node::setRewindNode(int nodeId) { _rewindNode = nodeId; }
-
-std::pair<int, int> &Node::getRewindLayer() { return _rewindLayer; };
-
-void Node::setRewindLayer(int layerId, int stepId) {
-  _rewindLayer.first = layerId;
-  _rewindLayer.second = stepId;
-}
-
-bool Node::equals(Node *other) const {
-  if (_opType == other->_opType && _dataType == other->_dataType &&
-      _opNum == other->_opNum)
+bool Node::equals(const Node *other) const {
+  if (_opType == other->_opType && _opNum == other->_opNum)
     return true;
 
   return false;
 }
 
+bool Node::equals(const Node &other) const {
+  return this->equals(&other);
+}
+
 Node::Node(const Node &other) noexcept {
-  _dataType = other._dataType;
   _opType = other._opType;
   _opClass = other._opClass;
   _opNum = other._opNum;
   _customOp = other._customOp;
   _name = other._name;
-  _scope_id = other._scope_id;
-  _scope_name = other._scope_name;
-  _rewindNode = other._rewindNode;
   _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _isInplace = other._isInplace;
   _active = other._active;
-  _removable = other._removable;
 
-  _graph = other._graph;
   _customOp = other._customOp;
-  _extraParams = other._extraParams;
   _protoContext = other._protoContext;
 
   _input = other._input;
   _output = other._output;
-  _dimensions = other._dimensions;
-  _rewindLayer = other._rewindLayer;
-  _referencedBy = other._referencedBy;
 }
 
 Node &Node::operator=(const Node &other) noexcept {
   if (this == &other) return *this;
 
-  _dataType = other._dataType;
   _opType = other._opType;
   _opClass = other._opClass;
   _opNum = other._opNum;
   _customOp = other._customOp;
   _name = other._name;
-  _scope_id = other._scope_id;
-  _scope_name = other._scope_name;
-  _rewindNode = other._rewindNode;
   _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _isInplace = other._isInplace;
   _active = other._active;
-  _removable = other._removable;
 
-  _graph = other._graph;
   _customOp = other._customOp;
-  _extraParams = other._extraParams;
   _protoContext = other._protoContext;
 
   _input = other._input;
   _output = other._output;
-  _dimensions = other._dimensions;
-  _rewindLayer = other._rewindLayer;
-  _referencedBy = other._referencedBy;
 
   return *this;
 }
 
 Node::Node(Node &&other) noexcept {
-  _dataType = other._dataType;
+
   _opType = other._opType;
   _opClass = other._opClass;
   _opNum = other._opNum;
   _customOp = other._customOp;
-  _scope_id = other._scope_id;
   _name = std::move(other._name);
-  _scope_name = std::move(other._scope_name);
-  _rewindNode = other._rewindNode;
   _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _isInplace = other._isInplace;
   _active = other._active;
-  _removable = other._removable;
 
-  _graph = other._graph;
-  _extraParams = other._extraParams;
   _protoContext = other._protoContext;
 
   _customOp = std::move(other._customOp);
   _input = std::move(other._input);
   _output = std::move(other._output);
-  _dimensions = std::move(other._dimensions);
-  _rewindLayer = std::move(other._rewindLayer);
-  _referencedBy = std::move(other._referencedBy);
 
   other._customOp = nullptr;
 }
@@ -843,101 +677,26 @@ Node::Node(Node &&other) noexcept {
 Node &Node::operator=(Node &&other) noexcept {
   if (this == &other) return *this;
 
-  _dataType = other._dataType;
   _opType = other._opType;
   _opClass = other._opClass;
   _opNum = other._opNum;
   _customOp = other._customOp;
-  _scope_id = other._scope_id;
   _name = std::move(other._name);
-  _scope_name = std::move(other._scope_name);
-  _rewindNode = other._rewindNode;
   _id = other._id;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _isInplace = other._isInplace;
   _active = other._active;
-  _removable = other._removable;
 
-  _graph = other._graph;
-  _extraParams = other._extraParams;
   _protoContext = other._protoContext;
 
   _customOp = std::move(other._customOp);
   _input = std::move(other._input);
   _output = std::move(other._output);
-  _dimensions = std::move(other._dimensions);
-  _rewindLayer = std::move(other._rewindLayer);
-  _referencedBy = std::move(other._referencedBy);
 
   return *this;
-}
-
-void Node::deleteOpByType(OpType opType, void *op) {
-  switch (opType) {
-    case OpType_PAIRWISE:
-      delete reinterpret_cast<sd::ops::LegacyPairwiseTransformOp *>(op);
-      break;
-    case OpType_PAIRWISE_BOOL:
-      delete reinterpret_cast<sd::ops::LegacyPairwiseTransformBoolOp *>(op);
-      break;
-    case OpType_TRANSFORM_STRICT:
-      delete reinterpret_cast<sd::ops::LegacyTransformStrictOp *>(op);
-      break;
-    case OpType_TRANSFORM_SAME:
-      delete reinterpret_cast<sd::ops::LegacyTransformSameOp *>(op);
-      break;
-    case OpType_TRANSFORM_FLOAT:
-      delete reinterpret_cast<sd::ops::LegacyTransformFloatOp *>(op);
-      break;
-    case OpType_TRANSFORM_BOOL:
-      delete reinterpret_cast<sd::ops::LegacyTransformBoolOp *>(op);
-      break;
-    case OpType_SCALAR:
-      delete reinterpret_cast<sd::ops::LegacyScalarOp *>(op);
-      break;
-    case OpType_SCALAR_BOOL:
-      delete reinterpret_cast<sd::ops::LegacyScalarBoolOp *>(op);
-      break;
-    case OpType_REDUCE_3:
-      delete reinterpret_cast<sd::ops::LegacyReduce3Op *>(op);
-      break;
-    case OpType_REDUCE_SAME:
-      delete reinterpret_cast<sd::ops::LegacyReduceSameOp *>(op);
-      break;
-    case OpType_REDUCE_FLOAT:
-      delete reinterpret_cast<sd::ops::LegacyReduceFloatOp *>(op);
-      break;
-    case OpType_REDUCE_LONG:
-      delete reinterpret_cast<sd::ops::LegacyReduceLongOp *>(op);
-      break;
-    case OpType_REDUCE_BOOL:
-      delete reinterpret_cast<sd::ops::LegacyReduceBoolOp *>(op);
-      break;
-    case OpType_INDEX_REDUCE:
-      delete reinterpret_cast<sd::ops::LegacyIndexReduceOp *>(op);
-      break;
-    case OpType_SUMMARYSTATS:
-      delete reinterpret_cast<sd::ops::LegacyStatsOp *>(op);
-      break;
-    case OpType_RANDOM:
-      delete reinterpret_cast<sd::ops::LegacyRandomOp *>(op);
-      break;
-    case OpType_BROADCAST:
-      delete reinterpret_cast<sd::ops::LegacyBroadcastOp *>(op);
-      break;
-    case OpType_BROADCAST_BOOL:
-      delete reinterpret_cast<sd::ops::LegacyBroadcastBoolOp *>(op);
-      break;
-    case OpType_CUSTOM:
-      delete reinterpret_cast<sd::ops::DeclarableOp *>(op);
-      break;
-    default:
-      throw std::runtime_error("Bad opType passed in");
-  }
 }
 
 std::shared_ptr<sd::ops::DeclarableOp> Node::buildOpByType(
@@ -984,21 +743,5 @@ std::shared_ptr<sd::ops::DeclarableOp> Node::buildOpByType(
   }
 }
 
-Node *Node::clone() {
-  if (this->_customOp && this->_opType == OpType_CUSTOM) {
-    auto clone = new Node(_customOp.get(), _id);
-    clone->pullValues(this);
-    return clone;
-  } else {
-    auto clone = new Node(_opType, _opNum, _id);
-
-    clone->pullValues(this);
-
-    // op time
-    clone->_customOp = _customOp;
-
-    return clone;
-  }
-}
 }  // namespace graph
 }  // namespace sd

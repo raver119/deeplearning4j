@@ -59,12 +59,12 @@ Nd4jStatus LogicExecutor::processNode(Graph *graph, Node *node) {
       return LogicEnter::processNode(graph, node);
   }
 
-  if (node->getName().empty()) {
+  if (node->name().empty()) {
     nd4j_printf("Unknown LogicOp used at node [%i]: [%i]\n", node->id(),
                 node->opNum());
   } else {
     nd4j_printf("Unknown LogicOp used at node [%i:<%s>]: [%i]\n", node->id(),
-                node->getName().c_str(), node->opNum());
+                node->name().c_str(), node->opNum());
   }
   return ND4J_STATUS_BAD_INPUT;
 }
