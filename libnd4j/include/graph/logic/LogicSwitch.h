@@ -18,8 +18,8 @@
 // Created by raver119 on 21.10.17.
 //
 
-#ifndef LIBND4J_LOGICSWITCH_H
-#define LIBND4J_LOGICSWITCH_H
+#ifndef SD_LOGICSWITCH_H
+#define SD_LOGICSWITCH_H
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
@@ -41,4 +41,4 @@ class LogicSwitch {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICSWITCH_H
+#endif  // SD_LOGICSWITCH_H

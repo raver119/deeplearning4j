@@ -18,7 +18,7 @@
 // Created by raver119 on 12.11.2017.
 //
 
-#ifndef LIBND4J_LOGICEXPOSE_H
+#ifndef SD_LOGICEXPOSE_H
 #define LIBND4J_LOGICEXPOSE_H
 
 #include <graph/Graph.h>

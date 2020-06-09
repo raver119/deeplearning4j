@@ -18,8 +18,8 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#ifndef LIBND4J_LOGICSCOPE_H
-#define LIBND4J_LOGICSCOPE_H
+#ifndef SD_LOGICSCOPE_H
+#define SD_LOGICSCOPE_H
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
@@ -41,4 +41,4 @@ class LogicScope {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICSCOPE_H
+#endif  // SD_LOGICSCOPE_H

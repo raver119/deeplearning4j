@@ -18,8 +18,8 @@
 // Created by raver119 on 30.01.18.
 //
 
-#ifndef LIBND4J_LOGICLOOPCOND_H
-#define LIBND4J_LOGICLOOPCOND_H
+#ifndef SD_LOGICLOOPCOND_H
+#define SD_LOGICLOOPCOND_H
 
 #include <graph/Graph.h>
 #include <system/pointercast.h>
@@ -33,4 +33,4 @@ class LogicLoopCond {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICLOOPCOND_H
+#endif  // SD_LOGICLOOPCOND_H

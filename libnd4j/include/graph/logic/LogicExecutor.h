@@ -18,8 +18,8 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#ifndef LIBND4J_LOGICEXECUTOR_H
-#define LIBND4J_LOGICEXECUTOR_H
+#ifndef SD_LOGICEXECUTOR_H
+#define SD_LOGICEXECUTOR_H
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
@@ -39,4 +39,4 @@ class LogicExecutor {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICEXECUTOR_H
+#endif  // SD_LOGICEXECUTOR_H

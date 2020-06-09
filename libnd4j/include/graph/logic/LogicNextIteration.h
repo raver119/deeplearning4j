@@ -18,8 +18,8 @@
 // Created by raver119 on 30.01.18.
 //
 
-#ifndef LIBND4J_LOGICNEXTITERATION_H
-#define LIBND4J_LOGICNEXTITERATION_H
+#ifndef SD_LOGICNEXTITERATION_H
+#define SD_LOGICNEXTITERATION_H
 
 #include <graph/Graph.h>
 #include <system/pointercast.h>
@@ -33,4 +33,4 @@ class LogicNextIeration {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICNEXTITERATION_H
+#endif  // SD_LOGICNEXTITERATION_H

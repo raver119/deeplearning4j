@@ -18,8 +18,8 @@
 // Created by raver119 on 20.10.2017.
 //
 
-#ifndef LIBND4J_LOGICWHILE_H
-#define LIBND4J_LOGICWHILE_H
+#ifndef SD_LOGICWHILE_H
+#define SD_LOGICWHILE_H
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
@@ -41,4 +41,4 @@ class LogicWhile {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICWHILE_H
+#endif  // SD_LOGICWHILE_H

@@ -18,8 +18,8 @@
 // Created by raver119 on 30.01.18.
 //
 
-#ifndef LIBND4J_LOGICENTER_H
-#define LIBND4J_LOGICENTER_H
+#ifndef SD_LOGICENTER_H
+#define SD_LOGICENTER_H
 
 #include <graph/Graph.h>
 #include <system/pointercast.h>
@@ -33,4 +33,4 @@ class LogicEnter {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICEXIT_H
+#endif  // SD_LOGICEXIT_H

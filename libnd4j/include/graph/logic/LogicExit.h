@@ -18,8 +18,8 @@
 // Created by raver119 on 30.01.18.
 //
 
-#ifndef LIBND4J_LOGICEXIT_H
-#define LIBND4J_LOGICEXIT_H
+#ifndef SD_LOGICEXIT_H
+#define SD_LOGICEXIT_H
 
 #include <graph/Graph.h>
 #include <system/pointercast.h>

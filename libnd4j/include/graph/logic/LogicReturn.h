@@ -18,8 +18,8 @@
 // Created by raver119 on 28.10.2017.
 //
 
-#ifndef LIBND4J_LOGICRETURN_H
-#define LIBND4J_LOGICRETURN_H
+#ifndef SD_LOGICRETURN_H
+#define SD_LOGICRETURN_H
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
@@ -41,4 +41,4 @@ class LogicReturn {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_LOGICRETURN_H
+#endif  // SD_LOGICRETURN_H
