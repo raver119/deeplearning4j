@@ -112,9 +112,8 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         for (const auto& nextId : workMap[id]._out)
             visit(nextId, 1, numOfLayers);
 
-
-    // fill _sortedGraph
-    _sortedGraph = std::vector<ExecutionLayer>(numOfLayers+1);
+    // fill vectors with layers
+    std::vector<ExecutionLayer> sortedGraphTemp(numOfLayers+1);
     for (const auto& p : workMap) {
 
         OpSequence seq;
@@ -123,7 +122,35 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         for (const auto& id : p.second._opSeq)
             seq.append(inMap.at(id), inMap.at(id).contextPrototype());
 
-        _sortedGraph[p.second._layerNum].append(std::move(seq));
+        sortedGraphTemp[p.second._layerNum].append(std::move(seq));
+    }
+
+    // check whether there is layer with one OpSequence containing only one op
+    bool isLayerWithOneOp = false;
+    for(auto& layer : sortedGraphTemp) {
+        if(layer.width() == 1 && layer.at(0).length() == 1) {
+            isLayerWithOneOp = true;
+            break;
+        }
+    }
+
+    // fill _sortedGraph
+    if(!isLayerWithOneOp) {
+        _sortedGraph = std::move(sortedGraphTemp);
+    }
+    else {
+        for (uint i = 0; i < sortedGraphTemp.size();) {
+
+            OpSequence seq;
+            while(i < sortedGraphTemp.size() && sortedGraphTemp[i].width() == 1 && sortedGraphTemp[i].at(0).length() == 1)
+                seq.append(std::move(sortedGraphTemp[i++].at(0).at(0)));
+
+            if(seq.length() != 0)
+                _sortedGraph.emplace_back(ExecutionLayer({seq}));
+            else
+                _sortedGraph.emplace_back(std::move(sortedGraphTemp[i++]));
+        }
+
     }
 
     // sort _sortedGraph

@@ -540,63 +540,23 @@ TEST_F(GraphAnalysisTests, optimizedGraph_7) {
   ASSERT_EQ(5, graph.size());
 
   const auto& optimized = graph.optimizedGraph();
-
+  // graph.printOut();
   // we expect that OptimizedGraph has exactly 3 layer
-  ASSERT_EQ(5, optimized.numOfLayers());
+  ASSERT_EQ(1, optimized.numOfLayers());
 
-  // checking first layer first
-  auto layer0 = optimized.layer(0);
+  auto layer = optimized.layer(0);
 
-  // we expect layer has exactly 1 OpSequence
-  ASSERT_EQ(1, layer0.width());
-  // auto sequence = layer0[0];
+  ASSERT_EQ(1, layer.width());
 
-  // we expect that OpSequence has exactly 2 ops
-  ASSERT_EQ(1, layer0[0].length());
-  ASSERT_EQ(4, layer0[0].at(0).protoContext().nodeId());
+  auto seq = layer.at(0);
+  ASSERT_EQ(5, seq.length());
 
-  // checking second layer now
-  auto layer1 = optimized.layer(1);
-
-  // we expect layer has exactly 2 OpSequences
-  ASSERT_EQ(1, layer1.width());
-  // sequence = layer1[0];
-
-  ASSERT_EQ(1, layer1[0].length());
-  ASSERT_EQ(5, layer1[0].at(0).protoContext().nodeId());
-
-  // checking layer 2
-  auto layer2 = optimized.layer(2);
-
-  // we expect layer has exactly 1 OpSequence
-  ASSERT_EQ(1, layer2.width());
-  // sequence = layer2[0];
-
-  // we expect that OpSequence has exactly 1 ops
-  ASSERT_EQ(1, layer2[0].length());
-  ASSERT_EQ(6, layer2[0].at(0).protoContext().nodeId());
-
-  // checking layer 3
-  auto layer3 = optimized.layer(3);
-
-  // we expect layer has exactly 1 OpSequence
-  ASSERT_EQ(1, layer3.width());
-  // sequence = layer3[0];
-
-  // we expect that OpSequence has exactly 1 ops
-  ASSERT_EQ(1, layer3[0].length());
-  ASSERT_EQ(7, layer3[0].at(0).protoContext().nodeId());
-
-  // checking layer 3
-  auto layer4 = optimized.layer(4);
-
-  // we expect layer has exactly 1 OpSequence
-  ASSERT_EQ(1, layer4.width());
-  // sequence = layer4[0];
-
-  // we expect that OpSequence has exactly 1 ops
-  ASSERT_EQ(1, layer4[0].length());
-  ASSERT_EQ(8, layer4[0].at(0).protoContext().nodeId());
+  // this Graph doesn't allow any variance here. Order must be exactly the same as below
+  ASSERT_EQ(std::string("a"), seq[0].node().name());
+  ASSERT_EQ(std::string("b"), seq[1].node().name());
+  ASSERT_EQ(std::string("c"), seq[2].node().name());
+  ASSERT_EQ(std::string("d"), seq[3].node().name());
+  ASSERT_EQ(std::string("e"), seq[4].node().name());
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_8) {
@@ -911,7 +871,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
 
   auto &optimized = graph.optimizedGraph();
 
-  graph.printOut();
+  // graph.printOut();
 
   // we expect exactly 1 layer
   ASSERT_EQ(1, optimized.layers());
@@ -931,7 +891,7 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
   const auto& optimized = graph.optimizedGraph();
-  graph.printOut();
+  // graph.printOut();
   graph.execute();
   /*
   some infor that would be useful for implementation
@@ -961,7 +921,7 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
 
 TEST_F(GraphAnalysisTests, test_cond_2) {
   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
-  graph.printOut();
+  // graph.printOut();
   graph.execute();
 }
 

@@ -84,6 +84,14 @@ void OpSequence::append(const Node &node,
   _ops.emplace_back(task);
 }
 
+void OpSequence::append(const ExecutionTask& task) {
+  _ops.emplace_back(task);
+}
+
+void OpSequence::append(ExecutionTask&& task) {
+  _ops.emplace_back(std::move(task));
+}
+
 OpSequence::iterator OpSequence::begin() {
   return OpSequence::iterator(*this, 0);
 }
