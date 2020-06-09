@@ -23,8 +23,8 @@
 
 namespace sd {
     enum Order {
-        kCOrder = 'c',
-        kFortranOrder = 'f',
+        kArrayOrderC = 'c',
+        kArrayOrderFortran = 'f',
     };
 }
 
