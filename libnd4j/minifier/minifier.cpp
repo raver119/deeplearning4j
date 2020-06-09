@@ -21,8 +21,9 @@
 #else
 #include <unistd.h>
 #endif
+
+#include <graph/Graph.h>
 #include <graph/GraphUtils.h>
-#include <graph/execution/GraphExecutioner.h>
 #include <ops/declarable/CustomOperations.h>
 
 #include <cstdlib>
@@ -113,10 +114,11 @@ int main(int argc, char *argv[]) {
         // std::cout << "File " << file << " exists and can be read" <<
         // std::endl;
         auto graph = Graph::fromFlatBuffers(file.c_str());
-        auto ops = graph->getOperations();
+        auto ops = graph.unmappedNodes();
 
         for (auto &v : ops) {
-          descriptors.emplace_back(v);
+          if (v.second.hasCustomOp())
+            descriptors.emplace_back(*v.second.customOp()->getOpDescriptor());
         }
       } else {
         std::cerr << "File " << file << " exists, but has zero size"
