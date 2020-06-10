@@ -60,16 +60,24 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     std::vector<int> startNodes;
     for (const auto& p : inMap) {
 
-        for (const auto& v : p.second.input()) {
-            if (v.first >= inMap.begin()->first) {              // is op
-                workMap[p.first]._in.push_back(v.first);
-                workMap[v.first]._out.push_back(p.first);
+        const auto& inputs = p.second.input();
+
+        for (int i = 0; i < inputs.size(); ++i) {
+
+            if (inputs[i].first >= inMap.begin()->first) {              // is op
+                workMap[p.first]._in.push_back(inputs[i].first);
+                workMap[inputs[i].first]._out.push_back(p.first);
+                const_cast<MAP_IMPL<int, Node>&>(inMap)[inputs[i].first].pickOutput(p.first, i);
             }
             else {                                              // is variable
-                for (const auto& i : varSpace.getVariable(v.first).get()->dependencies()) {
-                    if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), i.first) == workMap[p.first]._in.end()) {
-                        workMap[p.first]._in.push_back(i.first);
-                        workMap[i.first]._out.push_back(p.first);
+
+                const auto depends = varSpace.getVariable(inputs[i].first).get()->dependencies();
+
+                for (int j = 0; j < depends.size(); ++j) {
+                    if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
+                        workMap[p.first]._in.push_back(depends[j].first);
+                        workMap[depends[j].first]._out.push_back(p.first);
+                        const_cast<MAP_IMPL<int, Node>&>(inMap)[depends[j].first].pickOutput(p.first, j);
                     }
                 }
             }

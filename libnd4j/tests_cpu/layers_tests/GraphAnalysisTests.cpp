@@ -956,7 +956,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_13) {
   ASSERT_EQ(std::string("concat"),     seq[0].node().name());
 }
 
-TEST_F(GraphAnalysisTests, test_cond_1) {
+TEST_F(GraphAnalysisTests, optimizedGraph_cond1) {
 
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
   const auto& optimized = graph.optimizedGraph();
@@ -1018,7 +1018,7 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
   */
 }
 
-TEST_F(GraphAnalysisTests, test_cond_2) {
+TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
 
   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
   const auto& optimized = graph.optimizedGraph();
@@ -1054,7 +1054,7 @@ TEST_F(GraphAnalysisTests, test_cond_2) {
 
 }
 
-TEST_F(GraphAnalysisTests, test_while_iter_1_1) {
+TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   auto graph = Graph::fromFlatBuffers("resources/while_iter1.fb");
-  //graph.printOut();
+  graph.printOut();
 }
