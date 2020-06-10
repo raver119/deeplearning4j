@@ -261,9 +261,7 @@ std::shared_ptr<Variable> VariableSpace::getVariable(int id) const {
   return _variables.at(id);
 }
 
-VariableSpace::~VariableSpace() {
-  //
-}
+VariableSpace::~VariableSpace() { }
 
 VariableSpace::VariableSpace(const VariableSpace &other) {
   _stash = other._stash;

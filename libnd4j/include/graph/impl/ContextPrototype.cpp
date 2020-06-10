@@ -259,7 +259,7 @@ ContextPrototype &ContextPrototype::operator=(
 
 void ContextPrototype::setNodeId(int id) { _nodeId = id; }
 
-std::string ContextPrototype::name() const { return _name; }
+const std::string& ContextPrototype::name() const { return _name; }
 
 void ContextPrototype::setName(const std::string &name) { _name = name; }
 }  // namespace graph

@@ -34,6 +34,8 @@ class SD_EXPORT StackFrame {
  public:
   explicit StackFrame(VariableProxy &proxy);
   ~StackFrame() = default;
+
+  const VariableProxy& variableProxy() const { return _proxy; }
 };
 
 } // namespace graph

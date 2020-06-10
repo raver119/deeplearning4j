@@ -31,3 +31,56 @@ using namespace sd::graph;
 class NodeTests : public testing::Test {
  public:
 };
+
+TEST_F(NodeTests, test_copy_1) {
+  Node a(sd::ops::add(), "add");
+
+  Node b(sd::ops::divide(), "div");
+
+  ASSERT_NE(a.name(), b.name());
+  ASSERT_NE(a.customOp()->getOpName(), b.customOp()->getOpName());
+  ASSERT_NE(a.contextPrototype().name(), b.contextPrototype().name());
+
+  b = a;
+
+  ASSERT_EQ(a.name(), b.name());
+  ASSERT_EQ(a.customOp()->getOpName(), b.customOp()->getOpName());
+  ASSERT_EQ(a.contextPrototype().name(), b.contextPrototype().name());
+
+  ASSERT_NE(&a.contextPrototype(), &b.contextPrototype());
+}
+
+static FORCEINLINE Node copy(const Node& node) {
+  Node a(node);
+  return a;
+}
+
+TEST_F(NodeTests, test_copy_2) {
+  Node a(sd::ops::add(), "add");
+
+  Node b(sd::ops::divide(), "div");
+
+  ASSERT_NE(a.name(), b.name());
+  ASSERT_NE(a.customOp()->getOpName(), b.customOp()->getOpName());
+  ASSERT_NE(a.contextPrototype().name(), b.contextPrototype().name());
+
+  b = copy(a);
+
+  ASSERT_EQ(a.name(), b.name());
+  ASSERT_EQ(a.customOp()->getOpName(), b.customOp()->getOpName());
+  ASSERT_EQ(a.contextPrototype().name(), b.contextPrototype().name());
+
+  ASSERT_NE(&a.contextPrototype(), &b.contextPrototype());
+}
+
+TEST_F(NodeTests, test_copy_3) {
+  Node a(sd::ops::add(), "add");
+
+  Node b = copy(a);
+
+  ASSERT_EQ(a.name(), b.name());
+  ASSERT_EQ(a.customOp()->getOpName(), b.customOp()->getOpName());
+  ASSERT_EQ(a.contextPrototype().name(), b.contextPrototype().name());
+
+  ASSERT_NE(&a.contextPrototype(), &b.contextPrototype());
+}

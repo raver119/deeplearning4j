@@ -637,13 +637,11 @@ Node::Node(Node &&other) noexcept {
   _hasInternalInputs = other._hasInternalInputs;
   _active = other._active;
 
-  _protoContext = other._protoContext;
+  _protoContext = std::move(other._protoContext);
 
   _customOp = std::move(other._customOp);
   _input = std::move(other._input);
   _output = std::move(other._output);
-
-  other._customOp = nullptr;
 }
 
 Node &Node::operator=(Node &&other) noexcept {
@@ -662,7 +660,7 @@ Node &Node::operator=(Node &&other) noexcept {
   _hasInternalInputs = other._hasInternalInputs;
   _active = other._active;
 
-  _protoContext = other._protoContext;
+  _protoContext = std::move(other._protoContext);
 
   _customOp = std::move(other._customOp);
   _input = std::move(other._input);

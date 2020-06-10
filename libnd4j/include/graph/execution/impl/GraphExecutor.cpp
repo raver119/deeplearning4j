@@ -21,6 +21,7 @@
 #include <graph/Graph.h>
 #include <graph/execution/GraphExecutor.h>
 
+
 namespace sd {
 namespace graph {
 Context GraphExecutor::prepareContext(
@@ -61,7 +62,7 @@ Nd4jStatus GraphExecutor::execute(
 
 Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
                                   const OptimizedGraph &graph,
-                                  VariableProxy &proxy,
+                                  std::deque<StackFrame> &stackFrames,
                                   const int deviceId) const {
   // we either follow or override target deviceId specified in OpSequence
   auto targetDevice = deviceId >= 0
@@ -74,10 +75,11 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
   auto result = Status::OK();
   for (int e = 0; e < seq.length(); e++) {
     auto &v = seq[e];
+    auto &p = stackFrames.back().variableProxy();
 
     // only Ops can be executed this way :(
     if (v.node().hasCustomOp())
-      result = execute(v.node().customOp(), v.protoContext(), seq, graph, proxy, targetDevice);
+      result = execute(v.node().customOp(), v.protoContext(), seq, graph, const_cast<VariableProxy&>(p), targetDevice);
     else {
       nd4j_printf("Node <%i:%s> has no customOp set\n",
                   v.node().id(),
@@ -98,14 +100,21 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
    * this is a basic exection logic: roll through layers and sequences and
    * execute them one by one sequentially
    */
+  std::deque<StackFrame> stackFrames;
+
+  StackFrame baseFrame(proxy);
+
+  // now we create one default StackFrame. current one.
+  stackFrames.push_back(baseFrame);
+
   const auto numDevices = AffinityManager::numberOfDevices();
-  Nd4jStatus result = Status::OK();
+  Nd4jStatus result = Status::OK();  //
   for (uint64_t l = 0; l < graph.layers(); l++) {
     const auto &layer = graph.layer(l);
 
     //TODO: this loop is executable in parallel, so we should do this eventually
     for (uint64_t o = 0; o < layer.width(); o++) {
-      result = execute(layer[o], graph, proxy, -1);
+      result = execute(layer[o], graph, stackFrames, -1);
     }
 
     // early termination
@@ -121,7 +130,11 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
       }
   }
 
+  // that's the rule. it can't be not equal to 1.
+  assert(stackFrames.size() == 1);
+
   return result;
 }
+
 }  // namespace graph
 }  // namespace sd

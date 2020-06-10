@@ -132,7 +132,7 @@ class SD_EXPORT ContextPrototype {
   bool isUseMKLDNN() const { return _useMKLDNN; }
   void setUseMKLDNN(bool useMKLDNN) { _useMKLDNN = useMKLDNN; }
 
-  std::string name() const;
+  const std::string& name() const;
   void setName(const std::string& name);
 
   /**
