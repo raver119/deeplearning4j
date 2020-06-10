@@ -51,7 +51,7 @@ namespace sd {
         template <typename T>
         static NDArray valueOf(const std::vector<Nd4jLong>& shape, T value, const Order order = sd::kArrayOrderC,  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
-        static NDArray valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, const Order sd::kArrayOrderC,  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, const Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
         static NDArray linspace(T from, T to, Nd4jLong numElements);
