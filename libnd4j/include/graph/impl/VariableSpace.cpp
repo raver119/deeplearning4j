@@ -376,7 +376,19 @@ void VariableSpace::dropVariable(const std::pair<int, int> &pair) {
   dropVariable(pair.first, pair.second);
 }
 
-void VariableSpace::dropVariable(int id, int idx) {}
+void VariableSpace::dropVariable(int id, int idx) {
+  if (hasVariable(id, idx)) {
+    // we must check if string name is defined for this Variable
+    auto v = getVariable(id, idx);
+    if (!v->name().empty())
+      _symbolic.erase(v->name());
+
+    _paired.erase(std::pair<int, int>{id, idx});
+  }
+
+  if (idx == 0 && hasVariable(id))
+    _variables.erase(id);
+}
 
 VariableSpace::VariableSpace() {}
 }  // namespace graph
