@@ -957,11 +957,41 @@ TEST_F(GraphAnalysisTests, optimizedGraph_13) {
 }
 
 TEST_F(GraphAnalysisTests, test_cond_1) {
-  auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
 
+  auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
   const auto& optimized = graph.optimizedGraph();
   // graph.printOut();
-  graph.execute();
+
+  // we expect exactly 3 layers
+  ASSERT_EQ(3, optimized.layers());
+
+  // layer 0
+  auto layer = optimized.layer(0);
+  ASSERT_EQ(1, layer.width());
+  auto seq = layer[0];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("in_0/read"),   seq[0].node().name());
+  ASSERT_EQ(std::string("cond/Switch"), seq[1].node().name());
+
+  // layer 1
+  layer = optimized.layer(1);
+  ASSERT_EQ(2, layer.width());
+  seq = layer[0];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("cond/switch_t"), seq[0].node().name());
+  ASSERT_EQ(std::string("cond/LinSpace"), seq[1].node().name());
+  seq = layer[1];
+  ASSERT_EQ(1, seq.length());
+  ASSERT_EQ(std::string("cond/switch_f"), seq[0].node().name());
+
+  // layer 2
+  layer = optimized.layer(2);
+  ASSERT_EQ(1, layer.width());
+  seq = layer[0];
+  ASSERT_EQ(1, seq.length());
+  ASSERT_EQ(std::string("cond/Merge"), seq[0].node().name());
+
+  // graph.execute();
   /*
   some infor that would be useful for implementation
   currently on optimization graph is passing next data
@@ -989,9 +1019,39 @@ TEST_F(GraphAnalysisTests, test_cond_1) {
 }
 
 TEST_F(GraphAnalysisTests, test_cond_2) {
+
   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
+  const auto& optimized = graph.optimizedGraph();
   // graph.printOut();
-  graph.execute();
+
+  ASSERT_EQ(3, optimized.layers());
+
+  // layer 0
+  auto layer = optimized.layer(0);
+  ASSERT_EQ(1, layer.width());
+  auto seq = layer[0];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("in_0/read"),   seq[0].node().name());
+  ASSERT_EQ(std::string("cond/Switch"), seq[1].node().name());
+
+  // layer 1
+  layer = optimized.layer(1);
+  ASSERT_EQ(2, layer.width());
+  seq = layer[0];
+  ASSERT_EQ(2, seq.length());
+  ASSERT_EQ(std::string("cond/switch_t"), seq[0].node().name());
+  ASSERT_EQ(std::string("cond/LinSpace"), seq[1].node().name());
+  seq = layer[1];
+  ASSERT_EQ(1, seq.length());
+  ASSERT_EQ(std::string("cond/switch_f"), seq[0].node().name());
+
+  // layer 2
+  layer = optimized.layer(2);
+  ASSERT_EQ(1, layer.width());
+  seq = layer[0];
+  ASSERT_EQ(1, seq.length());
+  ASSERT_EQ(std::string("cond/Merge"), seq[0].node().name());
+
 }
 
 TEST_F(GraphAnalysisTests, test_while_iter_1_1) {
