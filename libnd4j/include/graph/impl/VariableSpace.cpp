@@ -339,35 +339,35 @@ VariableSpace &VariableSpace::operator=(const VariableSpace &other) {
 
 void VariableSpace::replaceVariable(std::shared_ptr<Variable> variable) {
   bool replaced = false;
-  // trying name first
+  // trying name lookup first
   if (!variable->getName().empty()) {
-    nd4j_printf("Trying to replace variable by name: [%s]\n",
-                variable->getName().c_str());
     if (hasVariable(variable->getName())) {
-      nd4j_printf("Replacing by name: [%s]\n", variable->getName().c_str());
       auto vs = getVariable(variable->getName());
       dropVariable(vs->id(), vs->index());
 
       putVariable({vs->id(), vs->index()}, variable);
-      // delete vs;
+
+      // if we're on zero index, we also must update index-less reference
+      if (vs->index() == 0)
+        _variables[vs->id()] = variable;
+
       replaced = true;
     }
   } else {
-    nd4j_printf("Trying to replace variable by id: [%i:%i]\n", variable->id(),
-                variable->index());
     if (hasVariable(variable->id(), variable->index())) {
-      nd4j_printf("Replacing by id: [%i:%i]\n", variable->id(),
-                  variable->index());
       auto vs = getVariable(variable->id(), variable->index());
       dropVariable(variable->id(), variable->index());
       putVariable({vs->id(), vs->index()}, variable);
-      // delete vs;
+
+      // if we're on zero index, we also must update index-less reference
+      if (vs->index() == 0)
+        _variables[vs->id()] = variable;
+
       replaced = true;
     }
   }
 
   if (!replaced) {
-    nd4j_printf("wasn't able to replace variable, putting\n", "");
     putVariable({variable->id(), variable->index()}, variable);
   }
 }

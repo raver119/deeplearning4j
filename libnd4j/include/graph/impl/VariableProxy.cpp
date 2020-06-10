@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -28,10 +29,9 @@ VariableProxy::VariableProxy(const VariableSpace *ref) {
   if (ref == nullptr) _backed = new VariableSpace();
 
   _backed = ref;
-  _current = new VariableSpace();
 }
 
-VariableProxy::~VariableProxy() { delete _current; }
+VariableProxy::~VariableProxy() { }
 
 int VariableProxy::numberOfPlaceholders() const {
   return _backed->numberOfPlaceholders();
@@ -55,15 +55,15 @@ bool VariableProxy::hasExternalVariable(const std::string &symbol) const {
 }
 
 bool VariableProxy::hasVariable(int id) const {
-  return _current->hasVariable(id) || _backed->hasVariable(id);
+  return _current.hasVariable(id) || _backed->hasVariable(id);
 }
 
 bool VariableProxy::hasVariable(int id, int idx) const {
-  return _current->hasVariable(id, idx) || _backed->hasVariable(id, idx);
+  return _current.hasVariable(id, idx) || _backed->hasVariable(id, idx);
 }
 
 bool VariableProxy::hasVariable(const std::pair<int, int> &pair) const {
-  return _current->hasVariable(pair) || _backed->hasVariable(pair);
+  return _current.hasVariable(pair) || _backed->hasVariable(pair);
 }
 
 void VariableProxy::dropVariable(const std::pair<int, int> &pair) {
@@ -71,16 +71,16 @@ void VariableProxy::dropVariable(const std::pair<int, int> &pair) {
 }
 
 void VariableProxy::dropVariable(int id, int idx) {
-  assert(_current->hasVariable(id, idx));
+  assert(_current.hasVariable(id, idx));
 
-  _current->dropVariable(id, idx);
+  _current.dropVariable(id, idx);
 }
 
 std::vector<std::shared_ptr<Variable>> VariableProxy::variables() const {
   std::vector<std::shared_ptr<Variable>> result;
 
   auto b = _backed->variables();
-  auto c = _current->variables();
+  auto c = _current.variables();
 
   for (auto v : b) result.emplace_back(v);
 
@@ -90,11 +90,11 @@ std::vector<std::shared_ptr<Variable>> VariableProxy::variables() const {
 }
 
 bool VariableProxy::hasVariable(const std::string &symbol) const {
-  return _current->hasVariable(symbol) || _backed->hasVariable(symbol);
+  return _current.hasVariable(symbol) || _backed->hasVariable(symbol);
 }
 
 std::shared_ptr<Variable> VariableProxy::getVariable(int id) const {
-  if (_current->hasVariable(id)) return _current->getVariable(id);
+  if (_current.hasVariable(id)) return _current.getVariable(id);
 
   if (_backed->hasVariable(id)) return _backed->getVariable(id);
 
@@ -103,7 +103,7 @@ std::shared_ptr<Variable> VariableProxy::getVariable(int id) const {
 }
 
 std::shared_ptr<Variable> VariableProxy::getVariable(int id, int idx) const {
-  if (_current->hasVariable(id, idx)) return _current->getVariable(id, idx);
+  if (_current.hasVariable(id, idx)) return _current.getVariable(id, idx);
 
   if (_backed->hasVariable(id, idx)) return _backed->getVariable(id, idx);
 
@@ -113,7 +113,7 @@ std::shared_ptr<Variable> VariableProxy::getVariable(int id, int idx) const {
 
 std::shared_ptr<Variable> VariableProxy::getVariable(
     const std::pair<int, int> &pair) const {
-  if (_current->hasVariable(pair)) return _current->getVariable(pair);
+  if (_current.hasVariable(pair)) return _current.getVariable(pair);
 
   if (_backed->hasVariable(pair)) return _backed->getVariable(pair);
 
@@ -124,7 +124,7 @@ std::shared_ptr<Variable> VariableProxy::getVariable(
 
 std::shared_ptr<Variable> VariableProxy::getVariable(
     const std::string &symbol) const {
-  if (_current->hasVariable(symbol)) return _current->getVariable(symbol);
+  if (_current.hasVariable(symbol)) return _current.getVariable(symbol);
 
   if (_backed->hasVariable(symbol)) return _backed->getVariable(symbol);
 
@@ -138,77 +138,77 @@ void VariableProxy::replaceVariable(std::shared_ptr<Variable> variable) {
     if (_backed->hasVariable(variable->getName())) {
       auto origVar = _backed->getVariable(variable->getName());
       variable->setId(origVar->id(), origVar->index());
-      _current->replaceVariable(variable);
+      _current.replaceVariable(variable);
     } else
-      _current->replaceVariable(variable);
+      _current.replaceVariable(variable);
   } else  // if proxy has variable - that's one story
-    _current->replaceVariable(variable);
+    _current.replaceVariable(variable);
 }
 
 std::shared_ptr<Variable> VariableProxy::putVariable(const std::string &name,
                                                      int id, int idx,
                                                      const NDArray &array) {
-  return _current->putVariable(name, id, idx, array);
+  return _current.putVariable(name, id, idx, array);
 }
 
 void VariableProxy::putOutputVariable(std::shared_ptr<Variable> variable) {
-  _current->putOutputVariable(variable);
+  _current.putOutputVariable(variable);
 }
 
 std::shared_ptr<Variable> VariableProxy::putVariable(
     const std::pair<int, int> &pair, const NDArray &array) {
-  return _current->putVariable(pair, array);
+  return _current.putVariable(pair, array);
 }
 
 void VariableProxy::putVariable(const std::pair<int, int> &pair,
                                 const std::shared_ptr<Variable> &variable) {
-  _current->putVariable(pair, variable);
+  _current.putVariable(pair, variable);
 }
 
 void VariableProxy::putVariable(int id,
                                 const std::shared_ptr<Variable> &variable) {
-  _current->putVariable(id, variable);
+  _current.putVariable(id, variable);
 }
 
 std::shared_ptr<Variable> VariableProxy::putVariable(int id,
                                                      const NDArray &array) {
-  return _current->putVariable(id, array);
+  return _current.putVariable(id, array);
 }
 
 std::shared_ptr<Variable> VariableProxy::putVariable(int id, int idx,
                                                      const NDArray &array) {
-  return _current->putVariable(id, idx, array);
+  return _current.putVariable(id, idx, array);
 }
 
 void VariableProxy::putVariable(const std::string &name, int id, int idx,
                                 const std::shared_ptr<Variable> &array) {
-  _current->putVariable(name, id, idx, array);
+  _current.putVariable(name, id, idx, array);
 }
 
-Stash *VariableProxy::stash() const { return _current->stash(); }
+Stash *VariableProxy::stash() const { return _current.stash(); }
 
 Nd4jLong VariableProxy::externalMemory() const {
-  return _backed->externalMemory() + _current->externalMemory();
+  return _backed->externalMemory() + _current.externalMemory();
 }
 
 Nd4jLong VariableProxy::internalMemory() const {
-  return _backed->internalMemory() + _current->internalMemory();
+  return _backed->internalMemory() + _current.internalMemory();
 }
 
 Nd4jLong VariableProxy::totalMemory() const {
-  return _backed->totalMemory() + _current->totalMemory();
+  return _backed->totalMemory() + _current.totalMemory();
 }
 
 int VariableProxy::externalEntries() const {
-  return _backed->externalEntries() + _current->externalEntries();
+  return _backed->externalEntries() + _current.externalEntries();
 }
 
 int VariableProxy::internalEntries() const {
-  return _backed->internalEntries() + _current->internalEntries();
+  return _backed->internalEntries() + _current.internalEntries();
 }
 
 int VariableProxy::totalEntries() const {
-  return _backed->totalEntries() + _current->totalEntries();
+  return _backed->totalEntries() + _current.totalEntries();
 }
 
 VariableSpace &VariableProxy::operator=(const VariableSpace &other) {
@@ -220,10 +220,15 @@ VariableSpace &VariableProxy::operator=(const VariableSpace &other) {
 }
 
 void VariableProxy::pullFrom(const VariableProxy &proxy) {
-
+  for (const auto &v:proxy._current.variables()) {
+    _current.replaceVariable(v);
+  }
 }
-void VariableProxy::pushTo(VariableProxy &proxy) const {
 
+void VariableProxy::pushTo(VariableProxy &proxy) const {
+  for (const auto &v:_current.variables()) {
+    proxy._current.replaceVariable(v);
+  }
 }
 
 }  // namespace graph

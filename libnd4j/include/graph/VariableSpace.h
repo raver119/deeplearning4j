@@ -97,19 +97,14 @@ class SD_EXPORT VariableSpace {
 
   virtual std::vector<std::shared_ptr<Variable>> variables() const;
 
-  virtual std::shared_ptr<Variable> putVariable(const std::pair<int, int> &pair,
-                                                const NDArray &array);
+  virtual std::shared_ptr<Variable> putVariable(const std::pair<int, int> &pair, const NDArray &array);
   virtual std::shared_ptr<Variable> putVariable(int id, const NDArray &array);
-  virtual std::shared_ptr<Variable> putVariable(
-      int id, int idx, const std::shared_ptr<NDArray> &array);
-  virtual std::shared_ptr<Variable> putVariable(int id, int idx,
-                                                const NDArray &array);
-  virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id,
-                                                int idx, const NDArray &array);
-  virtual void putVariable(const std::string &name, int id, int idx,
-                           const std::shared_ptr<Variable> &variable);
-  virtual void putVariable(const std::pair<int, int> &pair,
-                           const std::shared_ptr<Variable> &variable);
+  virtual std::shared_ptr<Variable> putVariable(int id, int idx, const std::shared_ptr<NDArray> &array);
+  virtual std::shared_ptr<Variable> putVariable(int id, int idx, const NDArray &array);
+  virtual std::shared_ptr<Variable> putVariable(const std::string &name, int id, int idx, const NDArray &array);
+
+  virtual void putVariable(const std::string &name, int id, int idx, const std::shared_ptr<Variable> &variable);
+  virtual void putVariable(const std::pair<int, int> &pair, const std::shared_ptr<Variable> &variable);
   virtual void putVariable(int id, const std::shared_ptr<Variable> &variable);
 
   virtual void dropVariable(const std::string &pair);
