@@ -31,9 +31,11 @@ namespace sd {
 namespace graph {
 class SD_EXPORT ExecutionTask {
  protected:
-  // FIXME: do we really want references here? smart pointers would work better
-  const Node& _node;
-  const ContextPrototype& _context;
+  // TODO: smart pointers here?
+  const Node _node;
+
+  // FIXME: this field can be removed. Node contains ContextPrototype.
+  const ContextPrototype _context;
 
  public:
   ExecutionTask(const Node& node,
