@@ -71,7 +71,7 @@ namespace sd {
         static NDArray create(char order, const std::vector<Nd4jLong> &shape, const std::vector<T> &data, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
-        static NDArray create(const std::vector<Nd4jLong> &shape, const std::vector<T> &data = {}, const Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
+        static NDArray create(const std::vector<Nd4jLong> &shape, const std::vector<T> &data = {}, const sd::Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
 
         template <typename T>
         static NDArray create(char order, const std::vector<Nd4jLong> &shape, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
