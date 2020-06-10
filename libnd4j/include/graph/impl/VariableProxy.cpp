@@ -218,5 +218,13 @@ VariableSpace &VariableProxy::operator=(const VariableSpace &other) {
 
   return *this;
 }
+
+void VariableProxy::pullFrom(const VariableProxy &proxy) {
+
+}
+void VariableProxy::pushTo(VariableProxy &proxy) const {
+
+}
+
 }  // namespace graph
 }  // namespace sd

@@ -144,3 +144,59 @@ TEST_F(VariableProxyTests, Test_Cast_1) {
   ASSERT_TRUE(y == *z1);
   ASSERT_TRUE(x == *z0);
 }
+
+TEST_F(VariableProxyTests, test_update_1) {
+  VariableSpace ref;
+
+  auto x = NDArrayFactory::create<int>(1);
+  auto A = NDArrayFactory::create<int>(2);
+  auto B = NDArrayFactory::create<int>(3);
+
+  // set initial states for all 3 VariableSpaces/Proxies
+  ref.putVariable(2, x);
+
+  VariableProxy proxyA(&ref);
+  proxyA.putVariable(2, A);
+
+  VariableProxy proxyB(&proxyA);
+  proxyB.putVariable(2, B);
+
+  // check out initial state
+  ASSERT_EQ(x,    *ref.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(A, *proxyA.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(B, *proxyB.getVariable(2)->getNDArray().get());
+
+  // update state now and check result
+  proxyB.pushTo(proxyA);
+  ASSERT_EQ(x,    *ref.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(B, *proxyA.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(B, *proxyB.getVariable(2)->getNDArray().get());
+}
+
+TEST_F(VariableProxyTests, test_update_2) {
+  VariableSpace ref;
+
+  auto x = NDArrayFactory::create<int>(1);
+  auto A = NDArrayFactory::create<int>(2);
+  auto B = NDArrayFactory::create<int>(3);
+
+  // set initial states for all 3 VariableSpaces/Proxies
+  ref.putVariable(2, x);
+
+  VariableProxy proxyA(&ref);
+  proxyA.putVariable(2, A);
+
+  VariableProxy proxyB(&proxyA);
+  proxyB.putVariable(2, B);
+
+  // check out initial state
+  ASSERT_EQ(x,    *ref.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(A, *proxyA.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(B, *proxyB.getVariable(2)->getNDArray().get());
+
+  // update state now and check result
+  proxyB.pullFrom(proxyA);
+  ASSERT_EQ(x,    *ref.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(A, *proxyA.getVariable(2)->getNDArray().get());
+  ASSERT_EQ(A, *proxyB.getVariable(2)->getNDArray().get());
+}

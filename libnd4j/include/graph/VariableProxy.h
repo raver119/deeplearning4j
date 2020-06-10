@@ -92,6 +92,18 @@ class SD_EXPORT VariableProxy : public VariableSpace {
   virtual int totalEntries() const override;
 
   virtual Stash* stash() const override;
+
+  /**
+   * This method updates this proxy with entries from a given VariableProxy
+   * @param proxy
+   */
+  void pullFrom(const VariableProxy &proxy);
+
+  /**
+   * This method will update given VariableProxy with values from this proxy
+   * @param proxy
+   */
+  void pushTo(VariableProxy &proxy) const;
 };
 }  // namespace graph
 }  // namespace sd
