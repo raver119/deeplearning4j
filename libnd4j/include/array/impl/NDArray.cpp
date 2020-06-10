@@ -1050,7 +1050,6 @@ bool NDArray::isR() const {
 
 //////////////////////////////////////////////////////////////////////////
 bool NDArray::isZ() const {
-  // TODO: decide if we really want to exclude Bool here
   return !isC() && !isR() && !isB() && !isS();
 }
 
@@ -2744,9 +2743,8 @@ NDArray NDArray::cast(DataType dtype) const {
 ////////////////////////////////////////////////////////////////////////
 void NDArray::cast(NDArray& target, DataType dtype) {
   if (isS())
-    throw std::runtime_error(
-        "NDArray::cast: you can't use this method on String array!");
-  // TODO: to be implemented properly
+    throw std::runtime_error("NDArray::cast: you can't use this method on String array!");
+
   target.assign(this);
 }
 

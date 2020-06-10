@@ -67,14 +67,13 @@ LaunchContext::LaunchContext(Nd4jPointer cudaStream,
 
 static std::mutex _lock;
 
-    LaunchContext* LaunchContext::defaultContext() {
-      {
-        // synchronous block goes here
-        std::lock_guard<std::mutex> lock(_lock);
-  // TODO: we need it to be device-aware, but only once we add NUMA support for
-  // cpu
-  if (LaunchContext::_contexts.empty())
-    LaunchContext::_contexts.emplace_back(std::make_shared<LaunchContext>());
+LaunchContext* LaunchContext::defaultContext() {
+  {
+    // synchronous block goes here
+    std::lock_guard<std::mutex> lock(_lock);
+    // TODO: we need it to be device-aware, but only once we add NUMA support for cpu
+    if (LaunchContext::_contexts.empty())
+      LaunchContext::_contexts.emplace_back(std::make_shared<LaunchContext>());
   }
 
   // return context for current device
@@ -83,19 +82,16 @@ static std::mutex _lock;
 
 std::mutex* LaunchContext::deviceMutex() { return &_mutex; }
 
-void LaunchContext::swapContextBuffers(ContextBuffers& buffers) {
-  //
-}
+void LaunchContext::swapContextBuffers(ContextBuffers& buffers) { }
 
 bool LaunchContext::isInitialized() { return true; }
 
-void LaunchContext::releaseBuffers() {
-  //
-}
+void LaunchContext::releaseBuffers() { }
 
 sd::ErrorReference* LaunchContext::errorReference() {
   return contextBuffers.errorReference();
 }
 
 void* LaunchContext::engine() { return _engine; }
+
 }  // namespace sd

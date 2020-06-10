@@ -847,12 +847,6 @@ class SD_EXPORT NDArray {
    */
   Nd4jLong argMax(std::initializer_list<int> dimensions = {});
 
-  // FIXME: remove this method eventually
-  void makeBothActual() const {
-    syncToDevice();
-    syncToHost();
-  }
-
   void applyTransform(sd::transform::FloatOps op, NDArray& target,
                       ExtraArguments* extraParams = nullptr);
   void applyTransform(sd::transform::SameOps op, NDArray& target,
@@ -2185,7 +2179,6 @@ const Nd4jLong* NDArray::shapeInfo() const { return _shapeInfo; }
 ////////////////////////////////////////////////////////////////////////
 const Nd4jLong* NDArray::specialShapeInfo() const {
   if (_shapeInfoD == nullptr) return _shapeInfo;
-  // FIXME: this should be fixed once CUDA backend added
   return _shapeInfoD;
 }
 

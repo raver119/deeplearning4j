@@ -615,7 +615,7 @@ void* NDArray::specialBuffer() {
     syncToDevice();
     tickReadHost();
   }
-  // FIXME: this should be fixed once CUDA backend added
+
   return static_cast<int8_t*>(_buffer->special()) + (_offset * sizeOfT());
 }
 
@@ -625,7 +625,7 @@ void const* NDArray::specialBuffer() const {
     syncToDevice();
     tickReadHost();
   }
-  // FIXME: this should be fixed once CUDA backend added
+
   return static_cast<int8_t*>(_buffer->special()) + (_offset * sizeOfT());
 }
 
