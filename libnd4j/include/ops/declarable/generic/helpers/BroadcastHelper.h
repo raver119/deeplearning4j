@@ -79,7 +79,7 @@ namespace sd {
                         return z;
                     } else {
                         auto v = y->getShapeAsVector();
-                        auto tZ = NDArrayFactory::valueOf(v, y, y->ordering());
+                        auto tZ = NDArrayFactory::valueOf(v, y, (sd::Order)y->ordering());
                         tZ.applyPairwiseTransform(op.p, *y, extraArgs);
                         return new NDArray(tZ);
                     }
@@ -120,7 +120,7 @@ namespace sd {
                         return z;
                     } else {
                         auto v = y->getShapeAsVector();
-                        auto tZ = NDArrayFactory::valueOf(v, y, y->ordering());
+                        auto tZ = NDArrayFactory::valueOf(v, y, (sd::Order)y->ordering());
                         //tZ->applyPairwiseTransform(op.p, *y, extraArgs);
                         return new NDArray(tZ);
                     }
