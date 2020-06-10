@@ -83,3 +83,28 @@ TEST_F(NodeTests, test_copy_3) {
 
   ASSERT_NE(&a.contextPrototype(), &b.contextPrototype());
 }
+
+static MAP_IMPL<int, Node> modifier(MAP_IMPL<int, Node> map) {
+  if (map.size() < 5) {
+    map[3] = Node(sd::ops::multiply(), "mul");
+    return map;
+  } else {
+    map.erase(1);
+    return map;
+  }
+}
+
+TEST_F(NodeTests, test_copy_4) {
+  MAP_IMPL<int, Node> map;
+  map[1] = Node(sd::ops::add(), "add");
+  map[2] = Node(sd::ops::divide(), "div");
+
+  auto other = modifier(map);
+
+  ASSERT_EQ(3, other.size());
+
+  ASSERT_EQ(map[1].name(), other[1].name());
+  ASSERT_EQ(map[1].contextPrototype().name(), other[1].contextPrototype().name());
+
+  ASSERT_NE(&map[1].contextPrototype(), &other[1].contextPrototype());
+}
