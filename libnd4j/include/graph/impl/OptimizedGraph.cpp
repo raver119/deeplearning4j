@@ -45,7 +45,7 @@ OptimizedGraph& OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////
-OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableSpace& varSpace) {
+OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& varSpace) {
 
     struct NodeInfo {
         uint _layerNum = 0;
@@ -67,7 +67,7 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
             if (inputs[i].first >= inMap.begin()->first) {              // is op
                 workMap[p.first]._in.push_back(inputs[i].first);
                 workMap[inputs[i].first]._out.push_back(p.first);
-                const_cast<MAP_IMPL<int, Node>&>(inMap)[inputs[i].first].pickOutput(p.first, i);
+                inMap[inputs[i].first].pickOutput(p.first, i);
             }
             else {                                              // is variable
 
@@ -77,7 +77,7 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
                     if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
                         workMap[p.first]._in.push_back(depends[j].first);
                         workMap[depends[j].first]._out.push_back(p.first);
-                        const_cast<MAP_IMPL<int, Node>&>(inMap)[depends[j].first].pickOutput(p.first, j);
+                        inMap[depends[j].first].pickOutput(p.first, j);
                     }
                 }
             }

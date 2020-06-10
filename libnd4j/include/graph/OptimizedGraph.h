@@ -39,7 +39,7 @@ class SD_EXPORT OptimizedGraph {
     // const Graph& _originalGraph;
 
   public:
-    OptimizedGraph(const MAP_IMPL<int, Node>& map, const VariableSpace& varSpace);
+    OptimizedGraph(MAP_IMPL<int, Node> map, const VariableSpace& varSpace);
     // move constructor
     OptimizedGraph(OptimizedGraph&& other) noexcept;
     // default constructor
