@@ -51,8 +51,7 @@ TEST_F(NodeTests, test_copy_1) {
 }
 
 static FORCEINLINE Node copy(const Node& node) {
-  Node a(node);
-  return a;
+  return Node(node);
 }
 
 TEST_F(NodeTests, test_copy_2) {
