@@ -94,6 +94,71 @@ namespace sd {
     template ND4J_EXPORT NDArray NDArrayFactory::create(const char order, const std::vector<Nd4jLong> &shape, const std::vector<uint8_t>& data, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const char order, const std::vector<Nd4jLong> &shape, const std::vector<bool>& data, sd::LaunchContext * context);
 
+////////////////////////////////////////////////////////////////////////////////
+    template <>
+    ND4J_EXPORT NDArray NDArrayFactory::create<bool>(const std::vector<Nd4jLong> &shape, const std::vector<bool> &data, sd::Order order, sd::LaunchContext * context) {
+
+        if ((int) shape.size() > MAX_RANK)
+            throw std::invalid_argument("NDArrayFactory::create: rank of NDArray can't exceed 32 !");
+
+        ShapeDescriptor descriptor(sd::DataType::BOOL, (char)order, shape);
+
+        if (data.size() > 0 && descriptor.arrLength() != data.size()) {
+            nd4j_printf("NDArrayFactory::create: data size [%i] doesn't match shape length [%lld]\n", data.size(), descriptor.arrLength());
+            throw std::runtime_error("NDArrayFactory::create: data size doesn't match shape");
+        }
+
+        bool* hostBuffer = nullptr;
+        ALLOCATE(hostBuffer, context->getWorkspace(), data.size() > 0? data.size():descriptor.arrLength(), bool);
+        if (data.size() > 0)
+        std::copy(data.begin(), data.end(), hostBuffer);
+
+        std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(hostBuffer, descriptor.arrLength() * sizeof(bool), sd::DataType::BOOL, true, context->getWorkspace());
+
+        NDArray result(buffer, descriptor, context);
+
+        return result;
+    }
+
+////////////////////////////////////////////////////////////////////////////////
+
+    template <typename T>
+    static NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<T> &data, Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext::defaultContext()) {
+        if ((int) shape.size() > MAX_RANK)
+            throw std::invalid_argument("NDArrayFactory::create: rank of NDArray can't exceed 32 !");
+
+        ShapeDescriptor descriptor(DataTypeUtils::fromT<T>(), (char)order, shape);
+
+        if (data.size() > 0 && descriptor.arrLength() != data.size()) {
+            nd4j_printf("NDArrayFactory::create: data size [%i] doesn't match shape length [%lld]\n", data.size(), descriptor.arrLength());
+            throw std::runtime_error("NDArrayFactory::create: data size doesn't match shape");
+        }
+        
+        if (data.size() == 0) {
+            std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(descriptor.arrLength() * DataTypeUtils::sizeOfElement(dtype), dtype, context->getWorkspace());
+            NDArray result(buffer, descriptor, context);
+            return result;
+        }
+
+        std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(data.data(), DataTypeUtils::fromT<T>(), descriptor.arrLength() * sizeof(T), context->getWorkspace());
+
+        NDArray result(buffer, descriptor, context);
+
+        return result;
+    }
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<double>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<float>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<float16>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<bfloat16>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<Nd4jLong>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<int>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<uint16_t>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<uint64_t>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<int16_t>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<int8_t>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<uint8_t>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<bool>& data, sd::Order order, sd::LaunchContext * context);
+
 ////////////////////////////////////////////////////////////////////////
 template <typename T>
 void NDArrayFactory::memcpyFromVector(void *ptr, const std::vector<T> &vector) {
@@ -194,6 +259,7 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
         result.assign(value);
         return result;
     }
+
     template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const double value, const char order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const float value, const char order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const float16 value, const char order, sd::LaunchContext * context);
@@ -205,6 +271,38 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
     template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const uint8_t value, const char order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const bool value, const char order, sd::LaunchContext * context);
 
+    ////////////////////////////////////////////////////////////////////////
+    template <>
+    ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, NDArray* value, const sd::Order order, sd::LaunchContext * context) {
+        auto result = create(value->dataType(), shape, order, context);
+        result.assign(*value);
+        return result;
+    }
+
+    template <>
+    ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, NDArray& value, const sd::Order order, sd::LaunchContext * context) {
+        auto result = create(value.dataType(), shape, order, context);
+        result.assign(value);
+        return result;
+    }
+
+    template <typename T>
+    NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const T value, const sd::Order order, sd::LaunchContext * context) {
+        auto result = create(DataTypeUtils::fromT<T>(), shape, order, context);
+        result.assign(value);
+        return result;
+    }
+
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const double value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const float value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const float16 value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const bfloat16 value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const Nd4jLong value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const int value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const int16_t value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const int8_t value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const uint8_t value, const sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::valueOf(const std::vector<Nd4jLong>& shape, const bool value, const sd::Order order, sd::LaunchContext * context);
 
     ////////////////////////////////////////////////////////////////////////
     template <typename T>
@@ -264,17 +362,17 @@ template ND4J_EXPORT void NDArrayFactory::memcpyFromVector(void *ptr, const std:
 ////////////////////////////////////////////////////////////////////////
     template <typename T>
     NDArray NDArrayFactory::create(const char order, const std::vector<Nd4jLong> &shape, sd::LaunchContext * context) {
-        return create(order, shape, DataTypeUtils::fromT<T>(), context);
+        return create(DataTypeUtils::fromT<T>(), shape, order, context);
     }
     BUILD_SINGLE_TEMPLATE(template ND4J_EXPORT NDArray NDArrayFactory::create, (const char order, const std::vector<Nd4jLong> &shape, sd::LaunchContext * context), LIBND4J_TYPES);
 
 ////////////////////////////////////////////////////////////////////////
-NDArray NDArrayFactory::create(const char order, const std::vector<Nd4jLong> &shape, sd::DataType dtype, sd::LaunchContext* context) {
+NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, sd::DataType dtype, const sd::Order order, sd::LaunchContext* context) {
 
     if ((int) shape.size() > MAX_RANK)
         throw std::invalid_argument("NDArrayFactory::create: rank of NDArray can't exceed 32");
 
-    ShapeDescriptor descriptor(dtype, order, shape);
+    ShapeDescriptor descriptor(dtype, (char const)order, shape);
 
     std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(descriptor.arrLength() * DataTypeUtils::sizeOfElement(dtype), dtype, context->getWorkspace());
 

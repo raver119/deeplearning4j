@@ -25,6 +25,7 @@
 #define DEV_TESTS_NDARRAYFACTORY_H
 
 #include <vector>
+#include <array/Order.h>
 #include <array/NDArray.h>
 //#include <memory/Workspace.h>
 #include <execution/LaunchContext.h>
@@ -48,8 +49,12 @@ namespace sd {
         static NDArray valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, char order = 'c',  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
-        static NDArray linspace(T from, T to, Nd4jLong numElements);
+        static NDArray valueOf(const std::vector<Nd4jLong>& shape, T value, const Order order = sd::kArrayOrderC,  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
+        static NDArray valueOf(const std::vector<Nd4jLong>& shape, const NDArray& value, const Order sd::kArrayOrderC,  sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+
+        template <typename T>
+        static NDArray linspace(T from, T to, Nd4jLong numElements);
 
         template <typename T>
         static NDArray create(const T value, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
@@ -66,8 +71,11 @@ namespace sd {
         static NDArray create(char order, const std::vector<Nd4jLong> &shape, const std::vector<T> &data, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
+        static NDArray create(const std::vector<Nd4jLong> &shape, const std::vector<T> &data = {}, const Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext::defaultContext());
+
+        template <typename T>
         static NDArray create(char order, const std::vector<Nd4jLong> &shape, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
-        static NDArray create(char order, const std::vector<Nd4jLong> &shape, sd::DataType dtype, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray create(sd::DataType dtype, const std::vector<Nd4jLong> &shape, const sd::Order order = kArrayOrderC, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
         static NDArray create(const std::vector<T> &values, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());

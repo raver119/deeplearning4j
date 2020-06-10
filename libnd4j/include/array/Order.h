@@ -23,8 +23,8 @@
 
 namespace sd {
     enum Order {
-        kArrayOrderC = 'c',
-        kArrayOrderFortran = 'f',
+        kArrayOrderC = 'c',       // C order for strides (rows first)
+        kArrayOrderFortran = 'f', // Fortran order for strides (columns first)
     };
 }
 
