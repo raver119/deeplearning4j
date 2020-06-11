@@ -157,16 +157,16 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
     const int K       = x->shapeOf()[1];
     const int N       = x->shapeOf()[2];                     // N - number of time steps
 
-    auto gradBias = NDArrayFactory::create(x->ordering(), {bS, 2*K, N}, gradX->dataType(), block.launchContext());
-    auto gradU    = NDArrayFactory::create(x->ordering(), {bS, 3*K, N}, gradX->dataType(), block.launchContext());
-    auto gradHX   = NDArrayFactory::create(x->ordering(), {bS, K, N}, gradX->dataType(), block.launchContext());
-    auto gct      = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto gradTanh = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto gradCt   = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto ftMinus  = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto rtMinus  = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto temp1    = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
-    auto temp2    = NDArrayFactory::create(c->ordering(), {bS, K}, gradX->dataType(), block.launchContext());
+    auto gradBias = NDArrayFactory::create(gradX->dataType(), {bS, 2*K, N}, (sd::Order)x->ordering(), block.launchContext());
+    auto gradU    = NDArrayFactory::create(gradX->dataType(), {bS, 3*K, N}, (sd::Order)x->ordering(), block.launchContext());
+    auto gradHX   = NDArrayFactory::create(gradX->dataType(), {bS, K, N}, (sd::Order)x->ordering(), block.launchContext());
+    auto gct      = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto gradTanh = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto gradCt   = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto ftMinus  = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto rtMinus  = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto temp1    = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
+    auto temp2    = NDArrayFactory::create(gradX->dataType(), {bS, K}, (sd::Order)c->ordering(), block.launchContext());
 
     //  x = x * mask
     if(applyMask)

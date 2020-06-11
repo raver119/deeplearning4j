@@ -72,8 +72,8 @@ CUSTOM_OP_IMPL(fused_batch_norm, 3, 3, false, 0, 2) {
     else {
         //REQUIRE_TRUE(block.width() == 3, 0, "CUSTOM_OP fused_batch_norm: when isTraining=true then number of input arrays must be equal to 3, but got %i instead !", block.width());
         std::vector<Nd4jLong> shape = {iD};
-        auto meanV = NDArrayFactory::create(scale->ordering(), shape, scale->dataType(), block.launchContext());
-        auto varianceV = NDArrayFactory::create(scale->ordering(), shape, scale->dataType(), block.launchContext());
+        auto meanV = NDArrayFactory::create(scale->dataType(), shape, (sd::Order)scale->ordering(), block.launchContext());
+        auto varianceV = NDArrayFactory::create(scale->dataType(), shape, (sd::Order)scale->ordering(), block.launchContext());
         mean = new NDArray(meanV); variance = new NDArray(varianceV);
     }
 
@@ -85,7 +85,7 @@ CUSTOM_OP_IMPL(fused_batch_norm, 3, 3, false, 0, 2) {
         epsilon = 0.001;
 
     const int restSize = x->lengthOf() / iD;
-    auto xAffected = NDArrayFactory::create(x->ordering(), {restSize, iD}, mean->dataType(), block.launchContext());
+    auto xAffected = NDArrayFactory::create(mean->dataType(), {restSize, iD}, (sd::Order) x->ordering(), block.launchContext());
     xAffected.assign(x);
 
     const int restSizeMinusOne = (restSize > 1) ? (restSize - 1) : 1;

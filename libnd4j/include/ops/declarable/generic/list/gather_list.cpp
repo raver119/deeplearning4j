@@ -49,7 +49,7 @@ namespace sd {
                 }
             }
 
-            auto result = NDArrayFactory::create('c', shape, list->dataType());
+            auto result = NDArrayFactory::create(list->dataType(), shape);
             std::vector<Nd4jLong> indicesList((list->readRaw(0)->rankOf() + 1) * 2, 0);
             int skipPosition = 0;
             for (int e = 0; e < indices->lengthOf(); e++) {
