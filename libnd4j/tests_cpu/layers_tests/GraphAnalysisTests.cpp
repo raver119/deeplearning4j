@@ -885,6 +885,16 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
   ASSERT_EQ(std::string("add"),     seq[0].node().name());
   ASSERT_EQ(std::string("range_1"), seq[1].node().name());
   ASSERT_EQ(std::string("range_2"), seq[2].node().name());
+
+  std::pair<int, int> exp;
+
+  exp = {seq[1].node().id(), 0};
+  ASSERT_EQ(exp, seq[0].node().output()[0]);
+
+  exp = {seq[2].node().id(), 0};
+  ASSERT_EQ(exp, seq[1].node().output()[0]);
+
+  ASSERT_EQ(0, seq[2].node().output().size());
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_13) {
