@@ -889,7 +889,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
   std::pair<int, int> exp;
 
   exp = {seq[1].node().id(), 0};
-  //ASSERT_EQ(exp, seq[0].node().output()[0]);
+  ASSERT_EQ(exp, seq[0].node().outputs()[0]);
 
   exp = {seq[2].node().id(), 0};
   ASSERT_EQ(exp, seq[1].node().outputs()[0]);
@@ -1079,5 +1079,5 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
 
 TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   auto graph = Graph::fromFlatBuffers("resources/while_iter1.fb");
-  graph.printOut();
+  //graph.printOut();
 }

@@ -100,12 +100,12 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
    * this is a basic exection logic: roll through layers and sequences and
    * execute them one by one sequentially
    */
-  std::deque<StackFrame> stackFrames;
 
-  StackFrame baseFrame(proxy);
+  // root StackFrame is built from VariableProxy copy
+  StackFrame rootFrame(proxy);
 
-  // now we create one default StackFrame. current one.
-  stackFrames.push_back(baseFrame);
+  // now we create out dequeue of frames with one root StackFrame. current one.
+  std::deque<StackFrame> stackFrames({rootFrame});
 
   const auto numDevices = AffinityManager::numberOfDevices();
   Nd4jStatus result = Status::OK();  //
@@ -132,6 +132,9 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
 
   // that's the rule. it can't be not equal to 1.
   assert(stackFrames.size() == 1);
+
+  // update original VariableProxy
+  proxy.pullFrom(stackFrames.front().variableProxy());
 
   return result;
 }
