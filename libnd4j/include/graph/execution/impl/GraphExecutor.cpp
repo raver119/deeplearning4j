@@ -77,10 +77,13 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
     auto &v = seq[e];
     auto &p = stackFrames.back().variableProxy();
 
-    // only Ops can be executed this way :(
-    if (v.node().hasCustomOp())
-      result = execute(v.node().customOp(), v.protoContext(), seq, graph, const_cast<VariableProxy&>(p), targetDevice);
-    else {
+
+    if (v.node().opType() == OpType_LOGIC) {
+
+    } else if (v.node().hasCustomOp()) {
+      // only Ops can be executed this way :(
+      result = execute(v.node().customOp(), v.protoContext(), seq, graph, const_cast<VariableProxy &>(p), targetDevice);
+    } else {
       nd4j_printf("Node <%i:%s> has no customOp set\n",
                   v.node().id(),
                   v.node().name().empty() ? "" : v.node().name().c_str());

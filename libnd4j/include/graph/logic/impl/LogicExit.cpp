@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -22,7 +23,7 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicExit::processNode(Graph *graph, Node *node) {
+Nd4jStatus LogicExit::processNode(const Node *node) {
   // this op is basically no-op
   // we just know it exists
   throw std::runtime_error("LogicExit::processNode - Not implemented yet");

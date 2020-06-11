@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -33,30 +34,30 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicExecutor::processNode(Graph *graph, Node *node) {
+Nd4jStatus LogicExecutor::processNode(const Node *node) {
   switch (node->opNum()) {
     case sd::logic::While:
-      return LogicWhile::processNode(graph, node);
+      return LogicWhile::processNode(node);
     case sd::logic::Scope:
-      return LogicScope::processNode(graph, node);
+      return LogicScope::processNode(node);
     case sd::logic::Conditional:
-      return LogicConditional::processNode(graph, node);
+      return LogicConditional::processNode(node);
     case sd::logic::Switch:
-      return LogicSwitch::processNode(graph, node);
+      return LogicSwitch::processNode(node);
     case sd::logic::Return:
-      return LogicReturn::processNode(graph, node);
+      return LogicReturn::processNode(node);
     case sd::logic::Expose:
-      return LogicExpose::processNode(graph, node);
+      return LogicExpose::processNode(node);
     case sd::logic::Merge:
-      return LogicMerge::processNode(graph, node);
+      return LogicMerge::processNode(node);
     case sd::logic::LoopCond:
-      return LogicLoopCond::processNode(graph, node);
+      return LogicLoopCond::processNode(node);
     case sd::logic::NextIteration:
-      return LogicNextIeration::processNode(graph, node);
+      return LogicNextIeration::processNode(node);
     case sd::logic::Exit:
-      return LogicExit::processNode(graph, node);
+      return LogicExit::processNode(node);
     case sd::logic::Enter:
-      return LogicEnter::processNode(graph, node);
+      return LogicEnter::processNode(node);
   }
 
   if (node->name().empty()) {

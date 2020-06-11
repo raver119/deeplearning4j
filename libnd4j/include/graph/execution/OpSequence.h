@@ -42,6 +42,12 @@ class SD_EXPORT OpSequence
 
   int _deviceId = 0;
 
+  // this map contains Node::id() -> OpSequence index mappings
+  MAP_IMPL<int, int> _idToIndex;
+
+  // this map contains OpSequence index -> Node::id() mapping
+  MAP_IMPL<int, int> _indexToId;
+
  public:
   explicit OpSequence(const std::vector<ExecutionTask>& ops, int deviceId = 0);
   OpSequence(int deviceId = 0);
@@ -95,6 +101,13 @@ class SD_EXPORT OpSequence
   void append(const ExecutionTask& task);
   void append(ExecutionTask&& task);
 
+  /**
+   * These two methods provide access to index/id dictionalries
+   * @param index
+   * @return
+   */
+  int nodeId(int index) const;
+  int nodeIndex(int id) const;
 
   /**
    * Iterator functionality for OpSequence

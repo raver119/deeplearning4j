@@ -20,6 +20,7 @@
 
 #include <graph/execution/OpSequence.h>
 #include <ops/declarable/OpRegistrator.h>
+#include <helpers/StringUtils.h>
 
 namespace sd {
 namespace graph {
@@ -81,15 +82,39 @@ uint64_t OpSequence::length() const { return _ops.size(); }
 void OpSequence::append(const Node &node,
                         const sd::graph::ContextPrototype &ctx) {
   ExecutionTask task(node, ctx);
-  _ops.emplace_back(task);
+  append(task);
 }
 
 void OpSequence::append(const ExecutionTask& task) {
   _ops.emplace_back(task);
+
+  // updating dictionaries
+  auto index = _ops.size() - 1;
+  _idToIndex[task.node().id()] = index;
+  _indexToId[index] = task.node().id();
 }
 
 void OpSequence::append(ExecutionTask&& task) {
   _ops.emplace_back(std::move(task));
+
+  // updating dictionaries
+  auto index = _ops.size() - 1;
+  _idToIndex[task.node().id()] = index;
+  _indexToId[index] = task.node().id();
+}
+
+int OpSequence::nodeId(int index) const {
+  if (index < 0 || index >= _ops.size() || _indexToId.count(index) < 1)
+    throw std::runtime_error("Out-of-size index requested: " + StringUtils::valueToString(index));
+
+  return _indexToId.at(index);
+}
+
+int OpSequence::nodeIndex(int id) const {
+  if ( _idToIndex.count(id) < 1)
+    throw std::runtime_error("Unknown Node ID requested: " + StringUtils::valueToString(id));
+
+  return _idToIndex.at(id);
 }
 
 OpSequence::iterator OpSequence::begin() {

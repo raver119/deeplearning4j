@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -34,7 +35,7 @@ namespace graph {
  */
 class LogicExecutor {
  public:
-  static Nd4jStatus processNode(Graph* graph, Node* node);
+  static Nd4jStatus processNode(const Node* node);
 };
 }  // namespace graph
 }  // namespace sd
