@@ -68,7 +68,7 @@ namespace sd {
         static NDArray create(sd::DataType dtype, const std::vector<Nd4jLong> &shape, const sd::Order order = kArrayOrderC, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
-        static NDArray create(const std::vector<T> &values, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
+        static NDArray vector(const std::vector<T> &values, sd::LaunchContext* context = sd::LaunchContext ::defaultContext());
 
 #ifndef __JAVACPP_HACK__
         /**
