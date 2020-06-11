@@ -983,6 +983,9 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond1) {
   ASSERT_EQ(std::string("in_0/read"),   seq[0].node().name());
   ASSERT_EQ(std::string("cond/Switch"), seq[1].node().name());
 
+  auto swtch = seq[1].node();
+  ASSERT_EQ(2, swtch.outputs().size());
+
   // layer 1
   layer = optimized.layer(1);
   ASSERT_EQ(2, layer.width());
@@ -993,6 +996,16 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond1) {
   seq = layer[1];
   ASSERT_EQ(1, seq.length());
   ASSERT_EQ(std::string("cond/switch_f"), seq[0].node().name());
+
+  std::pair<int, int> exp;
+
+  // checking True condition first
+  exp = {layer[0][0].node().id(), 1};
+  ASSERT_EQ(exp, swtch.outputs()[0]);
+
+  // checking False condition next
+  exp = {layer[1][0].node().id(), 0};
+  ASSERT_EQ(exp, swtch.outputs()[1]);
 
   // layer 2
   layer = optimized.layer(2);
