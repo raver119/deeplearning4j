@@ -18,31 +18,30 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_STACKFRAME_H_
-#define SD_STACKFRAME_H_
-
-#include <system/dll.h>
-#include <graph/VariableProxy.h>
+#include <graph/execution/Stack.h>
 
 namespace sd {
 namespace graph {
 
-class SD_EXPORT StackFrame {
- private:
-  VariableProxy _proxy;
+Stack::Stack(const VariableProxy &root) {
+  _frames.push_back(StackFrame(const_cast<VariableProxy&>(root)));
+}
 
-  MAP_IMPL<int, int> _disabledNodes;
- public:
-  explicit StackFrame(VariableProxy &proxy);
-  ~StackFrame() = default;
+const VariableProxy &Stack::rootVariableSpace() const {
+  return _frames.front().variableProxy();
+}
 
-  const VariableProxy& variableProxy() const { return _proxy; }
+StackFrame &Stack::back() {
+  return _frames.back();
+}
 
-  void disableNode(int nodeId);
-  bool isDisabled(int nodeId) const;
-};
+StackFrame &Stack::front() {
+  return _frames.front();
+}
+
+StackFrame &Stack::root() {
+  return _frames.front();
+}
 
 } // namespace graph
 } // namespace sd
-
-#endif // SD_STACKFRAME_H_

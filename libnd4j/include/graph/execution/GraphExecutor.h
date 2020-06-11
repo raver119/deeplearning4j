@@ -25,6 +25,7 @@
 #include <graph/VariableProxy.h>
 #include <memory/GraphMemoryManager.h>
 #include <graph/execution/StackFrame.h>
+#include <graph/execution/Stack.h>
 #include <deque>
 #include <system/dll.h>
 
@@ -79,7 +80,7 @@ class SD_EXPORT GraphExecutor {
    */
   virtual Nd4jStatus execute(const OpSequence &seq,
                              const OptimizedGraph &graph,
-                             std::deque<StackFrame> &stackFrames,
+                             Stack &stack,
                              int deviceId) const;
 
   /**

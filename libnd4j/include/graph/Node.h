@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -18,8 +19,8 @@
 // @author raver119@gmail.com
 //
 
-#ifndef LIBND4J_GNODE_H
-#define LIBND4J_GNODE_H
+#ifndef SD_GNODE_H
+#define SD_GNODE_H
 
 #include <array/NDArray.h>
 #include <graph/generated/node_generated.h>
@@ -184,4 +185,4 @@ class SD_EXPORT Node {
 }  // namespace graph
 }  // namespace sd
 
-#endif  // LIBND4J_GNODE_H
+#endif  // SD_GNODE_H

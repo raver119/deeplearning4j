@@ -62,7 +62,7 @@ Nd4jStatus GraphExecutor::execute(
 
 Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
                                   const OptimizedGraph &graph,
-                                  std::deque<StackFrame> &stackFrames,
+                                  Stack &stack,
                                   const int deviceId) const {
   // we either follow or override target deviceId specified in OpSequence
   auto targetDevice = deviceId >= 0
@@ -75,7 +75,7 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
   auto result = Status::OK();
   for (int e = 0; e < seq.length(); e++) {
     auto &v = seq[e];
-    auto &p = stackFrames.back().variableProxy();
+    auto &p = stack.back().variableProxy();
 
 
     if (v.node().opType() == OpType_LOGIC) {
@@ -104,11 +104,8 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
    * execute them one by one sequentially
    */
 
-  // root StackFrame is built from VariableProxy copy
-  StackFrame rootFrame(proxy);
-
   // now we create out dequeue of frames with one root StackFrame. current one.
-  std::deque<StackFrame> stackFrames({rootFrame});
+  Stack stack(proxy);
 
   const auto numDevices = AffinityManager::numberOfDevices();
   Nd4jStatus result = Status::OK();  //
@@ -117,7 +114,7 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
 
     //TODO: this loop is executable in parallel, so we should do this eventually
     for (uint64_t o = 0; o < layer.width(); o++) {
-      result = execute(layer[o], graph, stackFrames, -1);
+      result = execute(layer[o], graph, stack, -1);
     }
 
     // early termination
@@ -134,10 +131,10 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
   }
 
   // that's the rule. it can't be not equal to 1.
-  assert(stackFrames.size() == 1);
+  //assert(stackFrames.size() == 1);
 
   // update original VariableProxy
-  proxy.pullFrom(stackFrames.front().variableProxy());
+  proxy.pullFrom(stack.front().variableProxy());
 
   return result;
 }

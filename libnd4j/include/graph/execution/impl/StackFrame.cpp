@@ -21,4 +21,18 @@
 
 #include <graph/execution/StackFrame.h>
 
-sd::graph::StackFrame::StackFrame(sd::graph::VariableProxy &proxy) : _proxy(proxy) { }
+namespace sd {
+namespace graph {
+
+StackFrame::StackFrame(VariableProxy &proxy) : _proxy(proxy) { }
+
+void StackFrame::disableNode(int nodeId) {
+  _disabledNodes[nodeId] = 1;
+}
+
+bool StackFrame::isDisabled(int nodeId) const {
+  return _disabledNodes.count(nodeId) > 0;
+}
+
+} // namespace graph
+} // namespace sd
