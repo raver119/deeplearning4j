@@ -50,10 +50,10 @@ class SD_EXPORT Node {
   OpClass _opClass;
   Nd4jLong _opNum;
 
-  // Inputs are stored in <Producer Node ID: Producer Node output index> format
+  // Inputs are stored in <Producer Node ID : Producer Node output index> format
   std::vector<std::pair<int, int>> _input;
 
-  // Outputs are stored in <Producer Node output index: Consumer Node ID> format
+  // Outputs are stored in <Consumer Node ID : Producer Node output index> format
   std::vector<std::pair<int, int>> _output;
 
   // Control flow dependencies for Node
