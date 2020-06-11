@@ -140,8 +140,8 @@ class SD_EXPORT Node {
 
   Nd4jLong opNum() const;
 
-  const std::vector<std::pair<int, int>> &input() const;
-  const std::vector<std::pair<int, int>> &output() const;
+  const std::vector<std::pair<int, int>> &inputs() const;
+  const std::vector<std::pair<int, int>> &outputs() const;
   const std::vector<std::pair<int, int>> &dependencies() const;
 
   void setId(int id);

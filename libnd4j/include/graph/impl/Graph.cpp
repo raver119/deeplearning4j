@@ -218,10 +218,10 @@ void Graph::printOutNode(const Node &node) const {
 
   nd4j_printf("Inputs: [", "");
   // auto block = node->getBlock();
-  for (int e = 0; e < node.input().size(); e++) {
-    auto in = node.input()[e];
+  for (int e = 0; e < node.inputs().size(); e++) {
+    auto in = node.inputs()[e];
     printf("{%i:%i}", in.first, in.second);
-    if (e < node.input().size() - 1) nd4j_printf(", ", "");
+    if (e < node.inputs().size() - 1) nd4j_printf(", ", "");
   }
 
   if (node.opType() == OpType_CUSTOM) {

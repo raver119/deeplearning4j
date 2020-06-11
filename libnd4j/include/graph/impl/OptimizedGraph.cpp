@@ -60,7 +60,7 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
     std::vector<int> startNodes;
     for (const auto& p : inMap) {
 
-        const auto& inputs = p.second.input();
+        const auto& inputs = p.second.inputs();
 
         for (int i = 0; i < inputs.size(); ++i) {
 

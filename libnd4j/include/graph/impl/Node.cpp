@@ -200,9 +200,9 @@ int Node::id() const { return _id; }
 
 Nd4jLong Node::opNum() const { return _opNum; }
 
-const std::vector<std::pair<int, int>> &Node::input() const { return _input; }
+const std::vector<std::pair<int, int>> &Node::inputs() const { return _input; }
 
-const std::vector<std::pair<int, int>> &Node::output() const { return _output; }
+const std::vector<std::pair<int, int>> &Node::outputs() const { return _output; }
 
 Node::Node(const std::string &opName, const std::string &nodeName, const int id,
            const std::vector<std::string> &inputs,
@@ -474,8 +474,8 @@ Node::Node(const FlatNode *node) {
           node->inputPaired()->size() > 0) {
         ContextPrototype block(nullptr, this->id(), false);
 
-        for (int e = 0; e < this->input().size(); e++) {
-          block.pickInput(this->input().at(e));
+        for (int e = 0; e < this->inputs().size(); e++) {
+          block.pickInput(this->inputs().at(e));
         }
 
         // there's no other IArgs in legacy options, actually
@@ -510,8 +510,8 @@ Node::Node(const FlatNode *node) {
       if (!this->name().empty())
         block.setName(this->name());
 
-      for (int e = 0; e < this->input().size(); e++)
-        block.pickInput(this->input().at(e));
+      for (int e = 0; e < this->inputs().size(); e++)
+        block.pickInput(this->inputs().at(e));
 
       this->setContextPrototype(block);
     } else if (this->_opType == OpType_CUSTOM) {
@@ -524,8 +524,8 @@ Node::Node(const FlatNode *node) {
       if (!this->name().empty())
         block.setName(this->name());
 
-      for (int e = 0; e < this->input().size(); e++)
-        block.pickInput(this->input().at(e));
+      for (int e = 0; e < this->inputs().size(); e++)
+        block.pickInput(this->inputs().at(e));
 
       if (node->extraInteger() != nullptr)
         for (uint32_t e = 0; e < node->extraInteger()->size(); e++) {

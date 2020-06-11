@@ -889,12 +889,12 @@ TEST_F(GraphAnalysisTests, optimizedGraph_12) {
   std::pair<int, int> exp;
 
   exp = {seq[1].node().id(), 0};
-  ASSERT_EQ(exp, seq[0].node().output()[0]);
+  //ASSERT_EQ(exp, seq[0].node().output()[0]);
 
   exp = {seq[2].node().id(), 0};
-  ASSERT_EQ(exp, seq[1].node().output()[0]);
+  ASSERT_EQ(exp, seq[1].node().outputs()[0]);
 
-  ASSERT_EQ(0, seq[2].node().output().size());
+  ASSERT_EQ(0, seq[2].node().outputs().size());
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_13) {
