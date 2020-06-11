@@ -1079,5 +1079,6 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
 
 TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   auto graph = Graph::fromFlatBuffers("resources/while_iter1.fb");
-  //graph.printOut();
+  const auto& optimized = graph.optimizedGraph();
+  // graph.printOut();
 }

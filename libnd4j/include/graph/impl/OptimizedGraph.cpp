@@ -47,6 +47,16 @@ OptimizedGraph& OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
 ///////////////////////////////////////////////////////////////////
 OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& varSpace) {
 
+
+    // for (const auto& p : inMap) {
+    //     printf("%s %i, inputs: ", p.second.name().c_str(), p.first);
+    //     const auto& inputs = p.second.inputs();
+    //     for (int i = 0; i < inputs.size(); ++i)
+    //         printf("%i, ", inputs[i].first);
+    //     printf("\n");
+    // }
+    // return;
+
     struct NodeInfo {
         uint _layerNum = 0;
         std::vector<int> _opSeq = {};
@@ -65,9 +75,11 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
         for (int i = 0; i < inputs.size(); ++i) {
 
             if (inputs[i].first >= inMap.begin()->first) {              // is op
-                workMap[p.first]._in.push_back(inputs[i].first);
-                workMap[inputs[i].first]._out.push_back(p.first);
                 inMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
+                if(inMap[inputs[i].first].name().find("NextIteration") == std::string::npos) {
+                    workMap[inputs[i].first]._out.push_back(p.first);
+                    workMap[p.first]._in.push_back(inputs[i].first);
+                }
             }
             else {                                              // is variable
 
@@ -75,9 +87,11 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
 
                 for (int j = 0; j < depends.size(); ++j) {
                     if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
-                        workMap[p.first]._in.push_back(depends[j].first);
-                        workMap[depends[j].first]._out.push_back(p.first);
                         inMap[depends[j].first].pickOutput(p.first, depends[j].second);
+                        if(inMap[depends[j].first].name().find("NextIteration") == std::string::npos) {
+                            workMap[depends[j].first]._out.push_back(p.first);
+                            workMap[p.first]._in.push_back(depends[j].first);
+                        }
                     }
                 }
             }
@@ -86,6 +100,28 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
         if(workMap[p.first]._in.empty())
             startNodes.push_back(p.first);
     }
+// printf("\n\n\n\n\n");
+    // for (const auto& p : workMap) {
+    //     printf("id %i,  inputs: ", p.first);
+    //     for (const auto& i : p.second._in)
+    //         printf("%i, ", i);
+    //     printf("outputs: ");
+    //     for (const auto& i : p.second._out)
+    //         printf("%i, ", i);
+    //     printf("\n");
+    // }
+
+    // for (const auto& p : inMap) {
+    //     printf("id %i,   inputs ", p.first);
+    //     for(const auto& i : p.second.inputs())
+    //         printf("%i, ", i.first);
+    //     printf("    outputs: ");
+    //     for(const auto& i : p.second.outputs())
+    //         printf("%i, ", i.first);
+    //     printf("\n");
+    // }
+    // printf("\n\n\n\n\n");
+
 
     // collect OpSequences (fill _opSeq)
     std::vector<int> nodesToDelete;
@@ -133,7 +169,7 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
         sortedGraphTemp[p.second._layerNum].append(std::move(seq));
     }
 
-    // check whether there is layer with one OpSequence containing only one op
+    // check whether there are layers with one OpSequence which in turn contains only one op
     bool isLayerWithOneOp = false;
     for(auto& layer : sortedGraphTemp) {
         if(layer.width() == 1 && layer.at(0).length() == 1) {
