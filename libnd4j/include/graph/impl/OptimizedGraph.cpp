@@ -67,7 +67,7 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
             if (inputs[i].first >= inMap.begin()->first) {              // is op
                 workMap[p.first]._in.push_back(inputs[i].first);
                 workMap[inputs[i].first]._out.push_back(p.first);
-                inMap[inputs[i].first].pickOutput(p.first, i);
+                inMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
             }
             else {                                              // is variable
 
@@ -77,7 +77,7 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
                     if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
                         workMap[p.first]._in.push_back(depends[j].first);
                         workMap[depends[j].first]._out.push_back(p.first);
-                        inMap[depends[j].first].pickOutput(p.first, j);
+                        inMap[depends[j].first].pickOutput(p.first, depends[j].second);
                     }
                 }
             }
