@@ -142,7 +142,7 @@ namespace helpers {
         const int rowNum = input->rows();
         const int columnNum = input->columns();
 
-        NDArray determinant = NDArrayFactory::create<T>(1.f, context);
+        NDArray determinant = NDArrayFactory::create<T>((T)1.f, context);
         NDArray compoundMatrix = *input; // copy
         NDArray permutationMatrix(input, false, context); // has same shape as input and contiguous strides
         permutationMatrix.setIdentity();
@@ -186,7 +186,7 @@ namespace helpers {
         if (compound != nullptr)
             compound->assign(compoundMatrix);
         if (permutation != nullptr) {
-            auto permutaionVector = NDArrayFactory::create('c', {rowNum}, DataTypeUtils::fromT<I>(), input->getContext());
+            auto permutaionVector = NDArrayFactory::create(DataTypeUtils::fromT<I>(), std::vector<Nd4jLong>{rowNum}, input->getContext());
             for (auto i = 0; i < rowNum; i++) {
                 for (auto j = 0; j < columnNum; j++) {
                     if (permutationMatrix.t<T>(i, j) != 0) {
@@ -342,7 +342,7 @@ namespace helpers {
         Nd4jLong n = input->sizeAt(-1);
         Nd4jLong n2 = n * n;
 
-        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create(input->dataType(),{n, n}, (sd::Order)input->ordering(), context); //, block.getWorkspace());
 
         for (int e = 0; e < output->lengthOf(); e++) {
             for (int k = e * n2, row = 0; k < (e + 1) * n2; ++k, ++row)
@@ -363,7 +363,7 @@ template <typename T>
         Nd4jLong n = input->sizeAt(-1);
         Nd4jLong n2 = n * n;
 
-        NDArray matrix = NDArrayFactory::create(input->ordering(), {n, n}, input->dataType(), context); //, block.getWorkspace());
+        NDArray matrix = NDArrayFactory::create(input->dataType(), {n, n}, (sd::Order)input->ordering(), context); //, block.getWorkspace());
         for (int e = 0; e < output->lengthOf(); e++) {
             for (int k = e * n2, row = 0; k < (e + 1) * n2; ++k, ++row) {
                 matrix.p(row, input->e<T>(k));
@@ -388,11 +388,11 @@ template <typename T>
         auto totalCount = output->lengthOf() / n2;
 
         output->assign(0.f); // fill up output tensor with zeros
-        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto permutation = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
-        auto lowerMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
-        auto upperMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
+        auto matrix =      NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context); //, block.getWorkspace());
+        auto compound =    NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context); //, block.getWorkspace());
+        auto permutation = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
+        auto lowerMatrix = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
+        auto upperMatrix = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
 
         for (int e = 0; e < totalCount; e++) {
             if (e)
@@ -441,11 +441,11 @@ template <typename T>
         auto totalCount = output->lengthOf() / n2;
 
         output->assign(0.f); // fill up output tensor with zeros
-        auto matrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto compound = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
-        auto permutation = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
-        auto lowerMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
-        auto upperMatrix = NDArrayFactory::create('c', {n, n}, DataTypeUtils::fromT<T>(), context);
+        auto matrix =      NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context); //, block.getWorkspace());
+        auto compound =    NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context); //, block.getWorkspace());
+        auto permutation = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
+        auto lowerMatrix = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
+        auto upperMatrix = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, sd::kArrayOrderC, context);
 
 //        auto batchLoop = PRAGMA_THREADS_FOR {
         for (int e = 0; e < totalCount; e++) {
@@ -519,7 +519,7 @@ template <typename T>
                 for (Nd4jLong c = 0; c < thisMatrix->columns(); c++)
                     if (sd::math::nd4j_abs(thisMatrix->e<T>(r, c) - lastMatrixList.at(i)->e<T>(c,r)) > DataTypeUtils::min<T>()) return false;
 
-            NDArray output = NDArrayFactory::create<T>(0., context);
+            NDArray output = NDArrayFactory::create<T>((T)0.f, context);
             if (ND4J_STATUS_OK != determinant(context, thisMatrix, &output)) return false;
             if (output.e<T>(0) <= T(0)) return 0;
             NDArray reversedMatrix(*thisMatrix);
@@ -546,8 +546,8 @@ template <typename T>
         if (!inplace)
              output->assign(0.f); // fill up output tensor with zeros only inplace=false
 
-        auto matrix = NDArrayFactory::create('c', {n, n}, input->dataType(), context); //, block.getWorkspace());
-        auto lowerMatrix = NDArrayFactory::create('c',{n, n}, input->dataType(), context);
+        auto matrix = NDArrayFactory::create(input->dataType(), {n, n}, sd::kArrayOrderC, context); //, block.getWorkspace());
+        auto lowerMatrix = NDArrayFactory::create(input->dataType(), {n, n}, sd::kArrayOrderC, context);
 
         for (int e = 0; e < totalCount; e++) {
 

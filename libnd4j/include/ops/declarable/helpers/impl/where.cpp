@@ -38,7 +38,7 @@ namespace sd {
                     auto offset = shape::getOffset(condition.shapeInfo(), idx);
 
                     if (condition.e<bool>(offset)) {
-                        auto array = NDArrayFactory::create('c', {1, condition.rankOf()}, output.dataType(), output.getContext());
+                        auto array = NDArrayFactory::create(output.dataType(), {1, condition.rankOf()}, sd::kArrayOrderC, output.getContext());
                         for (int f = 0; f < condition.rankOf(); f++)
                             array.p(f, (T) idx[f]);
 

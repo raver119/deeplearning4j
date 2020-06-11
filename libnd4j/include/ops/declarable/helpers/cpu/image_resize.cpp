@@ -1115,8 +1115,8 @@ namespace helpers {
         // want to interpolate.
         float  const kernelScale = antialias ? math::nd4j_max(invScale, 1.f) : 1.f;
         spans._spanSize = math::nd4j_min(2 * static_cast<int>(std::ceil(kernel->radius() * kernelScale)) + 1, static_cast<int>(inSize));
-        spans._starts = NDArrayFactory::create<int>('c', {outSize});
-        spans._weights = NDArrayFactory::create<float>('c', {outSize, spans._spanSize});
+        spans._starts = NDArrayFactory::create<int>({outSize});
+        spans._weights = NDArrayFactory::create<float>({outSize, spans._spanSize});
 
         auto startsVec = spans._starts.bufferAsT<int>();
         auto weightsVector = spans._weights.bufferAsT<float>();
@@ -1276,7 +1276,7 @@ namespace helpers {
         Spans rowSpans;
         res = computeSpans(transformationKernel, outHeight, inputHeight, rowScale, 0.f, antialias, rowSpans);
 
-        NDArray intermediate = NDArrayFactory::create<Z>('c', {batchSize, outHeight, inputWidth, channels});
+        NDArray intermediate = NDArrayFactory::create<Z>({batchSize, outHeight, inputWidth, channels});
 
         //const functor::Spans& const_row_spans = row_spans;
         //typename TTypes<int32, 1>::ConstTensor row_starts(

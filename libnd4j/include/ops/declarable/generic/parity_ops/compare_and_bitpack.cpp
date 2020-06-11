@@ -29,7 +29,7 @@ namespace sd {
             auto x = INPUT_VARIABLE(0);
             auto y = INPUT_VARIABLE(1);
             auto z = OUTPUT_VARIABLE(0);
-            auto z0 = NDArrayFactory::create<bool>(x->ordering(), x->getShapeAsVector(), block.launchContext());
+            auto z0 = NDArrayFactory::create<bool>(x->getShapeAsVector(), std::vector<bool>{}, (sd::Order) x->ordering(), block.launchContext());
             BROADCAST_CHECK_EMPTY(x, y, (&z0));
 
             auto tZ = BroadcastHelper::broadcastApply(BROADCAST_BOOL(GreaterThan), x, y, &z0);

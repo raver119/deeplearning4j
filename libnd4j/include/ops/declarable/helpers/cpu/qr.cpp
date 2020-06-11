@@ -56,7 +56,7 @@ namespace helpers {
     void qrSingle(NDArray* matrix, NDArray* Q, NDArray* R, bool const fullMatricies) {
         Nd4jLong M = matrix->sizeAt(-2);
         Nd4jLong N = matrix->sizeAt(-1);
-        auto resQ = fullMatricies?Q->ulike():NDArrayFactory::create<T>(matrix->ordering(), {M,M}, Q->getContext());
+        auto resQ = fullMatricies?Q->ulike():NDArrayFactory::create<T>({M,M}, std::vector<T>{}, (sd::Order)matrix->ordering(), Q->getContext());
         auto resR = fullMatricies?R->ulike():matrix->ulike();
         std::vector<NDArray> q(M);
 

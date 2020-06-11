@@ -58,7 +58,7 @@ namespace helpers {
         // stage 1: LU decomposition batched
         auto leftOutput = leftInput->ulike();
         auto permuShape = rightInput->getShapeAsVector(); permuShape.pop_back();
-        auto permutations = NDArrayFactory::create<int>('c', permuShape, context);
+        auto permutations = NDArrayFactory::create(DataType::INT32, permuShape, context);
         helpers::lu(context, leftInput, &leftOutput, &permutations);
         auto P = leftInput->ulike(); //permutations batched matrix
         P.nullify(); // to fill up matricies with zeros
