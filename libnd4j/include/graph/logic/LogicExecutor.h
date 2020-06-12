@@ -24,6 +24,7 @@
 
 #include <graph/Graph.h>
 #include <graph/Node.h>
+#include <graph/OptimizedGraph.h>
 #include <system/pointercast.h>
 #include <graph/execution/StackFrame.h>
 
@@ -36,7 +37,7 @@ namespace graph {
  */
 class LogicExecutor {
  public:
-  static Nd4jStatus processNode(const Node* node, StackFrame &frame);
+  static Nd4jStatus processNode(const Node* node, StackFrame &frame, const OptimizedGraph& graph);
 };
 }  // namespace graph
 }  // namespace sd

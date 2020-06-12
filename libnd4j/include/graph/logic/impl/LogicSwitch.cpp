@@ -25,7 +25,43 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicSwitch::processNode(const Node* node, StackFrame &frame) {
+
+static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node) {
+  const auto &outputs = node->outputs();
+
+  // we're going to roll through all consumers
+  for (const auto &o:outputs) {
+    // now fetch disabled node
+    const auto &n = graph.getNodesMap().at(o.first);
+
+    // edge case here: don't disable Merge node
+    if (n.opType() == OpType_LOGIC && n.opNum() == sd::logic::Merge)
+      continue;
+
+    // disable each consumer
+    frame.disableNode(o.first);
+
+    // do recursive magic
+    disableBranch(frame, varSpace, graph, &n);
+  }
+}
+
+static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node, bool branchToDisable) {
+  const auto &outputs = node->outputs();
+  int second = branchToDisable ? 1 : 0;
+
+  for (const auto &o:outputs) {
+    if (o.second == second) {
+      frame.disableNode(o.first);
+
+      const auto &n = graph.getNodesMap().at(o.first);
+
+      disableBranch(frame, varSpace, graph, &n);
+    }
+  }
+}
+
+Nd4jStatus LogicSwitch::processNode(const Node* node, StackFrame &frame, const OptimizedGraph& graph) {
   const auto &inputs = node->inputs();
   const auto &outputs = node->outputs();
 
@@ -43,9 +79,11 @@ Nd4jStatus LogicSwitch::processNode(const Node* node, StackFrame &frame) {
   if (boolean->getNDArray()->e<bool>(0)) {
     // true branch
     varSpace.putVariable(std::pair<int, int>{node->id(), 1}, *input->getNDArray());
+    disableBranch(frame, varSpace, graph, node, false);
   } else {
     // false branch
     varSpace.putVariable(std::pair<int, int>{node->id(), 0}, *input->getNDArray());
+    disableBranch(frame, varSpace, graph, node, true);
   }
 
   return Status::OK();

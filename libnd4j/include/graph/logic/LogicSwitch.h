@@ -38,7 +38,7 @@ namespace graph {
  */
 class LogicSwitch {
  public:
-  static Nd4jStatus processNode(const Node* node, StackFrame &frame);
+  static Nd4jStatus processNode(const Node* node, StackFrame &frame, const OptimizedGraph& graph);
 };
 
 }  // namespace graph
