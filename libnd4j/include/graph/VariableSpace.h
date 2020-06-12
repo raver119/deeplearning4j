@@ -39,6 +39,7 @@
 namespace sd {
 namespace graph {
 class SD_EXPORT VariableSpace {
+ friend class VariableProxy;
  protected:
   // stash is NOT cloned
   Stash _stash;

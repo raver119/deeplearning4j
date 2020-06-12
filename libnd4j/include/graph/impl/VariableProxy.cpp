@@ -160,6 +160,10 @@ std::shared_ptr<Variable> VariableProxy::putVariable(
   return _current.putVariable(pair, array);
 }
 
+const MAP_IMPL<std::pair<int, int>, std::shared_ptr<Variable>> &VariableProxy::externalPaired() const {
+  return _backed->_paired;
+}
+
 void VariableProxy::putVariable(const std::pair<int, int> &pair,
                                 const std::shared_ptr<Variable> &variable) {
   _current.putVariable(pair, variable);

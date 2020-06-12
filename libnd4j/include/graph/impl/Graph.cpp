@@ -622,11 +622,17 @@ std::map<std::string, NDArray> Graph::execute(
   // fetch outputs from our VariableProxy
   std::map<std::string, NDArray> result;
   for (const auto &v : outputs) {
-    if (!proxy.hasVariable(v))
+    // resolve string -> int dep
+    int id = -119;
+    if (_symbolicLookupTable.count(v) > 0)
+      id = _symbolicLookupTable.at(v);
+
+
+    if (!proxy.hasVariable(id))
       throw unresolved_output_exception::build(
           "Requested output doesn't exist after execution", v);
 
-    auto var = proxy.getVariable(v);
+    auto var = proxy.getVariable(id);
 
     // TODO: we want to make sure ManagedDataBuffer doesn't leak here
     result[v] = *var->getNDArray();

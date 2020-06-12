@@ -28,9 +28,7 @@ namespace graph {
 
 ///////////////////////////////////////////////////////////////////
 // move constructor
-OptimizedGraph::OptimizedGraph(OptimizedGraph &&other) noexcept: _sortedGraph(std::move(other._sortedGraph)) {
-
-}
+OptimizedGraph::OptimizedGraph(OptimizedGraph &&other) noexcept: _sortedGraph(std::move(other._sortedGraph)), _nodesMap(std::move(other._nodesMap)) { }
 
 ///////////////////////////////////////////////////////////////////
 // move assignment operator
@@ -40,6 +38,7 @@ OptimizedGraph& OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
         return *this;
 
     _sortedGraph = std::move(other._sortedGraph);
+    _nodesMap = std::move(other._nodesMap);
 
     return *this;
 }

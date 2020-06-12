@@ -970,7 +970,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond1) {
 
   auto graph = Graph::fromFlatBuffers("resources/cond_true.fb");
   const auto& optimized = graph.optimizedGraph();
-  // graph.printOut();
+  graph.printOut();
 
   // we expect exactly 3 layers
   ASSERT_EQ(3, optimized.layers());
@@ -1014,31 +1014,11 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond1) {
   ASSERT_EQ(1, seq.length());
   ASSERT_EQ(std::string("cond/Merge"), seq[0].node().name());
 
-  // graph.execute();
-  /*
-  some infor that would be useful for implementation
-  currently on optimization graph is passing next data
+  auto res = graph.execute({}, {"cond/Merge"});
+  ASSERT_EQ(1, res.size());
+  auto arr = res["cond/Merge"];
 
-  Node name: cond/switch_f; ID: 11; Input: 9, 0; Operation type: 21;  Operation
-  class: -1719689536 Node name: cond/switch_t; ID: 10; Input: 9, 1; Operation
-  type: 21;  Operation class: -1719689536 Node name: cond/Switch;   ID: 9;
-  Input: 1, 0; Operation type: 119; Operation class: -1719689536 Node name:
-  cond/Switch;   ID: 9;  Input: 6, 0; Operation type: 119; Operation class:
-  -1719689536 Node name: cond/Merge;    ID: 8;  Input: 5, 0; Operation type:
-  119; Operation class: -1719689536 Node name: cond/Merge;    ID: 8;  Input: 7,
-  0; Operation type: 119; Operation class: -1719689536 Node name: in_0/read; ID:
-  6;  Input: 1, 0; Operation type: 21;  Operation class: -1719689536 Node name:
-  cond/LinSpace; ID: 7;  Input: 2, 0; Operation type: 21;  Operation class:
-  -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 3, 0; Operation type: 21;
-  Operation class: -1719689536 Node name: cond/LinSpace; ID: 7;  Input: 4, 0;
-  Operation type: 21;  Operation class: -1719689536
-
-  as it can be seen cond/LinSpace is not connected with any switch node(s) that
-  causes wrong results of optimization. also maybe to cover all conditional
-  operations will be need "Operation class", but this have to discovered deeper.
-
-  All above is true for test_cond_2
-  */
+  ASSERT_EQ(NDArrayFactory::create<float>({1.f, 2.f, 3.f, 4.f, 5.f}), arr);
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
@@ -1075,7 +1055,9 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
   ASSERT_EQ(1, seq.length());
   ASSERT_EQ(std::string("cond/Merge"), seq[0].node().name());
 
-  graph.execute();
+  auto res = graph.execute({}, {"cond/Merge"});
+  ASSERT_EQ(1, res.size());
+  ASSERT_EQ(NDArrayFactory::create<float>({1.f, 1.f, 1.f, 1.f, 1.f}), res["cond/Merge"]);
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_while1) {

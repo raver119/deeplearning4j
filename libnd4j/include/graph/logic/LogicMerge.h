@@ -30,7 +30,7 @@ namespace graph {
 
 class LogicMerge {
  public:
-  static Nd4jStatus processNode(const Node* node);
+  static Nd4jStatus processNode(const Node* node, StackFrame &frame, const OptimizedGraph& graph);
 };
 
 }  // namespace graph

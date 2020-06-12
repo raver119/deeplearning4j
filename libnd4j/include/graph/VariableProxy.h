@@ -41,6 +41,8 @@ class SD_EXPORT VariableProxy : public VariableSpace {
   virtual const std::vector<std::shared_ptr<Variable>>& placeholders()
       const override;
 
+  virtual const MAP_IMPL<std::pair<int, int>, std::shared_ptr<Variable>>& externalPaired() const;
+
   virtual bool hasExternalVariable(int it) const override;
   virtual bool hasExternalVariable(
       const std::pair<int, int>& pair) const override;

@@ -49,7 +49,7 @@ Nd4jStatus LogicExecutor::processNode(const Node *node, StackFrame &frame, const
     case sd::logic::Expose:
       return LogicExpose::processNode(node);
     case sd::logic::Merge:
-      return LogicMerge::processNode(node);
+      return LogicMerge::processNode(node, frame, graph);
     case sd::logic::LoopCond:
       return LogicLoopCond::processNode(node);
     case sd::logic::NextIteration:
