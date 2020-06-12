@@ -46,13 +46,13 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XZ() {
-            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            auto arr = NDArrayFactory::vector<T>(p.getIntParam("length"));
             arr.assign(1.0);
             x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
                 z.push_back(new NDArray(arr));
             } else {
-                auto arrV = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+                auto arrV = NDArrayFactory::vector<T>(p.getIntParam("length"));
                 z.push_back(new NDArray(arrV));
             }
         };
@@ -83,13 +83,13 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XZ() {
-            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            auto arr = NDArrayFactory::vector<T>(p.getIntParam("length"));
             arr.assign(1.0);
             x.push_back(new NDArray(arr));
             if(p.getIntParam("inplace") == 1){
                 z.push_back(new NDArray(arr));
             } else {
-                auto zArr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+                auto zArr = NDArrayFactory::vector<T>(p.getIntParam("length"));
                 z.push_back(new NDArray(zArr));
             }
         };
@@ -124,14 +124,14 @@ namespace sd {
         ParametersBatch batch({&length, &inplace});
 
         auto generator = PARAMETRIC_XYZ() {
-            auto arr1 = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
-            auto arr2 = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            auto arr1 = NDArrayFactory::vector<T>(p.getIntParam("length"));
+            auto arr2 = NDArrayFactory::vector<T>(p.getIntParam("length"));
             x.push_back(new NDArray(arr1));
             y.push_back(new NDArray(arr2));
             if(p.getIntParam("inplace") == 1){
                 z.push_back(new NDArray(arr1));
             } else {
-                auto zArr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+                auto zArr = NDArrayFactory::vector<T>(p.getIntParam("length"));
                 z.push_back(new NDArray(zArr));
             }
         };
@@ -160,8 +160,8 @@ namespace sd {
             int cols = numElements / rows;
             bool c = p.getIntParam("cf");
 
-            auto arr = NDArrayFactory::create<float>(c ? 'c' : 'f', {rows, cols});
-            auto arr2 = NDArrayFactory::create<float>(c ? 'f' : 'c', {rows, cols});
+            auto arr = NDArrayFactory::create<float>(std::vector<Nd4jLong>{rows, cols}, {}, c ? sd::kArrayOrderC : kArrayOrderFortran);
+            auto arr2 = NDArrayFactory::create<float>(std::vector<Nd4jLong>{rows, cols}, {}, c ? sd::kArrayOrderFortran : kArrayOrderC);
             x.push_back(new NDArray(arr));
             z.push_back(new NDArray(arr2));
         };
@@ -179,15 +179,15 @@ namespace sd {
             bool nchw = p.getIntParam("nchw");
 
             if(nchw) {
-                auto orig = NDArrayFactory::create<float>('c', {mb, c, hw, hw});
+                auto orig = NDArrayFactory::create<float>(std::vector<Nd4jLong>{mb, c, hw, hw});
                 orig.permutei({0,2,3,1});
                 x.push_back(new NDArray(orig));
-                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {mb, hw, hw, c})));
+                z.push_back(new NDArray(NDArrayFactory::create<float>(std::vector<Nd4jLong>{mb, hw, hw, c})));
             } else {
-                auto orig = NDArrayFactory::create<float>('c', {mb, hw, hw, c});
+                auto orig = NDArrayFactory::create<float>(std::vector<Nd4jLong>{mb, hw, hw, c});
                 orig.permutei({0,3,1,2});
                 x.push_back(new NDArray(orig.dup()));
-                z.push_back(new NDArray(NDArrayFactory::create<float>('c', {mb, c, hw, hw})));
+                z.push_back(new NDArray(NDArrayFactory::create<float>(std::vector<Nd4jLong>{mb, c, hw, hw})));
             }
         };
 
@@ -203,7 +203,7 @@ namespace sd {
         BenchmarkHelper helper(WARMUP, NUM_ITER);
 
         for (int o = 0; o <= 1; o++) {
-            char resultOrder = (o == 0 ? 'f' : 'c');
+            sd::Order resultOrder = (o == 0 ? sd::kArrayOrderFortran : sd::kArrayOrderC);
             IntPowerParameters sz("sz", 2, 4, 10, 2);          //2^4=16, ..., 2^10=1024   ->  4 elements
 
             ParametersBatch b({&sz});
@@ -216,9 +216,9 @@ namespace sd {
                 std::vector<Nd4jLong> shapeB;
                 shapeA = {a, b};
                 shapeB = {b, c};
-                auto A = NDArrayFactory::create<T>('c', shapeA);
-                auto B = NDArrayFactory::create<T>('c', shapeB);
-                auto C = NDArrayFactory::create<T>(resultOrder, {a, c});
+                auto A = NDArrayFactory::create<T>(shapeA);
+                auto B = NDArrayFactory::create<T>(shapeB);
+                auto C = NDArrayFactory::create<T>(std::vector<Nd4jLong>{a, c}, {}, resultOrder);
 
                 x.push_back(new NDArray(A));
                 y.push_back(new NDArray(B));
@@ -249,7 +249,7 @@ namespace sd {
         ParametersBatch batch({&length});
 
         auto generator = PARAMETRIC_XYZ() {
-            auto arr = NDArrayFactory::create<T>('c', {p.getIntParam("length")});
+            auto arr = NDArrayFactory::vector<T>(p.getIntParam("length"));
 
             x.push_back(new NDArray(arr));
             y.push_back(nullptr);
@@ -270,7 +270,7 @@ namespace sd {
         auto generator3 = PARAMETRIC_D(){
             auto ctx = new Context(1);
 
-            ctx->setInputArray(0, NDArrayFactory::create<T>('c', {p.getIntParam("length")}));
+            ctx->setInputArray(0, NDArrayFactory::vector<T>(p.getIntParam("length")));
             ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong>((Nd4jLong)0));
             ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong>(0));
 
@@ -301,7 +301,7 @@ namespace sd {
                 int rows = p.getIntParam("rows");
                 int cols = length[i] / rows;
                 int dim = p.getIntParam("dim");
-                auto arr = NDArrayFactory::create<T>('c', {rows, cols});
+                auto arr = NDArrayFactory::create<T>(std::vector<Nd4jLong>{rows, cols});
 
 
                 x.push_back(new NDArray(arr));
@@ -309,9 +309,9 @@ namespace sd {
 
                 NDArray result;
                 if(dim == 0){
-                    result = NDArrayFactory::create<T>('c', {cols});
+                    result = NDArrayFactory::vector<T>(cols);
                 } else {
-                    result = NDArrayFactory::create<T>('c', {rows});
+                    result = NDArrayFactory::vector<T>(rows);
                 }
                 z.push_back(new NDArray(result));
             };
@@ -334,7 +334,7 @@ namespace sd {
                 int rows = p.getIntParam("rows");
                 int cols = length[i] / rows;
                 int dim = p.getIntParam("dim");
-                auto arr = NDArrayFactory::create<T>('c', {rows, cols});
+                auto arr = NDArrayFactory::create<T>(std::vector<Nd4jLong>{rows, cols});
 
                 auto dimArg = new Nd4jLong[1];
                 dimArg[0] = dim;
@@ -345,9 +345,9 @@ namespace sd {
 
                 NDArray result;
                 if(dim == 0){
-                    result = NDArrayFactory::create<Nd4jLong>('c', {cols});
+                    result = NDArrayFactory::vector<Nd4jLong>(cols);
                 } else {
-                    result = NDArrayFactory::create<Nd4jLong>('c', {rows});
+                    result = NDArrayFactory::vector<Nd4jLong>(rows);
                 }
                 ctx->setOutputArray(0, result);
                 return ctx;
@@ -385,19 +385,19 @@ namespace sd {
             int khw = p.getIntParam("k");
 
             if (n == 0) {
-                auto input = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
-                auto output = NDArrayFactory::create<T>('c', {8, 3, hw, hw});
+                auto input = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, 3, hw, hw});
+                auto output = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, 3, hw, hw});
                 ctx->setInputArray(0, input);
                 ctx->setOutputArray(0, output);
             } else {
-                auto input = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
-                auto output = NDArrayFactory::create<T>('c', {8, hw, hw, 3});
+                auto input = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, hw, hw, 3});
+                auto output = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, hw, hw, 3});
                 ctx->setInputArray(0, input);
                 ctx->setOutputArray(0, output);
             }
 
-            auto b = NDArrayFactory::create<T>('c', {3});
-            auto w = NDArrayFactory::create<T>('c', {khw, khw, 3, 3});   // [kH, kW, iC, oC] always
+            auto b = NDArrayFactory::vector<T>(3);
+            auto w = NDArrayFactory::create<T>(std::vector<Nd4jLong>{khw, khw, 3, 3});   // [kH, kW, iC, oC] always
 
             ctx->setInputArray(1, w);
             ctx->setInputArray(2, b);
@@ -440,13 +440,13 @@ namespace sd {
             int khw = p.getIntParam("k");
 
             if (n == 0) {
-                auto input = NDArrayFactory::create<T>('c', {8, c, hw, hw});
-                auto output = NDArrayFactory::create<T>('c', {8, c, hw, hw});
+                auto input = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, c, hw, hw});
+                auto output = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, c, hw, hw});
                 ctx->setInputArray(0, input);
                 ctx->setOutputArray(0, output);
             } else {
-                auto input = NDArrayFactory::create<T>('c', {8, hw, hw, c});
-                auto output = NDArrayFactory::create<T>('c', {8, hw, hw, c});
+                auto input = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, hw, hw, c});
+                auto output = NDArrayFactory::create<T>(std::vector<Nd4jLong>{8, hw, hw, c});
                 ctx->setInputArray(0, input);
                 ctx->setOutputArray(0, output);
             }
@@ -501,33 +501,33 @@ namespace sd {
 
             if (f == 0) {
                 //TNS format
-                ctx->setInputArray(1, NDArrayFactory::create<T>('c', {seqLength, m, n}));     //x
-                ctx->setOutputArray(0, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //i
-                ctx->setOutputArray(1, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //c
-                ctx->setOutputArray(2, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //f
-                ctx->setOutputArray(3, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //o
-                ctx->setOutputArray(4, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //z
-                ctx->setOutputArray(5, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //h
-                ctx->setOutputArray(6, NDArrayFactory::create<T>('c', {seqLength, m, n}));    //y
+                ctx->setInputArray(1, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<T>(std::vector<Nd4jLong>{seqLength, m, n}));    //y
             } else {
                 //NST format
-                ctx->setInputArray(1, NDArrayFactory::create<T>('f', {m, n, seqLength}));     //x
-                ctx->setOutputArray(0, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //i
-                ctx->setOutputArray(1, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //c
-                ctx->setOutputArray(2, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //f
-                ctx->setOutputArray(3, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //o
-                ctx->setOutputArray(4, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //z
-                ctx->setOutputArray(5, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //h
-                ctx->setOutputArray(6, NDArrayFactory::create<T>('f', {m, n, seqLength}));    //y
+                ctx->setInputArray(1, NDArrayFactory::create<T>(std::vector<Nd4jLong>{m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));     //x
+                ctx->setOutputArray(0, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //i
+                ctx->setOutputArray(1, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //c
+                ctx->setOutputArray(2, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //f
+                ctx->setOutputArray(3, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //o
+                ctx->setOutputArray(4, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //z
+                ctx->setOutputArray(5, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //h
+                ctx->setOutputArray(6, NDArrayFactory::create<T>(std::vector<Nd4jLong> {m, n, seqLength}, std::vector<T>{}, kArrayOrderFortran));    //y
             }
 
-            auto cLast = NDArrayFactory::create<T>('c', {m, n});
-            auto yLast = NDArrayFactory::create<T>('c', {m, n});
-            auto W = NDArrayFactory::create<T>('c', {2 * n, 4 * n});
-            auto Wci = NDArrayFactory::create<T>('c', {n});
-            auto Wcf = NDArrayFactory::create<T>('c', {n});
-            auto Wco = NDArrayFactory::create<T>('c', {n});
-            auto b = NDArrayFactory::create<T>('c', {4 * n});
+            auto cLast = NDArrayFactory::create<T>(std::vector<Nd4jLong>{m, n});
+            auto yLast = NDArrayFactory::create<T>(std::vector<Nd4jLong>{m, n});
+            auto W = NDArrayFactory::create<T>(std::vector<Nd4jLong>{2 * n, 4 * n});
+            auto Wci = NDArrayFactory::vector<T>(n);
+            auto Wcf = NDArrayFactory::vector<T>(n);
+            auto Wco = NDArrayFactory::vector<T>(n);
+            auto b = NDArrayFactory::vector<T>(4 * n);
 
             ctx->setInputArray(2, cLast);
             ctx->setInputArray(3, yLast);
@@ -566,20 +566,20 @@ namespace sd {
 
         auto generator = PARAMETRIC_D() {
             auto a = p.getIntParam("axis");
-            auto arr = NDArrayFactory::create<float>('c', {rows, p.getIntParam("cols")});
+            auto arr = NDArrayFactory::create<float>(std::vector<Nd4jLong>{rows, p.getIntParam("cols")});
 
             auto ctx = new Context(1);
             ctx->setInputArray(0, arr);
             if(a == 0){
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {rows, 1}));
+                ctx->setInputArray(1, NDArrayFactory::create<float>(std::vector<Nd4jLong>{rows, 1}));
             } else {
-                ctx->setInputArray(1, NDArrayFactory::create<float>('c', {1, p.getIntParam("cols")}));
+                ctx->setInputArray(1, NDArrayFactory::create<float>(std::vector<Nd4jLong>{1, p.getIntParam("cols")}));
             }
             if (p.getIntParam("inplace") == 1) {
                 ctx->setOutputArray(0, arr);
                 ctx->markInplace(true);
             } else {
-                ctx->setOutputArray(0, NDArrayFactory::create<float>('c', {rows, p.getIntParam("cols")}));
+                ctx->setOutputArray(0, NDArrayFactory::create<float>(std::vector<Nd4jLong>{rows, p.getIntParam("cols")}));
             }
             return ctx;
         };

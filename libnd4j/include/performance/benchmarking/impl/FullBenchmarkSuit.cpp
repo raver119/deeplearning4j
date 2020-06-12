@@ -787,7 +787,7 @@ namespace sd {
                         auto s = p.getIntParam("sz");
                         auto A = NDArrayFactory::create<float>(std::vector<Nd4jLong>{s, s});
                         auto B = NDArrayFactory::create<float>(std::vector<Nd4jLong>{s, s});
-                        auto C = NDArrayFactory::create<float>(std::vector<Nd4jLong>, {s, s}, std::vector<float>{}, resultOrder);
+                        auto C = NDArrayFactory::create<float>(std::vector<Nd4jLong>{s, s}, std::vector<float>{}, resultOrder);
 
                         x.push_back(new NDArray(A));
                         y.push_back(new NDArray(B));
@@ -1227,9 +1227,9 @@ namespace sd {
                 auto arr = NDArrayFactory::create<float>(std::vector<Nd4jLong>{p.getIntParam("rows"), p.getIntParam("cols")});
                 x.push_back(new NDArray(arr));
                 if(axis == 0){
-                    y.push_back(new NDArray(NDArrayFactory::vector<float>(p.getIntParam("rows")}));
+                    y.push_back(new NDArray(NDArrayFactory::vector<float>(p.getIntParam("rows"))));
                 } else {
-                    y.push_back(new NDArray(NDArrayFactory::vector<float>(p.getIntParam("cols")}));
+                    y.push_back(new NDArray(NDArrayFactory::vector<float>(p.getIntParam("cols"))));
                 }
                 if (p.getIntParam("inplace") == 1) {
                     z.push_back(new NDArray(arr));
