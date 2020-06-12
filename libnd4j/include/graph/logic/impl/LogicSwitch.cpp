@@ -25,91 +25,31 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicSwitch::processNode(const Node* node) {
-  throw std::runtime_error("LogicSwitch::processNode - not implemented yet");
-  /*
-  auto __variableSpace = graph->variableSpace();
-  auto __flowPath = __variableSpace->flowPath();
+Nd4jStatus LogicSwitch::processNode(const Node* node, StackFrame &frame) {
+  const auto &inputs = node->inputs();
+  const auto &outputs = node->outputs();
 
-  Context ctx(node->getContextPrototype(), __variableSpace);
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
-  // this can be either  our format, or compatible format.
-  if (graph->hasScope(node->input()->at(0).first)) {
-      nd4j_debug("Node_%i: Scoped mode.\n", node->id());
-      // first input is Scope, so it's ours
-      int scopeConditionIndex = node->input()->at(0).first;
-      auto input = ctx.variable(1);
+  REQUIRE_TRUE(inputs.size() == 2, 0, "Switch: op must have exactly 2 inputs");
+  REQUIRE_TRUE(varSpace.hasVariable(inputs[0]), 0, "Switch: input Variable doesn't exist");
+  REQUIRE_TRUE(varSpace.hasVariable(inputs[1]), 0, "Switch: condition Variable doesn't exist");
 
-      auto scopeCondition = graph->scopeById(scopeConditionIndex);
-      int lastNode = 0;
-      for (auto v: *scopeCondition->nodes()) {
-          GraphExecutioner::executeFlatNode(graph, v, __variableSpace);
-          lastNode = v->id();
-      }
+  auto input = varSpace.getVariable(inputs[0]);
+  auto boolean = varSpace.getVariable(inputs[1]);
 
-      // now we should take result of the Scope run, and evaluate it
-      auto result = __variableSpace->getVariable(lastNode)->getNDArray();
-      //result->printBuffer("Result of the last node");
+  REQUIRE_TRUE(boolean->hasNDArray(), 0, "Switch: boolean Variable must have NDArray defined");
 
-
-      std::pair<int, int> pair0(node->id(), 0);
-      std::pair<int, int> pair1(node->id(), 1);
-
-      if (!__variableSpace->hasVariable(pair0))
-          __variableSpace->putVariable(pair0, new Variable(nullptr, nullptr,
-  node->id(), 0));
-
-      if (!__variableSpace->hasVariable(pair1))
-          __variableSpace->putVariable(pair1, new Variable(nullptr, nullptr,
-  node->id(), 1));
-
-      if (!result->e<bool>(0)) {
-          __flowPath->markBranch(node->id(), 0);
-          __variableSpace->getVariable(pair0)->setNDArray(input->getNDArray());
-          __variableSpace->getVariable(pair0)->markRemovable(false);
-      } else {
-          __flowPath->markBranch(node->id(), 1);
-          __variableSpace->getVariable(pair1)->setNDArray(input->getNDArray());
-          __variableSpace->getVariable(pair1)->markRemovable(false);
-      }
+  if (boolean->getNDArray()->e<bool>(0)) {
+    // true branch
+    varSpace.putVariable(std::pair<int, int>{node->id(), 1}, *input->getNDArray());
   } else {
-      // first input is NOT a Scope, so it's compatible format
-      nd4j_debug("Node_%i: Compatible mode.\n", node->id());
-
-      auto input = ctx.variable(0)->getNDArray();
-      auto boolean = ctx.variable(1)->getNDArray();
-
-      //input->printIndexedBuffer("0");
-      //boolean->printIndexedBuffer("1");
-
-      std::pair<int, int> pair0(node->id(), 0);
-      std::pair<int, int> pair1(node->id(), 1);
-
-      if (!__variableSpace->hasVariable(pair0))
-          __variableSpace->putVariable(pair0, new Variable(nullptr, nullptr,
-  node->id(), 0));
-
-      if (!__variableSpace->hasVariable(pair1))
-          __variableSpace->putVariable(pair1, new Variable(nullptr, nullptr,
-  node->id(), 1));
-
-      if (!boolean->e<bool>(0)) {
-          // false
-          nd4j_debug("Node_%i: FALSE branch active\n", node->id());
-          __flowPath->markBranch(node->id(), 0);
-          __variableSpace->getVariable(pair0)->setNDArray(input);
-          __variableSpace->getVariable(pair0)->markRemovable(false);
-      } else {
-          //true
-          nd4j_debug("Node_%i: TRUE branch active\n", node->id());
-          __flowPath->markBranch(node->id(), 1);
-          __variableSpace->getVariable(pair1)->setNDArray(input);
-          __variableSpace->getVariable(pair1)->markRemovable(false);
-      }
+    // false branch
+    varSpace.putVariable(std::pair<int, int>{node->id(), 0}, *input->getNDArray());
   }
 
-  return sd::Status::OK();
-  */
+  return Status::OK();
 };
+
 }  // namespace graph
 }  // namespace sd

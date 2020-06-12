@@ -20,6 +20,7 @@
 
 #include <graph/Graph.h>
 #include <graph/execution/GraphExecutor.h>
+#include <graph/logic/LogicExecutor.h>
 
 
 namespace sd {
@@ -75,12 +76,21 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
   auto result = Status::OK();
   for (int e = 0; e < seq.length(); e++) {
     auto &v = seq[e];
-    auto &p = stack.back().variableProxy();
+    auto &f = stack.back();
+    auto &p = f.variableProxy();
 
 
     if (v.node().opType() == OpType_LOGIC) {
+      nd4j_printf("Node <%i:%s> is a logic op\n",
+                  v.node().id(),
+                  v.node().name().empty() ? "" : v.node().name().c_str());
 
+      LogicExecutor::processNode(&v.node(), f);
     } else if (v.node().hasCustomOp()) {
+      // we skip all disabled nodes
+      if (f.isDisabled(v.node().id()))
+        continue;
+
       // only Ops can be executed this way :(
       result = execute(v.node().customOp(), v.protoContext(), seq, graph, const_cast<VariableProxy &>(p), targetDevice);
     } else {
@@ -130,10 +140,7 @@ Nd4jStatus GraphExecutor::execute(const OptimizedGraph &graph,
       }
   }
 
-  // that's the rule. it can't be not equal to 1.
-  //assert(stackFrames.size() == 1);
-
-  // update original VariableProxy
+  // update original VariableSpace from the top-level VariableSpace
   proxy.pullFrom(stack.front().variableProxy());
 
   return result;

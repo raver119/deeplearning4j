@@ -1045,7 +1045,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
 
   auto graph = Graph::fromFlatBuffers("resources/cond_false.fb");
   const auto& optimized = graph.optimizedGraph();
-  // graph.printOut();
+  graph.printOut();
 
   ASSERT_EQ(3, optimized.layers());
 
@@ -1075,6 +1075,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
   ASSERT_EQ(1, seq.length());
   ASSERT_EQ(std::string("cond/Merge"), seq[0].node().name());
 
+  graph.execute();
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_while1) {

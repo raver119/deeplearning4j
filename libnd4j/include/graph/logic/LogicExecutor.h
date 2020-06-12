@@ -25,6 +25,7 @@
 #include <graph/Graph.h>
 #include <graph/Node.h>
 #include <system/pointercast.h>
+#include <graph/execution/StackFrame.h>
 
 namespace sd {
 namespace graph {
@@ -35,7 +36,7 @@ namespace graph {
  */
 class LogicExecutor {
  public:
-  static Nd4jStatus processNode(const Node* node);
+  static Nd4jStatus processNode(const Node* node, StackFrame &frame);
 };
 }  // namespace graph
 }  // namespace sd

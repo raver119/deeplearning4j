@@ -31,12 +31,9 @@ namespace sd {
 namespace graph {
 
 
-class Graph;
-
 class SD_EXPORT OptimizedGraph {
   private:
     std::vector<ExecutionLayer> _sortedGraph;
-    // const Graph& _originalGraph;
 
   public:
     OptimizedGraph(MAP_IMPL<int, Node> map, const VariableSpace& varSpace);

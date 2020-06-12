@@ -34,7 +34,7 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicExecutor::processNode(const Node *node) {
+Nd4jStatus LogicExecutor::processNode(const Node *node, StackFrame &frame) {
   switch (node->opNum()) {
     case sd::logic::While:
       return LogicWhile::processNode(node);
@@ -43,7 +43,7 @@ Nd4jStatus LogicExecutor::processNode(const Node *node) {
     case sd::logic::Conditional:
       return LogicConditional::processNode(node);
     case sd::logic::Switch:
-      return LogicSwitch::processNode(node);
+      return LogicSwitch::processNode(node, frame);
     case sd::logic::Return:
       return LogicReturn::processNode(node);
     case sd::logic::Expose:
