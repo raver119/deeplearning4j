@@ -34,9 +34,10 @@ namespace graph {
 class SD_EXPORT OptimizedGraph {
   private:
     std::vector<ExecutionLayer> _sortedGraph;
+    MAP_IMPL<int, Node> _nodesMap;
 
   public:
-    OptimizedGraph(MAP_IMPL<int, Node> map, const VariableSpace& varSpace);
+    OptimizedGraph(const MAP_IMPL<int, Node>& map, const VariableSpace& varSpace);
     // move constructor
     OptimizedGraph(OptimizedGraph&& other) noexcept;
     // default constructor
@@ -82,6 +83,12 @@ class SD_EXPORT OptimizedGraph {
      * @param sequence
      */
     void append(const OpSequence &sequence);
+
+    /**
+     * returns reference on _nodesMap
+     * @return
+     */
+    const MAP_IMPL<int, Node>& getNodesMap() const { return _nodesMap; }
 };
 
 

@@ -45,10 +45,9 @@ OptimizedGraph& OptimizedGraph::operator=(OptimizedGraph &&other) noexcept {
 }
 
 ///////////////////////////////////////////////////////////////////
-OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& varSpace) {
+OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableSpace& varSpace): _nodesMap(inMap) {
 
-
-    // for (const auto& p : inMap) {
+    // for (const auto& p : _nodesMap) {
     //     printf("%s %i, inputs: ", p.second.name().c_str(), p.first);
     //     const auto& inputs = p.second.inputs();
     //     for (int i = 0; i < inputs.size(); ++i)
@@ -68,15 +67,15 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
 
     // create workMap, fill vectors containing input and output nodes per each node, and find start nodes
     std::vector<int> startNodes;
-    for (const auto& p : inMap) {
+    for (const auto& p : _nodesMap) {
 
         const auto& inputs = p.second.inputs();
 
         for (int i = 0; i < inputs.size(); ++i) {
 
-            if (inputs[i].first >= inMap.begin()->first) {              // is op
-                inMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
-                if(inMap[inputs[i].first].name().find("NextIteration") == std::string::npos) {
+            if (inputs[i].first >= _nodesMap.begin()->first) {              // is op
+                _nodesMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
+                if(_nodesMap[inputs[i].first].name().find("NextIteration") == std::string::npos) {
                     workMap[inputs[i].first]._out.push_back(p.first);
                     workMap[p.first]._in.push_back(inputs[i].first);
                 }
@@ -87,8 +86,8 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
 
                 for (int j = 0; j < depends.size(); ++j) {
                     if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
-                        inMap[depends[j].first].pickOutput(p.first, depends[j].second);
-                        if(inMap[depends[j].first].name().find("NextIteration") == std::string::npos) {
+                        _nodesMap[depends[j].first].pickOutput(p.first, depends[j].second);
+                        if(_nodesMap[depends[j].first].name().find("NextIteration") == std::string::npos) {
                             workMap[depends[j].first]._out.push_back(p.first);
                             workMap[p.first]._in.push_back(depends[j].first);
                         }
@@ -111,7 +110,7 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
     //     printf("\n");
     // }
 
-    // for (const auto& p : inMap) {
+    // for (const auto& p : _nodesMap) {
     //     printf("id %i,   inputs ", p.first);
     //     for(const auto& i : p.second.inputs())
     //         printf("%i, ", i.first);
@@ -161,10 +160,10 @@ OptimizedGraph::OptimizedGraph(MAP_IMPL<int, Node> inMap, const VariableSpace& v
     for (const auto& p : workMap) {
 
         OpSequence seq;
-        seq.append(inMap.at(p.first), inMap.at(p.first).contextPrototype());
+        seq.append(_nodesMap.at(p.first), _nodesMap.at(p.first).contextPrototype());
 
         for (const auto& id : p.second._opSeq)
-            seq.append(inMap.at(id), inMap.at(id).contextPrototype());
+            seq.append(_nodesMap.at(id), _nodesMap.at(id).contextPrototype());
 
         sortedGraphTemp[p.second._layerNum].append(std::move(seq));
     }
