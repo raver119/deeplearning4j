@@ -911,7 +911,7 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape,
 
 
 std::ostream& operator<<(std::ostream &os, const NDArray &m) {
-  os << m.asIndexedString();
+  os << m.indexedBufferString();
   return os;
 }
 
