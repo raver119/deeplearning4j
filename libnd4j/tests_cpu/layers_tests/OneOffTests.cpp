@@ -338,30 +338,27 @@ TEST_F(OneOffTests, test_identity_n_2) {
 }
 
 TEST_F(OneOffTests, test_non2d_1) {
-  // if (1 > 0)
-  //    throw std::runtime_error("Test not implemented yet");
-
-  auto e = NDArrayFactory::create<float>('c', {1, 1}, {5.42746449f});
+  auto e = NDArrayFactory::create<float>('c', {1, 2}, {2.07706356f, 2.66380072f});
 
   auto graph = Graph::fromFlatBuffers("./resources/non2d_1.fb");
 
+  graph.printOut();
   graph.execute();
 
-  ASSERT_TRUE(graph.variableSpace().hasVariable(3));
+  ASSERT_TRUE(graph.variableSpace().hasVariable(6));
 
-  auto z = graph.variableSpace().getVariable(3)->getNDArray();
+  auto z = graph.variableSpace().getVariable(6)->getNDArray();
   ASSERT_TRUE(z != nullptr);
 
   ASSERT_EQ(e, *z);
 }
 
 TEST_F(OneOffTests, test_reduce_all_1) {
-  auto e =
-      NDArrayFactory::create<bool>('c', {1, 4}, {true, false, false, false});
+  auto e = NDArrayFactory::create<bool>('c', {1, 4}, {true, false, false, false});
 
-  auto graph =
-      Graph::fromFlatBuffers("./resources/reduce_all_rank2_d0_keep.fb");
+  auto graph = Graph::fromFlatBuffers("./resources/reduce_all_rank2_d0_keep.fb");
 
+  graph.printOut();
   graph.execute();
 
   ASSERT_TRUE(graph.variableSpace().hasVariable(1));
