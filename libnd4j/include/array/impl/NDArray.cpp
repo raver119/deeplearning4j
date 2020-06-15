@@ -907,6 +907,13 @@ NDArray::NDArray(const std::vector<Nd4jLong>& shape,
   tickWriteHost();
   syncToDevice();
 }
+
+
+std::ostream& operator<<(std::ostream &os, const NDArray &m) {
+  os << m.asIndexedString();
+  return os;
+}
+
 /////////////////////////////////////////////////////////////////////////
 NDArray::NDArray(const std::vector<Nd4jLong>& shape,
                  const std::vector<const char32_t*>& string, sd::DataType dtype,
@@ -1060,7 +1067,7 @@ bool NDArray::isB() const {
 
 //////////////////////////////////////////////////////////////////////////
 template <typename T>
-std::string NDArray::toStringValue(T value) {
+std::string NDArray::toStringValue(T value) const {
   std::ostringstream os;
   // throw the value into the string stream
   os << value;
@@ -1070,7 +1077,7 @@ std::string NDArray::toStringValue(T value) {
 
 //////////////////////////////////////////////////////////////////////////
 template <>
-std::string NDArray::toStringValue(float16 value) {
+std::string NDArray::toStringValue(float16 value) const {
   std::ostringstream os;
   // throw the value into the string stream
   os << (float)value;
@@ -1080,7 +1087,7 @@ std::string NDArray::toStringValue(float16 value) {
 
 //////////////////////////////////////////////////////////////////////////
 template <>
-std::string NDArray::toStringValue(bfloat16 value) {
+std::string NDArray::toStringValue(bfloat16 value) const {
   std::ostringstream os;
   // throw the value into the string stream
   os << (float)value;
@@ -1089,7 +1096,7 @@ std::string NDArray::toStringValue(bfloat16 value) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-std::string NDArray::asIndexedString(Nd4jLong limit) {
+std::string NDArray::asIndexedString(Nd4jLong limit) const {
   std::ostringstream os;
   os << "[";
   if (limit < 1 || limit > this->lengthOf()) limit = this->lengthOf();
@@ -1102,7 +1109,7 @@ std::string NDArray::asIndexedString(Nd4jLong limit) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-std::string NDArray::asString(Nd4jLong limit) {
+std::string NDArray::asString(Nd4jLong limit) const {
   std::ostringstream os;
   os << "[";
   if (limit < 1 || limit > this->lengthOf()) limit = this->lengthOf();
