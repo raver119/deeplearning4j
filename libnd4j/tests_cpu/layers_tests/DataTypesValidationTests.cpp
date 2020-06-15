@@ -38,9 +38,9 @@ public:
 };
 
 TEST_F(DataTypesValidationTests, Basic_Test_1) {
-    auto input = NDArrayFactory::create<int8_t>('c', {1, 1, 1, 4});
-    auto weights = NDArrayFactory::create<int8_t>('c', {1, 1, 1, 4});
-    auto exp = NDArrayFactory::create<double>('c', {1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
+    auto input = NDArrayFactory::create<int8_t>({1, 1, 1, 4});
+    auto weights = NDArrayFactory::create<int8_t>({1, 1, 1, 4});
+    auto exp = NDArrayFactory::create<double>({1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
 
     weights.assign(2.0);
     input.linspace(1);
@@ -52,9 +52,9 @@ TEST_F(DataTypesValidationTests, Basic_Test_1) {
 }
 
 TEST_F(DataTypesValidationTests, Basic_Test_2) {
-    auto input = NDArrayFactory::create<float16>('c', {1, 1, 1, 4});
-    auto weights = NDArrayFactory::create<float16>('c', {1, 1, 1, 4});
-    auto exp = NDArrayFactory::create<float16>('c', {1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
+    auto input = NDArrayFactory::create<float16>({1, 1, 1, 4});
+    auto weights = NDArrayFactory::create<float16>({1, 1, 1, 4});
+    auto exp = NDArrayFactory::create<float16>({1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
 
     weights.assign(2.0);
     input.linspace(1);
@@ -71,10 +71,10 @@ TEST_F(DataTypesValidationTests, Basic_Test_2) {
 
 
 TEST_F(DataTypesValidationTests, Basic_Test_3) {
-    auto input = NDArrayFactory::create<bfloat16>('c', {1, 1, 1, 4});
-    auto weights = NDArrayFactory::create<bfloat16>('c', {1, 1, 1, 4});
-    auto exp = NDArrayFactory::create<bfloat16>('c', {1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
-    auto out = NDArrayFactory::create<bfloat16>('c', {1, 4, 1, 4});
+    auto input = NDArrayFactory::create<bfloat16>({1, 1, 1, 4});
+    auto weights = NDArrayFactory::create<bfloat16>({1, 1, 1, 4});
+    auto exp = NDArrayFactory::create<bfloat16>({1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
+    auto out = NDArrayFactory::create<bfloat16>({1, 4, 1, 4});
 
     weights.assign(2.0);
     input.linspace(1);
@@ -87,10 +87,10 @@ TEST_F(DataTypesValidationTests, Basic_Test_3) {
 }
 
 TEST_F(DataTypesValidationTests, Basic_Test_4) {
-    auto input = NDArrayFactory::create<int8_t>('c', {1, 1, 1, 4});
-    auto weights = NDArrayFactory::create<float16>('c', {1, 1, 1, 4});
-    auto exp = NDArrayFactory::create<float>('c', {1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
-    auto out = NDArrayFactory::create<int8_t>('c', {1, 4, 1, 4});
+    auto input = NDArrayFactory::create<int8_t>({1, 1, 1, 4});
+    auto weights = NDArrayFactory::create<float16>({1, 1, 1, 4});
+    auto exp = NDArrayFactory::create<float>({1, 4, 1, 4}, {2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8., 2., 4., 6., 8.});
+    auto out = NDArrayFactory::create<int8_t>({1, 4, 1, 4});
 
     weights.assign(2.0);
     input.linspace(1);
@@ -101,7 +101,7 @@ TEST_F(DataTypesValidationTests, Basic_Test_4) {
 }
 
 TEST_F(DataTypesValidationTests, test_bfloat16_rand_1) {
-    auto x = NDArrayFactory::create<bfloat16>('c', {5, 10});
+    auto x = NDArrayFactory::create<bfloat16>({5, 10});
     RandomGenerator gen(119, 120);
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), gen, &x, 1, 6);
 
@@ -109,7 +109,7 @@ TEST_F(DataTypesValidationTests, test_bfloat16_rand_1) {
 }
 
 TEST_F(DataTypesValidationTests, test_bfloat16_rand_2) {
-    auto x = NDArrayFactory::create<bfloat16>('c', {5, 10});
+    auto x = NDArrayFactory::create<bfloat16>({5, 10});
     RandomGenerator gen(119, 120);
     RandomLauncher::fillGaussian(LaunchContext::defaultContext(), gen, &x, 0, 1);
 
@@ -126,8 +126,8 @@ TEST_F(DataTypesValidationTests, cast_1) {
 }
 
 TEST_F(DataTypesValidationTests, test_bits_hamming_distance_1) {
-    auto x = NDArrayFactory::create<int>('c', {3}, {0b01011000, 0b01011111, 0b01111110});
-    auto y = NDArrayFactory::create<int>('c', {3}, {0b00010110, 0b01011000, 0b01011000});
+    auto x = NDArrayFactory::create<int>({3}, {0b01011000, 0b01011111, 0b01111110});
+    auto y = NDArrayFactory::create<int>({3}, {0b00010110, 0b01011000, 0b01011000});
     auto z = NDArrayFactory::create<uint64_t>(0);
 
     Context ctx(1);
@@ -141,8 +141,8 @@ TEST_F(DataTypesValidationTests, test_bits_hamming_distance_1) {
 }
 
 TEST_F(DataTypesValidationTests, test_bits_hamming_distance_2) {
-    auto x = NDArrayFactory::create<int>('c', {3}, {0b01011000, 0b01011111, 0b01111110});
-    auto y = NDArrayFactory::create<int>('c', {3}, {0b00010110, 0b01011000, 0b01011000});
+    auto x = NDArrayFactory::create<int>({3}, {0b01011000, 0b01011111, 0b01111110});
+    auto y = NDArrayFactory::create<int>({3}, {0b00010110, 0b01011000, 0b01011000});
     auto z = NDArrayFactory::create<Nd4jLong>(0);
 
     Context ctx(1);
