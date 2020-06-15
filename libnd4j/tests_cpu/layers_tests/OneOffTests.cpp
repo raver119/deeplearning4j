@@ -39,6 +39,7 @@ class OneOffTests : public testing::Test {
 TEST_F(OneOffTests, test_avg_pool_3d_1) {
   auto graph = Graph::fromFlatBuffers("./resources/avg_pooling3d.fb");
 
+  graph.printOut();
   graph.execute();
 }
 
