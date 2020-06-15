@@ -2098,7 +2098,7 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
             ss << "[";
             for (Nd4jLong row = 0; row < rows; ++row) {
                 if (row && depth > 0)
-                    ss << std::setfill(' ') << std::setw(depth);
+                    ss << std::setfill(' ') << std::setw(depth) << ' ';
                 ss << "[";
                 Nd4jLong colLimit = cols > limit ? cols : limit;
                 for (Nd4jLong col = 0; col < colLimit; ++col) {
