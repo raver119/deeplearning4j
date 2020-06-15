@@ -589,7 +589,6 @@ Node::Node(const Node &other) noexcept {
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _active = other._active;
 
   _customOp = other._customOp;
   _protoContext = other._protoContext;
@@ -612,7 +611,6 @@ Node &Node::operator=(const Node &other) noexcept {
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _active = other._active;
 
   _customOp = other._customOp;
   _protoContext = other._protoContext;
@@ -636,7 +634,6 @@ Node::Node(Node &&other) noexcept {
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _active = other._active;
 
   _protoContext = std::move(other._protoContext);
 
@@ -659,7 +656,6 @@ Node &Node::operator=(Node &&other) noexcept {
   _hasExternalInputs = other._hasExternalInputs;
   _hasInternalOutputs = other._hasInternalOutputs;
   _hasInternalInputs = other._hasInternalInputs;
-  _active = other._active;
 
   _protoContext = std::move(other._protoContext);
 

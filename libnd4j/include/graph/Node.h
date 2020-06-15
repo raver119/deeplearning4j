@@ -47,9 +47,9 @@ class SD_EXPORT Node {
   ContextPrototype _protoContext;
 
   // these 2 fields are used for Logic ops only
-  OpType _opType;
-  OpClass _opClass;
-  Nd4jLong _opNum;
+  OpType _opType = OpType_GRAPH;
+  OpClass _opClass = OpClass_GRAPH;
+  Nd4jLong _opNum = 0;
 
   // Inputs are stored in <Producer Node ID : Producer Node output index> format
   std::vector<std::pair<int, int>> _input;
@@ -68,10 +68,6 @@ class SD_EXPORT Node {
   bool _hasInternalInputs = false;
 
   std::shared_ptr<sd::ops::DeclarableOp> _customOp;
-
-  // each node can be active or inactive, if used with divergents, like IF
-  // statements
-  bool _active = true;
 
  public:
   explicit Node(const sd::ops::DeclarableOp &op,
