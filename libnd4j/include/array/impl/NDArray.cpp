@@ -2098,13 +2098,13 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
             ss << "[";
             for (Nd4jLong row = 0; row < rows; ++row) {
                 if (row && depth > 0)
-                    ss << std::setfill(' ') << std::setw(depth);
+                    ss << std::setfill(' ') << std::setw(depth) << ' ';
                 ss << "[";
                 Nd4jLong colLimit = cols > limit ? cols : limit;
                 for (Nd4jLong col = 0; col < colLimit; ++col) {
                     if (col) ss << (", ");
                     if (arr->isR())
-                        ss << arr->e<float>(row, col);
+                        ss << std::setw(12) << std::setprecision(6) << arr->e<float>(row, col);
                     else if (arr->isZ())
                         ss << arr->e<Nd4jLong>(row, col);
                     else if (arr->isB())
