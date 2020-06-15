@@ -72,7 +72,7 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
 
         for (int i = 0; i < inputs.size(); ++i) {
 
-            if (inputs[i].first >= _nodesMap.begin()->first) {              // is op
+            if (_nodesMap.count(inputs[i].first) != 0) {              // is op
                 _nodesMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
                 if(_nodesMap[inputs[i].first].name().find("NextIteration") == std::string::npos) {
                     workMap[inputs[i].first]._out.push_back(p.first);
