@@ -104,7 +104,7 @@ Node::Node(const std::string &opName, const std::string &nodeName,
 bool Node::isDivergencePoint() {
   if (hasCustomOp()) {
     return _customOp->getOpDescriptor()->isDivergent();
-  } else if (opType() == OpType_LOGIC && opNum() == 30)
+  } else if (opType() == OpType_LOGIC && opNum() == sd::logic::Switch)
     return true;
   else
     return false;
@@ -135,7 +135,7 @@ const std::string &Node::name() const { return _name; }
 void Node::setName(const std::string &name) { _name = name; }
 
 void Node::pickInput(const std::pair<int, int> &pair) {
-  _input.push_back(pair);
+  _input.emplace_back(pair);
   _protoContext.pickInput(pair);
 }
 
@@ -159,7 +159,7 @@ void Node::pickInput(int inputId) {
 
 void Node::pickExternalOutput(int outputId) {
   std::pair<int, int> pair(outputId, 0);
-  _output.push_back(pair);
+  _output.emplace_back(pair);
 
   _hasExternalOutputs = true;
 }
