@@ -61,6 +61,7 @@ class SD_EXPORT Node {
   std::vector<std::pair<int, int>> _dependencies;
   std::vector<std::string> _stringDependencies;
 
+  // TODO: these fields should be removed
   // service state fields
   bool _hasExternalOutputs = false;
   bool _hasExternalInputs = false;
