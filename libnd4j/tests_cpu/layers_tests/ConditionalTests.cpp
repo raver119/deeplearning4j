@@ -128,7 +128,7 @@ TEST_F(ConditionalTests, Flat_Test_1) {
 
     ASSERT_NE(nullptr, z);
 
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {-2, -2, -2, -2});
+    auto exp = NDArrayFactory::create<float>({2, 2}, {-2, -2, -2, -2});
 
     ASSERT_TRUE(exp.equalsTo(z));
 
@@ -158,7 +158,7 @@ TEST_F(ConditionalTests, Flat_Test_2) {
 
     ASSERT_NE(nullptr, z);
 
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {1, 1, 1, 1});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {1, 1, 1, 1});
 
     ASSERT_TRUE(exp.equalsTo(z));
     delete graph;
@@ -186,7 +186,7 @@ TEST_F(ConditionalTests, Flat_Test_3) {
 
     ASSERT_NE(nullptr, z);
 
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {1, 1, 1, 1});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {1, 1, 1, 1});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;
@@ -214,7 +214,7 @@ TEST_F(ConditionalTests, Flat_Test_4) {
     ASSERT_NE(nullptr, z);
 
     // 0.0 + 2.0 = 2.0 in each element
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {2, 2, 2, 2});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {2, 2, 2, 2});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;
@@ -243,7 +243,7 @@ TEST_F(ConditionalTests, Flat_Test_5) {
     ASSERT_NE(nullptr, z);
 
     // 0.0 + 2.0 + 2.0 = 4.0 in each element
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {4, 4, 4, 4});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {4, 4, 4, 4});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;
@@ -273,7 +273,7 @@ TEST_F(ConditionalTests, Flat_Test_6) {
 
     //z->printIndexedBuffer();
 
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {-1, -1, -1, -1});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {-1, -1, -1, -1});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;
@@ -300,7 +300,7 @@ TEST_F(ConditionalTests, Flat_Test_7) {
 
     //z->printIndexedBuffer();
 
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {-3, -3, -3, -3});
+    auto exp = NDArrayFactory::create<float>( {2, 2}, {-3, -3, -3, -3});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;
@@ -324,7 +324,7 @@ TEST_F(ConditionalTests, Flat_Test_8) {
     ASSERT_NE(nullptr, z);
 
     //val exp = Nd4j.create(2, 2).assign(15.0);
-    auto exp = NDArrayFactory::create<float>('c', {2, 2}, {15, 15, 15, 15});
+    auto exp = NDArrayFactory::create<float>({2, 2}, {15, 15, 15, 15});
     ASSERT_TRUE(exp.equalsTo(z));
 
     delete graph;

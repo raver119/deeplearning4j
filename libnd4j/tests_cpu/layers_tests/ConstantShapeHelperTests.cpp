@@ -47,11 +47,11 @@ public:
 TEST_F(ConstantShapeHelperTests, test_cachedAmount_1) {
     auto ttlBefore = ConstantShapeHelper::getInstance()->totalCachedEntries();
 
-    auto arrayA = NDArrayFactory::create<bool>('c', {7, 11, 17, 23, 31, 43});
+    auto arrayA = NDArrayFactory::create<bool>( {7, 11, 17, 23, 31, 43});
 
     auto ttlMiddle = ConstantShapeHelper::getInstance()->totalCachedEntries();
 
-    auto arrayB = NDArrayFactory::create<bool>('c', {7, 11, 17, 23, 31, 43});
+    auto arrayB = NDArrayFactory::create<bool>( {7, 11, 17, 23, 31, 43});
 
     auto ttlAfter = ConstantShapeHelper::getInstance()->totalCachedEntries();
 
@@ -60,7 +60,7 @@ TEST_F(ConstantShapeHelperTests, test_cachedAmount_1) {
 }
 
 TEST_F(ConstantTadHelperTests, test_cachedAmount_1) {
-    auto arrayA = NDArrayFactory::create<bool>('c', {7, 11, 17, 23, 31, 43});
+    auto arrayA = NDArrayFactory::create<bool>( {7, 11, 17, 23, 31, 43});
     auto ttlBefore = ConstantTadHelper::getInstance()->totalCachedEntries();
 
     auto packAA = ConstantTadHelper::getInstance()->tadForDimensions(arrayA.shapeInfo(), {3, 4});
@@ -124,7 +124,7 @@ TEST_F(ConstantShapeHelperTests, stress_test_1) {
 }
 
 TEST_F(ConstantShapeHelperTests, basic_test_3) {
-    auto array = NDArrayFactory::create<float>('c', {128});
+    auto array = NDArrayFactory::create<float>( {128});
 
     ASSERT_TRUE(array.shapeInfo() != nullptr);
 
@@ -136,7 +136,7 @@ TEST_F(ConstantShapeHelperTests, basic_test_3) {
 
 
 TEST_F(ConstantShapeHelperTests, basic_test_4) {
-    auto array = NDArrayFactory::create<float>('c', {128, 256});
+    auto array = NDArrayFactory::create<float>( {128, 256});
 
     auto dup = array.dup('f');
 
@@ -153,7 +153,7 @@ TEST_F(ConstantShapeHelperTests, basic_test_4) {
 TEST_F(ConstantShapeHelperTests, basic_test_5) {
 
     auto arrayA = NDArrayFactory::create<int>(1);
-    auto arrayB = NDArrayFactory::create<float>('c', {128, 256});
+    auto arrayB = NDArrayFactory::create<float>( {128, 256});
 
     //arrayA.printShapeInfo("A");
     //arrayB->printShapeInfo("B");
@@ -174,7 +174,7 @@ TEST_F(ConstantShapeHelperTests, basic_test_6) {
 }
 
 TEST_F(ConstantShapeHelperTests, basic_test_7) {
-    auto array = NDArrayFactory::create<float>('c', {32, 256});
+    auto array = NDArrayFactory::create<float>({32, 256});
 
     IndicesList indices({NDIndex::all(), NDIndex::interval(0,1)});
     auto strided = array.subarray(indices);

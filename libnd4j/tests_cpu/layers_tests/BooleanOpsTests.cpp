@@ -52,7 +52,7 @@ TEST_F(BooleanOpsTests, LtTest_2) {
 }
 
 TEST_F(BooleanOpsTests, Is_non_decreasing_1) {
-    auto x = NDArrayFactory::create<double>('c', {2 , 2}, {1, 2, 4, 4});
+    auto x = NDArrayFactory::create<double>({2LL , 2LL}, {1., 2., 4., 4.});
 
     sd::ops::is_non_decreasing op;
 
@@ -61,7 +61,7 @@ TEST_F(BooleanOpsTests, Is_non_decreasing_1) {
 }
 
 TEST_F(BooleanOpsTests, Is_non_decreasing_2) {
-    auto x = NDArrayFactory::create<double>('c', {2 , 2}, {1, 2, 4, 3});
+    auto x = NDArrayFactory::create<double>({2LL, 2LL}, {1., 2., 4., 3.});
 
     sd::ops::is_non_decreasing op;
 
@@ -70,7 +70,7 @@ TEST_F(BooleanOpsTests, Is_non_decreasing_2) {
 }
 
 TEST_F(BooleanOpsTests, Is_strictly_increasing_1) {
-    auto x = NDArrayFactory::create<double>('c', {2 , 2}, {1, 2, 4, 5});
+    auto x = NDArrayFactory::create<double>({2LL , 2LL}, {1., 2., 4., 5.});
 
     sd::ops::is_strictly_increasing op;
 
@@ -79,7 +79,7 @@ TEST_F(BooleanOpsTests, Is_strictly_increasing_1) {
 }
 
 TEST_F(BooleanOpsTests, Is_strictly_increasing_2) {
-    auto x = NDArrayFactory::create<double>('c', {2 , 2}, {1, 2, 3, 3});
+    auto x = NDArrayFactory::create<double>({2LL , 2LL}, {1., 2., 3., 3.});
 
     sd::ops::is_strictly_increasing op;
 
@@ -88,7 +88,7 @@ TEST_F(BooleanOpsTests, Is_strictly_increasing_2) {
 }
 
 TEST_F(BooleanOpsTests, Is_strictly_increasing_3) {
-    auto x = NDArrayFactory::create<double>('c', {2 , 2}, {1, 2, 4, 3});
+    auto x = NDArrayFactory::create<double>({2LL, 2LL}, {1., 2., 4., 3.});
 
     sd::ops::is_strictly_increasing op;
 
@@ -96,7 +96,7 @@ TEST_F(BooleanOpsTests, Is_strictly_increasing_3) {
 }
 
 TEST_F(BooleanOpsTests, Is_strictly_increasing_5) {
-    auto x = NDArrayFactory::create<double>('c', {64, 512});
+    auto x = NDArrayFactory::create<double>({64LL, 512LL});
     x.linspace(1.0);
 
     sd::ops::is_strictly_increasing op;
@@ -105,7 +105,7 @@ TEST_F(BooleanOpsTests, Is_strictly_increasing_5) {
 }
 
 TEST_F(BooleanOpsTests, Is_strictly_increasing_6) {
-    auto x = NDArrayFactory::create<double>('c', {64, 512});
+    auto x = NDArrayFactory::create<double>({64LL, 512LL});
     x.linspace(1.0);
 
     x.p(18, 1000323.f);
@@ -116,7 +116,7 @@ TEST_F(BooleanOpsTests, Is_strictly_increasing_6) {
 }
 
 TEST_F(BooleanOpsTests, Is_numeric_tensor_1) {
-    auto x = NDArrayFactory::create<float>('c', {2 , 2}, {1.f, 2.f, 4.f, 3.f});
+    auto x = NDArrayFactory::create<float>({2LL, 2LL}, {1.f, 2.f, 4.f, 3.f});
 
     sd::ops::is_numeric_tensor op;
 
@@ -124,9 +124,9 @@ TEST_F(BooleanOpsTests, Is_numeric_tensor_1) {
 }
 
 TEST_F(BooleanOpsTests, test_where_1) {
-    auto x = NDArrayFactory::create<double>('c', {6}, { 1, -3, 4, 8, -2, 5 });
-    auto y = NDArrayFactory::create<double>('c', {6}, { 2, -3, 1, 1, -2, 1 });
-    auto e = NDArrayFactory::create<double>('c', {3}, { 4, 8, 5 });
+    auto x = NDArrayFactory::create<double>({6LL,}, { 1., -3., 4., 8., -2., 5. });
+    auto y = NDArrayFactory::create<double>({6LL,}, { 2., -3., 1., 1., -2., 1. });
+    auto e = NDArrayFactory::create<double>({3LL,}, { 4., 8., 5. });
 
     sd::ops::choose op;
 
