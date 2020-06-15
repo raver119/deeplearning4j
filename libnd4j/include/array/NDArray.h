@@ -668,6 +668,12 @@ class SD_EXPORT NDArray {
                    const bool sync = true) const;
 
   /**
+   *  make strings for current ndarray - linear or structured by dimensions
+   * */
+  std::string linearString(Nd4jLong limit = -1) const;
+  std::string indexedBufferString(Nd4jLong limit = -1) const;
+
+  /**
    * print element by element consequently in a way they (elements) are stored
    * in physical memory
    */

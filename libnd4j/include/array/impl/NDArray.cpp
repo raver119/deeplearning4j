@@ -35,6 +35,7 @@
 #include <helpers/unicode.h>
 #include <loops/BroadcastPairwiseConverter.h>
 #include <memory/MemoryRegistrator.h>
+#include <iomanip>
 
 namespace sd {
 
@@ -1885,6 +1886,8 @@ void NDArray::printShapeInfo(const char* msg) const {
   fflush(stdout);
 }
 
+static std::string formattedString(NDArray const* arr, int depth, int limit, std::stringstream& ss);
+
 //////////////////////////////////////////////////////////////////////////
 void NDArray::printBuffer(const char* msg, Nd4jLong limit,
                           const bool sync) const {
@@ -1967,6 +1970,41 @@ void NDArray::printLinearBuffer() const {
   printf("]\n");
   fflush(stdout);
 }
+
+    std::string NDArray::linearString(Nd4jLong limit) const {
+        syncToHost();
+
+        const auto ews = this->ews() > 0 ? this->ews() : 1;
+        const auto len = this->lengthOf();
+        std::stringstream ss;
+        ss << "[";
+
+        for (Nd4jLong e = 0; e < len; e++) {
+            if (e)
+                ss << ", ";
+            switch (this->dataType()) {
+                case sd::DataType::INT32:
+                    ss << this->bufferAsT<int>()[e * ews];
+                    break;
+                case sd::DataType::INT64:
+                    ss << this->bufferAsT<Nd4jLong>()[e * ews];
+                    break;
+                case sd::DataType::FLOAT32:
+                    ss << std::setprecision(6) <<  this->bufferAsT<float>()[e * ews];
+                    break;
+                case sd::DataType::DOUBLE:
+                    ss << std::setprecision(6)  << this->bufferAsT<double>()[e * ews];
+                    break;
+                    //case sd::DataType::UTF8:    ss <<  this->bufferAsT<float>()[e * ews]; break;
+                default:
+                    throw std::invalid_argument("NDArray::linearString: not implemented yet for this data type !");
+            }
+
+        }
+        ss << "]";
+        return ss.str();
+    }
+
 //////////////////////////////////////////////////////////////////////////
 static void printFormatted(NDArray const* arr, int depth, int limit) {
   if (arr->rankOf() == 1) {
@@ -2030,38 +2068,107 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////
-void NDArray::printIndexedBuffer(const char* msg, Nd4jLong limit) const {
-  syncToHost();
+    static std::string formattedString(NDArray const* arr, int depth, int limit, std::stringstream& ss) {
 
+        if (arr->rankOf() == 1) {
+            ss << "[ ";
+            for (Nd4jLong i = 0; i < arr->lengthOf(); ++i) {
+                if (arr->isR())
+                    ss << arr->e<float>(i);
+                else if (arr->isZ())
+                    ss << arr->e<Nd4jLong>(i);
+                else if (arr->isB())
+                    ss << arr->e<bool>(i) ? "true" : "false";
+                else if (arr->isS()) {
+                    ss << "\"" << arr->e<std::string>(i).c_str() << "\"";
+                }
+            }
+            ss << "]";
+        } else if (arr->rankOf() == 2) {
+            Nd4jLong rows = arr->rows();
+            Nd4jLong cols = arr->columns();
+            //memset(padding, ' ', depth);
+            ss << "[";
+            for (Nd4jLong row = 0; row < rows; ++row) {
+                if (row && depth > 0)
+                    ss << std::setfill(' ') << std::setw(depth);
+                ss << "[";
+                Nd4jLong colLimit = cols > limit ? cols : limit;
+                for (Nd4jLong col = 0; col < colLimit; ++col) {
+                    if (col) ss << (", ");
+                    if (arr->isR())
+                        ss << arr->e<float>(row, col);
+                    else if (arr->isZ())
+                        ss << arr->e<Nd4jLong>(row, col);
+                    else if (arr->isB())
+                        ss << arr->e<bool>(row, col) ? "true" : "false";
+                    else if (arr->isS()) {
+                        ss << "\"" << arr->e<std::string>(row * cols + col).c_str() <<"\"";
+                    }
+                }
+                if (row < rows - 1)
+                    ss << "]" << std::endl;
+                else
+                    ss << "]";
+            }
+            ss << "]";
+        } else {
+            // std::unique_ptr<ResultSet> arrs(arr->allTensorsAlongDimension({0}));
+            size_t restCount = 2;
+            ss << "[";
+            restCount = ShapeUtils::getNumOfSubArrs(arr->shapeInfo(), {0});
+            for (size_t arrIndex = 0; arrIndex < restCount; ++arrIndex) {
+                NDArray subArr = (*arr)(arrIndex, {0});
+                formattedString(&subArr, depth + 1, limit, ss);
+                if (arrIndex < restCount - 1) {
+                    for (Nd4jLong i = 1; i < arr->rankOf(); ++i) printf("\n");
+                    for (Nd4jLong i = 0; i < depth - 2; ++i) printf(" ");
+                }
+            }
+            ss << "]";
+        }
+        return ss.str();
+    }
+
+//////////////////////////////////////////////////////////////////////////
+    void NDArray::printIndexedBuffer(const char* msg, Nd4jLong limit) const {
+         auto indexedString = indexedBufferString(limit);
+         if (msg)
+             printf("%s:\n%s\n", msg, indexedString.c_str());
+         else
+             printf("%s\n", indexedString.c_str());
+        fflush(stdout);
+    }
+//////////////////////////////////////////////////////////////////////////
+std::string NDArray::indexedBufferString(Nd4jLong limit) const {
+  syncToHost();
+  std::string output;
   Nd4jLong rank = this->rankOf();
 
   bool rowFlag = (rank < 2) || (rank == 2 && this->sizeAt(0) == 1);
 
-  if (msg) printf("%s: ", msg);
-
   if (this->isEmpty()) {
-    printf("Empty\n");
+    return std::string("Empty");
   } else if (this->rankOf() == 0) {
+      std::stringstream ss;
     if (this->isZ())
-      printf("%lld\n", this->e<Nd4jLong>(0));
+      ss << this->e<Nd4jLong>(0);
     else if (this->isR())
-      printf("%f\n", this->e<float>(0));
+      ss << this->e<float>(0);
     else if (this->isB()) {
-      printf("%s\n", this->e<bool>(0) ? "true" : "false");
+      ss << this->e<bool>(0) ? "true" : "false";
     } else if (this->isS()) {
       // todo do we need this
       // printf("\"%lld\"\n", this->getOffset(e));
-      printf("\"%s\"\n", this->e<std::string>(0).c_str());
+      ss << "\"" << this->e<std::string>(0) << "\n";
     }
+    return ss.str();
   } else if (rowFlag && ews() == 1)
-    printBuffer(nullptr, limit);
+    return linearString(limit);
   else {
-    if (msg) printf("\n");
-    printFormatted(this, 1, limit);
-    printf("\n");
+    std::stringstream ss;
+    return formattedString(this, 1, limit, ss);
   }
-  fflush(stdout);
 }
 
 //////////////////////////////////////////////////////////////////////////

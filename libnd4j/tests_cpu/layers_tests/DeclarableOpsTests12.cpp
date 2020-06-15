@@ -3035,12 +3035,12 @@ TEST_F(DeclarableOpsTests12, QR_Test_1) {
   ASSERT_EQ(res.status(), ND4J_STATUS_OK);
   auto q = res.at(0);
   auto r = res.at(1);
-  //    q->printIndexedBuffer("Orthogonal 5x5");
-  //    expQ.printBuffer("Orthogonal Exp");
-  //    r->printIndexedBuffer("Upper triangular 5x3");
-  //    expR.printBuffer("Upper triangular Exp");
-  //    q->printShapeInfo("Q shape");
-  //    r->printShapeInfo("R shape");
+      q.printIndexedBuffer("Orthogonal 5x5");
+      expQ.printBuffer("Orthogonal Exp");
+      r.printIndexedBuffer("Upper triangular 5x3");
+      expR.printBuffer("Upper triangular Exp");
+      q.printShapeInfo("Q shape");
+      r.printShapeInfo("R shape");
   sd::ops::matmul opMul;
   auto res2 =
       opMul.evaluate({&q, &r});  // MmulHelper::matmul(q, r, &in, false, false);
