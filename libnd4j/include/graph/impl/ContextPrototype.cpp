@@ -178,6 +178,7 @@ ContextPrototype::ContextPrototype(const ContextPrototype &other) noexcept {
   _bArgs = other._bArgs;
   _dArgs = other._dArgs;
   _name = other._name;
+  _axis = other._axis;
 
   _nodeId = other._nodeId;
   _isInplace = other._isInplace;
@@ -200,6 +201,7 @@ ContextPrototype &ContextPrototype::operator=(
   _bArgs = other._bArgs;
   _dArgs = other._dArgs;
   _name = other._name;
+  _axis = other._axis;
 
   _nodeId = other._nodeId;
   _isInplace = other._isInplace;
@@ -221,6 +223,7 @@ ContextPrototype::ContextPrototype(ContextPrototype &&other) noexcept {
   _bArgs = std::move(other._bArgs);
   _dArgs = std::move(other._dArgs);
   _name = std::move(other._name);
+  _axis = std::move(other._axis);
 
   _nodeId = other._nodeId;
   _isInplace = other._isInplace;
@@ -243,6 +246,7 @@ ContextPrototype &ContextPrototype::operator=(
   _bArgs = std::move(other._bArgs);
   _dArgs = std::move(other._dArgs);
   _name = std::move(other._name);
+  _axis = std::move(other._axis);
 
   _nodeId = other._nodeId;
   _isInplace = other._isInplace;
