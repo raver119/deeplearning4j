@@ -2104,7 +2104,7 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
                 for (Nd4jLong col = 0; col < colLimit; ++col) {
                     if (col) ss << (", ");
                     if (arr->isR())
-                        ss << arr->e<float>(row, col);
+                        ss << std::setw(12) << std::setprecision(6) << arr->e<float>(row, col);
                     else if (arr->isZ())
                         ss << arr->e<Nd4jLong>(row, col);
                     else if (arr->isB())
