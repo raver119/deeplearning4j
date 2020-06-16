@@ -103,6 +103,23 @@ namespace sd {
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<bool>& data, sd::Order order, sd::LaunchContext * context);
 
 ////////////////////////////////////////////////////////////////////////
+    template <typename T>
+    NDArray NDArrayFactory::create(const T* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext* context) {
+        if ((int) shape.size() > MAX_RANK)
+            throw std::invalid_argument("NDArrayFactory::create: rank of NDArray can't exceed 32 !");
+        auto dtype = DataTypeUtils::fromT<T>();
+
+        ShapeDescriptor descriptor(DataTypeUtils::fromT<T>(), (char const)order, shape);
+
+        std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(values, dtype, descriptor.arrLength() * sizeof(T), context->getWorkspace());
+
+        NDArray result(buffer, descriptor, context);
+
+        return result;
+    }
+
+////////////////////////////////////////////////////////////////////////
+
 template <typename T>
 void NDArrayFactory::memcpyFromVector(void *ptr, const std::vector<T> &vector) {
 

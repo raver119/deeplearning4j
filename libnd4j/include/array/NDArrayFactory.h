@@ -54,6 +54,18 @@ namespace sd {
         template <typename T>
         static NDArray create(const T value, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
+        /**
+         * create with given typed buffer and shape with order. 
+         * \param values - typed buffer with size, computed from shape
+         * \param shape - vector of dimensions
+         * \param order - given order of strides (C/F, default C)
+         * \param context - launch context pointer
+         *
+         * \return NDArray with given buffer and shape by given order.
+         */
+        template <typename T>
+        static NDArray create(const T* values, const std::vector<Nd4jLong>& shape, const Order order = sd::kArrayOrderC, sd::LaunchContext* context = sd::LaunchContext ::defaultContext());
+
         static NDArray create(sd::DataType dtype, sd::LaunchContext * context = sd::LaunchContext ::defaultContext());
 
         template <typename T>
