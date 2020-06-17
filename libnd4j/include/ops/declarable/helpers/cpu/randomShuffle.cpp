@@ -160,7 +160,7 @@ static void randomShuffle_(NDArray& input, NDArray& output, sd::graph::RandomGen
             for(int i = firstDim - 1; i > 0; --i) {
                 const int j = rng.relativeInt(i) % (i + 1);
                 if(i != j)
-                    subArrsList.at(i)->swapUnsafe(*subArrsList.at(j));
+                    subArrsList.at(i).swapUnsafe(subArrsList.at(j));
             }
         }
         else {
@@ -177,7 +177,7 @@ static void randomShuffle_(NDArray& input, NDArray& output, sd::graph::RandomGen
             auto func = PRAGMA_THREADS_FOR {
 
                 for (auto i = start; i < stop; ++i)
-                    subArrsListOut.at(i)->assign(subArrsListIn.at(indices[i]));
+                    subArrsListOut.at(i).assign(subArrsListIn.at(indices[i]));
             };
 
             samediff::Threads::parallel_for(func, 0, firstDim);

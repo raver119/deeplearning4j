@@ -1062,12 +1062,12 @@ TEST_F(RNGTests, Test_GammaDistribution_4) {
     ASSERT_FALSE(exp0.equalsTo(z));
     sd::ops::reduce_mean testOps1;
     sd::ops::reduce_variance testOps2;
-    auto testRes1 = testOps1.evaluate({z});
-    auto testRes2 = testOps2.evaluate({z});
+    auto testRes1 = testOps1.evaluate({&z});
+    auto testRes2 = testOps2.evaluate({&z});
 //    testRes1[0]->printBuffer("Mean (expected 1.0)");
 //    testRes2[0]->printBuffer("Variance (expected 0.5)");
-    ASSERT_NEAR(testRes1[0]->t<float>(0), 1.0f, 0.01);
-    ASSERT_NEAR(testRes2[0]->t<float>(0), 0.5f, 0.02);
+    ASSERT_NEAR(testRes1[0].t<float>(0), 1.0f, 0.01);
+    ASSERT_NEAR(testRes2[0].t<float>(0), 0.5f, 0.02);
 }
 
 TEST_F(RNGTests, Test_GammaDistribution_5) {
@@ -1090,12 +1090,12 @@ TEST_F(RNGTests, Test_GammaDistribution_5) {
 //    z->printIndexedBuffer("Gamma distributed");
     sd::ops::reduce_mean testOps1;
     sd::ops::reduce_variance testOps2;
-    auto testRes1 = testOps1.evaluate({z});
-    auto testRes2 = testOps2.evaluate({z});
+    auto testRes1 = testOps1.evaluate({&z});
+    auto testRes2 = testOps2.evaluate({&z});
 //    testRes1[0]->printBuffer("Mean (expected 0.1)");
 //    testRes2[0]->printBuffer("Variance (expected 0.05)");
-    ASSERT_NEAR(testRes1[0]->t<float>(0), 0.1f, 0.02);
-    ASSERT_NEAR(testRes2[0]->t<float>(0), 0.05f, 0.02);
+    ASSERT_NEAR(testRes1[0].t<float>(0), 0.1f, 0.02);
+    ASSERT_NEAR(testRes2[0].t<float>(0), 0.05f, 0.02);
 }
 
 TEST_F(RNGTests, Test_UniformDistribution_04) {

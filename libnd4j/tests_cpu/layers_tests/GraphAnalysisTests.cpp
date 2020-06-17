@@ -1065,3 +1065,9 @@ TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   const auto& optimized = graph.optimizedGraph();
   // graph.printOut();
 }
+
+TEST_F(GraphAnalysisTests, optimizedGraph_nested_while_1) {
+  auto graph = Graph::fromFlatBuffers("resources/simplewhile_nested.fb");
+  const auto& optimized = graph.optimizedGraph();
+  graph.printOut();
+}

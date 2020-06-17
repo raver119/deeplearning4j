@@ -1726,7 +1726,7 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test2) {
   auto output = results.at(0);
 
   ASSERT_EQ(Status::OK(), results.status());
-  ASSERT_TRUE(output->equalsTo(exp1));
+  ASSERT_TRUE(output.equalsTo(exp1));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1763,8 +1763,8 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test4) {
     auto output = results.at(0);
 
     ASSERT_EQ(Status::OK(), results.status());
-    ASSERT_TRUE(output->equalsTo(exp1) || output->equalsTo(exp2) || output->equalsTo(exp3)
-             || output->equalsTo(exp4) || output->equalsTo(exp5) || output->equalsTo(exp6));
+    ASSERT_TRUE(output.equalsTo(exp1) || output.equalsTo(exp2) || output.equalsTo(exp3)
+             || output.equalsTo(exp4) || output.equalsTo(exp5) || output.equalsTo(exp6));
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1781,11 +1781,11 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test5) {
   // ASSERT_TRUE(!output->equalsTo(input));
 
     bool hasDublicates = false;
-    for(int i = 0; i < output->lengthOf() - 1; ++i)
-  for(int j = i+1; j < output->lengthOf(); ++j)
-  if(output->t<int>(i) == output->t<int>(j)) {
+    for(int i = 0; i < output.lengthOf() - 1; ++i)
+  for(int j = i+1; j < output.lengthOf(); ++j)
+  if(output.t<int>(i) == output.t<int>(j)) {
                 hasDublicates = true;
-                i = output->lengthOf();
+                i = output.lengthOf();
                 break;}
     ASSERT_TRUE(!hasDublicates);
 }
@@ -1803,11 +1803,11 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test6) {
     // ASSERT_TRUE(!output->equalsTo(input));
 
     bool hasDublicates = false;
-    for(int i = 0; i < output->lengthOf() - 1; ++i)
-        for(int j = i+1; j < output->lengthOf(); ++j)
-            if(output->t<int>(i) == output->t<int>(j)) {
+    for(int i = 0; i < output.lengthOf() - 1; ++i)
+        for(int j = i+1; j < output.lengthOf(); ++j)
+            if(output.t<int>(i) == output.t<int>(j)) {
                 hasDublicates = true;
-                i = output->lengthOf();
+                i = output.lengthOf();
                 break;
             }
     ASSERT_TRUE(!hasDublicates);
@@ -1824,10 +1824,10 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test7) {
   auto output = results.at(0);
     // output->printBuffer();
     ASSERT_EQ(Status::OK(), results.status());
-    ASSERT_TRUE(!output->equalsTo(input));
+    ASSERT_TRUE(!output.equalsTo(input));
 
     auto vec1 = input.getBufferAsVector<int>();
-    auto vec2 = output->getBufferAsVector<int>();
+    auto vec2 = output.getBufferAsVector<int>();
     std::sort(vec2.begin(), vec2.end());
     ASSERT_TRUE(std::equal(vec1.begin(), vec1.end(), vec2.begin()));
 }
