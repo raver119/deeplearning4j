@@ -95,7 +95,7 @@ CublasHelper::CublasHelper() {
 }
 
 CublasHelper::~CublasHelper() {
-  nd4j_printf("Releasing cuBLAS\n", "");
+
   auto numDevices = AffinityManager::numberOfDevices();
 
   for (int e = 0; e < numDevices; e++) destroyHandle_(_cache[e]);

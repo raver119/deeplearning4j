@@ -3669,9 +3669,7 @@ class ManhattanDistance {
   }
 #endif
 
-#ifndef __clang__
-#pragma omp declare simd uniform(extraParamsRef)
-#endif
+
   op_def static Y merge(X old, X opOutput, X *extraParamsRef) {
     return update(old, opOutput, extraParamsRef);
   }

@@ -64,7 +64,7 @@ struct SD_EXPORT NpyArray {
   void destruct() { delete[] data; }
 };
 
-struct SD_EXPORT npz_t : public std::unordered_map<std::string, NpyArray> {
+struct SD_EXPORT npz_t : public std::map<std::string, NpyArray> {
   void destruct() {
     npz_t::iterator it = this->begin();
     for (; it != this->end(); ++it) (*it).second.destruct();
