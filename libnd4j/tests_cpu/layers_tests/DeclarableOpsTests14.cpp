@@ -2081,7 +2081,7 @@ TEST_F(DeclarableOpsTests14, Reshape1) {
 
     reshape.execute(block);
 
-    ASSERT_TRUE(x->isSameShape(y));
+    ASSERT_TRUE(x.isSameShape(y));
 
     delete variableSpace;
     delete block;
@@ -2092,8 +2092,8 @@ TEST_F(DeclarableOpsTests14, Reshape2) {
     const std::vector<Nd4jLong> xShape = { 5,4,3 };
     const std::vector<Nd4jLong> yShape = { 3,5,4 };
 
-    auto x = NDArrayFactory::create<float>('c', xShape);
-    auto y = NDArrayFactory::create<float>('c', yShape);
+    auto x = NDArrayFactory::create<float>(xShape);
+    auto y = NDArrayFactory::create<float>(yShape);
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, new NDArray(x));
@@ -2102,7 +2102,7 @@ TEST_F(DeclarableOpsTests14, Reshape2) {
     auto block = new Context(1, variableSpace, false);
     block->fillInputs({ -1 });
     std::vector<int>* arguments = block->getIArguments();
-    arguments->push_back(-y->ordering());
+    arguments->push_back(-y.ordering());
     arguments->push_back(3);
     arguments->push_back(5);
     arguments->push_back(4);
@@ -2115,7 +2115,6 @@ TEST_F(DeclarableOpsTests14, Reshape2) {
 
     ASSERT_TRUE(result->isSameShape(y));
 
-    delete y;
     delete block;
     delete variableSpace;
 }
@@ -2263,8 +2262,6 @@ TEST_F(DeclarableOpsTests14, Reshape13) {
     ASSERT_EQ(Status::OK(), result.status());
 
     ASSERT_EQ(exp, *result.at(0));
-
-    delete empty;
 }
 
 TEST_F(DeclarableOpsTests14, Reshape14) {
