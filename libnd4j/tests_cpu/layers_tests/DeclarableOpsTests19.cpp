@@ -42,7 +42,7 @@ public:
 
 
 TEST_F(DeclarableOpsTests19, test_argmax_maxint_vector_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {0.1f, 0.5f, 0.7f});
+    auto x = NDArrayFactory::create<float>(  {3}, {0.1f, 0.5f, 0.7f});
     auto z = NDArrayFactory::create<Nd4jLong>(0);
     auto e = NDArrayFactory::create<Nd4jLong>(2);
 
@@ -54,9 +54,9 @@ TEST_F(DeclarableOpsTests19, test_argmax_maxint_vector_1) {
 
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_1) {
-    auto x = NDArrayFactory::create<double>('c', {3}, {1.5, 2.5, -3.5});
-    auto exp_encoded = NDArrayFactory::create<int>('c', {7}, {3, 3, 1056964608, 0, 1, 2, -3});
-    auto exp_gradients = NDArrayFactory::create<double>('c', {3}, {1.0, 2.0, -3.0});
+    auto x = NDArrayFactory::create<double>(  {3}, {1.5, 2.5, -3.5});
+    auto exp_encoded = NDArrayFactory::create<int>(  {7}, {3, 3, 1056964608, 0, 1, 2, -3});
+    auto exp_gradients = NDArrayFactory::create<double>(  {3}, {1.0, 2.0, -3.0});
 
     sd::ops::encode_threshold op;
     auto result = op.evaluate({&x}, {0.5});
@@ -75,8 +75,8 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_1) {
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_2) {
     for (int length = 5; length < 35; length++) {
-        auto x = NDArrayFactory::create<double>('c', {10000});
-        auto exp_gradients = NDArrayFactory::create<double>('c', {10000});
+        auto x = NDArrayFactory::create<double>(  {10000});
+        auto exp_gradients = NDArrayFactory::create<double>(  {10000});
 
         for (int e = 0; e < length; e++) {
             x.p(e, 2e-3);
@@ -94,7 +94,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_2) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_1) {
-    auto x = NDArrayFactory::create<float>('c', {6});
+    auto x = NDArrayFactory::create<float>(  {6});
     x = 1.0f;
 
     sd::ops::encode_threshold op;
@@ -108,7 +108,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_1) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_2) {
-    auto x = NDArrayFactory::create<float>('c', {1000});
+    auto x = NDArrayFactory::create<float>(  {1000});
     x = 1.0f;
 
     sd::ops::encode_threshold op;
@@ -123,9 +123,9 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_2) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_decode_1) {
-    auto x = NDArrayFactory::create<double>('c', {3}, {1.0, 2.0, -3.0});
-    auto y = NDArrayFactory::create<int>('c', {7}, {3, 3, 1056964608, 0, 1, 2, -3});
-    auto exp_gradients = NDArrayFactory::create<double>('c', {3}, {1.5, 2.5, -3.5});
+    auto x = NDArrayFactory::create<double>(  {3}, {1.0, 2.0, -3.0});
+    auto y = NDArrayFactory::create<int>(  {7}, {3, 3, 1056964608, 0, 1, 2, -3});
+    auto exp_gradients = NDArrayFactory::create<double>(  {3}, {1.5, 2.5, -3.5});
 
     sd::ops::decode_threshold op;
     auto status = op.execute({&x, &y}, {&x});
@@ -134,7 +134,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_decode_1) {
 }
 
 TEST_F(DeclarableOpsTests19, test_bitmap_encode_1) {
-    auto initial = NDArrayFactory::create<float>('c', {6}, {0.0f, 0.0f, 1e-3f, -1e-3f, 0.0f, 0.0f});
+    auto initial = NDArrayFactory::create<float>(  {6}, {0.0f, 0.0f, 1e-3f, -1e-3f, 0.0f, 0.0f});
     auto exp_0 = initial.like();
     auto exp_1 = initial.dup();
     auto exp_c = NDArrayFactory::create<int>(2L);
@@ -164,7 +164,7 @@ TEST_F(DeclarableOpsTests19, test_bitmap_encode_1) {
 }
 
 TEST_F(DeclarableOpsTests19, test_bitmap_encode_decode) {
-    auto initial = NDArrayFactory::create<float>('c', {256000});
+    auto initial = NDArrayFactory::create<float>(  {256000});
     initial = 1.0f;
     auto exp = initial.dup();
     auto neg = initial.like();
@@ -199,7 +199,7 @@ TEST_F(DeclarableOpsTests19, test_bitmap_encode_decode) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
-    auto initial = NDArrayFactory::create<float>('c', {256000});
+    auto initial = NDArrayFactory::create<float>(  {256000});
     initial = 1.0f;
     auto exp = initial.dup();
     auto neg = initial.like();
@@ -244,7 +244,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
 #ifdef _RELEASE
 TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
   // [2,1,135079944,1,1,8192,1,99]
-  auto initial = NDArrayFactory::create<float>('c', {1, 135079944});
+  auto initial = NDArrayFactory::create<float>(  {1, 135079944});
   initial = 1.0f;
   auto exp = initial.dup();
   auto neg = initial.like();
@@ -293,10 +293,10 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_decode_2) {
 
 
 TEST_F(DeclarableOpsTests19, test_matmul_ccc) {
-    auto x = NDArrayFactory::create<float>('c', {10, 10});
-    auto y = NDArrayFactory::create<float>('c', {10, 10});
-    auto e = NDArrayFactory::create<float>('c', {10, 10});
-    auto z = NDArrayFactory::create<float>('c', {10, 10});
+    auto x = NDArrayFactory::create<float>(  {10, 10});
+    auto y = NDArrayFactory::create<float>(  {10, 10});
+    auto e = NDArrayFactory::create<float>(  {10, 10});
+    auto z = NDArrayFactory::create<float>(  {10, 10});
 
     z.assign(100.f);
     e.assign(110.f);
@@ -311,10 +311,10 @@ TEST_F(DeclarableOpsTests19, test_matmul_ccc) {
 }
 
 TEST_F(DeclarableOpsTests19, test_matmul_fcf) {
-    auto x = NDArrayFactory::create<float>('f', {10, 10});
-    auto y = NDArrayFactory::create<float>('c', {10, 10});
-    auto e = NDArrayFactory::create<float>('f', {10, 10});
-    auto z = NDArrayFactory::create<float>('f', {10, 10});
+    auto x = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto y = NDArrayFactory::create<float>(  {10, 10}, {}, sd::kArrayOrderFortran);
+    auto e = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto z = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
 
     z.assign(100.f);
     e.assign(110.f);
@@ -329,10 +329,10 @@ TEST_F(DeclarableOpsTests19, test_matmul_fcf) {
 }
 
 TEST_F(DeclarableOpsTests19, test_matmul_cff) {
-    auto x = NDArrayFactory::create<float>('c', {10, 10});
-    auto y = NDArrayFactory::create<float>('f', {10, 10});
-    auto e = NDArrayFactory::create<float>('f', {10, 10});
-    auto z = NDArrayFactory::create<float>('f', {10, 10});
+    auto x = NDArrayFactory::create<float>(  {10, 10});
+    auto y = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto e = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto z = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
 
     z.assign(100.f);
     e.assign(110.f);
@@ -348,10 +348,10 @@ TEST_F(DeclarableOpsTests19, test_matmul_cff) {
 
 
 TEST_F(DeclarableOpsTests19, test_matmul_ccf) {
-    auto x = NDArrayFactory::create<float>('c', {10, 10});
-    auto y = NDArrayFactory::create<float>('c', {10, 10});
-    auto e = NDArrayFactory::create<float>('f', {10, 10});
-    auto z = NDArrayFactory::create<float>('f', {10, 10});
+    auto x = NDArrayFactory::create<float>(  {10, 10});
+    auto y = NDArrayFactory::create<float>(  {10, 10});
+    auto e = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto z = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
 
     z.assign(100.f);
     e.assign(110.f);
@@ -366,10 +366,10 @@ TEST_F(DeclarableOpsTests19, test_matmul_ccf) {
 }
 
 TEST_F(DeclarableOpsTests19, test_matmul_fff) {
-    auto x = NDArrayFactory::create<float>('f', {10, 10});
-    auto y = NDArrayFactory::create<float>('f', {10, 10});
-    auto e = NDArrayFactory::create<float>('f', {10, 10});
-    auto z = NDArrayFactory::create<float>('f', {10, 10});
+    auto x = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto y = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto e = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
+    auto z = NDArrayFactory::create<float>( {10, 10}, {}, sd::kArrayOrderFortran);
 
     z.assign(100.f);
     e.assign(110.f);
@@ -400,9 +400,9 @@ TEST_F(DeclarableOpsTests19, test_conv1d_bp_1) {
     Nd4j.exec(op);
      */
 
-    auto t = NDArrayFactory::create<float>('c', {2, 2, 12});
-    auto u = NDArrayFactory::create<float>('c', {3, 2, 3});
-    auto v = NDArrayFactory::create<float>('c', {2, 3, 6});
+    auto t = NDArrayFactory::create<float>(  {2, 2, 12});
+    auto u = NDArrayFactory::create<float>(  {3, 2, 3});
+    auto v = NDArrayFactory::create<float>(  {2, 3, 6});
 
     sd::ops::conv1d_bp op;
     auto result = op.evaluate({&t, &u, &v}, {3, 2, 0, 1, 2,0});
@@ -411,8 +411,8 @@ TEST_F(DeclarableOpsTests19, test_conv1d_bp_1) {
 }
 
 TEST_F(DeclarableOpsTests19, test_squeeze_1) {
-    auto x = NDArrayFactory::create<double>('c', {3, 4, 1});
-    auto e = NDArrayFactory::create<double>('c', {3, 4});
+    auto x = NDArrayFactory::create<double>(  {3, 4, 1});
+    auto e = NDArrayFactory::create<double>(  {3, 4});
     int axis = 2;
 
     sd::ops::squeeze op;

@@ -52,9 +52,9 @@ TEST_F(DeclarableOpsTests18, test_bitcast_1) {
 }
 
 TEST_F(DeclarableOpsTests18, test_tanh_1) {
-    auto x = NDArrayFactory::create<float>('c', { 8 }, { 0.23f, -0.23f, 0.35f, -0.35f, 0.64f, -0.64f, 100000.f, -100000.f });
+    auto x = NDArrayFactory::create<float>(  { 8 }, { 0.23f, -0.23f, 0.35f, -0.35f, 0.64f, -0.64f, 100000.f, -100000.f });
     auto z = x.ulike();
-    auto e = NDArrayFactory::create<float>('c', { 8 }, { 0.226028f, -0.226028f, 0.336376f, -0.336376f, 0.564900f, -0.564900f, 1.f, -1.f });
+    auto e = NDArrayFactory::create<float>(  { 8 }, { 0.226028f, -0.226028f, 0.336376f, -0.336376f, 0.564900f, -0.564900f, 1.f, -1.f });
 
     sd::ops::tanh op;
     op.execute({ &x }, { &z });
@@ -190,9 +190,9 @@ TEST_F(DeclarableOpsTests18, TestSoftMax_bp_TEST3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_1) {
 
-    auto x = NDArrayFactory::create<float>('c', { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
-    auto w = NDArrayFactory::create<float>('c', { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
-    auto b = NDArrayFactory::create<float>({ 100.f, 200.f });
+    auto x = NDArrayFactory::create<float>(  { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
+    auto w = NDArrayFactory::create<float>(  { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
+    auto b = NDArrayFactory::vector<float>({ 100.f, 200.f });
 
     NDArray dLdz('c', { 2, 2 }, DataType::FLOAT32);
     dLdz.linspace(1);
@@ -206,9 +206,9 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_1) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdx = NDArrayFactory::create<float>('c', { 2,3 }, { 17.f, 14.f, 10.f, 45.f, 32.f, 26.f });
-    auto edLdw = NDArrayFactory::create<float>('c', { 3,2 }, { 43.f, 58.f, 26.f, 42.f, 21.f, 30.f });
-    auto edLdb = NDArrayFactory::create<float>('c', { 2 }, { 4.f, 6.f });
+    auto edLdx = NDArrayFactory::create<float>(  { 2,3 }, { 17.f, 14.f, 10.f, 45.f, 32.f, 26.f });
+    auto edLdw = NDArrayFactory::create<float>(  { 3,2 }, { 43.f, 58.f, 26.f, 42.f, 21.f, 30.f });
+    auto edLdb = NDArrayFactory::create<float>(  { 2 }, { 4.f, 6.f });
 
     ASSERT_TRUE(edLdx.isSameShape(dLdx));
     ASSERT_TRUE(edLdw.isSameShape(dLdw));
@@ -220,9 +220,9 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_2) {
 
-    auto x = NDArrayFactory::create<float>('c', { 6,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f, 1.f, 11.f,  3.f, 14.f,  5.f,  6.f, 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
-    auto w = NDArrayFactory::create<float>('c', { 3,4 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f, 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
-    auto b = NDArrayFactory::create<float>('c', { 4 }, { 100.f, 200.f, 100.f, 200.f });
+    auto x = NDArrayFactory::create<float>(  { 6,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f, 1.f, 11.f,  3.f, 14.f,  5.f,  6.f, 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
+    auto w = NDArrayFactory::create<float>(  { 3,4 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f, 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
+    auto b = NDArrayFactory::create<float>(  { 4 }, { 100.f, 200.f, 100.f, 200.f });
 
     NDArray dLdz('c', { 6, 4 }, DataType::FLOAT32);
     dLdz.linspace(.1, .5);
@@ -236,9 +236,9 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_2) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdx = NDArrayFactory::create<float>('c', { 6,3 }, { 15.3f, 18.700001f, 13.2f, 61.299995f, 62.699997f, 47.200001f, 107.299995f, 106.699997f, 81.199997f, 153.299988f, 150.699997f, 115.199997f, 199.300018f, 194.700012f, 149.199997f, 245.300018f, 238.700012f, 183.199997f });
-    auto edLdw = NDArrayFactory::create<float>('c', { 3,4 }, { 268.5f, 291.f, 313.5f, 336.f, 226.800003f, 250.800003f, 274.799988f, 298.799988f, 146.699997f, 160.199997f, 173.700012f, 187.200012f });
-    auto edLdb = NDArrayFactory::create<float>('c', { 4 }, { 30.6f, 33.599998f, 36.599998f, 39.599998f });
+    auto edLdx = NDArrayFactory::create<float>(  { 6,3 }, { 15.3f, 18.700001f, 13.2f, 61.299995f, 62.699997f, 47.200001f, 107.299995f, 106.699997f, 81.199997f, 153.299988f, 150.699997f, 115.199997f, 199.300018f, 194.700012f, 149.199997f, 245.300018f, 238.700012f, 183.199997f });
+    auto edLdw = NDArrayFactory::create<float>(  { 3,4 }, { 268.5f, 291.f, 313.5f, 336.f, 226.800003f, 250.800003f, 274.799988f, 298.799988f, 146.699997f, 160.199997f, 173.700012f, 187.200012f });
+    auto edLdb = NDArrayFactory::create<float>(  { 4 }, { 30.6f, 33.599998f, 36.599998f, 39.599998f });
     ASSERT_TRUE(edLdx.isSameShape(dLdx));
     ASSERT_TRUE(edLdw.isSameShape(dLdw));
     ASSERT_TRUE(edLdb.isSameShape(dLdb));
@@ -250,11 +250,11 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_3) {
 
-    auto x = NDArrayFactory::create<float>('c', { 1, 2 }, { 1.f, 11.f });
-    auto w = NDArrayFactory::create<float>('c', { 2, 3 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
-    auto b = NDArrayFactory::create<float>({ 100.f, 200.f, 300.f });
+    auto x = NDArrayFactory::create<float>(  { 1, 2 }, { 1.f, 11.f });
+    auto w = NDArrayFactory::create<float>(  { 2, 3 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
+    auto b = NDArrayFactory::vector<float>({ 100.f, 200.f, 300.f });
 
-    auto dLdz = NDArrayFactory::create<float>('c', { 1, 3 }, { 166.f, 269.f, 326.f });
+    auto dLdz = NDArrayFactory::create<float>(  { 1, 3 }, { 166.f, 269.f, 326.f });
 
     sd::ops::xw_plus_b_bp op;
     auto result = op.evaluate({ &x, &w, &b, &dLdz }, {}, {});
@@ -265,9 +265,9 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_3) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdx = NDArrayFactory::create<float>('c', { 1,2 }, { 3937.f, 3096.f });
-    auto edLdw = NDArrayFactory::create<float>('c', { 2,3 }, { 166.f, 269.f, 326.f, 1826.f, 2959.f, 3586.f });
-    auto edLdb = NDArrayFactory::create<float>('c', { 3 }, { 166.f, 269.f, 326.f });
+    auto edLdx = NDArrayFactory::create<float>(  { 1,2 }, { 3937.f, 3096.f });
+    auto edLdw = NDArrayFactory::create<float>(  { 2,3 }, { 166.f, 269.f, 326.f, 1826.f, 2959.f, 3586.f });
+    auto edLdb = NDArrayFactory::create<float>(  { 3 }, { 166.f, 269.f, 326.f });
     ASSERT_TRUE(edLdx.isSameShape(dLdx));
     ASSERT_TRUE(edLdw.isSameShape(dLdw));
     ASSERT_TRUE(edLdb.isSameShape(dLdb));
@@ -279,11 +279,11 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_4) {
 
-    auto x = NDArrayFactory::create<float>('c', { 1, 2 }, { 1.f, 11.f });
-    auto w = NDArrayFactory::create<float>('c', { 2, 1 }, { 11.f,  3.f });
-    auto b = NDArrayFactory::create<float>('c', { 1 }, { 200.f });
+    auto x = NDArrayFactory::create<float>(  { 1, 2 }, { 1.f, 11.f });
+    auto w = NDArrayFactory::create<float>(  { 2, 1 }, { 11.f,  3.f });
+    auto b = NDArrayFactory::create<float>(  { 1 }, { 200.f });
 
-    auto dLdz = NDArrayFactory::create<float>('c', { 1,1 }, { 244.f });
+    auto dLdz = NDArrayFactory::create<float>(  { 1,1 }, { 244.f });
 
     sd::ops::xw_plus_b_bp op;
     auto result = op.evaluate({ &x, &w, &b, &dLdz }, {}, {});
@@ -294,9 +294,9 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_4) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdx = NDArrayFactory::create<float>('c', { 1,2 }, { 2684.f, 732.f });
-    auto edLdw = NDArrayFactory::create<float>('c', { 2,1 }, { 244.f, 2684.f });
-    auto edLdb = NDArrayFactory::create<float>('c', { 1 }, { 244.f });
+    auto edLdx = NDArrayFactory::create<float>(  { 1,2 }, { 2684.f, 732.f });
+    auto edLdw = NDArrayFactory::create<float>(  { 2,1 }, { 244.f, 2684.f });
+    auto edLdb = NDArrayFactory::create<float>(  { 1 }, { 244.f });
     ASSERT_TRUE(edLdx.isSameShape(dLdx));
     ASSERT_TRUE(edLdw.isSameShape(dLdw));
     ASSERT_TRUE(edLdb.isSameShape(dLdb));
@@ -308,11 +308,11 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_4) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_5) {
 
-    auto x = NDArrayFactory::create<float>('f', { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
-    auto w = NDArrayFactory::create<float>('f', { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
-    auto b = NDArrayFactory::create<float>({ 100.f, 200.f });
+    auto x = NDArrayFactory::create<float>( { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f }, sd::kArrayOrderFortran);
+    auto w = NDArrayFactory::create<float>( { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f }, sd::kArrayOrderFortran);
+    auto b = NDArrayFactory::vector<float>( { 100.f, 200.f });
 
-    auto dLdz = NDArrayFactory::create<float>('f', { 2,2 }, { 140.f, 287.f, 233.f,  351.f });
+    auto dLdz = NDArrayFactory::create<float>( { 2,2 }, { 140.f, 287.f, 233.f,  351.f }, sd::kArrayOrderFortran);
 
     sd::ops::xw_plus_b_bp op;
     auto result = op.evaluate({ &x, &w, &b, &dLdz }, {}, {});
@@ -323,13 +323,13 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_5) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdxC = NDArrayFactory::create<float>('c', { 2,3 }, { 2705.f, 1818.f, 1026.f, 4912.f, 2967.f, 1850.f });
-    auto edLdwC = NDArrayFactory::create<float>('c', { 3,2 }, { 3297.f, 4094.f, 4438.f, 5613.f, 2422.f, 3271.f });
-    auto edLdbC = NDArrayFactory::create<float>('c', { 2 }, { 427.f, 584.f });
+    auto edLdxC = NDArrayFactory::create<float>(  { 2,3 }, { 2705.f, 1818.f, 1026.f, 4912.f, 2967.f, 1850.f });
+    auto edLdwC = NDArrayFactory::create<float>(  { 3,2 }, { 3297.f, 4094.f, 4438.f, 5613.f, 2422.f, 3271.f });
+    auto edLdbC = NDArrayFactory::create<float>(  { 2 }, { 427.f, 584.f });
 
-    auto edLdx = NDArrayFactory::create<float>('f', { 2,3 });
-    auto edLdw = NDArrayFactory::create<float>('f', { 3,2 });
-    auto edLdb = NDArrayFactory::create<float>('f', { 2 });
+    auto edLdx = NDArrayFactory::create<float>( { 2,3 }, {}, sd::kArrayOrderFortran);
+    auto edLdw = NDArrayFactory::create<float>( { 3,2 }, {}, sd::kArrayOrderFortran);
+    auto edLdb = NDArrayFactory::create<float>( { 2 }, {}, sd::kArrayOrderFortran);
 
     edLdx.assign(edLdxC);
     edLdw.assign(edLdwC);
@@ -346,11 +346,11 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_5) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests18, XWPlusB_Bp_6) {
 
-    auto x = NDArrayFactory::create<float>('c', { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
-    auto w = NDArrayFactory::create<float>('c', { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
-    auto b = NDArrayFactory::create<float>({ 100.f, 200.f });
+    auto x = NDArrayFactory::create<float>(  { 2,3 }, { 1.f, 11.f,  3.f, 14.f,  5.f,  6.f });
+    auto w = NDArrayFactory::create<float>(  { 3,2 }, { 11.f,  3.f, 4.f,  5.f, 6.f,  2.f });
+    auto b = NDArrayFactory::vector<float>({ 100.f, 200.f });
 
-    auto dLdz = NDArrayFactory::create<float>('c', { 2,2 }, { 173.f, 264.f, 310.f, 279.f });
+    auto dLdz = NDArrayFactory::create<float>(  { 2,2 }, { 173.f, 264.f, 310.f, 279.f });
 
     // mkl-format
     w.permutei({ 1,0 });
@@ -364,10 +364,10 @@ TEST_F(DeclarableOpsTests18, XWPlusB_Bp_6) {
     auto dLdw = result.at(1);
     auto dLdb = result.at(2);
 
-    auto edLdx = NDArrayFactory::create<float>('c', { 2,3 }, { 2695.f, 2012.f, 1566.f, 4247.f, 2635.f, 2418.f });
-    auto edLdwC = NDArrayFactory::create<float>('c', { 3,2 }, { 4513.f, 3453.f, 2379.f, 4170.f, 4299.f, 2466.f });
-    auto edLdb = NDArrayFactory::create<float>('c', { 2 }, { 483.f, 543.f });
-    auto edLdw = NDArrayFactory::create<float>('c', { 3,2 }, { 4513.f, 3453.f, 2379.f, 4170.f, 4299.f, 2466.f });
+    auto edLdx = NDArrayFactory::create<float>(  { 2,3 }, { 2695.f, 2012.f, 1566.f, 4247.f, 2635.f, 2418.f });
+    auto edLdwC = NDArrayFactory::create<float>(  { 3,2 }, { 4513.f, 3453.f, 2379.f, 4170.f, 4299.f, 2466.f });
+    auto edLdb = NDArrayFactory::create<float>(  { 2 }, { 483.f, 543.f });
+    auto edLdw = NDArrayFactory::create<float>(  { 3,2 }, { 4513.f, 3453.f, 2379.f, 4170.f, 4299.f, 2466.f });
     edLdw.permutei({ 1,0 });
     edLdw.assign(edLdwC);
 
