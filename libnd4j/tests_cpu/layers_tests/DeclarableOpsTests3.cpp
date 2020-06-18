@@ -908,7 +908,7 @@ TEST_F(DeclarableOpsTests3, invertPermutation_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -928,7 +928,7 @@ TEST_F(DeclarableOpsTests3, invertPermutation_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -947,7 +947,7 @@ TEST_F(DeclarableOpsTests3, invertPermutation_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -967,7 +967,7 @@ TEST_F(DeclarableOpsTests3, diag_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -987,7 +987,7 @@ TEST_F(DeclarableOpsTests3, diag_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1003,7 +1003,7 @@ TEST_F(DeclarableOpsTests3, diag_test_vector) {
     auto expected= NDArrayFactory::create<double>(  {4,4}, {1,0,0,0, 0,2,0,0, 0,0,3,0,0,0,0,4});
 
     sd::ops::diag op;
-    auto result = op.evaluate({input});
+    auto result = op.evaluate({&input});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
@@ -1011,29 +1011,23 @@ TEST_F(DeclarableOpsTests3, diag_test_vector) {
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
-
-    delete input;
 }
 
 TEST_F(DeclarableOpsTests3, diag_test_col_vector) {
 
-
     auto input = NDArrayFactory::linspace<double>(1,4,4);
-    input->reshapei({4,1});
+    input.reshapei({4,1});
     auto expected= NDArrayFactory::create<double>(  {4,4}, {1,0,0,0, 0,2,0,0, 0,0,3,0,0,0,0,4});
 
     sd::ops::diag op;
-    auto result = op.evaluate({input}, {}, {});
+    auto result = op.evaluate({&input}, {}, {});
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
-
-
-    delete input;
 }
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests3, diag_test3) {
@@ -1048,7 +1042,7 @@ TEST_F(DeclarableOpsTests3, diag_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1068,7 +1062,7 @@ TEST_F(DeclarableOpsTests3, diag_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1088,7 +1082,7 @@ TEST_F(DeclarableOpsTests3, diag_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1108,7 +1102,7 @@ TEST_F(DeclarableOpsTests3, diag_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1130,7 +1124,7 @@ TEST_F(DeclarableOpsTests3, matrixSetDiag_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1152,7 +1146,7 @@ TEST_F(DeclarableOpsTests3, matrixSetDiag_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1175,7 +1169,7 @@ TEST_F(DeclarableOpsTests3, matrixSetDiag_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1197,7 +1191,7 @@ TEST_F(DeclarableOpsTests3, matrixSetDiag_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1217,7 +1211,7 @@ TEST_F(DeclarableOpsTests3, diagPart_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
     // output->printBuffer();
 
     ASSERT_TRUE(expected.isSameShape(output));
@@ -1238,7 +1232,7 @@ TEST_F(DeclarableOpsTests3, diagPart_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1258,7 +1252,7 @@ TEST_F(DeclarableOpsTests3, diagPart_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1308,7 +1302,7 @@ TEST_F(DeclarableOpsTests3, betainc_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1333,7 +1327,7 @@ TEST_F(DeclarableOpsTests3, betainc_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1358,7 +1352,7 @@ TEST_F(DeclarableOpsTests3, betainc_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output, 1e-6));
@@ -1383,7 +1377,7 @@ TEST_F(DeclarableOpsTests3, betainc_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output, 1e-6));
@@ -1408,7 +1402,7 @@ TEST_F(DeclarableOpsTests3, betainc_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output, 1e-6));
@@ -1433,7 +1427,7 @@ TEST_F(DeclarableOpsTests3, betainc_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output, 1e-6));
@@ -1458,7 +1452,7 @@ TEST_F(DeclarableOpsTests3, betainc_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output, 1e-6));
@@ -1484,7 +1478,7 @@ TEST_F(DeclarableOpsTests3, betainc_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1509,7 +1503,7 @@ TEST_F(DeclarableOpsTests3, betainc_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1529,7 +1523,7 @@ TEST_F(DeclarableOpsTests3, betainc_test11) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1550,7 +1544,7 @@ TEST_F(DeclarableOpsTests3, betainc_test12) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1573,7 +1567,7 @@ TEST_F(DeclarableOpsTests3, zeta_test1) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1596,7 +1590,7 @@ TEST_F(DeclarableOpsTests3, zeta_test2) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1621,7 +1615,7 @@ TEST_F(DeclarableOpsTests3, zeta_test3) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1645,7 +1639,7 @@ TEST_F(DeclarableOpsTests3, zeta_test4) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1668,7 +1662,7 @@ TEST_F(DeclarableOpsTests3, zeta_test5) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1691,7 +1685,7 @@ TEST_F(DeclarableOpsTests3, zeta_test6) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1715,7 +1709,7 @@ TEST_F(DeclarableOpsTests3, zeta_test7) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1738,7 +1732,7 @@ TEST_F(DeclarableOpsTests3, zeta_test8) {
 
     ASSERT_EQ(ND4J_STATUS_OK, result.status());
 
-    auto *output = result.at(0);
+    auto output = result.at(0);
 
     ASSERT_TRUE(expected.isSameShape(output));
     ASSERT_TRUE(expected.equalsTo(output));
@@ -1763,7 +1757,7 @@ TEST_F(DeclarableOpsTests3, zeta_test9) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results);
 
-    //auto *output = result.at(0);
+    //auto output = result.at(0);
     // z.printIndexedBuffer("Zeta output");
     ASSERT_TRUE(expected.isSameShape(z));
     ASSERT_TRUE(expected.equalsTo(z));
@@ -1788,7 +1782,7 @@ TEST_F(DeclarableOpsTests3, zeta_test10) {
 
     ASSERT_EQ(ND4J_STATUS_OK, results);
 
-    //auto *output = result.at(0);
+    //auto output = result.at(0);
     // z.printIndexedBuffer("Zeta output");
     ASSERT_TRUE(expected.isSameShape(z));
     ASSERT_TRUE(expected.equalsTo(z));
@@ -1799,7 +1793,7 @@ TEST_F(DeclarableOpsTests3, zeta_test10) {
 
 TEST_F(DeclarableOpsTests3, Test_SplitV_Validation_1) {
     auto x = NDArrayFactory::create<float>(  {8, 7});
-    auto indices = NDArrayFactory::create<int>('c',{2}, {5, 3});
+    auto indices = NDArrayFactory::create<int>({2}, {5, 3});
     auto axis = NDArrayFactory::create<int>(-2);
 
     auto z0 = NDArrayFactory::create<float>(  {5, 7});
