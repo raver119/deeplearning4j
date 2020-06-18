@@ -149,8 +149,7 @@ class SD_EXPORT Context : public sd::graph::ContextPrototype {
   void pushNDArrayToVariableSpace(const std::pair<int, int> &pair,
                                   const NDArray &array);
 
-  void pushNDArrayListToVariableSpace(int nodeId, int index,
-                                      std::shared_ptr<NDArrayList> list);
+  void pushNDArrayListToVariableSpace(int nodeId, int index, std::shared_ptr<NDArrayList> list);
   void pushNDArrayListToVariableSpace(int nodeId, int index,
                                       const NDArrayList &list,
                                       bool track = true);

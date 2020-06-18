@@ -233,6 +233,21 @@ void Context::pushNDArrayListToVariableSpace(int nodeId, int index,
   pushNDArrayListToVariableSpace(pair, list, track);
 }
 
+
+void Context::pushNDArrayListToVariableSpace(int nodeId, int index,
+                                             std::shared_ptr<NDArrayList> list) {
+  std::pair<int, int> pair(nodeId, index);
+  if (!_variableSpace->hasVariable(pair)) {
+    auto var = std::make_shared<Variable>();
+    var->setId(pair.first, pair.second);
+    var->setNDArrayList(list);
+    _variableSpace->putVariable(pair, var);
+  } else {
+    auto var = _variableSpace->getVariable(pair);
+    var->setNDArrayList(list);
+  }
+}
+
 void Context::pushNDArrayListToVariableSpace(const std::pair<int, int> &pair,
                                              const NDArrayList &list,
                                              bool track) {

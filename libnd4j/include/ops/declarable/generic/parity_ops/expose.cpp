@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -15,7 +16,7 @@
  ******************************************************************************/
 
 //
-// Created by raver119 on 12/11/17.
+// @author raver119@gmail.com
 //
 
 #include <ops/declarable/CustomOperations.h>
@@ -35,8 +36,7 @@ CUSTOM_OP_IMPL(expose, -1, -1, true, 0, 0) {
       if (!var->hasNDArrayList()) {
         auto list = inVar->getNDArrayList();
 
-        // block.pushNDArrayListToVariableSpace(block.nodeId(), e, list);
-        throw std::runtime_error("Expose - not implemented yet");
+        block.pushNDArrayListToVariableSpace(block.nodeId(), e, list);
       }
     }
   }

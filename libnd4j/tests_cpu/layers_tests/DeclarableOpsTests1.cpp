@@ -3510,12 +3510,8 @@ TEST_F(DeclarableOpsTests1, Test_Expose_1) {
 }
 
 TEST_F(DeclarableOpsTests1, Test_Expose_2) {
-  if (1 > 0) throw std::runtime_error("Test not implemented yet");
-
-  auto list = new NDArrayList(0, true);
-
-  auto var = std::make_shared<Variable>(NDArray(), "arraylist", -1, 0);
-  // var->setNDArrayList(list);
+  auto list = std::make_shared<NDArrayList>(0, true);
+  auto var = std::make_shared<Variable>(list, "arraylist", -1, 0);
 
   VariableSpace variableSpace;
   variableSpace.putVariable(-1, var);
@@ -3535,7 +3531,7 @@ TEST_F(DeclarableOpsTests1, Test_Expose_2) {
 
   auto list1 = var1->getNDArrayList();
 
-  ASSERT_TRUE(list == list1.get());
+  ASSERT_TRUE(list.get() == list1.get());
 }
 
 TEST_F(DeclarableOpsTests1, Test_Release) {

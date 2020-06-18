@@ -61,7 +61,6 @@ class SD_EXPORT Variable {
  protected:
   int _id = 0;
   int _index = 0;
-  std::shared_ptr<sd::NDArray> _ndarray;
   std::string _name;
 
   std::vector<Nd4jLong> _shape;
@@ -72,6 +71,8 @@ class SD_EXPORT Variable {
   bool _placeholder = false;
   bool _removable = true;
 
+  // actual content
+  std::shared_ptr<sd::NDArray> _ndarray;
   std::shared_ptr<sd::NDArrayList> _list;
 
   VariableType _variableType = VariableType::NDARRAY;
@@ -80,16 +81,12 @@ class SD_EXPORT Variable {
   std::vector<std::string> _stringDependencies;
 
  public:
-  explicit Variable(bool placeHolder, DataType dataType = DataType::ANY,
-                    const std::vector<Nd4jLong> &shape = {});
-  explicit Variable(const sd::NDArray &array, const std::string &name, int id,
-                    int idx = 0);
-  explicit Variable(std::shared_ptr<sd::NDArray> array, const std::string &name,
-                    int id, int idx = 0);
-  explicit Variable(std::shared_ptr<sd::NDArray> array,
-                    const char *name = nullptr);
-  explicit Variable(const NDArrayList &arrayList, const std::string &name,
-                    int id, int idx = 0);
+  explicit Variable(bool placeHolder, DataType dataType = DataType::ANY, const std::vector<Nd4jLong> &shape = {});
+  explicit Variable(const sd::NDArray &array, const std::string &name, int id, int idx = 0);
+  explicit Variable(std::shared_ptr<sd::NDArray> array, const std::string &name, int id, int idx = 0);
+  explicit Variable(std::shared_ptr<sd::NDArrayList> array, const std::string &name, int id, int idx = 0);
+  explicit Variable(std::shared_ptr<sd::NDArray> array, const char *name = nullptr);
+  explicit Variable(const NDArrayList &arrayList, const std::string &name, int id, int idx = 0);
   explicit Variable();
 
 #ifndef __JAVACPP_HACK__
