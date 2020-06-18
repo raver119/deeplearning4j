@@ -159,11 +159,33 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     for (auto p0 = workMap.begin(); p0 != std::prev(workMap.end()); ++p0) {             // std::prev(workMap.end()) == workMap.end() - 1
         if(!p0->second._opSeq.empty() && p0->second._opSeq[0] == -1)
             continue;
-        const auto& name = _nodesMap[p0->first].name();
-        if(name.find("Enter") == std::string::npos)
+        // const auto& name = _nodesMap[p0->first].name();
+        // if(name.find("Enter") == std::string::npos)
+        //     continue;
+        bool isInLoop = false;
+        auto* name = &_nodesMap[p0->first].name();
+
+        if(name->find("Enter") == std::string::npos) {
+            for (const auto& id : p0->second._opSeq) {
+                if(id == -1)
+                    break;
+                name = &_nodesMap[id].name();
+                if(name->find("Enter") != std::string::npos) {
+                    isInLoop = true;
+                    break;
+                }
+           }
+        }
+        else
+            isInLoop = true;
+
+        if(!isInLoop)
             continue;
-        std::string loopName = name.substr(0, name.find(delimiter));    // evaluate name of loop
+
+        std::string loopName = name->substr(0, name->find(delimiter));    // evaluate name of loop
         for (auto p1 = std::next(p0); p1 != workMap.end(); ++p1) {      // std::next(p0) = p0 + 1
+            if(!p1->second._opSeq.empty() && p1->second._opSeq[0] == -1)
+                continue;
             if(_nodesMap[p1->first].name().find(loopName) == std::string::npos)
                 continue;
             p0->second._opSeq.push_back(p1->first);
