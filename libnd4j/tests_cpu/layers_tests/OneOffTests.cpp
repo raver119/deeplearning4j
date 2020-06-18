@@ -218,8 +218,6 @@ TEST_F(OneOffTests, test_tensor_array_2) {
 }
 
 TEST_F(OneOffTests, test_tensor_array_3) {
-  if (1 > 0) throw std::runtime_error("This test crashes");
-
   auto e = NDArrayFactory::create<int>(
       'c', {3, 2, 3}, {7, 2, 9, 4, 3, 3, 8, 7, 0, 0, 6, 8, 7, 9, 0, 1, 1, 4});
 
