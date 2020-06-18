@@ -1279,20 +1279,18 @@ TEST_F(DeclarableOpsTests13, lstmLayer_1) {
 
   const int dataFormat = 0;     // [sL,bS,nIn]
   const int directionMode = 0;  // forward
-  const int gateAct =
-      2;  // sigmoid activation for input (i), forget (f) and output (o) gates
-  const int cellAct = 0;  // tanh activation for cell state
-  const int outAct = 0;   // tanh activation for output
+  const int gateAct = 2;        // sigmoid activation for input (i), forget (f) and output (o) gates
+  const int cellAct = 0;        // tanh activation for cell state
+  const int outAct = 0;         // tanh activation for output
 
   const bool hasBiases = true;   // biases array is provided
   const bool hasSeqLen = false;  // seqLen array is not provided
   const auto hasInitH = true;    // initial output is provided
   const auto hasInitC = true;    // initial cell state is provided
   const auto hasPH = false;      // peephole connections are absent
-  const auto retFullSeq =
-      true;  // return whole h {h_0, h_1, ... , h_sL-1}, [sL,bS,nOut]
-  const auto retLastH = true;  // do not return output at last time step
-  const auto retLastC = true;  // return cells state at last time step
+  const auto retFullSeq = true;  // return whole h {h_0, h_1, ... , h_sL-1}, [sL,bS,nOut]
+  const auto retLastH = true;    // do not return output at last time step
+  const auto retLastC = true;    // return cells state at last time step
 
   const double cellClip = 0;  // do not apply clipping
 

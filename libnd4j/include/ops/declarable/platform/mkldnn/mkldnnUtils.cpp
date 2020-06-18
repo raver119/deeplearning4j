@@ -85,6 +85,7 @@ void setBlockStrides(const NDArray& array, dnnl::memory::desc& mklMd, const std:
     }
   }
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 dnnl::memory loadDataToMklStream(const NDArray& array, const dnnl::engine& engine,
                          const dnnl::stream& stream,
@@ -97,7 +98,8 @@ dnnl::memory loadDataToMklStream(const NDArray& array, const dnnl::engine& engin
   auto mkl_mem = bReorder ? dnnl::memory(primitive_md, engine) : user_mem;
   if (bReorder)
     dnnl::reorder(user_mem, mkl_mem).execute(stream, user_mem, mkl_mem);
-  arg = mkl_mem;return user_mem;
+  arg = mkl_mem;
+  return user_mem;
 }
 
 //////////////////////////////////////////////////////////////////////
