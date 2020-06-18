@@ -169,54 +169,6 @@ TEST_F(OneOffTests, test_assert_4) {
   ASSERT_EQ(e, *z);
 }
 
-// TEST_F(OneOffTests, test_cond_true_1) {
-//     auto e = NDArrayFactory::create<float>('c', {5},
-//     {1.f, 2.f, 3.f, 4.f, 5.f});
-
-//     auto graph = Graph::fromFlatBuffers("./resources/cond_true.fb");
-//     ASSERT_TRUE(graph != nullptr);
-
-//     graph->printOut();
-
-//     Nd4jStatus status = GraphExecutioner::execute(graph);
-//     ASSERT_EQ(Status::OK(), status);
-//     ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
-
-//     auto z = graph->variableSpace()->getVariable(6)->getNDArray();
-//     ASSERT_TRUE(z != nullptr);
-
-//     z->printIndexedBuffer("z buffer");
-
-//     ASSERT_EQ(e, *z);
-
-//     delete graph;
-// }
-
-/*
-TEST_F(OneOffTests, test_cond_false_1) {
-    auto e = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
-
-    auto graph = Graph::fromFlatBuffers("./resources/cond_false.fb");
-    ASSERT_TRUE(graph != nullptr);
-
-    graph->printOut();
-
-
-    Nd4jStatus status = GraphExecutioner::execute(graph);
-    ASSERT_EQ(Status::OK(), status);
-    ASSERT_TRUE(graph->variableSpace()->hasVariable(6));
-
-    auto z = graph->variableSpace()->getVariable(6)->getNDArray();
-    ASSERT_TRUE(z != nullptr);
-
-    z->printIndexedBuffer("z buffer");
-
-    ASSERT_EQ(e, *z);
-
-    delete graph;
-}
-*/
-
 TEST_F(OneOffTests, test_identity_n_2) {
   auto e =
       NDArrayFactory::create<float>('c', {2, 3},
@@ -243,7 +195,6 @@ TEST_F(OneOffTests, test_non2d_1) {
 
   auto graph = Graph::fromFlatBuffers("./resources/non2d_1.fb");
 
-  graph.printOut();
   graph.execute();
 
   ASSERT_TRUE(graph.variableSpace().hasVariable(6));
@@ -259,7 +210,6 @@ TEST_F(OneOffTests, test_reduce_all_1) {
 
   auto graph = Graph::fromFlatBuffers("./resources/reduce_all_rank2_d0_keep.fb");
 
-  graph.printOut();
   graph.execute();
 
   ASSERT_TRUE(graph.variableSpace().hasVariable(1));
