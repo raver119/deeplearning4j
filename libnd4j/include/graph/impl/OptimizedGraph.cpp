@@ -220,25 +220,30 @@ size_t OptimizedGraph::size() const {
 }
 
 void OptimizedGraph::printOut() const {
-
-    for (uint i = 0; i < _sortedGraph.size(); ++i) {
-        printf("Layer [%u]\n", i);
-        for (uint j = 0; j < _sortedGraph[i].width(); ++j)
-             _sortedGraph[i][j].printOut();
+  for (uint i = 0; i < _sortedGraph.size(); ++i) {
+    printf("Layer [%u] {\n", i);
+    for (uint j = 0; j < _sortedGraph[i].width(); ++j) {
+      printf("   Sequence [%u] {\n", j);
+      _sortedGraph[i][j].printOut();
+      printf("  }\n");
     }
+    printf("}\n");
+  }
 
-    printf("And simple print:\n");
-    for (int i = 0; i < _sortedGraph.size(); ++i) {
-        printf("layer %i: ", i);
-        for (int j = 0; j < _sortedGraph[i].width(); ++j) {
-            printf("(");
-            for (int k = 0; k < _sortedGraph[i][j].length(); ++k) {
-                printf("%i, ", _sortedGraph[i][j][k].protoContext().nodeId());
-            }
-            printf("), ");
-        }
-        printf("\n");
+  /*
+  printf("And simple print:\n");
+  for (int i = 0; i < _sortedGraph.size(); ++i) {
+    printf("layer %i: ", i);
+    for (int j = 0; j < _sortedGraph[i].width(); ++j) {
+      printf("(");
+      for (int k = 0; k < _sortedGraph[i][j].length(); ++k) {
+        printf("%i, ", _sortedGraph[i][j][k].protoContext().nodeId());
+      }
+      printf("), ");
     }
+    printf("\n");
+  }
+   */
 }
 
 

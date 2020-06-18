@@ -48,11 +48,11 @@ ExecutionTask::ExecutionTask(ExecutionTask &&other)
 void ExecutionTask::printOut() const {
   if (_context.name().empty()) {
     if (_node.hasCustomOp())
-      printf("   <%i:0>: {Op: %s}; ", _context.nodeId(), _node.customOp()->getOpName().c_str());
+      printf("      <%i:0>: {Op: %s}; ", _context.nodeId(), _node.customOp()->getOpName().c_str());
     else
-      printf("   <%i:0>: ", _context.nodeId());
+      printf("      <%i:0>: ", _context.nodeId());
   } else {
-    printf("   <%s> <%i>: ", _context.name().c_str(), _context.nodeId());
+    printf("      <%s> <%i>: ", _context.name().c_str(), _context.nodeId());
   }
 
   auto sz = _context.inputs().size();
