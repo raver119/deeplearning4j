@@ -133,8 +133,8 @@ namespace helpers {
  *  output - distributed output.
  * */
 template <typename T>
-static __global__ void fillGammaKernel(Tconst* uList, Nd4jLong uLength, T const* alpha,
-                                       const Nd4jLong* alphaShape, Tconst* beta,
+static __global__ void fillGammaKernel(T const* uList, Nd4jLong uLength, T const* alpha,
+                                       const Nd4jLong* alphaShape, T const* beta,
                                        const Nd4jLong* betaShape, T* output,
                                        const Nd4jLong* outputShape) {
   // fill up
@@ -180,11 +180,7 @@ static void fillRandomGamma_(LaunchContext* context,
 
     copyAlpha = new NDArray(alphaBroadcasted.applyTrueBroadcast(
         BroadcastOpsTuple::Assign(), *alpha));
-    copyBeta = new NDArray(
-        betaBroadcasted.applyTrueBroadcast(BroadcastOpsTuple::Assign(), *beta));
-   //            if (!copyAlpha->isActualOnDevice()) copyAlpha->syncToDevice();
-//            if (!
-    copyBeta->isActualOnDevice()) copyBeta->syncToDevice();
+    copyBeta = new NDArray(betaBroadcasted.applyTrueBroadcast(BroadcastOpsTuple::Assign(), *beta));
   }
 
   auto stream = context->getCudaStream();

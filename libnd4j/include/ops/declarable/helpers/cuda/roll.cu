@@ -272,8 +272,7 @@ static void rollFunctorFull_(NDArray *input, NDArray *output,
       //                    theShift -= fullLen * (theShift / fullLen - 1);
       //                }
       for (int k = 0; k < fullLen; k++) {
-        rollFunctorLinear(output->getContext(), listOfTensors.at(k),
-                          listOfOutTensors.at(k), theShift, true);
+        rollFunctorLinear(output->getContext(), &listOfTensors.at(k), &listOfOutTensors.at(k), theShift, true);
       }
     } else {
       std::vector<int> dims(input->rankOf() - axe - 1);

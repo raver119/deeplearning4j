@@ -478,10 +478,10 @@ PLATFORM_IMPL(depthwise_conv2d, ENGINE_CUDA) {
   int dH = INT_ARG(6);                                  // dilations height
   int dW = INT_ARG(7);                                  // dilations width
   int paddingMode = INT_ARG(8);                         // 0-VALID, 1-SAME
-  int isNCHW = block.getIArguments()->size() > 9
+  int isNCHW = block.numI() > 9
                    ? !INT_ARG(9)
                    : 1;  // INT_ARG(9): 0-NCHW,  1-NHWC
-  int wFormat = block.getIArguments()->size() > 10
+  int wFormat = block.numI() > 10
                     ? INT_ARG(10)
                     : 0;  // 0 - [kH, kW, iC, mC], 1 - [mC, iC, kH, kW], 2 -
                           // [mC, kH, kW, iC]
@@ -557,7 +557,7 @@ PLATFORM_CHECK(depthwise_conv2d, ENGINE_CUDA) {
   auto bias = block.width() > 2 ? INPUT_VARIABLE(2) : nullptr;  // [oC] = iC*mC
 
   const int paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME, 2-CAUSAL
-  const int wFormat = block.getIArguments()->size() > 10
+  const int wFormat = block.numI() > 10
                           ? INT_ARG(10)
                           : 0;  // 0 - [kH, kW, iC, mC], 1 - [mC, iC, kH, kW], 2
                                 // - [mC, kH, kW, iC]
@@ -625,10 +625,10 @@ PLATFORM_IMPL(depthwise_conv2d_bp, ENGINE_CUDA) {
   int dH = INT_ARG(6);                                  // dilations height
   int dW = INT_ARG(7);                                  // dilations width
   int paddingMode = INT_ARG(8);                         // 0-VALID, 1-SAME
-  int isNCHW = block.getIArguments()->size() > 9
+  int isNCHW = block.numI() > 9
                    ? !INT_ARG(9)
                    : 1;  // INT_ARG(9): 1-NHWC, 0-NCHW
-  int wFormat = block.getIArguments()->size() > 10
+  int wFormat = block.numI() > 10
                     ? INT_ARG(10)
                     : 0;  // 0 - [kH, kW, iC, mC], 1 - [mC, iC, kH, kW], 2 -
                           // [mC, kH, kW, iC]
@@ -738,10 +738,10 @@ PLATFORM_CHECK(depthwise_conv2d_bp, ENGINE_CUDA) {
                                          // oH, oW] (NCDHW), epsilon_next
 
   const int paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME, 2-CAUSAL
-  const int isNCHW = block.getIArguments()->size() > 9
+  const int isNCHW = block.numI() > 9
                          ? !INT_ARG(9)
                          : 1;  // INT_ARG(9): 0-NCHW, 1-NHWC
-  const int wFormat = block.getIArguments()->size() > 10
+  const int wFormat = block.numI() > 10
                           ? INT_ARG(10)
                           : 0;  // 0 - [kH, kW, iC, mC], 1 - [mC, iC, kH, kW], 2
                                 // - [mC, kH, kW, iC]

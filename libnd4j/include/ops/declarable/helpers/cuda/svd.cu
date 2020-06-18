@@ -728,8 +728,7 @@ void svd(sd::LaunchContext* context, const NDArray* x,
     }
 
     for (int i = 0; i < tadsX.size(); ++i)
-      svdJcb(context, tadsX.at(i), tadsS.at(i), calcUV ? tadsU->at(i) : nullptr,
-             calcUV ? tadsV->at(i) : nullptr, fullUV, calcUV);
+      svdJcb(context, &tadsX.at(i), &tadsS.at(i), calcUV ? &tadsU->at(i) : nullptr, calcUV ? &tadsV->at(i) : nullptr, fullUV, calcUV);
 
     if (calcUV) {
       delete tadsU;

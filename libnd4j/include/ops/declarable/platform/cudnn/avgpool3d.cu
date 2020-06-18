@@ -47,7 +47,7 @@ PLATFORM_IMPL(avgpool3dnew, ENGINE_CUDA) {
   int dW = INT_ARG(11);           // dilations width
   int paddingMode = INT_ARG(12);  // 1-SAME,  0-VALID
   int extraParam0 = INT_ARG(13);
-  int isNCDHW = block.getIArguments()->size() > 14 ? !INT_ARG(14)
+  int isNCDHW = block.numI() > 14 ? !INT_ARG(14)
                                                    : 1;  // 0-NCDHW, 1-NDHWC
 
   REQUIRE_TRUE(input->rankOf() == 5, 0,
@@ -128,7 +128,7 @@ PLATFORM_IMPL(avgpool3dnew_bp, ENGINE_CUDA) {
   const int isSameMode = INT_ARG(12);  // 1-SAME,  0-VALID
   const int extraParam0 =
       INT_ARG(13);  // define what divisor to use while averaging
-  const int isNCDHW = block.getIArguments()->size() > 14
+  const int isNCDHW = block.numI() > 14
                           ? !INT_ARG(14)
                           : 1;  // 0-NCDHW, 1-NDHWC
 

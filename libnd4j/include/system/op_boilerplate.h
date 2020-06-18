@@ -1255,7 +1255,7 @@
 #define REGISTER_H(NAME)  template <typename OpName>  \
                         struct __registrator_##NAME {\
                             __registrator_##NAME() {\
-                                OpName *ptr = new OpName(); \
+                                auto ptr = std::make_shared<OpName>(); \
                                 OpRegistrator::getInstance().registerOperation(ptr); \
                             }\
                         };\

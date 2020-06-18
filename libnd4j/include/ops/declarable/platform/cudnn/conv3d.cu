@@ -475,10 +475,10 @@ PLATFORM_IMPL(conv3dnew, ENGINE_CUDA) {
   int dH = INT_ARG(10);                                 // dilations height
   int dW = INT_ARG(11);                                 // dilations width
   int paddingMode = INT_ARG(12);                        // 0-SAME,  1-VALID
-  int isNCDHW = block.getIArguments()->size() > 13
+  int isNCDHW = block.numI() > 13
                     ? !INT_ARG(13)
                     : 1;  // INT_ARG(13): 1-NDHWC, 0-NCDHW
-  int wFormat = block.getIArguments()->size() > 14
+  int wFormat = block.numI() > 14
                     ? INT_ARG(14)
                     : 0;  // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW],
                           // 2-[oC, kD, kH, kW, iC]
@@ -620,10 +620,10 @@ PLATFORM_IMPL(conv3dnew_bp, ENGINE_CUDA) {
   int dH = INT_ARG(10);                                 // dilations height
   int dW = INT_ARG(11);                                 // dilations width
   int paddingMode = INT_ARG(12);                        // 1-SAME,  0-VALID
-  int isNCDHW = block.getIArguments()->size() > 13
+  int isNCDHW = block.numI() > 13
                     ? !INT_ARG(13)
                     : 1;  // INT_ARG(13): 1-NDHWC, 0-NCDHW
-  int wFormat = block.getIArguments()->size() > 14
+  int wFormat = block.numI() > 14
                     ? INT_ARG(14)
                     : 0;  // 0-[kD, kH, kW, iC, oC], 1-[oC, iC, kD, kH, kW],
                           // 2-[oC, kD, kH, kW, iC]
@@ -748,7 +748,7 @@ PLATFORM_CHECK(conv3dnew_bp, ENGINE_CUDA) {
                                 // oH, oW] (NCDHW), epsilon_next
 
   int paddingMode = INT_ARG(12);  // 1-SAME,  0-VALID
-  int isNCDHW = block.getIArguments()->size() > 13
+  int isNCDHW = block.numI() > 13
                     ? !INT_ARG(13)
                     : 1;  // INT_ARG(13): 1-NDHWC, 0-NCDHW
 

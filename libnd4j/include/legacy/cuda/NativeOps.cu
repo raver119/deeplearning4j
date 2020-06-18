@@ -2834,7 +2834,8 @@ void munmapFile(Nd4jPointer *extraPointers, Nd4jLong *ptrMap, Nd4jLong length) {
 sd::graph::ResultWrapper *executeFlatGraph(Nd4jPointer *extraPointers,
                                            Nd4jPointer flatBufferPointer) {
   try {
-    return sd::graph::GraphExecutioner::executeFlatBuffer(flatBufferPointer);
+    //return sd::graph::GraphExecutioner::executeFlatBuffer(flatBufferPointer);
+    return nullptr;
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
     sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(
@@ -2855,7 +2856,7 @@ const char *getAllCustomOps() {
 }
 
 sd::ShapeList *_calculateOutputShapes(
-    Nd4jPointer *extraPointers, sd::ops::DeclarableOp *op,
+    Nd4jPointer *extraPointers, std::shared_ptr<sd::ops::DeclarableOp> &op,
     Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int numInputShapes,
     double *tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs, bool *bArgs,
     int numBArgs, int *dArgs, int numDArgs) {
@@ -2863,14 +2864,14 @@ sd::ShapeList *_calculateOutputShapes(
   Context block(2, &varSpace);
   sd::ShapeList inShapes;
 
-  for (int e = 0; e < numIArgs; e++) block.getIArguments()->push_back(iArgs[e]);
+  for (int e = 0; e < numIArgs; e++) block.appendI(iArgs[e]);
 
-  for (int e = 0; e < numTArgs; e++) block.getTArguments()->push_back(tArgs[e]);
+  for (int e = 0; e < numTArgs; e++) block.appendT(tArgs[e]);
 
-  for (int e = 0; e < numBArgs; e++) block.getBArguments()->push_back(bArgs[e]);
+  for (int e = 0; e < numBArgs; e++) block.appendB(bArgs[e]);
 
   for (int e = 0; e < numDArgs; e++)
-    block.getDArguments()->push_back((sd::DataType)dArgs[e]);
+    block.appendD((sd::DataType) dArgs[e]);
 
   for (int e = 0; e < numInputShapes; e++) {
     auto shape_ = reinterpret_cast<Nd4jLong *>(inputShapes[e]);
@@ -2883,7 +2884,7 @@ sd::ShapeList *_calculateOutputShapes(
                          ? nullptr
                          : inputBuffers[e + numInputShapes];
 
-    auto array = new sd::NDArray(buffer_, bufferD_, shape_);
+    sd::NDArray array(buffer_, bufferD_, shape_);
 
     // block should contain references to proper variable
     varSpace.putVariable(1, e, array);
@@ -2893,8 +2894,6 @@ sd::ShapeList *_calculateOutputShapes(
   }
 
   auto shapeList = op->calculateOutputShape(&inShapes, block);
-
-  if (varSpace.launchContext()->getWorkspace() != nullptr) shapeList->detach();
 
   return shapeList;
 }
@@ -2921,7 +2920,7 @@ sd::ShapeList *calculateOutputShapes2(Nd4jPointer *extraPointers, Nd4jLong hash,
 }
 
 sd::ShapeList *_calculateOutputShapes(Nd4jPointer *extraPointers,
-                                      sd::ops::DeclarableOp *op,
+                                      std::shared_ptr<sd::ops::DeclarableOp> &op,
                                       Nd4jPointer *inputShapes,
                                       int numInputShapes, double *tArgs,
                                       int numTArgs, Nd4jLong *iArgs,
@@ -2929,9 +2928,9 @@ sd::ShapeList *_calculateOutputShapes(Nd4jPointer *extraPointers,
   Context block(1);
   sd::ShapeList inShapes;
 
-  for (int e = 0; e < numIArgs; e++) block.getIArguments()->push_back(iArgs[e]);
+  for (int e = 0; e < numIArgs; e++) block.appendI(iArgs[e]);
 
-  for (int e = 0; e < numTArgs; e++) block.getTArguments()->push_back(tArgs[e]);
+  for (int e = 0; e < numTArgs; e++) block.appendT(tArgs[e]);
 
   for (int e = 0; e < numInputShapes; e++)
     inShapes.push_back(reinterpret_cast<Nd4jLong *>(inputShapes[e]));
@@ -2966,12 +2965,12 @@ Nd4jLong const *getShape(sd::ShapeList *list, Nd4jLong i) {
   return list->at(i);
 }
 
-static FORCEINLINE Nd4jStatus
-realExec(sd::ops::DeclarableOp *op, Nd4jPointer *extraPointers, Nd4jLong hash,
-         Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int numInputs,
-         Nd4jPointer *outputBuffers, Nd4jPointer *outputShapes, int numOutputs,
-         double *tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs,
-         bool *bArgs, int numBArgs, bool isInplace) {
+static FORCEINLINE Nd4jStatus realExec(
+    std::shared_ptr<sd::ops::DeclarableOp> &op, Nd4jPointer *extraPointers, Nd4jLong hash,
+    Nd4jPointer *inputBuffers, Nd4jPointer *inputShapes, int numInputs,
+    Nd4jPointer *outputBuffers, Nd4jPointer *outputShapes, int numOutputs,
+    double *tArgs, int numTArgs, Nd4jLong *iArgs, int numIArgs,
+    bool *bArgs, int numBArgs, bool isInplace) {
   if (op == nullptr)
     nd4j_printf("Can't find requested operation: [%lld]\n", hash);
 
@@ -3128,64 +3127,12 @@ int registerGraph(Nd4jPointer *extraPointers, Nd4jLong graphId,
   }
 }
 
-static VariablesSet *executeStoredGraphT(Nd4jPointer *extraPointers,
-                                         Nd4jLong graphId,
-                                         Nd4jPointer *inputBuffers,
-                                         Nd4jPointer *inputShapes,
-                                         int *inputIndices, int numInputs) {
-  auto graph = sd::graph::GraphHolder::getInstance().pullGraph(graphId);
-  auto varSpace = graph->variableSpace()->clone();
-
-  std::vector<sd::NDArray *> handles;
-
-  for (int e = 0; e < numInputs; e++) {
-    auto idx = inputIndices[e];
-
-    // we'll delete this array later, together with cloned VariableSpace
-    auto array = new sd::NDArray(inputBuffers[e],
-                                 reinterpret_cast<Nd4jLong *>(inputShapes[e]));
-    handles.emplace_back(array);
-
-    if (varSpace->hasVariable(idx)) {
-      auto var = varSpace->getVariable(idx);
-      if (var->hasNDArray()) delete var->getNDArray();
-
-      var->setNDArray(array);
-    } else
-      varSpace->putVariable(idx, array);
-  }
-
-  auto dZ = sd::graph::GraphExecutioner::execute(graph, varSpace);
-  auto varSet = new sd::graph::VariablesSet(dZ);
-
-  if (dZ == ND4J_STATUS_OK) {
-    // pull back results, and provide them
-    auto outputs = graph->fetchOutputs();
-    for (int e = 0; e < outputs->size(); e++) {
-      // we're only getting variable ID/Index from original grap. values will be
-      // taken from cloned workspace
-      std::pair<int, int> varId(outputs->at(e)->id(), outputs->at(e)->index());
-
-      auto var = varSpace->getVariable(varId);
-
-      varSet->push_back(var->clone());
-    }
-
-    delete outputs;
-  }
-
-  delete varSpace;
-
-  return varSet;
-}
-
 VariablesSet *executeStoredGraph(Nd4jPointer *extraPointers, Nd4jLong graphId,
                                  Nd4jPointer *inputBuffers,
                                  Nd4jPointer *inputShapes, int *inputIndices,
                                  int numInputs) {
   try {
-    return executeStoredGraphT(extraPointers, graphId, inputBuffers,
-                               inputShapes, inputIndices, numInputs);
+    throw std::runtime_error("Not implemented yet");
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
     sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(
@@ -3213,7 +3160,7 @@ int getVariableIndex(sd::graph::Variable *variable) {
 }
 
 const char *getVariableName(sd::graph::Variable *variable) {
-  return variable->getName()->c_str();
+  return variable->name().c_str();
 }
 
 Nd4jLong const *getVariableShape(sd::graph::Variable *variable) {
@@ -3226,9 +3173,9 @@ void *getVariableBuffer(sd::graph::Variable *variable) {
 
 int unregisterGraph(Nd4jPointer *extraPointers, Nd4jLong graphId) {
   try {
-    sd::graph::GraphHolder::getInstance().dropGraphAny(graphId);
+    sd::graph::GraphHolder::getInstance().forgetGraph(graphId);
 
-    return ND4J_STATUS_OK;
+    return Status::OK();
   } catch (std::exception &e) {
     sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
     sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(
@@ -3270,85 +3217,7 @@ const char *getAllOperations() {
   return sd::OpTracker::getInstance().exportOperations();
 }
 
-Nd4jPointer getGraphState(Nd4jLong id) {
-  return (Nd4jPointer) new sd::graph::GraphState(id);
-}
 
-void deleteGraphState(Nd4jPointer state) {
-  auto stateP = reinterpret_cast<sd::graph::GraphState *>(state);
-  delete stateP;
-}
-
-Nd4jStatus execCustomOpWithScope(Nd4jPointer *extraPointers,
-                                 sd::graph::GraphState *state, Nd4jLong opHash,
-                                 Nd4jLong *scopes, int numScopes,
-                                 Nd4jPointer *inputBuffers,
-                                 Nd4jPointer *inputShapes, int numInputs,
-                                 Nd4jPointer *outputBuffers,
-                                 Nd4jPointer *outputShapes, int numOutputs) {
-  /**
-   * That's basically exec, with VariableSpace provided in GraphState:
-   * depending on operation (i.e. while of if), different logic executors could
-   * be used
-   */
-
-  auto graph = state->graph();
-  auto varSpace = state->variableSpace();
-
-  // Node is dynamically created, and has nothing beyond it: only inputs and
-  // outputs this node has id of 0, and inputs are
-  Node node(OpType_LOGIC, opHash, 0);
-
-  // mapping inputs
-  for (int e = 0; e < numInputs; e++) {
-    auto buffer = inputBuffers[e];
-    auto shapeInfo = reinterpret_cast<Nd4jLong *>(inputShapes[e]);
-
-    auto array = new sd::NDArray(buffer, shapeInfo, varSpace->launchContext());
-
-    // now we just put array to VarSpace
-    varSpace->putVariable(0, e, array);
-    node.pickInput(0, e);
-  }
-
-  // mapping scopes
-  for (int e = 0; e < numScopes; e++) {
-    // we should check scope existence in GraphState/Graph
-    int scopeId = (int)scopes[e];
-    if (!state->hasScope(scopeId)) {
-      // nd4j_printf("execCustomOpWithScope: referenced scope [%i] doesn't
-      // exist\n", scopeId);
-      return Status::THROW();
-    }
-    node.pickInput(scopeId, 0);
-  }
-
-  auto dZ = LogicExecutor::processNode(graph, &node);
-  if (dZ != Status::OK()) return dZ;
-
-  // mapping outputs
-
-  for (int e = 0; e < numOutputs; e++) {
-    auto buffer = outputBuffers[e];
-    auto shapeInfo = reinterpret_cast<Nd4jLong *>(outputShapes[e]);
-
-    NDArray array(buffer, shapeInfo, varSpace->launchContext());
-
-    // now we just put array to VarSpace to the same ID
-    // varSpace->putVariable(0, e, array);
-
-    auto t = varSpace->getVariable(0, e)->getNDArray();
-    array.assign(t);
-  }
-
-  // removing input variables
-  for (int e = 0; e < numInputs; e++) {
-    varSpace->dropVariable(0, e);
-  }
-
-  // after some bla-bla-bla we should have Graph and Node for current op
-  return Status::OK();
-}
 
 Nd4jStatus execCustomOpWithScope(Nd4jPointer *extraPointers, Nd4jPointer state,
                                  Nd4jLong opHash, Nd4jLong *scopes,
@@ -3356,17 +3225,7 @@ Nd4jStatus execCustomOpWithScope(Nd4jPointer *extraPointers, Nd4jPointer state,
                                  Nd4jPointer *inputShapes, int numInputs,
                                  Nd4jPointer *outputBuffers,
                                  Nd4jPointer *outputShapes, int numOutputs) {
-  try {
-    return execCustomOpWithScope(
-        extraPointers, reinterpret_cast<sd::graph::GraphState *>(state), opHash,
-        scopes, numScopes, inputBuffers, inputShapes, numInputs, outputBuffers,
-        outputShapes, numOutputs);
-  } catch (std::exception &e) {
-    sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
-    sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(
-        e.what());
-    return 1;
-  }
+  return 0;
 }
 
 void deleteResultWrapper(Nd4jPointer ptr) {

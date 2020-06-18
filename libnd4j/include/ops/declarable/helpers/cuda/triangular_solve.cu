@@ -200,10 +200,8 @@ static int triangularSolveFunctor_(sd::LaunchContext* context,
                 // output.syncToDevice();
             }
             BUILD_SINGLE_TEMPLATE(template void triangularSolve2D, (sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output), FLOAT_TYPES);
-//            template void triangularSolve2D<float>(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
-//            template void triangularSolve2D<bfloat16>(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
-//            template void triangularSolve2D<float16>(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);
-//            template void triangularSolve2D<double>(sd::LaunchContext* context, NDArray const& leftInput, NDArray const& rightInput, bool const lower, bool const unitsOnDiag, NDArray& output);int triangularSolveFunctor(sd::LaunchContext* context, NDArray* leftInput,
+
+int triangularSolveFunctor(sd::LaunchContext* context, NDArray* leftInput,
                            NDArray* rightInput, bool lower, bool unitsOnDiag,
                            NDArray* output) {
   BUILD_SINGLE_SELECTOR(

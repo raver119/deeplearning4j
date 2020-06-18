@@ -427,10 +427,10 @@ PLATFORM_IMPL(conv2d, ENGINE_CUDA) {
   int dH = INT_ARG(6);           // dilations height
   int dW = INT_ARG(7);           // dilations width
   int paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME
-  bool isNCHW = block.getIArguments()->size() > 9
+  bool isNCHW = block.numI() > 9
                     ? !INT_ARG(9)
                     : 1;  // INT_ARG(9): 0-NCHW, 1-NHWC
-  int wFormat = block.getIArguments()->size() > 10
+  int wFormat = block.numI() > 10
                     ? INT_ARG(10)
                     : 0;  // 0 - [kH, kW, iC, oC], 1 - [oC, iC, kH, kW], 2 -
                           // [oC, kH, kW, iC]
@@ -568,10 +568,10 @@ PLATFORM_IMPL(conv2d_bp, ENGINE_CUDA) {
   int dH = INT_ARG(6);           // dilations height
   int dW = INT_ARG(7);           // dilations width
   int paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME
-  int isNCHW = block.getIArguments()->size() > 9
+  int isNCHW = block.numI() > 9
                    ? !INT_ARG(9)
                    : 1;  // INT_ARG(9): 0-NCHW, 1-NHWC
-  int wFormat = block.getIArguments()->size() > 10
+  int wFormat = block.numI() > 10
                     ? INT_ARG(10)
                     : 0;  // 0 - [kH, kW, iC, oC], 1 - [oC, iC, kH, kW], 2 -
                           // [oC, kH, kW, iC]
@@ -697,7 +697,7 @@ PLATFORM_CHECK(conv2d_bp, ENGINE_CUDA) {
                                          // oH, oW] (NCHW), epsilon_next
 
   const int paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME, 2-CAUSAL
-  const int isNCHW = block.getIArguments()->size() > 9
+  const int isNCHW = block.numI() > 9
                          ? !INT_ARG(9)
                          : 1;  // INT_ARG(9): 0-NCHW, 1-NHWC
 

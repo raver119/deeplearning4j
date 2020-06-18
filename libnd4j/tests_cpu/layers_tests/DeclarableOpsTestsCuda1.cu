@@ -63,7 +63,7 @@ TEST_F(DeclarableOpsTestsCuda1, Test_CHOOSE_SCALAR_LARGE) {
 
   auto z = result.at(1);
 
-  ASSERT_EQ(148, z->e<double>(0));
+  ASSERT_EQ(148, z.e<double>(0));
   // ASSERT_TRUE(exp.isSameShape(z));
 }
 

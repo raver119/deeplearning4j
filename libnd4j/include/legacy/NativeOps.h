@@ -1517,11 +1517,6 @@ SD_EXPORT void deletePointerArray(Nd4jPointer pointer);
 
 SD_EXPORT void deleteVariablesSet(OpaqueVariablesSet* pointer);
 
-// GraphState creation
-SD_EXPORT Nd4jPointer getGraphState(Nd4jLong id);
-
-SD_EXPORT void deleteGraphState(Nd4jPointer state);
-
 SD_EXPORT void deleteResultWrapper(Nd4jPointer ptr);
 
 SD_EXPORT int estimateThreshold(Nd4jPointer* extraPointers, Nd4jPointer x,

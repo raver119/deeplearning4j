@@ -42,7 +42,7 @@ PLATFORM_IMPL(maxpool2d, ENGINE_CUDA) {
   const auto dH = INT_ARG(6);
   const auto dW = INT_ARG(7);
   const auto paddingMode = static_cast<bool>(INT_ARG(8));
-  const int isNCHW = block.getIArguments()->size() > 10
+  const int isNCHW = block.numI() > 10
                          ? !INT_ARG(10)
                          : 1;  // INT_ARG(10): 0-NCHW, 1-NHWC
 
@@ -105,7 +105,7 @@ PLATFORM_IMPL(maxpool2d_bp, ENGINE_CUDA) {
   const auto dH = INT_ARG(6);           // dilations height
   const auto dW = INT_ARG(7);           // dilations width
   const auto paddingMode = INT_ARG(8);  // 0-VALID, 1-SAME
-  const auto isNCHW = block.getIArguments()->size() > 10
+  const auto isNCHW = block.numI() > 10
                           ? !INT_ARG(10)
                           : 1;  // INT_ARG(10): 0-NCHW, 1-NHWC
 

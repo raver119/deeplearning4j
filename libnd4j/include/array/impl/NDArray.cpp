@@ -2085,7 +2085,7 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
                 else if (arr->isZ())
                     ss << arr->e<Nd4jLong>(i);
                 else if (arr->isB())
-                    ss << arr->e<bool>(i) ? "true" : "false";
+                    ss << (arr->e<bool>(i) ? "true" : "false");
                 else if (arr->isS()) {
                     ss << "\"" << arr->e<std::string>(i).c_str() << "\"";
                 }
@@ -2108,7 +2108,7 @@ static void printFormatted(NDArray const* arr, int depth, int limit) {
                     else if (arr->isZ())
                         ss << arr->e<Nd4jLong>(row, col);
                     else if (arr->isB())
-                        ss << arr->e<bool>(row, col) ? "true" : "false";
+                        ss << (arr->e<bool>(row, col) ? "true" : "false");
                     else if (arr->isS()) {
                         ss << "\"" << arr->e<std::string>(row * cols + col).c_str() <<"\"";
                     }
@@ -2163,7 +2163,7 @@ std::string NDArray::indexedBufferString(Nd4jLong limit) const {
     else if (this->isR())
       ss << this->e<float>(0);
     else if (this->isB()) {
-      ss << this->e<bool>(0) ? "true" : "false";
+      ss << (this->e<bool>(0) ? "true" : "false");
     } else if (this->isS()) {
       // todo do we need this
       // printf("\"%lld\"\n", this->getOffset(e));

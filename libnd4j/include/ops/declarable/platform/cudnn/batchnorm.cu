@@ -353,7 +353,7 @@ PLATFORM_IMPL(batchnorm, ENGINE_CUDA) {
   if (applyScale) gamma = INPUT_VARIABLE(3);
   if (applyOffset) beta = INPUT_VARIABLE(3 + (int)applyScale);
 
-  const int numOfIntArgs = block.getIArguments()->size();
+  const int numOfIntArgs = block.numI();
   const int inRank = input->rankOf();
 
   // get axes args to normalize input array over
@@ -463,7 +463,7 @@ PLATFORM_CHECK(batchnorm, ENGINE_CUDA) {
   NDArray* gamma = applyScale ? INPUT_VARIABLE(3) : nullptr;
   NDArray* beta = applyOffset ? INPUT_VARIABLE(3 + (int)applyScale) : nullptr;
 
-  const int numOfIntArgs = block.getIArguments()->size();
+  const int numOfIntArgs = block.numI();
   const int xRank = input->rankOf();
 
   // *********************************** //
@@ -545,7 +545,7 @@ PLATFORM_IMPL(batchnorm_bp, ENGINE_CUDA) {
     gradB = OUTPUT_VARIABLE(3 + (int)applyScale);
   }
 
-  const int numOfIntArgs = block.getIArguments()->size();
+  const int numOfIntArgs = block.numI();
   const int inRank = input->rankOf();
 
   // get axes args to normalize input array over
@@ -671,7 +671,7 @@ PLATFORM_CHECK(batchnorm_bp, ENGINE_CUDA) {
   NDArray* gradG = nullptr;
   NDArray* gradB = nullptr;
 
-  const int numOfIntArgs = block.getIArguments()->size();
+  const int numOfIntArgs = block.numI();
   const int xRank = input->rankOf();
 
   // *********************************** //

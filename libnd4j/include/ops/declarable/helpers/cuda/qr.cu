@@ -186,8 +186,7 @@ void qr_(LaunchContext* context, NDArray const* input, NDArray* outputQ,
 
   for (auto batch = start; batch < stop; batch += increment) {
     // qr here
-    qrSingle<T>(context, listInput.at(batch), listOutQ.at(batch),
-                listOutR.at(batch), fullMatricies);
+    qrSingle<T>(context, &listInput.at(batch), &listOutQ.at(batch), &listOutR.at(batch), fullMatricies);
   }
   NDArray::registerSpecialUse({outputQ, outputR}, {input});
 }

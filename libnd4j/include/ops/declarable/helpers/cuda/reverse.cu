@@ -218,15 +218,14 @@ static void reverseSequence_(sd::LaunchContext* context, const NDArray* input,
       int numOfElemsToReverse = seqLengths->e<int>(i);
 
       if (numOfElemsToReverse == 0 || numOfElemsToReverse == 1) {
-        outSubArrsSet.at(i)->assign(inSubArrsSet.at(i));
+        outSubArrsSet.at(i).assign(inSubArrsSet.at(i));
       } else {
         auto inInnerSet =
-            inSubArrsSet.at(i)->allTensorsAlongDimension({seqDim});
+            inSubArrsSet.at(i).allTensorsAlongDimension({seqDim});
         auto outInnerSet =
-            outSubArrsSet.at(i)->allTensorsAlongDimension({seqDim});
+            outSubArrsSet.at(i).allTensorsAlongDimension({seqDim});
         for (int j = 0; j < inInnerSet.size(); ++j)
-          reverseArray<T>(context, inInnerSet.at(j), outInnerSet.at(j),
-                          numOfElemsToReverse);
+          reverseArray<T>(context, &inInnerSet.at(j), &outInnerSet.at(j), numOfElemsToReverse);
       }
     }
   }
@@ -250,16 +249,13 @@ void reverseSequence(sd::LaunchContext* context, const NDArray* input,
 void reverse(sd::LaunchContext* context, const NDArray* input, NDArray* output,
              const std::vector<int>* intArgs) {
 
-  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      input->shapeInfo(), *intArgs);
-  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      output->shapeInfo(), *intArgs);
+  auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(input->shapeInfo(), *intArgs);
+  auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), *intArgs);
 
   NDArray::prepareSpecialUse({output}, {input});
 
   if (packX.numberOfTads() == 1) {
-    BUILD_SINGLE_SELECTOR(input->dataType(), reverseArray,
-                          (context, input, output, 0), LIBND4J_TYPES);
+    BUILD_SINGLE_SELECTOR(input->dataType(), reverseArray, (context, input, output, 0), LIBND4J_TYPES);
   } else {
     BUILD_SINGLE_SELECTOR(
         input->dataType(), reverseTad,
@@ -272,6 +268,7 @@ void reverse(sd::LaunchContext* context, const NDArray* input, NDArray* output,
 
   NDArray::registerSpecialUse({output}, {input});
 }
+
 }  // namespace helpers
 }  // namespace ops
 }  // namespace sd

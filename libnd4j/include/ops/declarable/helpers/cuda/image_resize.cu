@@ -1429,8 +1429,8 @@ BUILD_SINGLE_TEMPLATE(template int resizeBicubicFunctorA_,
 
 
 // ------------------------------------------------------------------------------------------------------------------//
-int resizeImagesFunctor(sd::LaunchContext* context, NDArray const* image, int constwidth,
-                  int constheight, ImageResizeMethods method,
+int resizeImagesFunctor(sd::LaunchContext* context, NDArray const* image, int const width,
+                  int const height, ImageResizeMethods method,
                   bool alignCorners, NDArray* output) {
   switch (method) {
     case kResizeBilinear:
