@@ -23,7 +23,7 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicExit::processNode(const Node *node) {
+Nd4jStatus LogicExit::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   // this op is basically no-op
   // we just know it exists
   throw std::runtime_error("LogicExit::processNode - Not implemented yet");

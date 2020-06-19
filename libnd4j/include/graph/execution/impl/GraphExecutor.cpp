@@ -85,7 +85,7 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
                   v.node().id(),
                   v.node().name().empty() ? "" : v.node().name().c_str());
 
-      LogicExecutor::processNode(&v.node(), f, graph);
+      LogicExecutor::processNode(&v.node(), stack, graph);
     } else if (v.node().hasCustomOp()) {
       // we skip all disabled nodes
       if (f.isDisabled(v.node().id()))

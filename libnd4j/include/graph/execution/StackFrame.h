@@ -23,6 +23,7 @@
 
 #include <system/dll.h>
 #include <graph/VariableProxy.h>
+#include <string>
 
 namespace sd {
 namespace graph {
@@ -32,14 +33,18 @@ class SD_EXPORT StackFrame {
   VariableProxy _proxy;
 
   MAP_IMPL<int, int> _disabledNodes;
+
+  std::string _frameName;
  public:
-  explicit StackFrame(VariableProxy &proxy);
+  explicit StackFrame(const VariableProxy &proxy, const std::string &frameName);
   ~StackFrame() = default;
 
   const VariableProxy& variableProxy() const { return _proxy; }
 
   void disableNode(int nodeId);
   bool isDisabled(int nodeId) const;
+
+  const std::string& frameName() const;
 };
 
 } // namespace graph

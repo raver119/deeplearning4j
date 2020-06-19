@@ -29,7 +29,7 @@ namespace sd {
 namespace graph {
 class LogicExit {
  public:
-  static Nd4jStatus processNode(const Node* node);
+  static Nd4jStatus processNode(const Node* node, Stack &stack, const OptimizedGraph& graph);
 };
 }  // namespace graph
 }  // namespace sd

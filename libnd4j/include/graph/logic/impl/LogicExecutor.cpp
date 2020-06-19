@@ -34,7 +34,7 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicExecutor::processNode(const Node *node, StackFrame &frame, const OptimizedGraph& graph) {
+Nd4jStatus LogicExecutor::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   switch (node->opNum()) {
     case sd::logic::While:
       return LogicWhile::processNode(node);
@@ -43,21 +43,21 @@ Nd4jStatus LogicExecutor::processNode(const Node *node, StackFrame &frame, const
     case sd::logic::Conditional:
       return LogicConditional::processNode(node);
     case sd::logic::Switch:
-      return LogicSwitch::processNode(node, frame, graph);
+      return LogicSwitch::processNode(node, stack, graph);
     case sd::logic::Return:
       return LogicReturn::processNode(node);
     case sd::logic::Expose:
       return LogicExpose::processNode(node);
     case sd::logic::Merge:
-      return LogicMerge::processNode(node, frame, graph);
+      return LogicMerge::processNode(node, stack, graph);
     case sd::logic::LoopCond:
       return LogicLoopCond::processNode(node);
     case sd::logic::NextIteration:
-      return LogicNextIeration::processNode(node);
+      return LogicNextIeration::processNode(node, stack, graph);
     case sd::logic::Exit:
-      return LogicExit::processNode(node);
+      return LogicExit::processNode(node, stack, graph);
     case sd::logic::Enter:
-      return LogicEnter::processNode(node);
+      return LogicEnter::processNode(node, stack, graph);
   }
 
   if (node->name().empty()) {

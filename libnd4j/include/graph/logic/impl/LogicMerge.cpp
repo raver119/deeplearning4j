@@ -24,7 +24,10 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicMerge::processNode(const Node *node, StackFrame &frame, const OptimizedGraph& graph) {
+Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
+  // getting current frame first
+  auto &frame = stack.back();
+
   const auto &inputs = node->inputs();
   auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 

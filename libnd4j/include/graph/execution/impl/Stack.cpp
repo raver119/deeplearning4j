@@ -24,7 +24,7 @@ namespace sd {
 namespace graph {
 
 Stack::Stack(const VariableProxy &root) {
-  _frames.push_back(StackFrame(const_cast<VariableProxy&>(root)));
+  _frames.push_back(StackFrame(const_cast<VariableProxy&>(root), "defaultFrame"));
 }
 
 const VariableProxy &Stack::rootVariableSpace() const {
@@ -41,6 +41,14 @@ StackFrame &Stack::front() {
 
 StackFrame &Stack::root() {
   return _frames.front();
+}
+
+void Stack::openFrame(const std::string &frameName) {
+  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameName));
+}
+
+void Stack::closeFrame() {
+
 }
 
 } // namespace graph

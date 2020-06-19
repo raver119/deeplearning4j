@@ -24,58 +24,33 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicEnter::processNode(const Node *node) {
-  throw std::runtime_error("LogicEnter::processNode - not implemented yet");
-  /*
-  // this op replicates input variable into the frame. basically happens once
-  for single loop.
-  // sure, if there's inner loop within outer loop, it'll be called once for
-  outer loop and multiple times for inner loop
 
-  auto __variableSpace = graph->variableSpace();
-  auto __flowPath = __variableSpace->flowPath();
+/**
+ * This function does 2 things:
+ * - Propagates input variable
+ * - Opens new StackFrame
+ */
+Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
+  // if current frameName isn't equal to node frame name - we'll open new StackFrame then
+  // FIXME: instead of node->name() we should use proper
+  if (node->name() != stack.back().frameName())
+    stack.openFrame(node->name());
 
-  // basically, first non-null variable is our target
-  for (int e = 0; e < node->input()->size(); e++) {
-      auto inputAddr = node->input()->at(e);
+  const auto &frame = stack.back();
 
-      if (__variableSpace->hasVariable(inputAddr)) {
-          auto var = __variableSpace->getVariable(inputAddr);
-          if (var->hasNDArray()) {
-              Variable *lvar = nullptr;
-              if (__variableSpace->hasVariable(node->id(), 0))
-                  lvar = __variableSpace->getVariable(node->id(), 0);
-              else
-                  lvar = new Variable(nullptr, node->getName().c_str(),
-  node->id(), 0);
+  const auto &inputs = node->inputs();
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
-              auto array = var->getNDArray();
-              lvar->setNDArray(array);
-              lvar->markReadOnly(true);
+  // validate Node state
+  REQUIRE_TRUE(inputs.size() == 1, 0, "Enter: op must have exactly 1 inputs");
+  REQUIRE_TRUE(varSpace.hasVariable(inputs[0]), 0, "Enter: input Variable doesn't exist");
 
-              break;
-          } else if (var->hasNDArrayList()) {
-              Variable *lvar = nullptr;
-              if (__variableSpace->hasVariable(node->id(), 0))
-                  lvar = __variableSpace->getVariable(node->id(), 0);
-              else
-                  lvar = new Variable(nullptr, node->getName().c_str(),
-  node->id(), 0);
-
-              auto list = var->getNDArrayList();
-              lvar->setNDArrayList(list);
-              lvar->markReadOnly(true);
-
-              break;
-          } else {
-              // FIXME: can we really have third case here?
-              continue;
-          }
-      }
-  }
+  // now we propagate input as ouwn output
+  auto input = varSpace.getVariable(inputs[0]);
+  varSpace.putVariable(std::pair<int, int>{node->id(), 0}, *input->getNDArray());
 
   return sd::Status::OK();
-   */
 }
+
 }  // namespace graph
 }  // namespace sd

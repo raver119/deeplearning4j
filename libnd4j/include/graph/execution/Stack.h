@@ -41,6 +41,9 @@ class SD_EXPORT Stack {
   StackFrame& root();
 
   const VariableProxy& rootVariableSpace() const;
+
+  void openFrame(const std::string &frameName);
+  void closeFrame();
 };
 
 } // namespace graph

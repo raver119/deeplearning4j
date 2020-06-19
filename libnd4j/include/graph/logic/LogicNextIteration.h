@@ -30,7 +30,7 @@ namespace graph {
 
 class LogicNextIeration {
  public:
-  static Nd4jStatus processNode(const Node* node);
+  static Nd4jStatus processNode(const Node* node, Stack &stack, const OptimizedGraph& graph);
 };
 
 }  // namespace graph

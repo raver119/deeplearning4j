@@ -23,7 +23,7 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicNextIeration::processNode(const Node *node) {
+Nd4jStatus LogicNextIeration::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   throw std::runtime_error(
       "LogicNextIeration::processNode - not implemented yet");
   /*

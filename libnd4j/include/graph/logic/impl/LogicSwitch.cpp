@@ -76,7 +76,10 @@ static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const Opti
   }
 }
 
-Nd4jStatus LogicSwitch::processNode(const Node* node, StackFrame &frame, const OptimizedGraph& graph) {
+Nd4jStatus LogicSwitch::processNode(const Node* node, Stack &stack, const OptimizedGraph& graph) {
+  // getting current frame first
+  auto &frame = stack.back();
+
   const auto &inputs = node->inputs();
   const auto &outputs = node->outputs();
 
