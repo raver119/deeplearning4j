@@ -66,9 +66,15 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
 
     // create workMap, fill vectors containing input and output nodes per each node, and find start nodes
     std::vector<int> startNodes;
-    for (const auto& p : _nodesMap) {
+    for (auto& p : _nodesMap) {
 
         const auto& inputs = p.second.inputs();
+
+        if(p.second.name().find("Exit") != std::string::npos) {
+            const int idOfEnter = _nodesMap[_nodesMap[inputs[0].first].inputs()[0].first].inputs()[0].first;
+            p.second.setFrameId(_nodesMap[idOfEnter].frameId());
+            _nodesMap[idOfEnter].setExitId(p.first);
+        }
 
         for (int i = 0; i < inputs.size(); ++i) {
 
@@ -167,14 +173,12 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
 
         if(name->find("Enter") == std::string::npos) {
             for (const auto& id : p0->second._opSeq) {
-                if(id == -1)
-                    break;
                 name = &_nodesMap[id].name();
                 if(name->find("Enter") != std::string::npos) {
                     isInLoop = true;
                     break;
                 }
-           }
+            }
         }
         else
             isInLoop = true;
