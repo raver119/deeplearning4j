@@ -31,6 +31,7 @@ namespace graph {
 class SD_EXPORT StackFrame {
  private:
   VariableProxy _proxy;
+  StackFrame *_parent = nullptr;
 
   MAP_IMPL<int, int> _disabledNodes;
 
@@ -41,9 +42,12 @@ class SD_EXPORT StackFrame {
   mutable int _exitId = -119;
  public:
   explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId);
+  explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId, StackFrame &parent);
   ~StackFrame() = default;
 
   const VariableProxy& variableProxy() const { return _proxy; }
+
+
 
   void disableNode(int nodeId);
   bool isDisabled(int nodeId) const;
@@ -55,6 +59,12 @@ class SD_EXPORT StackFrame {
 
   void setRewindId(int id) const;
   void setExitId(int id) const;
+
+  /**
+   * This method returns parent frame
+   * @return
+   */
+  StackFrame& parent() const;
 };
 
 } // namespace graph

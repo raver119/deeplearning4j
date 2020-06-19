@@ -44,11 +44,11 @@ StackFrame &Stack::root() {
 }
 
 void Stack::openFrame(int frameId, int enterId) {
-  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId));
+  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId, _frames.back()));
 }
 
 void Stack::closeFrame() {
-
+  _frames.pop_back();
 }
 
 } // namespace graph

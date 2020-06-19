@@ -36,6 +36,7 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
     // since this is the loop entrance, we'll rewind to this Node once iteration ends
     stack.openFrame(node->frameId(), node->id());
   }
+
   // getting current frame (it might be the new one!)
   const auto &frame = stack.back();
   const auto &inputs = node->inputs();

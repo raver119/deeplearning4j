@@ -30,7 +30,26 @@ namespace graph {
  * - closes current StackFrame (only if this is the last Exit node in this loop)
  */
 Nd4jStatus LogicExit::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
-  throw std::runtime_error("LogicExit::processNode - Not implemented yet");
+  // getting current frame (it must be the StackFrame created for a While loop)
+  const auto &frame = stack.back();
+
+  // we must propagate variable from this frame to parent one
+  const auto &parent = frame.parent();
+
+  const auto &inputs = node->inputs();
+
+  REQUIRE_TRUE(inputs.size() == 1, 0, "Exit: op must have exactly 1 input1");
+  REQUIRE_TRUE(frame.variableProxy().hasVariable(inputs[0]), 0, "Exit: input Variable doesn't exist");
+
+  // get Variable from current VariableProxy and put to the ParentOne
+  auto var = frame.variableProxy().getVariable(inputs[0]);
+  const_cast<VariableProxy&>(parent.variableProxy()).putVariable(inputs[0], var);
+
+  // if this is the last Exit node - we close current StackFrame
+  if (frame.exitId() == node->id())
+    stack.closeFrame();
+
+  return Status::OK();
 }
 
 }  // namespace graph
