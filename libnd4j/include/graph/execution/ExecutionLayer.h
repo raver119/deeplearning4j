@@ -72,6 +72,12 @@ class SD_EXPORT ExecutionLayer {
    */
   void sortOpSequences();
 
+  /**
+   * This method checks if specified Node resides within this ExecutionLayer
+   * @param nodeId
+   * @return
+   */
+  bool hasNode(int nodeId) const;
 };
 
 }  // namespace graph

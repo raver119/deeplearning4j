@@ -38,18 +38,24 @@ OpSequence::OpSequence(const OpSequence &other) noexcept {
   _ops.clear();
 
   for (const auto &v : other._ops) _ops.emplace_back(v);
+
+  _idToIndex = other._idToIndex;
+  _indexToId = other._indexToId;
 }
 
 ////////////////////////////////////////////////////////////////////////
 // move constructor
 OpSequence::OpSequence(OpSequence &&other) noexcept: _ops(std::move(other._ops))  {
-
+  _idToIndex = std::move(other._idToIndex);
+  _indexToId = std::move(other._indexToId);
 }
 
 OpSequence &OpSequence::operator=(OpSequence &&other) noexcept {
   if (this == &other) return *this;
 
   _ops = std::move(other._ops);
+  _idToIndex = std::move(other._idToIndex);
+  _indexToId = std::move(other._indexToId);
 
   return *this;
 }
@@ -59,6 +65,9 @@ OpSequence &OpSequence::operator=(const OpSequence &other) noexcept {
 
   _ops.clear();
   for (const auto &v : other._ops) _ops.emplace_back(v);
+
+  _idToIndex = other._idToIndex;
+  _indexToId = other._indexToId;
 
   return *this;
 }
@@ -115,6 +124,10 @@ int OpSequence::nodeIndex(int id) const {
     throw std::runtime_error("Unknown Node ID requested: " + StringUtils::valueToString(id));
 
   return _idToIndex.at(id);
+}
+
+bool OpSequence::hasNode(int id) const {
+  return _idToIndex.count(id) > 0;
 }
 
 OpSequence::iterator OpSequence::begin() {

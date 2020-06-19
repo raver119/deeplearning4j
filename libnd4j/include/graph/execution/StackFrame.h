@@ -50,6 +50,7 @@ class SD_EXPORT StackFrame {
   int frameId() const;
   int enterId() const;
   int exitId() const;
+  void setExitId(int id) const;
 };
 
 } // namespace graph

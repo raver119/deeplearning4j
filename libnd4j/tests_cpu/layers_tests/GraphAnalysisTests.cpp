@@ -1070,7 +1070,7 @@ TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
 
   graph.printOut();
 
-  //graph.execute();
+  graph.execute();
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_nested_while_1) {

@@ -36,6 +36,13 @@ const OpSequence &ExecutionLayer::operator[](uint64_t index) const {
   return at(index);
 }
 
+bool ExecutionLayer::hasNode(int nodeId) const {
+  for (const auto &v:_sequences)
+    if (v.hasNode(nodeId))
+      return true;
+
+  return false;
+}
 
 void ExecutionLayer::append(OpSequence&& sequence) {
   _sequences.emplace_back(std::move(sequence));

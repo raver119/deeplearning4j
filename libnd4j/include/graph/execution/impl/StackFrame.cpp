@@ -46,5 +46,9 @@ int StackFrame::exitId() const {
   return _exitId;
 }
 
+void StackFrame::setExitId(int id) const {
+  _exitId = id;
+}
+
 } // namespace graph
 } // namespace sd

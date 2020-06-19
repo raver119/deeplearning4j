@@ -88,7 +88,11 @@ class SD_EXPORT OptimizedGraph {
      * returns reference on _nodesMap
      * @return
      */
-    const MAP_IMPL<int, Node>& getNodesMap() const { return _nodesMap; }
+    const MAP_IMPL<int, Node>& nodesMap() const { return _nodesMap; }
+
+    int nodeLayer(int nodeId) const;
+    int nodeSequence(int nodeId) const;
+    int nodeIndex(int nodeId) const;
 };
 
 

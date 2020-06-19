@@ -108,6 +108,7 @@ class SD_EXPORT OpSequence
    */
   int nodeId(int index) const;
   int nodeIndex(int id) const;
+  bool hasNode(int id) const;
 
   /**
    * Iterator functionality for OpSequence

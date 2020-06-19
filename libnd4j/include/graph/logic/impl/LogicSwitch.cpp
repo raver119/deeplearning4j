@@ -40,11 +40,11 @@ static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const Opti
 
   // we're going to roll through all consumers
   for (const auto &o:outputs) {
-    if (graph.getNodesMap().count(o.first) == 0)
+    if (graph.nodesMap().count(o.first) == 0)
       throw std::runtime_error("pew-pew");
 
     // now fetch disabled node
-    const auto &n = graph.getNodesMap().at(o.first);
+    const auto &n = graph.nodesMap().at(o.first);
 
     // edge case here: don't disable Merge node
     if (n.opType() == OpType_LOGIC && n.opNum() == sd::logic::Merge)
@@ -66,10 +66,10 @@ static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const Opti
     if (o.second == second) {
       frame.disableNode(o.first);
 
-      if (graph.getNodesMap().count(o.first) == 0)
+      if (graph.nodesMap().count(o.first) == 0)
         throw std::runtime_error("pew-pew");
 
-      const auto &n = graph.getNodesMap().at(o.first);
+      const auto &n = graph.nodesMap().at(o.first);
 
       disableBranch(frame, varSpace, graph, &n);
     }

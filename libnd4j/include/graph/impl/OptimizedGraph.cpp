@@ -22,6 +22,7 @@
 #include <graph/Graph.h>
 #include <graph/OptimizedGraph.h>
 #include <forward_list>
+#include <helpers/StringUtils.h>
 
 namespace sd    {
 namespace graph {
@@ -275,6 +276,44 @@ size_t OptimizedGraph::size() const {
   ;});
 
   return size;
+}
+
+int OptimizedGraph::nodeLayer(int nodeId) const {
+  int cnt = 0;
+  for (const auto &v:_sortedGraph) {
+    if (v.hasNode(nodeId))
+      return cnt;
+
+    cnt++;
+  }
+
+  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+}
+
+int OptimizedGraph::nodeIndex(int nodeId) const {
+  for (const auto &v:_sortedGraph) {
+    if (v.hasNode(nodeId)) {
+      for (int e = 0; e < v.width(); e++) {
+        if (v[e].hasNode(nodeId))
+          return v[e].nodeIndex(nodeId);
+      }
+    }
+  }
+
+  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+}
+
+int OptimizedGraph::nodeSequence(int nodeId) const {
+  for (const auto &v:_sortedGraph) {
+    if (v.hasNode(nodeId)) {
+      for (int e = 0; e < v.width(); e++) {
+        if (v[e].hasNode(nodeId))
+          return e;
+      }
+    }
+  }
+
+  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
 }
 
 void OptimizedGraph::printOut() const {
