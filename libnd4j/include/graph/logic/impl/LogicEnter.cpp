@@ -37,10 +37,12 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
     stack.openFrame(node->frameId(), node->id());
   }
 
+  const auto &inputs = node->inputs();
+  const auto &outputs = node->outputs();
+
   // getting current frame (it might be the new one!)
   const auto &frame = stack.back();
 
-  // we need to find rewind point - it has to be NextIteration node with max index within OpSequence
   // and we need to find exit point - it has to be Exit node, with max index within OpSequence
   auto currentExitIndex = frame.exitId() >= 0 ? graph.nodeIndex(frame.exitId()) : -1;
   auto thisExitIndex = graph.nodeIndex(node->exitId());
@@ -49,7 +51,19 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
   if (thisExitIndex > currentExitIndex)
     frame.setExitId(node->exitId());
 
-  const auto &inputs = node->inputs();
+
+  // we need to find rewind point - it has to be NextIteration node with max index within OpSequence
+  const auto &merge = graph.nodesMap().at(outputs[0].first);
+  const auto &iter = graph.nodesMap().at(merge.inputs()[1].first);
+
+  // we must compare index of this NextIteration Node within OpSequence to the current one, if it's set
+  auto currentRewindIndex = frame.rewindId() >= 0 ? graph.nodeIndex(frame.rewindId()) : -1;
+  auto thisRewindIndex = graph.nodeIndex(iter.id());
+
+  // we want to rewind after the last NextIteration node
+  if (thisRewindIndex > currentRewindIndex)
+    frame.setRewindId(iter.id());
+
   auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
   // validate Node state

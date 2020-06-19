@@ -37,6 +37,7 @@ class SD_EXPORT StackFrame {
   // these fields are used
   int _frameId = -119;
   int _enterId = -119;
+  mutable int _rewindId = -119;
   mutable int _exitId = -119;
  public:
   explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId);
@@ -50,6 +51,9 @@ class SD_EXPORT StackFrame {
   int frameId() const;
   int enterId() const;
   int exitId() const;
+  int rewindId() const;
+
+  void setRewindId(int id) const;
   void setExitId(int id) const;
 };
 

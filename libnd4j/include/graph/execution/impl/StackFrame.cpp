@@ -50,5 +50,13 @@ void StackFrame::setExitId(int id) const {
   _exitId = id;
 }
 
+int StackFrame::rewindId() const {
+  return _rewindId;
+}
+
+void StackFrame::setRewindId(int id) const {
+  _rewindId = id;
+}
+
 } // namespace graph
 } // namespace sd
