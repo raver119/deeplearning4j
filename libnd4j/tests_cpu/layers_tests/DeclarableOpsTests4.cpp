@@ -399,7 +399,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_13) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -442,7 +442,7 @@ TEST_F(DeclarableOpsTests4, avgpool2d_14) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
@@ -485,7 +485,7 @@ TEST_F(DeclarableOpsTests4, Avgpool2d_test15) {
     // auto z('c',{bS,iD,oH,oW});
 
     auto variableSpace = new VariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
     // variableSpace->putVariable(1, &z);
 
     auto block = new Context(1, variableSpace, false);
