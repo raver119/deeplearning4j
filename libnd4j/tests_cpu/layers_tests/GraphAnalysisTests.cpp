@@ -1063,6 +1063,11 @@ TEST_F(GraphAnalysisTests, optimizedGraph_cond2) {
 TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   auto graph = Graph::fromFlatBuffers("resources/while_iter1.fb");
   const auto& optimized = graph.optimizedGraph();
+
+  // this Graph must have exactly 1 Layer and 1 OpSequence, since all it has is While loop
+  ASSERT_EQ(1, optimized.layers());
+  ASSERT_EQ(1, optimized.layer(0).width());
+
   graph.printOut();
 }
 
