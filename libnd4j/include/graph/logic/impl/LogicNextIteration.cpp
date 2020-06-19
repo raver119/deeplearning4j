@@ -23,32 +23,22 @@
 
 namespace sd {
 namespace graph {
+
 Nd4jStatus LogicNextIeration::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
-  throw std::runtime_error(
-      "LogicNextIeration::processNode - not implemented yet");
-  /*
-  auto __variableSpace = graph->variableSpace();
-  auto __flowPath = __variableSpace->flowPath();
+  auto &frame = stack.back();
 
-  auto inputAddr = node->input()->at(0);
+  const auto &inputs = node->inputs();
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
-  auto var = __variableSpace->getVariable(inputAddr);
+  REQUIRE_TRUE(inputs.size() == 1, 0, "LoopCond: op must have exactly 1 input1");
+  REQUIRE_TRUE(frame.variableProxy().hasVariable(inputs[0]), 0, "LoopCond: input Variable doesn't exist");
 
-  Variable *lvar = nullptr;
-  if (__variableSpace->hasVariable(node->id(), 0))
-      lvar = __variableSpace->getVariable(node->id(), 0);
-  else
-      lvar = new Variable(nullptr, node->getName().c_str(), node->id(), 0);
+  // Propagate Variable
+  auto var = varSpace.getVariable(inputs[0]);
+  varSpace.putVariable({node->id(), 0}, *var->getNDArray());
 
-//            if (lvar->hasNDArray())
-//                delete lvar->getNDArray();
-
-  auto array = var->getNDArray();
-  lvar->setNDArray(array);
-  lvar->markReadOnly(true);
-
-  return ND4J_STATUS_OK;
-  */
+  return Status::OK();
 }
+
 }  // namespace graph
 }  // namespace sd

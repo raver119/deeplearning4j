@@ -31,10 +31,15 @@ namespace graph {
  * - Opens new StackFrame (only if that's the first Enter in this Loop)
  */
 Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
-  // if current frameName isn't equal to node frame name - we'll open new StackFrame then
-  if (node->frameId() != stack.back().frameId()) {
-    // since this is the loop entrance, we'll rewind to this Node once iteration ends
-    stack.openFrame(node->frameId(), node->id());
+  // the only possible case for this equality is NextIteration rewind
+  if (node->id() == stack.back().enterId()) {
+    stack.iterateFrame(node->frameId(), node->id());
+  } else {
+    // if current frameName isn't equal to node frame name - we'll open new StackFrame then
+    if (node->frameId() != stack.back().frameId()) {
+      // since this is the loop entrance, we'll rewind to this Node once iteration ends
+      stack.openFrame(node->frameId(), node->id());
+    }
   }
 
   // getting current frame (it might be the new one!)

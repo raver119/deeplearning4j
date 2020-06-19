@@ -43,7 +43,7 @@ Nd4jStatus LogicExit::processNode(const Node *node, Stack &stack, const Optimize
 
   // get Variable from current VariableProxy and put to the ParentOne
   auto var = frame.variableProxy().getVariable(inputs[0]);
-  const_cast<VariableProxy&>(parent.variableProxy()).putVariable(inputs[0], var);
+  const_cast<VariableProxy&>(parent.variableProxy()).putVariable({node->id(), 0}, *var->getNDArray());
 
   // if this is the last Exit node - we close current StackFrame
   if (frame.exitId() == node->id())

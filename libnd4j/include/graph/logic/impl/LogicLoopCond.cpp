@@ -23,36 +23,22 @@
 
 namespace sd {
 namespace graph {
-Nd4jStatus LogicLoopCond::processNode(const Node *node) {
-  throw std::runtime_error("LogicLoopCond::processNode - Not implemented yet");
-  /*
-  auto __variableSpace = graph->variableSpace();
-  auto __flowPath = __variableSpace->flowPath();
 
-  Context ctx(node->contextPrototype(), __variableSpace);
-  auto input = ctx.variable(0)->getNDArray();
+Nd4jStatus LogicLoopCond::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
+  auto &frame = stack.back();
 
-  std::pair<int, int> pair0(node->id(), 0);
+  const auto &inputs = node->inputs();
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
-  if (!__variableSpace->hasVariable(pair0))
-      __variableSpace->putVariable(pair0, new Variable(nullptr, nullptr,
-node->id(), 0));
+  REQUIRE_TRUE(inputs.size() == 1, 0, "LoopCond: op must have exactly 1 input1");
+  REQUIRE_TRUE(frame.variableProxy().hasVariable(inputs[0]), 0, "LoopCond: input Variable doesn't exist");
 
-  __variableSpace->getVariable(pair0)->setNDArray(input);
-  __variableSpace->getVariable(pair0)->markRemovable(false);
+  // Propagate Variable
+  auto var = varSpace.getVariable(inputs[0]);
+  varSpace.putVariable({node->id(), 0}, *var->getNDArray());
 
-  // pass further
-  if (input->e<int>(0) > 0) {
-      // if condition is TRUE body will be invoked some time soon
-//           __flowPath->markFrameActive(node->getFrameId(), true);
-      //__flowPath->i
-  } else {
-      // body won't be activated
-//           __flowPath->markFrameActive(node->getFrameId(), false);
-  }
-
-  return ND4J_STATUS_OK;
-  */
+  return Status::OK();
 }
+
 }  // namespace graph
 }  // namespace sd

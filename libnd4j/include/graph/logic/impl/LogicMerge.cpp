@@ -36,14 +36,28 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
     REQUIRE_TRUE(false, 0, "Merge: only 1 input should be disabled, but got both of them down");
   }
 
-  // we're getting first non-disable input and propagate it
-  const auto &p = frame.isDisabled(inputs[0].first) ? inputs[1] : inputs[0];
+  const auto &firstNode = graph.nodesMap().at(inputs[0].first);
+  const auto &secondNode = graph.nodesMap().at(inputs[1].first);
 
-  REQUIRE_TRUE(frame.variableProxy().hasVariable(p), 0, "Merge: Variable [%i:%i] doesn't exist", p.first, p.second);
+  if ((firstNode.opType() == OpType_LOGIC && firstNode.opNum() == sd::logic::NextIteration)|| (secondNode.opType() == OpType_LOGIC && secondNode.opNum() == sd::logic::NextIteration)) {
+    // if we're on NextIteration merge, we'll propagate its output regardless of first arg existence
+    if (firstNode.opType() == OpType_LOGIC && firstNode.opNum() == sd::logic::NextIteration) {
+      auto id = varSpace.hasVariable(inputs[0]) && varSpace.getVariable(inputs[0])->hasNDArray() ? inputs[0] : inputs[1];
+      varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
+    } else {
+      auto id = varSpace.hasVariable(inputs[1]) && varSpace.getVariable(inputs[1])->hasNDArray() ? inputs[1] : inputs[0];
+      varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
+    }
+  } else {
+    // we're getting first non-disabled input and propagate it
+    const auto &p = frame.isDisabled(inputs[0].first) ? inputs[1] : inputs[0];
 
-  std::pair<int,int> t(node->id(), 0);
-  auto array = varSpace.getVariable(p)->getNDArray().get();
-  varSpace.putVariable(t, *array);
+    REQUIRE_TRUE(frame.variableProxy().hasVariable(p), 0, "Merge: Variable [%i:%i] doesn't exist", p.first, p.second);
+
+    std::pair<int, int> t(node->id(), 0);
+    auto array = varSpace.getVariable(p)->getNDArray().get();
+    varSpace.putVariable(t, *array);
+  }
 
   return Status::OK();
 }

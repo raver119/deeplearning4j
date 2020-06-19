@@ -1070,7 +1070,11 @@ TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
 
   graph.printOut();
 
-  graph.execute();
+  auto results = graph.execute({}, {"while/Exit", "while/Exit_1"});
+  ASSERT_EQ(2, results.size());
+
+  ASSERT_EQ(NDArrayFactory::create<float>(1.f), results["while/Exit"]);
+  ASSERT_EQ(NDArrayFactory::create<float>(1.f), results["while/Exit_1"]);
 }
 
 TEST_F(GraphAnalysisTests, optimizedGraph_nested_while_1) {

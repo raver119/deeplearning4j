@@ -47,7 +47,17 @@ void Stack::openFrame(int frameId, int enterId) {
   _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId, _frames.back()));
 }
 
+void Stack::iterateFrame(int frameId, int enterId) {
+  auto &current = this->back();
+  auto &parent = current.parent();
+  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId, parent));
+}
+
 void Stack::closeFrame() {
+  // we should remove all frames untl we hit parent frame
+  auto &current = this->back();
+  auto &parent = current.parent();
+
   _frames.pop_back();
 }
 

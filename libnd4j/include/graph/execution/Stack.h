@@ -43,6 +43,7 @@ class SD_EXPORT Stack {
   const VariableProxy& rootVariableSpace() const;
 
   void openFrame(int frameId, int enterId);
+  void iterateFrame(int frameId, int enterId);
   void closeFrame();
 };
 
