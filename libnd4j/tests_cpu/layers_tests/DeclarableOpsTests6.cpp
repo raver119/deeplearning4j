@@ -143,9 +143,9 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
 
     auto variableSpace = new VariableSpace();
     variableSpace->putVariable(-1, onesD);
-    variableSpace->putVariable(-2, b);
-    variableSpace->putVariable(-3, e);
-    variableSpace->putVariable(-4, s);
+    variableSpace->putVariable(-2, new NDArray(b));
+    variableSpace->putVariable(-3, new NDArray(e));
+    variableSpace->putVariable(-4, new NDArray(s));
     auto block = new Context(1, variableSpace, false);  // not-in-place
     block->fillInputs({-1});
     block->fillInputs({-2});
@@ -156,7 +156,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_Once_Again_04) {
     block->getIArguments()->push_back(1);
     block->getIArguments()->push_back(0);
     block->getIArguments()->push_back(0);
-    auto inputShapes = new ShapeList({ones->shapeInfo(), b->shapeInfo(), e->shapeInfo(), s->shapeInfo()});
+    auto inputShapes = new ShapeList({ones->shapeInfo(), b.shapeInfo(), e.shapeInfo(), s.shapeInfo()});
     sd::ops::strided_slice op;
     auto result = op.calculateOutputShape(inputShapes, *block); //execute({ones, &b, &e, &s}, {}, {0, 1, 0, 0, 0});
     ASSERT_EQ(result->size(), 1);
