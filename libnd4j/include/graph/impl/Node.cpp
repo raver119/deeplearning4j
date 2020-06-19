@@ -375,6 +375,14 @@ void Node::setFrameId(int frameId) {
   _frameId = frameId;
 }
 
+int Node::exitId() const {
+  return _exitId;
+}
+
+void Node::setExitId(int exitId) const {
+  _exitId = exitId;
+}
+
 Node::Node(const FlatNode *node) {
   // temporary holders _dimensions, for transferring axis into ContextPrototype
   std::vector<int> axis;
@@ -593,6 +601,7 @@ Node::Node(const Node &other) noexcept {
   _name = other._name;
   _id = other._id;
   _frameId = other._frameId;
+  _exitId = other._exitId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -616,6 +625,7 @@ Node &Node::operator=(const Node &other) noexcept {
   _name = other._name;
   _id = other._id;
   _frameId = other._frameId;
+  _exitId = other._exitId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -640,6 +650,7 @@ Node::Node(Node &&other) noexcept {
   _name = std::move(other._name);
   _id = other._id;
   _frameId = other._frameId;
+  _exitId = other._exitId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -663,6 +674,7 @@ Node &Node::operator=(Node &&other) noexcept {
   _name = std::move(other._name);
   _id = other._id;
   _frameId = other._frameId;
+  _exitId = other._exitId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;

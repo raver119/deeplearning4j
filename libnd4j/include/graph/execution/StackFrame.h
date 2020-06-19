@@ -34,9 +34,12 @@ class SD_EXPORT StackFrame {
 
   MAP_IMPL<int, int> _disabledNodes;
 
-  int _frameId;
+  // these fields are used
+  int _frameId = -119;
+  int _enterId = -119;
+  mutable int _exitId = -119;
  public:
-  explicit StackFrame(const VariableProxy &proxy, int frameId);
+  explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId);
   ~StackFrame() = default;
 
   const VariableProxy& variableProxy() const { return _proxy; }
@@ -45,6 +48,8 @@ class SD_EXPORT StackFrame {
   bool isDisabled(int nodeId) const;
 
   int frameId() const;
+  int enterId() const;
+  int exitId() const;
 };
 
 } // namespace graph

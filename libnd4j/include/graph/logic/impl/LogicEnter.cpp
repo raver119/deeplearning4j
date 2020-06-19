@@ -27,13 +27,17 @@ namespace graph {
 
 /**
  * This function does 2 things:
- * - Propagates input variable
- * - Opens new StackFrame
+ * - Propagates input Variable
+ * - Opens new StackFrame (only if that's the first Enter in this Loop)
  */
 Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   // if current frameName isn't equal to node frame name - we'll open new StackFrame then
-  if (node->frameId() != stack.back().frameId())
-    stack.openFrame(node->frameId());
+  if (node->frameId() != stack.back().frameId()) {
+    stack.openFrame(node->frameId(), node->id());
+
+    // since this is the loop entrance, we'll rewind to this Node once iteration ends
+    // Enter -> Merge -> NextIteration
+  }
 
   const auto &frame = stack.back();
 
@@ -44,7 +48,8 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
   REQUIRE_TRUE(inputs.size() == 1, 0, "Enter: op must have exactly 1 inputs");
   REQUIRE_TRUE(varSpace.hasVariable(inputs[0]), 0, "Enter: input Variable doesn't exist");
 
-  // now we propagate input as ouwn output
+  // now we propagate input as own output
+  // ssince we've opened new StackFrame, this Variable will end up in new VariableProxy
   auto input = varSpace.getVariable(inputs[0]);
   varSpace.putVariable(std::pair<int, int>{node->id(), 0}, *input->getNDArray());
 

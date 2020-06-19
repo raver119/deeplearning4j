@@ -24,7 +24,7 @@
 namespace sd {
 namespace graph {
 
-StackFrame::StackFrame(const VariableProxy &proxy, int frameId) : _proxy(proxy), _frameId(frameId) { }
+StackFrame::StackFrame(const VariableProxy &proxy, int frameId, int enterId) : _proxy(proxy), _frameId(frameId), _enterId(enterId) { }
 
 void StackFrame::disableNode(int nodeId) {
   _disabledNodes[nodeId] = 1;
@@ -36,6 +36,14 @@ bool StackFrame::isDisabled(int nodeId) const {
 
 int StackFrame::frameId() const {
   return _frameId;
+}
+
+int StackFrame::enterId() const {
+  return _enterId;
+}
+
+int StackFrame::exitId() const {
+  return _exitId;
 }
 
 } // namespace graph

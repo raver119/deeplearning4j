@@ -71,7 +71,8 @@ class SD_EXPORT Node {
   std::shared_ptr<sd::ops::DeclarableOp> _customOp;
 
   // this field is for Enter nodes only
-  int _frameId = -1;
+  mutable int _frameId = -1;
+  mutable int _exitId = -1;
 
  public:
   explicit Node(const sd::ops::DeclarableOp &op,
@@ -181,6 +182,9 @@ class SD_EXPORT Node {
 
   int frameId() const;
   void setFrameId(int frameId);
+
+  int exitId() const;
+  void setExitId(int exitId) const;
 
   // utility method that generates legacy ops out of OpType and OpNum
   static std::shared_ptr<sd::ops::DeclarableOp> buildOpByType(OpType opType, int numInputs, int numIArgs, int numTArgs, int opNum);

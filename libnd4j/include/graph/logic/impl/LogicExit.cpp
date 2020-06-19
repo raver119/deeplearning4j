@@ -23,28 +23,15 @@
 
 namespace sd {
 namespace graph {
+
+/**
+ * This funciton does 2 things:
+ * - Propagates input Variable to outer StackFrame
+ * - closes current StackFrame (only if this is the last Exit node in this loop)
+ */
 Nd4jStatus LogicExit::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
-  // this op is basically no-op
-  // we just know it exists
   throw std::runtime_error("LogicExit::processNode - Not implemented yet");
-  /*
-              auto __variableSpace = graph->variableSpace();
-              auto __flowPath = __variableSpace->flowPath();
-
-              Context ctx(node->contextPrototype(), __variableSpace);
-              auto input = ctx.variable(0)->getNDArray();
-
-              std::pair<int, int> pair0(node->id(), 0);
-
-              if (!__variableSpace->hasVariable(pair0))
-                  __variableSpace->putVariable(pair0, new Variable(nullptr,
-     nullptr, node->id(), 0));
-
-              __variableSpace->getVariable(pair0)->setNDArray(input);
-              __variableSpace->getVariable(pair0)->markRemovable(false);
-
-              return ND4J_STATUS_OK;
-              */
 }
+
 }  // namespace graph
 }  // namespace sd
