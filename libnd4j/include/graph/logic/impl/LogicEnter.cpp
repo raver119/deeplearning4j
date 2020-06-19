@@ -36,12 +36,11 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
     // since this is the loop entrance, we'll rewind to this Node once iteration ends
     stack.openFrame(node->frameId(), node->id());
   }
-
-  const auto &inputs = node->inputs();
-  const auto &outputs = node->outputs();
-
   // getting current frame (it might be the new one!)
   const auto &frame = stack.back();
+  const auto &inputs = node->inputs();
+  const auto &outputs = node->outputs();
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
   // and we need to find exit point - it has to be Exit node, with max index within OpSequence
   auto currentExitIndex = frame.exitId() >= 0 ? graph.nodeIndex(frame.exitId()) : -1;
@@ -50,7 +49,6 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
   // we want to exit after the last Exit node
   if (thisExitIndex > currentExitIndex)
     frame.setExitId(node->exitId());
-
 
   // we need to find rewind point - it has to be NextIteration node with max index within OpSequence
   const auto &merge = graph.nodesMap().at(outputs[0].first);
@@ -63,8 +61,6 @@ Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const Optimiz
   // we want to rewind after the last NextIteration node
   if (thisRewindIndex > currentRewindIndex)
     frame.setRewindId(iter.id());
-
-  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
   // validate Node state
   REQUIRE_TRUE(inputs.size() == 1, 0, "Enter: op must have exactly 1 inputs");
