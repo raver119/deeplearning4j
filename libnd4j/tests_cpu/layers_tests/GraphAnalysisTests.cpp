@@ -1077,6 +1077,23 @@ TEST_F(GraphAnalysisTests, optimizedGraph_while1) {
   ASSERT_EQ(NDArrayFactory::create<float>(1.f), results["while/Exit_1"]);
 }
 
+TEST_F(GraphAnalysisTests, optimizedGraph_while2) {
+  auto graph = Graph::fromFlatBuffers("resources/while_iter3.fb");
+  const auto& optimized = graph.optimizedGraph();
+
+  // this Graph must have exactly 1 Layer and 1 OpSequence, since all it has is While loop
+  ASSERT_EQ(1, optimized.layers());
+  ASSERT_EQ(1, optimized.layer(0).width());
+
+  graph.printOut();
+
+  auto results = graph.execute({}, {"while/Exit", "while/Exit_1"});
+  ASSERT_EQ(2, results.size());
+
+  ASSERT_EQ(NDArrayFactory::create<float>(3.f), results["while/Exit"]);
+  ASSERT_EQ(NDArrayFactory::create<float>(3.f), results["while/Exit_1"]);
+}
+
 TEST_F(GraphAnalysisTests, optimizedGraph_nested_while_1) {
   auto graph = Graph::fromFlatBuffers("resources/simplewhile_nested.fb");
   const auto& optimized = graph.optimizedGraph();
