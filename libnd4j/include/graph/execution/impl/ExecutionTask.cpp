@@ -59,7 +59,7 @@ void ExecutionTask::printOut() const {
   if (sz) {
     printf(" Inputs: [");
     int cnt = 0;
-    for (const auto &v : _context.inputs()) {
+    for (const auto &v : _node.inputs()) {
       printf("<%i:%i>", v.first, v.second);
 
       if (cnt < sz - 1) printf(", ");
@@ -69,6 +69,22 @@ void ExecutionTask::printOut() const {
     printf("]; ");
   } else {
     printf(" No inputs; ");
+  }
+
+  sz = _node.outputs().size();
+  if (sz) {
+    printf(" Outputs: [");
+    int cnt = 0;
+    for (const auto &v : _node.outputs()) {
+      printf("<%i:%i>", v.first, v.second);
+
+      if (cnt < sz - 1) printf(", ");
+      cnt++;
+    }
+
+    printf("]; ");
+  } else {
+    printf(" No outputs; ");
   }
 
   printf("\n");
