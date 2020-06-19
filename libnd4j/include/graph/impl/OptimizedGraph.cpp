@@ -187,11 +187,30 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
             continue;
 
         std::string loopName = name->substr(0, name->find(delimiter));    // evaluate name of loop
+
         for (auto p1 = std::next(p0); p1 != workMap.end(); ++p1) {      // std::next(p0) = p0 + 1
+
             if(!p1->second._opSeq.empty() && p1->second._opSeq[0] == -1)
                 continue;
-            if(_nodesMap[p1->first].name().find(loopName) == std::string::npos)
+
+            isInLoop = false;
+            name = &_nodesMap[p1->first].name();
+
+            if(name->find(loopName) == std::string::npos) {
+                for (const auto& id : p1->second._opSeq) {
+                   name = &_nodesMap[id].name();
+                    if(name->find(loopName) != std::string::npos) {
+                        isInLoop = true;
+                        break;
+                    }
+                }
+            }
+            else
+                isInLoop = true;
+
+            if(!isInLoop)
                 continue;
+
             p0->second._opSeq.push_back(p1->first);
             p0->second._opSeq.insert(p0->second._opSeq.end(), p1->second._opSeq.begin(), p1->second._opSeq.end());
             p1->second._opSeq.clear();
