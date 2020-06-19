@@ -34,9 +34,9 @@ class SD_EXPORT StackFrame {
 
   MAP_IMPL<int, int> _disabledNodes;
 
-  std::string _frameName;
+  int _frameId;
  public:
-  explicit StackFrame(const VariableProxy &proxy, const std::string &frameName);
+  explicit StackFrame(const VariableProxy &proxy, int frameId);
   ~StackFrame() = default;
 
   const VariableProxy& variableProxy() const { return _proxy; }
@@ -44,7 +44,7 @@ class SD_EXPORT StackFrame {
   void disableNode(int nodeId);
   bool isDisabled(int nodeId) const;
 
-  const std::string& frameName() const;
+  int frameId() const;
 };
 
 } // namespace graph

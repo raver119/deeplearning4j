@@ -42,7 +42,7 @@ class SD_EXPORT Stack {
 
   const VariableProxy& rootVariableSpace() const;
 
-  void openFrame(const std::string &frameName);
+  void openFrame(int frameId);
   void closeFrame();
 };
 

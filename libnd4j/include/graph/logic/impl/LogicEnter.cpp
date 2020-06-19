@@ -32,9 +32,8 @@ namespace graph {
  */
 Nd4jStatus LogicEnter::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   // if current frameName isn't equal to node frame name - we'll open new StackFrame then
-  // FIXME: instead of node->name() we should use proper
-  if (node->name() != stack.back().frameName())
-    stack.openFrame(node->name());
+  if (node->frameId() != stack.back().frameId())
+    stack.openFrame(node->frameId());
 
   const auto &frame = stack.back();
 

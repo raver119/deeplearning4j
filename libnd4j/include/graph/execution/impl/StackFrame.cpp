@@ -24,7 +24,7 @@
 namespace sd {
 namespace graph {
 
-StackFrame::StackFrame(const VariableProxy &proxy, const std::string &frameName) : _proxy(proxy), _frameName(frameName) { }
+StackFrame::StackFrame(const VariableProxy &proxy, int frameId) : _proxy(proxy), _frameId(frameId) { }
 
 void StackFrame::disableNode(int nodeId) {
   _disabledNodes[nodeId] = 1;
@@ -34,8 +34,8 @@ bool StackFrame::isDisabled(int nodeId) const {
   return _disabledNodes.count(nodeId) > 0;
 }
 
-const std::string& StackFrame::frameName() const {
-  return _frameName;
+int StackFrame::frameId() const {
+  return _frameId;
 }
 
 } // namespace graph

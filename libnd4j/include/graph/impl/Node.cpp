@@ -367,6 +367,14 @@ Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input,
   }
 };
 
+int Node::frameId() const {
+  return _frameId;
+}
+
+void Node::setFrameId(int frameId) {
+  _frameId = frameId;
+}
+
 Node::Node(const FlatNode *node) {
   // temporary holders _dimensions, for transferring axis into ContextPrototype
   std::vector<int> axis;
@@ -428,7 +436,7 @@ Node::Node(const FlatNode *node) {
       if (node->extraInteger()->size() < 1)
         throw std::runtime_error("Enter Node [" + StringUtils::valueToString(this->id()) + "] must have FrameID specified");
 
-      //this->setFrameId(node->extraInteger()->Get(0));
+      this->setFrameId(node->extraInteger()->Get(0));
     }
 
     // these ops allow in-place execution by design
@@ -584,6 +592,7 @@ Node::Node(const Node &other) noexcept {
   _customOp = other._customOp;
   _name = other._name;
   _id = other._id;
+  _frameId = other._frameId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -606,6 +615,7 @@ Node &Node::operator=(const Node &other) noexcept {
   _customOp = other._customOp;
   _name = other._name;
   _id = other._id;
+  _frameId = other._frameId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -629,6 +639,7 @@ Node::Node(Node &&other) noexcept {
   _customOp = other._customOp;
   _name = std::move(other._name);
   _id = other._id;
+  _frameId = other._frameId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
@@ -651,6 +662,7 @@ Node &Node::operator=(Node &&other) noexcept {
   _customOp = other._customOp;
   _name = std::move(other._name);
   _id = other._id;
+  _frameId = other._frameId;
 
   _hasExternalOutputs = other._hasExternalOutputs;
   _hasExternalInputs = other._hasExternalInputs;
