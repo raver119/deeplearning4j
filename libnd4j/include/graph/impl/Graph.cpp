@@ -143,6 +143,9 @@ Graph::Graph(const FlatGraph *flatGraph, const GraphMemoryManager &memoryManager
       }
 
       _variableSpace.putVariable(pair, var);
+
+      if (var->isPlaceholder())
+        _placeholders.emplace_back(var->name());
     }
   }
 
@@ -604,8 +607,14 @@ std::map<std::string, NDArray> Graph::execute(
   }
 
   // TODO: it would be nice if we'll print out unresolved placeholders
-  if (placeholdersCount != _placeholders.size())
-    throw std::runtime_error("Some placeholders were not resolved");
+  if (placeholdersCount != _placeholders.size()) {
+    std::string missing;
+    for (const auto &v:_placeholders) {
+      if (dictionary.count(v) == 0)
+        missing += "<" + v + ">, ";
+    }
+    throw std::runtime_error("Placeholders were not resolved: [" + missing + "]");
+  }
 
   // we also must check existence of requested outputs
   for (const auto &v : outputs) {

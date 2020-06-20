@@ -306,7 +306,7 @@ int OptimizedGraph::nodeLayer(int nodeId) const {
     cnt++;
   }
 
-  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+  throw std::runtime_error("Layer of Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
 }
 
 int OptimizedGraph::nodeIndex(int nodeId) const {
@@ -319,7 +319,7 @@ int OptimizedGraph::nodeIndex(int nodeId) const {
     }
   }
 
-  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+  throw std::runtime_error("Index of Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
 }
 
 int OptimizedGraph::nodeSequence(int nodeId) const {
@@ -332,7 +332,7 @@ int OptimizedGraph::nodeSequence(int nodeId) const {
     }
   }
 
-  throw std::runtime_error("Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+  throw std::runtime_error("Sequence of Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
 }
 
 void OptimizedGraph::printOut() const {

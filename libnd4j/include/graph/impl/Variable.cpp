@@ -66,7 +66,7 @@ void sd::graph::Variable::setVariableType(VariableType variableType) {
 
 bool sd::graph::Variable::hasNDArrayList() const { return _list != nullptr; }
 
-bool sd::graph::Variable::isPlaceholder() const { return _placeholder; }
+bool sd::graph::Variable::isPlaceholder() const { return _placeholder || _variableType == sd::graph::VariableType::PLACEHOLDER; }
 
 const std::string &sd::graph::Variable::name() const { return _name; }
 
@@ -236,16 +236,12 @@ sd::graph::Variable::Variable(const sd::graph::FlatVariable *flatVariable) {
       _variableType = VariableType::NDARRAY;
     } break;
     case VarType_PLACEHOLDER: {
-      if (flatVariable->shape() == nullptr &&
-          flatVariable->ndarray() == nullptr)
-        throw std::runtime_error(
-            "PLACEHOLDER variable must have shape defined");
+      if (flatVariable->shape() == nullptr && flatVariable->ndarray() == nullptr)
+        throw std::runtime_error("PLACEHOLDER variable must have shape defined");
 
       if (flatVariable->ndarray() != nullptr) {
         auto ar = flatVariable->ndarray();
-        _ndarray = std::make_shared<sd::NDArray>(
-            sd::graph::FlatUtils::fromFlatArray(ar));
-        // _ndarray->triggerAllocationFlag(true);
+        _ndarray = std::make_shared<sd::NDArray>(FlatUtils::fromFlatArray(ar));
 
         _variableType = VariableType::NDARRAY;
       }
@@ -254,6 +250,8 @@ sd::graph::Variable::Variable(const sd::graph::FlatVariable *flatVariable) {
         int shapeLen = flatVariable->shape()->Length();
         for (int i = 0; i < flatVariable->shape()->size(); i++)
           _shape.emplace_back(flatVariable->shape()->Get(i));
+
+        _dtype = (sd::DataType) flatVariable->dtype();
 
         if (_ndarray == nullptr) _variableType = VariableType::PLACEHOLDER;
       }
