@@ -24,6 +24,14 @@
 
 namespace sd {
 namespace graph {
+
+static bool isNextIterationCase(const OptimizedGraph& graph, int firstId, int secondId) {
+  const auto firstNode = graph.nodesMap().count(firstId) > 0  ? &graph.nodesMap().at(firstId) : nullptr;
+  const auto secondNode = graph.nodesMap().count(secondId) > 0 ? &graph.nodesMap().at(secondId) : nullptr;
+
+  return (firstNode != nullptr && firstNode->opType() == OpType_LOGIC && firstNode->opNum() == sd::logic::NextIteration) ||  (secondNode != nullptr && secondNode->opType() == OpType_LOGIC && secondNode->opNum() == sd::logic::NextIteration);
+}
+
 Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   // getting current frame first
   auto &frame = stack.back();
@@ -36,15 +44,17 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
     REQUIRE_TRUE(false, 0, "Merge: only 1 input should be disabled, but got both of them down");
   }
 
-  const auto &firstNode = graph.nodesMap().at(inputs[0].first);
-  const auto &secondNode = graph.nodesMap().at(inputs[1].first);
+  // if we're on NextIteration merge, we'll propagate its output regardless of first arg existence
+  if (isNextIterationCase(graph, inputs[0].first, inputs[1].first)) {
+    const auto firstNode = graph.nodesMap().count(inputs[0].first) > 0  ? &graph.nodesMap().at(inputs[0].first) : nullptr;
+    const auto secondNode = graph.nodesMap().count(inputs[1].first) > 0 ? &graph.nodesMap().at(inputs[1].first) : nullptr;
 
-  if ((firstNode.opType() == OpType_LOGIC && firstNode.opNum() == sd::logic::NextIteration)|| (secondNode.opType() == OpType_LOGIC && secondNode.opNum() == sd::logic::NextIteration)) {
-    // if we're on NextIteration merge, we'll propagate its output regardless of first arg existence
-    if (firstNode.opType() == OpType_LOGIC && firstNode.opNum() == sd::logic::NextIteration) {
+    if (firstNode != nullptr && firstNode->opType() == OpType_LOGIC && firstNode->opNum() == sd::logic::NextIteration) {
+      // we must check, if NextIteration Node already was executed. Or, pick initial value first
       auto id = varSpace.hasVariable(inputs[0]) && varSpace.getVariable(inputs[0])->hasNDArray() ? inputs[0] : inputs[1];
       varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
     } else {
+      // we must check, if NextIteration Node already was executed. Or, pick initial value first
       auto id = varSpace.hasVariable(inputs[1]) && varSpace.getVariable(inputs[1])->hasNDArray() ? inputs[1] : inputs[0];
       varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
     }
@@ -54,9 +64,7 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
 
     REQUIRE_TRUE(frame.variableProxy().hasVariable(p), 0, "Merge: Variable [%i:%i] doesn't exist", p.first, p.second);
 
-    std::pair<int, int> t(node->id(), 0);
-    auto array = varSpace.getVariable(p)->getNDArray().get();
-    varSpace.putVariable(t, *array);
+    varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(p)->getNDArray());
   }
 
   return Status::OK();

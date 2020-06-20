@@ -24,7 +24,7 @@ namespace sd {
 namespace graph {
 
 Stack::Stack(const VariableProxy &root) {
-  _frames.push_back(StackFrame(const_cast<VariableProxy&>(root), -1, 0));
+  _frames.push_back(StackFrame(const_cast<VariableProxy&>(root), _counter++, -1, 0));
 }
 
 const VariableProxy &Stack::rootVariableSpace() const {
@@ -44,21 +44,29 @@ StackFrame &Stack::root() {
 }
 
 void Stack::openFrame(int frameId, int enterId) {
-  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId, _frames.back()));
+  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), _counter++, frameId, enterId, _frames.back()));
 }
 
 void Stack::iterateFrame(int frameId, int enterId) {
   auto &current = this->back();
   auto &parent = current.parent();
-  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), frameId, enterId, parent));
+  _frames.emplace_back(StackFrame(_frames.back().variableProxy(), _counter++, frameId, enterId, parent));
 }
 
 void Stack::closeFrame() {
   // we should remove all frames untl we hit parent frame
-  auto &current = this->back();
-  auto &parent = current.parent();
+  auto &parent = this->back().parent();
 
-  _frames.pop_back();
+  while (!_frames.empty()) {
+    auto &current = this->back();
+
+    // if ID's match - we'll stop
+    if (current.id() == parent.id())
+      break;
+
+    _frames.pop_back();
+  }
+
 }
 
 } // namespace graph

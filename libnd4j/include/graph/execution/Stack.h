@@ -32,6 +32,7 @@ class SD_EXPORT Stack {
  private:
   std::deque<StackFrame> _frames;
 
+  int _counter = 0;
  public:
   Stack(const VariableProxy &root);
   ~Stack() = default;

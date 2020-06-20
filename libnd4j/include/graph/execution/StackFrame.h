@@ -30,6 +30,7 @@ namespace graph {
 
 class SD_EXPORT StackFrame {
  private:
+  int _id;
   VariableProxy _proxy;
   StackFrame *_parent = nullptr;
 
@@ -41,8 +42,8 @@ class SD_EXPORT StackFrame {
   mutable int _rewindId = -119;
   mutable int _exitId = -119;
  public:
-  explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId);
-  explicit StackFrame(const VariableProxy &proxy, int frameId, int enterId, StackFrame &parent);
+  explicit StackFrame(const VariableProxy &proxy, int id, int frameId, int enterId);
+  explicit StackFrame(const VariableProxy &proxy, int id, int frameId, int enterId, StackFrame &parent);
   ~StackFrame() = default;
 
   const VariableProxy& variableProxy() const { return _proxy; }
@@ -65,6 +66,8 @@ class SD_EXPORT StackFrame {
    * @return
    */
   StackFrame& parent() const;
+
+  int id() const { return _id; }
 };
 
 } // namespace graph

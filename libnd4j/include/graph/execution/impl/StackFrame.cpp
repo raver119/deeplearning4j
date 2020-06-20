@@ -24,13 +24,13 @@
 namespace sd {
 namespace graph {
 
-StackFrame::StackFrame(const VariableProxy &proxy, int frameId, int enterId)
-                      : _proxy(proxy), _frameId(frameId), _enterId(enterId) {
+StackFrame::StackFrame(const VariableProxy &proxy, int id, int frameId, int enterId)
+                      : _proxy(proxy), _frameId(frameId), _enterId(enterId), _id(id) {
 
 }
 
-StackFrame::StackFrame(const VariableProxy &proxy, int frameId, int enterId, StackFrame &parent)
-                      : StackFrame(proxy, frameId, enterId) {
+StackFrame::StackFrame(const VariableProxy &proxy, int id, int frameId, int enterId, StackFrame &parent)
+                      : StackFrame(proxy, id, frameId, enterId) {
   _parent = &parent;
 }
 
