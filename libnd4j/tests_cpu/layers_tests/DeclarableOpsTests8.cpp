@@ -3362,7 +3362,7 @@ TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_4_119) {
 ////////////////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_01) {
 
-    auto x = NDArrayFactory::create<double>( 'c', {1, 1, 1, 10});
+    auto x = NDArrayFactory::create<double>(  {1, 1, 1, 10});
     x.linspace(1);
     auto eps = NDArrayFactory::create<double>(  {1,1,1,10});
     eps.linspace(1);
@@ -3387,7 +3387,7 @@ TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_01) {
 ////////////////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_02) {
 
-    auto x = NDArrayFactory::create<double>( 'c', {1, 1, 1, 10});
+    auto x = NDArrayFactory::create<double>(  {1, 1, 1, 10});
     x.linspace(1);
     auto eps = NDArrayFactory::create<double>(  {1,1,1,10});
     eps.linspace(1);
@@ -3418,7 +3418,7 @@ TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_02) {
 ////////////////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_1) {
 
-    auto x = NDArrayFactory::create<TypeParam>( 'c', {3, 3, 5, 5});
+    auto x = NDArrayFactory::create<TypeParam>(  {3, 3, 5, 5});
     x.linspace(1);
     auto eps = NDArrayFactory::create<TypeParam>(  {3,3,5,5});
     eps.linspace(1);
@@ -3443,7 +3443,7 @@ auto exp = NDArrayFactory::create<TypeParam>(  {3,3,5,5}, {
 ////////////////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedDeclarableOpsTests8, LrnTest_BP_2) {
 
-    auto x = NDArrayFactory::create<TypeParam>( 'c', {3, 3, 5, 5});
+    auto x = NDArrayFactory::create<TypeParam>(  {3, 3, 5, 5});
     x.linspace(1);
 
     auto eps = NDArrayFactory::create<TypeParam>(  {3, 3, 5, 5}, {            0.2581989f, 0.3592106f, 0.40089184f, 0.53935987f, 0.70014f,

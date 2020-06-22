@@ -42,10 +42,10 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, reduceStDevBP_test3) {
 
-    auto x = NDArrayFactory::create<double>('c', {3,4});
-    auto gradO1 = NDArrayFactory::create<double>('c', {3,1}, {1.,2.,3.});
-    auto gradO2 = NDArrayFactory::create<double>('c', {3}, {1.,2.,3.});
-    auto exp = NDArrayFactory::create<double>('c', {3,4}, {-0.335410, -0.111803, 0.111803, 0.335410, -0.670820, -0.223607, 0.223607, 0.670820, -1.006231, -0.335410, 0.335410, 1.006231});
+    auto x = NDArrayFactory::create<double>(  {3,4});
+    auto gradO1 = NDArrayFactory::create<double>(  {3,1}, {1.,2.,3.});
+    auto gradO2 = NDArrayFactory::create<double>(  {3}, {1.,2.,3.});
+    auto exp = NDArrayFactory::create<double>(  {3,4}, {-0.335410, -0.111803, 0.111803, 0.335410, -0.670820, -0.223607, 0.223607, 0.670820, -1.006231, -0.335410, 0.335410, 1.006231});
 
     x.linspace(1);
 
@@ -71,11 +71,11 @@ TEST_F(DeclarableOpsTests9, reduceStDevBP_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, reduceStDevBP_test03) {
 
-    auto x = NDArrayFactory::create<double>('c', {3,4});
-    auto gradO1 = NDArrayFactory::create<double>('c', {3,1}, {1.,2.,3.});
-    auto gradO2 = NDArrayFactory::create<double>('c', {3}, {1.,2.,3.});
-    auto exp = NDArrayFactory::create<double>('c', {3,4}, {-0.335410, -0.111803, 0.111803, 0.335410, -0.670820, -0.223607, 0.223607, 0.670820, -1.006231, -0.335410, 0.335410, 1.006231});
-    auto axis = NDArrayFactory::create<int>('c', {1}, {1});
+    auto x = NDArrayFactory::create<double>(  {3,4});
+    auto gradO1 = NDArrayFactory::create<double>(  {3,1}, {1.,2.,3.});
+    auto gradO2 = NDArrayFactory::create<double>(  {3}, {1.,2.,3.});
+    auto exp = NDArrayFactory::create<double>(  {3,4}, {-0.335410, -0.111803, 0.111803, 0.335410, -0.670820, -0.223607, 0.223607, 0.670820, -1.006231, -0.335410, 0.335410, 1.006231});
+    auto axis = NDArrayFactory::create<int>(  {1}, {1});
     x.linspace(1);
 
     sd::ops::reduce_stdev_bp op;
@@ -106,7 +106,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistributionInv_test1) {
     const double mean   = 1. / lambda;
     const double std    = mean;
 
-    auto x = NDArrayFactory::create<double>('c', {N});
+    auto x = NDArrayFactory::create<double>(  {N});
     double extraParams[] = {lambda};
 
     Nd4jLong *buffer = new Nd4jLong[N];
@@ -135,8 +135,8 @@ TEST_F(DeclarableOpsTests9, exponentialDistributionInv_test2) {
     const double std    = mean;
     double extraParams[] = {lambda};
 
-    auto x = NDArrayFactory::create<double>('c', {N});
-    auto y = NDArrayFactory::create<double>('c', {N});
+    auto x = NDArrayFactory::create<double>(  {N});
+    auto y = NDArrayFactory::create<double>(  {N});
     y.linspace(0., 1./N);  // [0, 1)
 
 
@@ -166,7 +166,7 @@ TEST_F(DeclarableOpsTests9, exponentialDistribution_test1) {
     const double mean   = 1. / lambda;
     const double std    = mean;
 
-    auto x = NDArrayFactory::create<double>('c', {N});
+    auto x = NDArrayFactory::create<double>(  {N});
     double extraParams[] = {lambda};
 
     Nd4jLong *buffer = new Nd4jLong[N];
@@ -195,8 +195,8 @@ TEST_F(DeclarableOpsTests9, exponentialDistribution_test2) {
     const double std    = mean;
     double extraParams[] = {lambda};
 
-    auto x = NDArrayFactory::create<double>('c', {N});
-    auto y = NDArrayFactory::create<double>('c', {N});
+    auto x = NDArrayFactory::create<double>(  {N});
+    auto y = NDArrayFactory::create<double>(  {N});
     y.linspace(-N/2.);  // [-25000, 25000)
 
 
@@ -224,9 +224,9 @@ TEST_F(DeclarableOpsTests9, exponentialDistribution_test2) {
 */
 
 TEST_F(DeclarableOpsTests9, ScalarOpTest_MixedOrders_1) {
-    auto x = NDArrayFactory::create<double>('f', {2, 2}, {1.0, 3.0, 2.0, 4.0});
-    auto e = NDArrayFactory::create<double>('c', {2, 2}, {2.0, 3.0, 4.0, 5.0});
-    auto z = NDArrayFactory::create<double>('c', {2, 2}, {0.0, 0.0, 0.0, 0.0});
+    auto x = NDArrayFactory::create<double>( {2, 2}, {1.0, 3.0, 2.0, 4.0}, sd::kArrayOrderFortran);
+    auto e = NDArrayFactory::create<double>(  {2, 2}, {2.0, 3.0, 4.0, 5.0});
+    auto z = NDArrayFactory::create<double>(  {2, 2}, {0.0, 0.0, 0.0, 0.0});
 
     x.applyScalar(scalar::Add, 1.0, z);
 
@@ -236,10 +236,10 @@ TEST_F(DeclarableOpsTests9, ScalarOpTest_MixedOrders_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test1) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {2,3,4});
-    auto x1 = NDArrayFactory::create<float>('c', {2,2,4});
-    auto x2 = NDArrayFactory::create<float>('c', {2,1,4});
-    auto exp = NDArrayFactory::create<float>('c', {2,6,4}, {1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
+    auto x0 = NDArrayFactory::create<float>(  {2,3,4});
+    auto x1 = NDArrayFactory::create<float>(  {2,2,4});
+    auto x2 = NDArrayFactory::create<float>(  {2,1,4});
+    auto exp = NDArrayFactory::create<float>(  {2,6,4}, {1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
                                      13.f, 14.f, 15.f, 16.f,17.f, 18.f, 19.f, 20.f,21.f, 22.f, 23.f, 24.f, 9.f, 10.f, 11.f, 12.f,13.f, 14.f, 15.f, 16.f, 5.f,  6.f,  7.f,  8.});
 
     x0.linspace(1);
@@ -261,10 +261,10 @@ TEST_F(DeclarableOpsTests9, concat_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test2) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {1,3,1});
-    auto x1 = NDArrayFactory::create<float>('c', {1,2,1});
-    auto x2 = NDArrayFactory::create<float>('c', {1,1,1});
-    auto exp = NDArrayFactory::create<float>('c', {1,6,1}, {1.f, 2.f, 3.f, 1.f, 2.f, 1.f});
+    auto x0 = NDArrayFactory::create<float>(  {1,3,1});
+    auto x1 = NDArrayFactory::create<float>(  {1,2,1});
+    auto x2 = NDArrayFactory::create<float>(  {1,1,1});
+    auto exp = NDArrayFactory::create<float>(  {1,6,1}, {1.f, 2.f, 3.f, 1.f, 2.f, 1.f});
 
     x0.linspace(1);
     x1.linspace(1);
@@ -285,10 +285,10 @@ TEST_F(DeclarableOpsTests9, concat_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test3) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {3});
-    auto x1 = NDArrayFactory::create<float>('c', {2});
-    auto x2 = NDArrayFactory::create<float>('c', {1});
-    auto exp = NDArrayFactory::create<float>('c', {6}, {1.f, 2.f, 3.f, 1.f, 2.f, 1.f});
+    auto x0 = NDArrayFactory::create<float>(  {3});
+    auto x1 = NDArrayFactory::create<float>(  {2});
+    auto x2 = NDArrayFactory::create<float>(  {1});
+    auto exp = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 1.f, 2.f, 1.f});
 
     x0.linspace(1);
     x1.linspace(1);
@@ -307,10 +307,10 @@ TEST_F(DeclarableOpsTests9, concat_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test4) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {1,1,1}, {1.f});
-    auto x1 = NDArrayFactory::create<float>('c', {1,1,1}, {2.f});
-    auto x2 = NDArrayFactory::create<float>('c', {1,1,1}, {3.f});
-    auto exp = NDArrayFactory::create<float>('c', {1,3,1}, {1.f, 2.f, 3.f});
+    auto x0 = NDArrayFactory::create<float>(  {1,1,1}, {1.f});
+    auto x1 = NDArrayFactory::create<float>(  {1,1,1}, {2.f});
+    auto x2 = NDArrayFactory::create<float>(  {1,1,1}, {3.f});
+    auto exp = NDArrayFactory::create<float>(  {1,3,1}, {1.f, 2.f, 3.f});
 
     sd::ops::concat op;
 
@@ -328,9 +328,9 @@ TEST_F(DeclarableOpsTests9, concat_test4) {
 TEST_F(DeclarableOpsTests9, concat_test5) {
 
     auto x0 = NDArrayFactory::create<float>(1.f);
-    auto x1 = NDArrayFactory::create<float>('c', {1}, {2.f});
+    auto x1 = NDArrayFactory::create<float>(  {1}, {2.f});
     auto x2 = NDArrayFactory::create<float>(3.f);
-    auto exp = NDArrayFactory::create<float>('c', {3}, {1.f, 2.f, 3.f});
+    auto exp = NDArrayFactory::create<float>(  {3}, {1.f, 2.f, 3.f});
 
     sd::ops::concat op;
 
@@ -348,9 +348,9 @@ TEST_F(DeclarableOpsTests9, concat_test5) {
 TEST_F(DeclarableOpsTests9, concat_test6) {
 
     auto x0 = NDArrayFactory::create<float>(1.f);
-    auto x1 = NDArrayFactory::create<float>('c', {2}, {2.f, 20.f});
+    auto x1 = NDArrayFactory::create<float>(  {2}, {2.f, 20.f});
     auto x2 = NDArrayFactory::create<float>(3.f);
-    auto exp = NDArrayFactory::create<float>('c', {4}, {1.f, 2.f, 20.f, 3.f});
+    auto exp = NDArrayFactory::create<float>(  {4}, {1.f, 2.f, 20.f, 3.f});
 
     sd::ops::concat op;
 
@@ -370,7 +370,7 @@ TEST_F(DeclarableOpsTests9, concat_test7) {
     auto x0 = NDArrayFactory::create<float>(1.f);
     auto x1 = NDArrayFactory::create<float>(2.f);
     auto x2 = NDArrayFactory::create<float>(3.f);
-    auto exp = NDArrayFactory::create<float>('c', {3}, {1.f, 2.f, 3.f});
+    auto exp = NDArrayFactory::create<float>(  {3}, {1.f, 2.f, 3.f});
 
     sd::ops::concat op;
 
@@ -388,7 +388,7 @@ TEST_F(DeclarableOpsTests9, concat_test7) {
 TEST_F(DeclarableOpsTests9, concat_test8) {
 
     auto x0 = NDArrayFactory::create<float>(1.f);
-    auto exp = NDArrayFactory::create<float>('c', {1}, {1.f});
+    auto exp = NDArrayFactory::create<float>(  {1}, {1.f});
 
     sd::ops::concat op;
 
@@ -405,8 +405,8 @@ TEST_F(DeclarableOpsTests9, concat_test8) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test9) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {1}, {1.f});
-    auto exp = NDArrayFactory::create<float>('c', {1}, {1.f});
+    auto x0 = NDArrayFactory::create<float>(  {1}, {1.f});
+    auto exp = NDArrayFactory::create<float>(  {1}, {1.f});
 
     sd::ops::concat op;
 
@@ -423,10 +423,10 @@ TEST_F(DeclarableOpsTests9, concat_test9) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test10) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {2,3,4});
-    auto x1 = NDArrayFactory::create<float>('f', {2,2,4});
-    auto x2 = NDArrayFactory::create<float>('c', {2,1,4});
-    auto exp = NDArrayFactory::create<float>('c', {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
+    auto x0 = NDArrayFactory::create<float>(  {2,3,4});
+    auto x1 = NDArrayFactory::create<float>( {2,2,4}, {}, sd::kArrayOrderFortran);
+    auto x2 = NDArrayFactory::create<float>(  {2,1,4});
+    auto exp = NDArrayFactory::create<float>(  {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
                                       13.f, 14.f, 15.f, 16.f,17.f, 18.f, 19.f, 20.f,21.f, 22.f, 23.f, 24.f, 9.f, 10.f, 11.f, 12.f,13.f, 14.f, 15.f, 16.f, 5.f,  6.f,  7.f,  8.f});
 
     x0.linspace(1);
@@ -448,10 +448,10 @@ TEST_F(DeclarableOpsTests9, concat_test10) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test11) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {2,3,4});
-    auto x1 = NDArrayFactory::create<float>('f', {2,2,4});
-    auto x2 = NDArrayFactory::create<float>('f', {2,1,4});
-    auto exp = NDArrayFactory::create<float>('c', {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
+    auto x0 = NDArrayFactory::create<float>(  {2,3,4});
+    auto x1 = NDArrayFactory::create<float>( {2,2,4}, {}, sd::kArrayOrderFortran);
+    auto x2 = NDArrayFactory::create<float>( {2,1,4}, {}, sd::kArrayOrderFortran);
+    auto exp = NDArrayFactory::create<float>(  {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
                                       13.f, 14.f, 15.f, 16.f,17.f, 18.f, 19.f, 20.f,21.f, 22.f, 23.f, 24.f, 9.f, 10.f, 11.f, 12.f,13.f, 14.f, 15.f, 16.f, 5.f,  6.f,  7.f,  8.f});
 
     x0.linspace(1);
@@ -473,10 +473,10 @@ TEST_F(DeclarableOpsTests9, concat_test11) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test12) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {2,3,4});
-    auto x1 = NDArrayFactory::create<float>('f', {2,2,4});
-    auto x2 = NDArrayFactory::create<float>('f', {2,1,4});
-    auto exp = NDArrayFactory::create<float>('c', {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
+    auto x0 = NDArrayFactory::create<float>(  {2,3,4});
+    auto x1 = NDArrayFactory::create<float>( {2,2,4}, {}, sd::kArrayOrderFortran);
+    auto x2 = NDArrayFactory::create<float>( {2,1,4}, {}, sd::kArrayOrderFortran);
+    auto exp = NDArrayFactory::create<float>(  {2,6,4}, { 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 9.f, 10.f, 11.f, 12.f, 1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f, 1.f,  2.f,  3.f,  4.f,
                                       13.f, 14.f, 15.f, 16.f,17.f, 18.f, 19.f, 20.f,21.f, 22.f, 23.f, 24.f, 9.f, 10.f, 11.f, 12.f,13.f, 14.f, 15.f, 16.f, 5.f,  6.f,  7.f,  8.f});
 
     x0.linspace(1);
@@ -498,11 +498,12 @@ TEST_F(DeclarableOpsTests9, concat_test12) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test13) {
 
-    auto x0 = NDArrayFactory::create<float>('f', {2,3,4});
-    auto x1 = NDArrayFactory::create<float>('f', {2,2,4});
-    auto x2 = NDArrayFactory::create<float>('f', {2,1,4});
-    auto exp = NDArrayFactory::create<float>('f', {2,6,4}, { 1.f, 13.f, 5.f, 17.f, 9.f, 21.f, 1.f,  9.f, 5.f, 13.f, 1.f,  5.f, 2.f, 14.f, 6.f, 18.f,10.f, 22.f, 2.f, 10.f, 6.f, 14.f, 2.f,  6.f,
-                                       3.f, 15.f, 7.f, 19.f,11.f, 23.f, 3.f, 11.f, 7.f, 15.f, 3.f,  7.f, 4.f, 16.f, 8.f, 20.f,12.f, 24.f, 4.f, 12.f, 8.f, 16.f, 4.f,  8.f});
+    auto x0 = NDArrayFactory::create<float>( {2,3,4}, {}, sd::kArrayOrderFortran);
+    auto x1 = NDArrayFactory::create<float>( {2,2,4}, {}, sd::kArrayOrderFortran);
+    auto x2 = NDArrayFactory::create<float>( {2,1,4}, {}, sd::kArrayOrderFortran);
+    auto exp = NDArrayFactory::create<float>( {2,6,4}, { 1.f, 13.f, 5.f, 17.f, 9.f, 21.f, 1.f,  9.f, 5.f, 13.f, 1.f,  5.f, 2.f, 14.f, 6.f, 18.f,10.f, 22.f, 2.f, 10.f, 6.f, 14.f, 2.f,  6.f,
+                                       3.f, 15.f, 7.f, 19.f,11.f, 23.f, 3.f, 11.f, 7.f, 15.f, 3.f,  7.f, 4.f, 16.f, 8.f, 20.f,12.f, 24.f, 4.f, 12.f, 8.f, 16.f, 4.f,  8.f},
+                           sd::kArrayOrderFortran);
 
     x0.linspace(1);
     x1.linspace(1);
@@ -548,9 +549,9 @@ TEST_F(DeclarableOpsTests9, concat_test14) {
 }
 
 TEST_F(DeclarableOpsTests9, concat_test15) {
-    auto x = NDArrayFactory::create<float>('c', {2}, {1, 0});
+    auto x = NDArrayFactory::create<float>(  {2}, {1, 0});
     auto y = NDArrayFactory::create<float> (3.0f);
-    auto exp = NDArrayFactory::create<float>('c', {3}, {1, 0, 3});
+    auto exp = NDArrayFactory::create<float>(  {3}, {1, 0, 3});
 
     sd::ops::concat op;
     auto result = op.evaluate({&x, &y}, {}, {0});
@@ -567,9 +568,9 @@ TEST_F(DeclarableOpsTests9, concat_test15) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test16) {
 
-    auto x = NDArrayFactory::create<float>('c', {0,2,3});
-    auto y = NDArrayFactory::create<float>('c', {0,2,3});
-    auto exp = NDArrayFactory::create<float>('c', {0,2,3});
+    auto x = NDArrayFactory::create<float>(  {0,2,3});
+    auto y = NDArrayFactory::create<float>(  {0,2,3});
+    auto exp = NDArrayFactory::create<float>(  {0,2,3});
 
     sd::ops::concat op;
     auto result = op.evaluate({&x, &y}, {}, {0});
@@ -614,12 +615,12 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 2000; e++) {
-        auto array = NDArrayFactory::create<int>('c', {1, 300});
+        auto array = NDArrayFactory::create<int>(  {1, 300});
         array.assign(e);
-        context.setInputArray(e, array, true);
+        context.setInputArray(e, array);
     }
 
-    auto z = NDArrayFactory::create<int>('c', {2000, 300});
+    auto z = NDArrayFactory::create<int>(  {2000, 300});
     context.setOutputArray(0, &z, false);
     context.setIArguments(&axis, 1);
 
@@ -627,7 +628,7 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
     op.execute(&context);
 
     for (int e = 0; e < 2000; e++) {
-        auto exp = NDArrayFactory::create<int>('c', {300});
+        auto exp = NDArrayFactory::create<int>(  {300});
         exp.assign(e);
         auto row = z(e, {0});
         ASSERT_EQ(exp, row);
@@ -642,12 +643,12 @@ TEST_F(DeclarableOpsTests9, concat_test19) {
 
     // we crate bunch of arrays, filled with specific values
     for (int e = 0; e < 10; e++) {
-        auto array = NDArrayFactory::create<float>('c', {1, 5, 20});
+        auto array = NDArrayFactory::create<float>(  {1, 5, 20});
         array.assign(e);
-        context.setInputArray(e, array, true);
+        context.setInputArray(e, array);
     }
 
-    auto z = NDArrayFactory::create<float>('c', {10, 5, 20});
+    auto z = NDArrayFactory::create<float>(  {10, 5, 20});
     context.setOutputArray(0, &z, false);
     context.setIArguments(&axis, 1);
 
@@ -660,10 +661,10 @@ TEST_F(DeclarableOpsTests9, concat_test19) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test20) {
-    auto x0 = NDArrayFactory::create<float>('c', {1, 100, 150});
-    auto x1 = NDArrayFactory::create<float>('c', {1, 100, 150});
-    auto x2 = NDArrayFactory::create<float>('c', {1, 100, 150});
-    auto x3 = NDArrayFactory::create<float>('c', {1, 100, 150});
+    auto x0 = NDArrayFactory::create<float>(  {1, 100, 150});
+    auto x1 = NDArrayFactory::create<float>(  {1, 100, 150});
+    auto x2 = NDArrayFactory::create<float>(  {1, 100, 150});
+    auto x3 = NDArrayFactory::create<float>(  {1, 100, 150});
 
     x0.assign(1.0);
     x1.assign(2.0);
@@ -737,10 +738,10 @@ TEST_F(DeclarableOpsTests9, concat_test23) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test24) {
-    auto x = NDArrayFactory::create<float>('c', {2, 1}, {1, 1});
-    auto y = NDArrayFactory::create<float>('c', {2, 1}, {0, 0});
-    auto e = NDArrayFactory::create<float>('c', {2, 2}, {1, 0, 1, 0});
-    auto z = NDArrayFactory::create<float>('c', {2, 2});
+    auto x = NDArrayFactory::create<float>(  {2, 1}, {1, 1});
+    auto y = NDArrayFactory::create<float>(  {2, 1}, {0, 0});
+    auto e = NDArrayFactory::create<float>(  {2, 2}, {1, 0, 1, 0});
+    auto z = NDArrayFactory::create<float>(  {2, 2});
 
     sd::ops::concat op;
     auto status = op.execute({&x, &y}, {&z}, {}, {1}, {});
@@ -752,10 +753,10 @@ TEST_F(DeclarableOpsTests9, concat_test24) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test25) {
 
-    auto x0 = NDArrayFactory::create<float>('c', {1,4}, {1,2,3,4});
-    auto x1 = NDArrayFactory::create<float>('c', {1,4}, {5,6,7,8});
-    auto axis = NDArrayFactory::create<float>('c', {1}, {0.});
-    auto exp = NDArrayFactory::create<float>('c', {2,4}, {1,2,3,4,5,6,7,8});
+    auto x0 = NDArrayFactory::create<float>(  {1,4}, {1,2,3,4});
+    auto x1 = NDArrayFactory::create<float>(  {1,4}, {5,6,7,8});
+    auto axis = NDArrayFactory::create<float>(  {1}, {0.});
+    auto exp = NDArrayFactory::create<float>(  {2,4}, {1,2,3,4,5,6,7,8});
 
     sd::ops::concat op;
 
@@ -798,10 +799,10 @@ TEST_F(DeclarableOpsTests9, concat_test26) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test27) {
 
-    auto x1 = NDArrayFactory::create<float>('c', {0,1});
-    auto x2 = NDArrayFactory::create<float>('c', {0,1});
-    auto x3 = NDArrayFactory::create<float>('c', {0,1});
-    auto x4 = NDArrayFactory::create<float>('c', {0,1});
+    auto x1 = NDArrayFactory::create<float>(  {0,1});
+    auto x2 = NDArrayFactory::create<float>(  {0,1});
+    auto x3 = NDArrayFactory::create<float>(  {0,1});
+    auto x4 = NDArrayFactory::create<float>(  {0,1});
 
     std::vector<Nd4jLong> expShape = {0, 4};
 
@@ -817,9 +818,9 @@ TEST_F(DeclarableOpsTests9, concat_test27) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test1) {
 
-    auto input    = NDArrayFactory::create<double>('c', {2, 3}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>('c', {4, 9});
-    auto gradIExp = NDArrayFactory::create<double>('c', {2, 3}, {0.78, 0.84, 0.9,1.32, 1.38, 1.44});
+    auto input    = NDArrayFactory::create<double>(  {2, 3}, {1.,2.,3.,4.,5.,6.});
+    auto gradO    = NDArrayFactory::create<double>(  {4, 9});
+    auto gradIExp = NDArrayFactory::create<double>(  {2, 3}, {0.78, 0.84, 0.9,1.32, 1.38, 1.44});
 
     gradO.linspace(0.01, 0.01);
 
@@ -837,9 +838,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test2) {
 
-    auto input    = NDArrayFactory::create<double>('c', {2, 3}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>('c', {2, 9});
-    auto gradIExp = NDArrayFactory::create<double>('c', {2, 3}, {0.12, 0.15, 0.18, 0.39, 0.42, 0.45});
+    auto input    = NDArrayFactory::create<double>(  {2, 3}, {1.,2.,3.,4.,5.,6.});
+    auto gradO    = NDArrayFactory::create<double>(  {2, 9});
+    auto gradIExp = NDArrayFactory::create<double>(  {2, 3}, {0.12, 0.15, 0.18, 0.39, 0.42, 0.45});
 
     gradO.linspace(0.01, 0.01);
 
@@ -856,9 +857,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test2) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test3) {
 
-    auto input    = NDArrayFactory::create<double>('c', {2, 3}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>('c', {2, 3});
-    auto gradIExp = NDArrayFactory::create<double>('c', {2, 3}, {0.01, 0.02, 0.03,0.04, 0.05, 0.06});
+    auto input    = NDArrayFactory::create<double>(  {2, 3}, {1.,2.,3.,4.,5.,6.});
+    auto gradO    = NDArrayFactory::create<double>(  {2, 3});
+    auto gradIExp = NDArrayFactory::create<double>(  {2, 3}, {0.01, 0.02, 0.03,0.04, 0.05, 0.06});
 
     gradO.linspace(0.01, 0.01);
 
@@ -876,9 +877,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test3) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test4) {
 
-    auto input    = NDArrayFactory::create<double>('c', {6}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>('c', {12});
-    auto gradIExp = NDArrayFactory::create<double>('c', {6}, {0.08, 0.1 , 0.12, 0.14, 0.16, 0.18});
+    auto input    = NDArrayFactory::create<double>(  {6}, {1.,2.,3.,4.,5.,6.});
+    auto gradO    = NDArrayFactory::create<double>(  {12});
+    auto gradIExp = NDArrayFactory::create<double>(  {6}, {0.08, 0.1 , 0.12, 0.14, 0.16, 0.18});
 
     gradO.linspace(0.01, 0.01);
 
@@ -896,9 +897,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test4) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test5) {
 
-    auto input    = NDArrayFactory::create<double>('c', {1}, {1.});
-    auto gradO    = NDArrayFactory::create<double>('c', {1});
-    auto gradIExp = NDArrayFactory::create<double>('c', {1}, {0.01});
+    auto input    = NDArrayFactory::create<double>(  {1}, {1.});
+    auto gradO    = NDArrayFactory::create<double>(  {1});
+    auto gradIExp = NDArrayFactory::create<double>(  {1}, {0.01});
 
     gradO.linspace(0.01, 0.01);
 
@@ -916,9 +917,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test5) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test6) {
 
-    auto input    = NDArrayFactory::create<double>('c', {2, 1, 3}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>('c', {2, 3, 6});
-    auto gradIExp = NDArrayFactory::create<double>('c', {2, 1, 3}, {0.51, 0.57, 0.63, 1.59, 1.65, 1.71});
+    auto input    = NDArrayFactory::create<double>(  {2, 1, 3}, {1.,2.,3.,4.,5.,6.});
+    auto gradO    = NDArrayFactory::create<double>(  {2, 3, 6});
+    auto gradIExp = NDArrayFactory::create<double>(  {2, 1, 3}, {0.51, 0.57, 0.63, 1.59, 1.65, 1.71});
 
     gradO.linspace(0.01, 0.01);
 
@@ -936,10 +937,10 @@ TEST_F(DeclarableOpsTests9, tile_bp_test6) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_bp_test7) {
 
-    auto input    = NDArrayFactory::create<double>('c', {2, 1, 3}, {1.,2.,3.,4.,5.,6.});
-    auto reps     = NDArrayFactory::create<int>('c', {1, 3}, {1, 3, 2});
-    auto gradO    = NDArrayFactory::create<double>('c', {2, 3, 6});
-    auto gradIExp = NDArrayFactory::create<double>('c', {2, 1, 3}, {0.51, 0.57, 0.63, 1.59, 1.65, 1.71});
+    auto input    = NDArrayFactory::create<double>(  {2, 1, 3}, {1.,2.,3.,4.,5.,6.});
+    auto reps     = NDArrayFactory::create<int>(  {1, 3}, {1, 3, 2});
+    auto gradO    = NDArrayFactory::create<double>(  {2, 3, 6});
+    auto gradIExp = NDArrayFactory::create<double>(  {2, 1, 3}, {0.51, 0.57, 0.63, 1.59, 1.65, 1.71});
 
     gradO.linspace(0.01, 0.01);
 
@@ -957,9 +958,9 @@ TEST_F(DeclarableOpsTests9, tile_bp_test7) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, tile_test1) {
 
-    auto input  = NDArrayFactory::create<double>('c', {1, 6}, {1.,2.,3.,4.,5.,6.});
-    auto reps   = NDArrayFactory::create<int>('c', {1, 2}, {2, 1});
-    auto expOut = NDArrayFactory::create<double>('c', {2, 6,}, {1.,2.,3.,4.,5.,6., 1.,2.,3.,4.,5.,6.});
+    auto input  = NDArrayFactory::create<double>(  {1, 6}, {1.,2.,3.,4.,5.,6.});
+    auto reps   = NDArrayFactory::create<int>(  {1, 2}, {2, 1});
+    auto expOut = NDArrayFactory::create<double>(  {2, 6,}, {1.,2.,3.,4.,5.,6., 1.,2.,3.,4.,5.,6.});
 
     sd::ops::tile op;
     auto results = op.evaluate({&input, &reps}, {}, {});
@@ -1187,22 +1188,22 @@ TEST_F(DeclarableOpsTests9, test_range_empty_1) {
 
 
 TEST_F(DeclarableOpsTests9, test_broadcast_bool_1) {
-    auto x = NDArrayFactory::create<double>('c', {1, 3, 2, 4, 4});
-    auto y = NDArrayFactory::create<double>('c', {1, 2, 4, 4});
-    auto z = NDArrayFactory::create<bool>('c', {1, 3, 2, 4, 4});
+    auto x = NDArrayFactory::create<double>(  {1, 3, 2, 4, 4});
+    auto y = NDArrayFactory::create<double>(  {1, 2, 4, 4});
+    auto z = NDArrayFactory::create<bool>(  {1, 3, 2, 4, 4});
 
     std::vector<int> dims = {0, 2, 3, 4};
     x.applyBroadcast(broadcast::LessThan, dims, y, z);
 }
 
 TEST_F(DeclarableOpsTests9, test_broadcast_bool_2) {
-    auto orig = NDArrayFactory::create<double>('c', {1, 7, 4, 4});
+    auto orig = NDArrayFactory::create<double>(  {1, 7, 4, 4});
     std::vector<Nd4jLong>  list = {0,0, 0,2, 0,0, 0,0};
-    auto x = NDArrayFactory::create<double>('c', {1, 3, 2, 4, 4});
+    auto x = NDArrayFactory::create<double>(  {1, 3, 2, 4, 4});
 
     auto y = orig(list, true);
 
-    auto z = NDArrayFactory::create<bool>('c', {1, 3, 2, 4, 4});
+    auto z = NDArrayFactory::create<bool>(  {1, 3, 2, 4, 4});
 
     std::vector<int> dims = {0, 2, 3, 4};
     x.applyBroadcast(broadcast::LessThan, dims, y, z);
@@ -1210,7 +1211,7 @@ TEST_F(DeclarableOpsTests9, test_broadcast_bool_2) {
 }
 
 TEST_F(DeclarableOpsTests9, test_unstack_1) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5});
+    auto x = NDArrayFactory::create<double>(  {5, 5});
     x.linspace(1.0);
 
     sd::ops::unstack op;
@@ -1244,14 +1245,14 @@ TEST_F(DeclarableOpsTests9, test_unstack_SGO_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_1) {
 
-    auto inputC = NDArrayFactory::create<double>('c', {3, 5},   {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15.});
+    auto inputC = NDArrayFactory::create<double>(  {3, 5},   {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15.});
     auto axis = NDArrayFactory::create<Nd4jLong>(1);
 
-    auto expFF = NDArrayFactory::create<double>('c', {3, 5}, {1.,   2.,   6.,    24.,   120., 6.,  42., 336.,  3024., 30240.,11., 132.,1716., 24024.,360360.});
-    auto expTF = NDArrayFactory::create<double>('c', {3, 5}, {1, 1, 2, 6, 24,1, 6, 42, 336, 3024,1, 11, 132, 1716, 24024});
+    auto expFF = NDArrayFactory::create<double>(  {3, 5}, {1.,   2.,   6.,    24.,   120., 6.,  42., 336.,  3024., 30240.,11., 132.,1716., 24024.,360360.});
+    auto expTF = NDArrayFactory::create<double>(  {3, 5}, {1, 1, 2, 6, 24,1, 6, 42, 336, 3024,1, 11, 132, 1716, 24024});
 
-    auto expFT = NDArrayFactory::create<double>('c', {3, 5}, {120, 120, 60, 20, 5,30240, 5040, 720, 90, 10,360360, 32760, 2730, 210, 15});    //+++
-    auto expTT = NDArrayFactory::create<double>('c', {3, 5}, {120, 60, 20, 5, 1,5040, 720, 90, 10, 1,32760, 2730, 210, 15, 1});
+    auto expFT = NDArrayFactory::create<double>(  {3, 5}, {120, 120, 60, 20, 5,30240, 5040, 720, 90, 10,360360, 32760, 2730, 210, 15});    //+++
+    auto expTT = NDArrayFactory::create<double>(  {3, 5}, {120, 60, 20, 5, 1,5040, 720, 90, 10, 1,32760, 2730, 210, 15, 1});
 
     int exclusive, reverse;
 
@@ -1330,8 +1331,8 @@ TEST_F(DeclarableOpsTests9, cumprod_2) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_bp_check_1) {
 
-    auto       x = NDArrayFactory::create<double>('c', {4, 4});
-    auto   gradO = NDArrayFactory::create<double>('c', {4, 4});
+    auto       x = NDArrayFactory::create<double>(  {4, 4});
+    auto   gradO = NDArrayFactory::create<double>(  {4, 4});
 
     x.linspace(1);
 
@@ -1349,8 +1350,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_bp_check_2) {
 
-    auto       x = NDArrayFactory::create<double>('c', {4, 4});
-    auto   gradO = NDArrayFactory::create<double>('c', {4, 4});
+    auto       x = NDArrayFactory::create<double>(  {4, 4});
+    auto   gradO = NDArrayFactory::create<double>(  {4, 4});
 
     x.linspace(1);
 
@@ -1368,8 +1369,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_2) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_bp_check_3) {
 
-    auto       x = NDArrayFactory::create<double>('c', {4, 4});
-    auto   gradO = NDArrayFactory::create<double>('c', {4, 4});
+    auto       x = NDArrayFactory::create<double>(  {4, 4});
+    auto   gradO = NDArrayFactory::create<double>(  {4, 4});
 
     x.linspace(1);
 
@@ -1387,8 +1388,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_3) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_bp_check_4) {
 
-    auto       x = NDArrayFactory::create<double>('c', {4, 4});
-    auto   gradO = NDArrayFactory::create<double>('c', {4, 4});
+    auto       x = NDArrayFactory::create<double>(  {4, 4});
+    auto   gradO = NDArrayFactory::create<double>(  {4, 4});
 
     x.linspace(1);
 
@@ -1407,8 +1408,8 @@ TEST_F(DeclarableOpsTests9, cumprod_bp_check_4) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumsum_bp_check_2) {
 
-    auto       x = NDArrayFactory::create<double>('c', {4, 4});
-    auto   gradO = NDArrayFactory::create<double>('c', {4, 4});
+    auto       x = NDArrayFactory::create<double>(  {4, 4});
+    auto   gradO = NDArrayFactory::create<double>(  {4, 4});
 
     x.linspace(1);
 
@@ -1426,15 +1427,15 @@ TEST_F(DeclarableOpsTests9, cumsum_bp_check_2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_test1) {
 
-    auto inputC = NDArrayFactory::create<double>('c', {3, 5},   {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15.});
+    auto inputC = NDArrayFactory::create<double>(  {3, 5},   {1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11., 12., 13., 14., 15.});
     auto axis = NDArrayFactory::create<double>(1.);
 
-    auto expFF = NDArrayFactory::create<double>('c', {3, 5}, {1.,   2.,   6.,    24.,   120., 6.,  42., 336.,  3024., 30240.,11., 132.,1716., 24024.,360360.});
-    auto expTF = NDArrayFactory::create<double>('c', {3, 5}, {1, 1, 2, 6, 24,1, 6, 42, 336, 3024,1, 11, 132, 1716, 24024});
+    auto expFF = NDArrayFactory::create<double>(  {3, 5}, {1.,   2.,   6.,    24.,   120., 6.,  42., 336.,  3024., 30240.,11., 132.,1716., 24024.,360360.});
+    auto expTF = NDArrayFactory::create<double>(  {3, 5}, {1, 1, 2, 6, 24,1, 6, 42, 336, 3024,1, 11, 132, 1716, 24024});
 
-    auto expFT = NDArrayFactory::create<double>('c', {3, 5}, {120, 120, 60, 20, 5,30240, 5040, 720, 90, 10,360360, 32760, 2730, 210, 15});    //+++
-    auto expTT = NDArrayFactory::create<double>('c', {3, 5}, {120, 60, 20, 5, 1,5040, 720, 90, 10, 1,32760, 2730, 210, 15, 1});
-    auto gradO = NDArrayFactory::create<double>('c', {3, 5});
+    auto expFT = NDArrayFactory::create<double>(  {3, 5}, {120, 120, 60, 20, 5,30240, 5040, 720, 90, 10,360360, 32760, 2730, 210, 15});    //+++
+    auto expTT = NDArrayFactory::create<double>(  {3, 5}, {120, 60, 20, 5, 1,5040, 720, 90, 10, 1,32760, 2730, 210, 15, 1});
+    auto gradO = NDArrayFactory::create<double>(  {3, 5});
 
     int exclusive, reverse;
 
@@ -1455,10 +1456,10 @@ TEST_F(DeclarableOpsTests9, cumprod_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, cumprod_test2) {
 
-    auto inputC = NDArrayFactory::create<double>('c', {2, 2});
+    auto inputC = NDArrayFactory::create<double>(  {2, 2});
     auto axis = NDArrayFactory::create<double>(1.);
 
-    auto gradO = NDArrayFactory::create<double>('c', {2, 2});
+    auto gradO = NDArrayFactory::create<double>(  {2, 2});
 
     int exclusive, reverse;
 
@@ -1479,9 +1480,9 @@ TEST_F(DeclarableOpsTests9, cumprod_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test1) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {3, 4}, {-0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f, 5.5f, 4.f, 2.7f, 1.6f, 0.7f, 0.f, -0.5f,-0.8f, -0.9f, -0.8f, -0.5f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {3, 4}, {-0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {7.2f, 5.5f, 4.f, 2.7f, 1.6f, 0.7f, 0.f, -0.5f,-0.8f, -0.9f, -0.8f, -0.5f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
 
     sd::ops::prelu op;
 
@@ -1498,9 +1499,9 @@ TEST_F(DeclarableOpsTests9, prelu_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test2) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {3}, {-0.6f, 2.f, 4.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {3}, {-0.6f, 2.f, 4.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
@@ -1516,9 +1517,9 @@ TEST_F(DeclarableOpsTests9, prelu_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test3) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {3,1}, {-0.6f, 2.f, 4.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {3,1}, {-0.6f, 2.f, 4.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
@@ -1534,9 +1535,9 @@ TEST_F(DeclarableOpsTests9, prelu_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test4) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {1, 3}, {-0.6f, 2.f, 4.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {1, 3}, {-0.6f, 2.f, 4.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {7.2f,  6.6f,   6.f,   5.4f, -16.f, -14.f, -12.f, -10.f, -16.f, -12.f,  -8.f,  -4.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
@@ -1552,9 +1553,9 @@ TEST_F(DeclarableOpsTests9, prelu_test4) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test5) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {4}, {-0.6f, 2.f, 4.f, -1.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {7.2f, -22.f, -40.f,   9.f, 4.8f, -14.f, -24.f,   5.f, 2.4f,  -6.f,  -8.f,   1.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {4}, {-0.6f, 2.f, 4.f, -1.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {7.2f, -22.f, -40.f,   9.f, 4.8f, -14.f, -24.f,   5.f, 2.4f,  -6.f,  -8.f,   1.f, 0.f,   1.f,   2.f,   3.f, 4.f,   5.f,   6.f,   7.f, 8.f,   9.f,  10.f,  11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1});
@@ -1570,9 +1571,9 @@ TEST_F(DeclarableOpsTests9, prelu_test5) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test6) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto alpha = NDArrayFactory::create<double>('c', {1,1,1}, {-2.});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto alpha = NDArrayFactory::create<double>(  {1,1,1}, {-2.});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0});
@@ -1589,9 +1590,9 @@ TEST_F(DeclarableOpsTests9, prelu_test6) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test7) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
     auto alpha = NDArrayFactory::create<double>(-2.f);
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0});
@@ -1607,9 +1608,9 @@ TEST_F(DeclarableOpsTests9, prelu_test7) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test8) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
     auto alpha = NDArrayFactory::create<double>(-2.f);
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {24.f, 22.f, 20.f, 18.f, 16.f, 14.f, 12.f, 10.f, 8.f,  6.f,  4.f,  2.f, 0.f,  1.f,  2.f,  3.f, 4.f,  5.f,  6.f,  7.f, 8.f,  9.f, 10.f, 11.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1,0,1,0,1,0});
@@ -1625,9 +1626,9 @@ TEST_F(DeclarableOpsTests9, prelu_test8) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test9) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 4}, {-4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f});
+    auto x = NDArrayFactory::create<double>(  {2, 4}, {-4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f});
     auto alpha = NDArrayFactory::create<double>(-2.f);
-    auto exp = NDArrayFactory::create<double>('c', {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {0});
@@ -1643,9 +1644,9 @@ TEST_F(DeclarableOpsTests9, prelu_test9) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test10) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 4}, {-4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f});
+    auto x = NDArrayFactory::create<double>(  {2, 4}, {-4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f});
     auto alpha = NDArrayFactory::create<double>(-2.f);
-    auto exp = NDArrayFactory::create<double>('c', {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 4}, {8.f, 6.f, 4.f, 2.f,0.f, 1.f, 2.f, 3.f});
 
     sd::ops::prelu op;
     auto result = op.evaluate({&x, &alpha}, {}, {1});
@@ -1661,10 +1662,10 @@ TEST_F(DeclarableOpsTests9, prelu_test10) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test11) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4, 5});
     x.linspace(-50.);
-    auto alpha = NDArrayFactory::create<double>('c', {4}, {0.f, -0.5f, 0.5f, -1.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4, 5}, {0.f,   0.f,   0.f,   0.f,   0.f, 22.5f,  22.f,  21.5f,  21.f,  20.5f, -20.f, -19.5f, -19.f, -18.5f, -18.f, 35.f,  34.f,  33.f,
+    auto alpha = NDArrayFactory::create<double>(  {4}, {0.f, -0.5f, 0.5f, -1.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4, 5}, {0.f,   0.f,   0.f,   0.f,   0.f, 22.5f,  22.f,  21.5f,  21.f,  20.5f, -20.f, -19.5f, -19.f, -18.5f, -18.f, 35.f,  34.f,  33.f,
                                            32.f,  31.f, 0.f,   0.f,   0.f,   0.f,   0.f, 12.5f,  12.f,  11.5f,  11.f,  10.5f, -10.f,  -9.5f,  -9.f,  -8.5f,  -8.f, 15.f,
                                            14.f,  13.f,  12.f,  11.f, 0.f,   0.f,   0.f,   0.f,   0.f, 2.5f,   2.f,   1.5f,   1.f,   0.5f, 0.f,   1.f,   2.f,   3.f,   4.f,
                                            5.f,   6.f,   7.f,   8.f,   9.f, 10.f,  11.f,  12.f,  13.f,  14.f, 15.f,  16.f,  17.f,  18.f,  19.f, 20.f,  21.f,  22.f,  23.f,
@@ -1686,10 +1687,10 @@ TEST_F(DeclarableOpsTests9, prelu_test11) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test12) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4, 5});
     x.linspace(-50.);
-    auto alpha = NDArrayFactory::create<double>('c', {3,5}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4, 5}, {35.f, 29.4f, 24.f, 18.8f, 13.8f, 31.5f, 26.4f, 21.5f, 16.8f, 12.3f, 28.f, 23.4f, 19.f, 14.8f, 10.8f, 24.5f, 20.4f, 16.5f, 12.8f,
+    auto alpha = NDArrayFactory::create<double>(  {3,5}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4, 5}, {35.f, 29.4f, 24.f, 18.8f, 13.8f, 31.5f, 26.4f, 21.5f, 16.8f, 12.3f, 28.f, 23.4f, 19.f, 14.8f, 10.8f, 24.5f, 20.4f, 16.5f, 12.8f,
                                            9.3f, 6.f,  2.9f,  0.f, -2.7f, -5.2f, 5.f,  2.4f,  0.f, -2.2f, -4.2f, 4.f,  1.9f,  0.f, -1.7f, -3.2f, 3.f,  1.4f,  0.f, -1.2f,
                                            -2.2f, -3.f, -3.6f, -4.f, -4.2f, -4.2f, -1.5f, -1.6f, -1.5f, -1.2f, -0.7f, 0.f,  1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f,
                                            9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f, 17.f, 18.f, 19.f, 20.f, 21.f, 22.f, 23.f, 24.f, 25.f, 26.f, 27.f, 28.f, 29.f, 30.f,
@@ -1710,10 +1711,10 @@ TEST_F(DeclarableOpsTests9, prelu_test12) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test13) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4, 5});
     x.linspace(-50.);
-    auto alpha = NDArrayFactory::create<double>('c', {5,3}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4, 5}, {35.f, 29.4f, 24.f, 18.8f, 13.8f, 31.5f, 26.4f, 21.5f, 16.8f, 12.3f, 28.f, 23.4f, 19.f, 14.8f, 10.8f, 24.5f, 20.4f, 16.5f, 12.8f,
+    auto alpha = NDArrayFactory::create<double>(  {5,3}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4, 5}, {35.f, 29.4f, 24.f, 18.8f, 13.8f, 31.5f, 26.4f, 21.5f, 16.8f, 12.3f, 28.f, 23.4f, 19.f, 14.8f, 10.8f, 24.5f, 20.4f, 16.5f, 12.8f,
                                            9.3f, 6.f,  2.9f,  0.f, -2.7f, -5.2f, 5.f,  2.4f,  0.f, -2.2f, -4.2f, 4.f,  1.9f,  0.f, -1.7f, -3.2f, 3.f,  1.4f,  0.f, -1.2f,
                                            -2.2f, -3.f, -3.6f, -4.f, -4.2f, -4.2f, -1.5f, -1.6f, -1.5f, -1.2f, -0.7f, 0.f,  1.f,  2.f,  3.f,  4.f, 5.f,  6.f,  7.f,  8.f,
                                            9.f, 10.f, 11.f, 12.f, 13.f, 14.f, 15.f, 16.f, 17.f, 18.f, 19.f, 20.f, 21.f, 22.f, 23.f, 24.f, 25.f, 26.f, 27.f, 28.f, 29.f, 30.f,
@@ -1734,10 +1735,10 @@ TEST_F(DeclarableOpsTests9, prelu_test13) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_test14) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4, 5});
     x.linspace(-50.);
-    auto alpha = NDArrayFactory::create<double>('c', {2,10}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f, 1.1f, 1.2f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4, 5}, {35.f,  29.4f,  24.f,  18.8f,  13.8f, 9.f,   4.4f,   0.f,  -4.2f,  -8.2f, -12.f, -15.6f, -19.f, -22.2f, -25.2f, -28.f, -30.6f,
+    auto alpha = NDArrayFactory::create<double>(  {2,10}, {-0.7f, -0.6f, -0.5f, -0.4f, -0.3f, -0.2f, -0.1f, 0.f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f, 1.1f, 1.2f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4, 5}, {35.f,  29.4f,  24.f,  18.8f,  13.8f, 9.f,   4.4f,   0.f,  -4.2f,  -8.2f, -12.f, -15.6f, -19.f, -22.2f, -25.2f, -28.f, -30.6f,
                                            -33.f,-35.2f, -37.2f, 21.f,  17.4f,  14.f,  10.8f,   7.8f, 5.f,   2.4f,   0.f,  -2.2f,  -4.2f, -6.f,  -7.6f,  -9.f, -10.2f,
                                            -11.2f, -12.f, -12.6f, -13.f, -13.2f, -13.2f, 7.f,   5.4f,   4.f,   2.8f,   1.8f, 1.f,   0.4f,   0.f,  -0.2f,  -0.2f, 0.f,
                                            1.f,   2.f,   3.f,   4.f, 5.f,   6.f,   7.f,   8.f,   9.f, 10.f,  11.f,  12.f,  13.f,  14.f, 15.f,  16.f,  17.f,  18.f,
@@ -1760,8 +1761,8 @@ TEST_F(DeclarableOpsTests9, prelu_test14) {
 TEST_F(DeclarableOpsTests9, thresholdedrelu_test1) {
 
     const float theta = 2.f;
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 3.f,4.f, 5.f, 6.f, 7.f,8.f, 9.f,10.f,11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 0.f,0.f, 0.f, 0.f, 3.f,4.f, 5.f, 6.f, 7.f,8.f, 9.f,10.f,11.f});
 
     sd::ops::thresholdedrelu op;
 
@@ -1778,9 +1779,9 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, compare_and_bitpack_test1) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12.f, -11.f, -10.f, -9.f, -8.f, -7.f, -6.f, -5.f, -4.f, -3.f, -2.f, -1.f, 0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f});
     auto threshold = NDArrayFactory::create<double>(2.0);
-    auto exp = NDArrayFactory::create<uint8_t>('c', {2, 3, 4}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    auto exp = NDArrayFactory::create<uint8_t>(  {2, 3, 4}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                                                                 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1});
 
     sd::ops::compare_and_bitpack op;
@@ -1798,8 +1799,8 @@ TEST_F(DeclarableOpsTests9, compare_and_bitpack_test1) {
 TEST_F(DeclarableOpsTests9, thresholdedrelu_test2) {
 
     const float theta = -2.f;
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f,-4.f, -10.f, -8.f, 0.f, -9.f, -8.f, 5.f, 6.f, 6.f, 9.f, 6.f, -8.f, 5.f, 10.f, -2.f, 3.f, -7.f, 4.f, -8.f, -4.f, -9.f, -9.f, 3.f});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 5.f, 6.f, 6.f, 9.f, 6.f, 0.f, 5.f, 10.f, 0.f, 3.f, 0.f, 4.f, 0.f, 0.f, 0.f, 0.f, 3.f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {0.f,-4.f, -10.f, -8.f, 0.f, -9.f, -8.f, 5.f, 6.f, 6.f, 9.f, 6.f, -8.f, 5.f, 10.f, -2.f, 3.f, -7.f, 4.f, -8.f, -4.f, -9.f, -9.f, 3.f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 5.f, 6.f, 6.f, 9.f, 6.f, 0.f, 5.f, 10.f, 0.f, 3.f, 0.f, 4.f, 0.f, 0.f, 0.f, 0.f, 3.f});
 
     sd::ops::thresholdedrelu op;
 
@@ -1816,9 +1817,9 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_bp_test1) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12., -11., -10., -9., -8., -7., -6., -5., -4., -3., -2., -1., 0.5, 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.});
-    auto alpha = NDArrayFactory::create<double>('c', {3, 4}, {-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5});
-    auto dLdO = NDArrayFactory::create<double>('c', {2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12., -11., -10., -9., -8., -7., -6., -5., -4., -3., -2., -1., 0.5, 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.});
+    auto alpha = NDArrayFactory::create<double>(  {3, 4}, {-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5});
+    auto dLdO = NDArrayFactory::create<double>(  {2, 3, 4});
 
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {});
@@ -1834,9 +1835,9 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_bp_test2) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {-12., -11., -10., -9., -8., -7., -6., -5., -4., -3., -2., -1., 0.5, 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.});
-    auto alpha = NDArrayFactory::create<double>('c', {4}, {-0.6, 2., 4., -1.});
-    auto dLdO = NDArrayFactory::create<double>('c', {2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {-12., -11., -10., -9., -8., -7., -6., -5., -4., -3., -2., -1., 0.5, 1., 2., 3., 4., 5., 6., 7., 8., 9., 10., 11.});
+    auto alpha = NDArrayFactory::create<double>(  {4}, {-0.6, 2., 4., -1.});
+    auto dLdO = NDArrayFactory::create<double>(  {2, 3, 4});
 
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {1});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {1});
@@ -1852,11 +1853,11 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_bp_test3) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 2, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 2, 5});
     x.linspace(-30.);
     x.p(30, 0.5);   // avoid zero, since it is points of discontinuity for prelu
-    auto alpha = NDArrayFactory::create<double>('c', {5,3}, {-0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
-    auto dLdO = NDArrayFactory::create<double>('c', {2, 3, 2, 5});
+    auto alpha = NDArrayFactory::create<double>(  {5,3}, {-0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.5, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7});
+    auto dLdO = NDArrayFactory::create<double>(  {2, 3, 2, 5});
 
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {-1, 2});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {-1, 2});
@@ -1872,11 +1873,11 @@ TEST_F(DeclarableOpsTests9, prelu_bp_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, prelu_bp_test4) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4, 5});
     x.linspace(-50.);
     x.p(50, 0.5);   // avoid zero, since it is points of discontinuity for prele
-    auto alpha = NDArrayFactory::create<double>('c', {2,10}, {-0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.25, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2});
-    auto dLdO = NDArrayFactory::create<double>('c', {2, 3, 4, 5});
+    auto alpha = NDArrayFactory::create<double>(  {2,10}, {-0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.25, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1., 1.1, 1.2});
+    auto dLdO = NDArrayFactory::create<double>(  {2, 3, 4, 5});
 
     const OpArgsHolder argsHolderFF({&x, &alpha}, {}, {-2});
     const OpArgsHolder argsHolderBP({&x, &alpha, &dLdO}, {}, {-2});
@@ -1894,8 +1895,8 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_bp_test1) {
 
     const double theta = 0.15;
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4}, {1.2, 1.1, 1., 0.9, 0.8, -0.7, -0.6,-0.5,-0.4,-0.3,-0.2,-0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, -0.9, -1.0, -1.1});
-    auto dLdO = NDArrayFactory::create<double>('c', {2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4}, {1.2, 1.1, 1., 0.9, 0.8, -0.7, -0.6,-0.5,-0.4,-0.3,-0.2,-0.1, 0., 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, -0.9, -1.0, -1.1});
+    auto dLdO = NDArrayFactory::create<double>(  {2, 3, 4});
 
     const OpArgsHolder argsHolderFF({&x}, {theta}, {});
     const OpArgsHolder argsHolderBP({&x, &dLdO}, {theta}, {});
@@ -1911,9 +1912,9 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_bp_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_test1) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4});
-    auto y = NDArrayFactory::create<double>('c', {4});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.1f, 0.4f, 0.9f, 1.6f, 0.5f, 1.2f, 2.1f, 3.2f, 0.9f, 2.f, 3.3f, 4.8f, 1.3f, 2.8f, 4.5f, 6.4f, 1.7f, 3.6f, 5.7f, 8.f, 2.1f, 4.4f, 6.9f, 9.6f});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4});
+    auto y = NDArrayFactory::create<double>(  {4});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.1f, 0.4f, 0.9f, 1.6f, 0.5f, 1.2f, 2.1f, 3.2f, 0.9f, 2.f, 3.3f, 4.8f, 1.3f, 2.8f, 4.5f, 6.4f, 1.7f, 3.6f, 5.7f, 8.f, 2.1f, 4.4f, 6.9f, 9.6f});
     x.linspace(1.f);
     y.linspace(0.1f, 0.1f);
 
@@ -1931,9 +1932,9 @@ TEST_F(DeclarableOpsTests9, multiply_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_test2) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4});
     auto y = NDArrayFactory::create<double>(0.1);
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f, 2.f, 2.1f, 2.2f, 2.3f, 2.4f});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f, 2.f, 2.1f, 2.2f, 2.3f, 2.4f});
     x.linspace(1.f);
     // y.linspace(0.1f, 0.1f);
 
@@ -1951,9 +1952,9 @@ TEST_F(DeclarableOpsTests9, multiply_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_test3) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 1, 4});
-    auto y = NDArrayFactory::create<double>('c', {3,1});
-    auto exp = NDArrayFactory::create<double>('c', {2, 3, 4}, {0.1f, 0.2f, 0.3f, 0.4f, 0.2f, 0.4f, 0.6f, 0.8f, 0.3f, 0.6f, 0.9f, 1.2f, 0.5f, 0.6f, 0.7f, 0.8f, 1.f, 1.2f, 1.4f, 1.6f, 1.5f, 1.8f, 2.1f, 2.4f});
+    auto x = NDArrayFactory::create<double>(  {2, 1, 4});
+    auto y = NDArrayFactory::create<double>(  {3,1});
+    auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.1f, 0.2f, 0.3f, 0.4f, 0.2f, 0.4f, 0.6f, 0.8f, 0.3f, 0.6f, 0.9f, 1.2f, 0.5f, 0.6f, 0.7f, 0.8f, 1.f, 1.2f, 1.4f, 1.6f, 1.5f, 1.8f, 2.1f, 2.4f});
     x.linspace(1.f);
     y.linspace(0.1f, 0.1f);
 
@@ -1971,9 +1972,9 @@ TEST_F(DeclarableOpsTests9, multiply_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_test4) {
 
-    auto x = NDArrayFactory::create<double>('c', {1, 1});
+    auto x = NDArrayFactory::create<double>(  {1, 1});
     auto y = NDArrayFactory::create<double>(0.1f);
-    auto exp = NDArrayFactory::create<double>('c', {1, 1}, {0.1f});
+    auto exp = NDArrayFactory::create<double>(  {1, 1}, {0.1f});
     x.linspace(1.f);
 
     sd::ops::multiply op;
@@ -2008,9 +2009,9 @@ TEST_F(DeclarableOpsTests9, multiply_test5) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test1) {
 
-    auto x = NDArrayFactory::create<double>('c', {1, 1}, {100.});
+    auto x = NDArrayFactory::create<double>(  {1, 1}, {100.});
     auto y = NDArrayFactory::create<double>(0.1);
-    auto dLdz = NDArrayFactory::create<double>('c', {1, 1});
+    auto dLdz = NDArrayFactory::create<double>(  {1, 1});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2029,9 +2030,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test2) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 2}, {1.,2.,3.,4.});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1.,2.,3.,4.});
     auto y = NDArrayFactory::create<double>(0.1);
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 2});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 2});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2047,9 +2048,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test3) {
 
-    auto y = NDArrayFactory::create<double>('c', {2, 2}, {1.,2.,3.,4.});
+    auto y = NDArrayFactory::create<double>(  {2, 2}, {1.,2.,3.,4.});
     auto x = NDArrayFactory::create<double>(0.1);
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 2});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 2});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2065,9 +2066,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test3) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test4) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 2}, {1.,2.,3.,4.});
-    auto y = NDArrayFactory::create<double>('c', {2, 2}, {0.1,0.2,0.3,0.4});
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 2});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1.,2.,3.,4.});
+    auto y = NDArrayFactory::create<double>(  {2, 2}, {0.1,0.2,0.3,0.4});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 2});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2083,9 +2084,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test4) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test5) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 2}, {1.,2.,3.,4.});
-    auto y = NDArrayFactory::create<double>('c', {2}, {0.1,0.2});
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 2});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1.,2.,3.,4.});
+    auto y = NDArrayFactory::create<double>(  {2}, {0.1,0.2});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 2});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2101,9 +2102,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test5) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test6) {
 
-    auto y = NDArrayFactory::create<double>('c', {2, 2}, {1.,2.,3.,4.});
-    auto x = NDArrayFactory::create<double>('c', {2}, {0.1,0.2});
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 2});
+    auto y = NDArrayFactory::create<double>(  {2, 2}, {1.,2.,3.,4.});
+    auto x = NDArrayFactory::create<double>(  {2}, {0.1,0.2});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 2});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2119,9 +2120,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test6) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test7) {
 
-    auto y = NDArrayFactory::create<double>('c', {2, 3}, {1.,2.,3.,4.,5.,6.});
-    auto x = NDArrayFactory::create<double>('c', {2, 1}, {0.1,0.2});
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 3});
+    auto y = NDArrayFactory::create<double>(  {2, 3}, {1.,2.,3.,4.,5.,6.});
+    auto x = NDArrayFactory::create<double>(  {2, 1}, {0.1,0.2});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 3});
 
     const OpArgsHolder argsHolderFF({&x, &y}, {}, {});
     const OpArgsHolder argsHolderBP({&x, &y, &dLdz}, {}, {});
@@ -2137,9 +2138,9 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test7) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, multiply_bp_test8) {
 
-    auto y = NDArrayFactory::create<double>('c', {2, 1, 4});
-    auto x = NDArrayFactory::create<double>('c', {1, 3, 4});
-    auto dLdz = NDArrayFactory::create<double>('c', {2, 3, 4});
+    auto y = NDArrayFactory::create<double>(  {2, 1, 4});
+    auto x = NDArrayFactory::create<double>(  {1, 3, 4});
+    auto dLdz = NDArrayFactory::create<double>(  {2, 3, 4});
     x.linspace(1., 0.5);
     y.linspace(0.1, 0.05);
 
@@ -2157,10 +2158,10 @@ TEST_F(DeclarableOpsTests9, multiply_bp_test8) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Floormod_BP_Test_2) {
 
-    auto y = NDArrayFactory::create<double>('c', {10, 10});
-    auto x = NDArrayFactory::create<double>('c', {10, 10});
-    auto dLdz = NDArrayFactory::create<double>('c', {10, 10});
-    //auto eps = NDArrayFactory::create<double>('c', {10, 10});
+    auto y = NDArrayFactory::create<double>(  {10, 10});
+    auto x = NDArrayFactory::create<double>(  {10, 10});
+    auto dLdz = NDArrayFactory::create<double>(  {10, 10});
+    //auto eps = NDArrayFactory::create<double>(  {10, 10});
     x.linspace(4); //2., 2.0);
     y.linspace(3);
     dLdz.linspace(1);
@@ -2188,12 +2189,12 @@ TEST_F(DeclarableOpsTests9, Floormod_BP_Test_2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3, 4});
-    auto y = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 1, 0, 2});
-    auto dLdzX = NDArrayFactory::create<double>('c', {2, 4});
-    auto dLdzY = NDArrayFactory::create<double>('c', {2, 4});
-    auto dLdzZ = NDArrayFactory::create<double>('c', {2, 4});
-    auto exp = NDArrayFactory::create<double>('c', {2,3,4}, {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 3, 3, 3, 3});
+    auto x = NDArrayFactory::create<double>(  {2, 3, 4});
+    auto y = NDArrayFactory::create<int>(  {2, 3}, {0, 1, 2, 1, 0, 2});
+    auto dLdzX = NDArrayFactory::create<double>(  {2, 4});
+    auto dLdzY = NDArrayFactory::create<double>(  {2, 4});
+    auto dLdzZ = NDArrayFactory::create<double>(  {2, 4});
+    auto exp = NDArrayFactory::create<double>(  {2,3,4}, {1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1, 1, 3, 3, 3, 3});
     x.linspace(1);
 //    dLdzX.linspace(1);
 //    dLdzY.linspace(2);
@@ -2218,11 +2219,11 @@ TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
 //////////////////////////////////////////////////////////////////////
 //TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_2) {
 //
-//    auto x = NDArrayFactory::create<double>('c', {2, 3, 4});
-//    auto y = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 1, 0, 2});
-//    auto dLdzX = NDArrayFactory::create<double>('c', {2, 4});
-//    auto dLdzY = NDArrayFactory::create<double>('c', {2, 4});
-//    auto dLdzZ = NDArrayFactory::create<double>('c', {2, 4});
+//    auto x = NDArrayFactory::create<double>(  {2, 3, 4});
+//    auto y = NDArrayFactory::create<int>(  {2, 3}, {0, 1, 2, 1, 0, 2});
+//    auto dLdzX = NDArrayFactory::create<double>(  {2, 4});
+//    auto dLdzY = NDArrayFactory::create<double>(  {2, 4});
+//    auto dLdzZ = NDArrayFactory::create<double>(  {2, 4});
 //    x.linspace(1);
 //    dLdzX.linspace(1);
 //    dLdzY.linspace(1);
@@ -2242,10 +2243,10 @@ TEST_F(DeclarableOpsTests9, Dynamic_Partition_BP_1) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Floormod_BP_Test_4) {
 
-    auto x = NDArrayFactory::create<double>('c', {2, 1, 3}, {2.0, 6.0, -3.0, 2.0, 6.0, -3.0});
-    auto y = NDArrayFactory::create<double>('c', {1, 3}, {-3.0, 2.0, -2.0});
-    auto exp = NDArrayFactory::create<double>('c', {1, 3}, {-1.,  0., -1.});
-    auto eps = NDArrayFactory::create<double>('c', {2, 1, 3});
+    auto x = NDArrayFactory::create<double>(  {2, 1, 3}, {2.0, 6.0, -3.0, 2.0, 6.0, -3.0});
+    auto y = NDArrayFactory::create<double>(  {1, 3}, {-3.0, 2.0, -2.0});
+    auto exp = NDArrayFactory::create<double>(  {1, 3}, {-1.,  0., -1.});
+    auto eps = NDArrayFactory::create<double>(  {2, 1, 3});
     eps.assign(1.f);
     sd::ops::floormod_bp op;
 
@@ -2328,8 +2329,8 @@ TEST_F(DeclarableOpsTests9, gru_cell_bp_test1) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Cholesky_Test_1) {
 
-    NDArray x = NDArrayFactory::create<double>('c', {3, 3}, {4,12,-16, 12 ,37,-43, -16, -43, 98});
-    NDArray exp = NDArrayFactory::create<double>('c', {3,3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3.});
+    NDArray x = NDArrayFactory::create<double>(  {3, 3}, {4,12,-16, 12 ,37,-43, -16, -43, 98});
+    NDArray exp = NDArrayFactory::create<double>(  {3,3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3.});
 
     sd::ops::cholesky op;
 
@@ -2344,8 +2345,8 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_1) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Cholesky_Test_2) {
 
-    NDArray x = NDArrayFactory::create<double>('c', {2, 3, 3}, {4, 12,-16, 12 ,37,-43, -16, -43, 98, 1, 1, 1, 1, 2, 2, 1, 2., 6});
-    NDArray exp = NDArrayFactory::create<double>('c', {2, 3, 3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3., 1., 0., 0., 1., 1., 0,1., 1., 2.});
+    NDArray x = NDArrayFactory::create<double>(  {2, 3, 3}, {4, 12,-16, 12 ,37,-43, -16, -43, 98, 1, 1, 1, 1, 2, 2, 1, 2., 6});
+    NDArray exp = NDArrayFactory::create<double>(  {2, 3, 3}, {2.,  0.,  0., 6., 1.,  0., -8.,  5.,  3., 1., 0., 0., 1., 1., 0,1., 1., 2.});
 
     sd::ops::cholesky op;
 
@@ -2360,8 +2361,8 @@ TEST_F(DeclarableOpsTests9, Cholesky_Test_2) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, Cholesky_Test_3) {
 
-    NDArray x = NDArrayFactory::create<float>('c', {2, 3, 3}, {4.f, 12.f, -16.f, 12.f, 37.f, -43.f, -16.f, -43.f, 98.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 1.f, 2.f, 6.f});
-    NDArray exp = NDArrayFactory::create<float>('c', {2, 3, 3}, {2.f,  0.f,  0.f, 6.f, 1.f,  0.f, -8.f,  5.f,  3.f, 1.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 2.f});
+    NDArray x = NDArrayFactory::create<float>(  {2, 3, 3}, {4.f, 12.f, -16.f, 12.f, 37.f, -43.f, -16.f, -43.f, 98.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 1.f, 2.f, 6.f});
+    NDArray exp = NDArrayFactory::create<float>(  {2, 3, 3}, {2.f,  0.f,  0.f, 6.f, 1.f,  0.f, -8.f,  5.f,  3.f, 1.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 2.f});
 
     sd::ops::cholesky op;
 
