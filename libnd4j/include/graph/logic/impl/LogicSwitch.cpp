@@ -94,6 +94,8 @@ Nd4jStatus LogicSwitch::processNode(const Node* node, Stack &stack, const Optimi
 
   REQUIRE_TRUE(boolean->hasNDArray(), 0, "Switch: boolean Variable must have NDArray defined");
 
+  nd4j_printf("Switch [%i] evaluated as [%s]\n", node->id(), boolean->getNDArray()->e<bool>(0) ? "true" : "false");
+
   if (boolean->getNDArray()->e<bool>(0)) {
     // true branch
     varSpace.putVariable(std::pair<int, int>{node->id(), 1}, *input->getNDArray());

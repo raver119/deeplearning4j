@@ -21,6 +21,7 @@
 
 #include <graph/Status.h>
 #include <graph/logic/LogicMerge.h>
+#include <helpers/StringUtils.h>
 
 namespace sd {
 namespace graph {
@@ -32,6 +33,13 @@ static bool isNextIterationCase(const OptimizedGraph& graph, int firstId, int se
   return (firstNode != nullptr && firstNode->opType() == OpType_LOGIC && firstNode->opNum() == sd::logic::NextIteration) ||  (secondNode != nullptr && secondNode->opType() == OpType_LOGIC && secondNode->opNum() == sd::logic::NextIteration);
 }
 
+static bool checkViability(Stack &stack, const std::pair<int, int> &first, const std::pair<int, int> &second) {
+  auto &frame = stack.back();
+  auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
+
+  return (!frame.isDisabled(first.first) && varSpace.hasVariable(first) && varSpace.getVariable(first)->hasNDArray()) || (!frame.isDisabled(second.first) && varSpace.hasVariable(second) && varSpace.getVariable(second)->hasNDArray());
+}
+
 Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   // getting current frame first
   auto &frame = stack.back();
@@ -40,9 +48,19 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
   auto &varSpace = const_cast<VariableProxy&>(frame.variableProxy());
 
   REQUIRE_TRUE(inputs.size() == 2, 0, "Merge: op expects exactly 2 inputs, but only %i defined", (int) inputs.size());
+
+  // if both inputs are unavailable - this node is disabled and must be disabled
+  if (!checkViability(stack, inputs[0], inputs[1])) {
+    nd4j_printf("Both inputs absent, skipping\n", "");
+    // TODO: disable this branch
+    return Status::OK();
+  }
+
   if (frame.isDisabled(inputs[0].first) && frame.isDisabled(inputs[1].first)) {
     REQUIRE_TRUE(false, 0, "Merge: only 1 input should be disabled, but got both of them down");
   }
+
+
 
   // if we're on NextIteration merge, we'll propagate its output regardless of first arg existence
   if (isNextIterationCase(graph, inputs[0].first, inputs[1].first)) {
@@ -52,10 +70,16 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
     if (firstNode != nullptr && firstNode->opType() == OpType_LOGIC && firstNode->opNum() == sd::logic::NextIteration) {
       // we must check, if NextIteration Node already was executed. Or, pick initial value first
       auto id = varSpace.hasVariable(inputs[0]) && varSpace.getVariable(inputs[0])->hasNDArray() ? inputs[0] : inputs[1];
+      if (!varSpace.hasVariable(id) || !varSpace.getVariable(id)->hasNDArray())
+        throw std::runtime_error("Non-existent NDArray requested: [" + StringUtils::valueToString(id) +"]");
+
       varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
     } else {
       // we must check, if NextIteration Node already was executed. Or, pick initial value first
       auto id = varSpace.hasVariable(inputs[1]) && varSpace.getVariable(inputs[1])->hasNDArray() ? inputs[1] : inputs[0];
+      if (!varSpace.hasVariable(id) || !varSpace.getVariable(id)->hasNDArray())
+        throw std::runtime_error("Non-existent NDArray requested: [" + StringUtils::valueToString(id) +"]");
+
       varSpace.putVariable({node->id(), 0}, *varSpace.getVariable(id)->getNDArray());
     }
   } else {

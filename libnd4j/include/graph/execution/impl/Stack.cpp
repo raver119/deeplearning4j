@@ -45,17 +45,21 @@ StackFrame &Stack::root() {
 
 void Stack::openFrame(int frameId, int enterId) {
   _frames.emplace_back(StackFrame(_frames.back().variableProxy(), _counter++, frameId, enterId, _frames.back()));
+  nd4j_printf("Opening frame [%i], parent: [%i]\n", _frames.back().id(), _frames.back().parent().id());
 }
 
 void Stack::iterateFrame(int frameId, int enterId) {
   auto &current = this->back();
   auto &parent = current.parent();
   _frames.emplace_back(StackFrame(_frames.back().variableProxy(), _counter++, frameId, enterId, parent));
+  nd4j_printf("Iterating frame, parent: [%i]\n", parent.id());
 }
 
 void Stack::closeFrame() {
   // we should remove all frames untl we hit parent frame
   auto &parent = this->back().parent();
+
+  nd4j_printf("Collapsed frame [%i], parent: [%i]\n", this->back().id(), parent.id());
 
   while (!_frames.empty()) {
     auto &current = this->back();
@@ -66,7 +70,6 @@ void Stack::closeFrame() {
 
     _frames.pop_back();
   }
-
 }
 
 } // namespace graph

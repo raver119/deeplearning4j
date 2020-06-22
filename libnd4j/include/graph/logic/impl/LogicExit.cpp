@@ -41,6 +41,8 @@ Nd4jStatus LogicExit::processNode(const Node *node, Stack &stack, const Optimize
   REQUIRE_TRUE(inputs.size() == 1, 0, "Exit: op must have exactly 1 input1");
   REQUIRE_TRUE(frame.variableProxy().hasVariable(inputs[0]), 0, "Exit: input Variable doesn't exist");
 
+  nd4j_printf("Propagating Variable to the Frame [%i]\n", parent.id());
+
   // get Variable from current VariableProxy and put to the ParentOne
   auto var = frame.variableProxy().getVariable(inputs[0]);
   const_cast<VariableProxy&>(parent.variableProxy()).putVariable({node->id(), 0}, *var->getNDArray());
