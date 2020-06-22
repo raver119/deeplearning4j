@@ -146,13 +146,29 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         workMap.erase(i);
 
     // lambda for topological sort
-    std::function<void(int,uint,uint&)> visit = [&visit, &workMap] (const int id, const uint layerNum, uint& numOfLayers) {
+    std::function<void(int,uint,uint&)> visit = [&visit, &workMap, this] (const int id, const uint layerNum, uint& numOfLayers) {
 
-        if(layerNum <= workMap[id]._layerNum) { return; }
+        if(layerNum <= workMap[id]._layerNum)
+           return;
         workMap[id]._layerNum = layerNum;
-        if(numOfLayers < layerNum) { numOfLayers = layerNum; }
-        for (const auto& nextId : workMap[id]._out)
-            visit(nextId, layerNum+1, numOfLayers);
+        if(numOfLayers < layerNum)
+            numOfLayers = layerNum;
+
+        const bool isSwitch = this->_nodesMap[id].name().find("Switch") != std::string::npos;
+        if(!isSwitch) {
+            for (const auto& nextId : workMap[id]._out)
+                visit(nextId, layerNum+1, numOfLayers);
+        }
+        else {
+            if(this->_nodesMap[id].outputs()[0].second == 1) {
+                visit(_nodesMap[id].outputs()[0].first, layerNum+1, numOfLayers);        // true branch
+                visit(_nodesMap[id].outputs()[1].first, numOfLayers+1, numOfLayers);     // false branch
+            }
+            else {
+                visit(_nodesMap[id].outputs()[1].first, layerNum+1, numOfLayers);        // true branch
+                visit(_nodesMap[id].outputs()[0].first, numOfLayers+1, numOfLayers);     // false branch
+            }
+        }
     };
 
     // perform topological sort
@@ -161,71 +177,10 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         for (const auto& nextId : workMap[id]._out)
             visit(nextId, 1, numOfLayers);
 
-    // gather all nodes belonging to loop and store them in one OpSequence
-    const char delimiter = '/';
-    for (auto p0 = workMap.begin(); p0 != std::prev(workMap.end()); ++p0) {             // std::prev(workMap.end()) == workMap.end() - 1
-        if(!p0->second._opSeq.empty() && p0->second._opSeq[0] == -1)
-            continue;
-        // const auto& name = _nodesMap[p0->first].name();
-        // if(name.find("Enter") == std::string::npos)
-        //     continue;
-        bool isInLoop = false;
-        auto* name = &_nodesMap[p0->first].name();
-
-        if(name->find("Enter") == std::string::npos) {
-            for (const auto& id : p0->second._opSeq) {
-                name = &_nodesMap[id].name();
-                if(name->find("Enter") != std::string::npos) {
-                    isInLoop = true;
-                    break;
-                }
-            }
-        }
-        else
-            isInLoop = true;
-
-        if(!isInLoop)
-            continue;
-
-        std::string loopName = name->substr(0, name->find(delimiter));    // evaluate name of loop
-
-        for (auto p1 = std::next(p0); p1 != workMap.end(); ++p1) {      // std::next(p0) = p0 + 1
-
-            if(!p1->second._opSeq.empty() && p1->second._opSeq[0] == -1)
-                continue;
-
-            isInLoop = false;
-            name = &_nodesMap[p1->first].name();
-
-            if(name->find(loopName) == std::string::npos) {
-                for (const auto& id : p1->second._opSeq) {
-                   name = &_nodesMap[id].name();
-                    if(name->find(loopName) != std::string::npos) {
-                        isInLoop = true;
-                        break;
-                    }
-                }
-            }
-            else
-                isInLoop = true;
-
-            if(!isInLoop)
-                continue;
-
-            p0->second._opSeq.push_back(p1->first);
-            p0->second._opSeq.insert(p0->second._opSeq.end(), p1->second._opSeq.begin(), p1->second._opSeq.end());
-            p1->second._opSeq.clear();
-            p1->second._opSeq.push_back(-1);        // mark node to be neglected
-            // p1->second._layerNum = p0->second._layerNum;
-        }
-    }
 
     // fill vectors with layers
-    std::vector<ExecutionLayer> sortedGraphTemp;//(numOfLayers+1);
+    std::vector<ExecutionLayer> sortedGraphTemp(numOfLayers+1);
     for (const auto& p : workMap) {
-
-        if(!p.second._opSeq.empty() && p.second._opSeq[0] == -1)
-            continue;
 
         OpSequence seq;
         seq.append(_nodesMap.at(p.first), _nodesMap.at(p.first).contextPrototype());
@@ -233,17 +188,55 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
         for (const auto& id : p.second._opSeq)
             seq.append(_nodesMap.at(id), _nodesMap.at(id).contextPrototype());
 
-        while(sortedGraphTemp.size() <= p.second._layerNum)
-            sortedGraphTemp.emplace_back(ExecutionLayer());
+        // while(sortedGraphTemp.size() <= p.second._layerNum)
+        //     sortedGraphTemp.emplace_back(ExecutionLayer());
 
         sortedGraphTemp[p.second._layerNum].append(std::move(seq));
+    }
 
+    const char delimiter = '/';
+    for (int i0 = 0; i0 < sortedGraphTemp.size(); ++i0) {
+        for (int i1 = 0; i1 < sortedGraphTemp[i0].width(); ++i1) {
+            for (int i2 = 0; i2 < sortedGraphTemp[i0][i1].length(); ++i2) {
+                // if(!p0->second._opSeq.empty() && p0->second._opSeq[0] == -1)
+                //     continue;
+
+                auto id = sortedGraphTemp[i0][i1][i2].node().id();
+                auto* name = &_nodesMap[id].name();
+                if (name->find("Enter") == std::string::npos)
+                    continue;
+                std::string loopName = name->substr(0, name->find(delimiter));    // evaluate name of loop
+                for (int j0 = i0; j0 < sortedGraphTemp.size(); ++j0) {
+                    for (int j1 = j0 == i0 ? i1 + 1 : 0; j1 < sortedGraphTemp[j0].width(); ++j1) {
+                        for (int j2 = 0; j2 < sortedGraphTemp[j0][j1].length(); ++j2) {
+                            id = sortedGraphTemp[j0][j1][j2].node().id();
+                            name = &_nodesMap[id].name();
+                            if (name->find(loopName) == std::string::npos)
+                                continue;
+                            for (int k = 0; k < sortedGraphTemp[j0][j1].length(); ++k)
+                                const_cast<OpSequence&>(sortedGraphTemp[i0][i1]).append(sortedGraphTemp[j0][j1][k]);
+                            const_cast<OpSequence&>(sortedGraphTemp[j0][j1]) = OpSequence();
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
     }
 
     // delete empty layers
-    for (auto it = sortedGraphTemp.begin(); it != sortedGraphTemp.end(); ++it)
-        if(it->width() == 0)
+    for (auto it = sortedGraphTemp.begin(); it != sortedGraphTemp.end(); ++it) {
+        bool isEmpty = true;
+        for (uint i = 0; i < it->width(); ++i) {
+            if(it->at(i).length() != 0)
+                isEmpty = false;
+            break;
+        }
+
+        if(isEmpty)
             sortedGraphTemp.erase(it--);
+    }
 
     // check whether there are layers with one OpSequence which in turn contains only one op
     bool isLayerWithOneOp = false;
