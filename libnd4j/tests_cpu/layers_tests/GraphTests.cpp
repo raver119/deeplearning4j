@@ -47,10 +47,10 @@ public:
 TEST_F(GraphTests, SingleInput1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph->getVariableSpace()->putVariable(-1, x);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_STRICT, transform::Cosine, 2, {1}, {3});
@@ -77,17 +77,17 @@ TEST_F(GraphTests, SingleInput1) {
 TEST_F(GraphTests, DoubleInput1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(-1.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, y);
-    graph->getVariableSpace()->putVariable(-3, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(y));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(z));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {3});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {-2}, {3});
@@ -110,15 +110,15 @@ TEST_F(GraphTests, DoubleInput1) {
 TEST_F(GraphTests, SingleInput3) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto v0 = NDArrayFactory::create<float>('c', {5, 5});
-    auto v1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto v0 = NDArrayFactory::create<float>(  {5, 5});
+    auto v1 = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, v0);
-    graph->getVariableSpace()->putVariable(-3, v1);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(v0));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(v1));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2, 3});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {-2});
@@ -133,8 +133,8 @@ TEST_F(GraphTests, SingleInput3) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(1.4142135, v0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(1.0, v1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.4142135, v0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.0, v1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -142,15 +142,15 @@ TEST_F(GraphTests, SingleInput3) {
 TEST_F(GraphTests, SingleInput4) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto v0 = NDArrayFactory::create<float>('c', {5, 5});
-    auto v1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto v0 = NDArrayFactory::create<float>(  {5, 5});
+    auto v1 = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, v0);
-    graph->getVariableSpace()->putVariable(-3, v1);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(v0));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(v1));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -170,8 +170,8 @@ TEST_F(GraphTests, SingleInput4) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(1.0, v0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.4142135, v1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.0, v0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, v1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -180,19 +180,19 @@ TEST_F(GraphTests, SingleInput4) {
 TEST_F(GraphTests, DoubleInput2) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(-1.0);
 
-    auto z0 = NDArrayFactory::create<float>('c', {5, 5});
-    auto z1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto z0 = NDArrayFactory::create<float>(  {5, 5});
+    auto z1 = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, y);
-    graph->getVariableSpace()->putVariable(-3, z0);
-    graph->getVariableSpace()->putVariable(-4, z1);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(y));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(z0));
+    graph->getVariableSpace()->putVariable(-4, new NDArray(z1));
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -215,8 +215,8 @@ TEST_F(GraphTests, DoubleInput2) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(-1.4142135, z0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.0, z1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, z0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.0, z1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -225,22 +225,22 @@ TEST_F(GraphTests, DoubleInput2) {
 TEST_F(GraphTests, DoubleInput3) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(-1.0);
 
-    auto z0 = NDArrayFactory::create<float>('c', {5, 5});
-    auto z1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto z0 = NDArrayFactory::create<float>(  {5, 5});
+    auto z1 = NDArrayFactory::create<float>(  {5, 5});
 
-    auto w = NDArrayFactory::create<float>('c', {5, 5});
+    auto w = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, y);
-    graph->getVariableSpace()->putVariable(-3, z0);
-    graph->getVariableSpace()->putVariable(-4, z1);
-    graph->getVariableSpace()->putVariable(-5, w);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(y));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(z0));
+    graph->getVariableSpace()->putVariable(-4, new NDArray(z1));
+    graph->getVariableSpace()->putVariable(-5, new NDArray(w));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -279,26 +279,26 @@ TEST_F(GraphTests, DoubleInput3) {
 TEST_F(GraphTests, QuadInput1) {
     auto graph = new Graph();
 
-    auto x0 = NDArrayFactory::create<float>('c', {5, 5});
+    auto x0 = NDArrayFactory::create<float>(  {5, 5});
     x0.assign(0.0);
 
-    auto x1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto x1 = NDArrayFactory::create<float>(  {5, 5});
     x1.assign(-1.0);
 
-    auto x2 = NDArrayFactory::create<float>('c', {5, 5});
+    auto x2 = NDArrayFactory::create<float>(  {5, 5});
     x2.assign(-2.0);
 
-    auto x3 = NDArrayFactory::create<float>('c', {5, 5});
+    auto x3 = NDArrayFactory::create<float>(  {5, 5});
     x3.assign(-3.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
     z.assign(119.0);
 
-    graph->getVariableSpace()->putVariable(-1, x0);
-    graph->getVariableSpace()->putVariable(-2, x1);
-    graph->getVariableSpace()->putVariable(-3, x2);
-    graph->getVariableSpace()->putVariable(-4, x3);
-    graph->getVariableSpace()->putVariable(-5, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x0));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(x1));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(x2));
+    graph->getVariableSpace()->putVariable(-4, new NDArray(x3));
+    graph->getVariableSpace()->putVariable(-5, new NDArray(z));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {11});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {-2}, {11});
@@ -331,13 +331,13 @@ TEST_F(GraphTests, QuadInput1) {
 TEST_F(GraphTests, InternalBranching1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(0.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
 
     // 1.0
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Ones, 1, {-1}, {11, 21});
@@ -380,17 +380,17 @@ TEST_F(GraphTests, InternalBranching1) {
 TEST_F(GraphTests, ReductionsTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     for (int r = 0; r < x.rows(); r++) {
         for (int c = 0; c < x.columns(); c++) {
             x.p(r, c, -c);
         }
     }
 
-    auto z = NDArrayFactory::create<float>('c', {5});
+    auto z = NDArrayFactory::create<float>(  {5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
 
 //    sd::graph::Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input, std::initializer_list<int> output, std::initializer_list<int> dimensions, float scalar, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs) {
 
@@ -414,17 +414,17 @@ TEST_F(GraphTests, ReductionsTest1) {
 TEST_F(GraphTests, IndexReductionsTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     for (int r = 0; r < x.rows(); r++) {
         for (int c = 0; c < x.columns(); c++) {
             x.p(r, c, -c);
         }
     }
 
-    auto z = NDArrayFactory::create<Nd4jLong>('c', {5, 1});
-    auto axis = NDArrayFactory::create<Nd4jLong>('c', {1}, {1});
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, z);
+    auto z = NDArrayFactory::create<Nd4jLong>(  {5, 1});
+    auto axis = NDArrayFactory::create<Nd4jLong>(  {1}, {1});
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
     //graph->getVariableSpace()->putVariable(-3, axis);
 
 
@@ -442,16 +442,15 @@ TEST_F(GraphTests, IndexReductionsTest1) {
     ASSERT_NEAR(4.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
-    delete axis;
 }
 
 #if 0
 TEST_F(GraphTests, AutoOutput1) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph->getVariableSpace()->putVariable(-1, x);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA = new Node(OpType_TRANSFORM_FLOAT, 0, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, 35, 2, {1}, {});
@@ -483,10 +482,10 @@ TEST_F(GraphTests, AutoOutput1) {
 
 TEST_F(GraphTests, AutoOutput2) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph->getVariableSpace()->putVariable(-1, x);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, 0, 1, {-1}, {2, 3, -1});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, 35, 2, {1}, {});
@@ -523,19 +522,19 @@ TEST_F(GraphTests, AutoOutput2) {
 
 TEST_F(GraphTests, BroadcastTest1) {
     auto graph = new Graph();
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(0.f);
 
-    auto y = NDArrayFactory::create<float>('c', {1, 5});
+    auto y = NDArrayFactory::create<float>(  {1, 5});
     for (int e = 0; e < y.columns(); e++) {
         y.p(e, (float)e+1);
     }
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, y);
-    graph->getVariableSpace()->putVariable(-3, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(y));
+    graph->getVariableSpace()->putVariable(-3, new NDArray(z));
 
     auto nodeA = new Node(OpType_BROADCAST, broadcast::Subtract, 1, {-1, -2}, {2}, {1});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Neg, 2, {1}, {-3});
@@ -554,13 +553,13 @@ TEST_F(GraphTests, BroadcastTest1) {
 TEST_F(GraphTests, ScalarTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, z);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -583,13 +582,13 @@ TEST_F(GraphTests, ScalarTest1) {
 TEST_F(GraphTests, SymbolicLookupTest1) {
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -641,13 +640,13 @@ TEST_F(GraphTests, OutputValidation1) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -678,13 +677,13 @@ TEST_F(GraphTests, OutputValidation2) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.f);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -720,13 +719,13 @@ TEST_F(GraphTests, OutputValidation3) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_IMPLICIT;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    x->assign(-2.0);
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    x.assign(-2.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -760,13 +759,13 @@ TEST_F(GraphTests, OutputValidation4) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_EXPLICIT_AND_IMPLICIT;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -806,13 +805,13 @@ TEST_F(GraphTests, OutputValidation5) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_VARIABLE_SPACE;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -846,13 +845,13 @@ TEST_F(GraphTests, OutputValidation6) {
 
     graph->getExecutorConfiguration()->_outputMode = OutputMode_VARIABLE_SPACE;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
 
-    auto vX = new Variable(x);
-    auto vZ = new Variable(z);
+    auto vX = new Variable(new NDArray(x));
+    auto vZ = new Variable(new NDArray(z));
 
     std::string a("alpha");
     std::string o("omega");
@@ -892,14 +891,14 @@ TEST_F(GraphTests, TestMultiOutput1) {
     sd::ops::testop2i2o op1;
     auto graph = new Graph();
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(-3.0f);
 
-    graph->getVariableSpace()->putVariable(-1, x);
-    graph->getVariableSpace()->putVariable(-2, y);
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, new NDArray(y));
 
 
     // Abs
@@ -962,10 +961,10 @@ TEST_F(GraphTests, TestDivergentNode1) {
 TEST_F(GraphTests, MemoryEstimationTest1) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA0 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeA1 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {});
@@ -985,10 +984,10 @@ TEST_F(GraphTests, MemoryEstimationTest1) {
 TEST_F(GraphTests, MemoryEstimationTest2) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA0 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeA1 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {});
@@ -1008,10 +1007,10 @@ TEST_F(GraphTests, MemoryEstimationTest2) {
 TEST_F(GraphTests, MemoryEstimationTest3) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA0 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeA1 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {3});
@@ -1033,10 +1032,10 @@ TEST_F(GraphTests, MemoryEstimationTest3) {
 TEST_F(GraphTests, MemoryEstimationTest4) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     auto nodeA0 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeA1 = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {3});
@@ -1058,10 +1057,10 @@ TEST_F(GraphTests, MemoryEstimationTest4) {
 TEST_F(GraphTests, MemoryEstimationTest5) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-2.0f);
 
-    graph.getVariableSpace()->putVariable(-1, x);
+    graph.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     sd::ops::testcustom op;
 
@@ -1092,14 +1091,14 @@ TEST_F(GraphTests, TestGraphInGraph_1) {
     // and this ons is embedded
     Graph graphB;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-5.0f);
 
-    auto modifier = NDArrayFactory::create<float>('c', {5, 5});
+    auto modifier = NDArrayFactory::create<float>(  {5, 5});
     modifier.assign(3.0f);
 
-    graphA.getVariableSpace()->putVariable(-1, x);
-    graphB.getVariableSpace()->putVariable(-2, modifier);
+    graphA.getVariableSpace()->putVariable(-1, new NDArray(x));
+    graphB.getVariableSpace()->putVariable(-2, new NDArray(modifier));
 
     // this is placeholder variable
     graphB.getVariableSpace()->putVariable(-1, new Variable(true));
@@ -1158,16 +1157,16 @@ TEST_F(GraphTests, TestGraphInGraph_2) {
     // and this ons is embedded
     Graph graphB;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-5.0f);
 
-    auto modifier = NDArrayFactory::create<float>('c', {5, 5});
+    auto modifier = NDArrayFactory::create<float>(  {5, 5});
     modifier.assign(3.0f);
 
     std::string nameA1("_nodeA1");
     
-    graphA.getVariableSpace()->putVariable(-1, x);
-    graphB.getVariableSpace()->putVariable(-2, modifier);
+    graphA.getVariableSpace()->putVariable(-1, new NDArray(x));
+    graphB.getVariableSpace()->putVariable(-2, new NDArray(modifier));
 
     // this is placeholder variable
     auto placeHolder = new Variable(true);
@@ -1223,7 +1222,7 @@ TEST_F(GraphTests, TestGraphInGraph_2) {
 
 #if 0
 TEST_F(GraphTests, Test_Clone_1) {
-    auto exp = NDArrayFactory::create<float>('c', {3});
+    auto exp = NDArrayFactory::create<float>(  {3});
     exp.assign(3.0);
 
 
@@ -1261,7 +1260,7 @@ TEST_F(GraphTests, Test_Clone_1) {
 
 
 TEST_F(GraphTests, Test_Clone_2) {
-    auto exp = NDArrayFactory::create<float>('c', {3});
+    auto exp = NDArrayFactory::create<float>(  {3});
     exp.assign(3.0);
 
 
@@ -1296,8 +1295,8 @@ TEST_F(GraphTests, Test_Clone_2) {
 }
 
 TEST_F(GraphTests, Test_Dtype_Conversion_1) {
-    /*auto expD = NDArrayFactory::create<double>('c', {3}, {3.0, 3.0, 3.0});
-    auto expF = NDArrayFactory::create<float>('c', {3}, {3.0, 3.0, 3.0});
+    /*auto expD = NDArrayFactory::create<double>(  {3}, {3.0, 3.0, 3.0});
+    auto expF = NDArrayFactory::create<float>(  {3}, {3.0, 3.0, 3.0});
 
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
     graph->buildGraph();
@@ -1486,7 +1485,7 @@ TEST_F(GraphTests, OpListTest_4) {
 
 
 TEST_F(GraphTests, Test_Inplace_Execution_1) {
-    auto exp = NDArrayFactory::create<float>('c', {5, 4}, {0.32454616f, -0.06604697f, 0.22593613f, 0.43166467f, -0.18320604f, 0.00102305f, -0.06963076f, 0.25266643f, 0.07568010f, -0.03009197f, 0.07805517f, 0.33180334f, -0.06220427f, 0.07249600f, -0.06726961f, -0.22998397f, -0.06343779f, 0.07384885f, -0.06891008f,  -0.23745790f});
+    auto exp = NDArrayFactory::create<float>(  {5, 4}, {0.32454616f, -0.06604697f, 0.22593613f, 0.43166467f, -0.18320604f, 0.00102305f, -0.06963076f, 0.25266643f, 0.07568010f, -0.03009197f, 0.07805517f, 0.33180334f, -0.06220427f, 0.07249600f, -0.06726961f, -0.22998397f, -0.06343779f, 0.07384885f, -0.06891008f,  -0.23745790f});
 
     auto graph = GraphExecutioner::importFromFlatBuffers("./resources/ae_00.fb");
     // graph->printOut();
@@ -1517,10 +1516,10 @@ TEST_F(GraphTests, Test_Inplace_Execution_1) {
 TEST_F(GraphTests, Test_Inplace_Execution_2) {
     Graph graphA;
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(-5.0f);
 
-    graphA.getVariableSpace()->putVariable(-1, x);
+    graphA.getVariableSpace()->putVariable(-1, new NDArray(x));
 
     // abs, result is 5
     auto nodeA0 = new Node(OpType_TRANSFORM_SAME, 0, 1, {-1}, {});
@@ -1564,9 +1563,9 @@ TEST_F(GraphTests, Test_Inplace_Execution_2) {
 #endif
 
 TEST_F(GraphTests, Test_Inplace_Outputs_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto exp = NDArrayFactory::create<float>('c', {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>('c', {2, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto exp = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto z = NDArrayFactory::create<float>(  {2, 3});
 
     sd::ops::test_output_reshape op;
     auto result = op.execute({&x}, {&z}, {}, {}, {});
@@ -1580,9 +1579,9 @@ TEST_F(GraphTests, Test_Inplace_Outputs_2) {
 #ifndef __APPLE_OS__
     // we dont want testing this on apple. due to try/catch
 
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto exp = NDArrayFactory::create<float>('c', {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>('c', {3, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto exp = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto z = NDArrayFactory::create<float>(  {3, 3});
 
     bool failed = false;
     sd::ops::test_output_reshape op;
