@@ -42,6 +42,7 @@ import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.layers.FrozenLayerWithBackprop;
 import org.deeplearning4j.nn.layers.LayerHelper;
+import org.deeplearning4j.nn.layers.OutputLayer;
 import org.deeplearning4j.nn.layers.recurrent.BidirectionalLayer;
 import org.deeplearning4j.nn.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.updater.UpdaterCreator;
@@ -56,6 +57,9 @@ import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.util.NetworkUtils;
 import org.deeplearning4j.util.OutputLayerUtil;
 import org.nd4j.adapters.OutputAdapter;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -87,6 +91,8 @@ import org.nd4j.linalg.heartbeat.utils.TaskUtils;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
+import org.nd4j.linalg.lossfunctions.ILossFunction;
+import org.nd4j.linalg.lossfunctions.SameDiffLoss;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.util.FeatureUtil;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
@@ -753,6 +759,88 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
         }
 
         synchronizeIterEpochCounts();
+    }
+
+    /**
+     * Create the MultiLayerNetwork in a SameDiff instance.
+     * @param sameDiff The SameDiff instance to create the model in
+     * @param inferenceOnly If true, only create variables for inference (no labels or loss).
+     */
+    public void toSameDiff(@NonNull SameDiff sameDiff, boolean inferenceOnly){
+        if (!isInitCalled())
+            init();
+
+        SDVariable input = sameDiff.placeHolder("input", input().dataType(), input().shape());
+        SDVariable lastOutput = input;
+        for(int i = 0 ; i < layers.length ; i++){
+            Layer layer = layers[i];
+
+            NameScope layerScope = sameDiff.withNameScope("layer_" + i);
+
+            Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
+            for(Map.Entry<String, INDArray> entry : layer.paramTable().entrySet()){
+                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), entry.getValue()));
+            }
+
+            if(layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer){
+                org.deeplearning4j.nn.conf.layers.Layer config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
+
+                //TODO support masks
+                lastOutput = config.defineLayer(sameDiff, lastOutput, paramTable, null);
+
+            } else {
+                throw new UnsupportedOperationException("Can't convert non-Layer layers");
+            }
+
+            layerScope.close();
+        }
+
+        sameDiff.setOutputs(lastOutput);
+
+        Layer lastLayer = getOutputLayer();
+
+        if(!inferenceOnly && lastLayer instanceof OutputLayer){
+            OutputLayer outputLayer = (OutputLayer) lastLayer;
+            SDVariable labels = sameDiff.placeHolder("labels", this.labels.dataType(), this.labels.shape());
+            ILossFunction lossFn = outputLayer.layerConf().getLossFn();
+
+            //TODO make all losses SameDiffLoss / add a conversion method (and make interface abstract class?)
+            if(lossFn instanceof SameDiffLoss){
+                SDVariable loss = ((SameDiffLoss) lossFn).defineLoss(sameDiff, lastOutput, labels);
+                sameDiff.setLossVariables(loss);
+            } else {
+                throw new UnsupportedOperationException("Can't convert a non-SameDiffLoss loss");
+            }
+
+        }
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, boolean)}.  {@code inferenceOnly} is false.
+     */
+    public void toSameDiff(@NonNull SameDiff sameDiff){
+        toSameDiff(sameDiff, false);
+    }
+
+
+    /**
+     * Convert the MultiLayerNetwork to a SameDiff instance.
+     * See {@link #toSameDiff(SameDiff, boolean)}.
+     */
+    public SameDiff toSameDiff(boolean inferenceOnly){
+        SameDiff sameDiff = SameDiff.create();
+        toSameDiff(sameDiff, inferenceOnly);
+        return sameDiff;
+    }
+
+    /**
+     * Convert the MultiLayerNetwork to a SameDiff instance.
+     * See {@link #toSameDiff(SameDiff)}.
+     */
+    public SameDiff toSameDiff(){
+        SameDiff sameDiff = SameDiff.create();
+        toSameDiff(sameDiff);
+        return sameDiff;
     }
 
     /**

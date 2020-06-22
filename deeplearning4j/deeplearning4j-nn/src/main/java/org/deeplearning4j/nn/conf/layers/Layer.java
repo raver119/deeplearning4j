@@ -19,6 +19,7 @@ package org.deeplearning4j.nn.conf.layers;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.api.TrainingConfig;
@@ -28,8 +29,11 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.dropout.Dropout;
 import org.deeplearning4j.nn.conf.dropout.IDropout;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.samediff.SDLayerParams;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.learning.config.IUpdater;
@@ -95,6 +99,20 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
             this.constraints = null;
         }
         this.iDropout = builder.iDropout;
+    }
+
+
+    /**
+     * Define the layer for SameDiff conversion
+     *
+     * @param sameDiff SameDiff instance
+     * @param layerInput Input to the layer
+     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
+     * @param mask Optional, maybe null. Mask to apply if supported
+     * @return The final layer variable corresponding to the activations/output from the forward pass
+     */
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull Map<String, SDVariable> paramTable, SDVariable mask){
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 
     /**
