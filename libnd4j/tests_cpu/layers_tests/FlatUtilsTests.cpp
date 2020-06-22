@@ -32,7 +32,7 @@ public:
 };
 
 TEST_F(FlatUtilsTests, flat_float_serde_1) {
-    auto array = NDArrayFactory::create<float>('c', {4}, {1.f, 2.f, 3.f, 4.f});
+    auto array = NDArrayFactory::create<float>(  {4}, {1.f, 2.f, 3.f, 4.f});
 
     flatbuffers::FlatBufferBuilder builder(1024);
     auto flatArray = FlatUtils::toFlatArray(builder, array);
@@ -49,7 +49,7 @@ TEST_F(FlatUtilsTests, flat_float_serde_1) {
 }
 
 TEST_F(FlatUtilsTests, flat_int_serde_1) {
-    auto array = NDArrayFactory::create<int>('c', {4}, {1, 2, 3, 4});
+    auto array = NDArrayFactory::create<int>(  {4}, {1, 2, 3, 4});
 
     flatbuffers::FlatBufferBuilder builder(1024);
     auto flatArray = FlatUtils::toFlatArray(builder, array);
@@ -66,7 +66,7 @@ TEST_F(FlatUtilsTests, flat_int_serde_1) {
 }
 
 TEST_F(FlatUtilsTests, flat_bool_serde_1) {
-    auto array = NDArrayFactory::create<bool>('c', {4}, {true, false, true, false});
+    auto array = NDArrayFactory::create<bool>(  {4}, {true, false, true, false});
 
     flatbuffers::FlatBufferBuilder builder(1024);
     auto flatArray = FlatUtils::toFlatArray(builder, array);
@@ -83,7 +83,7 @@ TEST_F(FlatUtilsTests, flat_bool_serde_1) {
 }
 
 TEST_F(FlatUtilsTests, flat_string_serde_1) {
-    auto array = NDArrayFactory::string( {3}, {"alpha", "beta", "gamma"});
+    auto array = NDArrayFactory::string( {3}, {std::string("alpha"), std::string("beta"), std::string("gamma")});
 
     flatbuffers::FlatBufferBuilder builder(1024);
     auto flatArray = FlatUtils::toFlatArray(builder, array);
