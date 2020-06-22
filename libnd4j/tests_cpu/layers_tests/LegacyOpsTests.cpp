@@ -41,10 +41,10 @@ class LegacyOpsTests : public testing::Test {
 
 
 TEST_F(LegacyOpsTests, TransformTests_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
-    auto z = NDArrayFactory::create<float>('c', {5,5});
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(-1.0);
 
     sd::ops::LegacyTransformSameOp op(transform::Neg); // Neg
@@ -55,10 +55,10 @@ TEST_F(LegacyOpsTests, TransformTests_1) {
 }
 
 TEST_F(LegacyOpsTests, TransformTests_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
 
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(-1.0);
 
     sd::ops::LegacyTransformSameOp op(transform::Neg); // Neg
@@ -74,10 +74,10 @@ TEST_F(LegacyOpsTests, TransformTests_2) {
 }
 
 TEST_F(LegacyOpsTests,  Reciprocal_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(2.0f);
 
-    auto ethalon = NDArrayFactory::create<float>('c', {5, 5});
+    auto ethalon = NDArrayFactory::create<float>(  {5, 5});
     ethalon.assign(0.5f);
 
     sd::ops::LegacyTransformSameOp op(transform::Reciprocal); // Reciprocal
@@ -89,13 +89,13 @@ TEST_F(LegacyOpsTests,  Reciprocal_1) {
 }
 
 TEST_F(LegacyOpsTests,  PWT_Tests_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(2.0);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(3.0);
 
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(6.0);
 
     sd::ops::LegacyPairwiseTransformOp op(pairwise::Multiply); // Multiply
@@ -109,13 +109,13 @@ TEST_F(LegacyOpsTests,  PWT_Tests_1) {
 }
 
 TEST_F(LegacyOpsTests,  PWT_Tests_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(2.0);
 
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     y.assign(3.0);
 
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(6.0);
 
     sd::ops::LegacyPairwiseTransformOp op(pairwise::Multiply); // Multiply
@@ -130,10 +130,10 @@ TEST_F(LegacyOpsTests,  PWT_Tests_2) {
 }
 
 TEST_F(LegacyOpsTests, Scalar_Test_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(2.0);
 
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(7.0);
 
     sd::ops::LegacyScalarOp op(scalar::Add);
@@ -143,10 +143,10 @@ TEST_F(LegacyOpsTests, Scalar_Test_1) {
 }
 
 TEST_F(LegacyOpsTests, Scalar_Test_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(2.0);
 
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     exp.assign(7.0);
 
     auto y = NDArrayFactory::create<float>(5.0f);
@@ -162,7 +162,7 @@ TEST_F(LegacyOpsTests, Scalar_Test_2) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
     int opNum = reduce::Sum;
     sd::ops::LegacyReduceSameOp op(opNum);
@@ -181,11 +181,11 @@ TEST_F(LegacyOpsTests, ReduceTests_1) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
 
     sd::ops::LegacyReduceSameOp op(reduce::Sum);
-    auto axis = NDArrayFactory::create<Nd4jLong>('c', {1}, {1});
+    auto axis = NDArrayFactory::create<Nd4jLong>(  {1}, {1});
     auto result = op.evaluate({&x, &axis}, {}, {});
 
     ASSERT_EQ(1, result.size());
@@ -202,9 +202,9 @@ TEST_F(LegacyOpsTests, ReduceTests_2) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_3) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
     x.linspace(1);
-    auto indices = NDArrayFactory::create<int>('c', {1,1}, {1});
+    auto indices = NDArrayFactory::create<int>(  {1,1}, {1});
 
 
     sd::ops::LegacyReduceSameOp op(reduce::Sum);
@@ -222,9 +222,9 @@ TEST_F(LegacyOpsTests, ReduceTests_3) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_4) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3, 5});
+    auto x = NDArrayFactory::create<float>(  {2, 3, 5});
     x.linspace(1);
-    auto indices = NDArrayFactory::create<int>('c', {1, 1}, {1});
+    auto indices = NDArrayFactory::create<int>(  {1, 1}, {1});
 
 
     sd::ops::LegacyReduceSameOp op(reduce::Sum);
@@ -242,7 +242,7 @@ TEST_F(LegacyOpsTests, ReduceTests_4) {
 }
 
 TEST_F(LegacyOpsTests, ReduceTests_5) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
     int opNum = reduce::Mean;
     sd::ops::LegacyReduceFloatOp op(opNum);
@@ -261,9 +261,9 @@ TEST_F(LegacyOpsTests, ReduceTests_5) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_6) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.assign(1.0);
-    auto axis = NDArrayFactory::create<int>('c', {1}, {1});
+    auto axis = NDArrayFactory::create<int>(  {1}, {1});
     sd::ops::LegacyReduceFloatOp op(reduce::Mean);
 
     auto result = op.evaluate({&x, &axis}, {}, {});
@@ -282,9 +282,9 @@ TEST_F(LegacyOpsTests, ReduceTests_6) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_7) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
     x.linspace(1);
-    auto indices = NDArrayFactory::create<int>('c', {1,1}, {1});
+    auto indices = NDArrayFactory::create<int>(  {1,1}, {1});
 
 
     sd::ops::LegacyReduceFloatOp op(reduce::Mean);
@@ -302,9 +302,9 @@ TEST_F(LegacyOpsTests, ReduceTests_7) {
 
 
 TEST_F(LegacyOpsTests, ReduceTests_8) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3, 5});
+    auto x = NDArrayFactory::create<float>(  {2, 3, 5});
     x.linspace(1);
-    auto indices = NDArrayFactory::create<int>('c', {1}, {1});
+    auto indices = NDArrayFactory::create<int>(  {1}, {1});
 
 
     sd::ops::LegacyReduceFloatOp op(reduce::Mean);
@@ -324,7 +324,7 @@ TEST_F(LegacyOpsTests, ReduceTests_8) {
 
 
 TEST_F(LegacyOpsTests, IndexReduceTests_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     x.linspace(1);
 
     sd::ops::LegacyIndexReduceOp op(indexreduce::IndexMax);
@@ -343,10 +343,10 @@ TEST_F(LegacyOpsTests, IndexReduceTests_1) {
 
 
 TEST_F(LegacyOpsTests, IndexReduceTests_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto indices = NDArrayFactory::create<int>('c', {1}, {1});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto indices = NDArrayFactory::create<int>(  {1}, {1});
     x.linspace(1);
-    auto exp = NDArrayFactory::create<Nd4jLong>({4,4,4,4,4});
+    auto exp = NDArrayFactory::vector<Nd4jLong>({4,4,4,4,4});
     sd::ops::LegacyIndexReduceOp op(indexreduce::IndexMax);
 
     auto result = op.evaluate({&x, &indices}, {}, {});
@@ -366,12 +366,12 @@ TEST_F(LegacyOpsTests, IndexReduceTests_2) {
 }
 
 TEST_F(LegacyOpsTests, BroadcastingTests_1) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5});
+    auto x = NDArrayFactory::create<double>(  {5, 5});
     x.assign(0.0f);
 
-    auto row = NDArrayFactory::create<double>('c', {1, 5});
+    auto row = NDArrayFactory::create<double>(  {1, 5});
     row.linspace(1);
-    auto axis = NDArrayFactory::create<int>('c', {1}, {1});
+    auto axis = NDArrayFactory::create<int>(  {1}, {1});
     sd::ops::LegacyBroadcastOp op(broadcast::Add);
     Nd4jStatus status = op.execute({&x, &row, &axis}, {&x}, {}, {}, {});
 
@@ -385,9 +385,9 @@ TEST_F(LegacyOpsTests, BroadcastingTests_1) {
 }
 
 TEST_F(LegacyOpsTests, BroadcastingTests_2) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 1, 1, 1, 1});
-    auto y = NDArrayFactory::create<double>('c', {10, 5});
-    auto e = NDArrayFactory::create<double>('c', {10, 5});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 1, 1, 1, 1});
+    auto y = NDArrayFactory::create<double>(  {10, 5});
+    auto e = NDArrayFactory::create<double>(  {10, 5});
     y.assign(3.0);
     e.assign(4.0);
 
@@ -406,8 +406,8 @@ TEST_F(LegacyOpsTests, BroadcastingTests_2) {
 }
 
 TEST_F(LegacyOpsTests, PowDerivative_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     x.assign(3.f);
     exp.assign(6.f);
 
@@ -452,11 +452,11 @@ TEST_F(LegacyOpsTests, reduce3_1) {
 
 
 TEST_F(LegacyOpsTests, Reduce3_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5});
-    auto z = NDArrayFactory::create<float>('c', {5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5});
+    auto z = NDArrayFactory::create<float>(  {5});
 
-    auto dim = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();
 
     sd::LaunchContext* context = sd::LaunchContext::defaultContext();
@@ -488,15 +488,15 @@ TEST_F(LegacyOpsTests, Reduce3_2) {
 }
 
 TEST_F(LegacyOpsTests, Reduce3_3) {
-    auto x = NDArrayFactory::create<double>('c', {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
+    auto x = NDArrayFactory::create<double>(  {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
                                                           -0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673,
                                                           0.62955373525, -0.31357592344, 1.03362500667, -0.59279078245, 1.1914824247});
 
-    auto y = NDArrayFactory::create<double>('c', {5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
-    auto e = NDArrayFactory::create<double>('c', {3}, {0.577452, 0.0, 1.80182});
-    auto z = NDArrayFactory::create<double>('c', {3});
+    auto y = NDArrayFactory::create<double>(  {5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
+    auto e = NDArrayFactory::create<double>(  {3}, {0.577452, 0.0, 1.80182});
+    auto z = NDArrayFactory::create<double>(  {3});
 
-    auto dim = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();
 
     sd::LaunchContext* context = sd::LaunchContext::defaultContext();
@@ -528,15 +528,15 @@ TEST_F(LegacyOpsTests, Reduce3_3) {
 }
 
 TEST_F(LegacyOpsTests, Reduce3_4) {
-    auto x = NDArrayFactory::create<double>('c', {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
+    auto x = NDArrayFactory::create<double>(  {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
                                                           -0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673,
                                                           0.62955373525, -0.31357592344, 1.03362500667, -0.59279078245, 1.1914824247});
 
-    auto y = NDArrayFactory::create<double>('c', {1, 5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
-    auto e = NDArrayFactory::create<double>('c', {1, 3}, {0.577452, 0.0, 1.80182});
-    auto z = NDArrayFactory::create<double>('c', {1, 3});
+    auto y = NDArrayFactory::create<double>(  {1, 5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
+    auto e = NDArrayFactory::create<double>(  {1, 3}, {0.577452, 0.0, 1.80182});
+    auto z = NDArrayFactory::create<double>(  {1, 3});
 
-    auto dim = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();
 
     sd::LaunchContext* context = sd::LaunchContext::defaultContext();
@@ -570,15 +570,15 @@ TEST_F(LegacyOpsTests, Reduce3_4) {
 }
 
 TEST_F(LegacyOpsTests, Reduce3_5) {
-    auto x = NDArrayFactory::create<double>('c', {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
+    auto x = NDArrayFactory::create<double>(  {3, 5}, {-0.84443557262, -0.06822254508, 0.74266910552, 0.61765557527, -0.77555125951,
                                                           -0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673,
                                                           0.62955373525, -0.31357592344, 1.03362500667, -0.59279078245, 1.1914824247});
 
-    auto y = NDArrayFactory::create<double>('c', {1, 5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
-    auto e = NDArrayFactory::create<double>('c', {1, 3}, {0.577452, 0.0, 1.80182});
-    auto z = NDArrayFactory::create<double>('c', {1, 3});
+    auto y = NDArrayFactory::create<double>(  {1, 5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
+    auto e = NDArrayFactory::create<double>(  {1, 3}, {0.577452, 0.0, 1.80182});
+    auto z = NDArrayFactory::create<double>(  {1, 3});
 
-    auto dim = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();
 
     sd::LaunchContext* context = sd::LaunchContext::defaultContext();
@@ -611,10 +611,10 @@ TEST_F(LegacyOpsTests, Reduce3_5) {
 }
 
 TEST_F(LegacyOpsTests, test_Reduce3_All_1) {
-    auto x = NDArrayFactory::create<float>('c', {1000, 100});
-    auto y = NDArrayFactory::create<float>('c', {1, 100});
-    auto z = NDArrayFactory::create<float>('c', {1000, 1});
-    auto dim = NDArrayFactory::create<int>('c', {1}, {-1});
+    auto x = NDArrayFactory::create<float>(  {1000, 100});
+    auto y = NDArrayFactory::create<float>(  {1, 100});
+    auto z = NDArrayFactory::create<float>(  {1000, 1});
+    auto dim = NDArrayFactory::create<int>(  {1}, {-1});
 
     auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), -1);
     auto tadPackY = sd::ConstantTadHelper::getInstance()->tadForDimensions(y.shapeInfo(), -1);
@@ -647,9 +647,9 @@ TEST_F(LegacyOpsTests, test_Reduce3_All_1) {
 
 
 TEST_F(LegacyOpsTests, test_inverse_broadcast_1) {
-    auto x = NDArrayFactory::create<float>('c', {4}, {2.0f, 2.0f, 2.0f, 2.0f});
-    auto y = NDArrayFactory::create<float>('c', {3, 4});
-    auto e = NDArrayFactory::create<float>('c', {3, 4});
+    auto x = NDArrayFactory::create<float>(  {4}, {2.0f, 2.0f, 2.0f, 2.0f});
+    auto y = NDArrayFactory::create<float>(  {3, 4});
+    auto e = NDArrayFactory::create<float>(  {3, 4});
     e.assign(2.0f);
 
     auto tadPackY = sd::ConstantTadHelper::getInstance()->tadForDimensions(y.shapeInfo(), 1);
@@ -668,10 +668,10 @@ TEST_F(LegacyOpsTests, test_inverse_broadcast_1) {
 }
 
 TEST_F(LegacyOpsTests, test_inverse_broadcast_2) {
-    auto x = NDArrayFactory::create<float>('c', {4}, {2.0f, 2.0f, 2.0f, 2.0f});
-    auto y = NDArrayFactory::create<float>('c', {3, 4});
-    auto z = NDArrayFactory::create<bool>('c', {3, 4});
-    auto e = NDArrayFactory::create<bool>('c', {3, 4});
+    auto x = NDArrayFactory::create<float>(  {4}, {2.0f, 2.0f, 2.0f, 2.0f});
+    auto y = NDArrayFactory::create<float>(  {3, 4});
+    auto z = NDArrayFactory::create<bool>(  {3, 4});
+    auto e = NDArrayFactory::create<bool>(  {3, 4});
     e.assign(false);
 
     auto row = y(1, {0});
@@ -697,9 +697,9 @@ TEST_F(LegacyOpsTests, test_inverse_broadcast_2) {
 }
 
 TEST_F(LegacyOpsTests, test_legacy_reduce_empty_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 0, 3});
-    auto z = NDArrayFactory::create<float>('c', {2, 3});
-    auto e = NDArrayFactory::create<float>('c', {2, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 0, 3});
+    auto z = NDArrayFactory::create<float>(  {2, 3});
+    auto e = NDArrayFactory::create<float>(  {2, 3});
 
     int dim = 1;
 
@@ -713,9 +713,9 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_1) {
 }
 
 TEST_F(LegacyOpsTests, test_legacy_reduce_empty_2) {
-    auto x = NDArrayFactory::create<float>('c', {2, 0, 3});
-    auto z = NDArrayFactory::create<float>('c', {2, 3});
-    auto e = NDArrayFactory::create<float>('c', {2, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 0, 3});
+    auto z = NDArrayFactory::create<float>(  {2, 3});
+    auto e = NDArrayFactory::create<float>(  {2, 3});
     e.assign(std::numeric_limits<float>::infinity());
 
     int dim = 1;
@@ -726,9 +726,9 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_2) {
 }
 
 TEST_F(LegacyOpsTests, test_legacy_reduce_empty_3) {
-    auto x = NDArrayFactory::create<float>('c', {2, 0, 3});
-    auto z = NDArrayFactory::create<float>('c', {2, 3});
-    auto e = NDArrayFactory::create<float>('c', {2, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 0, 3});
+    auto z = NDArrayFactory::create<float>(  {2, 3});
+    auto e = NDArrayFactory::create<float>(  {2, 3});
     e.assign(-std::numeric_limits<float>::infinity());
 
     int dim = 1;
@@ -743,10 +743,10 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_4) {
         return;
     int a = 0;
 
-    auto x = NDArrayFactory::create<float>('c', {1, 0, 2});
-    auto d = NDArrayFactory::create<int>('c', {1}, {a});
-    auto z = NDArrayFactory::create<float>('c', {0, 2});
-    auto e = NDArrayFactory::create<float>('c', {0, 2});
+    auto x = NDArrayFactory::create<float>(  {1, 0, 2});
+    auto d = NDArrayFactory::create<int>(  {1}, {a});
+    auto z = NDArrayFactory::create<float>(  {0, 2});
+    auto e = NDArrayFactory::create<float>(  {0, 2});
 
     InteropDataBuffer xdb(x.dataBuffer());
     InteropDataBuffer ddb(d.dataBuffer());
@@ -762,7 +762,7 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_4) {
 }
 
 TEST_F(LegacyOpsTests, test_legacy_transform_float_1) {
-    auto x = NDArrayFactory::create<float>('c', {1, 0, 4});
+    auto x = NDArrayFactory::create<float>(  {1, 0, 4});
 
     NativeOpExecutioner::execTransformFloat(LaunchContext::defaultContext(), transform::FloatOps::RSqrt, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), nullptr, nullptr, nullptr);
 }

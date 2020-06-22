@@ -1280,14 +1280,14 @@ TEST_F(JavaInteropTests, test_size_dtype_1) {
 }
 
 TEST_F(JavaInteropTests, test_expandable_array_op_1) {
-    auto x = NDArrayFactory::string( {2}, {"first string", "second"});
+    auto x = NDArrayFactory::string( {2}, std::vector<char const*>{"first string", "second"});
     auto d = NDArrayFactory::string(" ", sd::DataType::UTF8);
 
     auto z0 = NDArrayFactory::create<Nd4jLong>(  {6});
-    auto z1 = NDArrayFactory::string( {3}, {"", "", ""});
+    auto z1 = NDArrayFactory::string( {3}, std::vector<char const*>{"", "", ""});
 
     auto exp0 = NDArrayFactory::vector<Nd4jLong>({0,0, 0,1, 1,0});
-    auto exp1 = NDArrayFactory::string( {3}, {"first", "string", "second"});
+    auto exp1 = NDArrayFactory::string( {3}, std::vector<char const*>{"first", "string", "second"});
 
     InteropDataBuffer iz0(z0.dataBuffer());
     InteropDataBuffer iz1(z1.dataBuffer());
