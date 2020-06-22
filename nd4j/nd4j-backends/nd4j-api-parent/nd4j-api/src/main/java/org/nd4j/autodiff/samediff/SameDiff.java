@@ -1312,6 +1312,34 @@ public class SameDiff extends SDBaseOps {
         return this.outputs;
     }
 
+
+
+    /**
+     * See {@link #setOutputs(List)}
+     */
+    public void setOutputs(SDVariable... outputs){
+        setVariableOutputs(outputs == null ? null : Arrays.asList(outputs));
+    }
+
+
+    /**
+     * See {@link #setOutputs(List)}
+     */
+    public void setVariableOutputs(List<SDVariable> outputs){
+
+        if(outputs != null){
+            List<String> names = new ArrayList<>(outputs.size());
+            for(SDVariable sdv : outputs){
+                Preconditions.checkArgument(sdv.sameDiff == this, "Can't set output to SDVariable in different SameDiff instance.");
+                names.add(sdv.name());
+            }
+
+            setOutputs(names);
+        } else {
+            setOutputs((List<String>) null);
+        }
+    }
+
     /**
      * See {@link #setOutputs(List)}
      */
