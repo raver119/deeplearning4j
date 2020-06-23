@@ -90,6 +90,9 @@ public class MultiLayerConfiguration implements Serializable, Cloneable {
     //Counter for the number of epochs completed so far. Used for per-epoch schedules
     protected int epochCount = 0;
 
+    @Getter
+    protected InputType inputType;
+
     public int getEpochCount() {
         return epochCount;
     }
@@ -715,6 +718,7 @@ public class MultiLayerConfiguration implements Serializable, Cloneable {
             conf.inferenceWorkspaceMode = inferenceWorkspaceMode;
             conf.cacheMode = cacheMode;
             conf.dataType = dataType;
+            conf.inputType = inputType;
 
             Nd4j.getRandom().setSeed(conf.getConf(0).getSeed());
 
