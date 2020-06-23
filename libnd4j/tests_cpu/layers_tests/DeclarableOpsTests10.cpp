@@ -46,7 +46,7 @@ class TypedDeclarableOpsTests10 : public testing::Test {
 };
 
 typedef ::testing::Types<double, float> TestingTypes;
-TYPED_TEST_CASE(TypedDeclarableOpsTests10, TestingTypes);
+TYPED_TEST_SUITE(TypedDeclarableOpsTests10, TestingTypes);
 
 TEST_F(DeclarableOpsTests10, Test_ArgMax_1) {
   auto x = NDArrayFactory::create<double>('c', {3, 3});

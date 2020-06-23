@@ -47,7 +47,7 @@ class TypedDeclarableOpsTests7 : public testing::Test {
 };
 
 typedef ::testing::Types<double, float> TestingTypes;
-TYPED_TEST_CASE(TypedDeclarableOpsTests7, TestingTypes);
+TYPED_TEST_SUITE(TypedDeclarableOpsTests7, TestingTypes);
 
 TEST_F(DeclarableOpsTests7, Test_CHOOSE_SCALAR_LARGE) {
   double inputData[150] = {

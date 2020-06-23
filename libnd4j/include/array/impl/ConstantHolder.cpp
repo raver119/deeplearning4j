@@ -28,6 +28,24 @@ ConstantHolder::ConstantHolder(const ConstantHolder& other) {
   _deviceId = other._deviceId;
 }
 
+ConstantHolder &ConstantHolder::operator=(const ConstantHolder &other) {
+  if (this == &other) return *this;
+
+  _buffers = other._buffers;
+  _deviceId = other._deviceId;
+
+  return *this;
+}
+
+ConstantHolder &ConstantHolder::operator=(ConstantHolder &&other) {
+  if (this == &other) return *this;
+
+  _buffers = std::move(other._buffers);
+  _deviceId = other._deviceId;
+
+  return *this;
+}
+
 bool ConstantHolder::hasBuffer(sd::DataType dataType) {
   return _buffers.count(dataType) > 0;
 }

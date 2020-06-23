@@ -45,7 +45,7 @@ class TypedDeclarableOpsTests8 : public testing::Test {
 };
 
 typedef ::testing::Types<double, float> TestingTypes;
-TYPED_TEST_CASE(TypedDeclarableOpsTests8, TestingTypes);
+TYPED_TEST_SUITE(TypedDeclarableOpsTests8, TestingTypes);
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests8, reduceVariance_test1) {
@@ -466,9 +466,7 @@ TEST_F(DeclarableOpsTests8, reduceVarianceBP_test02) {
       'c', {3, 4},
       {-4.000000f, -8.000000f, -12.000000f, -16.000000f, 0.000000f, 0.000000f,
        0.000000f, 0.000000f, 4.000000f, 8.000000f, 12.000000f, 16.000000f});
-  auto axes = NDArrayFactory::create<int>({
-      (int)0,
-  });
+  auto axes = NDArrayFactory::create<int>(0);
   x.linspace(1);
 
   sd::ops::reduce_variance_bp op;

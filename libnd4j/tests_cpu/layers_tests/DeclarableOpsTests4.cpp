@@ -52,7 +52,7 @@ class TypedDeclarableOpsTests4 : public testing::Test {
 };
 
 typedef ::testing::Types<double, float> TestingTypes;
-TYPED_TEST_CASE(TypedDeclarableOpsTests4, TestingTypes);
+TYPED_TEST_SUITE(TypedDeclarableOpsTests4, TestingTypes);
 
 //////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedDeclarableOpsTests4, avgpool2d_1) {

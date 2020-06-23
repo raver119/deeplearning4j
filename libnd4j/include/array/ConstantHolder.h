@@ -41,8 +41,8 @@ class ConstantHolder {
   ConstantHolder() = default;
   ~ConstantHolder() = default;
 
-  ConstantHolder& operator=(const ConstantHolder& other) = default;
-  ConstantHolder& operator=(ConstantHolder&& other) = default;
+  ConstantHolder& operator=(const ConstantHolder& other);
+  ConstantHolder& operator=(ConstantHolder&& other);
 
   bool hasBuffer(sd::DataType dataType);
 

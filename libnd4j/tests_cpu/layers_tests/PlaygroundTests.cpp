@@ -600,8 +600,6 @@ timeStart).count(); values.emplace_back(outerTime);
     }
 }
 
-
-/*
 TEST_F(PlaygroundTests, test_broadcast_1) {
     int pool = 500;
     std::vector<NDArray*> aX(pool);

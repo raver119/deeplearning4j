@@ -1169,7 +1169,7 @@ TEST_F(NativeOpsTests, ShuffleTest_1) {
                                (Nd4jPointer)z.specialShapeInfo()};
   int shuffleMap[] = {1, 0, 4, 3, 2};
   auto zTadPack = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      x.shapeInfo(), {1});
+      x.shapeInfo(), 1);
   Nd4jPointer zListOffset[] = {(Nd4jPointer)zTadPack.platformOffsets(),
                                (Nd4jPointer)zTadPack.platformOffsets()};
   Nd4jPointer zListTADs[] = {(Nd4jPointer)zTadPack.platformShapeInfo(),
@@ -1365,7 +1365,7 @@ TEST_F(NativeOpsTests, SortTest_4) {
 
   std::vector<int> dims({1});
   auto packX = ConstantTadHelper::getInstance().tadForDimensions(
-      sortedVals.shapeInfo(), {1});
+      sortedVals.shapeInfo(), 1);
   ::sortTad(nullptr, sortedVals.buffer(), sortedVals.shapeInfo(),
             sortedVals.specialBuffer(), sortedVals.specialShapeInfo(),
             dims.data(), dims.size(), packX.platformShapeInfo(),

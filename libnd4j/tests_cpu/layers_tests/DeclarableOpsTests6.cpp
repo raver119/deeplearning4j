@@ -1780,7 +1780,7 @@ TEST_F(DeclarableOpsTests6, Test_Reduce3_Edge) {
 
   std::vector<int> dims = {0, 1};
   auto z = x.applyReduce3(reduce3::CosineSimilarity, y, dims);
-  ASSERT_TRUE(&z != nullptr);
+  ASSERT_TRUE(z.defined());
 }
 
 ///////////////////////////////////////////////////////////////////

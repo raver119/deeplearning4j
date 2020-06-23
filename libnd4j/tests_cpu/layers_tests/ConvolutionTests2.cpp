@@ -103,7 +103,7 @@ class TypedConvolutionTests2 : public testing::Test {
 };
 
 typedef ::testing::Types<double, float> TestingTypes;
-TYPED_TEST_CASE(TypedConvolutionTests2, TestingTypes);
+TYPED_TEST_SUITE(TypedConvolutionTests2, TestingTypes);
 
 //////////////////////////////////////////////////////////////////////
 TYPED_TEST(TypedConvolutionTests2, deconv2d_tf_test2) {

@@ -350,7 +350,7 @@ TEST_F(LegacyOpsTests, BroadcastingTests_2) {
 
   // shape::printShapeInfoLinear("tad shape", tad.tadOnlyShapeInfo);
   auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      y.shapeInfo(), {axis});
+      y.shapeInfo(), axis);
 
   NDArray::prepareSpecialUse({&y}, {&x});
 
@@ -439,9 +439,9 @@ TEST_F(LegacyOpsTests, Reduce3_2) {
 #endif
 
   auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      x.shapeInfo(), {1});
+      x.shapeInfo(), 1);
   auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      y.shapeInfo(), {1});
+      y.shapeInfo(), 1);
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
   OpaqueDataBuffer xBuf(x.dataBuffer());
@@ -494,9 +494,9 @@ TEST_F(LegacyOpsTests, Reduce3_3) {
 #endif
 
   auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      x.shapeInfo(), {1});
+      x.shapeInfo(), 1);
   auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      y.shapeInfo(), {1});
+      y.shapeInfo(), 1);
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
   OpaqueDataBuffer xBuf(x.dataBuffer());
@@ -549,9 +549,9 @@ TEST_F(LegacyOpsTests, Reduce3_4) {
 #endif
 
   auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      x.shapeInfo(), {1});
+      x.shapeInfo(), 1);
   auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      y.shapeInfo(), {1});
+      y.shapeInfo(), 1);
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
   OpaqueDataBuffer xBuf(x.dataBuffer());
@@ -606,9 +606,9 @@ TEST_F(LegacyOpsTests, Reduce3_5) {
 #endif
 
   auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      x.shapeInfo(), {1});
+      x.shapeInfo(), 1);
   auto packY = sd::ConstantTadHelper::getInstance().tadForDimensions(
-      y.shapeInfo(), {1});
+      y.shapeInfo(), 1);
 
   NDArray::prepareSpecialUse({&z}, {&x, &y, &dim});
 
