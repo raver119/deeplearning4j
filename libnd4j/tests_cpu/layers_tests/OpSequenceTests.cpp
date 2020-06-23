@@ -38,42 +38,58 @@ class OpSequenceTests : public testing::Test {
   OpSequenceTests() {}
 };
 
-// TEST_F(OpSequenceTests, test_iterator_1) {
-//   Graph graph;
-//   OpSequence sequence;
+TEST_F(OpSequenceTests, test_append_1) {
+  OpSequence sequenceA;
+  OpSequence sequenceB;
 
-//   ASSERT_EQ(0, sequence.length());
+  ASSERT_EQ(0, sequenceA.length());
 
-//   ops::add op1;
-//   ops::multiply op2;
+  Context ctx1(1);
+  Context ctx2(2);
 
-//   Context ctx1(1);
-//   Context ctx2(2);
+  sequenceA.append(Node(sd::ops::add(), "add"), ctx1);
+  sequenceB.append(Node(sd::ops::multiply(), "mul"), ctx2);
 
-//   sequence.append(&op1, ctx1);
-//   sequence.append(&op2, ctx2);
+  ASSERT_EQ(1, sequenceA.length());
 
-//   ASSERT_EQ(2, sequence.length());
+  sequenceA.append(sequenceB);
 
-//   int cnt = 1;
-//   for (const auto &v : sequence) {
-//     ASSERT_EQ(cnt++, v.contextPrototype().nodeId());
-//   }
+  ASSERT_EQ(2, sequenceA.length());
+}
 
-//   ASSERT_EQ(3, cnt);
+TEST_F(OpSequenceTests, test_iterator_1) {
+  Graph graph;
+  OpSequence sequence;
 
-//   OptimizedGraph optimizedGraph;
-//   ASSERT_EQ(0, optimizedGraph.layers());
+  ASSERT_EQ(0, sequence.length());
 
-//   optimizedGraph.append(sequence);
-//   ASSERT_EQ(1, optimizedGraph.layers());
+  Context ctx1(1);
+  Context ctx2(2);
 
-//   auto layer = optimizedGraph.layer(0);
+  sequence.append(Node(ops::add(), "add"), ctx1);
+  sequence.append(Node(ops::divide(), "div"), ctx2);
 
-//   // we expect exactly 1 sequence in this layer
-//   ASSERT_EQ(1, layer.width());
+  ASSERT_EQ(2, sequence.length());
 
-//   auto seq = layer[0];
+  int cnt = 1;
+  for (const auto &v : sequence) {
+    ASSERT_EQ(cnt++, v.protoContext().nodeId());
+  }
 
-//   ASSERT_EQ(2, seq.length());
-// }
+  ASSERT_EQ(3, cnt);
+
+  OptimizedGraph optimizedGraph;
+  ASSERT_EQ(0, optimizedGraph.layers());
+
+  optimizedGraph.append(sequence);
+  ASSERT_EQ(1, optimizedGraph.layers());
+
+  auto layer = optimizedGraph.layer(0);
+
+  // we expect exactly 1 sequence in this layer
+  ASSERT_EQ(1, layer.width());
+
+  auto seq = layer[0];
+
+  ASSERT_EQ(2, seq.length());
+}
