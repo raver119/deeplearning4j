@@ -35,10 +35,10 @@ public:
 };
 
 TEST_F(VariableTests, TestClone_1) {
-    auto array1 = NDArrayFactory::create<float>('c', {5, 5});
+    auto array1 = NDArrayFactory::create<float>(  {5, 5});
     array1.assign(1.0f);
 
-    auto var1 = new Variable(array1, "alpha");
+    auto var1 = new Variable(new NDArray(array1), "alpha");
     var1->setId(119);
 
 
@@ -47,7 +47,7 @@ TEST_F(VariableTests, TestClone_1) {
     ASSERT_FALSE(var1->getNDArray() == var2->getNDArray());
     auto array2 = var2->getNDArray();
 
-    ASSERT_TRUE(array1->equalsTo(array2));
+    ASSERT_TRUE(array1.equalsTo(array2));
     ASSERT_EQ(var1->id(), var2->id());
     ASSERT_EQ(*var1->getName(), *var2->getName());
 
@@ -64,7 +64,7 @@ TEST_F(VariableTests, TestClone_1) {
 
 TEST_F(VariableTests, Test_FlatVariableDataType_1) {
     flatbuffers::FlatBufferBuilder builder(1024);
-    auto original = NDArrayFactory::create<float>('c', {5, 10});
+    auto original = NDArrayFactory::create<float>(  {5, 10});
     original.linspace(1);
 
     auto vec = original.asByteVector();
@@ -98,7 +98,7 @@ TEST_F(VariableTests, Test_FlatVariableDataType_1) {
 
 TEST_F(VariableTests, Test_FlatVariableDataType_2) {
     flatbuffers::FlatBufferBuilder builder(1024);
-    auto original = NDArrayFactory::create<double>('c', {5, 10});
+    auto original = NDArrayFactory::create<double>(  {5, 10});
     original.linspace(1);
 
     auto vec = original.asByteVector();
@@ -133,8 +133,8 @@ TEST_F(VariableTests, Test_FlatVariableDataType_2) {
 
 TEST_F(VariableTests, Test_FlatVariableDataType_3) {
     flatbuffers::FlatBufferBuilder builder(1024);
-    auto original = NDArrayFactory::create<double>('c', {5, 10});
-    auto floating = NDArrayFactory::create<float>('c', {5, 10});
+    auto original = NDArrayFactory::create<double>(  {5, 10});
+    auto floating = NDArrayFactory::create<float>(  {5, 10});
     original.linspace(1);
     floating.linspace(1);
 
@@ -171,7 +171,7 @@ TEST_F(VariableTests, Test_FlatVariableDataType_3) {
 /*
 TEST_F(VariableTests, Test_FlatVariableDataType_4) {
     flatbuffers::FlatBufferBuilder builder(1024);
-    auto original = NDArrayFactory::create<float>('c', {5, 10});
+    auto original = NDArrayFactory::create<float>(  {5, 10});
     std::vector<Nd4jLong> exp({5, 10});
 
     auto vec = original.asByteVector();
@@ -203,8 +203,8 @@ TEST_F(VariableTests, Test_FlatVariableDataType_4) {
 }
 */
 TEST_F(VariableTests, Test_Dtype_Conversion_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {1, 2, 3, 4, 5, 6});
-    Variable v(x, "alpha", 12, 3);
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {1, 2, 3, 4, 5, 6});
+    Variable v(new NDArray(x), "alpha", 12, 3);
 
     auto vd = v.template asT<double>();
     auto vf = vd->template asT<float>();
@@ -215,8 +215,8 @@ TEST_F(VariableTests, Test_Dtype_Conversion_1) {
 
     auto xf = vf->getNDArray();
 
-    ASSERT_TRUE(x->isSameShape(xf));
-    ASSERT_TRUE(x->equalsTo(xf));
+    ASSERT_TRUE(x.isSameShape(xf));
+    ASSERT_TRUE(x.equalsTo(xf));
 
     delete vd;
     delete vf;

@@ -48,7 +48,7 @@ TEST_F(WorkspaceTests, BasicInitialization2) {
     ASSERT_EQ(0, workspace.getCurrentOffset());
     LaunchContext ctx;
     ctx.setWorkspace(&workspace);
-    auto array = NDArrayFactory::create<float>('c', {5, 5}, &ctx);
+    auto array = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
 
     array.p(0, 1.0f);
     array.p(5, 1.0f);
@@ -69,7 +69,7 @@ TEST_F(WorkspaceTests, BasicInitialization3) {
     LaunchContext ctx;
     ctx.setWorkspace(&workspace);
 
-    auto array = NDArrayFactory::create<float>('c', {5, 5}, &ctx);
+    auto array = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
 
     array.p(0, 1.0f);
     array.p(5, 1.0f);
@@ -88,7 +88,7 @@ TEST_F(WorkspaceTests, ResetTest1) {
     LaunchContext ctx;
     ctx.setWorkspace(&workspace);
 
-    auto array = NDArrayFactory::create<float>('c', {5, 5}, &ctx);
+    auto array = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
     array.p(0, 1.0f);
     array.p(5, 1.0f);
 
@@ -96,7 +96,7 @@ TEST_F(WorkspaceTests, ResetTest1) {
     for (int e = 0; e < 5; e++) {
         workspace.scopeIn();
 
-        auto array2 = NDArrayFactory::create<float>('c', {5, 5}, &ctx);
+        auto array2 = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
         array2.p(0, 1.0f);
         array2.p(5, 1.0f);
 
@@ -161,7 +161,7 @@ TEST_F(WorkspaceTests, NewInWorkspaceTest1) {
 
     ASSERT_TRUE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
 
-    auto ast = NDArrayFactory::create<float>('c', {5, 5});
+    auto ast = NDArrayFactory::create<float>(  {5, 5});
 
     ASSERT_TRUE(ws.getCurrentOffset() > 0);
 
@@ -182,7 +182,7 @@ TEST_F(WorkspaceTests, NewInWorkspaceTest2) {
 
     MemoryRegistrator::getInstance()->attachWorkspace(&ws);
 
-    auto ast = NDArrayFactory::create<float>('c', {5, 5}, &ctx);
+    auto ast = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
 
     ASSERT_TRUE(ws.getCurrentOffset() > 0);
 
@@ -213,15 +213,15 @@ TEST_F(WorkspaceTests, Test_Arrays_1) {
     LaunchContext ctx;
     ctx.setWorkspace(&ws);
 
-    auto x = NDArrayFactory::create<float>('c', {3, 3}, {1, 2, 3, 4, 5, 6, 7, 8, 9}, &ctx);
+    auto x = NDArrayFactory::create<float>(  {3, 3}, {1, 2, 3, 4, 5, 6, 7, 8, 9}, sd::kArrayOrderC, &ctx);
 
     // x.printIndexedBuffer("x0");
 
-    auto y = NDArrayFactory::create<float>('c', {3, 3}, {-1, -2, -3, -4, -5, -6, -7, -8, -9}, &ctx);
+    auto y = NDArrayFactory::create<float>(  {3, 3}, {-1, -2, -3, -4, -5, -6, -7, -8, -9}, sd::kArrayOrderC, &ctx);
 
     // x.printIndexedBuffer("x2");
 
-    auto z = NDArrayFactory::create<float>('c', {3, 3}, {0, 0, 0, 0, 0, 0, 0, 0, 0}, &ctx);
+    auto z = NDArrayFactory::create<float>(  {3, 3}, {0, 0, 0, 0, 0, 0, 0, 0, 0}, sd::kArrayOrderC, &ctx);
 
     MmulHelper::mmul(&x, &y, &z);
 
@@ -261,7 +261,7 @@ TEST_F(WorkspaceTests, Test_Externalized_1) {
     LaunchContext ctx;
     ctx.setWorkspace(&ws);
 
-    auto x = NDArrayFactory::create<float>('c', {10, 10}, &ctx);
+    auto x = NDArrayFactory::create<float>(  {10, 10}, {}, sd::kArrayOrderC, &ctx);
 
     // only buffer size goes into account
     ASSERT_EQ(400, ws.getUsedSize());
