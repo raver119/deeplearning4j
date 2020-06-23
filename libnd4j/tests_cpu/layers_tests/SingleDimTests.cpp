@@ -33,7 +33,7 @@ public:
 };
 
 TEST_F(SingleDimTests, Test_Create_1) {
-    auto x = NDArrayFactory::create<float>('c', {5}, {1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<float>(  {5}, {1, 2, 3, 4, 5});
     ASSERT_EQ(5, x.lengthOf());
     ASSERT_EQ(1, x.rankOf());
     ASSERT_TRUE(x.isVector());
@@ -42,8 +42,8 @@ TEST_F(SingleDimTests, Test_Create_1) {
 }
 
 TEST_F(SingleDimTests, Test_Add_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {2, 3, 4});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {3}, {2, 3, 4});
 
     x += 1.0f;
 
@@ -53,8 +53,8 @@ TEST_F(SingleDimTests, Test_Add_1) {
 
 
 TEST_F(SingleDimTests, Test_Pairwise_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {2, 4, 6});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {3}, {2, 4, 6});
 
     x += x;
 
@@ -63,9 +63,9 @@ TEST_F(SingleDimTests, Test_Pairwise_1) {
 }
 
 TEST_F(SingleDimTests, Test_Concat_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto y = NDArrayFactory::create<float>('c', {3}, {4, 5, 6});
-    auto exp = NDArrayFactory::create<float>('c', {6}, {1, 2, 3, 4, 5, 6});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto y = NDArrayFactory::create<float>(  {3}, {4, 5, 6});
+    auto exp = NDArrayFactory::create<float>(  {6}, {1, 2, 3, 4, 5, 6});
 
     sd::ops::concat op;
     auto result = op.evaluate({&x, &y}, {}, {0});
@@ -81,7 +81,7 @@ TEST_F(SingleDimTests, Test_Concat_1) {
 }
 
 TEST_F(SingleDimTests, Test_Reduce_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
 
     float r = x.reduceNumber(reduce::Sum).e<float>(0);
 
@@ -89,7 +89,7 @@ TEST_F(SingleDimTests, Test_Reduce_1) {
 }
 
 TEST_F(SingleDimTests, Test_IndexReduce_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
 
     auto r = x.indexReduceNumber(indexreduce::IndexMax).e<int>(0);
 
@@ -98,8 +98,8 @@ TEST_F(SingleDimTests, Test_IndexReduce_1) {
 
 
 TEST_F(SingleDimTests, Test_ExpandDims_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {1, 3}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {1, 3}, {1, 2, 3});
 
     sd::ops::expand_dims op;
     auto result = op.evaluate({&x}, {}, {0});
@@ -116,8 +116,8 @@ TEST_F(SingleDimTests, Test_ExpandDims_1) {
 
 
 TEST_F(SingleDimTests, Test_ExpandDims_2) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {3, 1}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {3, 1}, {1, 2, 3});
 
     sd::ops::expand_dims op;
     auto result = op.evaluate({&x}, {}, {1});
@@ -136,7 +136,7 @@ TEST_F(SingleDimTests, Test_ExpandDims_2) {
 TEST_F(SingleDimTests, Test_Squeeze_1) {
     std::vector<Nd4jLong> vecS({1});
     std::vector<float> vecB({3.0f});
-    auto x = NDArrayFactory::create<float>('c', vecS, vecB);
+    auto x = NDArrayFactory::create<float>( vecS, vecB);
     auto exp = NDArrayFactory::create<float>(3.0f);
 
     sd::ops::squeeze op;
@@ -153,8 +153,8 @@ TEST_F(SingleDimTests, Test_Squeeze_1) {
 }
 
 TEST_F(SingleDimTests, Test_Squeeze_2) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
 
     sd::ops::squeeze op;
     auto result = op.evaluate({&x}, {}, {});
@@ -169,8 +169,8 @@ TEST_F(SingleDimTests, Test_Squeeze_2) {
 }
 
 TEST_F(SingleDimTests, Test_Permute_1) {
-    auto x = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {1, 2, 3});
+    auto x = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {3}, {1, 2, 3});
 
     sd::ops::permute op;
     auto result = op.evaluate({&x}, {}, {0});

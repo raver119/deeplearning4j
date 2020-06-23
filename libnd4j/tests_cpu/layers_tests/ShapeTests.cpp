@@ -198,7 +198,7 @@ TEST_F(ShapeTests, Test_Transpose_4) {
 }
 
 TEST_F(ShapeTests, Test_Edge_1) {
-    auto x = NDArrayFactory::create<float>('f', {1, 4, 1, 4});
+    auto x = NDArrayFactory::create<float>( {1, 4, 1, 4}, {}, sd::kArrayOrderFortran);
     x.linspace(1);
 
     x.reshapei('c', {4, 4});
@@ -213,7 +213,7 @@ TEST_F(ShapeTests, Test_Edge_1) {
 }
 
 TEST_F(ShapeTests, Test_Edge_2) {
-    auto x = NDArrayFactory::create<float>('c', {1, 4, 1, 3});
+    auto x = NDArrayFactory::create<float>(  {1, 4, 1, 3});
 
     x.reshapei('c', {3, 4});
 
@@ -283,9 +283,9 @@ TEST_F(ShapeTests, Test_Remove_Index_6) {
 }
 
 TEST_F(ShapeTests, Tests_Transpose_119_1) {
-    auto x = NDArrayFactory::create<float>('c', {3, 2});
-    auto y = NDArrayFactory::create<float>('c', {2}, {1.0f, 0.0f});
-    auto z = NDArrayFactory::create<float>('c', {2, 3});
+    auto x = NDArrayFactory::create<float>(  {3, 2});
+    auto y = NDArrayFactory::create<float>(  {2}, {1.0f, 0.0f});
+    auto z = NDArrayFactory::create<float>(  {2, 3});
 
     x.linspace(1.f);
 
@@ -301,7 +301,7 @@ TEST_F(ShapeTests, Tests_Transpose_119_1) {
 }
 
 TEST_F(ShapeTests, Tests_Transpose_119_2) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
     x.linspace(1.f);
 
     auto exp = x.transpose();
@@ -318,10 +318,10 @@ TEST_F(ShapeTests, Tests_Transpose_119_2) {
 }
 
 TEST_F(ShapeTests, Tests_Transpose_119_3) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
     x.linspace(1.f);
 
-    auto z = NDArrayFactory::create<float>('c', {5, 3});
+    auto z = NDArrayFactory::create<float>(  {5, 3});
 
     auto exp = x.transpose();
 

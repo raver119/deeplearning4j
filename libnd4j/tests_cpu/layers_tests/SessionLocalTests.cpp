@@ -62,10 +62,10 @@ TEST_F(SessionLocalTests, BasicTests_2) {
     if (omp_get_max_threads() <= 1)
         return;
 
-    auto alpha = sd::NDArrayFactory::create<float>('c',{5,5});
+    auto alpha = sd::NDArrayFactory::create<float>(  {5,5});
     alpha.assign(0.0);
 
-    variableSpace.putVariable(-1, alpha);
+    variableSpace.putVariable(-1, new sd::NDArray(alpha));
 
     PRAGMA_OMP_PARALLEL_FOR_THREADS(4)
     for (int e = 0; e < 4; e++) {

@@ -38,17 +38,17 @@ TEST_F(SwitchTests, SwitchTest1) {
     auto variableSpace = graph.getVariableSpace();
     variableSpace->setFlowPath(&flowPath);
 
-    auto input = NDArrayFactory::create<float>('c',{32, 100});
+    auto input = NDArrayFactory::create<float>(  {32, 100});
     input.assign(-119.0f);
 
-    auto condtionX = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionX = NDArrayFactory::create<float>(  {1, 1});
     condtionX.p(0, 0.0f);
-    auto condtionY = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionY = NDArrayFactory::create<float>(  {1, 1});
     condtionY.p(0, 0.0f);
 
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, condtionX);
-    variableSpace->putVariable(-3, condtionY);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(condtionX));
+    variableSpace->putVariable(-3, new NDArray(condtionY));
 
     // this is just 2 ops, that are executed sequentially. We don't really care bout them
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -125,18 +125,18 @@ TEST_F(SwitchTests, SwitchTest2) {
     auto variableSpace = graph.getVariableSpace();
     variableSpace->setFlowPath(&flowPath);
 
-    auto input = NDArrayFactory::create<float>('c',{32, 100});
+    auto input = NDArrayFactory::create<float>(  {32, 100});
     input.assign(-119.0f);
 
-    auto condtionX = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionX = NDArrayFactory::create<float>(  {1, 1});
     condtionX.p(0, 1.0f);
-    auto condtionY = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionY = NDArrayFactory::create<float>(  {1, 1});
     condtionY.p(0, 1.0f);
 
 
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, condtionX);
-    variableSpace->putVariable(-3, condtionY);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(condtionX));
+    variableSpace->putVariable(-3, new NDArray(condtionY));
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -191,18 +191,18 @@ TEST_F(SwitchTests, SwitchTest3) {
     auto variableSpace = graph.getVariableSpace();
     variableSpace->setFlowPath(&flowPath);
 
-    auto input = NDArrayFactory::create<float>('c',{32, 100});
+    auto input = NDArrayFactory::create<float>(  {32, 100});
     input.assign(-119.0f);
 
-    auto condtionX = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionX = NDArrayFactory::create<float>(  {1, 1});
     condtionX.p(0, 2.0f);
-    auto condtionY = NDArrayFactory::create<float>('c', {1, 1});
+    auto condtionY = NDArrayFactory::create<float>(  {1, 1});
     condtionY.p(0, 1.0f);
 
 
-    variableSpace->putVariable(-1, input);
-    variableSpace->putVariable(-2, condtionX);
-    variableSpace->putVariable(-3, condtionY);
+    variableSpace->putVariable(-1, new NDArray(input));
+    variableSpace->putVariable(-2, new NDArray(condtionX));
+    variableSpace->putVariable(-3, new NDArray(condtionY));
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});

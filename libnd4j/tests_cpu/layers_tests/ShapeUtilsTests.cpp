@@ -124,8 +124,8 @@ TEST_F(ShapeUtilsTests, EvalBroadcastShapeInfo_4)
 TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test1)
 {
 
-    auto x = NDArrayFactory::create<float>('c',{2,3,4,5});
-    auto expected = NDArrayFactory::create<float>('c', {2,4,5});
+    auto x = NDArrayFactory::create<float>(  {2,3,4,5});
+    auto expected = NDArrayFactory::create<float>(  {2,4,5});
     std::vector<int> dimensions = {1};
 
     auto newShapeInfo = ShapeUtils::evalReduceShapeInfo('c', dimensions, x.shapeInfo());
@@ -137,8 +137,8 @@ TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test1)
 TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test2)
 {
 
-    auto x = NDArrayFactory::create<float>('c',{2,3,4,5});
-    auto expected = NDArrayFactory::create<float>('c', {2,1,4,5});
+    auto x = NDArrayFactory::create<float>(  {2,3,4,5});
+    auto expected = NDArrayFactory::create<float>(  {2,1,4,5});
     std::vector<int> dimensions = {1};
 
     auto newShapeInfo = ShapeUtils::evalReduceShapeInfo('c', dimensions, x.shapeInfo(), true);
@@ -150,8 +150,8 @@ TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test2)
 TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test3)
 {
 
-    auto x = NDArrayFactory::create<float>('c',{2,3,4,5});
-    auto expected = NDArrayFactory::create<float>('c', {1,1,1,5});
+    auto x = NDArrayFactory::create<float>(  {2,3,4,5});
+    auto expected = NDArrayFactory::create<float>(  {1,1,1,5});
     std::vector<int> dimensions = {0,1,2};
 
     auto newShapeInfo = ShapeUtils::evalReduceShapeInfo('c', dimensions, x.shapeInfo(), true);
@@ -164,8 +164,8 @@ TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test3)
 TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test4)
 {
 
-    auto x = NDArrayFactory::create<float>('c',{2,3,4,5});
-    auto expected = NDArrayFactory::create<float>('c', {1,1,1,1});
+    auto x = NDArrayFactory::create<float>(  {2,3,4,5});
+    auto expected = NDArrayFactory::create<float>(  {1,1,1,1});
     std::vector<int> dimensions = {0,1,2,3};
 
     auto newShapeInfo = ShapeUtils::evalReduceShapeInfo('c', dimensions, x.shapeInfo(), true);
@@ -174,7 +174,7 @@ TEST_F(ShapeUtilsTests, evalReduceShapeInfo_test4)
 }
 
 TEST_F(ShapeUtilsTests, Test_Strings_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3, 4, 5});
+    auto x = NDArrayFactory::create<float>(  {2, 3, 4, 5});
     std::string exp("[2, 3, 4, 5]");
 
     auto s = ShapeUtils::shapeAsString(&x);
@@ -183,8 +183,8 @@ TEST_F(ShapeUtilsTests, Test_Strings_1) {
 }
 
 TEST_F(ShapeUtilsTests, Test_Backward_Axis_1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 4, 3});
-    auto y = NDArrayFactory::create<float>('c', {4, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 4, 3});
+    auto y = NDArrayFactory::create<float>(  {4, 3});
     std::vector<int> exp({0});
 
     auto z = ShapeUtils::evalBroadcastBackwardAxis(y.shapeInfo(), x.shapeInfo());
@@ -193,8 +193,8 @@ TEST_F(ShapeUtilsTests, Test_Backward_Axis_1) {
 }
 
 TEST_F(ShapeUtilsTests, Test_Backward_Axis_2) {
-    auto x = NDArrayFactory::create<float>('c', {2, 4, 4, 3});
-    auto y = NDArrayFactory::create<float>('c', {4, 1, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 4, 4, 3});
+    auto y = NDArrayFactory::create<float>(  {4, 1, 3});
     std::vector<int> exp({0, 2});
 
     auto z = ShapeUtils::evalBroadcastBackwardAxis(y.shapeInfo(), x.shapeInfo());
@@ -204,8 +204,8 @@ TEST_F(ShapeUtilsTests, Test_Backward_Axis_2) {
 
 
 TEST_F(ShapeUtilsTests, Test_Backward_Axis_3) {
-    auto x = NDArrayFactory::create<float>('c', {2, 4, 4, 3});
-    auto y = NDArrayFactory::create<float>('c', {2, 1, 1, 3});
+    auto x = NDArrayFactory::create<float>(  {2, 4, 4, 3});
+    auto y = NDArrayFactory::create<float>(  {2, 1, 1, 3});
     std::vector<int> exp({1, 2});
 
     auto z = ShapeUtils::evalBroadcastBackwardAxis(y.shapeInfo(), x.shapeInfo());

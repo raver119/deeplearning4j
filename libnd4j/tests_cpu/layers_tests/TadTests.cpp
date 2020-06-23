@@ -39,12 +39,12 @@ public:
 
 TEST_F(TadTests, Test4DTad1) {
 
-    NDArray*  arraySource = sd::NDArrayFactory::linspace(1.0f, 10000.0f, 10000);
+    auto arraySource = sd::NDArrayFactory::linspace(1.0f, 10000.0f, 10000);
 
     Nd4jLong badShape[]  = {4, 2, 1, 4, 4, 80, 16, 4, 1, 8192, -1, 99};
     Nd4jLong goodShape[] = {4, 2, 1, 4, 4, 16, 16, 4, 1, 8192,  1, 99};
 
-    std::vector<float> buff = arraySource->getBufferAsVector<float>();
+    std::vector<float> buff = arraySource.getBufferAsVector<float>();
 
     NDArray* arrayExp = new NDArray(buff.data(), goodShape);
     NDArray* arrayBad = new NDArray(buff.data(), badShape);
@@ -61,12 +61,11 @@ TEST_F(TadTests, Test4DTad1) {
 
     delete arrayExp;
     delete arrayBad;
-    delete arraySource;
 }
 
 TEST_F(TadTests, TestNumTads1) {
-    auto x = NDArrayFactory::create<float>('c', {2, 3});
-    auto y = NDArrayFactory::create<float>('c', {2, 2});
+    auto x = NDArrayFactory::create<float>(  {2, 3});
+    auto y = NDArrayFactory::create<float>(  {2, 2});
 
     std::vector<int> dim({0});
 
@@ -113,7 +112,7 @@ TEST_F(TadTests, TestShapeTad_1) {
 }
 
 TEST_F(TadTests, TadNoAxis_1) {
-    auto array = NDArrayFactory::create<float>('c', {2, 3});
+    auto array = NDArrayFactory::create<float>(  {2, 3});
 
     shape::TAD tad;
     tad.init(array.shapeInfo(), nullptr, 0);
@@ -126,8 +125,8 @@ TEST_F(TadTests, TadNoAxis_1) {
 }
 
 TEST_F(TadTests, TadEdgeCase_1) {
-    auto array = NDArrayFactory::create<float>('c', {5, 4, 1});
-    auto exp = NDArrayFactory::create<float>('c', {5, 4});
+    auto array = NDArrayFactory::create<float>(  {5, 4, 1});
+    auto exp = NDArrayFactory::create<float>(  {5, 4});
     array.linspace(1);
 
     auto tad = array(0, {2});
@@ -137,7 +136,7 @@ TEST_F(TadTests, TadEdgeCase_1) {
 
 TEST_F(TadTests, TestEdgeCase_2) {
 
-    auto array = NDArrayFactory::create<float>('f', {2, 3, 1}, {1, 4, 2, 5, 3, 6});
+    auto array = NDArrayFactory::create<float>( {2, 3, 1}, {1, 4, 2, 5, 3, 6}, sd::kArrayOrderFortran);
 
     for (int e = 0 ; e < array.lengthOf(); e++) {
         auto tad = array(e, {0,1});
@@ -146,7 +145,7 @@ TEST_F(TadTests, TestEdgeCase_2) {
 }
 
 TEST_F(TadTests, TadEdgeCase_2) {
-    auto array = NDArrayFactory::create<float>('c', {2, 3, 4});
+    auto array = NDArrayFactory::create<float>(  {2, 3, 4});
 
     auto tad = array(0, {0,2});
 
@@ -244,7 +243,7 @@ TEST_F(TadTests, test_tad_order_4) {
 }
 
 TEST_F(TadTests, test_column_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 2});
+    auto x = NDArrayFactory::create<float>(  {5, 2});
     auto tadPack = sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), 0);
 
     ASSERT_EQ(1, shape::rank(tadPack.primaryShapeInfo()));
