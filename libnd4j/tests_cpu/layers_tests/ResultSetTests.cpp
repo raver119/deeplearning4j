@@ -32,7 +32,7 @@ public:
 };
 
 TEST_F(ResultSetTests, basic_test_1) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
 
     auto tensors = x.allTensorsAlongDimension({1});
     ASSERT_EQ(3, tensors.size());

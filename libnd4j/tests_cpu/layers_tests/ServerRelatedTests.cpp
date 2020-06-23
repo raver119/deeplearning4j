@@ -87,7 +87,7 @@ TEST_F(ServerRelatedTests, Basic_Execution_Test_1) {
     auto oGraph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
     oGraph->printOut();
 
-    auto exp = NDArrayFactory::create<float>('c', {3}, {3.f, 3.f, 3.f});
+    auto exp = NDArrayFactory::create<float>( {3}, {3.f, 3.f, 3.f});
 
     GraphHolder::getInstance()->registerGraph(11901L, oGraph);
 
@@ -117,8 +117,8 @@ TEST_F(ServerRelatedTests, Basic_Execution_Test_2) {
     auto oGraph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
     oGraph->printOut();
 
-    auto input0 = NDArrayFactory::create<float>('c', {3, 3}, {2.f,2.f,2.f, 2.f,2.f,2.f, 2.f,2.f,2.f});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {6.f, 6.f, 6.f});
+    auto input0 = NDArrayFactory::create<float>( {3, 3}, {2.f,2.f,2.f, 2.f,2.f,2.f, 2.f,2.f,2.f});
+    auto exp = NDArrayFactory::create<float>( {3}, {6.f, 6.f, 6.f});
 
     GraphHolder::getInstance()->registerGraph(11902L, oGraph);
 
@@ -157,8 +157,8 @@ TEST_F(ServerRelatedTests, BasicExecutionTests_3) {
     auto oGraph = GraphExecutioner::importFromFlatBuffers("./resources/reduce_dim_false.fb");
     oGraph->printOut();
 
-    auto input0 = NDArrayFactory::create<float>('c', {3, 3}, {2.f,2.f,2.f, 2.f,2.f,2.f, 2.f,2.f,2.f});
-    auto exp = NDArrayFactory::create<float>('c', {3}, {6.f, 6.f, 6.f});
+    auto input0 = NDArrayFactory::create<float>( {3, 3}, {2.f,2.f,2.f, 2.f,2.f,2.f, 2.f,2.f,2.f});
+    auto exp = NDArrayFactory::create<float>( {3}, {6.f, 6.f, 6.f});
 
     GraphHolder::getInstance()->registerGraph(11903L, oGraph);
 

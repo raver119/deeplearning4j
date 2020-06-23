@@ -48,8 +48,8 @@ TEST_F(QuantizationTests, Compression_Test_1) {
 
     #ifndef __CUDABLAS__
 
-    auto x = NDArrayFactory::create<float>('c', {10});
-    auto z = NDArrayFactory::create<float>('c', {10});
+    auto x = NDArrayFactory::vector<float>(10);
+    auto z = NDArrayFactory::vector<float>(10);
     x.linspace(1.0f);
 
     auto q = new char[TypeCast::estimateQuantizedSize(x.lengthOf())];

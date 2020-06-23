@@ -68,8 +68,8 @@ TEST_F(PlaygroundTests, test_avx) {
 
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
-    auto x = NDArrayFactory::create<float>('c', {512, 3072});
-    auto y = NDArrayFactory::create<float>('c', {3072});
+    auto x = NDArrayFactory::create<float>(  {512, 3072});
+    auto y = NDArrayFactory::create<float>(  {3072});
 
     std::vector<Nd4jLong> values;
 
@@ -268,8 +268,8 @@ TEST_F(PlaygroundTests, test_bert_2) {
 
 
 TEST_F(PlaygroundTests, test_one_off_ops_1) {
-    auto x = NDArrayFactory::create<float>('c', {4, 128, 768});
-    auto y = NDArrayFactory::create<float>('c', {4, 128, 1});
+    auto x = NDArrayFactory::create<float>(  {4, 128, 768});
+    auto y = NDArrayFactory::create<float>(  {4, 128, 1});
     auto z = x.ulike();
 
     sd::ops::squaredsubtract op;
@@ -328,7 +328,7 @@ void testLegacy(bool random) {
 #endif
     constexpr int N = 5;
 
-    auto x = NDArrayFactory::create<float>('c', { bases[0], bases[1], bases[2], bases[3], bases[4] });
+    auto x = NDArrayFactory::create<float>(  { bases[0], bases[1], bases[2], bases[3], bases[4] });
     if (!random) {
         x.linspace(1);
     }
@@ -536,9 +536,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::vector<NDArray> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create<float>('c', {3072});
-        aZ[e] = NDArrayFactory::create<float>('c', {512, 3072});
+        aX[e] = NDArrayFactory::create<float>(  {512, 3072});
+        aY[e] = NDArrayFactory::create<float>(  {3072});
+        aZ[e] = NDArrayFactory::create<float>(  {512, 3072});
 
         aX[e].assign(119 * (e+1));
         aY[e].assign(119 * (e+3));
@@ -578,9 +578,9 @@ TEST_F(PlaygroundTests, test_broadcast_1) {
     std::vector<NDArray> aZ(pool);
 
     for (int e = 0; e < pool; e++) {
-        aX[e] = NDArrayFactory::create<float>('c', {512, 3072});
-        aY[e] = NDArrayFactory::create<float>('c', {768});
-        aZ[e] = NDArrayFactory::create<float>('c', {512, 3072});
+        aX[e] = NDArrayFactory::create<float>(  {512, 3072});
+        aY[e] = NDArrayFactory::create<float>(  {768});
+        aZ[e] = NDArrayFactory::create<float>(  {512, 3072});
 
         aX[e].assign( (e+1) / 119);
         aY[e].assign( (e+3) / 119);
@@ -622,7 +622,7 @@ TEST_F(PlaygroundTests, test_s_0) {
             sd::Environment::getInstance()->setMaxMasterThreads(t);
 
             auto x = NDArrayFactory::create<float>('c', shape);
-            auto y = NDArrayFactory::create<float>('c', {shape[3]});
+            auto y = NDArrayFactory::create<float>(  {shape[3]});
             auto z = x.ulike();
 
             std::vector<Nd4jLong> values;
@@ -661,7 +661,7 @@ TEST_F(PlaygroundTests, test_s_1) {
             sd::Environment::getInstance()->setMaxMasterThreads(t);
 
             auto x = NDArrayFactory::create<float>('c', shape);
-            auto y = NDArrayFactory::create<float>('c', {shape[1]});
+            auto y = NDArrayFactory::create<float>(  {shape[1]});
             auto z = x.ulike();
 
             std::vector<Nd4jLong> values;
@@ -694,8 +694,8 @@ TEST_F(PlaygroundTests, test_s_1) {
 
 /*
 TEST_F(PlaygroundTests, test_s_0) {
-    auto x = NDArrayFactory::create<float>('c', {32, 112, 112, 16});
-    auto y = NDArrayFactory::create<float>('c', {16});
+    auto x = NDArrayFactory::create<float>(  {32, 112, 112, 16});
+    auto y = NDArrayFactory::create<float>(  {16});
     auto z = x.ulike();
 
     std::vector<Nd4jLong> values;
@@ -724,7 +724,7 @@ TEST_F(PlaygroundTests, test_s_0) {
 */
 /*
 TEST_F(PlaygroundTests, test_s_1) {
-    auto x0 = NDArrayFactory::create<float>('c', {32, 7, 7, 176});
+    auto x0 = NDArrayFactory::create<float>(  {32, 7, 7, 176});
     auto x1 = x0.ulike();
     auto x2 = x0.ulike();
     auto x3 = x0.ulike();
@@ -732,7 +732,7 @@ TEST_F(PlaygroundTests, test_s_1) {
     auto x5 = x0.ulike();
 
     auto y = NDArrayFactory::create<int >(3);
-    auto z = NDArrayFactory::create<float>('c', {32, 7, 7, 1056});
+    auto z = NDArrayFactory::create<float>(  {32, 7, 7, 1056});
 
     Context ctx(1);
     ctx.setInputArray(0, &x0);
@@ -817,8 +817,8 @@ TEST_F(PlaygroundTests, test_s_4) {
 
     ////////
 
-    auto x = NDArrayFactory::create<float>('c', {32, 3, 256, 256});
-    auto z = NDArrayFactory::create<float>('c', {32, 3, 256, 256});
+    auto x = NDArrayFactory::create<float>(  {32, 3, 256, 256});
+    auto z = NDArrayFactory::create<float>(  {32, 3, 256, 256});
     x.linspace(1.0);
 
     auto xs0 = x.sizeAt(0);
@@ -884,7 +884,7 @@ TEST_F(PlaygroundTests, test_s_4) {
 
 
 TEST_F(PlaygroundTests, test_s_5) {
-    auto x = NDArrayFactory::create<float>('c', {32, 1, 28, 28});
+    auto x = NDArrayFactory::create<float>(  {32, 1, 28, 28});
 
     std::vector<Nd4jLong> values;
     auto iterations = 100;
@@ -924,7 +924,7 @@ TEST_F(PlaygroundTests, test_s_5) {
 
 
 TEST_F(PlaygroundTests, test_s_6) {
-    auto x = NDArrayFactory::create<float>('c', {1024 * 1024 * 64});
+    auto x = NDArrayFactory::create<float>(  {1024 * 1024 * 64});
     auto buffer = x.bufferAsT<float>();
     auto len = x.lengthOf();
     std::vector<Nd4jLong> values;
@@ -965,7 +965,7 @@ TEST_F(PlaygroundTests, test_s_3) {
 
 /*
 TEST_F(PlaygroundTests, test_relubp_1) {
-    auto x = NDArrayFactory::create<float>('c', {128, 64, 224, 224});
+    auto x = NDArrayFactory::create<float>(  {128, 64, 224, 224});
     auto y = x.ulike();
     auto z = x.ulike();
     RandomGenerator rng(119, 120);

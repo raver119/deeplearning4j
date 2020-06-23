@@ -34,11 +34,11 @@ public:
 TEST_F(ScopeTests, BasicTests_1) {
     Graph graph;
 
-    auto x = NDArrayFactory::create<float>('c', {2, 2});
-    x->assign(0.0f);
+    auto x = NDArrayFactory::create<float>(  {2, 2});
+    x.assign(0.0f);
 
     auto variableSpace = graph.getVariableSpace();
-    variableSpace->putVariable(-1, x);
+    variableSpace->putVariable(-1, new NDArray(x));
 
     sd::ops::Scope opScope;
 
