@@ -20,6 +20,8 @@ import lombok.*;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.common.primitives.Pair;
@@ -115,14 +117,10 @@ public class FeedForwardToCnnPreProcessor extends BaseInputPreProcessor {
 
     @Override
     public FeedForwardToCnnPreProcessor clone() {
-        try {
-            FeedForwardToCnnPreProcessor clone = (FeedForwardToCnnPreProcessor) super.clone();
-            if (clone.shape != null)
-                clone.shape = clone.shape.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        FeedForwardToCnnPreProcessor clone = (FeedForwardToCnnPreProcessor) super.clone();
+        if (clone.shape != null)
+            clone.shape = clone.shape.clone();
+        return clone;
     }
 
     @Override
@@ -167,4 +165,13 @@ public class FeedForwardToCnnPreProcessor extends BaseInputPreProcessor {
         return new Pair<>(maskArray, currentMaskState);
     }
 
+    @Override
+    public @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        //TODO Assuming shape of input is correct, it would be better to check & throw exception here, but needs offline shape inference
+
+        if(numChannels == -1)
+            throw new IllegalStateException("Can't convert when numChannels isn't explicitly specified");
+        //TODO get batch size.  Needs offline shape inference
+        return input.reshape(-1, numChannels, inputHeight, inputWidth);
+    }
 }

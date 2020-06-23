@@ -89,6 +89,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
+import org.nd4j.common.util.ArrayUtil;
 import org.nd4j.common.util.OneTimeLogger;
 import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -795,10 +796,10 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
         if (!isInitCalled())
             init();
 
-        SDVariable input = sameDiff.placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape());
+        SDVariable input = sameDiff.placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape(true));
         SDVariable currentOutput = input;
 
-        Map<Class<?>, Integer> numLayers = new HashMap<>();
+        Map<String, Integer> numLayers = new HashMap<>();
 
         InputType currentInputType = inputType;
 
@@ -814,16 +815,18 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 throw new UnsupportedOperationException("Can't convert non-Layer layers");
             }
 
-            Class<?> confClass = layer.getConfig().getClass();
+            String confClass = layer.getConfig().getClass().getSimpleName();
 
             int layerNum = 0;
 
             if(numLayers.containsKey(confClass)){
                 layerNum = numLayers.get(confClass);
                 numLayers.put(confClass, ++layerNum);
+            } else {
+                numLayers.put(confClass, 0);
             }
 
-            NameScope layerScope = sameDiff.withNameScope(confClass.getSimpleName() + (layerNum == 0 ? "" : "_" + layerNum));
+            NameScope layerScope = sameDiff.withNameScope(confClass + (layerNum == 0 ? "" : "_" + layerNum));
 
             // preprocessor
             InputPreProcessor preProcessor = config.getPreProcessorForInputType(currentInputType);
@@ -864,7 +867,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             BaseOutputLayer<?> outputLayer = (BaseOutputLayer<?>) lastLayer;
 
             // labels shape must be the same as the last layer
-            SDVariable labels = sameDiff.placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentOutput.getShape());
+            SDVariable labels = sameDiff.placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
             ILossFunction lossFn = outputLayer.layerConf().getLossFn();
 
             SDVariable loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
@@ -872,8 +875,10 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = org.nd4j.autodiff.samediff.TrainingConfig.builder()
                     .minimize(loss.name())
-                    .updater(this.conf().getIUpdater())
+                    .updater(this.conf().getIUpdater().clone())
                     .minimize(conf().isMinimize())
+                    .dataSetFeatureMapping(input.name())
+                    .dataSetLabelMapping(labels.name())
                     .build();
 
             sameDiff.setTrainingConfig(trainingConfig);

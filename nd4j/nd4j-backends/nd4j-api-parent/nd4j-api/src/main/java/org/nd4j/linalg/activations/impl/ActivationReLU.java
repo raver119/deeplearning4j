@@ -18,6 +18,9 @@ package org.nd4j.linalg.activations.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ops.impl.scalar.*;
 import org.nd4j.linalg.api.ops.impl.transforms.gradient.LeakyReLUBp;
 import org.nd4j.common.primitives.Pair;
@@ -99,6 +102,33 @@ public class ActivationReLU extends BaseActivationFunction {
             dLdz.muli(maxMask);
         }
         return new Pair<>(dLdz, null);
+    }
+
+    @Override
+    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        SDVariable temp;
+        double thresh = threshold == null ? 0.0 : threshold;
+        double ns = negativeSlope == null ? 0.0 : negativeSlope;
+        if(ns == 0){
+            temp = sameDiff.nn.relu(input, thresh);
+        } else {
+            if(thresh == 0)
+                temp = sameDiff.nn.leakyRelu(input, negativeSlope);
+            else {
+                //TODO optimize this
+                SDVariable t = sameDiff.constant(thresh);
+                SDVariable oneGte = input.gte(t).castTo(input.dataType());
+                SDVariable oneLt = input.lt(t).castTo(input.dataType());
+                SDVariable lower = oneLt.mul(ns).mul(input.sub(threshold));
+                SDVariable upper = oneGte.mul(input);
+                temp = lower.add(upper);
+            }
+        }
+
+        if(max != null)
+            temp = sameDiff.math.max(sameDiff.constant(max), temp);
+
+        return temp;
     }
 
     @Override

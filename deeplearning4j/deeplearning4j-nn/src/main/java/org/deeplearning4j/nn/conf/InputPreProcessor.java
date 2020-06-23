@@ -80,10 +80,10 @@ public interface InputPreProcessor extends Serializable, Cloneable {
     /**
      * Define the InputPreProcessor's input transformation in a {@link SameDiff} instance.
      * @param sameDiff The {@link SameDiff} instance.
-     * @param layerInput The input to transform.
+     * @param input The input to transform.
      * @return The transformed input.
      */
-    @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput);
+    @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
 
     //TODO add params?
     /**

@@ -24,7 +24,7 @@ import org.nd4j.linalg.lossfunctions.*;
 public class SDLossMSE extends SameDiffLoss {
 
     @Override
-    public SDVariable defineLoss(SameDiff sd, SDVariable layerInput, SDVariable labels) {
+    public SDVariable defineLoss(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {
         return labels.squaredDifference(layerInput).mean(1);
     }
 }

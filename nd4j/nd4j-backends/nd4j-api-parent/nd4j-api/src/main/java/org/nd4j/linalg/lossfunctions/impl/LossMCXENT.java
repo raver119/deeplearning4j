@@ -207,11 +207,12 @@ public class LossMCXENT extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels) {
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels) {
         if(weights == null){
-            return sd.loss.weightedCrossEntropyWithLogits(labels, input, null);
+            //TODO the javadoc lies, it doesn't support null weights.
+            return sameDiff.loss.weightedCrossEntropyWithLogits(labels, input, sameDiff.constant(1));
         } else {
-            return sd.loss.weightedCrossEntropyWithLogits(labels, input, sd.constant(weights));
+            return sameDiff.loss.weightedCrossEntropyWithLogits(labels, input, sameDiff.constant(weights));
         }
     }
 

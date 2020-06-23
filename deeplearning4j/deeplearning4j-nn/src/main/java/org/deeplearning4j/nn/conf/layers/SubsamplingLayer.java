@@ -29,12 +29,15 @@ import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
 
 /**
  * Subsampling layer also referred to as pooling in convolution neural nets
@@ -145,6 +148,26 @@ public class SubsamplingLayer extends NoParamLayer {
     @Override
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        Pooling2DConfig poolingConfig = Pooling2DConfig.builder()
+                .kH(kernelSize[0]).kW(kernelSize[1])
+                .sH(stride[0]).sW(stride[1])
+                .dH(dilation[0]).dW(dilation[1])
+                .isNHWC(cnn2dDataFormat == CNN2DFormat.NHWC)
+                .build();
+
+        if(poolingType == org.deeplearning4j.nn.conf.layers.PoolingType.MAX){
+            return sameDiff.cnn.maxPooling2d(layerInput, poolingConfig);
+        } else if(poolingType == org.deeplearning4j.nn.conf.layers.PoolingType.AVG){
+            return sameDiff.cnn.avgPooling2d(layerInput, poolingConfig);
+        } else {
+            throw new UnsupportedOperationException("Can't convert " + poolingType + " pooling layer to SameDiff, only MAX and AVG supported");
+        }
     }
 
     @Override

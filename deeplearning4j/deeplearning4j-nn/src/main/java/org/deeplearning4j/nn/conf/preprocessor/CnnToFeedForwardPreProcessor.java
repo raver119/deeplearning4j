@@ -17,11 +17,14 @@
 package org.deeplearning4j.nn.conf.preprocessor;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.val;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.common.primitives.Pair;
@@ -159,12 +162,8 @@ public class CnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
 
     @Override
     public CnnToFeedForwardPreProcessor clone() {
-        try {
-            CnnToFeedForwardPreProcessor clone = (CnnToFeedForwardPreProcessor) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        CnnToFeedForwardPreProcessor clone = (CnnToFeedForwardPreProcessor) super.clone();
+        return clone;
     }
 
     @Override
@@ -194,5 +193,10 @@ public class CnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
         }
 
         return new Pair<>(maskArray.reshape(maskArray.ordering(), maskArray.size(0), maskArray.size(1)), currentMaskState);
+    }
+
+    @Override
+    public @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        return input.reshape(-1, numChannels * inputHeight * inputWidth);
     }
 }

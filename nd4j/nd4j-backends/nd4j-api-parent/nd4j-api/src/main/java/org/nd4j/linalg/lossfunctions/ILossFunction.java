@@ -83,12 +83,12 @@ public interface ILossFunction extends Serializable {
 
     /**
      * Define the loss function for a {@link SameDiff} instance
-     * @param sd The {@link SameDiff} instance
+     * @param sameDiff The {@link SameDiff} instance
      * @param input The input to the loss function, typically the output of the previous layer.
      * @param labels The lables to compare the output to.  Should be the same shape as input.
      * @return The score (loss function value).
      */
-    @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels);
+    @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels);
 
     /**
      * The opName of this function

@@ -25,6 +25,8 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -70,6 +72,27 @@ public class DenseLayer extends FeedForwardLayer {
     @Override
     public ParamInitializer initializer() {
         return DefaultParamInitializer.getInstance();
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        SDVariable weight = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);
+        // may be null
+        SDVariable bias = paramTable.get(DefaultParamInitializer.BIAS_KEY);
+
+        SDVariable temp = layerInput.mmul(weight);
+
+        if(hasLayerNorm()){
+            SDVariable gain = paramTable.get(DefaultParamInitializer.GAIN_KEY);
+            temp = sameDiff.nn.layerNorm(temp, gain, bias, false, 1);
+        }
+
+        if(hasBias())
+            temp = temp.add(bias);
+
+        return doActivation(sameDiff, temp);
     }
 
     @Override

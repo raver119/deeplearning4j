@@ -48,8 +48,8 @@ public class KerasCustomLossTest extends BaseDL4JTest {
 
     public class LogCosh extends SameDiffLoss {
         @Override
-        public SDVariable defineLoss(SameDiff sd, SDVariable layerInput, SDVariable labels) {
-            return sd.math.log(sd.math.cosh(labels.sub(layerInput)));
+        public SDVariable defineLoss(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {
+            return sameDiff.math.log(sameDiff.math.cosh(labels.sub(layerInput)));
         }
     }
 

@@ -25,7 +25,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 public abstract class BaseLossFunction implements ILossFunction {
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels) {
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels) {
         throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 }
