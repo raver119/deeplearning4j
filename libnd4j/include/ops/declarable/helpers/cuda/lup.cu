@@ -629,7 +629,7 @@ namespace helpers {
 //        DataType dtype = input->dataType();
 //        if (dtype != DataType::DOUBLE)
 //            dtype = DataType::FLOAT32;
-        auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, DataTypeUtils::fromT<T>(), context); //, block.getWorkspace());
+        auto matrix = NDArrayFactory::create(DataTypeUtils::fromT<T>(), {n, n}, (sd::Order)input->ordering(), context); //, block.getWorkspace());
         auto det = NDArrayFactory::create<T>(1, context);
         auto stream = context->getCudaStream();
         NDArray::prepareSpecialUse({output}, {input});
@@ -674,7 +674,7 @@ namespace helpers {
             if (dtype != DataType::DOUBLE)
                 dtype = DataType::FLOAT32;
 
-            auto matrix = NDArrayFactory::create(input->ordering(), {n, n}, dtype, context); //, block.getWorkspace());
+            auto matrix = NDArrayFactory::create(dtype, {n, n}, (sd::Order)input->ordering(), context); //, block.getWorkspace());
             auto det = NDArrayFactory::create<T>(1, context);
             auto stream = context->getCudaStream();
             NDArray::prepareSpecialUse({output}, {input});
@@ -754,11 +754,11 @@ namespace helpers {
             auto dtype = DataTypeUtils::fromT<T>(); //input->dataType();
 //            if (dtype != DataType::DOUBLE)
 //                dtype = DataType::FLOAT32;
-            NDArray matrix = NDArrayFactory::create('c', {n, n}, dtype, context);
-            NDArray upper = NDArrayFactory::create('c', {n, n}, dtype, context);
-            NDArray lower = NDArrayFactory::create('c', {n, n}, dtype, context);
-            NDArray compound = NDArrayFactory::create('c', {n, n}, dtype, context);
-            NDArray permutation = NDArrayFactory::create('c', {n, n}, dtype, context);
+            NDArray matrix   = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
+            NDArray upper    = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
+            NDArray lower    = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
+            NDArray compound = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
+            NDArray permutation = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
             auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input->shapeInfo(),
                                                                                   {input->rankOf() - 2,
                                                                                    input->rankOf() - 1});
@@ -922,8 +922,8 @@ namespace helpers {
             else if (input->dataType() == DataType::FLOAT32)
                 cholesky__<float>(context, input, output, inplace);
             else {
-                auto tempOutput = NDArrayFactory::create_('c', input->getShapeAsVector(), DataType::FLOAT32, context);
-                tempOutput->assign(input);
+                auto tempOutput = NDArrayFactory::create(DataType::FLOAT32, input->getShapeAsVector(), sd::kArrayOrderC, context);
+                tempOutput.assign(input);
                 cholesky__<float>(context, &tempOutput, &tempOutput, true);
                 output->assign(tempOutput);
             }

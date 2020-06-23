@@ -133,7 +133,7 @@ namespace sd {
                 const int numThreads = 512;
                 const int numBlocks = updates.lengthOf() / numThreads + (updates.lengthOf() % numThreads ? 1 : 0);
 
-                auto tmp = NDArrayFactory::create<int>('c', {numBlocks + 1});
+                auto tmp = NDArrayFactory::vector<int>(numBlocks + 1);
 
                 dim3 launchDims(numBlocks, numThreads, 1024);
                 auto xType = updates.dataType();
@@ -179,7 +179,7 @@ namespace sd {
                 do {
                     int numPrefixBlocks = sd::math::nd4j_max<int>(1, sd::math::nd4j_ceil<float, int>((float) numElts / (2.0f * prefixThreads)));
                     if (numPrefixBlocks > 1) {
-                        tempArrays[level] = std::move(NDArrayFactory::create<int>('c', {numPrefixBlocks}));
+                        tempArrays[level] = std::move(NDArrayFactory::vector<int>(numPrefixBlocks));
                         pointers[level] = tempArrays[level].specialBuffer();;
                         level++;
                     }
@@ -187,7 +187,7 @@ namespace sd {
                 } while (numElts > 1);
 
                 PointersManager pm(LaunchContext::defaultContext(), "thresholdEncode");
-                auto offsets = NDArrayFactory::create<int>('c', {numBlocks});
+                auto offsets = NDArrayFactory::vector<int>(numBlocks);
 
                 // we want to check, if we're hiting external limit on number of encoded elements
                 auto numMatches = blocks.e<int>(0);

@@ -90,7 +90,7 @@ namespace helpers {
         }
 
         auto stream = context->getCudaStream();
-        NDArray uniform = NDArrayFactory::create<T>('c', {shift}, context);
+        NDArray uniform = NDArrayFactory::vector<T>(shift, T(0.f), context);
         uniform.syncToDevice();
         // fill up uniform with given length
         RandomLauncher::fillUniform(context, rng, &uniform, 0., 1.);

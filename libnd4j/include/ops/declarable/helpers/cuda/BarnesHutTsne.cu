@@ -160,7 +160,7 @@ namespace helpers {
         T const* pVals = reinterpret_cast<T const*>(valP->specialBuffer());
         T* pOutput = reinterpret_cast<T*>(outputVals->specialBuffer());
         //std::vector<int> rowCountsV = rowCounts->getBufferAsVector<int>();
-        auto offsetArr = NDArrayFactory::create<int>('c', {N});
+        auto offsetArr = NDArrayFactory::vector<int>(N);
         int* offset = reinterpret_cast<int*>(offsetArr.specialBuffer());
         // symmetrize itself
         symmetrizeKernel<T><<<1, 1, 1024, *stream>>>(pRows, pCols, pVals, symRowP, symColP, offset, pOutput, N);

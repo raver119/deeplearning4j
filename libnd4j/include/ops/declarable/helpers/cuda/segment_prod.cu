@@ -122,11 +122,11 @@ namespace helpers {
     static void segmentProdFunctor_(sd::LaunchContext* context, NDArray* input, NDArray* indices, NDArray* output) {
         auto stream = context->getCudaStream();
         Nd4jLong numClasses = indices->e<Nd4jLong>(indices->lengthOf() - 1) + 1;
-        NDArray classesRangesLens = NDArrayFactory::create<int>('c', {numClasses}, context);
-        NDArray classesRangesBegs = NDArrayFactory::create<int>('c', {numClasses}, context);
+        NDArray classesRangesLens = NDArrayFactory::vector<int>(numClasses, 0, context);
+        NDArray classesRangesBegs = NDArrayFactory::vector<int>(numClasses, indices->lengthOf(), context);
         output->assign(1);
-        classesRangesBegs.assign(indices->lengthOf());
-        classesRangesLens.assign(0);
+//        classesRangesBegs.assign(indices->lengthOf());
+//        classesRangesLens.assign(0);
 
         dim3 dims(numClasses, indices->lengthOf(), numClasses * 32 + 32);
         fillUpSegments(indices, numClasses, classesRangesBegs, classesRangesLens);
@@ -160,8 +160,8 @@ namespace helpers {
     static void unsortedSegmentProdFunctor_(sd::LaunchContext* context, NDArray* input, NDArray* indices, Nd4jLong numOfClasses, NDArray* output) {
         auto stream = context->getCudaStream();
 //        NDArray classes = NDArrayFactory::create<int>('c', {numOfClasses, 2});
-        NDArray classesRangesBegs = NDArrayFactory::create<int>('c', {numOfClasses}, context);
-        NDArray classesRangesLens = NDArrayFactory::create<int>('c', {numOfClasses}, context);
+        NDArray classesRangesBegs = NDArrayFactory::vector<int>(numOfClasses, indices->lengthOf(), context);
+        NDArray classesRangesLens = NDArrayFactory::vector<int>(numOfClasses, 0, context);
 //        NDArray row = NDArrayFactory::create<int>('c', {1, 2}, {(int)indices->lengthOf(), (int)0});
 //        classes.applyTrueBroadcast(sd::BroadcastOpsTuple::Assign(), &row, &classes);
         classesRangesBegs.assign(indices->lengthOf());

@@ -77,8 +77,8 @@ namespace sd {
                 NDArray::prepareSpecialUse({&result}, {&array});
                 auto length = array.lengthOf();
                 int numBlocks = length / blockSize + ((length % blockSize == 0) ? 0 : 1);
-                auto tempA = NDArrayFactory::create<Nd4jLong>('c', {numBlocks}, context);
-                auto tempB = NDArrayFactory::create<Nd4jLong>('c', { numBlocks / blockSize + 1}, context);
+                auto tempA = NDArrayFactory::vector<Nd4jLong>( numBlocks, T(0.f), context);
+                auto tempB = NDArrayFactory::vector<Nd4jLong>( numBlocks / blockSize + 1, T(0.f), context);
 
                 auto buffer = reinterpret_cast<T*>(array.specialBuffer()); //bufferAsT<T>();
                 auto tempBufferA = reinterpret_cast<Nd4jLong*>(tempA.specialBuffer()); //bufferAsT<Nd4jLong>();

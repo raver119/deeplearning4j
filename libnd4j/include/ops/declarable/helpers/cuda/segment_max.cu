@@ -167,11 +167,11 @@ namespace sd {
                 auto stream = context->getCudaStream();
                 indices->syncToHost();
                 Nd4jLong numOfClasses = indices->e<Nd4jLong>(indices->lengthOf() - 1) + 1;
-                NDArray classesRangesLens = NDArrayFactory::create<int>('c', {numOfClasses}, context);
-                NDArray classesRangesBegs = NDArrayFactory::create<int>('c', {numOfClasses}, context);
+                NDArray classesRangesLens = NDArrayFactory::vector<int>(numOfClasses, 0, context);
+                NDArray classesRangesBegs = NDArrayFactory::vector<int>(numOfClasses, indices->lengthOf(), context);
 
-                classesRangesBegs.assign(indices->lengthOf());
-                classesRangesLens.assign(0);
+                //classesRangesBegs.assign(indices->lengthOf());
+                //classesRangesLens.assign(0);
                 dim3 dims(256, 512, 256);
                 int* begins = reinterpret_cast<int*>(classesRangesBegs.specialBuffer());
                 int* lengths = reinterpret_cast<int*>(classesRangesLens.specialBuffer());
@@ -209,12 +209,12 @@ namespace sd {
 //        NDArray classes = NDArrayFactory::create<int>('c', {numOfClasses, 2});
                 output->assign(DataTypeUtils::infOrMax<T>());
 
-                NDArray classesRangesBegs = NDArrayFactory::create<int>('c', {numOfClasses}, context);
-                NDArray classesRangesLens = NDArrayFactory::create<int>('c', {numOfClasses}, context);
+                NDArray classesRangesBegs = NDArrayFactory::vector<int>(numOfClasses, indices->lengthOf(), context);
+                NDArray classesRangesLens = NDArrayFactory::vector<int>(numOfClasses, 0, context);
 //        NDArray row = NDArrayFactory::create<int>('c', {1, 2}, {(int)indices->lengthOf(), (int)0});
 //        classes.applyTrueBroadcast(sd::BroadcastOpsTuple::Assign(), row, classes);
-                classesRangesBegs.assign(indices->lengthOf());
-                classesRangesLens.assign(0);
+//                classesRangesBegs.assign(indices->lengthOf());
+//                classesRangesLens.assign(0);
                 dim3 dims(numOfClasses, indices->lengthOf(), numOfClasses * 32 + 32);
 //        int* classesBuf = reinterpret_cast<int*>(classes.specialBuffer());
                 fillUpSegments(indices, numOfClasses, classesRangesBegs, classesRangesLens);
