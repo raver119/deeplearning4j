@@ -603,6 +603,7 @@
                 <jumpy.test.skip>true</jumpy.test.skip>
                 <pydatavec.test.skip>true</pydatavec.test.skip>
                 <pydl4j.test.skip>true</pydl4j.test.skip>
+                <scala.test.skip>true</scala.test.skip>
                 <skipBackendChoice>true</skipBackendChoice>
                 <skipTestResourceEnforcement>true</skipTestResourceEnforcement>
             </properties>
@@ -620,6 +621,7 @@
                 <jumpy.test.skip>true</jumpy.test.skip>
                 <pydatavec.test.skip>true</pydatavec.test.skip>
                 <pydl4j.test.skip>true</pydl4j.test.skip>
+                <scala.test.skip>true</scala.test.skip>
                 <skipBackendChoice>true</skipBackendChoice>
                 <skipTestResourceEnforcement>true</skipTestResourceEnforcement>
             </properties>

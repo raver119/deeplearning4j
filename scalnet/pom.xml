@@ -163,7 +163,7 @@
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
                     <filereports>WDF TestSuite.txt</filereports>
-                    <skipTests>${maven.test.skip}</skipTests>
+                    <skipTests>${scala.test.skip}</skipTests>
                 </configuration>
                 <executions>
                     <execution>
