@@ -82,7 +82,15 @@ const ExecutionTask &OpSequence::at(uint64_t index) const {
   return _ops[index];
 }
 
+ExecutionTask &OpSequence::at(uint64_t index) {
+  return _ops[index];
+}
+
 const ExecutionTask &OpSequence::operator[](uint64_t index) const {
+  return at(index);
+}
+
+ExecutionTask &OpSequence::operator[](uint64_t index) {
   return at(index);
 }
 
@@ -110,6 +118,12 @@ void OpSequence::append(ExecutionTask&& task) {
   auto index = _ops.size() - 1;
   _idToIndex[task.node().id()] = index;
   _indexToId[index] = task.node().id();
+}
+
+void OpSequence::append(const OpSequence &sequence) {
+  for (const auto &v:sequence._ops) {
+    this->append(v);
+  }
 }
 
 int OpSequence::nodeId(int index) const {

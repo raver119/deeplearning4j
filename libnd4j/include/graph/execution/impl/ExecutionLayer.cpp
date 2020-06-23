@@ -95,6 +95,9 @@ void ExecutionLayer::sortOpSequences() {  // bubble sort
           }
 }
 
+void ExecutionLayer::purgeEmptySequences() {
+  _sequences.erase(std::remove_if(_sequences.begin(), _sequences.end(), [](OpSequence &seq) -> bool { return seq.length() == 0; }), _sequences.end());
+}
 
 }  // namespace graph
 }  // namespace sd

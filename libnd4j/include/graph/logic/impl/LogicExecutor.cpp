@@ -16,38 +16,23 @@
  ******************************************************************************/
 
 //
-// Created by raver119 on 20.10.2017.
+// @author raver119@gmail.com
 //
 
-#include <graph/logic/LogicConditional.h>
 #include <graph/logic/LogicEnter.h>
 #include <graph/logic/LogicExecutor.h>
 #include <graph/logic/LogicExit.h>
-#include <graph/logic/LogicExpose.h>
 #include <graph/logic/LogicLoopCond.h>
 #include <graph/logic/LogicMerge.h>
 #include <graph/logic/LogicNextIteration.h>
-#include <graph/logic/LogicReturn.h>
-#include <graph/logic/LogicScope.h>
 #include <graph/logic/LogicSwitch.h>
-#include <graph/logic/LogicWhile.h>
 
 namespace sd {
 namespace graph {
 Nd4jStatus LogicExecutor::processNode(const Node *node, Stack &stack, const OptimizedGraph& graph) {
   switch (node->opNum()) {
-    case sd::logic::While:
-      return LogicWhile::processNode(node);
-    case sd::logic::Scope:
-      return LogicScope::processNode(node);
-    case sd::logic::Conditional:
-      return LogicConditional::processNode(node);
     case sd::logic::Switch:
       return LogicSwitch::processNode(node, stack, graph);
-    case sd::logic::Return:
-      return LogicReturn::processNode(node);
-    case sd::logic::Expose:
-      return LogicExpose::processNode(node);
     case sd::logic::Merge:
       return LogicMerge::processNode(node, stack, graph);
     case sd::logic::LoopCond:

@@ -78,6 +78,11 @@ class SD_EXPORT ExecutionLayer {
    * @return
    */
   bool hasNode(int nodeId) const;
+
+  /**
+   * This method removes all empty OpSequences from this layer
+   */
+  void purgeEmptySequences();
 };
 
 }  // namespace graph

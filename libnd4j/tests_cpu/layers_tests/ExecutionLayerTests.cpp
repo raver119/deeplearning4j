@@ -62,3 +62,26 @@ TEST_F(ExecutionLayerTests, test_reassign_1) {
   seq = layer[1];
   ASSERT_EQ(2, seq.length());
 }
+
+TEST_F(ExecutionLayerTests, test_purge_1) {
+  ExecutionLayer layer;
+  OpSequence sequence1, sequence2;
+
+  Node a(sd::ops::add(), "add");
+  Node m(sd::ops::multiply(), "mul");
+
+  Context ctx1(1);
+  Context ctx2(2);
+
+  sequence1.append(a, ctx1);
+  sequence1.append(m, ctx2);
+
+  layer.append(sequence1);
+  layer.append(sequence2);
+
+  ASSERT_EQ(2, layer.width());
+
+  layer.purgeEmptySequences();
+
+  ASSERT_EQ(1, layer.width());
+}

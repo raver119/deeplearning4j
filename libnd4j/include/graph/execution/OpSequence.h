@@ -88,7 +88,11 @@ class SD_EXPORT OpSequence
    * @return
    */
   const ExecutionTask& at(uint64_t index) const;
+  ExecutionTask& at(uint64_t index);
+
   const ExecutionTask& operator[](uint64_t index) const;
+  ExecutionTask& operator[](uint64_t index);
+
 
   /**
    * This method allows to add DeclarableOp to the end of execution queue
@@ -96,10 +100,10 @@ class SD_EXPORT OpSequence
    * @param ctx - ContextPrototype for this operation with inputs/outputs/args
    * defined
    */
-  void append(const Node& node,
-              const sd::graph::ContextPrototype& ctx);
+  void append(const Node& node, const sd::graph::ContextPrototype& ctx);
   void append(const ExecutionTask& task);
   void append(ExecutionTask&& task);
+  void append(const OpSequence &sequence);
 
   /**
    * These two methods provide access to index/id dictionalries

@@ -85,9 +85,10 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
 
 
     if (v.node().opType() == OpType_LOGIC) {
-      nd4j_printf("Node <%i:%s> is a logic op\n",
+      nd4j_printf("Node <%i:%s> is a logic op; Current frame: [%i]\n",
                   v.node().id(),
-                  v.node().name().empty() ? "" : v.node().name().c_str());
+                  v.node().name().empty() ? "" : v.node().name().c_str(),
+                  f.id());
 
       LogicExecutor::processNode(&v.node(), stack, graph);
 
@@ -97,12 +98,18 @@ Nd4jStatus GraphExecutor::execute(const OpSequence &seq,
           e = seq.nodeIndex(f.enterId()) - 1;
       }
     } else if (v.node().hasCustomOp()) {
+      nd4j_printf("Node <%i:%s> is a custom op; Current frame: [%i]\n",
+                  v.node().id(),
+                  v.node().name().empty() ? "" : v.node().name().c_str(),
+                  f.id());
+
       // only Ops can be executed this way :(
       result = execute(v.node().customOp(), v.protoContext(), seq, graph, const_cast<VariableProxy &>(p), targetDevice);
     } else {
-      nd4j_printf("Node <%i:%s> has no customOp set\n",
+      nd4j_printf("Node <%i:%s> has no customOp set; Current frame: [%i]\n",
                   v.node().id(),
-                  v.node().name().empty() ? "" : v.node().name().c_str());
+                  v.node().name().empty() ? "" : v.node().name().c_str(),
+                  f.id());
     }
 
     // if any one op fails - there will be no sense in executing other ops

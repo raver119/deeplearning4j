@@ -36,6 +36,10 @@ class SD_EXPORT OptimizedGraph {
     std::vector<ExecutionLayer> _sortedGraph;
     MAP_IMPL<int, Node> _nodesMap;
 
+    /**
+     * This method removes all empty ExecutionLayers from this graph
+     */
+    void purgeEmptyLayers();
   public:
     OptimizedGraph(const MAP_IMPL<int, Node>& map, const VariableSpace& varSpace);
     // move constructor

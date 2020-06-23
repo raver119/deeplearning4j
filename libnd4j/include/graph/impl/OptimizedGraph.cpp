@@ -269,6 +269,9 @@ OptimizedGraph::OptimizedGraph(const MAP_IMPL<int, Node>& inMap, const VariableS
     // sort _sortedGraph
     // for (auto& l : _sortedGraph)
     //     l.sortOpSequences();
+
+    // clean up before exiting
+    purgeEmptyLayers();
 }
 
 void OptimizedGraph::append(const OpSequence &sequence) {
@@ -326,6 +329,15 @@ int OptimizedGraph::nodeSequence(int nodeId) const {
   }
 
   throw std::runtime_error("Sequence of Node [" + StringUtils::valueToString(nodeId) + "] wasn't found in OptimizedGraph");
+}
+
+void OptimizedGraph::purgeEmptyLayers() {
+  // purge empty sequences first, if any
+  for (auto &v:_sortedGraph)
+    v.purgeEmptySequences();
+
+  // now purge all layers without sequences
+  _sortedGraph.erase(std::remove_if(_sortedGraph.begin(), _sortedGraph.end(), [](ExecutionLayer &layer) -> bool { return layer.width() == 0; }), _sortedGraph.end());
 }
 
 void OptimizedGraph::printOut() const {
