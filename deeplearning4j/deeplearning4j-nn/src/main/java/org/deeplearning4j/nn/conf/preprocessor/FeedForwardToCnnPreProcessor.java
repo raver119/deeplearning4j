@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 @Data
 @EqualsAndHashCode(exclude = {"shape"})
-public class FeedForwardToCnnPreProcessor implements InputPreProcessor {
+public class FeedForwardToCnnPreProcessor extends BaseInputPreProcessor {
     private long inputHeight;
     private long inputWidth;
     private long numChannels;

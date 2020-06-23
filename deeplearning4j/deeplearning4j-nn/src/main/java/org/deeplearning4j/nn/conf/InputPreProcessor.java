@@ -17,8 +17,12 @@
 package org.deeplearning4j.nn.conf;
 
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -30,6 +34,9 @@ import java.io.Serializable;
  * Input pre processor used
  * for pre processing input before passing it
  * to the neural network.
+ *
+ * You will most likely want to extend BaseInputPreProcessor when creating a custom preprocessor,
+ * as it supplies default exception-throwing define* methods.
  *
  * @author Adam Gibson
  */
@@ -69,4 +76,21 @@ public interface InputPreProcessor extends Serializable, Cloneable {
 
 
     Pair<INDArray, MaskState> feedForwardMaskArray(INDArray maskArray, MaskState currentMaskState, int minibatchSize);
+
+    /**
+     * Define the InputPreProcessor's input transformation in a {@link SameDiff} instance.
+     * @param sameDiff The {@link SameDiff} instance.
+     * @param layerInput The input to transform.
+     * @return The transformed input.
+     */
+    @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput);
+
+    //TODO add params?
+    /**
+     * Define the InputPreProcessor's mask transformation in a {@link SameDiff} instance.
+     * @param sameDiff The {@link SameDiff} instance.
+     * @param mask The input to mask.
+     * @return The transformed mask.
+     */
+    @NonNull SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask);
 }

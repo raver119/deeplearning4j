@@ -51,7 +51,7 @@ import java.util.Arrays;
 @Data
 @Slf4j
 @NoArgsConstructor
-public class RnnToFeedForwardPreProcessor implements InputPreProcessor {
+public class RnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
 
     private RNNFormat rnnDataFormat = RNNFormat.NCW;
 

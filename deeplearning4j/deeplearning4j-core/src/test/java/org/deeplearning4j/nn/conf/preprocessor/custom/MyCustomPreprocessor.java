@@ -18,8 +18,8 @@ package org.deeplearning4j.nn.conf.preprocessor.custom;
 
 import lombok.EqualsAndHashCode;
 import org.deeplearning4j.nn.api.MaskState;
-import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.preprocessor.BaseInputPreProcessor;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -28,7 +28,7 @@ import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
  * Created by Alex on 09/09/2016.
  */
 @EqualsAndHashCode
-public class MyCustomPreprocessor implements InputPreProcessor {
+public class MyCustomPreprocessor extends BaseInputPreProcessor {
 
     @Override
     public INDArray preProcess(INDArray input, int miniBatchSize, LayerWorkspaceMgr workspaceMgr) {
@@ -41,7 +41,7 @@ public class MyCustomPreprocessor implements InputPreProcessor {
     }
 
     @Override
-    public InputPreProcessor clone() {
+    public BaseInputPreProcessor clone() {
         return new MyCustomPreprocessor();
     }
 

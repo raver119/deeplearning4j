@@ -49,7 +49,7 @@ import static org.nd4j.linalg.api.shape.Shape.hasDefaultStridesForShape;
  * @see FeedForwardToCnn3DPreProcessor for opposite case (i.e., DenseLayer -> CNN3D)
  */
 @Data
-public class Cnn3DToFeedForwardPreProcessor implements InputPreProcessor {
+public class Cnn3DToFeedForwardPreProcessor extends BaseInputPreProcessor {
     protected long inputDepth;
     protected long inputHeight;
     protected long inputWidth;
@@ -143,12 +143,8 @@ public class Cnn3DToFeedForwardPreProcessor implements InputPreProcessor {
 
     @Override
     public Cnn3DToFeedForwardPreProcessor clone() {
-        try {
-            Cnn3DToFeedForwardPreProcessor clone = (Cnn3DToFeedForwardPreProcessor) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        Cnn3DToFeedForwardPreProcessor clone = (Cnn3DToFeedForwardPreProcessor) super.clone();
+        return clone;
     }
 
     @Override

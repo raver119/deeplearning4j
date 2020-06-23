@@ -16,8 +16,11 @@
 
 package org.deeplearning4j.nn.conf.preprocessor;
 
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 
@@ -42,5 +45,13 @@ public abstract class BaseInputPreProcessor implements InputPreProcessor {
                     int minibatchSize) {
         //Default: pass-through, unmodified
         return new Pair<>(maskArray, currentMaskState);
+    }
+
+    public @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput){
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    }
+
+    public @NonNull SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask){
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 }

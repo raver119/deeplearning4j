@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 @Data
 @EqualsAndHashCode(exclude = {"product"})
-public class RnnToCnnPreProcessor implements InputPreProcessor {
+public class RnnToCnnPreProcessor extends BaseInputPreProcessor {
 
     private int inputHeight;
     private int inputWidth;

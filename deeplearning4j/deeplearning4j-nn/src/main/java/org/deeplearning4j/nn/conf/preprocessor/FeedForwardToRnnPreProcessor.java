@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 @Data
 @NoArgsConstructor
-public class FeedForwardToRnnPreProcessor implements InputPreProcessor {
+public class FeedForwardToRnnPreProcessor extends BaseInputPreProcessor {
     private RNNFormat rnnDataFormat = RNNFormat.NCW;
 
     public FeedForwardToRnnPreProcessor(@JsonProperty("rnnDataFormat") RNNFormat rnnDataFormat){

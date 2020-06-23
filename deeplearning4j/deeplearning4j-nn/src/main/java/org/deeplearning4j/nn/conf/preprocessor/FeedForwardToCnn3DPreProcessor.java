@@ -48,7 +48,7 @@ import static org.nd4j.linalg.api.shape.Shape.hasDefaultStridesForShape;
  */
 @Data
 @EqualsAndHashCode(exclude = {"shape"})
-public class FeedForwardToCnn3DPreProcessor implements InputPreProcessor {
+public class FeedForwardToCnn3DPreProcessor extends BaseInputPreProcessor {
     private int inputDepth;
     private int inputHeight;
     private int inputWidth;
@@ -126,14 +126,10 @@ public class FeedForwardToCnn3DPreProcessor implements InputPreProcessor {
 
     @Override
     public FeedForwardToCnn3DPreProcessor clone() {
-        try {
-            FeedForwardToCnn3DPreProcessor clone = (FeedForwardToCnn3DPreProcessor) super.clone();
-            if (clone.shape != null)
-                clone.shape = clone.shape.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        FeedForwardToCnn3DPreProcessor clone = (FeedForwardToCnn3DPreProcessor) super.clone();
+        if (clone.shape != null)
+            clone.shape = clone.shape.clone();
+        return clone;
     }
 
     @Override

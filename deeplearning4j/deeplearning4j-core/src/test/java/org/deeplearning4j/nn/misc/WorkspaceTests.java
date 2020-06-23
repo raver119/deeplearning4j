@@ -24,6 +24,7 @@ import org.deeplearning4j.nn.conf.graph.rnn.LastTimeStepVertex;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
+import org.deeplearning4j.nn.conf.preprocessor.BaseInputPreProcessor;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.misc.iter.WSTestDataSetIterator;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -208,7 +209,7 @@ public class WorkspaceTests extends BaseDL4JTest {
         }
     }
 
-    public static class DupPreProcessor implements InputPreProcessor {
+    public static class DupPreProcessor extends BaseInputPreProcessor {
         @Override
         public INDArray preProcess(INDArray input, int miniBatchSize, LayerWorkspaceMgr mgr) {
             return mgr.dup(ArrayType.ACTIVATIONS, input);
@@ -220,7 +221,7 @@ public class WorkspaceTests extends BaseDL4JTest {
         }
 
         @Override
-        public InputPreProcessor clone() {
+        public BaseInputPreProcessor clone() {
             return new DupPreProcessor();
         }
 

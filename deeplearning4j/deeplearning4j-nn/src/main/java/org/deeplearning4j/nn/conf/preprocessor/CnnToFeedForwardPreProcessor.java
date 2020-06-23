@@ -51,7 +51,7 @@ import java.util.Arrays;
  * @see FeedForwardToCnnPreProcessor for opposite case (i.e., DenseLayer -> CNNetc)
  */
 @Data
-public class CnnToFeedForwardPreProcessor implements InputPreProcessor {
+public class CnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
     protected long inputHeight;
     protected long inputWidth;
     protected long numChannels;

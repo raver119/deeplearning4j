@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.layers.CnnLossLayer;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.ZeroPaddingLayer;
 import org.deeplearning4j.nn.conf.layers.convolutional.Cropping2D;
+import org.deeplearning4j.nn.conf.preprocessor.BaseInputPreProcessor;
 import org.deeplearning4j.nn.conf.preprocessor.CnnToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.conf.preprocessor.ComposableInputPreProcessor;
 import org.deeplearning4j.nn.gradient.Gradient;
@@ -943,7 +944,7 @@ public class ConvDataFormatTests extends BaseDL4JTest {
 
     //Converts NHWC to NCHW activations
     @EqualsAndHashCode
-    private static class NHWCToNCHWPreprocessor implements InputPreProcessor {
+    private static class NHWCToNCHWPreprocessor extends BaseInputPreProcessor {
 
         @Override
         public INDArray preProcess(INDArray input, int miniBatchSize, LayerWorkspaceMgr workspaceMgr) {
@@ -956,7 +957,7 @@ public class ConvDataFormatTests extends BaseDL4JTest {
         }
 
         @Override
-        public InputPreProcessor clone() {
+        public BaseInputPreProcessor clone() {
             return this;
         }
 
