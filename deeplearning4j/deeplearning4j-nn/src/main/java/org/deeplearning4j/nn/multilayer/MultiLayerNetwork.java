@@ -17,6 +17,21 @@
 package org.deeplearning4j.nn.multilayer;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -28,21 +43,32 @@ import org.bytedeco.javacpp.Pointer;
 import org.deeplearning4j.datasets.iterator.MultiDataSetWrapperIterator;
 import org.deeplearning4j.exception.DL4JException;
 import org.deeplearning4j.exception.DL4JInvalidInputException;
+import org.deeplearning4j.nn.api.Classifier;
+import org.deeplearning4j.nn.api.FwdPassType;
+import org.deeplearning4j.nn.api.Layer;
+import org.deeplearning4j.nn.api.MaskState;
+import org.deeplearning4j.nn.api.ModelAdapter;
+import org.deeplearning4j.nn.api.NeuralNetwork;
+import org.deeplearning4j.nn.api.TrainingConfig;
 import org.deeplearning4j.nn.api.Updater;
-import org.deeplearning4j.nn.api.*;
 import org.deeplearning4j.nn.api.layers.IOutputLayer;
 import org.deeplearning4j.nn.api.layers.RecurrentLayer;
-import org.deeplearning4j.nn.conf.*;
+import org.deeplearning4j.nn.conf.BackpropType;
+import org.deeplearning4j.nn.conf.CacheMode;
+import org.deeplearning4j.nn.conf.InputPreProcessor;
+import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.WorkspaceMode;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.FeedForwardLayer;
 import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional;
 import org.deeplearning4j.nn.gradient.DefaultGradient;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.layers.FrozenLayerWithBackprop;
 import org.deeplearning4j.nn.layers.LayerHelper;
-import org.deeplearning4j.nn.layers.OutputLayer;
 import org.deeplearning4j.nn.layers.recurrent.BidirectionalLayer;
 import org.deeplearning4j.nn.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.updater.UpdaterCreator;
@@ -61,6 +87,9 @@ import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
+import org.nd4j.common.primitives.Pair;
+import org.nd4j.common.primitives.Triple;
+import org.nd4j.common.util.OneTimeLogger;
 import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.evaluation.classification.ROC;
@@ -89,18 +118,12 @@ import org.nd4j.linalg.heartbeat.reports.Task;
 import org.nd4j.linalg.heartbeat.utils.EnvironmentUtils;
 import org.nd4j.linalg.heartbeat.utils.TaskUtils;
 import org.nd4j.linalg.indexing.NDArrayIndex;
-import org.nd4j.common.primitives.Pair;
-import org.nd4j.common.primitives.Triple;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
-import org.nd4j.linalg.lossfunctions.SameDiffLoss;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.util.FeatureUtil;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
 import org.nd4j.linalg.workspace.WorkspaceUtils;
-import org.nd4j.common.util.OneTimeLogger;
-
-import java.io.*;
-import java.util.*;
+import org.nd4j.weightinit.impl.ZeroInitScheme;
 
 ;
 
@@ -762,80 +785,160 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
     }
 
     /**
+     * TODO overloads for input type
      * Create the MultiLayerNetwork in a SameDiff instance.
      * @param sameDiff The SameDiff instance to create the model in
-     * @param inferenceOnly If true, only create variables for inference (no labels or loss).
+     * @param useView whether to directly use the (view) weights in the SDVariables, or create new ones.
+     * Using them saves an initialization (of every weight), but may cause issues with multi-gpu setups.
      */
-    public void toSameDiff(@NonNull SameDiff sameDiff, boolean inferenceOnly){
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType, boolean useView){
         if (!isInitCalled())
             init();
 
-        SDVariable input = sameDiff.placeHolder("input", input().dataType(), input().shape());
-        SDVariable lastOutput = input;
+        SDVariable input = sameDiff.placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape());
+        SDVariable currentOutput = input;
+
+        Map<Class<?>, Integer> numLayers = new HashMap<>();
+
+        InputType currentInputType = inputType;
+
         for(int i = 0 ; i < layers.length ; i++){
             Layer layer = layers[i];
 
-            NameScope layerScope = sameDiff.withNameScope("layer_" + i);
-
-            Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
-            for(Map.Entry<String, INDArray> entry : layer.paramTable().entrySet()){
-                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), entry.getValue()));
-            }
-
+            org.deeplearning4j.nn.conf.layers.Layer config;
+            // layer
             if(layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer){
-                org.deeplearning4j.nn.conf.layers.Layer config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
-
-                //TODO support masks
-                lastOutput = config.defineLayer(sameDiff, lastOutput, paramTable, null);
+                config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
 
             } else {
                 throw new UnsupportedOperationException("Can't convert non-Layer layers");
             }
 
+            Class<?> confClass = layer.getConfig().getClass();
+
+            int layerNum = 0;
+
+            if(numLayers.containsKey(confClass)){
+                layerNum = numLayers.get(confClass);
+                numLayers.put(confClass, ++layerNum);
+            }
+
+            NameScope layerScope = sameDiff.withNameScope(confClass.getSimpleName() + (layerNum == 0 ? "" : "_" + layerNum));
+
+            // preprocessor
+            InputPreProcessor preProcessor = config.getPreProcessorForInputType(currentInputType);
+
+            if(preProcessor != null) {
+                NameScope preProcessorScope = sameDiff.withNameScope("inputPreprocessor");
+
+                currentOutput = preProcessor.definePreProcess(sameDiff, currentOutput);
+                currentInputType = preProcessor.getOutputType(currentInputType);
+                preProcessorScope.close();
+            }
+
+            // create weights
+            Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
+            for(Map.Entry<String, INDArray> entry : layer.paramTable().entrySet()){
+                if(useView) {
+                    paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), entry.getValue()));
+                } else {
+                    INDArray base = entry.getValue();
+                    SDVariable weight = sameDiff.var(entry.getKey(), new ZeroInitScheme(), base.dataType(), base.shape());
+                    weight.getArr().addi(base);
+                }
+            }
+
+            // layer
+            //TODO regularizations?  No SameDiff support for per-layer/weight regularizes
+            currentOutput = config.defineLayer(sameDiff, currentOutput, paramTable, null);
+            currentInputType = config.getOutputType(i, currentInputType);
+
             layerScope.close();
         }
 
-        sameDiff.setOutputs(lastOutput);
+        sameDiff.setOutputs(currentOutput);
 
         Layer lastLayer = getOutputLayer();
 
-        if(!inferenceOnly && lastLayer instanceof OutputLayer){
-            OutputLayer outputLayer = (OutputLayer) lastLayer;
-            SDVariable labels = sameDiff.placeHolder("labels", this.labels.dataType(), this.labels.shape());
+        if(lastLayer instanceof BaseOutputLayer){
+            BaseOutputLayer<?> outputLayer = (BaseOutputLayer<?>) lastLayer;
+
+            // labels shape must be the same as the last layer
+            SDVariable labels = sameDiff.placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentOutput.getShape());
             ILossFunction lossFn = outputLayer.layerConf().getLossFn();
 
-            //TODO make all losses SameDiffLoss / add a conversion method (and make interface abstract class?)
-            if(lossFn instanceof SameDiffLoss){
-                SDVariable loss = ((SameDiffLoss) lossFn).defineLoss(sameDiff, lastOutput, labels);
-                sameDiff.setLossVariables(loss);
-            } else {
-                throw new UnsupportedOperationException("Can't convert a non-SameDiffLoss loss");
-            }
+            SDVariable loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
+            sameDiff.setLossVariables(loss);
 
+            org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = org.nd4j.autodiff.samediff.TrainingConfig.builder()
+                    .minimize(loss.name())
+                    .updater(this.conf().getIUpdater())
+                    .minimize(conf().isMinimize())
+                    .build();
+
+            sameDiff.setTrainingConfig(trainingConfig);
+            return trainingConfig;
         }
+
+        return null;
     }
 
     /**
-     * See {@link #toSameDiff(SameDiff, boolean)}.  {@code inferenceOnly} is false.
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true.
      */
-    public void toSameDiff(@NonNull SameDiff sameDiff){
-        toSameDiff(sameDiff, false);
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType){
+        return toSameDiff(sameDiff, inputType, true);
     }
 
+    /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code inputType} is inferred.
+     */
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, boolean useView){
+        //TODO move to overload w/o InputType
+        Preconditions.checkState(layerWiseConfigurations.getInputType() != null, "Must specify an input type or have it inferred for SameDiff conversion");
+        return toSameDiff(sameDiff, layerWiseConfigurations.getInputType(), useView);
+    }
 
     /**
-     * Convert the MultiLayerNetwork to a SameDiff instance.
-     * See {@link #toSameDiff(SameDiff, boolean)}.
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true and {@code inputType} is inferred.
      */
-    public SameDiff toSameDiff(boolean inferenceOnly){
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff){
+        return toSameDiff(sameDiff, true);
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.
+     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
+     */
+    public SameDiff toSameDiff(@NonNull InputType inputType, boolean useView){
         SameDiff sameDiff = SameDiff.create();
-        toSameDiff(sameDiff, inferenceOnly);
+        toSameDiff(sameDiff, inputType, useView);
         return sameDiff;
     }
 
     /**
-     * Convert the MultiLayerNetwork to a SameDiff instance.
-     * See {@link #toSameDiff(SameDiff)}.
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true.
+     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
+     */
+    public SameDiff toSameDiff(@NonNull InputType inputType){
+        SameDiff sameDiff = SameDiff.create();
+        toSameDiff(sameDiff, inputType);
+        return sameDiff;
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code inputType} is inferred.
+     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
+     */
+    public SameDiff toSameDiff(boolean useView){
+        SameDiff sameDiff = SameDiff.create();
+        toSameDiff(sameDiff, useView);
+        return sameDiff;
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true and {@code inputType} is inferred.
+     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
      */
     public SameDiff toSameDiff(){
         SameDiff sameDiff = SameDiff.create();
