@@ -23,6 +23,7 @@ import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.transforms.same.Sign;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -42,7 +43,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossL1 implements ILossFunction {
+public class LossL1 extends BaseLossFunction {
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
     @JsonDeserialize(using = NDArrayTextDeSerializer.class)

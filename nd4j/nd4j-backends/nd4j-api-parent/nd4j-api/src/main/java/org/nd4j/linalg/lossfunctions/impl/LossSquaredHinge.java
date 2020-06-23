@@ -22,6 +22,7 @@ import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.common.primitives.Pair;
@@ -30,7 +31,7 @@ import org.nd4j.common.primitives.Pair;
  * Created by susaneraly on 9/9/16.
  */
 @EqualsAndHashCode
-public class LossSquaredHinge implements ILossFunction {
+public class LossSquaredHinge extends BaseLossFunction {
 
     public INDArray scoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
         if(!labels.equalShapes(preOutput)){

@@ -25,6 +25,7 @@ import org.nd4j.linalg.api.ops.impl.transforms.custom.SoftMax;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -64,7 +65,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
  */
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LossMixtureDensity implements ILossFunction {
+public class LossMixtureDensity extends BaseLossFunction {
 
     private  int mMixtures;
     private  int mLabelWidth;

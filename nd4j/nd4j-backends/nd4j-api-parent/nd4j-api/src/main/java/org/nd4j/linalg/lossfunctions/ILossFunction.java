@@ -17,6 +17,9 @@
 package org.nd4j.linalg.lossfunctions;
 
 
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
@@ -77,6 +80,15 @@ public interface ILossFunction extends Serializable {
     //TODO: do we want to use the apache commons pair here?
     Pair<Double, INDArray> computeGradientAndScore(INDArray labels, INDArray preOutput, IActivation activationFn,
                     INDArray mask, boolean average);
+
+    /**
+     * Define the loss function for a {@link SameDiff} instance
+     * @param sd The {@link SameDiff} instance
+     * @param input The input to the loss function, typically the output of the previous layer.
+     * @param labels The lables to compare the output to.  Should be the same shape as input.
+     * @return The score (loss function value).
+     */
+    @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels);
 
     /**
      * The opName of this function

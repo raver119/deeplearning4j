@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.nd4j.linalg.lossfunctions;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
@@ -36,7 +37,7 @@ import java.util.Map;
  * {@code return labels.squaredDifference(layerInput).mean(1);}
  *
  */
-public abstract class SameDiffLoss implements ILossFunction {
+public abstract class SameDiffLoss extends BaseLossFunction {
     protected transient SameDiff sd;
     protected transient SDVariable scorePerExampleVariable;
 
@@ -54,7 +55,7 @@ public abstract class SameDiffLoss implements ILossFunction {
      * @param labels     Labels placeholder
      * @return The score on a per example basis (SDVariable with shape [minibatch])
      */
-    public abstract SDVariable defineLoss(SameDiff sd, SDVariable layerInput, SDVariable labels);
+    public abstract @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
 
     protected void createSameDiffInstance(DataType dataType){
         sd = SameDiff.create();

@@ -21,6 +21,7 @@ import lombok.Getter;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -56,7 +57,7 @@ import org.nd4j.shade.jackson.annotation.JsonInclude;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossMultiLabel implements ILossFunction {
+public class LossMultiLabel extends BaseLossFunction {
 
 
     public LossMultiLabel() {

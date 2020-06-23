@@ -21,6 +21,7 @@ import lombok.Getter;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -39,7 +40,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossMSLE implements ILossFunction {
+public class LossMSLE extends BaseLossFunction {
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
     @JsonDeserialize(using = NDArrayTextDeSerializer.class)

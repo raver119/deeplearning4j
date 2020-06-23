@@ -20,13 +20,17 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
+import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.linalg.ops.transforms.Transforms;
@@ -52,7 +56,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class LossMCXENT implements ILossFunction {
+public class LossMCXENT extends BaseLossFunction {
     private static final double DEFAULT_SOFTMAX_CLIPPING_EPSILON = 1e-10;
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
@@ -200,6 +204,15 @@ public class LossMCXENT implements ILossFunction {
 
         return new Pair<>(computeScore(labels, preOutput, activationFn, mask, average),
                         computeGradient(labels, preOutput, activationFn, mask));
+    }
+
+    @Override
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels) {
+        if(weights == null){
+            return sd.loss.weightedCrossEntropyWithLogits(labels, input, null);
+        } else {
+            return sd.loss.weightedCrossEntropyWithLogits(labels, input, sd.constant(weights));
+        }
     }
 
     /**

@@ -16,16 +16,16 @@
  *  *****************************************************************************
  */
 
-package org.deeplearning4j.nn.multilayer;
+package org.nd4j.linalg.lossfunctions;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.linalg.lossfunctions.SameDiffLoss;
 
-public class SameDiffNLLL extends SameDiffLoss {
+public abstract class BaseLossFunction implements ILossFunction {
 
     @Override
-    public SDVariable defineLoss(SameDiff sd, SDVariable layerInput, SDVariable labels) {
-        return sd.loss.weightedCrossEntropyWithLogits(labels, layerInput, null);
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sd, @NonNull SDVariable input, @NonNull SDVariable labels) {
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 }
