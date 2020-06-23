@@ -29,8 +29,8 @@ namespace sd {
                 Nd4jLong blockSize = 32;
                 auto length = array.lengthOf();
                 int numBlocks = length / blockSize + ((length % blockSize == 0) ? 0 : 1);
-                auto tempA = NDArrayFactory::create(DataType::INT64, std::vector<Nd4jLong>{numBlocks}, context);
-                auto tempB = NDArrayFactory::create(DataType::INT64, std::vector<Nd4jLong>{ numBlocks / blockSize + 1}, context);
+                auto tempA = NDArrayFactory::vector<Nd4jLong>(numBlocks, 0LL, context);
+                auto tempB = NDArrayFactory::vector<Nd4jLong>(numBlocks / blockSize + 1, 0LL, context);
 
                 auto buffer = array.bufferAsT<T>();
                 auto tempBufferA = tempA.bufferAsT<Nd4jLong>();

@@ -68,7 +68,7 @@ namespace sd {
             if (block.getIArguments()->size() > 0)
                 N = INT_ARG(0);
             auto dataType = rowP->dataType(); //ArrayOptions::dataType(inputShape->at(0));
-            auto rowCounts = NDArrayFactory::create(DataType::INT32, std::vector<Nd4jLong>{ N }, block.launchContext()); //rowP->dup();
+            auto rowCounts = NDArrayFactory::vector<int>(N, 0, block.launchContext()); //rowP->dup();
             //srowCounts->assign(0);
             Nd4jLong len = helpers::barnes_row_count(rowP, colP, N, rowCounts);
             rowCounts.syncToHost();

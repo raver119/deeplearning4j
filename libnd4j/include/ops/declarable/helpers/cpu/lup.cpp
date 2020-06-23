@@ -186,7 +186,7 @@ namespace helpers {
         if (compound != nullptr)
             compound->assign(compoundMatrix);
         if (permutation != nullptr) {
-            auto permutaionVector = NDArrayFactory::create(DataTypeUtils::fromT<I>(), std::vector<Nd4jLong>{rowNum}, input->getContext());
+            auto permutaionVector = NDArrayFactory::vector<I>(rowNum, (I)0, input->getContext());
             for (auto i = 0; i < rowNum; i++) {
                 for (auto j = 0; j < columnNum; j++) {
                     if (permutationMatrix.t<T>(i, j) != 0) {

@@ -95,6 +95,7 @@ namespace sd {
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<bfloat16>& data, sd::Order order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<Nd4jLong>& data, sd::Order order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<int>& data, sd::Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<unsigned int>& data, sd::Order order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<uint16_t>& data, sd::Order order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<uint64_t>& data, sd::Order order, sd::LaunchContext * context);
     template ND4J_EXPORT NDArray NDArrayFactory::create(const std::vector<Nd4jLong> &shape, const std::vector<int16_t>& data, sd::Order order, sd::LaunchContext * context);
@@ -117,6 +118,20 @@ namespace sd {
 
         return result;
     }
+
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const double* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const float* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const float16* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const bfloat16* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const Nd4jLong* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const int* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const int8_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const uint8_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const uint16_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext* workspace);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const uint32_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext* workspace);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const uint64_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext* workspace);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const int16_t* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
+    template ND4J_EXPORT NDArray NDArrayFactory::create(const bool* values, const std::vector<Nd4jLong>& shape, const Order order, sd::LaunchContext * context);
 
 ////////////////////////////////////////////////////////////////////////
 
