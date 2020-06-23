@@ -161,18 +161,6 @@
                 <updatePolicy>daily</updatePolicy>  <!-- Optional, update daily -->
             </snapshots>
         </repository>
-        <repository>
-            <id>maven-restlet</id>
-            <name>Public online Restlet repository</name>
-            <url>http://maven.restlet.org</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>  <!-- Optional, update daily -->
-            </snapshots>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -182,18 +170,6 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>
                 <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>  <!-- Optional, update daily -->
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-restlet</id>
-            <name>Public online Restlet repository</name>
-            <url>http://maven.restlet.org</url>
-            <releases>
-                <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
