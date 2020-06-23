@@ -35,9 +35,9 @@ public:
 };
 
 TEST_F(JavaInteropCudaTests, test_DeclarableOp_execution_1) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5});
-    auto y = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
-    auto e = NDArrayFactory::create<float>('c', {3, 5});
+    auto x = NDArrayFactory::create<float>(  {3, 5});
+    auto y = NDArrayFactory::create<float>(  {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+    auto e = NDArrayFactory::create<float>(  {3, 5});
     x.assign(1.f);
     e.assign(2.f);
 

@@ -57,8 +57,8 @@ void launcher(cudaStream_t *stream, double *input, double *output, Nd4jLong leng
 
 
 TEST_F(LambdaTests, test_basic_1) {
-    auto x = NDArrayFactory::create<double>('c', {5});
-    auto e = NDArrayFactory::create<double>('c', {5}, {1., 1., 1., 1., 1.});
+    auto x = NDArrayFactory::create<double>(  {5});
+    auto e = NDArrayFactory::create<double>(  {5}, {1., 1., 1., 1., 1.});
 
 
 
@@ -120,8 +120,8 @@ void testIndexedPairwise(NDArray &x, NDArray &y) {
 }
 
 TEST_F(LambdaTests, test_basic_2) {
-    auto x = NDArrayFactory::create<double>('c', {5});
-    auto e = NDArrayFactory::create<double>('c', {5}, {1., 1., 1., 1., 1.});
+    auto x = NDArrayFactory::create<double>(  {5});
+    auto e = NDArrayFactory::create<double>(  {5}, {1., 1., 1., 1., 1.});
 
     test(x);
 
@@ -129,8 +129,8 @@ TEST_F(LambdaTests, test_basic_2) {
 }
 
 TEST_F(LambdaTests, test_basic_3) {
-    auto x = NDArrayFactory::create<float>('c', {5});
-    auto e = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+    auto x = NDArrayFactory::create<float>(  {5});
+    auto e = NDArrayFactory::create<float>(  {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
 
     test(x);
 
@@ -138,8 +138,8 @@ TEST_F(LambdaTests, test_basic_3) {
 }
 
 TEST_F(LambdaTests, test_basic_4) {
-    auto x = NDArrayFactory::create<float>('c', {5});
-    auto e = NDArrayFactory::create<float>('c', {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
+    auto x = NDArrayFactory::create<float>(  {5});
+    auto e = NDArrayFactory::create<float>(  {5}, {1.f, 1.f, 1.f, 1.f, 1.f});
 
     test2<float>(x);
 
@@ -147,9 +147,9 @@ TEST_F(LambdaTests, test_basic_4) {
 }
 
 TEST_F(LambdaTests, test_basic_5) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1., 1., 1., 1., 1.});
-    auto y = NDArrayFactory::create<double>('c', {5}, {2., 2., 2., 2., 2.});
-    auto e = NDArrayFactory::create<double>('c', {5}, {4., 4., 4., 4., 4.});
+    auto x = NDArrayFactory::create<double>(  {5}, {1., 1., 1., 1., 1.});
+    auto y = NDArrayFactory::create<double>(  {5}, {2., 2., 2., 2., 2.});
+    auto e = NDArrayFactory::create<double>(  {5}, {4., 4., 4., 4., 4.});
 
     testPairwise(x, y);
 
@@ -157,8 +157,8 @@ TEST_F(LambdaTests, test_basic_5) {
 }
 
 TEST_F(LambdaTests, test_basic_6) {
-    auto x = NDArrayFactory::create<double>('c', {5});
-    auto e = NDArrayFactory::create<double>('c', {5}, {1., 2., 3., 4., 5.});
+    auto x = NDArrayFactory::create<double>(  {5});
+    auto e = NDArrayFactory::create<double>(  {5}, {1., 2., 3., 4., 5.});
 
     testIndexed(x);
 
@@ -166,10 +166,10 @@ TEST_F(LambdaTests, test_basic_6) {
 }
 
 TEST_F(LambdaTests, test_basic_7) {
-    auto w = NDArrayFactory::create<double>('c', {5}, {0., 0., 0., 0., 0.});
-    auto x = NDArrayFactory::create<double>('c', {5}, {1., 1., 1., 1., 1.});
-    auto y = NDArrayFactory::create<double>('c', {5}, {2., 2., 2., 2., 2.});
-    auto e = NDArrayFactory::create<double>('c', {5}, {5., 5., 5., 5., 5.});
+    auto w = NDArrayFactory::create<double>(  {5}, {0., 0., 0., 0., 0.});
+    auto x = NDArrayFactory::create<double>(  {5}, {1., 1., 1., 1., 1.});
+    auto y = NDArrayFactory::create<double>(  {5}, {2., 2., 2., 2., 2.});
+    auto e = NDArrayFactory::create<double>(  {5}, {5., 5., 5., 5., 5.});
 
     testTriplewise(w, x, y);
 
@@ -177,9 +177,9 @@ TEST_F(LambdaTests, test_basic_7) {
 }
 
 TEST_F(LambdaTests, test_basic_8) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1., 1., 1., 1., 1.});
-    auto y = NDArrayFactory::create<double>('c', {5}, {2., 2., 2., 2., 2.});
-    auto e = NDArrayFactory::create<double>('c', {5}, {4., 5., 6., 7., 8.});
+    auto x = NDArrayFactory::create<double>(  {5}, {1., 1., 1., 1., 1.});
+    auto y = NDArrayFactory::create<double>(  {5}, {2., 2., 2., 2., 2.});
+    auto e = NDArrayFactory::create<double>(  {5}, {4., 5., 6., 7., 8.});
 
     testIndexedPairwise(x, y);
 

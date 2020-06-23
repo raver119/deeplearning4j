@@ -99,11 +99,11 @@ TEST_F(CuDnnTests, mixed_helpers_test_1) {
     int paddingMode = 0;             // 1-SAME, 0-VALID;
     int dataFormat  = 0;             // 1-NHWC, 0-NCHW
 
-    auto input    = NDArrayFactory::create<float>('c', {bS, iC, iH, iW});
-    auto weights  = NDArrayFactory::create<float>('c', {oC, iC, kH, kW});
-    auto bias     = NDArrayFactory::create<float>('c', {oC}, {1,2,3});
+    auto input    = NDArrayFactory::create<float>(  {bS, iC, iH, iW});
+    auto weights  = NDArrayFactory::create<float>(  {oC, iC, kH, kW});
+    auto bias     = NDArrayFactory::create<float>(  {oC}, {1,2,3});
 
-    auto expOutput = NDArrayFactory::create<float>('c', {bS, oC, oH, oW}, {61.f,   61.f,  61.f,   61.f, 177.2f,  177.2f, 177.2f,  177.2f, 293.4f,  293.4f, 293.4f,  293.4f,  61.f,   61.f,  61.f,   61.f, 177.2f,  177.2f, 177.2f,  177.2f, 293.4f,  293.4f, 293.4f,  293.4f});
+    auto expOutput = NDArrayFactory::create<float>(  {bS, oC, oH, oW}, {61.f,   61.f,  61.f,   61.f, 177.2f,  177.2f, 177.2f,  177.2f, 293.4f,  293.4f, 293.4f,  293.4f,  61.f,   61.f,  61.f,   61.f, 177.2f,  177.2f, 177.2f,  177.2f, 293.4f,  293.4f, 293.4f,  293.4f});
     auto zCUDA = expOutput.like();
     auto zMKL = expOutput.like();
 

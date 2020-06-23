@@ -66,24 +66,24 @@ static cudaError_t allocateDeviceMem(LaunchContext& lc, std::vector<void*>& devi
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_1) {
-    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>(  {5}, {5, 4, 3, 2, 1});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_2) {
-    auto x = NDArrayFactory::create<int>('c', {5});
-    auto y = NDArrayFactory::create<int>('c', {5});
+    auto x = NDArrayFactory::create<int>(  {5});
+    auto y = NDArrayFactory::create<int>(  {5});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_3) {
-    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>(  {5}, {5, 4, 3, 2, 1});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -98,24 +98,24 @@ TEST_F(NDArrayCudaBasicsTests, Test_Registration_3) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_01) {
-    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>(  {5}, {5, 4, 3, 2, 1});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_02) {
-    auto x = NDArrayFactory::create<int>('c', {5});
-    auto y = NDArrayFactory::create<int>('c', {5});
+    auto x = NDArrayFactory::create<int>(  {5});
+    auto y = NDArrayFactory::create<int>(  {5});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Registration_03) {
-    auto x = NDArrayFactory::create<int>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<int>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<int>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>(  {5}, {5, 4, 3, 2, 1});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -132,8 +132,8 @@ TEST_F(NDArrayCudaBasicsTests, Test_Registration_03) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Cosine_1) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5}, {5, 4, 3, 2, 1});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5}, {5, 4, 3, 2, 1});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -151,11 +151,11 @@ TEST_F(NDArrayCudaBasicsTests, Test_Cosine_1) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_1) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto z = NDArrayFactory::create<double>('c', { 5 }, {10, 10, 10, 10, 10});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto z = NDArrayFactory::create<double>(  { 5 }, {10, 10, 10, 10, 10});
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 2, 4, 6, 8, 10 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 2, 4, 6, 8, 10 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -210,11 +210,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_2) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_3) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto z = NDArrayFactory::create<double>('c', { 5 }, {10, 10, 10, 10, 10});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto z = NDArrayFactory::create<double>(  { 5 }, {10, 10, 10, 10, 10});
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 2, 4, 6, 8, 10 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 2, 4, 6, 8, 10 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -258,11 +258,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_3) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_4) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto z = NDArrayFactory::create<double>('c', { 5 });
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 2, 4, 6, 8, 10 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 2, 4, 6, 8, 10 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -287,11 +287,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_4) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_5) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 2, 4, 6, 8, 10 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 2, 4, 6, 8, 10 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -320,11 +320,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_5) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_6) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
     auto y = NDArrayFactory::create<double>(2); //.'c', { 5 }, { 1, 2, 3, 4, 5});
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 3, 4, 5, 6, 7 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 3, 4, 5, 6, 7 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -350,11 +350,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_6) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestAdd_7) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
     //auto y = NDArrayFactory::create<double>(2); //.'c', { 5 }, { 1, 2, 3, 4, 5});
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 3, 4, 5, 6, 7 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 3, 4, 5, 6, 7 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -380,11 +380,11 @@ TEST_F(NDArrayCudaBasicsTests, TestAdd_7) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestMultiply_1) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto z = NDArrayFactory::create<double>('c', { 5 });
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 1, 4, 9, 16, 25 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 1, 4, 9, 16, 25 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -412,11 +412,11 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_1) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestMultiply_2) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
     NDArray z('c', { 5 }, sd::DataType::DOUBLE);
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 1, 4, 9, 16, 25 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 1, 4, 9, 16, 25 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -443,9 +443,9 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_3) {
     // allocating host-side arrays
     NDArray x('c', { 5 }, { 1, 2, 3, 4, 5}, sd::DataType::DOUBLE);
     NDArray y('c', { 5 }, { 1., 2., 3., 4., 5.}, sd::DataType::DOUBLE);
-    auto z = NDArrayFactory::create<double>('c', { 5 });
+    auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 1, 4, 9, 16, 25 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 1, 4, 9, 16, 25 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -475,9 +475,9 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_4) {
     // allocating host-side arrays
     NDArray x('c', { 5 }, { 1, 2, 3, 4, 5}, sd::DataType::DOUBLE);
     NDArray y('c', { 5 }, { 1., 2., 3., 4., 5.}, sd::DataType::DOUBLE);
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 5 }, { 1, 4, 9, 16, 25 });
+    auto exp = NDArrayFactory::create<double>(  { 5 }, { 1, 4, 9, 16, 25 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -507,9 +507,9 @@ TEST_F(NDArrayCudaBasicsTests, TestMultiply_4) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestPrimitiveNeg_01) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<int>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<int>('c', { 5 }, { 1, 2, 3, 4, 5});
-    auto exp = NDArrayFactory::create<int>('c', { 5 }, { -1, -2, -3, -4, -5 });
+    auto x = NDArrayFactory::create<int>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<int>(  { 5 }, { 1, 2, 3, 4, 5});
+    auto exp = NDArrayFactory::create<int>(  { 5 }, { -1, -2, -3, -4, -5 });
 
     auto stream = x.getContext()->getCudaStream();//reinterpret_cast<cudaStream_t *>(&nativeStream);
 
@@ -527,8 +527,8 @@ TEST_F(NDArrayCudaBasicsTests, TestPrimitiveNeg_01) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveNeg_2) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -547,9 +547,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveNeg_2) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveSqrt_1) { // strict
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
-    auto exp = NDArrayFactory::create<double>({1.000000, 1.414214, 1.732051, 2.000000, 2.236068});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
+    auto exp = NDArrayFactory::vector<double>({1.000000, 1.414214, 1.732051, 2.000000, 2.236068});
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
 
@@ -568,8 +568,8 @@ TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveSqrt_1) { // strict
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveAssign_1) { // strict
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
     //auto exp = NDArrayFactory::create<double>({1.000000, 1.414214, 1.732051, 2.000000, 2.236068});
     //ASSERT_TRUE(x.isActualOnDeviceSide());
     //ASSERT_TRUE(x.isActualOnHostSide());
@@ -593,9 +593,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveAssign_1) { // strict
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveCosine_1) { // strict
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
-    auto exp = NDArrayFactory::create<double>('c', {5}, {0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
+    auto exp = NDArrayFactory::create<double>(  {5}, {0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -616,9 +616,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveCosine_1) { // strict
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveCosine_2) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
-    auto exp = NDArrayFactory::create<double>('c', {5}, {0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
+    auto exp = NDArrayFactory::create<double>(  {5}, {0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -645,9 +645,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveCosine_2) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PrimitiveCosine_3) {
-    auto x = NDArrayFactory::create<double>('c', {5}, {1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<double>('c', {5});
-    auto exp = NDArrayFactory::create<double>({0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
+    auto x = NDArrayFactory::create<double>(  {5}, {1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<double>(  {5});
+    auto exp = NDArrayFactory::vector<double>({0.540302, -0.416147, -0.989992, -0.653644, 0.283662});
 
     ASSERT_TRUE(x.isActualOnDeviceSide());
     ASSERT_FALSE(x.isActualOnHostSide());
@@ -681,7 +681,7 @@ TEST_F(NDArrayCudaBasicsTests, TestRawBroadcast_2) {
     //if (!Environment::getInstance()->isExperimentalBuild())
     //    return;
 
-    NDArray x = NDArrayFactory::create<double>('c', {2,3,4});
+    NDArray x = NDArrayFactory::create<double>(  {2,3,4});
     NDArray y('c', {2,4},   {10,20,30,40,50,60,70,80}, sd::DataType::DOUBLE);
     NDArray z('c', {2,3,4}, {100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100}, sd::DataType::DOUBLE);
 //    NDArray exp('c', {2,3,4}, {10., 21., 32., 43., 14., 25., 36., 47., 18., 29., 40., 51., 62., 73., 84., 95., 66., 77., 88., 99., 70., 81., 92., 103}, sd::DataType::DOUBLE);
@@ -806,9 +806,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_1) {
     // allocating host-side arrays
     NDArray x('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}, sd::DataType::DOUBLE);
     NDArray y = NDArrayFactory::create<double>(3.); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -836,9 +836,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_01) {
     // allocating host-side arrays
     NDArray x('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}, sd::DataType::DOUBLE);
     NDArray y = NDArrayFactory::create<double>(3.); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    auto z = NDArrayFactory::create<double>('c', { 2, 3 });
+    auto z = NDArrayFactory::create<double>(  { 2, 3 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -867,11 +867,11 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_01) {
 
 TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_02) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}); //, sd::DataType::DOUBLE);
-    auto y = NDArrayFactory::create<double>('c', {2,3}, {3, 3, 3, 3, 3, 3}); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    auto z = NDArrayFactory::create<double>('c', { 2, 3 });
+    auto x = NDArrayFactory::create<double>(  { 2, 3 }, { 1, 2, 3, 4, 5, 6}); //, sd::DataType::DOUBLE);
+    auto y = NDArrayFactory::create<double>(  {2,3}, {3, 3, 3, 3, 3, 3}); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
+    auto z = NDArrayFactory::create<double>(  { 2, 3 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 3, 6, 9, 12, 15, 18 });
     //if (x.isActualOnHostSide() && !x.isActualOnDeviceSide())
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -901,11 +901,11 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_02) {
 
 TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_002) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}); //, sd::DataType::DOUBLE);
-    auto y = NDArrayFactory::create<double>('c', {2, 3}, {2., 3., 3., 3., 3., 3.}); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    auto z = NDArrayFactory::create<double>('c', { 2, 3 });
+    auto x = NDArrayFactory::create<double>(  { 2, 3 }, { 1, 2, 3, 4, 5, 6}); //, sd::DataType::DOUBLE);
+    auto y = NDArrayFactory::create<double>(  {2, 3}, {2., 3., 3., 3., 3., 3.}); //'c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
+    auto z = NDArrayFactory::create<double>(  { 2, 3 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 2, 6, 9, 12, 15, 18 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 2, 6, 9, 12, 15, 18 });
     //if (x.isActualOnHostSide() && !x.isActualOnDeviceSide())
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -1004,9 +1004,9 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply) {
     // allocating host-side arrays
     NDArray x('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}, sd::DataType::DOUBLE);
     NDArray y('c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 2, 6, 12, 8, 15, 24 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 2, 6, 12, 8, 15, 24 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -1036,10 +1036,10 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_2) {
     // allocating host-side arrays
     NDArray x('c', { 2, 3 }, { 1, 2, 3, 4, 5, 6}, sd::DataType::DOUBLE);
     NDArray y('c', { 3 }, { 2., 3., 4.}, sd::DataType::DOUBLE);
-    //auto z = NDArrayFactory::create<double>('c', { 5 });
+    //auto z = NDArrayFactory::create<double>(  { 5 });
 
-    auto exp = NDArrayFactory::create<double>('c', { 2, 3 }, { 11,12, 13,14, 15, 16 });
-    auto expZ = NDArrayFactory::create<double>('c', { 2, 3 }, { 2, 6, 12, 8, 15, 24 });
+    auto exp = NDArrayFactory::create<double>(  { 2, 3 }, { 11,12, 13,14, 15, 16 });
+    auto expZ = NDArrayFactory::create<double>(  { 2, 3 }, { 2, 6, 12, 8, 15, 24 });
 
     // making raw buffers
     //Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;
@@ -1071,7 +1071,7 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcastMultiply_2) {
 //////////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, TestReduceSum_1) {
     // allocating host-side arrays
-    auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
     auto y = NDArrayFactory::create<double>(15);
     auto exp = NDArrayFactory::create<double>(15);
 
@@ -1424,12 +1424,12 @@ TEST_F(NDArrayCudaBasicsTests, reduceAlongDimension_float_test2) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, EqualityTest1) {
-    auto arrayA = NDArrayFactory::create<float>('f', {3, 5});
-    auto arrayB = NDArrayFactory::create<float>('f', {3, 5});
-    auto arrayC = NDArrayFactory::create<float>('f', {3, 5});
+    auto arrayA = NDArrayFactory::create<float>( {3, 5}, {}, sd::kArrayOrderFortran);
+    auto arrayB = NDArrayFactory::create<float>( {3, 5}, {}, sd::kArrayOrderFortran);
+    auto arrayC = NDArrayFactory::create<float>( {3, 5}, {}, sd::kArrayOrderFortran);
 
-    auto arrayD = NDArrayFactory::create<float>('f', {2, 4});
-    auto arrayE = NDArrayFactory::create<float>('f', {1, 15});
+    auto arrayD = NDArrayFactory::create<float>( {2, 4}, {}, sd::kArrayOrderFortran);
+    auto arrayE = NDArrayFactory::create<float>( {1, 15, {}, sd::kArrayOrderFortran});
 
     for (int i = 0; i < arrayA.rows(); i++) {
         for (int k = 0; k < arrayA.columns(); k++) {
@@ -1670,8 +1670,8 @@ TEST_F(NDArrayCudaBasicsTests, reduceAlongDimension_long_test2) {
 
 TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest1) {
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5, 5});
     auto row = NDArrayFactory::linspace(1.0f, 5.0f, 5);
     NDArray expRow('c', {1, 5,}, {1,2,3,4,5}, sd::DataType::FLOAT32);
     NDArray exp('c', {5,5}, {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5}, sd::DataType::FLOAT32);
@@ -1689,8 +1689,8 @@ TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest1) {
 
 TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest2) {
 
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    //auto z = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    //auto z = NDArrayFactory::create<float>(  {5, 5});
     auto row = NDArrayFactory::linspace(1.0f, 5.0f, 5);
     NDArray expRow('c', {1, 5,}, {1,2,3,4,5}, sd::DataType::FLOAT32);
     NDArray exp('c', {5,5}, {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5}, sd::DataType::FLOAT32);
@@ -1706,7 +1706,7 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcast_1) {
     NDArray exp('c', {2, 3, 2, 2}, {1., 1., 1., 1., 2., 2., 2., 2., 3., 3., 3., 3., 1., 1., 1., 1., 2., 2., 2., 2., 3., 3., 3., 3.}, sd::DataType::DOUBLE);
 
     auto input = NDArrayFactory::create<double>('c',{ 2, 3, 2, 2});
-    auto bias = NDArrayFactory::create<double>('c', {1, 3});
+    auto bias = NDArrayFactory::create<double>(  {1, 3});
 
     bias.linspace(1);
     input.applyBroadcast(broadcast::Add, {1}, bias, input);
@@ -1714,49 +1714,49 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcast_1) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat16_1) {
-    auto x = NDArrayFactory::create<float>({1,2,3,4,5,7,8,9});
-    auto y = NDArrayFactory::create<float>({1,2,3,4,5,7,8,9});
+    auto x = NDArrayFactory::vector<float>({1,2,3,4,5,7,8,9});
+    auto y = NDArrayFactory::vector<float>({1,2,3,4,5,7,8,9});
     ASSERT_TRUE(x.equalsTo(&y));
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat16_2) {
-    auto x = NDArrayFactory::create<float16>('c', {9}, {1,2,3,4,5,6,7,8,9});
-    auto y = NDArrayFactory::create<float16>('c', {9}, {1,2,3,4,5,6,7,8,9});
+    auto x = NDArrayFactory::create<float16>(  {9}, {1,2,3,4,5,6,7,8,9});
+    auto y = NDArrayFactory::create<float16>(  {9}, {1,2,3,4,5,6,7,8,9});
     ASSERT_TRUE(x.equalsTo(y));
     //for (int e = 0; e < x.lengthOf(); e++)
     //    ASSERT_NEAR(x.e<float16>(e), y.e<float16>(e), 1.e-5f);
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat16_3) {
-    auto x = NDArrayFactory::create<bfloat16>({1,2,3,4,5,7,8,9});
-    auto y = NDArrayFactory::create<bfloat16>({1,2,3,4,5,7,8,9});
+    auto x = NDArrayFactory::vector<bfloat16>({1,2,3,4,5,7,8,9});
+    auto y = NDArrayFactory::vector<bfloat16>({1,2,3,4,5,7,8,9});
     ASSERT_TRUE(x.equalsTo(&y));
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat_4) {
-    auto x = NDArrayFactory::create<float>({1,2,3,4,5,7,8,9});
-    auto y = NDArrayFactory::create<float>({2,4,5,5,6,7,8,9});
+    auto x = NDArrayFactory::vector<float>({1,2,3,4,5,7,8,9});
+    auto y = NDArrayFactory::vector<float>({2,4,5,5,6,7,8,9});
     ASSERT_FALSE(x.equalsTo(&y));
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat_5) {
-    auto x = NDArrayFactory::create<float>('c', {3,3}, {1,2,3,4,5,6,7,8,9});
-    auto y = NDArrayFactory::create<float>('c', {3,3}, {2,4,5,5,6,7,8,9, 10});
+    auto x = NDArrayFactory::create<float>(  {3,3}, {1,2,3,4,5,6,7,8,9});
+    auto y = NDArrayFactory::create<float>(  {3,3}, {2,4,5,5,6,7,8,9, 10});
     ASSERT_FALSE(x.equalsTo(&y));
 }
 
 TEST_F(NDArrayCudaBasicsTests, TestFloat_6) {
-    auto x = NDArrayFactory::create<float>('f', {3,3}, {1,2,3,4,5,6,7,8,9});
-    auto y = NDArrayFactory::create<float>('f', {3,3}, {2,4,5,5,6,7,8,9,10});
+    auto x = NDArrayFactory::create<float>( {3,3}, {1,2,3,4,5,6,7,8,9}, sd::kArrayOrderFortran);
+    auto y = NDArrayFactory::create<float>( {3,3}, {2,4,5,5,6,7,8,9,10}, sd::kArrayOrderFortran);
     ASSERT_FALSE(x.equalsTo(&y));
 }
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_05)
 {
-    auto x = NDArrayFactory::create<float>('c', {8, 8, 8});
-    auto y = NDArrayFactory::create<float>('c', {1, 8, 8});
-    auto expected = NDArrayFactory::create<float>('c', {8, 8, 8});
+    auto x = NDArrayFactory::create<float>(  {8, 8, 8});
+    auto y = NDArrayFactory::create<float>(  {1, 8, 8});
+    auto expected = NDArrayFactory::create<float>(  {8, 8, 8});
     NDArray res2  = NDArrayFactory::create<float>(expected.ordering(), expected.getShapeAsVector());
     x = 1.;
     y = 2.;
@@ -1772,9 +1772,9 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_05)
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_5)
 {
-    auto x = NDArrayFactory::create<float>('c', {8, 8, 8});
-    auto y = NDArrayFactory::create<float>('c', {8, 1, 8});
-    auto expected = NDArrayFactory::create<float>('c', {8, 8, 8});
+    auto x = NDArrayFactory::create<float>(  {8, 8, 8});
+    auto y = NDArrayFactory::create<float>(  {8, 1, 8});
+    auto expected = NDArrayFactory::create<float>(  {8, 8, 8});
     NDArray res2(expected);
     x = 1.;
     y = 2.;
@@ -1801,9 +1801,9 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_5)
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_51)
 {
-    auto x = NDArrayFactory::create<float>('c', {8, 8, 8});
-    auto y = NDArrayFactory::create<float>('c', {8, 8});
-    auto expected = NDArrayFactory::create<float>('c', {8, 8, 8});
+    auto x = NDArrayFactory::create<float>(  {8, 8, 8});
+    auto y = NDArrayFactory::create<float>(  {8, 8});
+    auto expected = NDArrayFactory::create<float>(  {8, 8, 8});
     NDArray res2(expected);
     x = 1.;
     y = 2.;
@@ -1829,10 +1829,10 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_51)
 
 TEST_F(NDArrayCudaBasicsTests, Tile_Test_2_1)
 {
-    auto x = NDArrayFactory::create<float>('c', {2, 1, 2});
+    auto x = NDArrayFactory::create<float>(  {2, 1, 2});
     x = 10.;
     auto y = x.tile({1,2,1});
-    auto exp = NDArrayFactory::create<float>('c', {2, 2, 2});
+    auto exp = NDArrayFactory::create<float>(  {2, 2, 2});
     exp = 10.;
 
     // y.printShapeInfo("Output SHAPE");
@@ -1843,22 +1843,22 @@ TEST_F(NDArrayCudaBasicsTests, Tile_Test_2_1)
 
 TEST_F(NDArrayCudaBasicsTests, Tile_Test_2_2)
 {
-    auto x = NDArrayFactory::create<float>('f', {2, 1, 2});
+    auto x = NDArrayFactory::create<float>( {2, 1, 2}, {}, sd::kArrayOrderFortran);
     x = 10.;
     auto y = x.tile({1,2,1});
-    auto exp = NDArrayFactory::create<float>('f', {2, 2, 2});
+    auto exp = NDArrayFactory::create<float>( {2, 2, 2}, {}, sd::kArrayOrderFortran);
     exp = 10.;
     ASSERT_TRUE(exp.equalsTo(y));
 }
 
 TEST_F(NDArrayCudaBasicsTests, Tile_Test_2_3)
 {
-    auto x = NDArrayFactory::create<float>('f', {2, 1, 2});
+    auto x = NDArrayFactory::create<float>( {2, 1, 2}, {}, sd::kArrayOrderFortran);
     x = 10.;
     x.p(1,0,1, 20);
     x.syncToDevice();
     auto y = x.tile({1,2,1});
-    auto exp = NDArrayFactory::create<float>('f', {2, 2, 2});
+    auto exp = NDArrayFactory::create<float>( {2, 2, 2}, {}, sd::kArrayOrderFortran);
     exp = 10.;
     exp.p(1,0,1, 20.);
     exp.p(1, 1, 1, 20.);
@@ -1871,7 +1871,7 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_2)
 {
     double expBuff[] = {2., 3, 3., 4., 4., 5, 5., 6., 6., 7, 7., 8.};
     NDArray a('c', {4,4}, {1,2,3,4,5,6,7,8,9,2,3,2,1,0,4,7}, sd::DataType::FLOAT32);
-    auto x = NDArrayFactory::create<double>('c', {3, 2, 1});
+    auto x = NDArrayFactory::create<double>(  {3, 2, 1});
     auto y = NDArrayFactory::create<double>('c',    {1, 2});
     auto expected = NDArrayFactory::create<double>(expBuff, 'c', {3, 2, 2});
 
@@ -2026,7 +2026,7 @@ TEST_F(NDArrayCudaBasicsTests, subarray_1)
 //        ASSERT_TRUE(y3.e<float>(i) == buffExpY3[i]);
 
     NDArray y4 = y(2, {1}, true);
-    NDArray y4Exp = NDArrayFactory::create<float>('f', {2,1,4}, {5, 6, 11, 12, 17, 18, 23, 24});
+    NDArray y4Exp = NDArrayFactory::create<float>( {2,1,4}, {5, 6, 11, 12, 17, 18, 23, 24}, sd::kArrayOrderFortran);
     ASSERT_TRUE(y4Exp.isSameShape(y4));
     ASSERT_TRUE(y4Exp.equalsTo(y4));
 //    for(int i = 0; i < shape::shapeInfoLength(y4.rankOf()); ++i)
@@ -2047,8 +2047,8 @@ TEST_F(NDArrayCudaBasicsTests, subarray_1)
 //////////////////////////////////////////////////////////////////////
 TEST_F(NDArrayCudaBasicsTests, Test_diagonal_1) {
 
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {1, 2, 3, 4, 5, 6});
-    auto exp = NDArrayFactory::create<float>('c', {2, 1}, {1, 5});
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {1, 2, 3, 4, 5, 6});
+    auto exp = NDArrayFactory::create<float>(  {2, 1}, {1, 5});
 
     auto diag = x.diagonal('c');
     //diag.syncToDevice();
@@ -2077,7 +2077,7 @@ TEST_F(NDArrayCudaBasicsTests, Test_diagonal_1) {
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_02) {
     auto x = NDArrayFactory::linspace<float>(1.f, 60.f, 60); //('c', {1, 60});
     //x.linspace(1);
-    auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
+    auto exp = NDArrayFactory::create<float>(  {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
     x.reshapei('c', {3, 4, 5});
 
     x.permutei({0, 1, 2});
@@ -2092,9 +2092,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_02) {
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_0) {
-    auto x = NDArrayFactory::create<float>('c', {1, 60});
+    auto x = NDArrayFactory::create<float>(  {1, 60});
     x.linspace(1);
-    auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
+    auto exp = NDArrayFactory::create<float>(  {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
     x.reshapei('c', {3, 4, 5});
 
     x.permutei({0, 1, 2});
@@ -2107,9 +2107,9 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_0) {
     ASSERT_TRUE(exp.equalsTo(&x));
 }
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_1) {
-    auto x = NDArrayFactory::create<float>('c', {1, 60});
+    auto x = NDArrayFactory::create<float>(  {1, 60});
     x.linspace(1);
-    auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
+    auto exp = NDArrayFactory::create<float>(  {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
     x.reshapei('c', {3, 4, 5});
 
     x.permutei({0, 1, 2});
@@ -2122,11 +2122,11 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_1) {
     ASSERT_TRUE(exp.equalsTo(&x));
 }
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_2) {
-    //auto x = NDArrayFactory::create<float>('c', {1, 60});
+    //auto x = NDArrayFactory::create<float>(  {1, 60});
     auto xx = NDArrayFactory::linspace<float>(1.f, 60.f, 60); //('c', {1, 60});
 //    auto x = *xx;
     //x.linspace(1);
-//    auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
+//    auto exp = NDArrayFactory::create<float>(  {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
 //    x.reshapei('c', {3, 4, 5});
 
 //    x.permutei({0, 1, 2});
@@ -2140,11 +2140,11 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_2) {
     delete xx;
 }
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_3) {
-    auto x = NDArrayFactory::create<float>('c', {1, 60});
+    auto x = NDArrayFactory::create<float>(  {1, 60});
     //x.linspace(1);
     for (int l = 0; l < x.lengthOf(); l++)
         x.p(l, float(l + 1.f));
-    auto exp = NDArrayFactory::create<float>('c', {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
+    auto exp = NDArrayFactory::create<float>(  {3, 4, 5}, {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f, 25.0f, 26.0f, 27.0f, 28.0f, 29.0f, 30.0f, 31.0f, 32.0f, 33.0f, 34.0f, 35.0f, 36.0f, 37.0f, 38.0f, 39.0f, 40.0f, 41.0f, 42.0f, 43.0f, 44.0f, 45.0f, 46.0f, 47.0f, 48.0f, 49.0f, 50.0f, 51.0f, 52.0f, 53.0f, 54.0f, 55.0f, 56.0f, 57.0f, 58.0f, 59.0f, 60.0});
     x.reshapei('c', {3, 4, 5});
 
     x.permutei({0, 1, 2});

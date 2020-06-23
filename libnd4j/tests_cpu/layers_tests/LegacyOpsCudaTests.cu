@@ -41,11 +41,11 @@ class LegacyOpsCudaTests : public testing::Test {
 
 
 TEST_F(LegacyOpsCudaTests, test_sortTad_1) {
-    auto x = NDArrayFactory::create<float>('c', {3, 5}, {1.f, 3.f, 0.f, 2.f, 4.f,
+    auto x = NDArrayFactory::create<float>(  {3, 5}, {1.f, 3.f, 0.f, 2.f, 4.f,
                                                          6.f, 5.f, 9.f, 7.f, 8.f,
                                                          10.f, 11.f, 14.f, 12.f, 13.f});
 
-    auto e = NDArrayFactory::create<float>('c', {3, 5}, {0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f});
+    auto e = NDArrayFactory::create<float>(  {3, 5}, {0.f, 1.f, 2.f, 3.f, 4.f, 5.f, 6.f, 7.f, 8.f, 9.f, 10.f, 11.f, 12.f, 13.f, 14.f});
 
     int axis = 1;
     auto packX = ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), axis);

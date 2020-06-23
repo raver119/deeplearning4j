@@ -73,10 +73,10 @@ static cudaError_t allocateDeviceMem(LaunchContext& lc, std::vector<void*>& devi
 //////////////////////////////////////////////////////////////////////////
 TEST_F(CudaBasicsTests1, TestPairwise_1) {
 	// allocating host-side arrays
-	auto x = NDArrayFactory::create<double>('c', { 5 }, { 1, 2, 3, 4, 5});
-	auto z = NDArrayFactory::create<double>('c', { 5 }, {0,0,0,0,0});
+	auto x = NDArrayFactory::create<double>(  { 5 }, { 1, 2, 3, 4, 5});
+	auto z = NDArrayFactory::create<double>(  { 5 }, {0,0,0,0,0});
 
-	auto exp = NDArrayFactory::create<double>('c', { 5 }, { 2, 4, 6, 8, 10 });
+	auto exp = NDArrayFactory::create<double>(  { 5 }, { 2, 4, 6, 8, 10 });
 
 	// making raw buffers
 	Nd4jPointer devBufferPtrX, devBufferPtrZ, devShapePtrX;

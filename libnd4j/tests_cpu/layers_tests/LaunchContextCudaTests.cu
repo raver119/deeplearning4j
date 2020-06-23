@@ -67,7 +67,7 @@ TEST_F(LaunchContextCudaTests, basic_test_1) {
 }
 
 void fillArray(int tid, std::vector<NDArray> &arrays) {
-    auto array = NDArrayFactory::create<int>('c', {3, 10});
+    auto array = NDArrayFactory::create<int>(  {3, 10});
     nd4j_printf("Array created on device [%i]\n", AffinityManager::currentDeviceId());
     array.assign(tid);
     arrays[tid] = array;
