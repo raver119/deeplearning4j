@@ -16,6 +16,9 @@
 
 package org.nd4j.linalg.activations;
 
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.serde.json.LegacyIActivationDeserializerHelper;
@@ -58,5 +61,8 @@ public interface IActivation extends Serializable {
 
 
     int numParams(int inputSize);
+
+    //TODO default impl in BaseActivation, activations
+    @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
 
 }

@@ -25,6 +25,8 @@ import org.deeplearning4j.nn.weights.IWeightInit;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.weights.WeightInitDistribution;
 import org.deeplearning4j.util.NetworkUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.learning.config.IUpdater;
@@ -143,6 +145,16 @@ public abstract class BaseLayer extends Layer implements Serializable, Cloneable
             return regularizationBias;
         }
         return null;
+    }
+
+    /**
+     * Applies the activation function if it isn't null.
+     */
+    protected @NonNull SDVariable doActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
+        if(activationFn != null)
+            return activationFn.defineActivation(sameDiff, input);
+        else
+            return input;
     }
 
 

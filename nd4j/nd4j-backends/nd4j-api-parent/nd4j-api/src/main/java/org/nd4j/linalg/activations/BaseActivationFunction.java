@@ -16,6 +16,9 @@
 
 package org.nd4j.linalg.activations;
 
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Arrays;
@@ -37,5 +40,10 @@ public abstract class BaseActivationFunction implements IActivation {
             throw new IllegalStateException("Shapes must be equal during backprop: in.shape{} = " + Arrays.toString(in.shape())
                     + ", epsilon.shape() = " + Arrays.toString(epsilon.shape()));
         }
+    }
+
+    public
+    @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 }
