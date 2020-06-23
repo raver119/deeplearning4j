@@ -59,9 +59,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_1) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
-    auto y = NDArrayFactory::create<double>('c', {2, 3}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0});
-    auto e = NDArrayFactory::create<float>('c', {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
+    auto y = NDArrayFactory::create<double>(  {2, 3}, {0.0, 1.0, 2.0, 3.0, 4.0, 5.0});
+    auto e = NDArrayFactory::create<float>(  {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
 
     auto z = x + y;
 
@@ -73,9 +73,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_2) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<float>('c', {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
+    auto x = NDArrayFactory::create<float>(  {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
     auto y = NDArrayFactory::create<double>(2.0);
-    auto e = NDArrayFactory::create<float>('c', {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
+    auto e = NDArrayFactory::create<float>(  {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
 
     auto z = x * y;
 
@@ -87,9 +87,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_3) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<int>(  {2, 3}, {0, 1, 2, 3, 4, 5});
     auto y = NDArrayFactory::create<double>(2.0);
-    auto e = NDArrayFactory::create<double>('c', {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
+    auto e = NDArrayFactory::create<double>(  {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
 
     auto z = x * y;
 
@@ -101,9 +101,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_4) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<double>('c', {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
+    auto x = NDArrayFactory::create<double>(  {2, 3}, {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f});
     auto y = NDArrayFactory::create<float>(2.0);
-    auto e = NDArrayFactory::create<double>('c', {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
+    auto e = NDArrayFactory::create<double>(  {2, 3}, {0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f});
 
     auto z = x * y;
 
@@ -115,9 +115,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_5) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<int>(  {2, 3}, {0, 1, 2, 3, 4, 5});
     auto y = NDArrayFactory::create<Nd4jLong>(2);
-    auto e = NDArrayFactory::create<int>('c', {2, 3}, {0, 2, 4, 6, 8, 10});
+    auto e = NDArrayFactory::create<int>(  {2, 3}, {0, 2, 4, 6, 8, 10});
 
     auto z = x * y;
 
@@ -128,9 +128,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_7) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<int>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
-    auto y = NDArrayFactory::create<float>('c', {2, 3}, {0.f, 1.f, 2.f, 3.f, 4.f, 5.f});
-    auto e = NDArrayFactory::create<float>('c', {2, 3}, {0.f, 2.f, 4.f, 6.f, 8.f, 10.f});
+    auto x = NDArrayFactory::create<int>(  {2, 3}, {0, 1, 2, 3, 4, 5});
+    auto y = NDArrayFactory::create<float>(  {2, 3}, {0.f, 1.f, 2.f, 3.f, 4.f, 5.f});
+    auto e = NDArrayFactory::create<float>(  {2, 3}, {0.f, 2.f, 4.f, 6.f, 8.f, 10.f});
 
     sd::ops::add op;
     auto result = op.evaluate({&x, &y});
@@ -146,9 +146,9 @@ TEST_F(MultiDataTypeTests, Basic_Test_6) {
     if (!Environment::getInstance()->isExperimentalBuild())
         return;
 
-    auto x = NDArrayFactory::create<Nd4jLong>('c', {2, 3}, {0, 1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::create<Nd4jLong>(  {2, 3}, {0, 1, 2, 3, 4, 5});
     auto y = NDArrayFactory::create<int>(2);
-    auto e = NDArrayFactory::create<Nd4jLong >('c', {2, 3}, {0, 2, 4, 6, 8, 10});
+    auto e = NDArrayFactory::create<Nd4jLong >(  {2, 3}, {0, 2, 4, 6, 8, 10});
 
     auto z = x * y;
 
@@ -1852,11 +1852,11 @@ TEST_F(MultiDataTypeTests, assign_test2) {
 }
 
 TEST_F(MultiDataTypeTests, Test_Cast_1) {
-    auto first = NDArrayFactory::create<float>('c', {10});
-    auto asBool = NDArrayFactory::create<bool>('c', {10});
-    auto _not = NDArrayFactory::create<bool>('c', {10});
-    auto asFloat = NDArrayFactory::create<float>('c', {10});
-    auto exp = NDArrayFactory::create<float>('c', {10});
+    auto first = NDArrayFactory::vector<float>(10);
+    auto asBool = NDArrayFactory::vector<bool>(10);
+    auto _not = NDArrayFactory::vector<bool>(10);
+    auto asFloat = NDArrayFactory::vector<float>(10);
+    auto exp = NDArrayFactory::vector<float>(10);
     exp.assign(0.0f);
 
     asBool.assign(first);
@@ -1873,11 +1873,11 @@ TEST_F(MultiDataTypeTests, Test_Cast_1) {
 }
 
 TEST_F(MultiDataTypeTests, Test_Cast_2) {
-    auto first = NDArrayFactory::create<float>('c', {10});
-    auto asBool = NDArrayFactory::create<bool>('c', {10});
-    auto _not = NDArrayFactory::create<bool>('c', {10});
-    auto asFloat = NDArrayFactory::create<float>('c', {10});
-    auto exp = NDArrayFactory::create<float>('c', {10});
+    auto first = NDArrayFactory::vector<float>(10);
+    auto asBool = NDArrayFactory::vector<bool>(10);
+    auto _not = NDArrayFactory::vector<bool>(10);
+    auto asFloat = NDArrayFactory::vector<float>(10);
+    auto exp = NDArrayFactory::vector<float>(10);
     exp.assign(1.0f);
 
     asBool.assign(first);

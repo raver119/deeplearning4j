@@ -151,8 +151,6 @@ TEST_F(ListOperationsTests, BasicTest_Read_1) {
         auto row = NDArrayFactory::create<double>(  {1, 100});
         row.assign((double) e);
         list.write(e, new NDArray(row));
-
-        delete row;
     }
 
     sd::ops::read_list op;
@@ -177,8 +175,6 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
         auto row = NDArrayFactory::create<double>(  {100});
         row.assign((double) e);
         list.write(e, new NDArray(row));
-
-        delete row;
     }
 
     auto tads = exp.allTensorsAlongDimension({1});
@@ -197,7 +193,6 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
 
     ASSERT_TRUE(exp.isSameShape(z));
     ASSERT_TRUE(exp.equalsTo(z));
-
     
 }
 
@@ -205,7 +200,7 @@ TEST_F(ListOperationsTests, BasicTest_Size_1) {
     NDArrayList list(10);
     auto exp = NDArrayFactory::create<int>(10);
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create_<double>(  {100});
+        auto row = NDArrayFactory::create<double>(  {100});
         row.assign((double) e);
         list.write(e, new NDArray(row));
     }
@@ -274,8 +269,6 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
             tads1.at(cnt1++)->assign(row);
         else
             tads2.at(cnt2++)->assign(row);
-
-        delete row;
     }
 
     sd::ops::split_list op;
@@ -414,8 +407,8 @@ TEST_F(ListOperationsTests, GraphTests_Sequential_1) {
 
 
     auto variableSpace = graph.getVariableSpace();
-    variableSpace->putVariable(-1, matrix);
-    variableSpace->putVariable(-2, indices);
+    variableSpace->putVariable(-1, new NDArray(matrix));
+    variableSpace->putVariable(-2, new NDArray(indices));
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, 0, 1, {-1});
@@ -544,9 +537,9 @@ TEST_F(ListOperationsTests, GraphTests_Sequential_2) {
 
 
     auto variableSpace = graph.getVariableSpace();
-    variableSpace->putVariable(-1, matrix);
-    variableSpace->putVariable(-2, indices);
-    variableSpace->putVariable(-3, scalar);
+    variableSpace->putVariable(-1, new NDArray(matrix));
+    variableSpace->putVariable(-2, new NDArray(indices));
+    variableSpace->putVariable(-3, new NDArray(scalar));
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, 0, 1, {-1});

@@ -41,7 +41,7 @@ void createArrays(int limit, std::vector<NDArray> &arrays) {
 
     for (int e = 0; e < limit; e++) {
         auto value = deviceId * limit + e;
-        arrays[value] = NDArrayFactory::create<float>('c', {10});
+        arrays[value] = NDArrayFactory::vector<float>(10); // create a vector with 10 float values
         arrays[value].assign(value);
         //nd4j_printf("device_%i; value: [%i]; mean: [%f]\n", deviceId, value, arrays[value]->meanNumber().e<float>(0));
     }
@@ -62,7 +62,6 @@ TEST_F(MultiDeviceTests, test_multi_device_migration_1) {
 
     // at this moment all arrays are build, so we can test migration
     for (int e = 0; e < arrays.size(); e++) {
-        ASSERT_NEAR((float) e, arrays[e]->meanNumber().e<float>(0), 1e-5f);
-        delete arrays[e];
+        ASSERT_NEAR((float) e, arrays[e].meanNumber().e<float>(0), 1e-5f);
     }
 }
