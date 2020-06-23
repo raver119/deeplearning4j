@@ -65,7 +65,7 @@ TEST_F(NativeOpsTests, CreateContextTests_2) {
 }
 
 TEST_F(NativeOpsTests, PointerTests_1) {
-    auto x = NDArrayFactory::create<float>('c', {5}, {1,2,3,4,5});
+    auto x = NDArrayFactory::create<float>(  {5}, {1,2,3,4,5});
 //    x.linspace(1.0);
 #ifdef __CUDABLAS__
 printf("Unsupported for cuda now.\n");
@@ -113,7 +113,7 @@ TEST_F(NativeOpsTests, ThresholdTests_2) {
 }
 
 TEST_F(NativeOpsTests, ExecIndexReduce_1) {
-    auto x = NDArrayFactory::create<float>('c', {5}, {1,2,3,4,5});
+    auto x = NDArrayFactory::create<float>(  {5}, {1,2,3,4,5});
     auto exp = NDArrayFactory::create<Nd4jLong>(120);
     x.linspace(1.0);
 #ifdef __CUDABLAS__
@@ -135,13 +135,13 @@ TEST_F(NativeOpsTests, ExecIndexReduce_1) {
 }
 
 TEST_F(NativeOpsTests, ExecIndexReduce_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<Nd4jLong>(120);
     x.linspace(1.0);
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
-    NDArray dimension = NDArrayFactory::create<int>({});
+    NDArray dimension = NDArrayFactory::vector<int>({});
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer expBuf(exp.dataBuffer());
     OpaqueDataBuffer dimensionBuf(dimension.dataBuffer());
@@ -161,15 +161,15 @@ TEST_F(NativeOpsTests, ExecIndexReduce_2) {
 }
 
 TEST_F(NativeOpsTests, ExecBroadcast_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 1});
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 1});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     x.linspace(1.0);
     y.linspace(2,2);
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
-    auto dimension = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dimension = NDArrayFactory::create<int>(  {1}, {1});
 
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer yBuf(y.dataBuffer());
@@ -193,16 +193,16 @@ TEST_F(NativeOpsTests, ExecBroadcast_1) {
 }
 
 TEST_F(NativeOpsTests, ExecBroadcast_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 1});
-    auto exp = NDArrayFactory::create<bool>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 1});
+    auto exp = NDArrayFactory::create<bool>(  {5, 5});
     x.linspace(1.0);
     y.linspace(2,2);
 #ifdef __CUDABLAS__
 printf("Unsupported for cuda now.\n");
 #else
     int dimd = 0;
-    auto dimension = NDArrayFactory::create<int>('c', {1}, {dimd});
+    auto dimension = NDArrayFactory::create<int>(  {1}, {dimd});
 
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer yBuf(y.dataBuffer());
@@ -222,9 +222,9 @@ printf("Unsupported for cuda now.\n");
 }
 
 TEST_F(NativeOpsTests, ExecPairwise_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
     x.linspace(1.0);
     y.assign(2.);
 #ifdef __CUDABLAS__
@@ -246,9 +246,9 @@ TEST_F(NativeOpsTests, ExecPairwise_1) {
 }
 
 TEST_F(NativeOpsTests, ExecPairwise_2) {
-    auto x = NDArrayFactory::create<bool>('c', {5, 5});
-    auto y = NDArrayFactory::create<bool>('c', {5, 5});
-    auto exp = NDArrayFactory::create<bool>('c', {5, 5});
+    auto x = NDArrayFactory::create<bool>(  {5, 5});
+    auto y = NDArrayFactory::create<bool>(  {5, 5});
+    auto exp = NDArrayFactory::create<bool>(  {5, 5});
     x.assign(true);
     y.assign(false);
     y.r<bool>(5) = true;
@@ -271,14 +271,14 @@ TEST_F(NativeOpsTests, ExecPairwise_2) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     x.linspace(1.0);
 
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
-    auto dimension = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dimension = NDArrayFactory::create<int>(  {1}, {1});
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer expBuf(exp.dataBuffer());
 
@@ -295,7 +295,7 @@ TEST_F(NativeOpsTests, ReduceTest_1) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     x.linspace(1.0);
 
@@ -318,7 +318,7 @@ TEST_F(NativeOpsTests, ReduceTest_2) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_3) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<bool>(false);
     x.linspace(1.0);
 
@@ -341,7 +341,7 @@ TEST_F(NativeOpsTests, ReduceTest_3) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_4) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<Nd4jLong>(120LL);
     x.linspace(1.0);
 
@@ -364,14 +364,14 @@ TEST_F(NativeOpsTests, ReduceTest_4) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_5) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<Nd4jLong>(120LL);
     x.linspace(1.0);
 
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
-    auto dimension = NDArrayFactory::create<int>({0, 1});
+    auto dimension = NDArrayFactory::vector<int>({0, 1});
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer expBuf(exp.dataBuffer());
     OpaqueDataBuffer dimBuf(dimension.dataBuffer());
@@ -390,15 +390,15 @@ TEST_F(NativeOpsTests, ReduceTest_5) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_6) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto z = NDArrayFactory::create<Nd4jLong>({5, 4, 3, 2, 1});
-    auto exp = NDArrayFactory::create<Nd4jLong>({1,2,3,4,6});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto z = NDArrayFactory::vector<Nd4jLong>({5, 4, 3, 2, 1});
+    auto exp = NDArrayFactory::vector<Nd4jLong>({1,2,3,4,6});
     x.linspace(1.0);
 
 #ifdef __CUDABLAS__
     printf("Unsupported for cuda now.\n");
 #else
-    auto dimension = NDArrayFactory::create<int>('c', {1}, {1});
+    auto dimension = NDArrayFactory::create<int>(  {1}, {1});
     x.p(5, 0);
     x.p(10, 0); x.p(11, 0);
     x.p(15, 0); x.p(16, 0); x.p(17, 0);
@@ -422,12 +422,12 @@ TEST_F(NativeOpsTests, ReduceTest_6) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_7) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     auto z = NDArrayFactory::create<float>(13.);
 
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     x.syncToHost();
@@ -454,12 +454,12 @@ TEST_F(NativeOpsTests, ReduceTest_7) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_8) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto z = NDArrayFactory::create<float>(120.);
     auto exp = NDArrayFactory::create<float>(325.);
 
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -487,11 +487,11 @@ TEST_F(NativeOpsTests, ReduceTest_8) {
 }
 
 TEST_F(NativeOpsTests, ReduceTest_9) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<bool>(false);
     auto z = NDArrayFactory::create<bool>(true);
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -519,12 +519,12 @@ TEST_F(NativeOpsTests, ReduceTest_9) {
 }
 
 TEST_F(NativeOpsTests, Reduce3Test_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     auto z = NDArrayFactory::create<float>(650.);
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -553,12 +553,12 @@ TEST_F(NativeOpsTests, Reduce3Test_1) {
 }
 
 TEST_F(NativeOpsTests, Reduce3Test_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     auto z = NDArrayFactory::create<float>(650.);
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -587,12 +587,12 @@ TEST_F(NativeOpsTests, Reduce3Test_2) {
 }
 
 TEST_F(NativeOpsTests, Reduce3Test_3) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     auto z = NDArrayFactory::create<float>(650.);
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -625,12 +625,12 @@ TEST_F(NativeOpsTests, Reduce3Test_3) {
 }
 
 TEST_F(NativeOpsTests, Reduce3Test_4) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
     auto exp = NDArrayFactory::create<float>(120.);
     auto z = NDArrayFactory::create<float>(650.);
 
-    auto dimension = NDArrayFactory::create<int>('c', {2}, {0, 1});
+    auto dimension = NDArrayFactory::create<int>(  {2}, {0, 1});
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
     extra[1] = x.getContext()->getCudaStream();
@@ -671,10 +671,10 @@ TEST_F(NativeOpsTests, Reduce3Test_4) {
 }
 
 TEST_F(NativeOpsTests, ScalarTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto y = NDArrayFactory::create<float>(10.);
-    auto exp = NDArrayFactory::create<float>('c', {5,5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto exp = NDArrayFactory::create<float>(  {5,5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -706,10 +706,10 @@ TEST_F(NativeOpsTests, ScalarTest_1) {
 }
 
 TEST_F(NativeOpsTests, ScalarTest_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto y = NDArrayFactory::create<float>(10.f);
-    auto exp = NDArrayFactory::create<bool>('c', {5,5});
-    auto z = NDArrayFactory::create<bool>('c', {5,5});
+    auto exp = NDArrayFactory::create<bool>(  {5,5});
+    auto z = NDArrayFactory::create<bool>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -741,7 +741,7 @@ TEST_F(NativeOpsTests, ScalarTest_2) {
 }
 
 TEST_F(NativeOpsTests, SummaryStatsScalarTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5}, {0.1f, 0.2f, 0.3f, -0.3f, -0.5f, 0.5f, 0.7f, 0.9f, 0.8f, 0.1f, 0.11f, 0.12f, 0.5f, -0.8f, -0.9f, 0.4f, 0.1f, 0.2f, 0.3f, -0.3f, -0.5f, 0.2f, 0.3f, -0.3f, -0.5f});
+    auto x = NDArrayFactory::create<float>(  {5, 5}, {0.1f, 0.2f, 0.3f, -0.3f, -0.5f, 0.5f, 0.7f, 0.9f, 0.8f, 0.1f, 0.11f, 0.12f, 0.5f, -0.8f, -0.9f, 0.4f, 0.1f, 0.2f, 0.3f, -0.3f, -0.5f, 0.2f, 0.3f, -0.3f, -0.5f});
     auto exp = NDArrayFactory::create<float>(0.9f);
     auto z = NDArrayFactory::create<float>(0.21587136f);
 
@@ -767,7 +767,7 @@ TEST_F(NativeOpsTests, SummaryStatsScalarTest_1) {
 }
 
 TEST_F(NativeOpsTests, SummaryStatsScalarTest_2) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5}, {0.1, 0.2, 0.3, -0.3, -0.5, 0.5, 0.7, 0.9, 0.8, 0.1, 0.11, 0.12, 0.5, -0.8, -0.9, 0.4, 0.1, 0.2, 0.3, -0.3, -0.5, 0.2, 0.3, -0.3, -0.5});
+    auto x = NDArrayFactory::create<double>(  {5, 5}, {0.1, 0.2, 0.3, -0.3, -0.5, 0.5, 0.7, 0.9, 0.8, 0.1, 0.11, 0.12, 0.5, -0.8, -0.9, 0.4, 0.1, 0.2, 0.3, -0.3, -0.5, 0.2, 0.3, -0.3, -0.5});
     auto exp = NDArrayFactory::create<double>(0.9);
     auto z = NDArrayFactory::create<double>(0.21587136);
 
@@ -792,7 +792,7 @@ TEST_F(NativeOpsTests, SummaryStatsScalarTest_2) {
 }
 
 TEST_F(NativeOpsTests, SummaryStatsScalarTest_3) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5}, {0.1, 0.2, 0.3, -0.3, -0.5, 0.5, 0.7, 0.9, 0.8, 0.1, 0.11, 0.12, 0.5, -0.8, -0.9, 0.4, 0.1, 0.2, 0.3, -0.3, -0.5, 0.2, 0.3, -0.3, -0.5});
+    auto x = NDArrayFactory::create<double>(  {5, 5}, {0.1, 0.2, 0.3, -0.3, -0.5, 0.5, 0.7, 0.9, 0.8, 0.1, 0.11, 0.12, 0.5, -0.8, -0.9, 0.4, 0.1, 0.2, 0.3, -0.3, -0.5, 0.2, 0.3, -0.3, -0.5});
     auto exp = NDArrayFactory::create<double>(0.9);
     auto z = NDArrayFactory::create<double>(0.21587136);
 
@@ -804,7 +804,7 @@ TEST_F(NativeOpsTests, SummaryStatsScalarTest_3) {
     printf("Unsupported for CUDA platform yet.\n");
     return;
 #endif
-    auto dimensions = NDArrayFactory::create<int>({0, 1});
+    auto dimensions = NDArrayFactory::vector<int>({0, 1});
     OpaqueDataBuffer xBuf(x.dataBuffer());
     OpaqueDataBuffer expBuf(exp.dataBuffer());
     OpaqueDataBuffer dimBuf(dimensions.dataBuffer());
@@ -823,9 +823,9 @@ TEST_F(NativeOpsTests, SummaryStatsScalarTest_3) {
 }
 
 TEST_F(NativeOpsTests, TransformTest_1) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5}, {1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484, 529, 576, 625});
-    auto exp = NDArrayFactory::create<double>('c', {5, 5});
-    auto z = NDArrayFactory::create<double>('c', {5,5});
+    auto x = NDArrayFactory::create<double>(  {5, 5}, {1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484, 529, 576, 625});
+    auto exp = NDArrayFactory::create<double>(  {5, 5});
+    auto z = NDArrayFactory::create<double>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -852,9 +852,9 @@ TEST_F(NativeOpsTests, TransformTest_1) {
 }
 
 TEST_F(NativeOpsTests, TransformTest_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5}, {1.f, 4.f, 9.f, 16.f, 25.f, 36.f, 49.f, 64.f, 81.f, 100.f, 121.f, 144.f, 169.f, 196.f, 225.f, 256.f, 289.f, 324.f, 361.f, 400.f, 441.f, 484.f, 529.f, 576.f, 625.f});
-    auto exp = NDArrayFactory::create<float>('c', {5, 5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5}, {1.f, 4.f, 9.f, 16.f, 25.f, 36.f, 49.f, 64.f, 81.f, 100.f, 121.f, 144.f, 169.f, 196.f, 225.f, 256.f, 289.f, 324.f, 361.f, 400.f, 441.f, 484.f, 529.f, 576.f, 625.f});
+    auto exp = NDArrayFactory::create<float>(  {5, 5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -881,9 +881,9 @@ TEST_F(NativeOpsTests, TransformTest_2) {
 }
 
 TEST_F(NativeOpsTests, TransformTest_3) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<bool>('c', {5, 5});
-    auto z = NDArrayFactory::create<bool>('c', {5,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<bool>(  {5, 5});
+    auto z = NDArrayFactory::create<bool>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -912,10 +912,10 @@ TEST_F(NativeOpsTests, TransformTest_3) {
 }
 
 TEST_F(NativeOpsTests, TransformTest_4) {
-    auto x = NDArrayFactory::create<double>('c', {5, 5}, {0, 1, 2, 3, 2, 1, 0, 1.57, 1.57, 1.57, 3.141592, 3.141592,
+    auto x = NDArrayFactory::create<double>(  {5, 5}, {0, 1, 2, 3, 2, 1, 0, 1.57, 1.57, 1.57, 3.141592, 3.141592,
                                                          3.141592, 0, 0, 0, 0, 1, 1, 2, 2, 2, 1, 0, 0});
-    auto exp = NDArrayFactory::create<double>('c', {5, 5});
-    auto z = NDArrayFactory::create<double>('c', {5,5}, {1., 0.540302, -0.416147, -0.989992, -0.416147,  0.540302, 1.0,
+    auto exp = NDArrayFactory::create<double>(  {5, 5});
+    auto z = NDArrayFactory::create<double>(  {5,5}, {1., 0.540302, -0.416147, -0.989992, -0.416147,  0.540302, 1.0,
                                                         0.000796, 0.000796, 0.000796, -1, -1, -1, 1., 1., 1.0, 1.0,
                                                         0.540302, 0.540302, -0.416147, -0.416147, -0.416147, 0.540302, 1., 1.});
 
@@ -942,10 +942,10 @@ TEST_F(NativeOpsTests, TransformTest_4) {
 }
 
 TEST_F(NativeOpsTests, ScalarTadTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
     auto y = NDArrayFactory::create<float>(10.f);
-    auto exp = NDArrayFactory::create<float>('c', {5,5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto exp = NDArrayFactory::create<float>(  {5,5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -961,7 +961,7 @@ TEST_F(NativeOpsTests, ScalarTadTest_1) {
     //y.assign(2.);
     x.syncToDevice();
     z.syncToDevice();
-    auto dimension = NDArrayFactory::create<int>({0, 1});
+    auto dimension = NDArrayFactory::vector<int>({0, 1});
     auto dimensions = reinterpret_cast<int*>(dimension.buffer());
     auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), dimensions, dimension.lengthOf());
     auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(z.shapeInfo(), dimensions, dimension.lengthOf());
@@ -985,10 +985,10 @@ TEST_F(NativeOpsTests, ScalarTadTest_1) {
 }
 
 TEST_F(NativeOpsTests, ScalarTadTest_2) {
-    auto x = NDArrayFactory::create<bool>('c', {5, 5});
+    auto x = NDArrayFactory::create<bool>(  {5, 5});
     auto y = NDArrayFactory::create<bool>(true);
-    auto exp = NDArrayFactory::create<bool>('c', {5,5});
-    auto z = NDArrayFactory::create<bool>('c', {5, 5});
+    auto exp = NDArrayFactory::create<bool>(  {5,5});
+    auto z = NDArrayFactory::create<bool>(  {5, 5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -1006,7 +1006,7 @@ TEST_F(NativeOpsTests, ScalarTadTest_2) {
     //y.assign(2.);
     x.syncToDevice();
     z.syncToDevice();
-    auto dimension = NDArrayFactory::create<int>({0, 1});
+    auto dimension = NDArrayFactory::vector<int>({0, 1});
     auto dimensions = reinterpret_cast<int*>(dimension.buffer());
     auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), dimensions, dimension.lengthOf());
     auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(z.shapeInfo(), dimensions, dimension.lengthOf());
@@ -1034,10 +1034,10 @@ TEST_F(NativeOpsTests, ScalarTadTest_2) {
 }
 
 TEST_F(NativeOpsTests, ConcatTest_2) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {10,5});
-    auto z = NDArrayFactory::create<float>('c', {10,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {10,5});
+    auto z = NDArrayFactory::create<float>(  {10,5});
 
     Nd4jPointer extra[6];
 #ifdef __CUDABLAS__
@@ -1055,7 +1055,7 @@ TEST_F(NativeOpsTests, ConcatTest_2) {
     x.syncToDevice();
     z.syncToDevice();
     int d = 0;
-    auto dimension = NDArrayFactory::create<int>('c', {1}, {d});
+    auto dimension = NDArrayFactory::create<int>(  {1}, {d});
     auto dimensions = reinterpret_cast<int*>(dimension.buffer());
     //auto tadPackX = sd::ConstantTadHelper::getInstance()->tadForDimensions(x.shapeInfo(), dimensions, dimension.lengthOf());
     auto tadPackZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(z.shapeInfo(), dimensions, dimension.lengthOf());
@@ -1101,8 +1101,8 @@ TEST_F(NativeOpsTests, CreateTest_1) {
 }
 
 TEST_F(NativeOpsTests, MemTest_1) {
-    auto x = NDArrayFactory::create<double>({10, 20, 30, 40, 50});
-    auto y = NDArrayFactory::create<double>({20, 20, 20, 20, 20});
+    auto x = NDArrayFactory::vector<double>({10, 20, 30, 40, 50});
+    auto y = NDArrayFactory::vector<double>({20, 20, 20, 20, 20});
 
 #ifdef __CUDABLAS__
     return ;
@@ -1149,7 +1149,7 @@ TEST_F(NativeOpsTests, PullRowsTest_1) {
 TEST_F(NativeOpsTests, TadPackTest_1) {
     int dimension[] = {1};
     int const dimensionLength = 1;
-    auto x = NDArrayFactory::create<int>('c', {2,3,4});
+    auto x = NDArrayFactory::create<int>(  {2,3,4});
     sd::TadPack* pack = ::tadOnlyShapeInfo(x.shapeInfo(),
                                     dimension,
                                     dimensionLength);
@@ -1158,10 +1158,10 @@ TEST_F(NativeOpsTests, TadPackTest_1) {
 }
 
 TEST_F(NativeOpsTests, AverageTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {5,5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5,5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 #ifdef __CUDABLAS__
     return;
 #endif
@@ -1182,10 +1182,10 @@ TEST_F(NativeOpsTests, AverageTest_1) {
 }
 
 TEST_F(NativeOpsTests, AccumulateTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {5,5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5,5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 #ifdef __CUDABLAS__
     return;
 #endif
@@ -1211,10 +1211,10 @@ TEST_F(NativeOpsTests, P2PTest_1) {
 }
 
 TEST_F(NativeOpsTests, ShuffleTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
-    auto y = NDArrayFactory::create<float>('c', {5, 5});
-    auto exp = NDArrayFactory::create<float>('c', {5,5});
-    auto z = NDArrayFactory::create<float>('c', {5,5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
+    auto y = NDArrayFactory::create<float>(  {5, 5});
+    auto exp = NDArrayFactory::create<float>(  {5,5});
+    auto z = NDArrayFactory::create<float>(  {5,5});
 #ifdef __CUDABLAS__
     return;
 #endif
@@ -1247,10 +1247,10 @@ TEST_F(NativeOpsTests, ShuffleTest_1) {
 }
 
 TEST_F(NativeOpsTests, ConvertTypesTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {5, 5});
+    auto x = NDArrayFactory::create<float>(  {5, 5});
 
-    auto exp = NDArrayFactory::create<double>('c', {5, 5});
-    auto z = NDArrayFactory::create<double>('c', {5, 5});
+    auto exp = NDArrayFactory::create<double>(  {5, 5});
+    auto z = NDArrayFactory::create<double>(  {5, 5});
 
 #ifdef __CUDABLAS__
     return;
@@ -1263,8 +1263,8 @@ TEST_F(NativeOpsTests, ConvertTypesTest_1) {
 
 //TEST_F(NativeOpsTests, Test_Aggregations_1) {
 //    NativeOps ops;
-//    auto x = NDArrayFactory::create<float>('c', {5,5});
-//    auto y = NDArrayFactory::create<float>('c', {5,5});
+//    auto x = NDArrayFactory::create<float>(  {5,5});
+//    auto y = NDArrayFactory::create<float>(  {5,5});
 //
 //
 //    ops.execAggregate(nullptr, 0, maxArgs, maxShapes, maxIntArrays, maxIntArraySize, maxIndexArguments, maxRealArguments, pointer.data(), sd::DataType::FLOAT32);
@@ -1282,7 +1282,7 @@ TEST_F(NativeOpsTests, ConvertTypesTest_1) {
 //}
 
 TEST_F(NativeOpsTests, RandomTest_1) {
-    auto z = NDArrayFactory::create<double>('c', {100});
+    auto z = NDArrayFactory::create<double>(  {100});
     Nd4jPointer extra[] = {nullptr, nullptr};
 #ifdef __CUDABLAS__
     return;
@@ -1296,8 +1296,8 @@ TEST_F(NativeOpsTests, RandomTest_1) {
 }
 
 TEST_F(NativeOpsTests, RandomTest_2) {
-    auto x = NDArrayFactory::create<double>('c', {100});
-    auto z = NDArrayFactory::create<double>('c', {100});
+    auto x = NDArrayFactory::create<double>(  {100});
+    auto z = NDArrayFactory::create<double>(  {100});
     Nd4jPointer extra[] = {nullptr, nullptr};
 #ifdef __CUDABLAS__
     return;
@@ -1313,9 +1313,9 @@ TEST_F(NativeOpsTests, RandomTest_2) {
 }
 
 TEST_F(NativeOpsTests, RandomTest_3) {
-    auto x = NDArrayFactory::create<double>('c', {100});
-    auto y = NDArrayFactory::create<double>('c', {100});
-    auto z = NDArrayFactory::create<double>('c', {100});
+    auto x = NDArrayFactory::create<double>(  {100});
+    auto y = NDArrayFactory::create<double>(  {100});
+    auto z = NDArrayFactory::create<double>(  {100});
     Nd4jPointer extra[] = {nullptr, nullptr};
 #ifdef __CUDABLAS__
     return;
@@ -1347,9 +1347,9 @@ TEST_F(NativeOpsTests, SortTest_1) {
 #ifdef __CUDABLAS__
     return ;
 #endif
-    auto sortedVals = NDArrayFactory::create<int>(
+    auto sortedVals = NDArrayFactory::vector<int>(
             {10, 1, 5, 120, 34, 5, 78, 138, 3, 111, 331, 29, 91, 71, 73, 50, 56, 4});
-    auto exp = NDArrayFactory::create<int>({1, 3, 4, 5, 5, 10, 29, 34, 50, 56, 71, 73, 78, 91, 111, 120, 138, 331});
+    auto exp = NDArrayFactory::vector<int>({1, 3, 4, 5, 5, 10, 29, 34, 50, 56, 71, 73, 78, 91, 111, 120, 138, 331});
 
     ::sort(nullptr, sortedVals.buffer(), sortedVals.shapeInfo(), sortedVals.specialBuffer(),
              sortedVals.specialShapeInfo(), false);
@@ -1357,11 +1357,11 @@ TEST_F(NativeOpsTests, SortTest_1) {
 }
 
 TEST_F(NativeOpsTests, SortTests_2) {
-    auto k = NDArrayFactory::create<Nd4jLong>('c', {10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
-    auto v = NDArrayFactory::create<double>('c', {10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
+    auto k = NDArrayFactory::create<Nd4jLong>(  {10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
+    auto v = NDArrayFactory::create<double>(  {10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
 
-    auto ek = NDArrayFactory::create<Nd4jLong>('c', {10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    auto ev = NDArrayFactory::create<double>('c', {10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
+    auto ek = NDArrayFactory::create<Nd4jLong>(  {10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    auto ev = NDArrayFactory::create<double>(  {10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
     Nd4jPointer extras[2];
 #ifdef __CUDABLAS__
     extras[1] = LaunchContext::defaultContext()->getCudaStream();
@@ -1380,11 +1380,11 @@ TEST_F(NativeOpsTests, SortTests_2) {
 }
 
 TEST_F(NativeOpsTests, SortTest_3) {
-    auto k = NDArrayFactory::create<Nd4jLong>('c', {10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
-    auto v = NDArrayFactory::create<double>('c', {10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
+    auto k = NDArrayFactory::create<Nd4jLong>(  {10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
+    auto v = NDArrayFactory::create<double>(  {10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
 
-    auto ek = NDArrayFactory::create<Nd4jLong>('c', {10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    auto ev = NDArrayFactory::create<double>('c', {10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
+    auto ek = NDArrayFactory::create<Nd4jLong>(  {10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    auto ev = NDArrayFactory::create<double>(  {10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
 
 #ifdef __CUDABLAS__
     Nd4jPointer extras[2] = {nullptr, LaunchContext::defaultContext()->getCudaStream()};
@@ -1404,11 +1404,11 @@ TEST_F(NativeOpsTests, SortTest_4) {
 #ifdef __CUDABLAS__
     return ;
 #endif
-    auto sortedVals = NDArrayFactory::create<int>('c', {3, 6},
+    auto sortedVals = NDArrayFactory::create<int>(  {3, 6},
             { 10,   1, 5, 120,  34,  5,
                    78, 138,  3, 111, 331, 29,
                    91,  71, 73,  50,  56,  4});
-    auto exp = NDArrayFactory::create<int>('c', {3, 6}, {1, 5, 5, 10, 34, 120, 3, 29, 78, 111, 138, 331, 4, 50, 56, 71, 73, 91});
+    auto exp = NDArrayFactory::create<int>(  {3, 6}, {1, 5, 5, 10, 34, 120, 3, 29, 78, 111, 138, 331, 4, 50, 56, 71, 73, 91});
 
     std::vector<int> dims({1});
     auto packX = ConstantTadHelper::getInstance()->tadForDimensions(sortedVals.shapeInfo(), {1});
@@ -1420,11 +1420,11 @@ TEST_F(NativeOpsTests, SortTest_4) {
 }
 
 TEST_F(NativeOpsTests, SortTests_5) {
-    auto k = NDArrayFactory::create<Nd4jLong>('c', {2, 10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8,   1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
-    auto v = NDArrayFactory::create<double>('c', {2, 10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5,   1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
+    auto k = NDArrayFactory::create<Nd4jLong>(  {2, 10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8,   1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
+    auto v = NDArrayFactory::create<double>(  {2, 10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5,   1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
 
-    auto ek = NDArrayFactory::create<Nd4jLong>('c', {2, 10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,     0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    auto ev = NDArrayFactory::create<double>('c', {2, 10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5,     0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
+    auto ek = NDArrayFactory::create<Nd4jLong>(  {2, 10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,     0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    auto ev = NDArrayFactory::create<double>(  {2, 10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5,     0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
 
     Nd4jPointer extras[2];
 #ifdef __CUDABLAS__
@@ -1445,11 +1445,11 @@ TEST_F(NativeOpsTests, SortTests_5) {
 }
 
 TEST_F(NativeOpsTests, SortTests_6) {
-    auto k = NDArrayFactory::create<Nd4jLong>('c', {2, 10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8,   1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
-    auto v = NDArrayFactory::create<double>('c', {2, 10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5,   1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
+    auto k = NDArrayFactory::create<Nd4jLong>(  {2, 10}, {1, 3, 5, 9, 0, 2, 4, 6, 7, 8,   1, 3, 5, 9, 0, 2, 4, 6, 7, 8});
+    auto v = NDArrayFactory::create<double>(  {2, 10}, {1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5,   1.5, 3.5, 5.5, 9.5, 0.5, 2.5, 4.5, 6.5, 7.5, 8.5});
 
-    auto ek = NDArrayFactory::create<Nd4jLong>('c', {2, 10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,     0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    auto ev = NDArrayFactory::create<double>('c', {2, 10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5,     0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
+    auto ek = NDArrayFactory::create<Nd4jLong>(  {2, 10}, {0, 1, 2, 3, 4, 5, 6, 7, 8, 9,     0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    auto ev = NDArrayFactory::create<double>(  {2, 10}, {0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5,     0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5});
 
     Nd4jPointer extras[2];
 #ifdef __CUDABLAS__
@@ -1487,9 +1487,9 @@ TEST_F(NativeOpsTests, MapTests_1) {
 }
 
 TEST_F(NativeOpsTests, CustomOpTest_1) {
-    auto x = NDArrayFactory::create<float>('c', {1, 6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>('c', {6});
-    auto e = NDArrayFactory::create<float>('c', {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto x = NDArrayFactory::create<float>(  {1, 6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto z = NDArrayFactory::create<float>(  {6});
+    auto e = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
 
     sd::ops::squeeze op;
 
@@ -1506,11 +1506,11 @@ TEST_F(NativeOpsTests, CustomOpTest_1) {
     ASSERT_EQ(e, z);
 }
 TEST_F(NativeOpsTests, CustomOpTests_2) {
-    auto array0 = NDArrayFactory::create<float>('c', {3, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto array1 = NDArrayFactory::create<float>('c', {3, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>('c', {3, 2});
+    auto array0 = NDArrayFactory::create<float>(  {3, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto array1 = NDArrayFactory::create<float>(  {3, 2}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
+    auto z = NDArrayFactory::create<float>(  {3, 2});
 
-    auto exp = NDArrayFactory::create<float>('c', {3, 2}, {2.f, 4.f, 6.f, 8.f, 10.f, 12.f});
+    auto exp = NDArrayFactory::create<float>(  {3, 2}, {2.f, 4.f, 6.f, 8.f, 10.f, 12.f});
     Context ctx(1);
 
     NDArray::prepareSpecialUse({&z}, {&array0, &array1});
@@ -1529,9 +1529,9 @@ TEST_F(NativeOpsTests, CustomOpTests_2) {
     ASSERT_EQ(exp, z);
 }
 TEST_F(NativeOpsTests, CalculateOutputShapeTests_1) {
-    auto input = NDArrayFactory::create<float>('c', {1, 2, 5, 4});
-    auto weights = NDArrayFactory::create<float>('c', {2, 2, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {1, 3, 5, 4});
+    auto input = NDArrayFactory::create<float>(  {1, 2, 5, 4});
+    auto weights = NDArrayFactory::create<float>(  {2, 2, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {1, 3, 5, 4});
 
     sd::ops::conv2d op;
 
@@ -1561,9 +1561,9 @@ TEST_F(NativeOpsTests, CalculateOutputShapeTests_1) {
 }
 
 TEST_F(NativeOpsTests, CalculateOutputShapeTests_2) {
-    auto input = NDArrayFactory::create<float>('c', {1, 2, 5, 4});
-    auto weights = NDArrayFactory::create<float>('c', {2, 2, 2, 3});
-    auto exp = NDArrayFactory::create<float>('c', {1, 3, 5, 4});
+    auto input = NDArrayFactory::create<float>(  {1, 2, 5, 4});
+    auto weights = NDArrayFactory::create<float>(  {2, 2, 2, 3});
+    auto exp = NDArrayFactory::create<float>(  {1, 3, 5, 4});
 
     sd::ops::conv2d op;
 
