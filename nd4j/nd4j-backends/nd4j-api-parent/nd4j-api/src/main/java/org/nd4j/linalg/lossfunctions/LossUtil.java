@@ -17,6 +17,7 @@
 package org.nd4j.linalg.lossfunctions;
 
 import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -62,5 +63,9 @@ public class LossUtil {
         } else {
             return loss.mul(loss.getSameDiff().constant(weight));
         }
+    }
+
+    public static SDVariable batchAverage(@NonNull SDVariable loss){
+        return loss.sum().div(loss.shape().get(SDIndex.point(0)));
     }
 }

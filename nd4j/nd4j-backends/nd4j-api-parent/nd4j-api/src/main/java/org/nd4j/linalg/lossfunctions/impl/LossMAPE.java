@@ -162,7 +162,7 @@ public class LossMAPE extends BaseLossFunction {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.multiplyWeight(sameDiff.math.abs(input.rsub(labels).div(labels)).mul(100).div(labels.shape().get(SDIndex.point(1))), weights);
+        return LossUtil.batchAverage(LossUtil.multiplyWeight(sameDiff.math.abs(input.rsub(labels).div(labels)).mul(100).div(labels.shape().get(SDIndex.point(1))), weights));
     }
 
     /**

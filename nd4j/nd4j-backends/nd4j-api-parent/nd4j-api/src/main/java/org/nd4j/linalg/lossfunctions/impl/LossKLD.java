@@ -121,7 +121,7 @@ public class LossKLD extends BaseLossFunction {
         input = sameDiff.math.clipByValue(input, Nd4j.EPS_THRESHOLD, 1);
         labels = sameDiff.math.clipByValue(labels, Nd4j.EPS_THRESHOLD, 1);
 
-        return sameDiff.math.log(input.rdiv(labels)).mul(labels);
+        return LossUtil.batchAverage(sameDiff.math.log(input.rdiv(labels)).mul(labels));
     }
 
     /**

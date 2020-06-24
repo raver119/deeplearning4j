@@ -110,7 +110,7 @@ public class LossWasserstein extends BaseLossFunction {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return labels.mul(input).mean(true, 1);
+        return LossUtil.batchAverage(labels.mul(input).mean(true, 1));
     }
 
     @Override

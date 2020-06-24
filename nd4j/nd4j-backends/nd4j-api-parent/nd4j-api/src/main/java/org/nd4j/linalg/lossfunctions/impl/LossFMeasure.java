@@ -28,6 +28,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.common.primitives.Pair;
+import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
 
 /**
@@ -222,7 +223,7 @@ public class LossFMeasure extends BaseLossFunction {
         numerator = sameDiff.math.max(sameDiff.math.abs(numerator), eps).mul(sameDiff.math.sign(numerator));
         denominator = sameDiff.math.max(sameDiff.math.abs(denominator), eps).mul(sameDiff.math.sign(denominator));
 
-        return numerator.div(denominator).rsub(1);
+        return LossUtil.batchAverage(numerator.div(denominator).rsub(1));
     }
 
     /**

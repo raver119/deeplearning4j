@@ -121,7 +121,7 @@ public class LossSquaredHinge extends BaseLossFunction {
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
         SDVariable hinge = sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0));
-        return hinge.mul(hinge).sum(true, 1);
+        return LossUtil.batchAverage(hinge.mul(hinge).sum(true, 1));
     }
 
     /**

@@ -149,7 +149,7 @@ public class TestUtils {
 
         INDArray sdOutput = sdOutputs.get(model.outputs().get(0));
         INDArray sdLoss = sdOutputs.get(model.getLossVariables().get(0));
-        double sdScore = sdLoss.sumNumber().doubleValue() / sdLoss.size(0);
+        double sdScore = sdLoss.sumNumber().doubleValue();
 
         assertTrue(sdOutput.equalsWithEps(output, 1e-3));
         assertTrue("Losses don't match for original network and SameDiff version", Math.abs(sdScore - score) < 1e-3);

@@ -114,7 +114,7 @@ public class LossPoisson extends BaseLossFunction {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return sameDiff.math.log(input).mul(labels).rsub(input).sum(true,1);
+        return LossUtil.batchAverage(sameDiff.math.log(input).mul(labels).rsub(input).sum(true,1));
     }
 
     /**

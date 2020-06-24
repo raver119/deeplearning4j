@@ -164,7 +164,7 @@ public class LossL1 extends BaseLossFunction {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return defineFullLossArray(sameDiff, input, labels).sum(true, 1);
+        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).sum(true, 1));
     }
 
     /**

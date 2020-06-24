@@ -22,6 +22,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
 
 /**
@@ -70,7 +71,7 @@ public class LossMSE extends LossL2 {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return defineFullLossArray(sameDiff, input, labels).mean(true, 1);
+        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).mean(true, 1));
     }
 
     /**
