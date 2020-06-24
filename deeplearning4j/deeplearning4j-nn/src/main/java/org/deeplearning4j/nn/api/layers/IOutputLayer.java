@@ -20,6 +20,7 @@ import org.deeplearning4j.nn.api.Classifier;
 import org.deeplearning4j.nn.api.Layer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 /**
  * Interface for output layers (those that calculate gradients with respect to a labels array)
@@ -66,4 +67,10 @@ public interface IOutputLayer extends Layer, Classifier {
     INDArray computeScoreForExamples(double fullNetworkRegScore, LayerWorkspaceMgr workspaceMgr);
 
 
+    /**
+     * Get the loss function being used by the output layer.
+     * May be null if one isn't used, in which case the output should be usable as the loss value (e.g. for SameDiffOutputLayer).
+     * @return The loss function.
+     */
+    ILossFunction getLossFn();
 }

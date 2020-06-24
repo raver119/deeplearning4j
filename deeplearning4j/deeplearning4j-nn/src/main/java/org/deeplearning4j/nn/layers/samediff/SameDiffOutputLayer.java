@@ -43,6 +43,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.common.primitives.Pair;
 
 import java.util.*;
+import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer>
     implements IOutputLayer {
@@ -393,5 +394,10 @@ public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.con
     @Override
     public void fit(INDArray examples, int[] labels) {
         throw new UnsupportedOperationException("Not supported");
+    }
+
+    @Override
+    public ILossFunction getLossFn() {
+        return null;
     }
 }

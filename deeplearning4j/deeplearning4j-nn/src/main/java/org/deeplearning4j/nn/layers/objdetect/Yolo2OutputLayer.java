@@ -680,4 +680,9 @@ public class Yolo2OutputLayer extends AbstractLayer<org.deeplearning4j.nn.conf.l
         INDArray conf = networkOutput.get(point(example), point(5*bbs + classNumber), all(), all());
         return conf;
     }
+
+    @Override
+    public ILossFunction getLossFn() {
+        return null;
+    }
 }

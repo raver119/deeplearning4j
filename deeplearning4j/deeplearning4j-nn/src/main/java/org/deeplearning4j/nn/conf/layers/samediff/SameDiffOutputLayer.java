@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.conf.layers.samediff;
 
+import lombok.NonNull;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -65,6 +66,12 @@ public abstract class SameDiffOutputLayer extends AbstractSameDiffLayer {
      */
     public abstract SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, SDVariable labels,
                     Map<String, SDVariable> paramTable);
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        throw new IllegalStateException("SameDiffOutputLayers should be defined using the define method using labels");
+    }
 
     /**
      * Output layers should terminate in a single scalar value (i.e., a score) - however, sometimes the output activations
