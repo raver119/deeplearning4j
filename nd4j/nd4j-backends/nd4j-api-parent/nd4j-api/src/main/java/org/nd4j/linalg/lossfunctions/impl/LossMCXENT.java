@@ -208,7 +208,10 @@ public class LossMCXENT extends BaseLossFunction {
 
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels) {
-        throw new UnsupportedOperationException("TODO");
+        if(input.getCreator().opName().equals("softmax") && softmaxClipEps > 0.0){
+            input = sameDiff.math.clipByValue(input, softmaxClipEps, 1.0-softmaxClipEps);
+        }
+        return LossUtil.batchAverage(LossUtil.multiplyWeight(sameDiff.math.log(input).mul(labels).neg(), weights));
     }
 
     /**

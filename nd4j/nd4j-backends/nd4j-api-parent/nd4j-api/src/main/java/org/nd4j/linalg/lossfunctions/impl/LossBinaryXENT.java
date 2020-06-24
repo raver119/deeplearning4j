@@ -18,7 +18,10 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
@@ -236,6 +239,23 @@ public class LossBinaryXENT extends BaseLossFunction {
 
         return new Pair<>(computeScore(labels, preOutput, activationFn, mask, average),
                         computeGradient(labels, preOutput, activationFn, mask));
+    }
+
+    @Override
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        SDVariable scoreArr;
+        if(input.getCreator().opName().equals("softmax")){
+            scoreArr = sameDiff.math.log(input).mul(labels);
+        } else {
+            input = sameDiff.math.clipByValue(input, clipEps, 1-clipEps);
+            scoreArr = sameDiff.math.log(input).mul(labels);
+
+            SDVariable secondTerm = sameDiff.math.log(input.rsub(1)).mul(labels.rsub(1));
+
+            scoreArr = scoreArr.add(secondTerm);
+        }
+        return LossUtil.batchAverage(LossUtil.multiplyWeight(scoreArr, weights));
     }
 
     /**
