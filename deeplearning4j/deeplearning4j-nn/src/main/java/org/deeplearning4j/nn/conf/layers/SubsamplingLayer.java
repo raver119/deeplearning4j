@@ -159,6 +159,7 @@ public class SubsamplingLayer extends NoParamLayer {
                 .sH(stride[0]).sW(stride[1])
                 .dH(dilation[0]).dW(dilation[1])
                 .isNHWC(cnn2dDataFormat == CNN2DFormat.NHWC)
+                .isSameMode(convolutionMode == ConvolutionMode.Same)
                 .build();
 
         if(poolingType == org.deeplearning4j.nn.conf.layers.PoolingType.MAX){

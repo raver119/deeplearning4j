@@ -207,6 +207,7 @@ public class ConvolutionLayer extends FeedForwardLayer {
         SDVariable value = sameDiff.cnn.conv2d(layerInput, weight, bias,
                 Conv2DConfig.builder()
                         .dataFormat(this.cnn2dDataFormat.name())
+                        .isSameMode(convolutionMode == ConvolutionMode.Same)
                         .kH(kernelSize[0]).kW(kernelSize[1])
                         .sH(stride[0]).sW(stride[1])
                         .pH(padding[0]).pW(padding[1])
