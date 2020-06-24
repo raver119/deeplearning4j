@@ -1041,6 +1041,7 @@ public class MultiLayerTest extends BaseDL4JTest {
 
         assertEquals(4, net.getLayerWiseConfigurations().getEpochCount());
 
+        TestUtils.testToSameDiff(net, true);
         MultiLayerNetwork restored = TestUtils.testModelSerialization(net);
         assertEquals(4, restored.getLayerWiseConfigurations().getEpochCount());
     }
@@ -1242,6 +1243,7 @@ public class MultiLayerTest extends BaseDL4JTest {
 
         net.fit(ds);
 
+        TestUtils.testToSameDiff(net, true);
         MultiLayerNetwork net2 = TestUtils.testModelSerialization(net);
         INDArray out2 = net2.output(ds.getFeatures());
         assertEquals(out, out2);

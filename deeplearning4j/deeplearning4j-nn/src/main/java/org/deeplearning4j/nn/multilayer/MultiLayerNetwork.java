@@ -787,7 +787,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
     }
 
     /**
-     * TODO overloads for input type
+     * TODO make loss work for all IOutputLayers (get loss function in it?)
      * Create the MultiLayerNetwork in a SameDiff instance.
      *
      * The input and lables placeholders are created with names "input" and "labels", respectively.
@@ -879,7 +879,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
         // labels shape must be the same as the last layer
         SDVariable labels = sameDiff
                 .placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
-        NameScope lossScope = sameDiff.withNameScope("loss");
+        NameScope lossScope = sameDiff.withNameScope(lossFn.getClass().getSimpleName());
 
         SDVariable loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
         loss.rename("loss");

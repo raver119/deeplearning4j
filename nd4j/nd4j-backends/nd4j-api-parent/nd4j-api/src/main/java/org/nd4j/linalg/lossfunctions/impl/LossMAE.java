@@ -18,6 +18,7 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
@@ -74,7 +75,7 @@ public class LossMAE extends LossL1 {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).mean(true, 1));
+        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).div(labels.shape().get(SDIndex.point(1))));
     }
 
     /**

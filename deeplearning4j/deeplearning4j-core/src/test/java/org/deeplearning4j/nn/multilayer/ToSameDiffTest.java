@@ -217,14 +217,7 @@ public class ToSameDiffTest extends BaseDL4JTest {
     public void testMSE(){
         SameDiff sd = SameDiff.create();
 
-        SDVariable input = sd.zero("input", 2, 3).plus(0.2);
-        SDVariable labels = sd.zero("labelinput", 2, 3).add(sd.constant(Nd4j.createFromArray(0, 0.6, 0)));
-        SDVariable out = sd.math.cosineSimilarity(input, labels).sum(true, 1).neg();
-
-        System.out.println(out.eval());
-
-        LossCosineProximity loss = new LossCosineProximity();
-        System.out.println(loss.computeScoreArray(labels.eval(), input.eval(), Activation.IDENTITY.getActivationFunction(), null));
+        System.out.println(sd.nn.relu(sd.constant(1), 2).eval());
 
     }
 }

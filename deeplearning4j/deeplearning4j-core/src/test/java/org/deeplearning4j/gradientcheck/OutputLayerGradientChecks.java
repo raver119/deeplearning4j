@@ -22,6 +22,7 @@ import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.junit.Test;
@@ -146,6 +147,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                         .labels(labels).labelMask(labelMask));
 
                 assertTrue(testName, gradOK);
+                TestUtils.testToSameDiff(mln, input, labels, true);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -231,11 +233,13 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                                     .convolutionMode(ConvolutionMode.Same)
                                     .list()
                                     .layer(new ConvolutionLayer.Builder().nIn(dIn).nOut(dOut).activation(Activation.TANH)
+                                            .kernelSize(3, 3)
                                             .dist(new NormalDistribution(0, 1.0))
                                             .updater(new NoOp()).build())
                                     .layer(new CnnLossLayer.Builder(lf)
                                             .activation(oa)
                                             .build())
+                                    .setInputType(InputType.inferInputType(input))
                                     .validateOutputLayerConfig(false).build();
 
                     MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -253,6 +257,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                             .labels(labels).labelMask(labelMask));
 
                     assertTrue(testName, gradOK);
+                    TestUtils.testToSameDiff(mln, input, labels, true);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -385,6 +390,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                                                 .lossFunction(lf)
                                                 .activation(oa)
                                                 .build())
+                                        .setInputType(InputType.inferInputType(input))
                                         .validateOutputLayerConfig(false).build();
 
                         MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -402,6 +408,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                                 .labels(labels).labelMask(labelMask));
 
                         assertTrue(testName, gradOK);
+                        TestUtils.testToSameDiff(mln, input, labels, true);
                         TestUtils.testModelSerialization(mln);
                     }
                 }

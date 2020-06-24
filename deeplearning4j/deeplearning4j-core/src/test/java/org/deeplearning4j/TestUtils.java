@@ -25,6 +25,8 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.layers.BaseLayer;
 import org.deeplearning4j.nn.conf.layers.samediff.AbstractSameDiffLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.layers.BaseOutputLayer;
+import org.deeplearning4j.nn.layers.LossLayer;
 import org.deeplearning4j.nn.layers.convolution.ConvolutionLayer;
 import org.deeplearning4j.nn.layers.convolution.subsampling.SubsamplingLayer;
 import org.deeplearning4j.nn.layers.normalization.BatchNormalization;
@@ -47,6 +49,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
+import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -103,7 +106,7 @@ public class TestUtils {
         return restored;
     }
 
-    public static void testToSameDiffInference(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
+    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
 
         SameDiff model;
         try{
@@ -125,7 +128,7 @@ public class TestUtils {
         assertTrue(sdOutput.equalsWithEps(output, 1e-3));
     }
 
-    public static void testToSameDiffInferenceAndLoss(MultiLayerNetwork network, INDArray input, INDArray labels, boolean passUnimplemented){
+    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, INDArray labels, boolean passUnimplemented){
 
         SameDiff model;
         try{
@@ -151,8 +154,38 @@ public class TestUtils {
         INDArray sdLoss = sdOutputs.get(model.getLossVariables().get(0));
         double sdScore = sdLoss.sumNumber().doubleValue();
 
-        assertTrue(sdOutput.equalsWithEps(output, 1e-3));
-        assertTrue("Losses don't match for original network and SameDiff version", Math.abs(sdScore - score) < 1e-3);
+        ILossFunction lossFn = null;
+        Layer lastLayer = network.getLayer(network.getnLayers() - 1);
+        if(lastLayer instanceof LossLayer){
+            lossFn = ((LossLayer) lastLayer).layerConf().getLossFn();
+        } else if(lastLayer instanceof BaseOutputLayer){
+            lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
+        }
+
+        if(Math.abs(sdScore - score) > 1e-3) {
+            network.output(input);
+            network.computeGradientAndScore();
+        }
+
+        assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
+        assertTrue("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
+                Math.abs(sdScore - score) < 1e-3);
+    }
+
+    public static void testToSameDiff(MultiLayerNetwork network, boolean passUnimplemented){
+        if(network.getInput() != null){
+            if(network.getLabels() != null)
+                testToSameDiff(network, network.getInput(), network.getLabels(), passUnimplemented);
+            else
+                testToSameDiff(network, network.getInput(), passUnimplemented);
+        } else {
+            try {
+                network.toSameDiff();
+            } catch (UnsupportedOperationException e) {
+                if (!passUnimplemented)
+                    throw e;
+            }
+        }
     }
 
     private static <T> T serializeDeserializeJava(T object){

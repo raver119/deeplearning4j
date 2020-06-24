@@ -223,7 +223,8 @@ public class LossFMeasure extends BaseLossFunction {
         numerator = sameDiff.math.max(sameDiff.math.abs(numerator), eps).mul(sameDiff.math.sign(numerator));
         denominator = sameDiff.math.max(sameDiff.math.abs(denominator), eps).mul(sameDiff.math.sign(denominator));
 
-        return LossUtil.batchAverage(numerator.div(denominator).rsub(1));
+        // have to use labels to get batch size
+        return numerator.div(denominator).rsub(1).sum().div(labels.shape().get(SDIndex.point(0)));
     }
 
     /**

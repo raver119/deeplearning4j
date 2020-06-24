@@ -451,6 +451,7 @@ public class BatchNormalizationTest extends BaseDL4JTest {
 
         assertEquals(out, out2);
 
+        TestUtils.testToSameDiff(net, in, true);
         MultiLayerNetwork net2 = TestUtils.testModelSerialization(net);
 
         INDArray outDeser = net2.output(in, false);

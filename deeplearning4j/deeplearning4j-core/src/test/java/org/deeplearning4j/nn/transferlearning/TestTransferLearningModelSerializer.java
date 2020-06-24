@@ -88,6 +88,8 @@ public class TestTransferLearningModelSerializer extends BaseDL4JTest {
 
         assertEquals(out, out2);
 
+        TestUtils.testToSameDiff(withFrozen, in, true);
+
         //Sanity check on train mode:
         out = withFrozen.output(in, true);
         out2 = restored.output(in, true);

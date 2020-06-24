@@ -332,6 +332,7 @@ public class OutputLayerTest extends BaseDL4JTest {
         assertEquals(mln.gradient().gradient(), mln2.gradient().gradient());
         assertEquals(mln.score(), mln2.score(), 1e-6);
 
+        TestUtils.testToSameDiff(mln, in, labels, true);
         TestUtils.testModelSerialization(mln);
     }
 
@@ -421,6 +422,7 @@ public class OutputLayerTest extends BaseDL4JTest {
                 assertArrayEquals(new long[]{2, 1}, s.shape());
                 assertEquals(s.getDouble(0), s.getDouble(1), 1e-6);
 
+                TestUtils.testToSameDiff(mln, in, labels, true);
                 TestUtils.testModelSerialization(mln);
             }
         }

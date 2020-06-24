@@ -374,6 +374,11 @@ public class RnnDataFormatTests extends BaseDL4JTest {
                 assertEquals(tc.msg, out1, net3a.output(inNWC));   //NWC to NCW
                 assertEquals(tc.msg, out1, net4a.output(inNWC));
             }
+
+            TestUtils.testToSameDiff(tc.net1, inNCW, true);
+            TestUtils.testToSameDiff(tc.net2, inNCW, true);
+            TestUtils.testToSameDiff(tc.net3, inNWC, true);
+            TestUtils.testToSameDiff(tc.net4, inNWC, true);
         }
 
     }

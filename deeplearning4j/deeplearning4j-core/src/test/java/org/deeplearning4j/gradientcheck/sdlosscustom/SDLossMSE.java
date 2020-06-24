@@ -16,6 +16,7 @@
 package org.deeplearning4j.gradientcheck.sdlosscustom;
 
 import lombok.EqualsAndHashCode;
+import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.lossfunctions.*;

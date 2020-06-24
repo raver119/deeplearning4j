@@ -31,7 +31,6 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -159,6 +158,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                                             assertTrue(msg, gradOK);
 
+                                            TestUtils.testToSameDiff(net, input, labels, true);
                                             TestUtils.testModelSerialization(net);
                                         }
                                     }
@@ -262,6 +262,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
+                    TestUtils.testToSameDiff(net, input, labels, true);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -352,6 +353,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                             assertTrue(msg, gradOK);
 
+                            TestUtils.testToSameDiff(net, input, labels, true);
                             TestUtils.testModelSerialization(net);
                         }
                     }
@@ -442,6 +444,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(msg, gradOK);
 
+                        TestUtils.testToSameDiff(net, input, labels, true);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -541,6 +544,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
+                    TestUtils.testToSameDiff(net, input, labels, true);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -632,6 +636,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }

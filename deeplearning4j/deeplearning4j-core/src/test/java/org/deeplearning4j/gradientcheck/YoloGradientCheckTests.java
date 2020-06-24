@@ -153,6 +153,7 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
                     .labels(labels).subset(true).maxPerParam(100));
 
             assertTrue(msg, gradOK);
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -261,6 +262,7 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
                 .labels(l).inputMask(null).subset(true).maxPerParam(64));
 
         assertTrue(ok);
+        TestUtils.testToSameDiff(net, f, l, true);
         TestUtils.testModelSerialization(net);
     }
 }

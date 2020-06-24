@@ -925,6 +925,11 @@ public class ConvDataFormatTests extends BaseDL4JTest {
             assertEquals(tc.msg, out1, net4a.output(inNHWC).permute(0,3,1,2));
         }
 
+        TestUtils.testToSameDiff(tc.net1, inNCHW, true);
+        TestUtils.testToSameDiff(tc.net2, inNCHW, true);
+        TestUtils.testToSameDiff(tc.net3, inNHWC, true);
+        TestUtils.testToSameDiff(tc.net4, inNHWC, true);
+
     }
 
     private static List<String> differentGrads(Gradient g1, Gradient g2){

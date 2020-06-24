@@ -106,6 +106,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                 assertTrue(gradOK);
+                TestUtils.testToSameDiff(mln, input, labels, true);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -165,6 +166,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                             DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                     assertTrue(gradOK);
+                    TestUtils.testToSameDiff(mln, input, labels, true);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -225,6 +227,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                     .labels(labels).inputMask(featuresMask));
 
             assertTrue(gradOK);
+            TestUtils.testToSameDiff(mln, input, labels, true);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -308,6 +311,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                             .labels(labels).inputMask(inputMask));
 
                     assertTrue(gradOK);
+                    TestUtils.testToSameDiff(mln, input, labels, true);
                     TestUtils.testModelSerialization(mln);
                 }
             }

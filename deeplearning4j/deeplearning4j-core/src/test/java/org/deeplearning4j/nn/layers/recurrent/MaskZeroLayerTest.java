@@ -115,6 +115,7 @@ public class MaskZeroLayerTest extends BaseDL4JTest {
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
 
+        TestUtils.testToSameDiff(net, true);
         TestUtils.testModelSerialization(net);
     }
 }

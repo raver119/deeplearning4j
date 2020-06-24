@@ -122,7 +122,7 @@ public class LossHinge extends BaseLossFunction {
     @Override
     public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0)).sum(true, 1));
+        return LossUtil.batchAverage(sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0.0)).sum(true, 1));
     }
 
     /**

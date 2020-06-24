@@ -137,6 +137,7 @@ public class GradientCheckTestsMasking extends BaseDL4JTest {
                 String msg = "gradientCheckMaskingOutputSimple() - timeSeriesLength=" + timeSeriesLength
                                 + ", miniBatchSize=" + 1;
                 assertTrue(msg, gradOK);
+                TestUtils.testToSameDiff(mln, input, labels, true);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -186,6 +187,7 @@ public class GradientCheckTestsMasking extends BaseDL4JTest {
                     .labels(labels).inputMask(mask).labelMask(mask).subset(true).maxPerParam(12));
 
             assertTrue(gradOK);
+            TestUtils.testToSameDiff(mln, input, labels, true);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -267,6 +269,7 @@ public class GradientCheckTestsMasking extends BaseDL4JTest {
                         .labels(labels).labelMask(labelMask));
 
                 assertTrue(msg, gradOK);
+                TestUtils.testToSameDiff(net, features, labels, true);
                 TestUtils.testModelSerialization(net);
             }
         }

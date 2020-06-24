@@ -21,6 +21,7 @@ import org.deeplearning4j.TestUtils;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.variational.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -116,6 +117,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
 
                                     .dist(new NormalDistribution(0, 1))
                                     .build())
+                            .setInputType(InputType.inferInputType(input))
                             .build();
 
             MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -135,6 +137,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input,
                     labels);
             assertTrue(msg, gradOK);
+            TestUtils.testToSameDiff(mln, input, labels, true);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -184,6 +187,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                             .reconstructionDistribution(
                                     new GaussianReconstructionDistribution(pxzAfn))
                             .activation(afn).build())
+                    .setInputType(InputType.inferInputType(input))
                     .build();
 
             MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -207,6 +211,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     RETURN_ON_FIRST_FAILURE, input, 12345);
 
             assertTrue(msg, gradOK);
+            TestUtils.testToSameDiff(mln, input, labels, true);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -275,6 +280,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                                             reconstructionDistributions[i])
                                     .activation(Activation.TANH)
                                     .build())
+                    .setInputType(InputType.inferInputType(data))
                     .build();
 
             MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -295,6 +301,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     data, 12345);
 
             assertTrue(msg, gradOK);
+            TestUtils.testToSameDiff(mln, data, true);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -317,6 +324,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                                     new GaussianReconstructionDistribution(Activation.TANH))
                             .numSamples(numSamples).activation(Activation.TANH)
                             .build())
+                    .setInputType(InputType.inferInputType(features))
                     .build();
 
             MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -337,6 +345,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     features, 12345);
 
             assertTrue(msg, gradOK);
+            TestUtils.testToSameDiff(mln, features, true);
             TestUtils.testModelSerialization(mln);
         }
     }

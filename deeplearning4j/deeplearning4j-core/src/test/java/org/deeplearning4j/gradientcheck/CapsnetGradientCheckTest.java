@@ -39,8 +39,6 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.lossfunctions.impl.LossNegativeLogLikelihood;
 
-import java.util.Random;
-
 public class CapsnetGradientCheckTest extends BaseDL4JTest {
 
     @Override
@@ -114,6 +112,7 @@ public class CapsnetGradientCheckTest extends BaseDL4JTest {
 
                                 assertTrue(msg, gradOK);
 
+                                TestUtils.testToSameDiff(net, input, labels, true);
                                 TestUtils.testModelSerialization(net);
                             }
                         }

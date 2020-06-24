@@ -159,6 +159,8 @@ public class TestYolo2OutputLayer extends BaseDL4JTest {
         assertArrayEquals(new long[]{mb,1}, scoreArr1.shape());
         assertArrayEquals(new long[]{mb,1}, scoreArr2.shape());
         assertNotEquals(scoreArr1, scoreArr2);
+
+        TestUtils.testToSameDiff(net, input, labels, true);
     }
 
 

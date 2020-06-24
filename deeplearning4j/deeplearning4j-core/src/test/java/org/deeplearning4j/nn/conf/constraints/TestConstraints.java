@@ -100,6 +100,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, RW0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -153,6 +154,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -205,6 +207,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, w0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -265,6 +268,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -326,6 +330,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -384,6 +389,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, w1.norm2(1).maxNumber().doubleValue(), 1e-6 );
             }
 
+            TestUtils.testToSameDiff(net, input, labels, true);
             TestUtils.testModelSerialization(net);
         }
     }

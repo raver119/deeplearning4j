@@ -556,6 +556,7 @@ public class EmbeddingLayerTest extends BaseDL4JTest {
             INDArray w = net.getParam("0_W");
             assertEquals(vectors, w);
 
+            TestUtils.testToSameDiff(net, true);
             TestUtils.testModelSerialization(net);
 
             //Test same thing for embedding sequence layer:
@@ -581,6 +582,7 @@ public class EmbeddingLayerTest extends BaseDL4JTest {
             w = net.getParam("0_W");
             assertEquals(vectors, w);
 
+            TestUtils.testToSameDiff(net, true);
             TestUtils.testModelSerialization(net);
         }
     }

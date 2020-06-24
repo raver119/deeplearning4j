@@ -22,6 +22,7 @@ import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.BaseActivationFunction;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.factory.Nd4j;
@@ -69,7 +70,8 @@ public class ActivationThresholdedReLU extends BaseActivationFunction {
 
     @Override
     public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
-        return sameDiff.nn.relu(input, theta);
+        //TODO the mul works around a bug in relu, should only need the relu call https://github.com/eclipse/deeplearning4j/issues/9018
+        return sameDiff.nn.relu(input, theta).mul(input.gt(theta).castTo(input.dataType()));
     }
 
     @Override

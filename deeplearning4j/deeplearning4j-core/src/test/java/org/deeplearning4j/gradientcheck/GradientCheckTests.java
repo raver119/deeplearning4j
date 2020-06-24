@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.conf.layers.misc.ElementWiseMultiplicationLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -136,6 +137,7 @@ public class GradientCheckTests extends BaseDL4JTest {
         String msg = "testMinibatchApplication() - activationFn=" + afn + ", lossFn=" + lf
                 + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst;
         assertTrue(msg, gradOK);
+        TestUtils.testToSameDiff(mln, ds.getFeatures(), ds.getLabels(), true);
         TestUtils.testModelSerialization(mln);
     }
 
@@ -216,6 +218,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                     String msg = "testGradMLP2LayerIrisSimple() - activationFn=" + afn + ", lossFn=" + lf
                                     + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst;
                     assertTrue(msg, gradOK);
+                    TestUtils.testToSameDiff(mln, input, labels, true);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -311,6 +314,10 @@ public class GradientCheckTests extends BaseDL4JTest {
                                         + ", outputActivation=" + outputActivation + ", doLearningFirst="
                                         + doLearningFirst + ", l2=" + l2 + ", l1=" + l1;
                         assertTrue(msg, gradOK);
+
+                        //TODO toSameDiff doesn't support regularization
+                        if(mln.calcRegularizationScore(false) == 0)
+                            TestUtils.testToSameDiff(mln, input, labels, true);
                         TestUtils.testModelSerialization(mln);
                     }
                 }
@@ -394,6 +401,7 @@ public class GradientCheckTests extends BaseDL4JTest {
 
         String msg = "testEmbeddingLayerSimple";
         assertTrue(msg, gradOK);
+        TestUtils.testToSameDiff(mln, input, labels, true);
         TestUtils.testModelSerialization(mln);
     }
 
@@ -446,6 +454,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                                                                                         .activation(afn).build())
                                                         .layer(1, new OutputLayer.Builder(lf).nIn(3).nOut(3)
                                                                         .activation(outputActivation).build())
+                                                        .setInputType(InputType.inferInputType(input))
                                                         .build();
 
                         MultiLayerNetwork mln = new MultiLayerNetwork(conf);
@@ -482,6 +491,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                         boolean gradOK = GradientCheckUtil.checkGradients(mln, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
                                         DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                         assertTrue(msg, gradOK);
+                        TestUtils.testToSameDiff(mln, input, labels, true);
                         TestUtils.testModelSerialization(mln);
                     }
                 }
@@ -579,6 +589,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                             .layer(new RnnOutputLayer.Builder().nIn(4).nOut(3).activation(Activation.TANH)
                                     .dataFormat(seqOutputFormat)
                                     .lossFunction(LossFunction.MSE).build())
+                            .setInputType(InputType.recurrent(3, 6, RNNFormat.NCW))
                             .build();
 
                     MultiLayerNetwork net = new MultiLayerNetwork(conf);
@@ -606,6 +617,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                             .labels(label).inputMask(fMask));
                     assertTrue(msg, gradOK);
+                    TestUtils.testToSameDiff(net, in, label, true);
                     TestUtils.testModelSerialization(net);
 
 
@@ -705,6 +717,9 @@ public class GradientCheckTests extends BaseDL4JTest {
                             + ", outputActivation=" + outputActivation + ", l2=" + l2 + ", l1=" + l1;
                     assertTrue(msg, gradOK1);
 
+                    //TODO toSameDiff doesn't support regularization
+                    if(mln.calcRegularizationScore(false) == 0)
+                        TestUtils.testToSameDiff(mln, input, labels, true);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -789,6 +804,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                         String msg = "testGradMLP2LayerIrisSimple() - activationFn=" + afn + ", lossFn=" + lf
                                 + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst + ", layerNorm=" + layerNorm;
                         assertTrue(msg, gradOK);
+                        TestUtils.testToSameDiff(mln, input, labels, true);
                         TestUtils.testModelSerialization(mln);
                     }
                 }

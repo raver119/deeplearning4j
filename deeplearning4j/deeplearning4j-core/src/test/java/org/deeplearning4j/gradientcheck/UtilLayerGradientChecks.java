@@ -186,6 +186,7 @@ public class UtilLayerGradientChecks extends BaseDL4JTest {
                             .input(input).labels(label).inputMask(inMask));
                     assertTrue(gradOK);
 
+                    TestUtils.testToSameDiff(net, input, label, true);
                     TestUtils.testModelSerialization(net);
                 }
             }
@@ -226,6 +227,7 @@ public class UtilLayerGradientChecks extends BaseDL4JTest {
                     .labels(labels).excludeParams(excludeParams));
             assertTrue(gradOK);
 
+            TestUtils.testToSameDiff(net, in, labels, true);
             TestUtils.testModelSerialization(net);
 
 

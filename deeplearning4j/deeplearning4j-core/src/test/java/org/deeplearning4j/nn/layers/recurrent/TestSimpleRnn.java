@@ -117,6 +117,7 @@ public class TestSimpleRnn extends BaseDL4JTest {
         }
 
 
+        TestUtils.testToSameDiff(net, true);
         TestUtils.testModelSerialization(net);
     }
 
