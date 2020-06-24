@@ -22,6 +22,7 @@ import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -111,6 +112,7 @@ public class MaskZeroLayerTest extends BaseDL4JTest {
                 .list()
                 .layer(new org.deeplearning4j.nn.conf.layers.util.MaskZeroLayer.Builder()
                         .setMaskValue(0.0).setUnderlying(new LSTM.Builder().nIn(4).nOut(5).dataFormat(rnnDataFormat).build()).build())
+                .setInputType(InputType.recurrent(4, 10))
                 .build();
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();

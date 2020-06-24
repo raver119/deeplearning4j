@@ -93,6 +93,7 @@ public class TestYolo2OutputLayer extends BaseDL4JTest {
                 .layer(new Yolo2OutputLayer.Builder()
                         .boundingBoxPriors(bbPrior)
                         .build())
+                .setInputType(InputType.convolutional(h, w, depth))
                 .build();
 
         MultiLayerNetwork net = new MultiLayerNetwork(conf);

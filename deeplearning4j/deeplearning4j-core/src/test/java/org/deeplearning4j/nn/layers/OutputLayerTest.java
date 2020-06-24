@@ -22,6 +22,7 @@ import org.deeplearning4j.TestUtils;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.*;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.conf.preprocessor.FeedForwardToRnnPreProcessor;
 import org.deeplearning4j.nn.conf.preprocessor.RnnToFeedForwardPreProcessor;
@@ -362,6 +363,7 @@ public class OutputLayerTest extends BaseDL4JTest {
                                 .layer(new CnnLossLayer.Builder(LossFunction.MSE)
                                         .activation(a)
                                         .build())
+                                .setInputType(InputType.convolutional(5, 5, 4))
                                 .build();
 
                 MultiLayerConfiguration conf2 =

@@ -106,28 +106,6 @@ public class TestUtils {
         return restored;
     }
 
-    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
-
-        SameDiff model;
-        try{
-            model = network.toSameDiff();
-        } catch (UnsupportedOperationException e){
-            if(!passUnimplemented)
-                throw e;
-            else
-                return;
-        }
-
-        INDArray output = network.output(input);
-
-        INDArray sdOutput = model.batchOutput()
-                .output(model.outputs().get(0))
-                .input("input", input)
-                .outputSingle();
-
-        assertTrue(sdOutput.equalsWithEps(output, 1e-3));
-    }
-
     public static void testToSameDiff(MultiLayerNetwork network, INDArray input, INDArray labels, boolean passUnimplemented){
 
         SameDiff model;
@@ -170,6 +148,28 @@ public class TestUtils {
         assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
         assertTrue("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
                 Math.abs(sdScore - score) < 1e-3);
+    }
+
+    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
+
+        SameDiff model;
+        try{
+            model = network.toSameDiff();
+        } catch (UnsupportedOperationException e){
+            if(!passUnimplemented)
+                throw e;
+            else
+                return;
+        }
+
+        INDArray output = network.output(input);
+
+        INDArray sdOutput = model.batchOutput()
+                .output(model.outputs().get(0))
+                .input("input", input)
+                .outputSingle();
+
+        assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
     }
 
     public static void testToSameDiff(MultiLayerNetwork network, boolean passUnimplemented){

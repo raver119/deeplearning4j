@@ -574,6 +574,7 @@ public class EmbeddingLayerTest extends BaseDL4JTest {
                     .layer(new DenseLayer.Builder().activation(Activation.TANH).nIn(3).nOut(3).build())
                     .layer(new OutputLayer.Builder().lossFunction(LossFunctions.LossFunction.MSE).nIn(3)
                             .nOut(4).build())
+                    .setInputType(InputType.feedForward(10))
                     .build();
 
             net = new MultiLayerNetwork(conf);

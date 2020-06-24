@@ -817,7 +817,6 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             // layer
             if (layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer) {
                 config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
-
             } else {
                 throw new UnsupportedOperationException("Can't convert non-Layer layers");
             }

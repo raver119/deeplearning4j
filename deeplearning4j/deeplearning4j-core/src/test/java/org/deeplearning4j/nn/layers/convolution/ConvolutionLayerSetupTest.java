@@ -72,6 +72,7 @@ public class ConvolutionLayerSetupTest extends BaseDL4JTest {
         builder.setInputType(InputType.convolutionalFlat(28, 28, 1));
         MultiLayerConfiguration completed = complete().build();
         MultiLayerConfiguration test = builder.build();
+        test.setInputType(null);
         assertEquals(completed, test);
 
     }
