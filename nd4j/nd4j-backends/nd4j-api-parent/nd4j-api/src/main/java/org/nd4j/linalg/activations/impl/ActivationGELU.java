@@ -18,6 +18,9 @@ package org.nd4j.linalg.activations.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.BaseActivationFunction;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.transforms.strict.GELU;
@@ -66,6 +69,14 @@ public class ActivationGELU extends BaseActivationFunction {
 
         dLdz.muli(epsilon);
         return new Pair<>(dLdz, null);
+    }
+
+    @Override
+    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        if(precise)
+            return sameDiff.nn.preciseGelu(input);
+        else
+            return sameDiff.nn.gelu(input);
     }
 
     @Override

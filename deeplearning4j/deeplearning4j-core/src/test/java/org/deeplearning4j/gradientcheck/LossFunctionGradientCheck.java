@@ -395,6 +395,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                 }
 
                 TestUtils.testModelSerialization(net);
+                TestUtils.testToSameDiffInferenceAndLoss(net, input, labels, true);
             }
         }
 
@@ -703,6 +704,8 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                     } else {
                         failed.add(testName);
                     }
+
+                    TestUtils.testToSameDiffInferenceAndLoss(net, input, labels, true);
                 }
             }
         }

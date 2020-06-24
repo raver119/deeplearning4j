@@ -18,6 +18,10 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -179,6 +183,46 @@ public class LossFMeasure extends BaseLossFunction {
         //TODO optimize
         return new Pair<>(computeScore(labels, preOutput, activationFn, mask, average),
                         computeGradient(labels, preOutput, activationFn, mask));
+    }
+
+    @Override
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        long n = labels.placeholderShape()[1];
+        if (n != 1 && n != 2) {
+            throw new UnsupportedOperationException(
+                    "For binary classification: expect output size of 1 or 2. Got: " + n);
+        }
+
+        //First: determine positives and negatives
+        SDVariable isPositiveLabel;
+        SDVariable isNegativeLabel;
+        SDVariable pClass0;
+        SDVariable pClass1;
+        if (n == 1) {
+            isPositiveLabel = labels;
+            isNegativeLabel = isPositiveLabel.rsub(1.0);
+            pClass0 = input.rsub(1.0);
+            pClass1 = input;
+        } else {
+            isPositiveLabel = labels.get(SDIndex.all(), SDIndex.point(1));
+            isNegativeLabel = labels.get(SDIndex.all(), SDIndex.point(0));
+            pClass0 = input.get(SDIndex.all(), SDIndex.point(0));
+            pClass1 = input.get(SDIndex.all(), SDIndex.point(1));
+        }
+
+        SDVariable tp = isPositiveLabel.mul(pClass1).sum();
+        SDVariable fp = isNegativeLabel.mul(pClass1).sum();
+        SDVariable fn = isPositiveLabel.mul(pClass0).sum();
+
+        SDVariable numerator = tp.mul(1.0 + beta * beta);
+        SDVariable denominator = tp.mul(1.0 + beta * beta).add(fn.mul(beta * beta)).add(fp);
+
+        SDVariable eps = sameDiff.constant(Nd4j.EPS_THRESHOLD);
+        numerator = sameDiff.math.max(sameDiff.math.abs(numerator), eps).mul(sameDiff.math.sign(numerator));
+        denominator = sameDiff.math.max(sameDiff.math.abs(denominator), eps).mul(sameDiff.math.sign(denominator));
+
+        return numerator.div(denominator).rsub(1);
     }
 
     /**

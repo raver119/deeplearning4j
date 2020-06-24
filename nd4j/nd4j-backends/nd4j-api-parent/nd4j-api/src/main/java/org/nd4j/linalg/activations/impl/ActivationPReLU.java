@@ -19,6 +19,10 @@ package org.nd4j.linalg.activations.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.common.util.ArrayUtil;
 import org.nd4j.linalg.activations.BaseActivationFunction;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
@@ -76,6 +80,12 @@ public class ActivationPReLU extends BaseActivationFunction {
         Nd4j.exec(preluBp.build());
         in.assign(outTemp);
         return new Pair<>(in, dLdalpha);
+    }
+
+    @Override
+    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        SDVariable alpha = sameDiff.var("alpha", getAlpha().dup());
+        return sameDiff.nn.prelu(input, alpha, sharedAxes == null ? new int[]{} : ArrayUtil.toInts(sharedAxes));
     }
 
     @Override

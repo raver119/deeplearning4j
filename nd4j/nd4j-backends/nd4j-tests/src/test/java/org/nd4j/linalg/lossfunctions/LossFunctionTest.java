@@ -17,6 +17,8 @@
 package org.nd4j.linalg.lossfunctions;
 
 import org.junit.Test;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.activations.impl.ActivationSigmoid;
@@ -131,6 +133,21 @@ public class LossFunctionTest extends BaseNd4jTest {
 
                     //Check backward
                     lf.computeGradient(l, preOut, new ActivationSoftmax(), null);
+
+                    INDArray scoreArray = lf.computeScoreArray(l, preOut, new ActivationSoftmax(), null);
+
+                    // check SameDiff conversion
+                    try {
+                        SameDiff sameDiff = SameDiff.create();
+                        SDVariable input = sameDiff.nn.softmax(sameDiff.constant(preOut));
+                        SDVariable labels = sameDiff.constant(l);
+                        SDVariable loss = lf.defineLoss(sameDiff, input, labels);
+
+                        assertTrue("SameDiff loss doesn't match INDArray loss", scoreArray.equalsWithEps(loss.eval(), 1e-5));
+
+                    } catch (UnsupportedOperationException e){
+
+                    }
                 }
             }
         }

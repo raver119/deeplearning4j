@@ -69,6 +69,7 @@ import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.layers.FrozenLayerWithBackprop;
 import org.deeplearning4j.nn.layers.LayerHelper;
+import org.deeplearning4j.nn.layers.LossLayer;
 import org.deeplearning4j.nn.layers.recurrent.BidirectionalLayer;
 import org.deeplearning4j.nn.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.updater.UpdaterCreator;
@@ -788,27 +789,33 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
     /**
      * TODO overloads for input type
      * Create the MultiLayerNetwork in a SameDiff instance.
+     *
+     * The input and lables placeholders are created with names "input" and "labels", respectively.
+     * Output and loss variables are set on the SameDiff instance and can be gotten from it.
+     *
      * @param sameDiff The SameDiff instance to create the model in
      * @param useView whether to directly use the (view) weights in the SDVariables, or create new ones.
      * Using them saves an initialization (of every weight), but may cause issues with multi-gpu setups.
+     * @return The {@link org.nd4j.autodiff.samediff.TrainingConfig} if training is setup (the last layer is an BaseOutputLayer), or null if not.
      */
-    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType, boolean useView){
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType, boolean useView) {
         if (!isInitCalled())
             init();
 
-        SDVariable input = sameDiff.placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape(true));
+        SDVariable input = sameDiff
+                .placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape(true));
         SDVariable currentOutput = input;
 
         Map<String, Integer> numLayers = new HashMap<>();
 
         InputType currentInputType = inputType;
 
-        for(int i = 0 ; i < layers.length ; i++){
+        for (int i = 0; i < layers.length; i++) {
             Layer layer = layers[i];
 
             org.deeplearning4j.nn.conf.layers.Layer config;
             // layer
-            if(layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer){
+            if (layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer) {
                 config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
 
             } else {
@@ -819,7 +826,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             int layerNum = 0;
 
-            if(numLayers.containsKey(confClass)){
+            if (numLayers.containsKey(confClass)) {
                 layerNum = numLayers.get(confClass);
                 numLayers.put(confClass, ++layerNum);
             } else {
@@ -831,7 +838,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             // preprocessor
             InputPreProcessor preProcessor = config.getPreProcessorForInputType(currentInputType);
 
-            if(preProcessor != null) {
+            if (preProcessor != null) {
                 NameScope preProcessorScope = sameDiff.withNameScope("inputPreprocessor");
 
                 currentOutput = preProcessor.definePreProcess(sameDiff, currentOutput);
@@ -841,14 +848,12 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             // create weights
             Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
-            for(Map.Entry<String, INDArray> entry : layer.paramTable().entrySet()){
-                if(useView) {
-                    paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), entry.getValue()));
-                } else {
-                    INDArray base = entry.getValue();
-                    SDVariable weight = sameDiff.var(entry.getKey(), new ZeroInitScheme(), base.dataType(), base.shape());
-                    weight.getArr().addi(base);
+            for (Map.Entry<String, INDArray> entry : layer.paramTable().entrySet()) {
+                INDArray value = entry.getValue();
+                if (!useView) {
+                    value = value.dup();
                 }
+                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
             }
 
             // layer
@@ -862,30 +867,35 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
         sameDiff.setOutputs(currentOutput);
 
         Layer lastLayer = getOutputLayer();
-
-        if(lastLayer instanceof BaseOutputLayer){
-            BaseOutputLayer<?> outputLayer = (BaseOutputLayer<?>) lastLayer;
-
-            // labels shape must be the same as the last layer
-            SDVariable labels = sameDiff.placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
-            ILossFunction lossFn = outputLayer.layerConf().getLossFn();
-
-            SDVariable loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
-            sameDiff.setLossVariables(loss);
-
-            org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = org.nd4j.autodiff.samediff.TrainingConfig.builder()
-                    .minimize(loss.name())
-                    .updater(this.conf().getIUpdater().clone())
-                    .minimize(conf().isMinimize())
-                    .dataSetFeatureMapping(input.name())
-                    .dataSetLabelMapping(labels.name())
-                    .build();
-
-            sameDiff.setTrainingConfig(trainingConfig);
-            return trainingConfig;
+        ILossFunction lossFn;
+        if (lastLayer instanceof BaseOutputLayer) {
+            lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
+        } else if (lastLayer instanceof LossLayer) {
+            lossFn = ((LossLayer) lastLayer).layerConf().getLossFn();
+        } else {
+            return null;
         }
 
-        return null;
+        // labels shape must be the same as the last layer
+        SDVariable labels = sameDiff
+                .placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
+        NameScope lossScope = sameDiff.withNameScope("loss");
+
+        SDVariable loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
+        loss.rename("loss");
+        sameDiff.setLossVariables(loss);
+        lossScope.close();
+
+        org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = org.nd4j.autodiff.samediff.TrainingConfig.builder()
+                .minimize(loss.name())
+                .updater(this.conf().getIUpdater().clone())
+                .minimize(conf().isMinimize())
+                .dataSetFeatureMapping(input.name())
+                .dataSetLabelMapping(labels.name())
+                .build();
+
+        sameDiff.setTrainingConfig(trainingConfig);
+        return trainingConfig;
     }
 
     /**

@@ -18,6 +18,10 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.loss.LossReduce;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -151,6 +155,16 @@ public class LossL1 extends BaseLossFunction {
 
         return new Pair<>(computeScore(labels, preOutput, activationFn, mask, average),
                         computeGradient(labels, preOutput, activationFn, mask));
+    }
+
+    protected SDVariable defineFullLossArray(SameDiff sameDiff, SDVariable input, SDVariable labels){
+        return LossUtil.multiplyWeight(sameDiff.math.abs(input.sub(labels)), weights);
+    }
+
+    @Override
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        return defineFullLossArray(sameDiff, input, labels).sum(true, 1);
     }
 
     /**

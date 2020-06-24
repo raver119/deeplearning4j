@@ -16,6 +16,8 @@
 
 package org.nd4j.linalg.lossfunctions;
 
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Arrays;
@@ -51,6 +53,14 @@ public class LossUtil {
             throw new IllegalStateException("Invalid mask array: per-example masking should be a column vector, "
                             + "per output masking arrays should be the same shape as the labels array. Mask shape: "
                             + Arrays.toString(mask.shape()) + ", output shape: " + Arrays.toString(to.shape()));
+        }
+    }
+
+    public static SDVariable multiplyWeight(@NonNull SDVariable loss, INDArray weight){
+        if(weight == null){
+            return loss;
+        } else {
+            return loss.mul(loss.getSameDiff().constant(weight));
         }
     }
 }

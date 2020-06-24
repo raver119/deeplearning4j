@@ -150,9 +150,9 @@ public abstract class BaseLayer extends Layer implements Serializable, Cloneable
     /**
      * Applies the activation function if it isn't null.
      */
-    protected @NonNull SDVariable doActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
+    protected @NonNull SDVariable doActivation(@NonNull SDVariable input){
         if(activationFn != null)
-            return activationFn.defineActivation(sameDiff, input);
+            return activationFn.defineActivation(input.getSameDiff(), input);
         else
             return input;
     }

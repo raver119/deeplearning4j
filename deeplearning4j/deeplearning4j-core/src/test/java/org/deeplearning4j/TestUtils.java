@@ -16,6 +16,7 @@
 
 package org.deeplearning4j;
 
+import java.util.Map;
 import org.apache.commons.compress.utils.IOUtils;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
@@ -31,6 +32,7 @@ import org.deeplearning4j.nn.layers.normalization.LocalResponseNormalization;
 import org.deeplearning4j.nn.layers.recurrent.LSTM;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -48,6 +50,7 @@ import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestUtils {
 
@@ -98,6 +101,58 @@ public class TestUtils {
         serializeDeserializeJava(conf);
 
         return restored;
+    }
+
+    public static void testToSameDiffInference(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
+
+        SameDiff model;
+        try{
+            model = network.toSameDiff();
+        } catch (UnsupportedOperationException e){
+            if(!passUnimplemented)
+                throw e;
+            else
+                return;
+        }
+
+        INDArray output = network.output(input);
+
+        INDArray sdOutput = model.batchOutput()
+                .output(model.outputs().get(0))
+                .input("input", input)
+                .outputSingle();
+
+        assertTrue(sdOutput.equalsWithEps(output, 1e-3));
+    }
+
+    public static void testToSameDiffInferenceAndLoss(MultiLayerNetwork network, INDArray input, INDArray labels, boolean passUnimplemented){
+
+        SameDiff model;
+        try{
+            model = network.toSameDiff();
+        } catch (UnsupportedOperationException e){
+            if(!passUnimplemented)
+                throw e;
+            else
+                return;
+        }
+
+        INDArray output = network.output(input);
+        network.computeGradientAndScore();
+        double score = network.score();
+
+        Map<String, INDArray> sdOutputs = model.batchOutput()
+                .output(model.outputs().get(0), model.getLossVariables().get(0))
+                .input("input", input)
+                .input("labels", labels)
+                .output();
+
+        INDArray sdOutput = sdOutputs.get(model.outputs().get(0));
+        INDArray sdLoss = sdOutputs.get(model.getLossVariables().get(0));
+        double sdScore = sdLoss.sumNumber().doubleValue() / sdLoss.size(0);
+
+        assertTrue(sdOutput.equalsWithEps(output, 1e-3));
+        assertTrue("Losses don't match for original network and SameDiff version", Math.abs(sdScore - score) < 1e-3);
     }
 
     private static <T> T serializeDeserializeJava(T object){

@@ -82,6 +82,7 @@ public interface ILossFunction extends Serializable {
                     INDArray mask, boolean average);
 
     /**
+     * TODO Specify whether to return score array or averaged(?) score.  Currently doing array.
      * Define the loss function for a {@link SameDiff} instance
      * @param sameDiff The {@link SameDiff} instance
      * @param input The input to the loss function, typically the output of the previous layer.

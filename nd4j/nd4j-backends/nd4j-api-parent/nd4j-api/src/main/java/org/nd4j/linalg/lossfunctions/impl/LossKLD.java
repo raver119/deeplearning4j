@@ -18,6 +18,9 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -112,6 +115,14 @@ public class LossKLD extends BaseLossFunction {
                         computeGradient(labels, preOutput, activationFn, mask));
     }
 
+    @Override
+    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        input = sameDiff.math.clipByValue(input, Nd4j.EPS_THRESHOLD, 1);
+        labels = sameDiff.math.clipByValue(labels, Nd4j.EPS_THRESHOLD, 1);
+
+        return sameDiff.math.log(input.rdiv(labels)).mul(labels);
+    }
 
     /**
      * The opName of this function

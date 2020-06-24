@@ -82,7 +82,7 @@ public class OutputLayer extends BaseOutputLayer {
         if(hasBias())
             temp = temp.add(bias);
 
-        return doActivation(sameDiff, temp);
+        return doActivation(temp);
     }
 
     @Override

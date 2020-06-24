@@ -18,6 +18,9 @@ package org.nd4j.linalg.activations.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.BaseActivationFunction;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.scalar.LeakyReLU;
@@ -58,6 +61,11 @@ public class ActivationLReLU extends BaseActivationFunction {
         Nd4j.getExecutioner().execAndReturn(new LeakyReLUBp(in, epsilon, in, alpha));
 
         return new Pair<>(in, null);
+    }
+
+    @Override
+    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        return sameDiff.nn.leakyRelu(input, alpha);
     }
 
     @Override

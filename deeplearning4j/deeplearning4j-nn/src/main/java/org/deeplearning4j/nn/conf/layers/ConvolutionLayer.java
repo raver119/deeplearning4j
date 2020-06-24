@@ -215,7 +215,7 @@ public class ConvolutionLayer extends FeedForwardLayer {
                         .build()
         );
 
-        return doActivation(sameDiff, value);
+        return doActivation(value);
     }
 
     @Override

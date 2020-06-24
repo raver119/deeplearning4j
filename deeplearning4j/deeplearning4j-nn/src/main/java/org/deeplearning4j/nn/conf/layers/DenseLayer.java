@@ -92,7 +92,7 @@ public class DenseLayer extends FeedForwardLayer {
         if(hasBias())
             temp = temp.add(bias);
 
-        return doActivation(sameDiff, temp);
+        return doActivation(temp);
     }
 
     @Override

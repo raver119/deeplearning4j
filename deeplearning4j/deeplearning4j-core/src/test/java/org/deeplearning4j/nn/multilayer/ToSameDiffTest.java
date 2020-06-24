@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import java.io.IOException;
+import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.ml.neuralnet.MapUtils;
 import org.deeplearning4j.BaseDL4JTest;
@@ -40,15 +41,19 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.nd4j.autodiff.loss.LossReduce;
+import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
+import org.nd4j.linalg.cpu.nativecpu.NDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.nd4j.linalg.lossfunctions.impl.LossBinaryXENT;
+import org.nd4j.linalg.lossfunctions.impl.LossCosineProximity;
 
 @Slf4j
 public class ToSameDiffTest extends BaseDL4JTest {
@@ -190,6 +195,8 @@ public class ToSameDiffTest extends BaseDL4JTest {
 
         testSameDiffInference(network, example);
 
+        //TODO test output dims of mseLoss
+
         // training
         //TODO needs a crossentropy op
 //        trainData.reset();
@@ -204,5 +211,20 @@ public class ToSameDiffTest extends BaseDL4JTest {
 //        // post training test
 //
 //        testSameDiffInference(network, example);
+    }
+
+    @Test
+    public void testMSE(){
+        SameDiff sd = SameDiff.create();
+
+        SDVariable input = sd.zero("input", 2, 3).plus(0.2);
+        SDVariable labels = sd.zero("labelinput", 2, 3).add(sd.constant(Nd4j.createFromArray(0, 0.6, 0)));
+        SDVariable out = sd.math.cosineSimilarity(input, labels).sum(true, 1).neg();
+
+        System.out.println(out.eval());
+
+        LossCosineProximity loss = new LossCosineProximity();
+        System.out.println(loss.computeScoreArray(labels.eval(), input.eval(), Activation.IDENTITY.getActivationFunction(), null));
+
     }
 }
