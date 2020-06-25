@@ -256,9 +256,9 @@ public class PythonTypes {
                     int[] arr = (int[]) javaObject;
                     for (int x : arr) ret.add(x);
                     return ret;
-                } else if (javaObject instanceof byte[]) {
+                }else if (javaObject instanceof byte[]){
                     byte[] arr = (byte[]) javaObject;
-                    for (int x : arr) ret.add(x & 0xff);
+                    for (int x : arr) ret.add(x);
                     return ret;
                 } else if (javaObject instanceof long[]) {
                     long[] arr = (long[]) javaObject;
@@ -430,7 +430,7 @@ public class PythonTypes {
 
         @Override
         public PythonObject toPython(byte[] javaObject) {
-            try (PythonGC gc = PythonGC.watch()) {
+            try(PythonGC gc = PythonGC.watch()){
                 PythonObject ret = Python.bytes(LIST.toPython(LIST.adapt(javaObject)));
                 PythonGC.keep(ret);
                 return ret;
@@ -444,8 +444,8 @@ public class PythonTypes {
 
         @Override
         public byte[] adapt(Object javaObject) {
-            if (javaObject instanceof byte[]) {
-                return (byte[]) javaObject;
+            if (javaObject instanceof byte[]){
+                return (byte[])javaObject;
             }
             throw new PythonException("Cannot cast object of type " + javaObject.getClass().getName() + " to byte[]");
         }

@@ -79,6 +79,19 @@ public class PythonPrimitiveTypesTest {
 
         Assert.assertEquals(b, b3);
     }
+    @Test
+    public void testBytes() {
+        byte[] bytes = new byte[]{97, 98, 99};
+        List<PythonVariable> inputs = new ArrayList<>();
+        inputs.add(new PythonVariable<>("buff", PythonTypes.BYTES, bytes));
+        List<PythonVariable> outputs = new ArrayList<>();
+        outputs.add(new PythonVariable<>("s1", PythonTypes.STR));
+        outputs.add(new PythonVariable<>("buff2", PythonTypes.BYTES));
+        String code = "s1 = ''.join(chr(c) for c in buff)\nbuff2=b'def'";
+        PythonExecutioner.exec(code, inputs, outputs);
+        Assert.assertEquals("abc", outputs.get(0).getValue());
+        Assert.assertArrayEquals(new byte[]{100, 101, 102}, (byte[])outputs.get(1).getValue());
+    }
 
     @Test
     public void testBytes() {
