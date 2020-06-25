@@ -59,6 +59,9 @@ class SD_EXPORT ExecutionLayer {
   const OpSequence& at(uint64_t index) const;
   const OpSequence& operator[](uint64_t index) const;
 
+  OpSequence& at(uint64_t index);
+  OpSequence& operator[](uint64_t index);
+
   /**
    * This method appends OpSequence to the end of this layer
    * @param sequence

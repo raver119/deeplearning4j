@@ -32,7 +32,15 @@ const OpSequence &ExecutionLayer::at(uint64_t index) const {
   return _sequences[index];
 }
 
+OpSequence &ExecutionLayer::at(uint64_t index) {
+  return _sequences[index];
+}
+
 const OpSequence &ExecutionLayer::operator[](uint64_t index) const {
+  return at(index);
+}
+
+OpSequence &ExecutionLayer::operator[](uint64_t index) {
   return at(index);
 }
 
