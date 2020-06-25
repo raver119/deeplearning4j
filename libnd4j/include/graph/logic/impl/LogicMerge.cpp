@@ -22,6 +22,7 @@
 #include <graph/Status.h>
 #include <graph/logic/LogicMerge.h>
 #include <helpers/StringUtils.h>
+#include <graph/logic/LogicUtilities.h>
 
 namespace sd {
 namespace graph {
@@ -52,7 +53,7 @@ Nd4jStatus LogicMerge::processNode(const Node *node, Stack &stack, const Optimiz
   // if both inputs are unavailable - this node is disabled and must be disabled
   if (!checkViability(stack, inputs[0], inputs[1])) {
     nd4j_printf("Both inputs absent, skipping\n", "");
-    // TODO: disable this branch
+    LogicUtilities::disableBranch(frame, varSpace, graph, node);
     return Status::OK();
   }
 

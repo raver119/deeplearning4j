@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
  * Copyright (c) 2020 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
@@ -19,29 +18,25 @@
 // @author raver119@gmail.com
 //
 
-#ifndef SD_LOGICSWITCH_H
-#define SD_LOGICSWITCH_H
+#ifndef SD_LOGICUTILITIES_H
+#define SD_LOGICUTILITIES_H
 
-#include <graph/Graph.h>
-#include <graph/Node.h>
-#include <system/pointercast.h>
+#include <system/dll.h>
+#include <graph/VariableProxy.h>
+#include <graph/OptimizedGraph.h>
 #include <graph/execution/StackFrame.h>
 
 namespace sd {
 namespace graph {
-/**
- * This class is responsible for execution logic of Switch logical abstraction
- *
- * It's ultra-simple. It does nothing, and can't be executed directly.
- *
- * @tparam T
- */
-class LogicSwitch {
+
+class SD_EXPORT LogicUtilities {
  public:
-  static Nd4jStatus processNode(const Node* node, Stack &stack, const OptimizedGraph& graph);
+  static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node, bool branchToDisable);
+  static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node);
 };
 
-}  // namespace graph
-}  // namespace sd
 
-#endif  // SD_LOGICSWITCH_H
+}
+}
+
+#endif //SD_LOGICUTILITIES_H

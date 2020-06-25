@@ -22,59 +22,11 @@
 #include <graph/Status.h>
 #include <graph/logic/LogicSwitch.h>
 #include <system/pointercast.h>
+#include <graph/logic/LogicUtilities.h>
 
 namespace sd {
 namespace graph {
 
-static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node) {
-  const auto &outputs = node->outputs();
-
-  // we're going to disable certain external variables, if they depend on a current disabled node
-  // FIXME: it can be done in a better way rather than O(n^2)
-  for (const auto &var: varSpace.externalPaired()) {
-    for (const auto &d: var.second->dependencies()) {
-      if (d.first == node->id())
-        frame.disableNode(var.second->id());
-    }
-  }
-
-  // we're going to roll through all consumers
-  for (const auto &o:outputs) {
-    if (graph.nodesMap().count(o.first) == 0)
-      throw std::runtime_error("pew-pew");
-
-    // now fetch disabled node
-    const auto &n = graph.nodesMap().at(o.first);
-
-    // edge case here: don't disable Merge node
-    if (n.opType() == OpType_LOGIC && n.opNum() == sd::logic::Merge)
-      continue;
-
-    // disable each consumer
-    frame.disableNode(o.first);
-
-    // do recursive magic
-    disableBranch(frame, varSpace, graph, &n);
-  }
-}
-
-static void disableBranch(StackFrame &frame, VariableProxy &varSpace, const OptimizedGraph &graph, const Node* node, bool branchToDisable) {
-  const auto &outputs = node->outputs();
-  int second = branchToDisable ? 1 : 0;
-
-  for (const auto &o:outputs) {
-    if (o.second == second) {
-      frame.disableNode(o.first);
-
-      if (graph.nodesMap().count(o.first) == 0)
-        throw std::runtime_error("pew-pew");
-
-      const auto &n = graph.nodesMap().at(o.first);
-
-      disableBranch(frame, varSpace, graph, &n);
-    }
-  }
-}
 
 Nd4jStatus LogicSwitch::processNode(const Node* node, Stack &stack, const OptimizedGraph& graph) {
   // getting current frame first
@@ -99,11 +51,11 @@ Nd4jStatus LogicSwitch::processNode(const Node* node, Stack &stack, const Optimi
   if (boolean->getNDArray()->e<bool>(0)) {
     // true branch
     varSpace.putVariable(std::pair<int, int>{node->id(), 1}, *input->getNDArray());
-    disableBranch(frame, varSpace, graph, node, false);
+    LogicUtilities::disableBranch(frame, varSpace, graph, node, false);
   } else {
     // false branch
     varSpace.putVariable(std::pair<int, int>{node->id(), 0}, *input->getNDArray());
-    disableBranch(frame, varSpace, graph, node, true);
+    LogicUtilities::disableBranch(frame, varSpace, graph, node, true);
   }
 
   return Status::OK();
