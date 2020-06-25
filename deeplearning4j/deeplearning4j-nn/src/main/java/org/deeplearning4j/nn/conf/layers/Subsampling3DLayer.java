@@ -18,10 +18,12 @@ package org.deeplearning4j.nn.conf.layers;
 
 import lombok.*;
 import org.deeplearning4j.nn.api.ParamInitializer;
+import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.Convolution3D.DataFormat;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
@@ -29,9 +31,13 @@ import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.Convolution3DUtils;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling3DConfig;
 import org.nd4j.linalg.exception.ND4JArraySizeException;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
@@ -130,6 +136,27 @@ public class Subsampling3DLayer extends NoParamLayer {
     @Override
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        Pooling3DConfig poolingConfig = Pooling3DConfig.builder()
+                .kD(kernelSize[0]).kH(kernelSize[1]).kW(kernelSize[2])
+                .sD(stride[0]).sH(stride[1]).sW(stride[2])
+                .pD(padding[0]).pH(padding[1]).pW(padding[2])
+                .dD(dilation[0]).dH(dilation[1]).dW(dilation[2])
+                .isNCDHW(dataFormat == DataFormat.NCDHW)
+                .isSameMode(convolutionMode == ConvolutionMode.Same)
+                .build();
+
+        if(poolingType == org.deeplearning4j.nn.conf.layers.PoolingType.MAX){
+            return sameDiff.cnn.maxPooling3d(layerInput, poolingConfig);
+        } else if(poolingType == org.deeplearning4j.nn.conf.layers.PoolingType.AVG){
+            return sameDiff.cnn.avgPooling3d(layerInput, poolingConfig);
+        } else {
+            throw new UnsupportedOperationException("Can't convert " + poolingType + " pooling layer to SameDiff, only MAX and AVG supported");
+        }
     }
 
     @Override

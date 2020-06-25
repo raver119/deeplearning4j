@@ -18,6 +18,7 @@ package org.deeplearning4j.nn.conf.layers;
 
 import lombok.*;
 import org.deeplearning4j.nn.api.ParamInitializer;
+import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
@@ -26,12 +27,15 @@ import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * Zero padding 3D layer for convolutional neural networks. Allows padding to be done separately for "left" and "right"
@@ -68,6 +72,30 @@ public class ZeroPadding3DLayer extends NoParamLayer {
     @Override
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        //TODO support data formats
+        int padLeftD = padding[0];
+        int padRightD = padding[1];
+        int padLeftH = padding[2];
+        int padRightH = padding[3];
+        int padLeftW = padding[4];
+        int padRightW = padding[5];
+
+        int[][] fullPadding;
+        fullPadding = new int[][]{
+                {0, 0},
+                {0, 0},
+                {padLeftD, padRightD},
+                {padLeftH, padRightH},
+                {padLeftW, padRightW}
+        };
+
+        return sameDiff.nn.pad(layerInput, sameDiff.constant(Nd4j.createFromArray(fullPadding)), 0);
     }
 
     @Override

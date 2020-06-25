@@ -157,6 +157,7 @@ public class SubsamplingLayer extends NoParamLayer {
         Pooling2DConfig poolingConfig = Pooling2DConfig.builder()
                 .kH(kernelSize[0]).kW(kernelSize[1])
                 .sH(stride[0]).sW(stride[1])
+                .pH(padding[0]).pW(padding[1])
                 .dH(dilation[0]).dW(dilation[1])
                 .isNHWC(cnn2dDataFormat == CNN2DFormat.NHWC)
                 .isSameMode(convolutionMode == ConvolutionMode.Same)

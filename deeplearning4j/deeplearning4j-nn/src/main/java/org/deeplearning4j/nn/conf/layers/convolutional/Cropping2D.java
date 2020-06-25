@@ -29,6 +29,9 @@ import org.deeplearning4j.nn.layers.convolution.Cropping2DLayer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -101,6 +104,18 @@ public class Cropping2D extends NoParamLayer {
         ret.setParamTable(paramTable);
         ret.setConf(conf);
         return ret;
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        if(dataFormat == CNN2DFormat.NCHW) {
+            return layerInput.get(SDIndex.all(), SDIndex.all(), SDIndex.interval(cropping[0], -cropping[1]), SDIndex.interval(cropping[2], -cropping[3]));
+        } else if(dataFormat == CNN2DFormat.NHWC){
+            return layerInput.get(SDIndex.all(), SDIndex.interval(cropping[0], -cropping[1]), SDIndex.interval(cropping[2], -cropping[3]), SDIndex.all());
+        } else {
+            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+        }
     }
 
     @Override

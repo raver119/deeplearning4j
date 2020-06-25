@@ -26,6 +26,8 @@ import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -33,6 +35,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * Zero padding layer for convolutional neural networks (2D CNNs). Allows padding to be done separately for
@@ -80,6 +83,37 @@ public class ZeroPaddingLayer extends NoParamLayer {
         ret.setParamTable(paramTable);
         ret.setConf(conf);
         return ret;
+    }
+
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        int padTop = padding[0];
+        int padBottom = padding[1];
+        int padLeft = padding[2];
+        int padRight = padding[3];
+
+        int[][] fullPadding;
+        if(dataFormat == CNN2DFormat.NCHW){
+            fullPadding = new int[][]{
+                    {0, 0},
+                    {0, 0},
+                    {padTop, padBottom},
+                    {padLeft, padRight}
+            };
+        } else if(dataFormat == CNN2DFormat.NHWC) {
+            fullPadding = new int[][]{
+                    {0, 0},
+                    {padTop, padBottom},
+                    {padLeft, padRight},
+                    {0, 0}
+            };
+        } else {
+            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+        }
+
+        return sameDiff.nn.pad(layerInput, sameDiff.constant(Nd4j.createFromArray(fullPadding)), 0);
     }
 
     @Override

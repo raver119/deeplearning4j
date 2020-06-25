@@ -28,6 +28,8 @@ import org.deeplearning4j.nn.conf.preprocessor.FeedForwardToCnnPreProcessor;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -105,6 +107,7 @@ public class GlobalPoolingLayer extends NoParamLayer {
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
     }
+
 
     @Override
     public InputType getOutputType(int layerIndex, InputType inputType) {

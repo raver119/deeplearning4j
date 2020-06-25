@@ -26,6 +26,9 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.enums.DataFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -125,6 +128,19 @@ public class SpaceToDepthLayer extends NoParamLayer {
         return EmptyParamInitializer.getInstance();
     }
 
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        org.nd4j.enums.DataFormat format;
+        if(dataFormat == CNN2DFormat.NCHW)
+            format = org.nd4j.enums.DataFormat.NCHW;
+        else if(dataFormat == CNN2DFormat.NHWC)
+            format = org.nd4j.enums.DataFormat.NHWC;
+        else
+            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+
+        return sameDiff.cnn.spaceToDepth(layerInput, blockSize, format);
+    }
 
     @Override
     public void setNIn(InputType inputType, boolean override) {

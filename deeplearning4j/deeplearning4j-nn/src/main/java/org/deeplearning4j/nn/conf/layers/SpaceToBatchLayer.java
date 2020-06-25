@@ -27,6 +27,8 @@ import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -124,6 +126,12 @@ public class SpaceToBatchLayer extends NoParamLayer {
         return EmptyParamInitializer.getInstance();
     }
 
+    @Override
+    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        //TODO SameDiff spaceToBatch has issues, see https://github.com/eclipse/deeplearning4j/issues/9019
+        return sameDiff.cnn.spaceToBatch(layerInput, blocks, padding[0], padding[1]);
+    }
 
     @Override
     public void setNIn(InputType inputType, boolean override) {
