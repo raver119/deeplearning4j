@@ -36,6 +36,9 @@ class SD_EXPORT OptimizedGraph {
     std::vector<ExecutionLayer> _sortedGraph;
     MAP_IMPL<int, Node> _nodesMap;
 
+    void sortUsualGraph(const VariableSpace& varSpace);
+    void sortGraphWithFrames(const VariableSpace& varSpace);
+
     /**
      * This method removes all empty ExecutionLayers from this graph
      */
