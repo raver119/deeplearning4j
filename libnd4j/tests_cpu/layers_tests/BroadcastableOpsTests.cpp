@@ -287,15 +287,18 @@ TEST_F(BroadcastableOpsTests, Test_Inplace_Output_1) {
     auto y = NDArrayFactory::create<float>({4, 3});
     auto o = NDArrayFactory::create<float>({2, 4, 3});
     auto e = NDArrayFactory::create<float>({2, 4, 3});
-    auto buffO1 = reinterpret_cast<float *>(o.buffer());
+    auto buffO1 = reinterpret_cast<float*>(o.buffer());
     y.assign(1.0f);
     e.assign(1.0f);
-
+    ASSERT_TRUE(o.buffer() == nullptr);
+    nd4j_logger("1. Buffer is null\n", "");
     sd::ops::add op;
     auto result = op.execute({&x, &y}, {&o}, {}, {}, {});
     ASSERT_EQ(Status::OK(), result);
 
-    auto buffO2 = reinterpret_cast<float *>(o.buffer());
+    auto buffO2 = reinterpret_cast<float*>(o.buffer());
+    ASSERT_TRUE(o.buffer() == nullptr);
+    nd4j_logger("2. Buffer is null", "");
 
     ASSERT_TRUE(e.isSameShape(o));
     ASSERT_TRUE(e.equalsTo(o));

@@ -93,7 +93,7 @@ TEST_F(NDArrayConstructorsTests, test_constructor_4) {
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_5) {
-    auto x = NDArrayFactory::create<double>('c',{2, 2}, {1, 2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1, 2, 3, 4});
 
     ASSERT_TRUE(x.buffer() == nullptr);
     ASSERT_FALSE(x.specialBuffer() == nullptr);
@@ -106,7 +106,7 @@ TEST_F(NDArrayConstructorsTests, test_constructor_5) {
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_6) {
-    auto x = NDArrayFactory::create<double>('c', {2, 2}, {1, 2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1, 2, 3, 4});
     NDArray y(x);
 
     ASSERT_TRUE(y.buffer() == nullptr);
@@ -133,7 +133,7 @@ TEST_F(NDArrayConstructorsTests, test_constructor_7) {
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_8) {
-    auto x = NDArrayFactory::create<double>('c',{2, 2}, {1, 2, 3, 4});
+    auto x = NDArrayFactory::create<double>(  {2, 2}, {1, 2, 3, 4});
 
     ASSERT_TRUE(x.buffer() == nullptr);
     ASSERT_FALSE(x.specialBuffer() == nullptr);
@@ -146,7 +146,7 @@ TEST_F(NDArrayConstructorsTests, test_constructor_8) {
 }
 
 TEST_F(NDArrayConstructorsTests, test_constructor_9) {
-    auto x = NDArrayFactory::create<double>('c',{2, 2});
+    auto x = NDArrayFactory::create<double>(  {2, 2});
 
     ASSERT_TRUE(x.buffer() == nullptr);
     ASSERT_FALSE(x.specialBuffer() == nullptr);

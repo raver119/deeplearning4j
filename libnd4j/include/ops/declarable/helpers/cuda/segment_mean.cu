@@ -368,7 +368,7 @@ namespace helpers {
         NDArray::prepareSpecialUse({output}, {input, indices, gradOut});
         auto numClasses = indices->e<int>(indices->lengthOf() - 1) + 1;
         NDArray classesRangesLens = NDArrayFactory::vector<int>(numClasses, 0,  context);
-        NDArray classesRangesBegs = NDArrayFactory::vector<int>(numClasses, indeices->lengthOf(), context);
+        NDArray classesRangesBegs = NDArrayFactory::vector<int>(numClasses, indices->lengthOf(), context);
 
 //        classesRangesBegs.assign(indices->lengthOf());
 //        classesRangesLens.assign(0);

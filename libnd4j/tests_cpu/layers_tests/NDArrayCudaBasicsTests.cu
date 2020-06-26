@@ -1437,8 +1437,8 @@ TEST_F(NDArrayCudaBasicsTests, EqualityTest1) {
         }
     }
 
-    for (int i = 0; i < arrayB->rows(); i++) {
-        for (int k = 0; k < arrayB->columns(); k++) {
+    for (int i = 0; i < arrayB.rows(); i++) {
+        for (int k = 0; k < arrayB.columns(); k++) {
             arrayB.p(i, k, (float) i);
         }
     }
@@ -1676,15 +1676,13 @@ TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest1) {
     NDArray expRow('c', {1, 5,}, {1,2,3,4,5}, sd::DataType::FLOAT32);
     NDArray exp('c', {5,5}, {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5}, sd::DataType::FLOAT32);
 
-    ASSERT_TRUE(row->equalsTo(&expRow));
+    ASSERT_TRUE(row.equalsTo(&expRow));
 
-    x.applyBroadcast(broadcast::Add, {1}, *row, z);
-    x += *row;
+    x.applyBroadcast(broadcast::Add, {1}, row, z);
+    x += row;
 
     ASSERT_TRUE(x.equalsTo(z));
     //ASSERT_TRUE(z.equalsTo(&exp));
-
-    delete row;
 }
 
 TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest2) {
@@ -1695,8 +1693,8 @@ TEST_F(NDArrayCudaBasicsTests, BroadcastOpsTest2) {
     NDArray expRow('c', {1, 5,}, {1,2,3,4,5}, sd::DataType::FLOAT32);
     NDArray exp('c', {5,5}, {1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5}, sd::DataType::FLOAT32);
 
-    ASSERT_TRUE(row->equalsTo(&expRow));
-    x.applyBroadcast(broadcast::Add, {1}, *row, x);
+    ASSERT_TRUE(row.equalsTo(&expRow));
+    x.applyBroadcast(broadcast::Add, {1}, row, x);
     ASSERT_TRUE(x.equalsTo(&exp));
 }
 
@@ -1705,7 +1703,7 @@ TEST_F(NDArrayCudaBasicsTests, TestBroadcast_1) {
 
     NDArray exp('c', {2, 3, 2, 2}, {1., 1., 1., 1., 2., 2., 2., 2., 3., 3., 3., 3., 1., 1., 1., 1., 2., 2., 2., 2., 3., 3., 3., 3.}, sd::DataType::DOUBLE);
 
-    auto input = NDArrayFactory::create<double>('c',{ 2, 3, 2, 2});
+    auto input = NDArrayFactory::create<double>(  { 2, 3, 2, 2});
     auto bias = NDArrayFactory::create<double>(  {1, 3});
 
     bias.linspace(1);
@@ -1757,7 +1755,7 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_05)
     auto x = NDArrayFactory::create<float>(  {8, 8, 8});
     auto y = NDArrayFactory::create<float>(  {1, 8, 8});
     auto expected = NDArrayFactory::create<float>(  {8, 8, 8});
-    NDArray res2  = NDArrayFactory::create<float>(expected.ordering(), expected.getShapeAsVector());
+    NDArray res2  = NDArrayFactory::create<float>(expected.getShapeAsVector(), {}, (sd::Order)expected.ordering());
     x = 1.;
     y = 2.;
     expected = 3.;
@@ -1872,8 +1870,8 @@ TEST_F(NDArrayCudaBasicsTests, Operator_Plus_Test_2)
     double expBuff[] = {2., 3, 3., 4., 4., 5, 5., 6., 6., 7, 7., 8.};
     NDArray a('c', {4,4}, {1,2,3,4,5,6,7,8,9,2,3,2,1,0,4,7}, sd::DataType::FLOAT32);
     auto x = NDArrayFactory::create<double>(  {3, 2, 1});
-    auto y = NDArrayFactory::create<double>('c',    {1, 2});
-    auto expected = NDArrayFactory::create<double>(expBuff, 'c', {3, 2, 2});
+    auto y = NDArrayFactory::create<double>(  {1, 2});
+    auto expected = NDArrayFactory::create<double>(expBuff, {3, 2, 2});
 
     x.linspace(1);
     y.linspace(1);
@@ -2137,7 +2135,6 @@ TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_2) {
 
 //    ASSERT_TRUE(exp.isSameShape(&x));
 //    ASSERT_TRUE(exp.equalsTo(&x));
-    delete xx;
 }
 TEST_F(NDArrayCudaBasicsTests, Test_PermuteEquality_3) {
     auto x = NDArrayFactory::create<float>(  {1, 60});
@@ -2167,7 +2164,6 @@ TEST_F(NDArrayCudaBasicsTests, Test_Empty_2) {
     auto x = NDArrayFactory::empty<float>();
 
     ASSERT_TRUE(x.isEmpty());
-    delete x;
 }
 
 TEST_F(NDArrayCudaBasicsTests, Test_Empty_3) {

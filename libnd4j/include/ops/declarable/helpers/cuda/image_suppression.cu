@@ -188,12 +188,12 @@ namespace helpers {
     static void nonMaxSuppressionV2_(sd::LaunchContext* context, NDArray* boxes, NDArray* scales, int maxSize, double threshold, double scoreThreshold, NDArray* output) {
         auto stream = context->getCudaStream();
         NDArray::prepareSpecialUse({output}, {boxes, scales});
-        auto indices = NDArrayFactory::vector<I>(scales->lengthOf(), I(0), context); // - 1, scales->lengthOf()); //, scales->getContext());
+        auto indices = NDArrayFactory::vector<I>(scales->lengthOf(), 0, context); // - 1, scales->lengthOf()); //, scales->getContext());
 
         NDArray scores(*scales);
         Nd4jPointer extras[2] = {nullptr, stream};
-        auto indexBuf = indices.dataBuffer()->specialAsT<I>();///reinterpret_cast<I*>(indices->specialBuffer());
-        auto scoreBuf = scores.dataBuffer()->specialAsT<T>();
+        auto indexBuf = indices.dataBuffer()->template specialAsT<I>();///reinterpret_cast<I*>(indices->specialBuffer());
+        auto scoreBuf = scores.dataBuffer()->template specialAsT<T>();
         suppressScores<T,I><<<128, 128, 128, *stream>>>(scoreBuf, indexBuf, scores.lengthOf(), T(scoreThreshold));
         indices.tickWriteDevice();
         sortByValue(extras, indices.buffer(), indices.shapeInfo(), indices.specialBuffer(), indices.specialShapeInfo(), scores.buffer(), scores.shapeInfo(), scores.specialBuffer(), scores.specialShapeInfo(), true);

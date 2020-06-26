@@ -747,7 +747,6 @@ TEST_F(LegacyOpsTests, test_legacy_reduce_empty_4) {
     auto d = NDArrayFactory::create<int>(  {1}, {a});
     auto z = NDArrayFactory::create<float>(  {0, 2});
     auto e = NDArrayFactory::create<float>(  {0, 2});
-
     InteropDataBuffer xdb(x.dataBuffer());
     InteropDataBuffer ddb(d.dataBuffer());
     InteropDataBuffer zdb(z.dataBuffer());
