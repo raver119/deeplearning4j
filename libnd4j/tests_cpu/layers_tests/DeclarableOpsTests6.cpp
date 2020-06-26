@@ -236,7 +236,7 @@ TEST_F(DeclarableOpsTests6, Test_StridedSlice_BP_1) {
 //    auto e = NDArrayFactory::create<int>(  {1}, {zero});
 //    auto s = NDArrayFactory::create<int>(  {1}, {1});
 
-    auto grad = NDArrayFactory::create<double>(  {5});
+    auto grad = NDArrayFactory::vector<double>(5);
 
     matrix.linspace(1);
     grad.linspace(1);
@@ -1109,7 +1109,7 @@ TEST_F(DeclarableOpsTests6, BinCount_5) {
 /////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_1) {
 
-    auto x = NDArrayFactory::create<int>( {2, 2, 2} );
+    auto x = NDArrayFactory::vector<int>({2, 2, 2});
 
     auto y = NDArrayFactory::vector<int>({ 2, 1, 2});
 
@@ -1127,7 +1127,7 @@ TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_1) {
 /////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_2) {
 
-    auto x = NDArrayFactory::create<Nd4jLong>( {2, 2} );
+    auto x = NDArrayFactory::vector<Nd4jLong>({2, 2});
 
     auto y = NDArrayFactory::vector<Nd4jLong>({2, 1, 2});
 
@@ -1144,7 +1144,7 @@ TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_2) {
 /////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_3) {
 
-    auto x = NDArrayFactory::create<int>( {2, 2, 2} );
+    auto x = NDArrayFactory::vector<int>({2, 2, 2});
 
     auto y = NDArrayFactory::vector<int>({2, 1});
 
@@ -1161,7 +1161,7 @@ TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_3) {
 /////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_SGO_4) {
 
-    auto x = NDArrayFactory::create<Nd4jLong>( {2, 1} );
+    auto x = NDArrayFactory::vector<Nd4jLong>( {2, 1} );
 
     auto y = NDArrayFactory::create<Nd4jLong>(  {1}, {4});
 
@@ -1215,7 +1215,7 @@ TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_SGO_8) {
 
     auto y = NDArrayFactory::create<int>(  {1}, {4});
 
-    auto z = NDArrayFactory::create<int>(  {1});
+    auto z = NDArrayFactory::vector<int>(1, 1); // int vector {1}
 
     auto exp = NDArrayFactory::create<int>(  {1}, {4});
 
@@ -1233,7 +1233,7 @@ TEST_F(DeclarableOpsTests6, BroadcastDynamicShape_SGO_9) {
 
     auto y = NDArrayFactory::create<int>(  {1}, {1});
 
-    auto z = NDArrayFactory::create<Nd4jLong>(  {2});
+    auto z = NDArrayFactory::vector<Nd4jLong>(2); // long long vector {0LL, 0LL}
 
     auto exp = NDArrayFactory::create<Nd4jLong>(  {2}, {2,2});
 
@@ -1897,7 +1897,7 @@ TEST_F(DeclarableOpsTests6, static_rnn_test1) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2*numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
     auto maxTimeStep = NDArrayFactory::create<double>(  {bS}, {time-1, time-3});
 
@@ -1940,7 +1940,7 @@ TEST_F(DeclarableOpsTests6, static_rnn_test2) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
 
     x.linspace(0.01, 0.01);
@@ -1983,7 +1983,7 @@ TEST_F(DeclarableOpsTests6, static_rnn_test3) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
     auto maxTimeStep = NDArrayFactory::create<double>(  {bS}, {time-1, 0});
 
@@ -2026,7 +2026,7 @@ TEST_F(DeclarableOpsTests6, static_rnn_test4) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
     auto maxTimeStep = NDArrayFactory::create<double>(  {bS}, {time-1, time-3});
 
@@ -2068,7 +2068,7 @@ TEST_F(DeclarableOpsTests6, static_rnn_test5) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
 
     x.linspace(0.01, 0.01);
@@ -2111,7 +2111,7 @@ TEST_F(DeclarableOpsTests6, static_bidir_rnn_test1) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto h0FW = NDArrayFactory::create<double>(  {bS, numUnitsFW});
     auto h0BW = NDArrayFactory::create<double>(  {bS, numUnitsBW});
@@ -2165,7 +2165,7 @@ TEST_F(DeclarableOpsTests6, static_bidir_rnn_test2) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto maxTimeStep = NDArrayFactory::create<double>(  {bS}, {time-1, time-3, time-4, 0});
 
@@ -2219,7 +2219,7 @@ TEST_F(DeclarableOpsTests6, static_bidir_rnn_test3) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     x.linspace(0.01, 0.01);
     WxFW = 0.3;
@@ -2270,7 +2270,7 @@ TEST_F(DeclarableOpsTests6, dynamic_rnn_test1) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
     auto maxTimeStep = NDArrayFactory::create<Nd4jLong>(  {bS}, {time-1, time-3});
 
@@ -2314,7 +2314,7 @@ TEST_F(DeclarableOpsTests6, dynamic_rnn_test2) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
     auto maxTimeStep = NDArrayFactory::create<int>(  {bS}, {time-1, time});
 
@@ -2358,7 +2358,7 @@ TEST_F(DeclarableOpsTests6, dynamic_rnn_test3) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto h0 = NDArrayFactory::create<double>(  {bS, numUnits});
 
     x.linspace(0.01, 0.01);
@@ -2400,7 +2400,7 @@ TEST_F(DeclarableOpsTests6, dynamic_rnn_test4) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
     auto maxTimeStep = NDArrayFactory::create<double>(  {bS}, {time-1, time-4});
 
     x.linspace(0.01, 0.01);
@@ -2441,7 +2441,7 @@ TEST_F(DeclarableOpsTests6, dynamic_rnn_test5) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto Wx = NDArrayFactory::create<double>(  {inSize, numUnits});
     auto Wh = NDArrayFactory::create<double>(  {numUnits, numUnits});
-    auto b  = NDArrayFactory::create<double>(  {2*numUnits});
+    auto b  = NDArrayFactory::vector<double>(2 * numUnits);
 
     x.linspace(0.01, 0.01);
     Wx = 0.3;
@@ -2483,7 +2483,7 @@ TEST_F(DeclarableOpsTests6, dynamic_bidir_rnn_test1) {
     auto x  = NDArrayFactory::create<double>(  {time, bS, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto h0FW = NDArrayFactory::create<double>(  {bS, numUnitsFW});
     auto h0BW = NDArrayFactory::create<double>(  {bS, numUnitsBW});
@@ -2545,7 +2545,7 @@ TEST_F(DeclarableOpsTests6, dynamic_bidir_rnn_test2) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto h0FW = NDArrayFactory::create<double>(  {bS, numUnitsFW});
     auto h0BW = NDArrayFactory::create<double>(  {bS, numUnitsBW});
@@ -2605,7 +2605,7 @@ TEST_F(DeclarableOpsTests6, dynamic_bidir_rnn_test3) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto maxTimeStep = NDArrayFactory::create<int>(  {bS}, {time-1, time-3, time-4, 0});
 
@@ -2661,7 +2661,7 @@ TEST_F(DeclarableOpsTests6, dynamic_bidir_rnn_test4) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     auto h0FW = NDArrayFactory::create<double>(  {bS, numUnitsFW});
     auto h0BW = NDArrayFactory::create<double>(  {bS, numUnitsBW});
@@ -2719,7 +2719,7 @@ TEST_F(DeclarableOpsTests6, dynamic_bidir_rnn_test5) {
     auto x  = NDArrayFactory::create<double>(  {bS, time, inSize});
     auto WxFW = NDArrayFactory::create<double>(  {inSize, numUnitsFW});
     auto WhFW = NDArrayFactory::create<double>(  {numUnitsFW, numUnitsFW});
-    auto bFW  = NDArrayFactory::create<double>(  {2*numUnitsFW});
+    auto bFW  = NDArrayFactory::vector<double>(2 * numUnitsFW);
 
     x.linspace(0.01, 0.01);
     WxFW = 0.3;
