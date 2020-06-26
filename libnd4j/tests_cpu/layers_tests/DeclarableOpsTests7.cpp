@@ -1177,7 +1177,7 @@ TEST_F(DeclarableOpsTests7, TestSegmentMinBP_1) {
     auto x = NDArrayFactory::vector<double>({1.8, 2.5,  4.,  9., 2.1, 2.4,  3.,  9., 2.1, 2.1, 0.7, 0.1, 3., 4.2,  2.2, 1.});
     auto idx = NDArrayFactory::vector<int>({0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4});
     auto exp = NDArrayFactory::vector<double>({ 1.,   0.,  0., 0.,  2.,   0.,  3.,  0.,  4.,  4.,  0., 5.,  0.,  0.,  0.,  0.});
-    auto eps = NDArrayFactory::create<double>(  {5});
+    auto eps = NDArrayFactory::vector<double>(5);
     eps.linspace(1);
     sd::ops::segment_min_bp op;
 
@@ -1194,7 +1194,7 @@ TEST_F(DeclarableOpsTests7, TestUnsortedSegmentMinBP_1) {
     auto x = NDArrayFactory::vector<double>({1.8, 2.5,  4.,  9., 2.1, 2.4,  3.,  9., 2.1, 2.1, 0.7, 0.1, 3., 4.2,  2.2, 1.});
     auto idx = NDArrayFactory::vector<int>({0, 0, 1, 1, 1, 1, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4});
     auto exp = NDArrayFactory::vector<double>({ 1.,   0.,  0., 0.,  2.,   0.,  3.,  0.,  4.,  4.,  0., 5.,  0.,  0.,  0.,  0.});
-    auto eps = NDArrayFactory::create<double>(  {5});
+    auto eps = NDArrayFactory::vector<double>(5);
     eps.linspace(1);
     sd::ops::unsorted_segment_min_bp op;
 
@@ -1213,7 +1213,7 @@ TEST_F(DeclarableOpsTests7, TestUnsortedSegmentMinBP_2) {
     auto x = NDArrayFactory::vector<double>({3., 1.8, 2.5,  4.,  9., 2.1, 2.4,  9., 2.1, 2.1, 0.7, 0.1, 3., 4.2,  2.2, 1.});
     auto idx = NDArrayFactory::vector<int>({2, 0, 0, 1, 1, 1, 1, 3, 3, 3, 4, 4, 4, 4, 4, 4});
     auto exp = NDArrayFactory::vector<double>({3., 1.,   0.,  0., 0.,  2.,   0.,  0.,  4.,  4.,  0., 5.,  0.,  0.,  0.,  0.});
-    auto eps = NDArrayFactory::create<double>(  {5});
+    auto eps = NDArrayFactory::vector<double>(5);
     eps.linspace(1);
     sd::ops::unsorted_segment_min_bp op;
 
@@ -2299,12 +2299,12 @@ TEST_F(DeclarableOpsTests7, TestSegmentProd_04) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests7, TestSegmentProd_05) {
-    auto x = NDArrayFactory::create<int16_t>({1,2,3,4,5,6,7,8 });
+    auto x = NDArrayFactory::vector<int16_t>({1,2,3,4,5,6,7,8 });
 
 // ----------------------------------------------------------------
 
     auto idx = NDArrayFactory::vector<int>({0,0,1,2,2,2,3,3});
-    auto exp = NDArrayFactory::create<int16_t>({ 2,   3, 120,  56});
+    auto exp = NDArrayFactory::vector<int16_t>({ 2,   3, 120,  56});
 
     sd::ops::segment_prod op;
 
@@ -2338,29 +2338,27 @@ TEST_F(DeclarableOpsTests7, TestSegmentProd_05_1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests7, TestSegmentProd_06) {
-    auto x = NDArrayFactory::create<int8_t>({'\x1','\x2','\x3','\x4','\x5','\x6','\x7','\x8' });
+    auto x = NDArrayFactory::vector<int8_t>({'\x1','\x2','\x3','\x4','\x5','\x6','\x7','\x8' });
 
 // ----------------------------------------------------------------
 
     auto idx = NDArrayFactory::vector<int>({0,0,1,2,2,2,3,3});
-    auto exp = NDArrayFactory::create<int8_t>({ 2,   3, 120,  56});
+    auto exp = NDArrayFactory::vector<int8_t>({ 2,   3, 120,  56});
     sd::ops::segment_prod op;
 
     auto result = op.evaluate({&x, &idx}, {}, {});
     ASSERT_EQ(result.status(), Status::OK());
     ASSERT_TRUE(exp.equalsTo(result.at(0)));
-
-    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests7, TestSegmentProd_07) {
-    auto x = NDArrayFactory::create<uint8_t>({'\x1','\x2','\x3','\x4','\x5','\x6','\x7','\x8' });
+    auto x = NDArrayFactory::vector<uint8_t>({'\x1','\x2','\x3','\x4','\x5','\x6','\x7','\x8' });
 
 // ----------------------------------------------------------------
 
     auto idx = NDArrayFactory::vector<int>({0,0,1,2,2,2,3,3});
-    auto exp = NDArrayFactory::create<uint8_t>({ 2,   3, 120,  56});
+    auto exp = NDArrayFactory::vector<uint8_t>({ 2,   3, 120,  56});
     sd::ops::segment_prod op;
 
     auto result = op.evaluate({&x, &idx}, {}, {});
@@ -6912,7 +6910,7 @@ TEST_F(DeclarableOpsTests7, Test_Reduce_Dot_BP_3) {
 
     auto x = NDArrayFactory::create<double>(  {3, 4});
     auto y = NDArrayFactory::create<double>(  {3, 4});
-    auto eps = NDArrayFactory::create<double>(  {3});
+    auto eps = NDArrayFactory::vector<double>(3);
     auto expX = NDArrayFactory::create<double>(  {3, 4}, {2.f, 2.f, 2.f, 2.f, 4.f, 4.f, 4.f, 4.f, 6.f, 6.f, 6.f, 6.f});
     auto expY = NDArrayFactory::create<double>(  {3, 4}, {1.f, 2.f, 3.f, 4.f, 10.f, 12.f, 14.f, 16.f, 27.f, 30.f, 33.f, 36.f});
     x.linspace(1);

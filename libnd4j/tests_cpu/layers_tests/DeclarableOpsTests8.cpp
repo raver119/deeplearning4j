@@ -450,7 +450,7 @@ TEST_F(DeclarableOpsTests8, reduceVarianceBP_test02) {
     auto gradO2 = NDArrayFactory::create<double>(  {4}, {1.f,2.f,3.f,4.f});
     auto exp12 = NDArrayFactory::create<double>(  {3,4}, {-2.666667f, -5.333333f, -8.000000f,  -10.666667f, 0.000000f, 0.000000f, 0.000000f, 0.000000f, 2.666667f, 5.333333f,  8.000000f, 10.666667f});
     auto exp34 = NDArrayFactory::create<double>(  {3,4}, {-4.000000f, -8.000000f, -12.000000f, -16.000000f, 0.000000f, 0.000000f, 0.000000f, 0.000000f, 4.000000f, 8.000000f, 12.000000f, 16.000000f});
-    auto axes = NDArrayFactory::vector<int>({(int)0,});
+    auto axes = NDArrayFactory::vector<int>(1, 0); // axes = {0}
     x.linspace(1);
 
     sd::ops::reduce_variance_bp op;
@@ -2617,7 +2617,7 @@ TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test7) {
 TEST_F(DeclarableOpsTests8, softmax_cross_entropy_loss_with_logits_test8) {
 
     auto labels = NDArrayFactory::create<double>(  {2}, {0,1});
-    auto logits = NDArrayFactory::create<double>(  {2});
+    auto logits = NDArrayFactory::vector<double>(2);
     auto expected = NDArrayFactory::create<double>(0.6444);
 
     logits.linspace(0.1, 0.1);
