@@ -699,7 +699,7 @@ TEST_F(DeclarableOpsTests4, Test_FirasSparce_1) {
 
 TEST_F(DeclarableOpsTests4, Test_FlattenTests_1) {
     auto x = NDArrayFactory::create<double>(  {3, 3, 3, 3});
-    auto exp = NDArrayFactory::create<double>(  {81});
+    auto exp = NDArrayFactory::vector<double>(81);
 
     x.linspace(1);
     exp.linspace(1);
@@ -719,7 +719,7 @@ TEST_F(DeclarableOpsTests4, Test_FlattenTests_1) {
 TEST_F(DeclarableOpsTests4, Test_FlattenTests_2) {
     auto x = NDArrayFactory::create<double>(  {3, 3, 3, 3});
     auto y = NDArrayFactory::create<double>(  {3, 3});
-    auto exp = NDArrayFactory::create<double>(  {90});
+    auto exp = NDArrayFactory::vector<double>(90);
 
     x.linspace(1);
     y.linspace(82);
@@ -1726,9 +1726,9 @@ TEST_F(DeclarableOpsTests4, lstm_test1) {
     auto c0  = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx  = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh  = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc  = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc  = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp  = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b   = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b   = NDArrayFactory::vector<double>(4 * numUnits);
 
     x.linspace(0.5, 0.5);
     h0 = 1.;
