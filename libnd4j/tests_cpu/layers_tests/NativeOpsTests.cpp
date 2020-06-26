@@ -1488,7 +1488,7 @@ TEST_F(NativeOpsTests, MapTests_1) {
 
 TEST_F(NativeOpsTests, CustomOpTest_1) {
     auto x = NDArrayFactory::create<float>(  {1, 6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>(  {6});
+    auto z = NDArrayFactory::vector<float>(6);
     auto e = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
 
     sd::ops::squeeze op;

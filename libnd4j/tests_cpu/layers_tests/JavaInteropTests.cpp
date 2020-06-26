@@ -125,7 +125,7 @@ TEST_F(JavaInteropTests, TestShapeExposure3) {
 
 TEST_F(JavaInteropTests, Test_Squeeze_1) {
     auto x = NDArrayFactory::create<float>(  {1, 6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
-    auto z = NDArrayFactory::create<float>(  {6});
+    auto z = NDArrayFactory::vector<float>(6);
     auto e = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 4.f, 5.f, 6.f});
 
     sd::ops::squeeze op;
@@ -144,7 +144,7 @@ TEST_F(JavaInteropTests, Test_Squeeze_1) {
 TEST_F(JavaInteropTests, Test_RDiv_1) {
     auto x = NDArrayFactory::create<double>(  {3}, {2, 2, 2});
     auto y = NDArrayFactory::create<double>(  {3}, {4, 6, 8});
-    auto z = NDArrayFactory::create<double>(  {3});
+    auto z = NDArrayFactory::vector<double>(3);
     auto e = NDArrayFactory::create<double>(  {3}, {2, 3, 4});
 
     NDArray::prepareSpecialUse({&z}, {&x, &y});
@@ -169,7 +169,7 @@ TEST_F(JavaInteropTests, TestSconv2d_1) {
     auto input = NDArrayFactory::create<float>(  {3, 3, 8, 8});
     auto weightsD = NDArrayFactory::create<float>(  {1, 3, 1, 1});
     auto weightsP = NDArrayFactory::create<float>(  {2, 3, 1, 1});
-    auto bias = NDArrayFactory::create<float>(  {2});
+    auto bias = NDArrayFactory::vector<float>(2);
     auto output = NDArrayFactory::create<float>(  {3, 2, 8, 8});
     output.assign(0.0);
 
@@ -1200,7 +1200,7 @@ TEST_F(JavaInteropTests, Test_Fastpath_6) {
 TEST_F(JavaInteropTests, Test_Fastpath_7) {
     auto a = NDArrayFactory::create<float>(  {2}, {1.f, 2.f});
     auto b = NDArrayFactory::create<float>(3.f);
-    auto z = NDArrayFactory::create<float>(  {3});
+    auto z = NDArrayFactory::vector<float>(3);
     auto e = NDArrayFactory::create<float>(  {3}, {1.f, 2.f, 3.f});
 
     NDArray::prepareSpecialUse({&z}, {&a, &b});
@@ -1283,7 +1283,7 @@ TEST_F(JavaInteropTests, test_expandable_array_op_1) {
     auto x = NDArrayFactory::string( {2}, std::vector<char const*>{"first string", "second"});
     auto d = NDArrayFactory::string(" ", sd::DataType::UTF8);
 
-    auto z0 = NDArrayFactory::create<Nd4jLong>(  {6});
+    auto z0 = NDArrayFactory::vector<Nd4jLong>(6);
     auto z1 = NDArrayFactory::string( {3}, std::vector<char const*>{"", "", ""});
 
     auto exp0 = NDArrayFactory::vector<Nd4jLong>({0,0, 0,1, 1,0});

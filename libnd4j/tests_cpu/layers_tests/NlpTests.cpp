@@ -48,13 +48,13 @@ TEST_F(NlpTests, basic_sg_hs_test_1) {
     auto target = NDArrayFactory::create<int>(0);
     auto ngStarter = NDArrayFactory::empty<int>();
     auto indices = NDArrayFactory::create<int>(  {1}, {1});
-    auto codes = NDArrayFactory::create<int8_t>(  {1});
+    auto codes = NDArrayFactory::vector<int8_t>(1);
     auto syn0 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1Neg = NDArrayFactory::empty<float>();
-    auto expTable = NDArrayFactory::create<float>(  {10000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
     auto negTable = NDArrayFactory::empty<float>();
-    auto neu1e = NDArrayFactory::create<float>(  {10});
+    auto neu1e = NDArrayFactory::vector<float>(10);
 
     syn0.assign(0.01);
     syn1.assign(0.02);
@@ -246,13 +246,13 @@ TEST_F(NlpTests, basic_cb_hs_test_1) {
     auto target = NDArrayFactory::create<int>(0);
     auto ngStarter = NDArrayFactory::empty<int>();
     auto context = NDArrayFactory::create<int>(  {3}, {0, 1, 2});
-    auto locked = NDArrayFactory::create<int>(  {3});
+    auto locked = NDArrayFactory::vector<int>(3);
     auto indices = NDArrayFactory::create<int>(  {2}, {4, 5});
     auto codes = NDArrayFactory::create<int8_t>(  {2}, {1, 1});
     auto syn0 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1Neg = NDArrayFactory::empty<float>();
-    auto expTable = NDArrayFactory::create<float>(  {10000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
     auto negTable = NDArrayFactory::empty<float>();
     auto numWords = NDArrayFactory::create<int>(  {1}, {1});
 
@@ -299,14 +299,14 @@ TEST_F(NlpTests, basic_cb_ns_test_1) {
     auto target = NDArrayFactory::create<int>(0);
     auto ngStarter = NDArrayFactory::create<int>(6);
     auto context = NDArrayFactory::create<int>(  {3}, {0, 1, 2});
-    auto locked = NDArrayFactory::create<int>(  {3});
+    auto locked = NDArrayFactory::vector<int>(3);
     auto indices = NDArrayFactory::empty<int>();
     auto codes = NDArrayFactory::empty<int8_t>();
     auto syn0 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1Neg = NDArrayFactory::create<float>(  {100, 10});
-    auto expTable = NDArrayFactory::create<float>(  {10000});
-    auto negTable = NDArrayFactory::create<float>(  {100000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
+    auto negTable = NDArrayFactory::vector<float>(100000);
     auto numWords = NDArrayFactory::create<int>(  {2}, {1, 2});
 
     syn0.assign(0.01);
@@ -355,7 +355,7 @@ TEST_F(NlpTests, test_sg_hs_batch_1) {
     auto syn0 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1Neg = NDArrayFactory::empty<float>();
-    auto expTable = NDArrayFactory::create<float>(  {10000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
     auto negTable = NDArrayFactory::empty<float>();
 
     auto alpha = NDArrayFactory::create<double>(  {2}, {0.001, 0.024});
@@ -398,8 +398,8 @@ TEST_F(NlpTests, test_sg_ns_batch_1) {
     auto syn0 = NDArrayFactory::create<float>(  {100, 10});
     auto syn1Neg = NDArrayFactory::create<float>(  {100, 10});
     auto syn1 = NDArrayFactory::empty<float>();
-    auto expTable = NDArrayFactory::create<float>(  {10000});
-    auto negTable = NDArrayFactory::create<float>(  {100000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
+    auto negTable = NDArrayFactory::vector<float>(100000);
 
     auto alpha = NDArrayFactory::create<double>(  {2}, {0.001, 0.024});
     auto randomValue = NDArrayFactory::create<Nd4jLong>(  {2}, {1L, 3L});
@@ -432,7 +432,7 @@ TEST_F(NlpTests, test_cbow_hs_batch_1) {
     auto syn0 = NDArrayFactory::create<float>(  {244, 10});
     auto syn1 = NDArrayFactory::create<float>(  {244, 10});
     auto syn1Neg = NDArrayFactory::empty<float>();
-    auto expTable = NDArrayFactory::create<float>(  {10000});
+    auto expTable = NDArrayFactory::vector<float>(10000);
     auto negTable = NDArrayFactory::empty<float>();
     auto numWords = NDArrayFactory::create<int>(  {2}, {1, 2});
 

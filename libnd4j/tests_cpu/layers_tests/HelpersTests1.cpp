@@ -78,7 +78,7 @@ public:
 TEST_F(HelpersTests1, evalHHmatrixData_test1) {
 
     auto x = NDArrayFactory::create<double>(  {4}, {14,17,3,1});
-    auto tail = NDArrayFactory::create<double>(  {3});
+    auto tail = NDArrayFactory::vector<double>(3);
     auto expTail = NDArrayFactory::create<double>(  {3}, {0.468984, 0.0827618, 0.0275873});
     const double normXExpected = -22.2486;
     const double coeffExpected = 1.62925;
@@ -1916,7 +1916,7 @@ TEST_F(HelpersTests1, softMaxForVector_test2) {
 TEST_F(HelpersTests1, softMaxForVector_test3) {
 
     auto input= NDArrayFactory::create<double>(  {5}, {1,2,3,4,5});
-    auto output = NDArrayFactory::create<double>(  {5});
+    auto output = NDArrayFactory::vector<double>(5);
     auto expOutput = NDArrayFactory::create<double>(  {5}, {0.01165623,  0.03168492,  0.08612854,  0.23412166,  0.63640865});
 
     ops::helpers::softmax(sd::LaunchContext ::defaultContext(), input, output, 0);
@@ -1986,7 +1986,7 @@ TEST_F(HelpersTests1, logSoftMaxForVector_test2) {
 TEST_F(HelpersTests1, logSoftMaxForVector_test3) {
 
     auto input= NDArrayFactory::create<double>(  {5}, {1,2,3,4,5});
-    auto output = NDArrayFactory::create<double>(  {5});
+    auto output = NDArrayFactory::vector<double>(5);
     auto expOutput = NDArrayFactory::create<double>(  {5}, {-4.4519144, -3.4519144, -2.4519144, -1.4519144, -0.4519144});
 
     ops::helpers::logSoftmax(sd::LaunchContext ::defaultContext(), input, output, 0);

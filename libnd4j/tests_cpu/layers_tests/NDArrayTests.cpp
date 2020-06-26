@@ -1677,7 +1677,7 @@ TEST_F(NDArrayTest, TestVarianceAlongDimension3) {
 
 
     NDArray x = NDArrayFactory::create<double>(  {10, 10});//(xBuff, xShapeInfo);
-    NDArray exp = NDArrayFactory::create<double>(  {10});//(expBuff, expShapeInfo);
+    NDArray exp = NDArrayFactory::vector<double>(10);//(expBuff, expShapeInfo);
     x.linspace(1); // 1, 2, 3, ..., 100
     exp.assign(825.f);
     auto result = x.varianceAlongDimension(variance::SummaryStatsVariance, false, {0});

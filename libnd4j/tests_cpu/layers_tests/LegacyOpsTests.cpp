@@ -453,8 +453,8 @@ TEST_F(LegacyOpsTests, reduce3_1) {
 
 TEST_F(LegacyOpsTests, Reduce3_2) {
     auto x = NDArrayFactory::create<float>(  {5, 5});
-    auto y = NDArrayFactory::create<float>(  {5});
-    auto z = NDArrayFactory::create<float>(  {5});
+    auto y = NDArrayFactory::vector<float>(5);
+    auto z = NDArrayFactory::vector<float>(5);
 
     auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();
@@ -494,7 +494,7 @@ TEST_F(LegacyOpsTests, Reduce3_3) {
 
     auto y = NDArrayFactory::create<double>(  {5}, {-0.99536740779, -0.0257304441183, -0.6512106060, -0.345789492130, -1.25485503673});
     auto e = NDArrayFactory::create<double>(  {3}, {0.577452, 0.0, 1.80182});
-    auto z = NDArrayFactory::create<double>(  {3});
+    auto z = NDArrayFactory::vector<double>(3);
 
     auto dim = NDArrayFactory::create<int>(  {1}, {1});
     dim.syncToHost();

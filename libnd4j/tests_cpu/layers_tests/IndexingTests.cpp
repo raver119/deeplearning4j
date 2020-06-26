@@ -248,7 +248,7 @@ TEST_F(IndexingTests, MaskedSlice_1) {
         tads.at(e)->assign((float) (e+1));
     }
 
-    auto exp = NDArrayFactory::create<float>(  {5});
+    auto exp = NDArrayFactory::vector<float>(5);
     exp.assign(2.0f);
 
     sd::ops::strided_slice op;
