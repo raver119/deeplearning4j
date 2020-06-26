@@ -695,7 +695,7 @@ TEST_F(DeclarableOpsTests3, sruCell_test1) {
     auto xt  = NDArrayFactory::create<float>(  {batchSize, inSize});
     auto ct_1= NDArrayFactory::create<float>(  {batchSize, inSize});
     auto w   = NDArrayFactory::create<float>(  {inSize, 3*inSize});
-    auto b   = NDArrayFactory::create<float>(  {2*inSize});
+    auto b   = NDArrayFactory::vector<float>(2 * inSize);
 
     xt.assign(1.);
     ct_1.assign(2.);
@@ -730,7 +730,7 @@ TEST_F(DeclarableOpsTests3, sruCell_test2) {
     auto xt  = NDArrayFactory::create<float>(  {batchSize, inSize});
     auto ct_1= NDArrayFactory::create<float>(  {batchSize, inSize});
     auto w   = NDArrayFactory::create<float>(  {inSize, 3*inSize});
-    auto b   = NDArrayFactory::create<float>(  {2*inSize});
+    auto b   = NDArrayFactory::vector<float>(2 * inSize);
 
     xt.assign(1.);
     ct_1.assign(2.);
@@ -764,7 +764,7 @@ TEST_F(DeclarableOpsTests3, sruCell_test3) {
     auto xt  = NDArrayFactory::create<float>(  {batchSize, inSize});
     auto ct_1= NDArrayFactory::create<float>(  {batchSize, inSize});
     auto w   = NDArrayFactory::create<float>(  {inSize, 3*inSize});
-    auto b   = NDArrayFactory::create<float>(  {2*inSize});
+    auto b   = NDArrayFactory::vector<float>(2 * inSize);
 
     xt.assign(10.);
     ct_1.assign(1.);
@@ -801,8 +801,8 @@ TEST_F(DeclarableOpsTests3, gruCell_test1) {
     auto ht_1  = NDArrayFactory::create<float>(  {batchSize, numUnits});
     auto Wru   = NDArrayFactory::create<float>(  {(inSize+numUnits), 2*numUnits});
     auto Wc    = NDArrayFactory::create<float>(  {(inSize+numUnits), numUnits});
-    auto bru   = NDArrayFactory::create<float>(  {2*numUnits});
-    auto bc    = NDArrayFactory::create<float>(  {numUnits});
+    auto bru   = NDArrayFactory::vector<float>(2 * numUnits);
+    auto bc    = NDArrayFactory::vector<float>(numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -836,8 +836,8 @@ TEST_F(DeclarableOpsTests3, gruCell_test2) {
     auto ht_1  = NDArrayFactory::create<float>(  {batchSize, numUnits});
     auto Wru   = NDArrayFactory::create<float>(  {(inSize+numUnits), 2*numUnits});
     auto Wc    = NDArrayFactory::create<float>(  {(inSize+numUnits), numUnits});
-    auto bru   = NDArrayFactory::create<float>(  {2*numUnits});
-    auto bc    = NDArrayFactory::create<float>(  {numUnits});
+    auto bru   = NDArrayFactory::vector<float>(2 * numUnits);
+    auto bc    = NDArrayFactory::vector<float>(numUnits);
 
     xt.assign(1.);
     ht_1.assign(0.);
@@ -872,8 +872,8 @@ TEST_F(DeclarableOpsTests3, gruCell_test3) {
     auto ht_1= NDArrayFactory::create<float>(  {batchSize, numUnits});
     auto Wru   = NDArrayFactory::create<float>(  {(inSize+numUnits), 2*numUnits});
     auto Wc    = NDArrayFactory::create<float>(  {(inSize+numUnits), numUnits});
-    auto bru   = NDArrayFactory::create<float>(  {2*numUnits});
-    auto bc    = NDArrayFactory::create<float>(  {numUnits});
+    auto bru   = NDArrayFactory::vector<float>(2 * numUnits);
+    auto bc    = NDArrayFactory::vector<float>(numUnits);
 
     xt.assign(1.);
     ht_1.assign(0.);
