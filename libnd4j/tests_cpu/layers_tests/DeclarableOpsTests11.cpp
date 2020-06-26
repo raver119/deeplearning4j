@@ -616,7 +616,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test1) {
         48.467438f,   48.66914f,  48.849144f,   49.08372f,    49.4071f,   49.680256f,
         49.902905f,  50.092834f,  50.262653f,  50.329483f,   50.30638f,    50.25057f});
 
-    auto size = NDArrayFactory::create<int>({30, 30});
+    auto size = NDArrayFactory::vector<int>({30, 30});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -689,7 +689,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test2) {
             119.125000f, 120.125000f, 121.125000f, 119.406250f, 120.406250f, 121.406250f
     });    //input = 1.f;
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({10, 8});
+    auto size = NDArrayFactory::vector<int>({10, 8});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -725,7 +725,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test3) {
             35.500000f, 34.125000f, 35.125000f, 36.125000f, 37.125000f, 34.500000f, 35.500000f, 36.500000f, 37.500000f
     });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -761,7 +761,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test4) {
             33.906250f, 34.906250f, 35.906250f, 35.125000f, 36.125000f, 37.125000f, 35.406250f, 36.406250f, 37.406250f
             });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 8});
+    auto size = NDArrayFactory::vector<int>({6, 8});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -803,7 +803,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test5) {
             47.406250f, 48.406250f, 49.406250f,
         });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({8, 8});
+    auto size = NDArrayFactory::vector<int>({8, 8});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -932,7 +932,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test6) {
             49.083720f, 49.407100f, 49.680256f, 49.902905f, 50.092834f, 50.262653f, 50.329483f, 50.306380f, 50.250570f
     });
 
-    auto size = NDArrayFactory::create<int>({30, 30});
+    auto size = NDArrayFactory::vector<int>({30, 30});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -989,7 +989,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test7) {
             0.29948136f,  0.5276342f, 0.76461166f,  0.8442875f,   0.907862f,
              0.9139262f, 0.92068815f
     });
-    auto size = NDArrayFactory::create<int>({9, 9});
+    auto size = NDArrayFactory::vector<int>({9, 9});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1041,7 +1041,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeBicubic_Test8) {
         0.385430396f,        0.292239636f,        0.274263054f,        0.445040524f,        0.675405145f,        0.817462444f,        0.882036269f,        0.895356655f,        0.869933784f
     });
 
-    auto size = NDArrayFactory::create<int>({9, 9});
+    auto size = NDArrayFactory::vector<int>({9, 9});
     sd::ops::resize_bicubic op;
     auto results = op.evaluate({&input, &size}, {}, {}, {true, false});
 
@@ -1102,7 +1102,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test1) {
             33.f, 34.f, 35.f, 36.f,
             33.f, 34.f, 35.f, 36.f    });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1129,7 +1129,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test2) {
             7.f, 7.f, 8.f, 8.f, 9.f, 9.f
     });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1156,7 +1156,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test3) {
         19.f, 20.f, 21.f,  19.f, 20.f, 21.f,  22.f, 23.f, 24.f,  22.f, 23.f, 24.f,  25.f, 26.f, 27.f,  25.f, 26.f, 27.f
     });
     input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1193,7 +1193,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test4) {
         19.f, 20.f, 21.f,  19.f, 20.f, 21.f,  22.f, 23.f, 24.f,  22.f, 23.f, 24.f,  25.f, 26.f, 27.f,  25.f, 26.f, 27.f
     });
     //input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1230,7 +1230,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test5) {
             19.f, 20.f, 21.f,  19.f, 20.f, 21.f,  22.f, 23.f, 24.f,  22.f, 23.f, 24.f,  25.f, 26.f, 27.f,  25.f, 26.f, 27.f
     });
     //input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1267,7 +1267,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test6) {
             7.f,             7.f,            7.5f,            8.f,            8.f,            9.f
     });
     //input.linspace(1);
-    auto size = NDArrayFactory::create<int>({6, 6});
+    auto size = NDArrayFactory::vector<int>({6, 6});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {}, {true});
 
@@ -1390,7 +1390,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test9) {
 
     });
     //input.linspace(1);
-    auto size = NDArrayFactory::create<int>({10, 10});
+    auto size = NDArrayFactory::vector<int>({10, 10});
     sd::ops::resize_area op;
     auto results = op.evaluate({&input, &size}, {}, {});
 
@@ -1513,7 +1513,7 @@ TEST_F(DeclarableOpsTests11, ImageResizeArea_Test14) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({8, 7});
+    auto size = NDArrayFactory::vector<int>({8, 7});
     NDArray expected = NDArrayFactory::create<float>({1, 8, 7, 1}, {
             1.f,  1.6f ,  2.1999993f,  2.9999995f ,  3.8f ,  4.399997f,  5.f ,  2.9999995f ,  3.5999997f ,  4.199999f,
             4.9999995f,  5.8f ,  6.3999963f ,  7.f ,  5.999999f  ,       6.6f,  7.1999984f ,  7.9999995f ,  8.8f,
