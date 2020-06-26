@@ -493,7 +493,7 @@ TYPED_TEST(TypedConvolutionTests1, sconv2d_3) {
     auto input = NDArrayFactory::create<TypeParam>( {3, 3, 8, 8});
     auto weightsD = NDArrayFactory::create<TypeParam>( {1, 3, 1, 1});
     auto weightsP = NDArrayFactory::create<TypeParam>( {2, 3, 1, 1});
-    auto bias = NDArrayFactory::create<TypeParam>( {2});
+    auto bias = NDArrayFactory::vector<TypeParam>(2);
     auto output = NDArrayFactory::create<TypeParam>( {3, 2, 8, 8});
     output.assign(0.0);
 
@@ -876,7 +876,7 @@ TEST_F(ConvolutionTests1, deconv2d_bp_3) {
 TYPED_TEST(TypedConvolutionTests1, Test_Conv1D_ff_1) {
     auto input = NDArrayFactory::create<TypeParam>({2, 2, 6});
     auto weights = NDArrayFactory::create<TypeParam>({2, 2, 3}, {1,5,9,3,7,11,2,6,10,4,8,12});
-    auto bias = NDArrayFactory::create<TypeParam>({3});
+    auto bias = NDArrayFactory::vector<TypeParam>(3);
     auto expFF = NDArrayFactory::create<TypeParam>({2, 3, 5}, {59.0f, 69.0f, 79.0f, 89.0f, 99.0f, 132.0f, 158.0f, 184.0f, 210.0f, 236.0f, 205.0f, 247.0f, 289.0f, 331.0f, 373.0f, 179.0f, 189.0f, 199.0f, 209.0f, 219.0f, 444.0f, 470.0f, 496.0f, 522.0f, 548.0f, 709.0f, 751.0f, 793.0f, 835.0f, 877.0f});
     auto expEps = NDArrayFactory::create<TypeParam>({2, 2, 6}, {130.0f, 293.0f, 326.0f, 359.0f, 392.0f, 220.0f, 166.0f, 371.0f, 416.0f, 461.0f, 506.0f, 280.0f, 355.0f, 788.0f, 821.0f, 854.0f, 887.0f, 490.0f, 481.0f, 1046.0f, 1091.0f, 1136.0f, 1181.0f, 640.0f});
     auto expGW = NDArrayFactory::create<TypeParam>({3, 2, 2}, {1415.0f, 1520.0f, 2045.0f, 2150.0f, 1865.0f, 2020.0f, 2795.0f, 2950.0f, 2315.0f, 2520.0f, 3545.0f, 3750.0f});
@@ -1849,7 +1849,7 @@ TYPED_TEST(TypedConvolutionTests1, conv3d_test4) {
 
     auto input    = NDArrayFactory::create<TypeParam>({bS, iC, iD, iH, iW});
     auto weights  = NDArrayFactory::create<TypeParam>({kD, kH, kW, iC, oC});
-    auto bias     = NDArrayFactory::create<TypeParam>({oC});
+    auto bias     = NDArrayFactory::vector<TypeParam>(oC);
     auto expected = NDArrayFactory::create<TypeParam>({2, 3, 2, 2, 2});
 
     input = 2.;
@@ -2139,7 +2139,7 @@ TYPED_TEST(TypedConvolutionTests1, pointwise_conv2d_test1) {
 
     auto input    = NDArrayFactory::create<TypeParam>( {bS, iH, iW, iC});
     auto weights  = NDArrayFactory::create<TypeParam>( {1,   1, iC, oC});
-    auto bias     = NDArrayFactory::create<TypeParam>( {oC});
+    auto bias     = NDArrayFactory::vector<TypeParam>(oC);
 
 
     auto expOutput = NDArrayFactory::create<TypeParam>( {bS, iH, iW, oC},{ 5.4f, 6.2f, 7.0f, 5.4f, 6.2f, 7.0f, 5.4f, 6.2f, 7.0f, 5.4f, 6.2f, 7.0f, 5.4f, 6.2f, 7.0f, 5.4f, 6.2f, 7.0f, 5.4f, 6.2f,
@@ -2564,7 +2564,7 @@ TEST_F(ConvolutionTests1, deconv2d_test3) {
 
     auto input    = NDArrayFactory::create<float>( {bS, iH, iW, iC});
     auto weights  = NDArrayFactory::create<float>( {kH, kW, oC, iC});
-    auto bias     = NDArrayFactory::create<float>( {oC});
+    auto bias     = NDArrayFactory::vector<float>(oC);
 
     auto exp = NDArrayFactory::create<float>( {bS, oH, oW, oC}, {-2.9f, -6.8f, -10.7f, -2.6f, -6.1f, -9.6f, -16.9f, -23.9f, -30.9f, -13.1f, -16.6f, -20.1f, -11.6f, -14.7f, -17.8f, -2.0f, -4.7f, -7.4f, -1.7f, -4.0f, -6.3f, -11.5f, -16.1f,
                                 -20.7f, -8.6f, -10.9f, -13.2f, -7.1f, -9.0f, -10.9f, -27.4f, -32.8f, -38.2f, -24.4f, -29.0f, -33.6f, -65.0f, -74.2f, -83.4f, -38.2f, -42.8f, -47.4f,
@@ -2684,7 +2684,7 @@ TEST_F(ConvolutionTests1, deconv2d_test7) {
 
     auto input = NDArrayFactory::create<double>( {3, 3, 4, 4});
     auto weights = NDArrayFactory::create<double>({1, 1, 2, 3}, {1,3,5,2,4,6});
-    auto bias = NDArrayFactory::create<double>( {2});
+    auto bias = NDArrayFactory::vector<double>(2);
 
     input.linspace(1);
     bias.linspace(1);

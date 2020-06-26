@@ -90,7 +90,7 @@ namespace sd {
                 delete[] newShape;
                 // string order always 'c'
                 auto stringV = NDArrayFactory::string(shapeVector, substrings);
-                return new NDArray(stringV);
+                return new NDArray(stringV.dup());
             }
 
 

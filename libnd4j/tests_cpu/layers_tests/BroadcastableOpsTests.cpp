@@ -840,7 +840,7 @@ TEST_F(BroadcastableOpsTests, test_bert_multiply_1) {
 
 TEST_F(BroadcastableOpsTests, test_bert_multiply_2) {
     auto x = NDArrayFactory::create<float>({4, 128, 1});
-    auto y = NDArrayFactory::create<float>({768});
+    auto y = NDArrayFactory::vector<float>(768);
     auto z = NDArrayFactory::create<float>({4, 128, 768});
     auto e = NDArrayFactory::create<float>({4, 128, 768});
 

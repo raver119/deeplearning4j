@@ -2097,10 +2097,10 @@ TEST_F(DeclarableOpsTests13, batchnorm_test1) {
 TYPED_TEST(TypedDeclarableOpsTests13, batchnorm_test2) {
 
     auto input    = NDArrayFactory::create<TypeParam>({2,3,4});
-    auto mean     = NDArrayFactory::create<TypeParam>({4});
-    auto variance = NDArrayFactory::create<TypeParam>({4});
-    auto gamma    = NDArrayFactory::create<TypeParam>({4});
-    auto beta     = NDArrayFactory::create<TypeParam>({4});
+    auto mean     = NDArrayFactory::vector<TypeParam>(4);
+    auto variance = NDArrayFactory::vector<TypeParam>(4);
+    auto gamma    = NDArrayFactory::vector<TypeParam>(4);
+    auto beta     = NDArrayFactory::vector<TypeParam>(4);
 
     auto expected = NDArrayFactory::create<TypeParam>({2,3,4}, {-0.52733537f, -0.35763144f, -0.18792751f, -0.01822358f, 0.15148035f, 0.32118428f, 0.49088821f, 0.66059214f, 0.83029607f, 1.f, 1.16970393f, 1.33940786f,
                                             1.50911179f, 1.67881572f, 1.84851965f, 2.01822358f, 2.18792751f, 2.35763144f, 2.52733537f, 2.6970393f, 2.86674323f, 3.03644717f, 3.2061511f, 3.37585503f});

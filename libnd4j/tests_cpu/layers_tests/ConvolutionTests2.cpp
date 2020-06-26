@@ -561,7 +561,7 @@ TEST_F(ConvolutionTests2, deconv3d_test5) {
 
     auto input    = NDArrayFactory::create<float>({bS, iD, iH, iW, iC});
     auto weights  = NDArrayFactory::create<float>({kD, kH, kW, oC, iC});
-    auto bias     = NDArrayFactory::create<float>({oC});
+    auto bias     = NDArrayFactory::vector<float>(oC);
 
     auto exp = NDArrayFactory::create<float>({bS, oD, oH, oW, oC}, {-2.9f, -6.8f, -10.7f, -2.6f, -6.1f, -9.6f, -16.9f, -23.9f, -30.9f, -13.1f, -16.6f, -20.1f, -11.6f, -14.7f, -17.8f, -2.0f, -4.7f, -7.4f, -1.7f, -4.0f, -6.3f, -11.5f,
                 -16.1f, -20.7f, -8.6f, -10.9f, -13.2f, -7.1f, -9.0f, -10.9f, -27.4f, -32.8f, -38.2f, -24.4f, -29.0f, -33.6f, -65.0f, -74.2f, -83.4f, -38.2f, -42.8f, -47.4f, -32.8f,
@@ -673,7 +673,7 @@ TEST_F(ConvolutionTests2, deconv3d_bp_test1) {
 
     auto input    = NDArrayFactory::create<float>({bS, oD, oH, oW, oC});
     auto weights  = NDArrayFactory::create<float>({kD, kH, kW, iC, oC});
-    auto bias     = NDArrayFactory::create<float>({iC});
+    auto bias     = NDArrayFactory::vector<float>(iC);
     auto gradO    = NDArrayFactory::create<float>({bS, iD, iH, iW, iC});
 
     NDArray expGradI('c', {bS, oD, oH, oW, oC}, {62., 67.6, 68.4, 74.8, 81.2, 89.2, 87.6, 96.4, 119.6, 132.4, 126., 139.6, 138.8, 154., 145.2, 161.2}, sd::DataType::FLOAT32);

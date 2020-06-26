@@ -84,10 +84,10 @@ TEST_F(GraphTests, DoubleInput1) {
     y.assign(-1.0);
 
     auto z = NDArrayFactory::create<float>(  {5, 5});
-
+    auto pZ = new NDArray(z);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
     graph->getVariableSpace()->putVariable(-2, new NDArray(y));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-3, pZ);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {3});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {-2}, {3});
@@ -102,7 +102,7 @@ TEST_F(GraphTests, DoubleInput1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -116,9 +116,11 @@ TEST_F(GraphTests, SingleInput3) {
     auto v0 = NDArrayFactory::create<float>(  {5, 5});
     auto v1 = NDArrayFactory::create<float>(  {5, 5});
 
+    auto pV0 = new NDArray(v0);
+    auto pV1 = new NDArray(v1);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(v0));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(v1));
+    graph->getVariableSpace()->putVariable(-2, pV0);
+    graph->getVariableSpace()->putVariable(-3, pV1);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2, 3});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {-2});
@@ -133,8 +135,8 @@ TEST_F(GraphTests, SingleInput3) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(1.4142135, v0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(1.0, v1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.4142135, pV0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.0, pV1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -148,9 +150,11 @@ TEST_F(GraphTests, SingleInput4) {
     auto v0 = NDArrayFactory::create<float>(  {5, 5});
     auto v1 = NDArrayFactory::create<float>(  {5, 5});
 
+    auto pV0 = new NDArray(v0);
+    auto pV1 = new NDArray(v1);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(v0));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(v1));
+    graph->getVariableSpace()->putVariable(-2, pV0);
+    graph->getVariableSpace()->putVariable(-3, pV1);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -170,8 +174,8 @@ TEST_F(GraphTests, SingleInput4) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(1.0, v0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.4142135, v1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.0, pV0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, pV1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -189,10 +193,12 @@ TEST_F(GraphTests, DoubleInput2) {
     auto z0 = NDArrayFactory::create<float>(  {5, 5});
     auto z1 = NDArrayFactory::create<float>(  {5, 5});
 
+    auto pZ0 = new NDArray(z0);
+    auto pZ1 = new NDArray(z1);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
     graph->getVariableSpace()->putVariable(-2, new NDArray(y));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(z0));
-    graph->getVariableSpace()->putVariable(-4, new NDArray(z1));
+    graph->getVariableSpace()->putVariable(-3, pZ0);
+    graph->getVariableSpace()->putVariable(-4, pZ1);
 
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
@@ -215,8 +221,8 @@ TEST_F(GraphTests, DoubleInput2) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(-1.4142135, z0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.0, z1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, pZ0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.0, pZ1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -236,11 +242,14 @@ TEST_F(GraphTests, DoubleInput3) {
 
     auto w = NDArrayFactory::create<float>(  {5, 5});
 
+    auto pZ0 = new NDArray(z0);
+    auto pZ1 = new NDArray(z1);
+    auto pW = new NDArray(w);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
     graph->getVariableSpace()->putVariable(-2, new NDArray(y));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(z0));
-    graph->getVariableSpace()->putVariable(-4, new NDArray(z1));
-    graph->getVariableSpace()->putVariable(-5, new NDArray(w));
+    graph->getVariableSpace()->putVariable(-3, pZ0);
+    graph->getVariableSpace()->putVariable(-4, pZ1);
+    graph->getVariableSpace()->putVariable(-5, pW);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -267,10 +276,10 @@ TEST_F(GraphTests, DoubleInput3) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(-1.4142135, z0.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
-    ASSERT_NEAR(-1.0, z1.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.4142135, pZ0->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(-1.0, pZ1->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
-    ASSERT_NEAR(2.4142135, w.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.4142135, pW->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -294,11 +303,13 @@ TEST_F(GraphTests, QuadInput1) {
     auto z = NDArrayFactory::create<float>(  {5, 5});
     z.assign(119.0);
 
+    auto pZ = new NDArray(z);
+
     graph->getVariableSpace()->putVariable(-1, new NDArray(x0));
     graph->getVariableSpace()->putVariable(-2, new NDArray(x1));
     graph->getVariableSpace()->putVariable(-3, new NDArray(x2));
     graph->getVariableSpace()->putVariable(-4, new NDArray(x3));
-    graph->getVariableSpace()->putVariable(-5, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-5, pZ);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {11});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {-2}, {11});
@@ -323,7 +334,7 @@ TEST_F(GraphTests, QuadInput1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(6.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(6.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -335,9 +346,9 @@ TEST_F(GraphTests, InternalBranching1) {
     x.assign(0.0);
 
     auto z = NDArrayFactory::create<float>(  {5, 5});
-
+    auto pZ = new NDArray(z);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-2, pZ);
 
     // 1.0
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Ones, 1, {-1}, {11, 21});
@@ -371,7 +382,7 @@ TEST_F(GraphTests, InternalBranching1) {
 
     ASSERT_EQ(3, nodeZ->getLayer());
 
-    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -387,10 +398,10 @@ TEST_F(GraphTests, ReductionsTest1) {
         }
     }
 
-    auto z = NDArrayFactory::create<float>(  {5});
-
+    auto z = NDArrayFactory::vector<float>(5);
+    auto pZ = new NDArray(z);
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-2, pZ);
 
 //    sd::graph::Node::Node(OpType opType, int opNum, int id, std::initializer_list<int> input, std::initializer_list<int> output, std::initializer_list<int> dimensions, float scalar, std::initializer_list<double> tArgs, std::initializer_list<int> iArgs) {
 
@@ -405,7 +416,7 @@ TEST_F(GraphTests, ReductionsTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(2.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -423,10 +434,11 @@ TEST_F(GraphTests, IndexReductionsTest1) {
 
     auto z = NDArrayFactory::create<Nd4jLong>(  {5, 1});
     auto axis = NDArrayFactory::create<Nd4jLong>(  {1}, {1});
-    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
-    //graph->getVariableSpace()->putVariable(-3, axis);
+    auto pZ = new NDArray(z);
 
+    graph->getVariableSpace()->putVariable(-1, new NDArray(x));
+    graph->getVariableSpace()->putVariable(-2, pZ);
+    //graph->getVariableSpace()->putVariable(-3, axis);
 
     auto nodeA = new Node(OpType_INDEX_REDUCE, indexreduce::IndexMin, 1, {-1}, {2}, {1});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Abs, 2, {1}, {-2});
@@ -439,7 +451,7 @@ TEST_F(GraphTests, IndexReductionsTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(4.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(4.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -531,10 +543,11 @@ TEST_F(GraphTests, BroadcastTest1) {
     }
 
     auto z = NDArrayFactory::create<float>(  {5, 5});
+    auto pZ = new NDArray(z);
 
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
     graph->getVariableSpace()->putVariable(-2, new NDArray(y));
-    graph->getVariableSpace()->putVariable(-3, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-3, pZ);
 
     auto nodeA = new Node(OpType_BROADCAST, broadcast::Subtract, 1, {-1, -2}, {2}, {1});
     auto nodeB = new Node(OpType_TRANSFORM_SAME, transform::Neg, 2, {1}, {-3});
@@ -544,7 +557,7 @@ TEST_F(GraphTests, BroadcastTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(3.0, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(3.0, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -557,9 +570,10 @@ TEST_F(GraphTests, ScalarTest1) {
     x.assign(-2.0);
 
     auto z = NDArrayFactory::create<float>(  {5, 5});
+    auto pZ = new NDArray(z);
 
     graph->getVariableSpace()->putVariable(-1, new NDArray(x));
-    graph->getVariableSpace()->putVariable(-2, new NDArray(z));
+    graph->getVariableSpace()->putVariable(-2, pZ);
 
     auto nodeA = new Node(OpType_TRANSFORM_SAME, transform::Abs, 1, {-1}, {2});
     auto nodeB = new Node(OpType_TRANSFORM_FLOAT, transform::Sqrt, 2, {1}, {3});
@@ -574,7 +588,7 @@ TEST_F(GraphTests, ScalarTest1) {
 
     GraphExecutioner::execute(graph);
 
-    ASSERT_NEAR(2.714213, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(2.714213, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -586,9 +600,10 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     x.assign(-2.0);
 
     auto z = NDArrayFactory::create<float>(  {5, 5});
+    auto pZ = new NDArray(z);
 
     auto vX = new Variable(new NDArray(x));
-    auto vZ = new Variable(new NDArray(z));
+    auto vZ = new Variable(pZ);
 
     std::string a("alpha");
     std::string o("omega");
@@ -630,7 +645,7 @@ TEST_F(GraphTests, SymbolicLookupTest1) {
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&p));
     ASSERT_TRUE(graph->getVariableSpace()->hasVariable(&t));
 
-    ASSERT_NEAR(1.4142135, z.reduceNumber(reduce::Mean).e<float>(0), 1e-5);
+    ASSERT_NEAR(1.4142135, pZ->reduceNumber(reduce::Mean).e<float>(0), 1e-5);
 
     delete graph;
 }
@@ -1597,11 +1612,11 @@ TEST_F(GraphTests, Test_Inplace_Outputs_2) {
 #endif
 }
 
-/*
+
 TEST_F(GraphTests, Test_Minifier_1) {
     // run preprocessor to produce single header
     // if all ok - return value is 0, if error - non-zero value will be returned
-    std::string input("../include/ops/ops.h"); //declarable/CustomOperations.h");
+    std::string input("../include/memory/Workspace.h"); //declarable/CustomOperations.h");
 
     ASSERT_EQ(0, GraphUtils::runPreprocessor(input.c_str(), "libnd4j_mini.hpp"));
     // remove file from filesystem
@@ -1609,13 +1624,12 @@ TEST_F(GraphTests, Test_Minifier_1) {
     ASSERT_EQ(0, unlink("libnd4j_mini.hpp"));
 #endif
 }
-*/
 
 TEST_F(GraphTests, Test_Minifier_2) {
 
     // run preprocessor to produce single header
     // if all ok - return value is 0, if error - non-zero value will be returned
-    ASSERT_EQ(0, GraphUtils::runPreprocessor("../include/ops/specials.h", "libnd4j_mini2.hpp"));
+    ASSERT_EQ(0, GraphUtils::runPreprocessor("../include/memory/Workspace.h", "libnd4j_mini2.hpp"));
     // remove file from filesystem
 #ifdef __linux__
     ASSERT_EQ(0, unlink("libnd4j_mini2.hpp"));
