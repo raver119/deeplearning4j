@@ -39,8 +39,8 @@ public:
 };
 
 TEST_F(DeclarableOpsTests14, Test_Validation_Edge_1) {
-    auto x = NDArrayFactory::create<int>({2}, {2, 2});
-    auto exp = NDArrayFactory::create(Environment::getInstance()->defaultFloatDataType(), {2, 2});
+    auto x = NDArrayFactory::create<int>(  {2}, {2, 2});
+    auto exp = NDArrayFactory::create(Environment::getInstance().defaultFloatDataType(),  {2LL, 2LL});
     exp.assign(4.0f);
 
     sd::ops::fill op;

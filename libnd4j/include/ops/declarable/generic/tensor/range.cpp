@@ -162,7 +162,7 @@ DECLARE_SHAPE_FN(range) {
 
             if (limit == start){
                 //Return [0] to match TF
-                return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(0, dtype));
+                return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(0, dtype));
             }
 
             REQUIRE_TRUE(delta != 0, 0, "CUSTOM RANGE OP: delta should not be equal to zero !");
@@ -192,7 +192,7 @@ DECLARE_SHAPE_FN(range) {
 
             if (limit == start){
                 //Return [0] to match TF
-                return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(0, dtype));
+                return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(0, dtype));
             }
 
             REQUIRE_TRUE(delta != 0, 0, "CUSTOM RANGE OP: delta should not be equal to zero !");
@@ -222,7 +222,7 @@ DECLARE_SHAPE_FN(range) {
 
         if (limit == start){
             //Return [0] to match TF
-            return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(0, sd::DataType::INT32));
+            return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(0, sd::DataType::INT32));
         }
 
         REQUIRE_TRUE(delta != 0, 0, "CUSTOM RANGE OP: delta should not be equal to zero !");
@@ -256,7 +256,7 @@ DECLARE_SHAPE_FN(range) {
 
         if (limit == start){
             //Return [0] to match TF
-            return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(0, Environment::getInstance()->defaultFloatDataType()));
+            return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(0, Environment::getInstance().defaultFloatDataType()));
         }
 
 
@@ -265,10 +265,10 @@ DECLARE_SHAPE_FN(range) {
         steps = static_cast<Nd4jLong >((limit - start) / delta);
 
         if (!block.numD()) {
-            if (Environment::getInstance()->precisionBoostAllowed())
+            if (Environment::getInstance().precisionBoostAllowed())
                 dataType = sd::DataType::DOUBLE;
             else
-                dataType = Environment::getInstance()->defaultFloatDataType();
+                dataType = Environment::getInstance().defaultFloatDataType();
         }
 
         if(math::nd4j_abs<double>(start + steps * delta) < math::nd4j_abs<double >(limit))
@@ -279,7 +279,7 @@ DECLARE_SHAPE_FN(range) {
 
     REQUIRE_TRUE(steps > 0, 0, "CUSTOM RANGE OP: value of (limit-start)/delta should be positive !");
 
-    return SHAPELIST(ConstantShapeHelper::getInstance()->vectorShapeInfo(steps, dataType));
+    return SHAPELIST(ConstantShapeHelper::getInstance().vectorShapeInfo(steps, dataType));
 }
 
 

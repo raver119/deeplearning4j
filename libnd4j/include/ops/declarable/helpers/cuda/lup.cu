@@ -604,8 +604,8 @@ namespace helpers {
 //        output->tickWriteDevice();
         permutationVectors->applyTrueBroadcast(sd::BroadcastOpsTuple::Assign(), iota, *permutationVectors, true, nullptr);
 //        permutationVectors->tickWriteDevice();
-        auto tads = ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {-2, -1});
-        auto permutaionTads = ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {-1});
+        auto tads = ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {-2, -1});
+        auto permutaionTads = ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {-1});
         auto batchNum = tads.numberOfTads();
         luBatchedKernel<T,I><<<batchNum, 256, 1024, *stream>>>(reinterpret_cast<T*>(output->platformBuffer()),
                 output->specialShapeInfo(), reinterpret_cast<I*>(permutationVectors->platformBuffer()),
@@ -624,8 +624,8 @@ namespace helpers {
         Nd4jLong n = input->sizeAt(-1);
         Nd4jLong n2 = n * n;
         std::vector<int> dims();
-        auto packX = ConstantTadHelper::getInstance()->tadForDimensions(input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
-        //auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {output->rankOf() - 1});
+        auto packX = ConstantTadHelper::getInstance().tadForDimensions(input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
+        //auto packZ = ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {output->rankOf() - 1});
 //        DataType dtype = input->dataType();
 //        if (dtype != DataType::DOUBLE)
 //            dtype = DataType::FLOAT32;
@@ -668,8 +668,8 @@ namespace helpers {
             Nd4jLong n = input->sizeAt(-1);
             Nd4jLong n2 = n * n;
             std::vector<int> dims();
-            auto packX = ConstantTadHelper::getInstance()->tadForDimensions(input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
-            //auto packZ = ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(), {output->rankOf() - 1});
+            auto packX = ConstantTadHelper::getInstance().tadForDimensions(input->shapeInfo(), {input->rankOf() - 2, input->rankOf() - 1});
+            //auto packZ = ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(), {output->rankOf() - 1});
             DataType dtype = input->dataType();
             if (dtype != DataType::DOUBLE)
                 dtype = DataType::FLOAT32;
@@ -759,10 +759,10 @@ namespace helpers {
             NDArray lower    = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
             NDArray compound = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
             NDArray permutation = NDArrayFactory::create(dtype, {n, n}, sd::kArrayOrderC, context);
-            auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(input->shapeInfo(),
+            auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(input->shapeInfo(),
                                                                                   {input->rankOf() - 2,
                                                                                    input->rankOf() - 1});
-            auto packZ = sd::ConstantTadHelper::getInstance()->tadForDimensions(output->shapeInfo(),
+            auto packZ = sd::ConstantTadHelper::getInstance().tadForDimensions(output->shapeInfo(),
                                                                                   {output->rankOf() - 2,
                                                                                    output->rankOf() - 1});
             auto stream = context->getCudaStream();
@@ -849,7 +849,7 @@ namespace helpers {
                 throw cuda_exception::build("helpers::cholesky_: Cannot create solver handle", status);
             }
             F **dArrayBatch = nullptr;
-            auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(tempOutput.shapeInfo(),
+            auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(tempOutput.shapeInfo(),
                                                                                   {tempOutput.rankOf() - 2,
                                                                                    tempOutput.rankOf() - 1});
             const Nd4jLong batchSize = packX.numberOfTads();
@@ -979,7 +979,7 @@ namespace helpers {
             auto outputBuf = output->dataBuffer()->specialAsT<T>(); //reinterpret_cast<T*>(output->specialBuffer()); // + e * n2; // + e * n2;
             auto inputBuf = tempOutput.dataBuffer()->specialAsT<T>(); //reinterpret_cast<T*>(tempOutput.specialBuffer());
             output->nullify();
-            auto packX = sd::ConstantTadHelper::getInstance()->tadForDimensions(tempOutput.shapeInfo(),
+            auto packX = sd::ConstantTadHelper::getInstance().tadForDimensions(tempOutput.shapeInfo(),
                                                                                   {tempOutput.rankOf() - 2,
                                                                                    tempOutput.rankOf() - 1});
             logDetKernel<T><<<128, 512, 256, *stream>>>(inputBuf, tempOutput.specialShapeInfo(),

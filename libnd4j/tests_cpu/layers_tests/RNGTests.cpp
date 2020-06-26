@@ -208,6 +208,77 @@ TEST_F(RNGTests, Test_Uniform_1) {
     }
 }
 
+TEST_F(RNGTests, Test_Uniform_10) {
+  auto x = NDArrayFactory::create<float>(  {10000, 10000});
+  auto z = NDArrayFactory::create<float>(0.0f);
+
+  RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngA, &x, 0.0f, 1.0f);
+
+  sd::ops::reduce_max op;
+  auto status = op.execute({&x}, {&z});
+  ASSERT_EQ(Status::OK(), status);
+
+  ASSERT_LT(z.t<float>(0), 1.0f);
+}
+
+TEST_F(RNGTests, Test_Uniform_10_double) {
+  auto x = NDArrayFactory::create<double>(  {10000, 10000});
+  auto z = NDArrayFactory::create<double>(0.0f);
+
+  RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngA, &x, 0.0f, 1.0f);
+
+  sd::ops::reduce_max op;
+  auto status = op.execute({&x}, {&z});
+  ASSERT_EQ(Status::OK(), status);
+
+  ASSERT_LT(z.t<double>(0), 1.0);
+}
+
+TEST_F(RNGTests, Test_Uniform_11) {
+  uint32_t max = 0;
+  for (int e = 0; e < 100000000; e++) {
+    auto v = _rngA.xoroshiro32(e) >> 8;
+    if (v > max)
+      max = v;
+  }
+
+  nd4j_printf("Max value: %i\n", (int) max);
+}
+
+TEST_F(RNGTests, Test_Uniform_12) {
+  float max = -std::numeric_limits<float>::infinity();
+  float min = std::numeric_limits<float>::infinity();
+  for (int e = 0; e < 100000000; e++) {
+    auto v = _rngA.relativeT<float>(e);
+    if (v > max)
+      max = v;
+
+    if (v < min)
+      min = v;
+  }
+
+  nd4j_printf("Max value: %.8f; Min value: %.8f\n", (float) max, (float) min);
+  ASSERT_LT(max, 1.0f);
+  ASSERT_GE(min, 0.0);
+}
+
+TEST_F(RNGTests, Test_Uniform_13) {
+  double max = -std::numeric_limits<double>::infinity();
+  double min = std::numeric_limits<double>::infinity();
+  for (int e = 0; e < 100000000; e++) {
+    auto v = _rngA.relativeT<double>(e);
+    if (v > max)
+      max = v;
+
+    if (v < min)
+      min = v;
+  }
+
+  nd4j_printf("Max value: %.8f; Min value: %.8f\n", (float) max, (float) min);
+  ASSERT_LT(max, 1.0);
+  ASSERT_GE(min, 0.0);
+}
+
 TEST_F(RNGTests, Test_Uniform_3) {
     auto x0 = NDArrayFactory::create<double>(  {1000000});
 
@@ -250,8 +321,8 @@ TEST_F(RNGTests, Test_Gaussian_1) {
 }
 
 TEST_F(RNGTests, Test_Gaussian_21) {
-    auto x0 = NDArrayFactory::create<float>(  {10, 10});
-    auto x1 = NDArrayFactory::create<float>(  {10, 10});
+    auto x0 = NDArrayFactory::create<float>(  {1000, 1000});
+    auto x1 = NDArrayFactory::create<float>(  {1000, 1000});
 
     RandomLauncher::fillGaussian(LaunchContext::defaultContext(), _rngA, &x0, 0.0f, 1.0f);
     RandomLauncher::fillGaussian(LaunchContext::defaultContext(), _rngB, &x1, 0.0f, 1.0f);
@@ -932,8 +1003,6 @@ TEST_F(RNGTests, Test_GammaDistribution_2) {
 //    z->printIndexedBuffer("Gamma distribution");
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
-
-
 }
 
 TEST_F(RNGTests, Test_GammaDistribution_3) {
@@ -954,7 +1023,62 @@ TEST_F(RNGTests, Test_GammaDistribution_3) {
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
 
+    
+}
 
+TEST_F(RNGTests, Test_GammaDistribution_4) {
+    auto x = NDArrayFactory::create<Nd4jLong>(  {2}, {1000, 1000});
+    auto al = NDArrayFactory::create<float>(2.f);
+    auto be = NDArrayFactory::create<float>(2.f);
+    auto exp0 = NDArrayFactory::create<float>(  {1000, 1000});
+
+//    al.linspace(1.0);
+//    be.assign(2.0);
+
+    sd::ops::random_gamma op;
+    auto result = op.evaluate({&x, &al, &be}, {}, {});
+    ASSERT_EQ(Status::OK(), result.status());
+
+    auto z = result.at(0);
+//    z->printIndexedBuffer("Gamma distribution");
+    ASSERT_TRUE(exp0.isSameShape(z));
+    ASSERT_FALSE(exp0.equalsTo(z));
+    sd::ops::reduce_mean testOps1;
+    sd::ops::reduce_variance testOps2;
+    auto testRes1 = testOps1.evaluate({z});
+    auto testRes2 = testOps2.evaluate({z});
+//    testRes1[0]->printBuffer("Mean (expected 1.0)");
+//    testRes2[0]->printBuffer("Variance (expected 0.5)");
+    ASSERT_NEAR(testRes1[0]->t<float>(0), 1.0f, 0.01);
+    ASSERT_NEAR(testRes2[0]->t<float>(0), 0.5f, 0.02);
+}
+
+TEST_F(RNGTests, Test_GammaDistribution_5) {
+    auto x = NDArrayFactory::create<Nd4jLong>(  {2}, {100, 100});
+    auto al = NDArrayFactory::create<float>(0.2f);
+    auto be = NDArrayFactory::create<float>(2.f);
+    auto exp0 = NDArrayFactory::create<float>(  {100, 100});
+
+//    al.linspace(1.0);
+//    be.assign(2.0);
+
+    sd::ops::random_gamma op;
+    auto result = op.evaluate({&x, &al, &be}, {}, {});
+    ASSERT_EQ(Status::OK(), result.status());
+
+    auto z = result.at(0);
+//    z->printIndexedBuffer("Gamma distribution");
+    ASSERT_TRUE(exp0.isSameShape(z));
+    ASSERT_FALSE(exp0.equalsTo(z));
+//    z->printIndexedBuffer("Gamma distributed");
+    sd::ops::reduce_mean testOps1;
+    sd::ops::reduce_variance testOps2;
+    auto testRes1 = testOps1.evaluate({z});
+    auto testRes2 = testOps2.evaluate({z});
+//    testRes1[0]->printBuffer("Mean (expected 0.1)");
+//    testRes2[0]->printBuffer("Variance (expected 0.05)");
+    ASSERT_NEAR(testRes1[0]->t<float>(0), 0.1f, 0.02);
+    ASSERT_NEAR(testRes2[0]->t<float>(0), 0.05f, 0.02);
 }
 
 TEST_F(RNGTests, Test_UniformDistribution_04) {
@@ -972,7 +1096,26 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
 
+}
 
+TEST_F(RNGTests, Test_UniformDistribution_05) {
+    auto x = NDArrayFactory::create<Nd4jLong>(  {2}, {10000, 10000});
+    auto al = NDArrayFactory::create<float>(0.f);
+    auto be = NDArrayFactory::create<float>(1.f);
+    auto exp0 = NDArrayFactory::create<float>(  {10000, 10000});
+
+
+    sd::ops::randomuniform op;
+    auto result = op.evaluate({&x, &al, &be}, {}, {},{}, {DataType::FLOAT32});
+    ASSERT_EQ(Status::OK(), result.status());
+
+    auto z = result.at(0);
+    ASSERT_TRUE(exp0.isSameShape(z));
+    ASSERT_FALSE(exp0.equalsTo(z));
+
+    sd::ops::reduce_max checkOp;
+    auto checkResult = checkOp.evaluate({z});
+    checkResult[0]->printIndexedBuffer("Max on uniform with 0 to 1 on 100M cases is");
 }
 
 namespace sd {
@@ -1124,7 +1267,6 @@ TEST_F(RNGTests, test_multinomial_1) {
     ASSERT_EQ(Status::OK(), result.status());
     ASSERT_TRUE(expectedZ.isSameShape(outputZ));
     ASSERT_TRUE(expectedZ.equalsTo(outputZ));
-
 }
 
 TEST_F(RNGTests, test_multinomial_2) {
@@ -1271,7 +1413,6 @@ TEST_F(RNGTests, test_multinomial_6) {
     // printf("Var: %f  Mean: %f \n", deviation.e<double>(0), mean.e<double>(0));
     ASSERT_NEAR(1.2175, deviation.e<double>(0), 45e-3); // 1000000 35e-3);
     ASSERT_NEAR(2.906, mean.e<double>(0), 45e-3); // 1000000 35e-3);
-
 
 
     RandomGenerator rng(1234, 1234);

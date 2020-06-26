@@ -111,7 +111,7 @@ namespace helpers {
                 invertedMatrix->r<T>(i, i) /= inputMatrix->t<T>(i, i);
         };
 
-        //PRAGMA_OMP_PARALLEL_FOR_IF(n > Environment::getInstance()->elementwiseThreshold())
+        //PRAGMA_OMP_PARALLEL_FOR_IF(n > Environment::getInstance().elementwiseThreshold())
         auto invertUpDiagonals = PRAGMA_THREADS_FOR {
             for (auto i = start; i < stop; i += increment)
                 invertedMatrix->r<T>(i, i + 1) -= (inputMatrix->t<T>(i, i + 1) * invertedMatrix->t<T>(i + 1, i + 1) /
@@ -215,7 +215,9 @@ namespace helpers {
         auto maxValue = T(0); //sd::math::nd4j_abs(compoundBuffer[xInitialIndex]);
         auto result = -1;
         //auto loop = PRAGMA_THREADS_FOR {
-            auto start = column, stop = rowNum, increment = 1;
+            auto start = column;
+	    auto stop = rowNum;
+	    auto increment = 1;
             for (auto rowCounter = start; rowCounter < stop; rowCounter++) {
                 Nd4jLong xPos[] = {rowCounter, column};
                 auto xIndex = shape::getOffset(compoundShape, xPos, 0);

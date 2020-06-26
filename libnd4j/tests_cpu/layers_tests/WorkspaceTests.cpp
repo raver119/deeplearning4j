@@ -112,7 +112,7 @@ TEST_F(WorkspaceTests, ResetTest1) {
 
 
 TEST_F(WorkspaceTests, StretchTest1) {
-    if (!Environment::getInstance()->isCPU())
+    if (!Environment::getInstance().isCPU())
         return;
 
     Workspace workspace(128);
@@ -147,7 +147,7 @@ TEST_F(WorkspaceTests, StretchTest1) {
 }
 
 TEST_F(WorkspaceTests, NewInWorkspaceTest1) {
-    if (!Environment::getInstance()->isCPU())
+    if (!Environment::getInstance().isCPU())
         return;
 
     Workspace ws(65536);
@@ -155,20 +155,20 @@ TEST_F(WorkspaceTests, NewInWorkspaceTest1) {
     ASSERT_EQ(65536, ws.getCurrentSize());
     ASSERT_EQ(0, ws.getCurrentOffset());
 
-    ASSERT_FALSE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
+    ASSERT_FALSE(MemoryRegistrator::getInstance().hasWorkspaceAttached());
 
-    MemoryRegistrator::getInstance()->attachWorkspace(&ws);
+    MemoryRegistrator::getInstance().attachWorkspace(&ws);
 
-    ASSERT_TRUE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
+    ASSERT_TRUE(MemoryRegistrator::getInstance().hasWorkspaceAttached());
 
     auto ast = NDArrayFactory::create<float>(  {5, 5});
     auto pAst = new NDArray(ast);
     ASSERT_TRUE(ws.getCurrentOffset() > 0);
     delete pAst;
-    MemoryRegistrator::getInstance()->forgetWorkspace();
+    MemoryRegistrator::getInstance().forgetWorkspace();
 
-    ASSERT_FALSE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
-    ASSERT_TRUE(MemoryRegistrator::getInstance()->getWorkspace() == nullptr);
+    ASSERT_FALSE(MemoryRegistrator::getInstance().hasWorkspaceAttached());
+    ASSERT_TRUE(MemoryRegistrator::getInstance().getWorkspace() == nullptr);
 }
 
 
@@ -180,17 +180,17 @@ TEST_F(WorkspaceTests, NewInWorkspaceTest2) {
     ASSERT_EQ(65536, ws.getCurrentSize());
     ASSERT_EQ(0, ws.getCurrentOffset());
 
-    MemoryRegistrator::getInstance()->attachWorkspace(&ws);
+    MemoryRegistrator::getInstance().attachWorkspace(&ws);
 
     auto ast = NDArrayFactory::create<float>(  {5, 5}, {}, sd::kArrayOrderC, &ctx);
 
     ASSERT_TRUE(ws.getCurrentOffset() > 0);
 
-    MemoryRegistrator::getInstance()->forgetWorkspace();
+    MemoryRegistrator::getInstance().forgetWorkspace();
 }
 
 TEST_F(WorkspaceTests, CloneTest1) {
-    if (!Environment::getInstance()->isCPU())
+    if (!Environment::getInstance().isCPU())
         return;
 
     Workspace ws(65536);
@@ -246,7 +246,7 @@ TEST_F(WorkspaceTests, Test_Graph_1) {
 #endif
 
 TEST_F(WorkspaceTests, Test_Externalized_1) {
-    if (!Environment::getInstance()->isCPU())
+    if (!Environment::getInstance().isCPU())
         return;
 
     char buffer[10000];
