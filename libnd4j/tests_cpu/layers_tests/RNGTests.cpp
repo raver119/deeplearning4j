@@ -1085,7 +1085,7 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
     auto x = NDArrayFactory::create<Nd4jLong>(  {1}, {10});
     auto al = NDArrayFactory::create<int>(1);
     auto be = NDArrayFactory::create<int>(20);
-    auto exp0 = NDArrayFactory::vector<float>(10);
+    auto exp0 = NDArrayFactory::vector<float>(10, 21.f);
 
 
     sd::ops::randomuniform op;
@@ -1095,7 +1095,6 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
     auto z = result.at(0);
     ASSERT_TRUE(exp0.isSameShape(z));
     ASSERT_FALSE(exp0.equalsTo(z));
-
 }
 
 TEST_F(RNGTests, Test_UniformDistribution_05) {
@@ -1206,7 +1205,7 @@ TEST_F(RNGTests, Test_Reproducibility_2) {
 }
 
 TEST_F(RNGTests, Test_Uniform_4) {
-    auto x1 = NDArrayFactory::create<double>(  {1000000});
+    auto x1 = NDArrayFactory::vector<double>(  {1000000});
 
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngB, &x1, 1.0, 2.0);
 
