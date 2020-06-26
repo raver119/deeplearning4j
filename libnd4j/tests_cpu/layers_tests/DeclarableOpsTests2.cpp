@@ -334,13 +334,13 @@ TEST_F(DeclarableOpsTests2, NLP_Cbow_Test_1) {
     auto target = NDArrayFactory::create<int>(0);
     auto ngStarter = NDArrayFactory::empty<int>();
     auto context = NDArrayFactory::create<int>(  {3}, {0, 1, 2});
-    auto locked = NDArrayFactory::create<int>(  {3});
+    auto locked = NDArrayFactory::vector<int>(3);
     auto indices = NDArrayFactory::create<int>(  {2}, {4, 5});
     auto codes = NDArrayFactory::create<int8_t>(  {2}, {1, 1});
     auto syn0 = NDArrayFactory::create<double>(  {100, 10});
     auto syn1 = NDArrayFactory::create<double>(  {100, 10});
     auto syn1Neg = NDArrayFactory::empty<double>();
-    auto expTable = NDArrayFactory::create<double>(  {10000});
+    auto expTable = NDArrayFactory::vector<double>(10000);
     auto negTable = NDArrayFactory::empty<double>();
     auto numWords = NDArrayFactory::create<int>(  {1}, {1});
 
@@ -3650,9 +3650,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test1) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3695,9 +3695,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test2) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3740,9 +3740,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test3) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3785,9 +3785,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test4) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3830,9 +3830,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test5) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3875,9 +3875,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test6) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3920,9 +3920,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test7) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -3966,9 +3966,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test8) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -4011,9 +4011,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test9) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -4056,9 +4056,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test10) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -4101,9 +4101,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test11) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
@@ -4146,9 +4146,9 @@ TEST_F(DeclarableOpsTests2, lstmCell_test12) {
     auto ct_1 = NDArrayFactory::create<double>(  {batchSize, numUnits});
     auto Wx   = NDArrayFactory::create<double>(  {inSize, 4*numUnits});
     auto Wh   = NDArrayFactory::create<double>(  {numProj, 4*numUnits});
-    auto Wc   = NDArrayFactory::create<double>(  {3*numUnits});
+    auto Wc   = NDArrayFactory::vector<double>(3 * numUnits);
     auto Wp   = NDArrayFactory::create<double>(  {numUnits, numProj});
-    auto b    = NDArrayFactory::create<double>(  {4*numUnits});
+    auto b    = NDArrayFactory::vector<double>(4 * numUnits);
 
     xt.assign(1.);
     ht_1.assign(2.);
