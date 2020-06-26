@@ -1236,9 +1236,9 @@ TEST_F(DeclarableOpsTests12, inTopK_1) {
 TEST_F(DeclarableOpsTests12, inTopK_2) {
 
     auto input = NDArrayFactory::create<double>({4, 5});
-    auto idx = NDArrayFactory::create<Nd4jLong>({4});
+    auto idx = NDArrayFactory::vector<Nd4jLong>(4);
 
-    auto exp = NDArrayFactory::create<bool>({false, false, false, true});
+    auto exp = NDArrayFactory::vector<bool>({false, false, false, true});
 
     int exclusive, reverse;
     input.linspace(1);
@@ -1681,7 +1681,7 @@ TEST_F(DeclarableOpsTests12, pad_tests12) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, pad_tests13) {
 
-    auto input    = NDArrayFactory::create<double>({5});
+    auto input    = NDArrayFactory::vector<double>(5);
     auto paddings = NDArrayFactory::create<int>({1,2}, {2,3});
     auto expected = NDArrayFactory::create<double>({10}, {3., 2., 1., 2., 3., 4., 5., 4., 3., 2.});
     input.linspace(1.f);
@@ -1787,7 +1787,7 @@ TEST_F(DeclarableOpsTests12, pad_tests17) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, pad_tests18) {
 
-    auto input    = NDArrayFactory::create<double>({5});
+    auto input    = NDArrayFactory::vector<double>(5);
     auto paddings = NDArrayFactory::create<int>({1,2}, {0,0});
     auto expected = NDArrayFactory::create<double>({5}, {1.,2.,3.,4.,5.});
     input.linspace(1.f);
@@ -1920,7 +1920,7 @@ TEST_F(DeclarableOpsTests12, pad_tests23) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, pad_tests24) {
 
-    auto input    = NDArrayFactory::create<double>({1});
+    auto input    = NDArrayFactory::vector<double>(1);
     auto paddings = NDArrayFactory::create<int>({1,2}, {0,0});
     auto expected = NDArrayFactory::create<double>({1}, {1.});
 
@@ -1942,7 +1942,7 @@ TEST_F(DeclarableOpsTests12, pad_tests24) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, pad_tests25) {
 
-    auto input    = NDArrayFactory::create<double>({1});
+    auto input    = NDArrayFactory::vector<double>(1);
     auto paddings = NDArrayFactory::create<int>({1,2}, {1,1});
     auto expected = NDArrayFactory::create<double>({3}, {1.,1.,1});
 
@@ -1964,7 +1964,7 @@ TEST_F(DeclarableOpsTests12, pad_tests25) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests12, pad_tests26) {
 
-    auto input    = NDArrayFactory::create<double>({1});
+    auto input    = NDArrayFactory::vector<double>(1);
     auto paddings = NDArrayFactory::create<int>({1,2}, {3,2});
     auto expected = NDArrayFactory::create<double>({6}, {0., 0., 0., 1., 0., 0.});
 
@@ -2826,7 +2826,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test1) {
     NDArray input    = NDArrayFactory::create<float>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
              0.628328f,  0.97913796f,  1.8058043f,   2.563919f,   2.844548f,
             3.6026628f,   4.4293294f,  4.7801394f,  2.9474494f,  3.2982588f,
@@ -2860,7 +2860,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test2) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             0.628328f,  0.97913796f,  1.8058043f,   2.563919f,   2.844548f,
             3.6026628f,   4.4293294f,  4.7801394f,  2.9474494f,  3.2982588f,
@@ -2894,7 +2894,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test3) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             0.6537938f,  1.0309073f,  1.8018917f,  2.4606667f,  2.9888396f,  3.6476145f,  4.418599f,
             4.7957115f,  3.1913466f,  3.5684595f,  4.3394437f,   4.998219f,   5.526393f,  6.185168f,
@@ -2924,7 +2924,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test4) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
              1.4150869f,  1.7928237f,  2.4084527f,  3.0680697f, 3.6419308f,    4.301548f, 4.9171767f,
               5.294914f,   4.012885f,   4.390622f,  5.0062513f, 5.6658688f,     6.23973f,  6.899347f,
@@ -2954,7 +2954,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test5) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             0.6372399f,  1.0536414f,  1.7716959f,  2.3966959f,  3.0216959f,  3.6466963f,  4.3647504f,   4.781152f,
             3.3926036f,  3.8090053f,  4.5270596f,  5.1520596f,  5.7770596f,  6.4020596f,  7.1201134f,  7.5365143f,
@@ -2983,7 +2983,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test6) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             0.63678247f,  1.0531839f,  1.7712381f,  2.396238f,   3.021238f ,    3.646238f,   4.364292f,   4.780694f,
             3.3934183f,   3.8098197f,  4.5278745f, 5.1528745f,  5.7778745f,    6.402874f,  7.1209283f,  7.5373297f,
@@ -3011,7 +3011,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test7) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             0.98593485f,  1.3872082f,  2.0625007f,  2.6875007f, 3.3125012f,    3.937501f,   4.612794f,   5.014066f,
              3.6096964f,    4.01097f,  4.6862626f,   5.311262f,  5.936263f,    6.561262f,  7.2365556f,   7.637828f,
@@ -3040,7 +3040,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test8) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             1.f       ,  1.4375f   ,  2.0625f   ,  2.6875f   ,  3.3125f   ,  3.9375f   ,  4.5625f   ,  5.f       ,
             3.8571427f,  4.2946424f,  4.9196424f,  5.5446424f,  6.1696424f,  6.7946424f,  7.4196424f,  7.8571424f,
@@ -3069,7 +3069,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test9) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             1.f     , 1.4f    , 2.f     , 2.8f    , 3.2f    , 4.f     , 4.6f    , 5.f     ,
             4.f     , 4.4f    , 5.f     , 5.8f    , 6.2f    , 7.f     , 7.6f    , 8.f     ,
@@ -3098,7 +3098,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test10) {
     NDArray input    = NDArrayFactory::create<float>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<float>({1, 7, 8, 1}, {
             1,  1,  2,  3,  3,  4,  5,  5,  6,  6,  7,  8,  8,  9, 10, 10,  6,
             6,  7,  8,  8,  9, 10, 10, 11, 11, 12, 13, 13, 14, 15, 15, 16, 16,
@@ -3124,7 +3124,7 @@ TEST_F(DeclarableOpsTests12, ImageResize_Test11) {
     NDArray input    = NDArrayFactory::create<int>({1, 5, 5, 1}, {
             1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
     });
-    auto size = NDArrayFactory::create<int>({7, 8});
+    auto size = NDArrayFactory::vector<int>({7, 8});
     NDArray expected = NDArrayFactory::create<int>({1, 7, 8, 1}, {
             1,  1,  2,  3,  3,  4,  5,  5,  6,  6,  7,  8,  8,  9, 10, 10,  6,
             6,  7,  8,  8,  9, 10, 10, 11, 11, 12, 13, 13, 14, 15, 15, 16, 16,
