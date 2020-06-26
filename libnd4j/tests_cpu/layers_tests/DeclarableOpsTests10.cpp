@@ -211,9 +211,9 @@ TEST_F(DeclarableOpsTests10, Where_SGO_Test_02) {
 TEST_F(DeclarableOpsTests10, WhereNP_SGO_Test_1) {
     auto cond3d = NDArrayFactory::create<bool>({2, 2, 2}, {true, false, false, true, true, true, true, false});
 //    auto expIdx({0., 1., 0., 2., 0., 3., 4., 1., 4., 1.});
-    auto exp1 = NDArrayFactory::create<Nd4jLong>({0, 0, 1, 1, 1});
-    auto exp2 = NDArrayFactory::create<Nd4jLong>({0, 1, 0, 0, 1});
-    auto exp3 = NDArrayFactory::create<Nd4jLong>({0, 1, 0, 1, 0});
+    auto exp1 = NDArrayFactory::vector<Nd4jLong>({0, 0, 1, 1, 1});
+    auto exp2 = NDArrayFactory::vector<Nd4jLong>({0, 1, 0, 0, 1});
+    auto exp3 = NDArrayFactory::vector<Nd4jLong>({0, 1, 0, 1, 0});
     sd::ops::where_np op;
     auto res = op.evaluate({&cond3d}, {}, {});
     ASSERT_TRUE(res.size() == 3);
@@ -236,8 +236,8 @@ TEST_F(DeclarableOpsTests10, WhereNP_SGO_Test_2) {
     auto cond2d = NDArrayFactory::create<bool>({3, 5}, {true, true, false, false, true, true, true,
                                                              true, true, true, false, true, true, true, true});
 //    auto expIdx({0, 1, 0, 2, 0, 3, 4, 1, 4, 1});
-    auto exp1 = NDArrayFactory::create<Nd4jLong>({0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2});
-    auto exp2 = NDArrayFactory::create<Nd4jLong>({0, 1, 4, 0, 1, 2, 3, 4, 1, 2, 3, 4});
+    auto exp1 = NDArrayFactory::vector<Nd4jLong>({0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2});
+    auto exp2 = NDArrayFactory::vector<Nd4jLong>({0, 1, 4, 0, 1, 2, 3, 4, 1, 2, 3, 4});
     sd::ops::where_np op;
     auto res = op.evaluate({&cond2d}, {}, {});
     ASSERT_TRUE(res.size() == 2);
@@ -250,7 +250,7 @@ TEST_F(DeclarableOpsTests10, WhereNP_SGO_Test_2) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, Where_SGO_Test_2) {
-    auto input = NDArrayFactory::create<bool>({true, false, true, true, true});
+    auto input = NDArrayFactory::vector<bool>({true, false, true, true, true});
     //auto expIdx({0., 1., 0., 2., 0., 3., 4., 1., 4., 1.});
     auto exp = NDArrayFactory::create<Nd4jLong>({4,1}, {0, 2, 3, 4});
 
@@ -1119,7 +1119,7 @@ TEST_F(DeclarableOpsTests10, NTH_Element_Test_8) {
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, broadcast_to_test1) {
 
-    auto input = NDArrayFactory::create<Nd4jLong>({3});
+    auto input = NDArrayFactory::vector<Nd4jLong>(3);
     auto shape = NDArrayFactory::create<int>({2}, {3, 3});
     auto exp = NDArrayFactory::create<Nd4jLong>({3,3}, {1, 2, 3,1, 2, 3, 1, 2, 3});
 
@@ -1251,7 +1251,7 @@ TEST_F(DeclarableOpsTests10, broadcast_to_test7) {
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, broadcast_to_test8) {
 
-    auto input = NDArrayFactory::create<double>({3});
+    auto input = NDArrayFactory::vector<double>(3);
     auto shape = NDArrayFactory::create<double>({3}, {1.f, 3.f, 3.f});
     auto exp = NDArrayFactory::create<double>({1,3,3}, {1.f, 2.f, 3.f,1.f, 2.f, 3.f,1.f, 2.f, 3.f});
 
@@ -1371,7 +1371,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test_11) {
     NDArray input    = NDArrayFactory::create<float>({1, 1, 1, 256});
 
     input.assign(0.8f); //linspace(1);
-    auto size = NDArrayFactory::create<int>({65,65});
+    auto size = NDArrayFactory::vector<int>({65,65});
     auto ex = NDArrayFactory::create<float>({1,65,65,256});
     sd::ops::resize_bilinear op;
     auto results = op.evaluate({&input, &size}, {}, {}, {false});
@@ -1388,7 +1388,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test_12) {
     NDArray input    = NDArrayFactory::create<float>({1, 1, 1, 256});
 
     input.assign(0.8f); //linspace(1);
-    auto size = NDArrayFactory::create<int>({65,65});
+    auto size = NDArrayFactory::vector<int>({65,65});
     auto ex = NDArrayFactory::create<float>({1,65,65,256});
     sd::ops::resize_bilinear op;
     auto results = op.evaluate({&input, &size}, {}, {}, {true});
@@ -1601,7 +1601,7 @@ TEST_F(DeclarableOpsTests10, ResizeImages_Test1) {
            117.666664f,118.666664f,119.666664f,      118.f,      119.f,      120.f
     });
 
-    auto size = NDArrayFactory::create<int>({7, 11});
+    auto size = NDArrayFactory::vector<int>({7, 11});
     sd::ops::resize_images op;
     auto results = op.evaluate({&input, &size}, {}, {0}, {false, true}); // resize with bilinear method
 
@@ -1775,7 +1775,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test02) {
 TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test2) {
 
     NDArray input    = NDArrayFactory::create<double>({1, 2,3,4});
-    NDArray size = NDArrayFactory::create<int>({10, 10});
+    NDArray size = NDArrayFactory::vector<int>({10, 10});
     //NDArray<float> expected('c', {2,4,4}, {1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,0.,0.,0.,0.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,0.,0.,0.,0.});
     NDArray expected = NDArrayFactory::create<double>({1, 10, 10, 4}, {1.,  2.,   3.,   4.,  2.2,  3.2,  4.2,  5.2, 3.4,  4.4,  5.4,  6.4,
                                                   4.6, 5.6,  6.6,  7.6, 5.8,  6.8,  7.8,  8.8, 7.,   8.,   9.,  10.,
@@ -1957,7 +1957,7 @@ TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test3) {
 TEST_F(DeclarableOpsTests10, ImageResizeBilinear_Test4) {
 
     NDArray input    = NDArrayFactory::create<double>({1, 2,3,4});
-    NDArray size = NDArrayFactory::create<int>({10, 10});
+    NDArray size = NDArrayFactory::vector<int>({10, 10});
     NDArray expected = NDArrayFactory::create<double>({1, 10, 10, 4},
                             { 1.,         2.,         3.,         4. ,
                               1.8888888,  2.8888888,  3.8888888,  4.888889,
@@ -2609,7 +2609,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_1) {
     NDArray images = NDArrayFactory::create<double>({1,2,2,1}, {1,2,3,4});
     NDArray boxes = NDArrayFactory::create<float>({1,4}, {0,0,1,1});
     NDArray boxI = NDArrayFactory::create<int>({1}, {axis});
-    NDArray cropSize = NDArrayFactory::create<int>({1, 1});
+    NDArray cropSize = NDArrayFactory::vector<int>({1, 1});
 
     //NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
     NDArray expected = NDArrayFactory::create<double>({1,1,1,1}, {2.5f});
@@ -2632,7 +2632,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_2) {
     NDArray images    = NDArrayFactory::create<float>({1,2,2,1}, {1.f, 2.f, 3.f, 4.f});
     NDArray boxes = NDArrayFactory::create<float>({1,4}, {0.f, 0.f, 1.f, 1.f});
     NDArray boxI = NDArrayFactory::create<int>({1}, {axis});
-    NDArray cropSize = NDArrayFactory::create<int>({1, 1});
+    NDArray cropSize = NDArrayFactory::vector<int>({1, 1});
 
     //NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
     NDArray expected = NDArrayFactory::create<float>({1,1,1,1}, {4.f});
@@ -2654,7 +2654,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_3) {
     NDArray images   ('c', {1,2,2,1}, {1,2,3,4}, sd::DataType::FLOAT32);
     NDArray boxes('c', {1,4}, {0,0,1,1}, sd::DataType::FLOAT32);
     NDArray boxI('c', {1}, std::vector<double>{0}, sd::DataType::INT64);
-    NDArray cropSize = NDArrayFactory::create<Nd4jLong>({3, 3});
+    NDArray cropSize = NDArrayFactory::vector<Nd4jLong>({3, 3});
 
     //NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
     NDArray expected('c', {1,3,3,1}, {1.f, 1.5f, 2., 2.f, 2.5f, 3.f, 3.f, 3.5f, 4.f}, sd::DataType::FLOAT32);
@@ -2676,7 +2676,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_4) {
     NDArray images('c', {1,2,2,1}, {1, 2, 3, 4}, sd::DataType::FLOAT32);
     NDArray boxes('c', {1,4}, {0,0,1,1}, sd::DataType::FLOAT32);
     NDArray boxI('c', {1}, std::vector<double>({0.}), sd::DataType::INT32);
-    NDArray cropSize = NDArrayFactory::create<int>({3, 3});
+    NDArray cropSize = NDArrayFactory::vector<int>({3, 3});
 
     //NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
     NDArray expected('c', {1,3,3,1}, {1.f, 2.f, 2.f, 3.f, 4, 4.f, 3.f, 4.f, 4.f}, sd::DataType::FLOAT32);
@@ -2698,7 +2698,7 @@ TEST_F(DeclarableOpsTests10, Image_CropAndResize_5) {
     NDArray images('c', {1, 100, 100, 3}, sd::DataType::FLOAT32);
     NDArray boxes('c', {1,4}, {0,0,1,1}, sd::DataType::FLOAT32);
     NDArray boxI('c', {2}, {1,1}, sd::DataType::INT32);
-    NDArray cropSize = NDArrayFactory::create<int>({10, 10});
+    NDArray cropSize = NDArrayFactory::vector<int>({10, 10});
 
     //NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
     NDArray expected('c', {1, 10, 10,3}, sd::DataType::FLOAT32);
@@ -3105,7 +3105,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_6) {
 //////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_7) {
 
-    NDArray x = NDArrayFactory::create<float>({100});
+    NDArray x = NDArrayFactory::vector<float>(100);
     NDArray exp = NDArrayFactory::create<float>({100},  {
                     0.f, 0.01176471f, 0.01960784f, 0.03137255f, 0.03921569f,
              0.0509804f, 0.05882353f, 0.07058824f, 0.07843138f, 0.09019608f,
@@ -3146,7 +3146,7 @@ TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_7) {
 //////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, FakeQuantWithMinMaxVars_Test_8) {
 
-    NDArray x = NDArrayFactory::create<float>({10});
+    NDArray x = NDArrayFactory::vector<float>(10);
     NDArray exp = NDArrayFactory::create<float>({10},  {
              0.f,        0.09803922f, 0.20000002f, 0.3019608f,  0.40000004f, 0.49803925f,
             0.6f,        0.69803923f, 0.8000001f,  0.8980393f
