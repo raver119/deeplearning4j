@@ -32,7 +32,7 @@ class OpTupleTests : public testing::Test {
 TEST_F(OpTupleTests, DirectConstructorTest1) {
     auto alpha = NDArrayFactory::create<float>(  {1, 2});
     auto beta = NDArrayFactory::create<float>(  {1, 2});
-    OpTuple tuple("dummy", {&alpha, &beta}, {12.0f}, {1, 2, 3});
+    OpTuple tuple("dummy", {new NDArray(alpha), new NDArray(beta)}, {12.0f}, {1, 2, 3});
 
     ASSERT_EQ("dummy", tuple._opName);
     ASSERT_EQ(2, tuple._inputs.size());
@@ -45,8 +45,8 @@ TEST_F(OpTupleTests, BuilderTest1) {
     auto alpha = NDArrayFactory::create<float>(  {1, 2});
     auto beta = NDArrayFactory::create<float>(  {1, 2});
     OpTuple tuple("dummy");
-    tuple.addInput(&alpha)
-            ->addInput(&beta)
+    tuple.addInput(new NDArray(alpha))
+            ->addInput(new NDArray(beta))
             ->setTArgs({12.0f})
             ->setIArgs({1, 2, 3});
 

@@ -311,7 +311,7 @@ TEST_F(RNGTests, Test_Gaussian_22) {
 }
 
 TEST_F(RNGTests, Test_Gaussian_3) {
-    auto x0 = NDArrayFactory::create<double>(  {800000});
+    auto x0 = NDArrayFactory::vector<double>(800000);
 
     RandomLauncher::fillGaussian(LaunchContext::defaultContext(), _rngA, &x0, 0.0, 1.0);
 
@@ -961,7 +961,7 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
     auto x = NDArrayFactory::create<Nd4jLong>(  {1}, {10});
     auto al = NDArrayFactory::create<int>(1);
     auto be = NDArrayFactory::create<int>(20);
-    auto exp0 = NDArrayFactory::create<float>(  {10});
+    auto exp0 = NDArrayFactory::vector<float>(10);
 
 
     sd::ops::randomuniform op;
@@ -981,7 +981,7 @@ namespace sd {
             rng->setSeed((int) seed);
 
             for (int i = 0; i < numberOfArrays; i++) {
-                auto arrayI = NDArrayFactory::create<Nd4jLong>(shape);
+                auto arrayI = NDArrayFactory::vector<Nd4jLong>(shape);
                 auto arrayR = NDArrayFactory::create<double>(shape);
                 auto min = NDArrayFactory::create(0.0);
                 auto max = NDArrayFactory::create(1.0);

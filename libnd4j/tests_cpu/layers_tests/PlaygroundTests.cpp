@@ -69,7 +69,7 @@ TEST_F(PlaygroundTests, test_avx) {
 
 TEST_F(PlaygroundTests, test_biasAdd_1) {
     auto x = NDArrayFactory::create<float>(  {512, 3072});
-    auto y = NDArrayFactory::create<float>(  {3072});
+    auto y = NDArrayFactory::vector<float>(3072);
 
     std::vector<Nd4jLong> values;
 

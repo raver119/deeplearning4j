@@ -56,7 +56,7 @@ TEST_F(ListOperationsTests, BasicTest_Stack_1) {
     auto exp = NDArrayFactory::create<double>(  {10, 100});
     auto tads = exp.allTensorsAlongDimension({1});
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create<double>(  {100});
+        auto row = NDArrayFactory::vector<double>(100);
         row.assign((double) e);
         list.write(e, new NDArray(row));
         tads.at(e)->assign(row);
@@ -172,7 +172,7 @@ TEST_F(ListOperationsTests, BasicTest_Pick_1) {
     auto exp = NDArrayFactory::create<double>(  {4, 100});
 
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create<double>(  {100});
+        auto row = NDArrayFactory::vector<double>(100);
         row.assign((double) e);
         list.write(e, new NDArray(row));
     }
@@ -244,7 +244,7 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
 
     auto matrix = NDArrayFactory::create<double>(  {10, 5});
 
-    auto lengths = NDArrayFactory::create<int>(  {3});
+    auto lengths = NDArrayFactory::vector<int>(3);
     lengths.p(0, 2);
     lengths.p(1, 3);
     lengths.p(2, 5);
@@ -259,7 +259,7 @@ TEST_F(ListOperationsTests, BasicTest_Split_1) {
     int cnt1 = 0;
     int cnt2 = 0;
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create<double>(  {5});
+        auto row = NDArrayFactory::vector<double>(5);
         row.assign((double) e);
         tads.at(e)->assign(row);
 
@@ -353,7 +353,7 @@ TEST_F(ListOperationsTests, BasicTest_Clone_1) {
 TEST_F(ListOperationsTests, BasicTest_Gather_1) {
     NDArrayList list(0, true);
     for (int e = 0; e < 10; e++) {
-        auto row = NDArrayFactory::create<double>(  {3});
+        auto row = NDArrayFactory::vector<double>(3);
         row.assign((double) e);
         list.write(e, new NDArray(row));
     }

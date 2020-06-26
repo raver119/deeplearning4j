@@ -162,9 +162,9 @@ TEST_F(WorkspaceTests, NewInWorkspaceTest1) {
     ASSERT_TRUE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
 
     auto ast = NDArrayFactory::create<float>(  {5, 5});
-
+    auto pAst = new NDArray(ast);
     ASSERT_TRUE(ws.getCurrentOffset() > 0);
-
+    delete pAst;
     MemoryRegistrator::getInstance()->forgetWorkspace();
 
     ASSERT_FALSE(MemoryRegistrator::getInstance()->hasWorkspaceAttached());
