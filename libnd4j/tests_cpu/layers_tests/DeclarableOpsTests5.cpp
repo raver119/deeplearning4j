@@ -1697,7 +1697,7 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test3) {
 }
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, random_shuffle_test04) {
-    auto input = NDArrayFactory::create<double>(  {4});
+    auto input = NDArrayFactory::vector<double>(4);
     input.linspace(1);
 
     sd::ops::random_shuffle op;
@@ -1719,7 +1719,7 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test04) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, random_shuffle_test4) {
-    auto input = NDArrayFactory::create<double>(  {4});
+    auto input = NDArrayFactory::vector<double>(4);
     input.linspace(1);
 
     sd::ops::random_shuffle op;
@@ -2083,7 +2083,7 @@ TEST_F(DeclarableOpsTests5, DynamicStitch_empty_1) {
 
 TEST_F(DeclarableOpsTests5, DynamicStitch_empty_2) {
     auto i0 = NDArrayFactory::create<int>(  {2}, {2, 3});
-    auto i1 = NDArrayFactory::create<int>(  {0});
+    auto i1 = NDArrayFactory::create<int>(  std::vector<Nd4jLong>{0});
     auto i2 = NDArrayFactory::create<int>(  {2}, {0, 1});
 
     auto d0 = NDArrayFactory::create<double>(  {2, 5}, {0.085571885,0.7937801,0.65908563,0.55552566,0.15962744,0.7787856,0.80119777,0.72437465,0.23089433,0.72714126});
@@ -2156,10 +2156,10 @@ TEST_F(DeclarableOpsTests5, fusedBatchNorm_test1) {
 
     auto x = NDArrayFactory::create<double>(  {2, 2, 3, 4});
     x.linspace(1);
-    auto scale = NDArrayFactory::create<double>(  {4});
+    auto scale = NDArrayFactory::vector<double>(4);
 
     scale = 0.5;
-    auto offset = NDArrayFactory::create<double>(  {4});
+    auto offset = NDArrayFactory::vector<double>(4);
     offset = 2.;
     auto expY = NDArrayFactory::create<double>(  {2, 2, 3, 4}, {1.20337462,  1.20337462,  1.20337462,  1.20337462, 1.34821558,  1.34821558,  1.34821558,  1.34821558, 1.49305654,  1.49305654,  1.49305654,  1.49305654, 1.63789749,  1.63789749,  1.63789749,  1.63789749, 1.78273857,  1.78273857,  1.78273857,  1.78273857, 1.92757952,  1.92757952,  1.92757952,  1.92757952, 2.0724206 ,  2.0724206 ,  2.0724206 ,  2.0724206 , 2.21726155,  2.21726155,  2.21726155,  2.21726155, 2.36210251,  2.36210251,  2.36210251,  2.36210251, 2.50694346,  2.50694346,  2.50694346,  2.50694346, 2.65178442,  2.65178442,  2.65178442,  2.65178442, 2.79662538,  2.79662538,  2.79662538,  2.79662538});
     auto expBatchMean = NDArrayFactory::create<double>(  {4}, {23.,  24.,  25.,  26.});
@@ -2186,10 +2186,10 @@ TEST_F(DeclarableOpsTests5, fusedBatchNorm_test2) {
     auto x = NDArrayFactory::create<double>(  {2, 2, 3, 4});
     x.linspace(1);
 
-    auto scale = NDArrayFactory::create<double>(  {4});
+    auto scale = NDArrayFactory::vector<double>(4);
 
     scale = 0.5;
-    auto offset = NDArrayFactory::create<double>(  {4});
+    auto offset = NDArrayFactory::vector<double>(4);
     offset = 2.;
     auto expY = NDArrayFactory::create<double>(  {2, 2, 3, 4}, {1.20347691,  1.20347691,  1.20347691,  1.20347691, 1.34829926,  1.34829926,  1.34829926,  1.34829926, 1.49312162,  1.49312162,  1.49312162,  1.49312162, 1.6379441 ,  1.6379441 ,  1.6379441 ,  1.6379441 , 1.78276646,  1.78276646,  1.78276646,  1.78276646, 1.92758882,  1.92758882,  1.92758882,  1.92758882, 2.0724113 ,  2.0724113 ,  2.0724113 ,  2.0724113 , 2.21723366,  2.21723366,  2.21723366,  2.21723366, 2.36205602,  2.36205602,  2.36205602,  2.36205602, 2.50687838,  2.50687838,  2.50687838,  2.50687838, 2.65170074,  2.65170074,  2.65170074,  2.65170074, 2.79652309,  2.79652309,  2.79652309,  2.79652309});
     auto expBatchMean = NDArrayFactory::create<double>(  {4}, {23.,  24.,  25.,  26.});
@@ -2215,10 +2215,10 @@ TEST_F(DeclarableOpsTests5, fusedBatchNorm_test3) {
     auto x = NDArrayFactory::create<double>(  {2, 4, 2, 3});
     x.linspace(1);
 
-    auto scale = NDArrayFactory::create<double>(  {4});
+    auto scale = NDArrayFactory::vector<double>(4);
 
     scale = 0.5;
-    auto offset = NDArrayFactory::create<double>(  {4});
+    auto offset = NDArrayFactory::vector<double>(4);
     offset = 2.;
     auto expY = NDArrayFactory::create<double>(  {2, 4, 2, 3}, {1.20337462,  1.20337462,  1.20337462,  1.20337462, 1.34821558,  1.34821558,  1.34821558,  1.34821558, 1.49305654,  1.49305654,  1.49305654,  1.49305654, 1.63789749,  1.63789749,  1.63789749,  1.63789749, 1.78273857,  1.78273857,  1.78273857,  1.78273857, 1.92757952,  1.92757952,  1.92757952,  1.92757952, 2.0724206 ,  2.0724206 ,  2.0724206 ,  2.0724206 , 2.21726155,  2.21726155,  2.21726155,  2.21726155, 2.36210251,  2.36210251,  2.36210251,  2.36210251, 2.50694346,  2.50694346,  2.50694346,  2.50694346, 2.65178442,  2.65178442,  2.65178442,  2.65178442, 2.79662538,  2.79662538,  2.79662538,  2.79662538});
     auto expBatchMean = NDArrayFactory::create<double>(  {4}, {23.,  24.,  25.,  26.});
