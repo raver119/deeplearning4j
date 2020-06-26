@@ -285,9 +285,9 @@ TEST_F(DeclarableOpsTests9, concat_test2) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, concat_test3) {
 
-    auto x0 = NDArrayFactory::create<float>(  {3});
-    auto x1 = NDArrayFactory::create<float>(  {2});
-    auto x2 = NDArrayFactory::create<float>(  {1});
+    auto x0 = NDArrayFactory::vector<float>(3);
+    auto x1 = NDArrayFactory::vector<float>(2);
+    auto x2 = NDArrayFactory::vector<float>(1);
     auto exp = NDArrayFactory::create<float>(  {6}, {1.f, 2.f, 3.f, 1.f, 2.f, 1.f});
 
     x0.linspace(1);
@@ -604,7 +604,7 @@ TEST_F(DeclarableOpsTests9, concat_test17) {
     for (int e = 0; e < numOfTads; ++e) {
         NDArray tad  = (*z)(e, {0});
         auto mean = tad.meanNumber().e<float>(0);
-        ASSERT_NEAR((e+1)*1., mean, 1e-5);
+        ASSERT_NEAR((e + 1) * 1., mean, 1e-5);
     }
 }
 
@@ -628,7 +628,7 @@ TEST_F(DeclarableOpsTests9, concat_test18) {
     op.execute(&context);
 
     for (int e = 0; e < 2000; e++) {
-        auto exp = NDArrayFactory::create<int>(  {300});
+        auto exp = NDArrayFactory::vector<int>(300);
         exp.assign(e);
         auto row = z(e, {0});
         ASSERT_EQ(exp, row);
@@ -878,7 +878,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test3) {
 TEST_F(DeclarableOpsTests9, tile_bp_test4) {
 
     auto input    = NDArrayFactory::create<double>(  {6}, {1.,2.,3.,4.,5.,6.});
-    auto gradO    = NDArrayFactory::create<double>(  {12});
+    auto gradO    = NDArrayFactory::vector<double>(12);
     auto gradIExp = NDArrayFactory::create<double>(  {6}, {0.08, 0.1 , 0.12, 0.14, 0.16, 0.18});
 
     gradO.linspace(0.01, 0.01);
@@ -898,7 +898,7 @@ TEST_F(DeclarableOpsTests9, tile_bp_test4) {
 TEST_F(DeclarableOpsTests9, tile_bp_test5) {
 
     auto input    = NDArrayFactory::create<double>(  {1}, {1.});
-    auto gradO    = NDArrayFactory::create<double>(  {1});
+    auto gradO    = NDArrayFactory::vector<double>(1);
     auto gradIExp = NDArrayFactory::create<double>(  {1}, {0.01});
 
     gradO.linspace(0.01, 0.01);
@@ -1223,7 +1223,7 @@ TEST_F(DeclarableOpsTests9, test_unstack_1) {
 
 ////////////////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests9, test_unstack_SGO_1) {
-    auto x = NDArrayFactory::create<double>({1, 2, 3, 4, 5});
+    auto x = NDArrayFactory::vector<double>({1, 2, 3, 4, 5});
     x.linspace(1.0);
     auto z1 = NDArrayFactory::create<double>(1);
     auto z2 = NDArrayFactory::create<double>(2);
@@ -1913,7 +1913,7 @@ TEST_F(DeclarableOpsTests9, thresholdedrelu_bp_test1) {
 TEST_F(DeclarableOpsTests9, multiply_test1) {
 
     auto x = NDArrayFactory::create<double>(  {2, 3, 4});
-    auto y = NDArrayFactory::create<double>(  {4});
+    auto y = NDArrayFactory::vector<double>(4);
     auto exp = NDArrayFactory::create<double>(  {2, 3, 4}, {0.1f, 0.4f, 0.9f, 1.6f, 0.5f, 1.2f, 2.1f, 3.2f, 0.9f, 2.f, 3.3f, 4.8f, 1.3f, 2.8f, 4.5f, 6.4f, 1.7f, 3.6f, 5.7f, 8.f, 2.1f, 4.4f, 6.9f, 9.6f});
     x.linspace(1.f);
     y.linspace(0.1f, 0.1f);
