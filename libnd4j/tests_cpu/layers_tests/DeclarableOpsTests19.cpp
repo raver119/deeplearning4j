@@ -75,8 +75,8 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_1) {
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_2) {
     for (int length = 5; length < 35; length++) {
-        auto x = NDArrayFactory::create<double>(  {10000});
-        auto exp_gradients = NDArrayFactory::create<double>(  {10000});
+        auto x = NDArrayFactory::vector<double>(10000);
+        auto exp_gradients = NDArrayFactory::vector<double>(10000);
 
         for (int e = 0; e < length; e++) {
             x.p(e, 2e-3);
@@ -94,7 +94,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_2) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_1) {
-    auto x = NDArrayFactory::create<float>(  {6});
+    auto x = NDArrayFactory::vector<float>(6);
     x = 1.0f;
 
     sd::ops::encode_threshold op;
@@ -108,7 +108,7 @@ TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_1) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_boundary_2) {
-    auto x = NDArrayFactory::create<float>(  {1000});
+    auto x = NDArrayFactory::vector<float>(1000);
     x = 1.0f;
 
     sd::ops::encode_threshold op;
@@ -199,7 +199,7 @@ TEST_F(DeclarableOpsTests19, test_bitmap_encode_decode) {
 }
 
 TEST_F(DeclarableOpsTests19, test_threshold_encode_decode) {
-    auto initial = NDArrayFactory::create<float>(  {256000});
+    auto initial = NDArrayFactory::vector<float>(256000);
     initial = 1.0f;
     auto exp = initial.dup();
     auto neg = initial.like();

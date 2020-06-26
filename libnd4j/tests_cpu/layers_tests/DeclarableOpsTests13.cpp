@@ -105,7 +105,7 @@ TEST_F(DeclarableOpsTests13, test_argmax_edge_1) {
     auto arr = NDArrayFactory::create<float>({1024,1});
 
     ctx->setInputArray(0, arr);
-    ctx->setOutputArray(0, NDArrayFactory::create<Nd4jLong >({1}));
+    ctx->setOutputArray(0, NDArrayFactory::vector<Nd4jLong >(1));
     ctx->setInputArray(1, NDArrayFactory::create<Nd4jLong >(0));   //Axis 0
 
 
@@ -133,8 +133,8 @@ TEST_F(DeclarableOpsTests13, test_listdiff_1) {
     auto x = NDArrayFactory::create<int>({4}, {0, 1, 2, 3});
     auto y = NDArrayFactory::create<int>({2}, {3, 1});
 
-    auto od = NDArrayFactory::create<int>({2});
-    auto oi = NDArrayFactory::create<int>({2});
+    auto od = NDArrayFactory::vector<int>(2);
+    auto oi = NDArrayFactory::vector<int>(2);
 
     sd::ops::listdiff op;
     auto result = op.execute({&x, &y}, std::vector<NDArray*>{&od, &oi}, {}, {}, {});

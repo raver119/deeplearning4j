@@ -599,7 +599,7 @@ TEST_F(DeclarableOpsTests15, test_check_numeric_2) {
 
     auto x = NDArrayFactory::create<float>(  {3},{1.f, 2.f, std::numeric_limits<float>::infinity()});
     auto y = NDArrayFactory::string("should trigger");
-    auto z = NDArrayFactory::create<float>(  {3} );
+    auto z = NDArrayFactory::vector<float>(3);
 
     sd::ops::check_numerics op;
     try {
@@ -618,7 +618,7 @@ TEST_F(DeclarableOpsTests15, test_check_numeric_3) {
 
     auto x = NDArrayFactory::create<float>(  {3},{1.f, 2.f, std::numeric_limits<float>::quiet_NaN()});
     auto y = NDArrayFactory::string("should trigger");
-    auto z = NDArrayFactory::create<float>(  {3} );
+    auto z = NDArrayFactory::vector<float>(3);
 
     sd::ops::check_numerics op;
     try {
@@ -712,8 +712,8 @@ TEST_F(DeclarableOpsTests15, test_hashCode_2) {
 
 TEST_F(DeclarableOpsTests15, test_rank_1) {
     auto array = NDArrayFactory::create<float>(  {4, 64});
-    auto e = NDArrayFactory::create<int>(  {}, {2});
-    auto z = NDArrayFactory::create<int>(  {});
+    auto e = NDArrayFactory::create<int>(2);
+    auto z = NDArrayFactory::create<int>(0);
 
     sd::ops::rank op;
     auto result = op.execute({&array}, {&z}, {}, {}, {});
@@ -723,7 +723,7 @@ TEST_F(DeclarableOpsTests15, test_rank_1) {
 
 TEST_F(DeclarableOpsTests15, test_rank_2) {
     auto array = NDArrayFactory::create<float>(  {4, 64});
-    auto e = NDArrayFactory::create<int>(  {}, {2});
+    auto e = NDArrayFactory::create<int>(2);
 
     sd::ops::rank op;
     auto result = op.evaluate({&array}, {}, {});
@@ -745,7 +745,7 @@ TEST_F(DeclarableOpsTests15, test_lstmBlock_1) {
     auto x5 = NDArrayFactory::create<float>(  {1, 3});
     auto x6 = NDArrayFactory::create<float>(  {1, 3});
     auto x7 = NDArrayFactory::create<float>(  {1, 3});
-    auto x8 = NDArrayFactory::create<float>(  {12});
+    auto x8 = NDArrayFactory::vector<float>(12);
 
     sd::ops::lstmBlock op;
     auto result = op.evaluate({&x0, &x1, &x2, &x3, &x4, &x5, &x6, &x7, &x8}, {2.0, 0.3}, {0, 0});
