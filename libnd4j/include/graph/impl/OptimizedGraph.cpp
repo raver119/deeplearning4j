@@ -55,10 +55,10 @@ void OptimizedGraph::sortGraphWithFrames(const VariableSpace& varSpace) {
     MAP_IMPL<int, NodeInfo> workMap;  // key is node id, value is class NodeInfo containing auxiliary information (layer number this node belongs to, input/output nodes)
 
     // create workMap, fill vectors containing input and output nodes per each node, and find start nodes
-    std::unordered_map<std::size_t, std::vector<int>> nextItersOfFrame;    // key - id of frame, value is vector containing ids of all NextIterations of this frame
-    std::hash<std::string> hasher;
+    std::unordered_map<std::string, std::vector<int>> nextItersOfFrame;    // key - id of frame, value is vector containing ids of all NextIterations of this frame
     for (auto& p : _nodesMap) {
 
+        const auto& id = p.first;
         const auto& inputs = p.second.inputs();
         const auto& nameOfNode = p.second.name();
 
@@ -66,31 +66,32 @@ void OptimizedGraph::sortGraphWithFrames(const VariableSpace& varSpace) {
 
             const int idOfEnter = _nodesMap[_nodesMap[inputs[0].first].inputs()[0].first].inputs()[0].first;
             p.second.setFrameId(_nodesMap[idOfEnter].frameId());
-            _nodesMap[idOfEnter].setExitId(p.first);
+            _nodesMap[idOfEnter].setExitId(id);
 
         } else if (nameOfNode.find("NextIteration") != std::string::npos) {
 
             const std::string frameName = nameOfNode.substr(0, nameOfNode.find_last_of("/"));
-            nextItersOfFrame[hasher(frameName)].push_back(p.first);
+            nextItersOfFrame[frameName].push_back(id);
         }
 
         for (int i = 0; i < inputs.size(); ++i) {
 
-            if (_nodesMap.count(inputs[i].first) != 0) {              // is op
+            const auto& inId = inputs[i].first;
+            if (_nodesMap.count(inId) != 0) {              // is op
 
-                _nodesMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
-                workMap[p.first]._in.push_back(inputs[i].first);
+                _nodesMap[inId].pickOutput(id, inputs[i].second);
+                workMap[id]._in.push_back(inId);
 
             } else {                                              // is variable
 
-                const auto depends = varSpace.getVariable(inputs[i].first).get()->dependencies();
+                const auto& depends = varSpace.getVariable(inId).get()->dependencies();
 
                 for (int j = 0; j < depends.size(); ++j) {
 
-                    if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
+                    if(std::find(workMap[id]._in.begin(), workMap[id]._in.end(), depends[j].first) == workMap[id]._in.end()) {
 
-                        _nodesMap[depends[j].first].pickOutput(p.first, depends[j].second);
-                        workMap[p.first]._in.push_back(depends[j].first);
+                        _nodesMap[depends[j].first].pickOutput(id, depends[j].second);
+                        workMap[id]._in.push_back(depends[j].first);
                     }
                 }
             }
@@ -121,7 +122,7 @@ void OptimizedGraph::sortGraphWithFrames(const VariableSpace& varSpace) {
                 else if (nameOfNode.find("Exit") != std::string::npos) {
                     const std::string frameName = nameOfNode.substr(0, nameOfNode.find_last_of("/"));
 
-                    for (const auto& j : nextItersOfFrame[hasher(frameName)]) {
+                    for (const auto& j : nextItersOfFrame[frameName]) {
                         if(!workMap[j]._isActive){
                             makeActive = false;
                             break;
@@ -163,44 +164,69 @@ void OptimizedGraph::sortUsualGraph(const VariableSpace& varSpace) {
     MAP_IMPL<int, NodeInfo> workMap;  // key is node id, value is class NodeInfo containing auxiliary information (layer number this node belongs to, input/output nodes, OpSequence that starts from this node)
 
     // create workMap, fill vectors containing input and output nodes per each node, and find start nodes
-    std::vector<int> startNodes;
+    std::vector<int> startNodes, idsOfExits, idsOfNextIters;
     for (auto& p : _nodesMap) {
 
+        const auto& id = p.first;
         const auto& inputs = p.second.inputs();
 
         if(p.second.name().find("Exit") != std::string::npos) {
+            idsOfExits.push_back(id);
             const int idOfEnter = _nodesMap[_nodesMap[inputs[0].first].inputs()[0].first].inputs()[0].first;
             p.second.setFrameId(_nodesMap[idOfEnter].frameId());
-            _nodesMap[idOfEnter].setExitId(p.first);
+            _nodesMap[idOfEnter].setExitId(id);
+        }
+        else if(p.second.name().find("NextIteration") != std::string::npos) {
+            idsOfNextIters.push_back(id);
         }
 
         for (int i = 0; i < inputs.size(); ++i) {
 
-            if (_nodesMap.count(inputs[i].first) != 0) {              // is op
-                _nodesMap[inputs[i].first].pickOutput(p.first, inputs[i].second);
-                if(_nodesMap[inputs[i].first].name().find("NextIteration") == std::string::npos) {
-                    workMap[inputs[i].first]._out.push_back(p.first);
-                    workMap[p.first]._in.push_back(inputs[i].first);
+            const auto& inId = inputs[i].first;
+            if (_nodesMap.count(inId) != 0) {              // is op
+
+                _nodesMap[inId].pickOutput(id, inputs[i].second);
+
+                if(_nodesMap[inId].name().find("NextIteration") == std::string::npos) {
+                    workMap[inId]._out.push_back(id);
+                    workMap[id]._in.push_back(inId);
                 }
             }
             else {                                              // is variable
 
-                const auto depends = varSpace.getVariable(inputs[i].first).get()->dependencies();
+                const auto& depends = varSpace.getVariable(inId).get()->dependencies();
 
                 for (int j = 0; j < depends.size(); ++j) {
-                    if(std::find(workMap[p.first]._in.begin(), workMap[p.first]._in.end(), depends[j].first) == workMap[p.first]._in.end()) {
-                        _nodesMap[depends[j].first].pickOutput(p.first, depends[j].second);
+                    if(std::find(workMap[id]._in.begin(), workMap[id]._in.end(), depends[j].first) == workMap[id]._in.end()) {
+                        _nodesMap[depends[j].first].pickOutput(id, depends[j].second);
                         if(_nodesMap[depends[j].first].name().find("NextIteration") == std::string::npos) {
-                            workMap[depends[j].first]._out.push_back(p.first);
-                            workMap[p.first]._in.push_back(depends[j].first);
+                            workMap[depends[j].first]._out.push_back(id);
+                            workMap[id]._in.push_back(depends[j].first);
                         }
                     }
                 }
             }
         }
 
-        if(workMap[p.first]._in.empty())
-            startNodes.push_back(p.first);
+        if(workMap[id]._in.empty())
+            startNodes.push_back(id);
+    }
+
+    // make all NextIteration within current frame to be inputs for all Exits within the same frame
+    for (const auto& i0 : idsOfExits) {
+
+        const std::string frameName0 = _nodesMap[i0].name().substr(0, _nodesMap[i0].name().find_last_of("/"));
+
+        for (const auto& i1 : idsOfNextIters) {
+
+            const std::string frameName1 = _nodesMap[i1].name().substr(0, _nodesMap[i1].name().find_last_of("/"));
+
+            if(frameName0 != frameName1)
+                continue;
+
+            workMap[i0]._in.push_back(i1);
+            workMap[i1]._out.push_back(i0);
+        }
     }
 
     // collect OpSequences (fill _opSeq)
