@@ -78,7 +78,7 @@ TEST_F(DeclarableOpsTests14, Multiply_test) {
     for(int k=2;k<10;k++){
         //nd4j_printf("k=%d\n", k);
         NDArray x = NDArrayFactory::create<double>({k, 1});
-        NDArray y = NDArrayFactory::create<double>({k});
+        NDArray y = NDArrayFactory::vector<double>(k);
         NDArray e = NDArrayFactory::create<double>({k, k});
         x.assign(1.0);
         y.assign(1.0);

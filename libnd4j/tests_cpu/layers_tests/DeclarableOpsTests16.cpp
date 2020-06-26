@@ -117,7 +117,7 @@ TEST_F(DeclarableOpsTests16, test_empty_noop_2) {
 
 TEST_F(DeclarableOpsTests16, test_svd_1) {
     auto x = NDArrayFactory::create<float>({ 3, 3 }, { 0.7787856f, 0.80119777f, 0.72437465f, 0.23089433f, 0.72714126f, 0.18039072f,0.50563407f, 0.89252293f, 0.5461209f });
-    auto z = NDArrayFactory::create<float>({ 3 });
+    auto z = NDArrayFactory::vector<float>( 3 );
 
     sd::ops::svd op;
     auto status = op.execute({ &x }, { &z }, {}, { 0, 0, 16 }, {});
@@ -126,8 +126,8 @@ TEST_F(DeclarableOpsTests16, test_svd_1) {
 }
 
 TEST_F(DeclarableOpsTests16, test_hamming_distance_1) {
-    auto x = NDArrayFactory::create<Nd4jLong>({ 37, 37, 37 });
-    auto y = NDArrayFactory::create<Nd4jLong>({ 8723, 8723, 8723 });
+    auto x = NDArrayFactory::vector<Nd4jLong>({ 37, 37, 37 });
+    auto y = NDArrayFactory::vector<Nd4jLong>({ 8723, 8723, 8723 });
     auto e = NDArrayFactory::create<Nd4jLong>(18);
 
     sd::ops::bits_hamming_distance op;
@@ -167,7 +167,7 @@ TEST_F(DeclarableOpsTests16, test_empty_cast_1) {
 
 TEST_F(DeclarableOpsTests16, test_range_1) {
     sd::ops::range op;
-    auto z = NDArrayFactory::create<float>({ 200 });
+    auto z = NDArrayFactory::vector<float>( 200 );
 
     Context ctx(1);
     ctx.setTArguments({ -1.0, 1.0, 0.01 });
@@ -179,7 +179,7 @@ TEST_F(DeclarableOpsTests16, test_range_1) {
 
 TEST_F(DeclarableOpsTests16, test_range_2) {
     sd::ops::range op;
-    auto z = NDArrayFactory::create<float>({ 200 });
+    auto z = NDArrayFactory::vector<float>( 200 );
 
     double tArgs[] = { -1.0, 1.0, 0.01 };
 
@@ -201,8 +201,8 @@ TEST_F(DeclarableOpsTests16, test_reverse_1) {
             auto exp = NDArrayFactory::create<float>({ r, c });
             auto reversed = NDArrayFactory::create<float>({ r, c });
 
-            auto rowOriginal = NDArrayFactory::create<float>({ c });
-            auto rowReversed = NDArrayFactory::create<float>({ c });
+            auto rowOriginal = NDArrayFactory::vector<float>(c);
+            auto rowReversed = NDArrayFactory::vector<float>(c);
 
             for (int e = 0; e < c; e++) {
                 rowOriginal.p(e, (float)e);
@@ -253,6 +253,7 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_1) {
          0.911922634f, 0.270003974f, 0.164243385f, 0.0581932105f, 0.313204288f,
          0.644775152f, 0.437950462f, 0.775881767f, 0.575452209f, 0.946475744f
         });
+
     auto expected = NDArrayFactory::create<float>({ 5, 4, 3 }, {
          0.262831867f, 0.430244058f, 0.725874603f, 0.723622441f, 0.418478161f,
          0.890151322f, 0.740797927f, 0.906427443f, 0.928968489f, 0.717254877f,
@@ -392,14 +393,14 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_4) {
 }
 
 TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_5) {
-    auto rgbs = NDArrayFactory::create<float>({ 3 }, {
+    auto rgbs = NDArrayFactory::vector<float>( {
         0.545678377f, 0.725874603f, 0.413571358f
         });
-    auto expected = NDArrayFactory::create<float>({ 3 }, {
+    auto expected = NDArrayFactory::vector<float>( {
            0.262831867f, 0.430244058f, 0.725874603f
         });
 
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>(3);
 
     Context ctx(1);
     ctx.setInputArray(0, &rgbs);
@@ -436,7 +437,7 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_hsv_6) {
     //[RANK][SHAPE][STRIDES][OPTIONS][EWS][ORDER]
     subArrRgbs.printShapeInfo("subArrRgbs");
 #endif
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>( 3 );
 
     Context ctx(1);
     ctx.setInputArray(0, &subArrRgbs);
@@ -591,14 +592,10 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_4) {
 
 TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_5) {
 
-    auto hsvs = NDArrayFactory::create<float>({ 3 }, {
-        0.705504596f, 0.793608069f, 0.65870738f
-        });
-    auto expected = NDArrayFactory::create<float>({ 3 }, {
-           0.257768334f, 0.135951888f, 0.65870738f
-        });
+    auto hsvs = NDArrayFactory::create<float>({ 3 }, {0.705504596f, 0.793608069f, 0.65870738f});
+    auto expected = NDArrayFactory::create<float>({ 3 }, {0.257768334f, 0.135951888f, 0.65870738f});
 
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>(3);
 
     Context ctx(1);
     ctx.setInputArray(0, &hsvs);
@@ -626,7 +623,7 @@ TEST_F(DeclarableOpsTests16, test_hsv_to_rgb_6) {
          0.773604929f, 0.074230373f
         });
 
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>(3);
     //get subarray
     NDArray subArrHsvs = hsvs.subarray({ NDIndex::all(), NDIndex::point(0) });
     subArrHsvs.reshapei({ 3 });
@@ -826,7 +823,7 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_5) {
         { 0.64696468f, -0.01777124f, -0.24070648f, });
 
 
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>( 3 );
 
     Context ctx(1);
     ctx.setInputArray(0, &rgbs);
@@ -864,7 +861,7 @@ TEST_F(DeclarableOpsTests16, test_rgb_to_yiq_6) {
     //[RANK][SHAPE][STRIDES][OPTIONS][EWS][ORDER]
     subArrRgbs.printShapeInfo("subArrRgbs");
 #endif
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>( 3 );
 
     Context ctx(1);
     ctx.setInputArray(0, &subArrRgbs);
@@ -1025,7 +1022,7 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_5) {
     auto expected = NDArrayFactory::create<float>({ 3 }, {
     0.416663059f, 0.939747555f, 0.868814286f
         });
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>( 3 );
 
     Context ctx(1);
     ctx.setInputArray(0, &yiqs);
@@ -1063,7 +1060,7 @@ TEST_F(DeclarableOpsTests16, test_yiq_to_rgb_6) {
     //[RANK][SHAPE][STRIDES][OPTIONS][EWS][ORDER]
     subArrYiqs.printShapeInfo("subArrYiqs");
 #endif
-    auto actual = NDArrayFactory::create<float>({ 3 });
+    auto actual = NDArrayFactory::vector<float>( 3 );
 
     Context ctx(1);
     ctx.setInputArray(0, &subArrYiqs);
@@ -1295,9 +1292,9 @@ TEST_F(DeclarableOpsTests16, clipbynorm_13) {
     const int axis = 0;
     const double clip = 2.;
 
-    auto x = NDArrayFactory::create<double>({bS, nOut}, {0.412 ,0.184 ,0.961 ,0.897 ,0.173 ,0.931 ,0.736 ,0.540 ,0.953 ,0.278 ,0.573 ,0.787 ,0.320 ,0.776 ,0.338 ,0.311 ,0.835 ,0.909 ,0.890 ,0.290});    // uniform random in range [0,1]
-    auto colVect = NDArrayFactory::create<double>({bS, 1}, {0.9, 0.95, 1.00, 1.05, 1.1});
-    auto expect = NDArrayFactory::create<double>({bS, nOut});
+    auto x = NDArrayFactory::create<double>(  {bS, nOut}, {0.412 ,0.184 ,0.961 ,0.897 ,0.173 ,0.931 ,0.736 ,0.540 ,0.953 ,0.278 ,0.573 ,0.787 ,0.320 ,0.776 ,0.338 ,0.311 ,0.835 ,0.909 ,0.890 ,0.290});    // uniform random in range [0,1]
+    auto colVect = NDArrayFactory::create<double>(  {bS, 1}, {0.9, 0.95, 1.00, 1.05, 1.1});
+    auto expect = NDArrayFactory::create<double>(  {bS, nOut});
 
     auto norm2 = x.reduceAlongDimension(reduce::Norm2, {axis}, true); // norm2 has shape [1, nOut]
 
