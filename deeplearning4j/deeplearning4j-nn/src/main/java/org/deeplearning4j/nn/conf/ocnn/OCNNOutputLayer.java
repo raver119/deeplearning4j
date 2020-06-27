@@ -24,6 +24,9 @@ import org.deeplearning4j.nn.conf.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.conf.layers.LayerValidation;
 import org.deeplearning4j.nn.layers.ocnn.OCNNParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.activations.impl.ActivationIdentity;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -122,6 +125,19 @@ public class OCNNOutputLayer extends BaseOutputLayer {
             paramTable.get(OCNNParamInitializer.R_KEY).putScalar(0, initialRValue);
         }
         return ret;
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable w = paramTable.get(OCNNParamInitializer.W_KEY);
+        SDVariable v = paramTable.get(OCNNParamInitializer.V_KEY);
+
+        SDVariable wFlat = w.reshape(sameDiff.concat(0, w.shape().get(SDIndex.point(0)), sameDiff.constant(-1)));
+
+        SDVariable first = layerInput.mul(v);
+        SDVariable  act2d = doActivation(first);
+        return act2d.mul(wFlat); //TODO DL4J implementation sets labels to the output as well, will this work here?  probably not
     }
 
     @Override

@@ -87,7 +87,7 @@ public class ZeroPadding1DLayer extends NoParamLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
         int padLeft = padding[0];

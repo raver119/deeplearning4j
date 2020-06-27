@@ -25,15 +25,21 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.Convolution3DLayer;
 import org.deeplearning4j.nn.params.Convolution3DParamInitializer;
+import org.deeplearning4j.nn.params.ConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.Convolution3DUtils;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv3DConfig;
 
 /**
  * 3D convolution layer configuration
@@ -111,6 +117,29 @@ public class Convolution3D extends ConvolutionLayer {
     @Override
     public ParamInitializer initializer() {
         return Convolution3DParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable weight = paramTable.get(Convolution3DParamInitializer.WEIGHT_KEY);
+        SDVariable bias = paramTable.get(Convolution3DParamInitializer.BIAS_KEY);
+
+        weight = weight.permute(2, 3, 4, 1, 0);
+
+        SDVariable value = sameDiff.cnn.conv3d(layerInput, weight, bias,
+                Conv3DConfig.builder()
+                        .dataFormat(this.dataFormat.name())
+                        .isSameMode(convolutionMode == ConvolutionMode.Same)
+                        .kD(kernelSize[0]).kH(kernelSize[1]).kW(kernelSize[2])
+                        .sD(stride[0]).sH(stride[1]).sW(stride[2])
+                        .pD(padding[0]).pH(padding[1]).pW(padding[2])
+                        .dD(dilation[0]).dH(dilation[1]).dW(dilation[2])
+                        .biasUsed(hasBias)
+                        .build()
+        );
+
+        return doActivation(value);
     }
 
     @Override

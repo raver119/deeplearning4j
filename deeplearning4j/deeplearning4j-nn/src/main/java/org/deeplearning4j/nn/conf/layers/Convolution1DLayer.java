@@ -19,20 +19,29 @@ package org.deeplearning4j.nn.conf.layers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
+import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.params.ConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.Convolution1DUtils;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv1DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
 
 /**
  * 1D (temporal) convolutional layer. This layer accepts RNN InputTypes instead of CNN InputTypes
@@ -75,6 +84,40 @@ public class Convolution1DLayer extends ConvolutionLayer {
         ret.setParamTable(paramTable);
         ret.setConf(conf);
         return ret;
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable weight = paramTable.get(ConvolutionParamInitializer.WEIGHT_KEY);
+        SDVariable bias = paramTable.get(ConvolutionParamInitializer.BIAS_KEY);
+
+        // weights are in conv2d shape and different format
+        weight = sameDiff.squeeze(weight, 3);
+        // is now [outDepth, inDepth, kernel]
+        weight = weight.permute(2, 1, 0);
+
+        PaddingMode paddingMode;
+
+        if(convolutionMode == ConvolutionMode.Same)
+            paddingMode = PaddingMode.SAME;
+        else if(convolutionMode == ConvolutionMode.Causal)
+            paddingMode = PaddingMode.CAUSAL;
+        else
+            paddingMode = PaddingMode.VALID;
+
+        SDVariable value = sameDiff.cnn.conv1d(layerInput, weight, bias,
+                Conv1DConfig.builder()
+                        .dataFormat(rnnDataFormat.name())
+                        .paddingMode(paddingMode)
+                        .k(kernelSize[0])
+                        .s(stride[0])
+                        .p(padding[0])
+                        .d(dilation[0])
+                        .build()
+        );
+
+        return doActivation(value);
     }
 
     @Override

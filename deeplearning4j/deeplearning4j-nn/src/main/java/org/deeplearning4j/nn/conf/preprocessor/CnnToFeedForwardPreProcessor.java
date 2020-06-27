@@ -196,7 +196,7 @@ public class CnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
     }
 
     @Override
-    public @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         return input.reshape(-1, numChannels * inputHeight * inputWidth);
     }
 }

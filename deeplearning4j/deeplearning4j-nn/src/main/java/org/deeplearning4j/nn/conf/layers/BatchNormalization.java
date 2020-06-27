@@ -30,6 +30,8 @@ import org.deeplearning4j.nn.conf.preprocessor.FeedForwardToCnnPreProcessor;
 import org.deeplearning4j.nn.conf.preprocessor.RnnToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.params.BatchNormalizationParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.learning.config.IUpdater;
@@ -108,6 +110,37 @@ public class BatchNormalization extends FeedForwardLayer {
         return BatchNormalizationParamInitializer.getInstance();
     }
 
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        if(lockGammaBeta)
+            throw new UnsupportedOperationException("Locked Gamma & Beta not supported for SameDiff conversion");
+        if(useLogStd)
+            throw new UnsupportedOperationException("LogStd not supported for SameDiff conversion");
+
+        SDVariable beta = paramTable.get(BatchNormalizationParamInitializer.BETA);
+        SDVariable gamma = paramTable.get(BatchNormalizationParamInitializer.GAMMA);
+        SDVariable mean = paramTable.get(BatchNormalizationParamInitializer.GLOBAL_MEAN);
+        SDVariable variance = paramTable.get(BatchNormalizationParamInitializer.GLOBAL_VAR);
+
+        int axis;
+        if(cnn2DFormat == CNN2DFormat.NCHW)
+            axis = 1;
+        else if(cnn2DFormat == CNN2DFormat.NHWC)
+            axis = 3;
+        else
+            throw new UnsupportedOperationException("Unknown CNN data format " + cnn2DFormat);
+
+        SDVariable output = sameDiff.nn.batchNorm(layerInput,
+                sameDiff.squeeze(mean, 0),
+                sameDiff.squeeze(variance, 0),
+                sameDiff.squeeze(gamma, 0),
+                sameDiff.squeeze(beta, 0),
+                eps,
+                axis);
+        return doActivation(output);
+    }
 
     @Override
     public InputType getOutputType(int layerIndex, InputType inputType) {

@@ -70,9 +70,9 @@ public class LossMSE extends LossL2 {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return super.defineLoss(sameDiff, input, labels).div(labels.shape().get(SDIndex.point(1)));
+        return super.defineLossArray(sameDiff, input, labels).div(labels.shape().get(SDIndex.point(1)));
     }
 
     /**

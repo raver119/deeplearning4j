@@ -34,6 +34,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.serde.jackson.shaded.NDArrayTextDeSerializer;
@@ -54,7 +55,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class LossBinaryXENT extends BaseLossFunction {
+public class LossBinaryXENT extends NonFusedLossFunction {
     public static final double DEFAULT_CLIPPING_EPSILON = 1e-5;
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
@@ -242,7 +243,7 @@ public class LossBinaryXENT extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
         SDVariable scoreArr;
         if(input.getCreator().opName().equals("softmax")){
@@ -255,7 +256,7 @@ public class LossBinaryXENT extends BaseLossFunction {
 
             scoreArr = scoreArr.add(secondTerm);
         }
-        return LossUtil.batchAverage(LossUtil.multiplyWeight(scoreArr, weights));
+        return LossUtil.multiplyWeight(scoreArr.mul(-1), weights);
     }
 
     /**

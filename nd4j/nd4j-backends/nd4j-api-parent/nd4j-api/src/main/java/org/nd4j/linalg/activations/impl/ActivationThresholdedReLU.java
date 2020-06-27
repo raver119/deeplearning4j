@@ -69,7 +69,7 @@ public class ActivationThresholdedReLU extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         //TODO the mul works around a bug in relu, should only need the relu call https://github.com/eclipse/deeplearning4j/issues/9018
         return sameDiff.nn.relu(input, theta).mul(input.gt(theta).castTo(input.dataType()));
     }

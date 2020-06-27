@@ -36,12 +36,20 @@ public class SDIndex {
 
 
     public SDIndex(){}
-    
+
+    /**
+     * Create an index that gets the entire dimension.
+     */
     public static SDIndex all(){
         return new SDIndex();
     }
-    
 
+
+    /**
+     * Create a point index.  The dimension will not be kept.
+     * Negative values are supported, and interpreted as being from the end (like Python indexing).
+     * @param i The index to get.
+     */
     public static SDIndex point(long i){
         SDIndex sdIndex = new SDIndex();
         sdIndex.indexType = IndexType.POINT;
@@ -51,6 +59,12 @@ public class SDIndex {
     }
 
 
+    /**
+     * Create a point index.
+     * Negative values are supported, and interpreted as being from the end (like Python indexing).
+     * @param i The index to get.
+     * @param keepDim Whether to keep the dimension.
+     */
     public static SDIndex point(long i, boolean keepDim){
         SDIndex sdIndex = new SDIndex();
         sdIndex.indexType = IndexType.POINT;
@@ -59,6 +73,12 @@ public class SDIndex {
         return sdIndex;
     }
 
+    /**
+     * Create an interval index with a stride of 1.
+     * Negative values are supported, and interpreted as being from the end (like Python indexing).
+     * @param begin The beginning of the interval.
+     * @param end The end of the interval (exclusive).
+     */
     public static SDIndex interval(Long begin, Long end){
         SDIndex sdIndex = new SDIndex();
         sdIndex.indexType = IndexType.INTERVAL;
@@ -67,6 +87,13 @@ public class SDIndex {
         return sdIndex;
     }
 
+
+    /**
+     * Create an interval index with a stride of 1.
+     * Negative values are supported, and interpreted as being from the end (like Python indexing).
+     * @param begin The beginning of the interval.
+     * @param end The end of the interval (exclusive).
+     */
     public static SDIndex interval(Integer begin, Integer end){
         SDIndex sdIndex = new SDIndex();
         sdIndex.indexType = IndexType.INTERVAL;
@@ -79,6 +106,14 @@ public class SDIndex {
         return sdIndex;
     }
 
+
+    /**
+     * Create an interval index.
+     * Negative endpoints are supported, and interpreted as being from the end (like Python indexing).
+     * @param begin The beginning of the interval.
+     * @param strides The stride of the interval.
+     * @param end The end of the interval (exclusive).
+     */
     public static SDIndex interval(Long begin, Long strides, Long end){
         if(strides == 0){
             throw new ND4JIllegalArgumentException("Invalid index : strides can not be 0.");
@@ -91,6 +126,13 @@ public class SDIndex {
         return sdIndex;
     }
 
+    /**
+     * Create an interval index.
+     * Negative endpoints are supported, and interpreted as being from the end (like Python indexing).
+     * @param begin The beginning of the interval.
+     * @param strides The stride of the interval.
+     * @param end The end of the interval (exclusive).
+     */
     public static SDIndex interval(Integer begin, Integer strides, Integer end){
         if(strides == 0){
             throw new ND4JIllegalArgumentException("Invalid index : strides can not be 0.");

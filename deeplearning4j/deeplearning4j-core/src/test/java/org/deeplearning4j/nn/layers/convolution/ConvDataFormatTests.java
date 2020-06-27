@@ -38,6 +38,8 @@ import org.deeplearning4j.util.ConvolutionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -978,6 +980,11 @@ public class ConvDataFormatTests extends BaseDL4JTest {
         @Override
         public Pair<INDArray, MaskState> feedForwardMaskArray(INDArray maskArray, MaskState currentMaskState, int minibatchSize) {
             return null;
+        }
+
+        @Override
+        public SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+            return input.permute(0, 3, 1, 2);
         }
     }
 

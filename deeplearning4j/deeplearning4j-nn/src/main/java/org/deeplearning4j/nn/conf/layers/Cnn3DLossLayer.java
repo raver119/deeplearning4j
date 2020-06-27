@@ -16,19 +16,26 @@
 
 package org.deeplearning4j.nn.conf.layers;
 
+import java.util.HashMap;
 import lombok.*;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
+import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.Convolution3D.DataFormat;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 import java.util.Collection;
@@ -87,6 +94,47 @@ public class Cnn3DLossLayer extends FeedForwardLayer {
     @Override
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        SDVariable batch = sameDiff.sizeAt(layerInput, 0);
+        SDVariable channels;
+        SDVariable depth;
+        SDVariable height;
+        SDVariable width;
+
+        if(dataFormat == DataFormat.NCDHW){
+            channels = sameDiff.sizeAt(layerInput, 1);
+            depth = sameDiff.sizeAt(layerInput, 2);
+            height = sameDiff.sizeAt(layerInput, 3);
+            width = sameDiff.sizeAt(layerInput, 4);
+            layerInput = layerInput.permute(0, 2, 3, 4, 1);
+        } else if(dataFormat == DataFormat.NDHWC){
+            depth = sameDiff.sizeAt(layerInput, 1);
+            height = sameDiff.sizeAt(layerInput, 2);
+            width = sameDiff.sizeAt(layerInput, 3);
+            channels = sameDiff.sizeAt(layerInput, 4);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
+
+//        Map<String, INDArray> placeholders = new HashMap<>();
+//        long[] inputShape = sameDiff.getVariable("input").placeholderShape();
+//        inputShape[0] = 1;
+//        placeholders.put("input", Nd4j.rand(inputShape));
+
+        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels));
+
+        SDVariable distributedOutput = distributedInput; // doActivation(distributedInput);
+
+        SDVariable output = distributedOutput.reshape(sameDiff.concat(0, batch, depth, height, width, channels));
+
+        if(dataFormat == DataFormat.NCDHW)
+            return output.permute(0, 4, 1, 2, 3);
+        else
+            return output;
     }
 
     @Override

@@ -18,10 +18,13 @@ package org.deeplearning4j.nn.conf.preprocessor;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.workspace.ArrayType;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -89,5 +92,19 @@ public class ComposableInputPreProcessor extends BaseInputPreProcessor {
             currentMaskState = p.getSecond();
         }
         return new Pair<>(maskArray, currentMaskState);
+    }
+
+    @Override
+    public SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        for(InputPreProcessor preProcessor : inputPreProcessors)
+            input = preProcessor.definePreProcess(sameDiff, input);
+        return input;
+    }
+
+    @Override
+    public SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask) {
+        for(InputPreProcessor preProcessor : inputPreProcessors)
+            mask = preProcessor.definePreProcessMask(sameDiff, mask);
+        return mask;
     }
 }

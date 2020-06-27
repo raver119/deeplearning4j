@@ -19,10 +19,13 @@ package org.deeplearning4j.nn.conf.dropout;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -69,7 +72,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties({"mask", "helper", "helperCountFail", "initializedHelper"})
 @EqualsAndHashCode(exclude = {"mask", "helper", "helperCountFail", "initializedHelper"})
 @Slf4j
-public class Dropout implements IDropout {
+public class Dropout extends BaseDropout {
 
     /**
      * When using CuDNN and an error is encountered, should fallback to the non-CuDNN implementatation be allowed?
@@ -240,6 +243,14 @@ public class Dropout implements IDropout {
         Nd4j.getExecutioner().exec(new MulOp(gradAtOutput, m, gradAtInput));
         mask = null;
         return gradAtInput;
+    }
+
+    @Override
+    public SDVariable defineDropout(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        if(pSchedule != null)
+            throw new UnsupportedOperationException("Scheduled dropout is not supported for SameDiff conversion");
+
+        return sameDiff.nn.dropout(input, p);
     }
 
     @Override

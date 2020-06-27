@@ -144,7 +144,7 @@ public class TestDropout extends BaseDL4JTest {
     }
 
     @Data
-    public static class CustomDropout implements IDropout{
+    public static class CustomDropout extends BaseDropout{
         private List<Pair<Integer,Integer>> allCalls = new ArrayList<>();
         private List<Pair<Integer,Integer>> allReverseCalls = new ArrayList<>();
 

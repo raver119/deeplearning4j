@@ -424,7 +424,7 @@ public class OutputLayerTest extends BaseDL4JTest {
                 assertArrayEquals(new long[]{2, 1}, s.shape());
                 assertEquals(s.getDouble(0), s.getDouble(1), 1e-6);
 
-                TestUtils.testToSameDiff(mln, in, labels, true);
+                TestUtils.testToSameDiff(mln, in2, labels2, true);
                 TestUtils.testModelSerialization(mln);
             }
         }

@@ -45,7 +45,7 @@ public class ActivationIdentity extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         return input;
     }
 

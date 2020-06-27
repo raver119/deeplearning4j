@@ -29,12 +29,13 @@ import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.common.primitives.Pair;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 
 /**
  * Created by susaneraly on 8/15/16.
  */
 @EqualsAndHashCode
-public class LossHinge extends BaseLossFunction {
+public class LossHinge extends NonFusedLossFunction {
 
     public INDArray scoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
         if(!labels.equalShapes(preOutput)){
@@ -120,9 +121,9 @@ public class LossHinge extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0.0)).sum(true, 1));
+        return sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0.0)).sum(true, 1);
     }
 
     /**

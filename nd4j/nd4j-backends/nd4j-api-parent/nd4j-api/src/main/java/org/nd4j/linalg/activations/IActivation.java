@@ -63,6 +63,6 @@ public interface IActivation extends Serializable {
     int numParams(int inputSize);
 
     //TODO default impl in BaseActivation, activations
-    @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
 
 }

@@ -82,15 +82,23 @@ public interface ILossFunction extends Serializable {
                     INDArray mask, boolean average);
 
     /**
-     * Define the loss function for a {@link SameDiff} instance.  Can return a scalar or array, the array will be summed.
-     * The scalar or summed array should match computeScore with average = true.
+     * Define the loss function for a {@link SameDiff} instance.  Should return a scalar. <br>
+     *
+     * If average is true, should be the batchwise average, otherwise the sum.
+     *
+     * Note that using a {@link org.nd4j.autodiff.samediff.ops.SDLoss} function with {@link org.nd4j.autodiff.loss.LossReduce} MEAN_BY_NONZERO_WEIGHT_COUNT
+     * will result in the loss values for DL4J and SameDiff being slightly different.
+     * DL4J gets the loss with average=false and then averages it itself, while SameDiff will work with what you pass it.
      *
      * @param sameDiff The {@link SameDiff} instance
      * @param input The input to the loss function, typically the output of the previous layer.
      * @param labels The lables to compare the output to.  Should be the same shape as input.
+     * @param average Whether to average the loss per example.
      * @return The score (loss function value).
      */
-    @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels);
+    SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels, boolean average);
+
+    //TODO defineLossArray method.  Or make defineLoss take LossReduce
 
     /**
      * The opName of this function

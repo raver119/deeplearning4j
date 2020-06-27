@@ -27,6 +27,9 @@ import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.PReLUParamInitializer;
 import org.deeplearning4j.nn.weights.WeightInitConstant;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.common.util.ArrayUtil;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -72,6 +75,13 @@ public class PReLULayer extends BaseLayer {
         ret.setParamTable(paramTable);
         ret.setConf(conf);
         return ret;
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable alpha = paramTable.get(PReLUParamInitializer.WEIGHT_KEY);
+        return doActivation(sameDiff.nn.prelu(layerInput, alpha, ArrayUtil.toInts(sharedAxes)));
     }
 
     @Override

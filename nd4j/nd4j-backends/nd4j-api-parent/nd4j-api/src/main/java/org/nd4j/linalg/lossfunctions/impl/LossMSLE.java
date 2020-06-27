@@ -28,6 +28,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.serde.jackson.shaded.NDArrayTextDeSerializer;
@@ -44,7 +45,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossMSLE extends BaseLossFunction {
+public class LossMSLE extends NonFusedLossFunction {
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
     @JsonDeserialize(using = NDArrayTextDeSerializer.class)
@@ -158,10 +159,10 @@ public class LossMSLE extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
         SDVariable score = sameDiff.math.log(input.add(1.0).div(labels.add(1.0)));
-        return LossUtil.batchAverage(LossUtil.multiplyWeight(score.mul(score).div(labels.shape().get(SDIndex.point(1))), weights));
+        return LossUtil.multiplyWeight(score.mul(score).div(labels.shape().get(SDIndex.point(1))), weights);
     }
 
     /**

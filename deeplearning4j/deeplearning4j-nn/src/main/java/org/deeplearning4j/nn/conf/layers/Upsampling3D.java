@@ -95,7 +95,7 @@ public class Upsampling3D extends BaseUpsamplingLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         return sameDiff.cnn.upsampling3d(layerInput, dataFormat == DataFormat.NCDHW, size[0], size[1], size[2]);
     }

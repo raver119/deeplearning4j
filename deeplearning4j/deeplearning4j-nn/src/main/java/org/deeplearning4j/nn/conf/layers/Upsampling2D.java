@@ -92,7 +92,7 @@ public class Upsampling2D extends BaseUpsamplingLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         return sameDiff.cnn.upsampling2d(layerInput, size[0], size[1], format == CNN2DFormat.NCHW);
     }

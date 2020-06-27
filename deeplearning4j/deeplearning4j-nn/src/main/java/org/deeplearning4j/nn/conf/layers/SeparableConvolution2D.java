@@ -21,17 +21,24 @@ import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.api.layers.LayerConstraint;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
+import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.SeparableConvolution2DLayer;
+import org.deeplearning4j.nn.params.Convolution3DParamInitializer;
 import org.deeplearning4j.nn.params.SeparableConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.*;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv3DConfig;
 
 /**
  * 2D Separable convolution layer configuration.
@@ -147,6 +154,28 @@ public class SeparableConvolution2D extends ConvolutionLayer {
     @Override
     public ParamInitializer initializer() {
         return SeparableConvolutionParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable depthWeight = paramTable.get(SeparableConvolutionParamInitializer.DEPTH_WISE_WEIGHT_KEY);
+        SDVariable pointWeight = paramTable.get(SeparableConvolutionParamInitializer.POINT_WISE_WEIGHT_KEY);
+        SDVariable bias = paramTable.get(SeparableConvolutionParamInitializer.BIAS_KEY);
+
+        SDVariable value = sameDiff.cnn.separableConv2d(layerInput, depthWeight,  pointWeight, bias,
+                Conv2DConfig.builder()
+                        .dataFormat(this.cnn2dDataFormat.name())
+                        .isSameMode(convolutionMode == ConvolutionMode.Same)
+                        .kH(kernelSize[0]).kW(kernelSize[1])
+                        .sH(stride[0]).sW(stride[1])
+                        .pH(padding[0]).pW(padding[1])
+                        .dH(dilation[0]).dW(dilation[1])
+                        .weightsFormat(WeightsFormat.OIYX)
+                        .build()
+        );
+
+        return doActivation(value);
     }
 
     @Override

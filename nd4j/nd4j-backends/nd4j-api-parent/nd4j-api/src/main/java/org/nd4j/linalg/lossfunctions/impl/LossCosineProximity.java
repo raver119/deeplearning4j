@@ -27,6 +27,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
 
@@ -36,7 +37,7 @@ import java.util.Arrays;
  * Created by susaneraly on 9/9/16.
  */
 @EqualsAndHashCode
-public class LossCosineProximity extends BaseLossFunction {
+public class LossCosineProximity extends NonFusedLossFunction {
 
     /**
      *
@@ -144,9 +145,9 @@ public class LossCosineProximity extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(sameDiff.math.cosineSimilarity(labels, input, 1).neg().reshape(-1, 1));
+        return sameDiff.math.cosineSimilarity(labels, input, 1).neg().reshape(-1, 1);
     }
 
     /**

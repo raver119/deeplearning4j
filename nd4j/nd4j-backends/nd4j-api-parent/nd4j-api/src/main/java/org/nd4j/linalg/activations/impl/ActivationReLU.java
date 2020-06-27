@@ -105,7 +105,7 @@ public class ActivationReLU extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         SDVariable temp;
         double thresh = threshold == null ? 0.0 : threshold;
         double ns = negativeSlope == null ? 0.0 : negativeSlope;
@@ -116,7 +116,7 @@ public class ActivationReLU extends BaseActivationFunction {
                 temp = sameDiff.nn.leakyRelu(input, negativeSlope);
             else {
                 //TODO optimize this
-                SDVariable t = sameDiff.constant(thresh);
+                SDVariable t = sameDiff.constant(thresh).castTo(input.dataType());
                 SDVariable oneGte = input.gte(t).castTo(input.dataType());
                 SDVariable oneLt = input.lt(t).castTo(input.dataType());
                 SDVariable lower = oneLt.mul(ns).mul(input.sub(threshold));
@@ -126,7 +126,7 @@ public class ActivationReLU extends BaseActivationFunction {
         }
 
         if(max != null)
-            temp = sameDiff.math.max(sameDiff.constant(max), temp);
+            temp = sameDiff.math.max(sameDiff.constant(max).castTo(temp.dataType()), temp);
 
         return temp;
     }

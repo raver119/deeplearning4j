@@ -98,14 +98,21 @@ public class Cropping3D extends NoParamLayer {
         return ret;
     }
 
+    private static Integer end(int idx){
+        if(idx == 0)
+            return null;
+        else
+            return -idx;
+    }
+
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         //TODO support different dataTypes
         return layerInput.get(SDIndex.all(), SDIndex.all(),
-                SDIndex.interval(cropping[0], -cropping[1]),
-                SDIndex.interval(cropping[2], -cropping[3]),
-                SDIndex.interval(cropping[4], -cropping[5]));
+                SDIndex.interval(cropping[0], end(cropping[1])),
+                SDIndex.interval(cropping[2], end(cropping[3])),
+                SDIndex.interval(cropping[4], end(cropping[5])));
     }
 
     @Override

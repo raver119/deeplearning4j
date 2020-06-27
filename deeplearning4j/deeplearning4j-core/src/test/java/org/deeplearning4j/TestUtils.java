@@ -140,14 +140,13 @@ public class TestUtils {
             lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
         }
 
-        if(Math.abs(sdScore - score) > 1e-3) {
-            network.output(input);
-            network.computeGradientAndScore();
+        if(!sdOutput.equalsWithEps(output, 1e-3)){
+            System.out.println();
         }
 
         assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
-        assertTrue("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
-                Math.abs(sdScore - score) < 1e-3);
+        assertEquals("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
+                sdScore, score, 1e-3);
     }
 
     public static void testToSameDiff(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
@@ -179,12 +178,32 @@ public class TestUtils {
             else
                 testToSameDiff(network, network.getInput(), passUnimplemented);
         } else {
-            try {
-                network.toSameDiff();
-            } catch (UnsupportedOperationException e) {
-                if (!passUnimplemented)
+            SameDiff model;
+            try{
+                model = network.toSameDiff();
+            } catch (UnsupportedOperationException e){
+                if(!passUnimplemented)
                     throw e;
+                else
+                    return;
             }
+
+            long[] inputShape = model.getVariable("input").placeholderShape();
+            for(int i = 0 ; i < inputShape.length ; i++){
+                if(inputShape[i] == -1)
+                    inputShape[i] = 1;
+            }
+
+            INDArray fakeInput = Nd4j.rand(inputShape);
+
+            INDArray output = network.output(fakeInput);
+
+            INDArray sdOutput = model.batchOutput()
+                    .output(model.outputs().get(0))
+                    .input("input", fakeInput)
+                    .outputSingle();
+
+            assertEquals("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
         }
     }
 

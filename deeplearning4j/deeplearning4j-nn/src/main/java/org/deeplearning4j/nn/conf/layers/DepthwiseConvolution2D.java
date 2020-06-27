@@ -20,18 +20,24 @@ import lombok.*;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.conf.CNN2DFormat;
+import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.DepthwiseConvolution2DLayer;
+import org.deeplearning4j.nn.params.ConvolutionParamInitializer;
 import org.deeplearning4j.nn.params.DepthwiseConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
+import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.*;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
 
 /**
  * 2D depth-wise convolution layer configuration.
@@ -87,6 +93,31 @@ public class DepthwiseConvolution2D extends ConvolutionLayer {
     @Override
     public ParamInitializer initializer() {
         return DepthwiseConvolutionParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable weight = paramTable.get(DepthwiseConvolutionParamInitializer.WEIGHT_KEY);
+        SDVariable bias = paramTable.get(DepthwiseConvolutionParamInitializer.BIAS_KEY);
+
+        if(depthMultiplier != 1)
+            throw new UnsupportedOperationException("Can't convert depthwise convolutions wih a depth multiplier != 1");
+
+        //TODO can't set depthMultiplier?
+        SDVariable value = sameDiff.cnn.depthWiseConv2d(layerInput, weight, bias,
+                Conv2DConfig.builder()
+                        .dataFormat(this.cnn2dDataFormat.name())
+                        .isSameMode(convolutionMode == ConvolutionMode.Same)
+                        .kH(kernelSize[0]).kW(kernelSize[1])
+                        .sH(stride[0]).sW(stride[1])
+                        .pH(padding[0]).pW(padding[1])
+                        .dH(dilation[0]).dW(dilation[1])
+                        .weightsFormat(WeightsFormat.OIYX)
+                        .build()
+        );
+
+        return doActivation(value);
     }
 
     @Override

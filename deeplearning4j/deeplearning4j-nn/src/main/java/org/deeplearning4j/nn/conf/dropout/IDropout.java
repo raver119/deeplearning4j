@@ -16,7 +16,10 @@
 
 package org.deeplearning4j.nn.conf.dropout;
 
+import lombok.NonNull;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.shade.jackson.annotation.JsonTypeInfo;
 
@@ -59,4 +62,13 @@ public interface IDropout extends Serializable, Cloneable {
     void clear();
 
     IDropout clone();
+
+    /**
+     * Define the dropout for a {@link SameDiff} instance.
+     *
+     * @param sameDiff The {@link SameDiff} instance
+     * @param input The input to the dropout, typically the output of the previous layer.
+     * @return The score (loss function value).
+     */
+    @NonNull SDVariable defineDropout(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
 }

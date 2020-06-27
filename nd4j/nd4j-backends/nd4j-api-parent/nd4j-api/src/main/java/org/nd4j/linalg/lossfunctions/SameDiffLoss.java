@@ -55,7 +55,7 @@ public abstract class SameDiffLoss extends BaseLossFunction {
      * @param labels     Labels placeholder
      * @return The score on a per example basis (SDVariable with shape [minibatch])
      */
-    public abstract @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
+    public abstract SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
 
     protected void createSameDiffInstance(DataType dataType){
         sd = SameDiff.create();

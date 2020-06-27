@@ -29,6 +29,7 @@ import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
 
 /**
@@ -187,8 +188,8 @@ public class LossFMeasure extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
-            @NonNull SDVariable labels) {
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels, boolean average) {
         long n = labels.placeholderShape()[1];
         if (n != 1 && n != 2) {
             throw new UnsupportedOperationException(
@@ -224,7 +225,12 @@ public class LossFMeasure extends BaseLossFunction {
         denominator = sameDiff.math.max(sameDiff.math.abs(denominator), eps).mul(sameDiff.math.sign(denominator));
 
         // have to use labels to get batch size
-        return numerator.div(denominator).rsub(1).sum().div(labels.shape().get(SDIndex.point(0)));
+        SDVariable out = numerator.div(denominator).rsub(1).sum();
+
+        if(average)
+            return out.div(sameDiff.sizeAt(labels, 0));
+        else
+            return out;
     }
 
     /**

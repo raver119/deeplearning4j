@@ -33,6 +33,7 @@ import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.serde.jackson.shaded.NDArrayTextDeSerializer;
@@ -56,7 +57,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter @Setter
-public class LossMCXENT extends BaseLossFunction {
+public class LossMCXENT extends NonFusedLossFunction {
     private static final double DEFAULT_SOFTMAX_CLIPPING_EPSILON = 1e-10;
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
@@ -207,11 +208,11 @@ public class LossMCXENT extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels) {
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels) {
         if(input.getCreator().opName().equals("softmax") && softmaxClipEps > 0.0){
             input = sameDiff.math.clipByValue(input, softmaxClipEps, 1.0-softmaxClipEps);
         }
-        return LossUtil.batchAverage(LossUtil.multiplyWeight(sameDiff.math.log(input).mul(labels).neg(), weights));
+        return LossUtil.multiplyWeight(sameDiff.math.log(input).mul(labels).neg(), weights);
     }
 
     /**

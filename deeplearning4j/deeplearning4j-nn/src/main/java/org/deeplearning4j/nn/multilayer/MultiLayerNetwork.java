@@ -821,15 +821,13 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                     throw new IllegalStateException("A SameDiffOutputLayer must be the last layer in the model");
             }
 
-            org.deeplearning4j.nn.conf.layers.Layer config;
-            // layer
-            if (layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer) {
-                config = (org.deeplearning4j.nn.conf.layers.Layer) layer.getConfig();
-            } else {
+            if (!(layer.getConfig() instanceof org.deeplearning4j.nn.conf.layers.Layer)) {
                 throw new UnsupportedOperationException("Can't convert non-Layer layers");
             }
 
-            String confClass = layer.getConfig().getClass().getSimpleName();
+            org.deeplearning4j.nn.conf.layers.Layer config = layerWiseConfigurations.getConf(i).getLayer();
+
+            String confClass = config.getClass().getSimpleName();
 
             int layerNum = 0;
 
@@ -843,7 +841,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             NameScope layerScope = sameDiff.withNameScope(confClass + (layerNum == 0 ? "" : "_" + layerNum));
 
             // preprocessor
-            InputPreProcessor preProcessor = config.getPreProcessorForInputType(currentInputType);
+            InputPreProcessor preProcessor = layerWiseConfigurations.getInputPreProcess(i);
 
             if (preProcessor != null) {
                 NameScope preProcessorScope = sameDiff.withNameScope("inputPreprocessor");
@@ -861,6 +859,10 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                     value = value.dup();
                 }
                 paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
+            }
+
+            if(config.getIDropout() != null){
+                currentOutput = config.getIDropout().defineDropout(sameDiff, currentOutput);
             }
 
             // layer
@@ -899,7 +901,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                         .placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
                 NameScope lossScope = sameDiff.withNameScope(lossFn.getClass().getSimpleName());
 
-                loss = lossFn.defineLoss(sameDiff, currentOutput, labels);
+                loss = lossFn.defineLoss(sameDiff, currentOutput, labels, conf().isMiniBatch());
                 lossScope.close();
                 loss.rename("loss");
             }
@@ -2994,16 +2996,23 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                         .preProcess(inputToOutputLayer, getInputMiniBatchSize(), mgr);
                 //Validate activations location
             }
-            getOutputLayer().setInput(inputToOutputLayer, mgr);
-            //Then: compute gradients
-            Pair<Gradient, INDArray> pair = calcBackpropGradients(null, true, false, false);
-            this.gradient = (pair == null ? null : pair.getFirst());
 
+            IOutputLayer outputLayer = (IOutputLayer) getOutputLayer();
+            outputLayer.setInput(inputToOutputLayer, mgr);
+            if (labels == null && outputLayer.needsLabels())
+                throw new IllegalStateException("No labels found");
+            outputLayer.setLabels(labels);
+
+            //Some gradient methods overwrite their inputs, so calculate the score first
             //Calculate score
             try(MemoryWorkspace wsFF = mgr.notifyScopeEntered(ArrayType.FF_WORKING_MEM)) {
                 double r = calcRegularizationScore(true);
                 score = ((IOutputLayer) getOutputLayer()).computeScore(r, true, mgr);
             }
+
+            //Then: compute gradients
+            Pair<Gradient, INDArray> pair = calcBackpropGradients(null, true, false, false);
+            this.gradient = (pair == null ? null : pair.getFirst());
 
             //Listeners
             if (!trainingListeners.isEmpty()) {

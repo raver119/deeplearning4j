@@ -55,7 +55,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
 @EqualsAndHashCode(exclude = {"lastPValue","alphaPrime","a","b", "mask"})
 @ToString(exclude = {"lastPValue","alphaPrime","a","b"})
 @JsonIgnoreProperties({"lastPValue", "alphaPrime", "a", "b", "mask"})
-public class AlphaDropout implements IDropout {
+public class AlphaDropout extends BaseDropout {
 
     public static final double DEFAULT_ALPHA =  1.6732632423543772;
     public static final double DEFAULT_LAMBDA = 1.0507009873554804;

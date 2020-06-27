@@ -68,7 +68,7 @@ public abstract class SameDiffOutputLayer extends AbstractSameDiffLayer {
                     Map<String, SDVariable> paramTable);
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         throw new IllegalStateException("SameDiffOutputLayers should be defined using the define method using labels");
     }

@@ -16,16 +16,20 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.linalg.lossfunctions;
+package org.deeplearning4j.nn.conf.dropout;
 
 import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 
-public abstract class BaseLossFunction implements ILossFunction {
+public abstract class BaseDropout implements IDropout {
+    @Override
+    public SDVariable defineDropout(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    }
 
     @Override
-    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels, boolean average) {
-        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    public IDropout clone() {
+        throw new UnsupportedOperationException("Clone not implemented for " + this.getClass().getSimpleName());
     }
 }

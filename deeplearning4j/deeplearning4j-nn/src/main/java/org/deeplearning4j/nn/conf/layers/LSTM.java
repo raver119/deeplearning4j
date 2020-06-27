@@ -16,29 +16,51 @@
 
 package org.deeplearning4j.nn.conf.layers;
 
-import lombok.*;
-import org.deeplearning4j.nn.api.Layer;
-import org.deeplearning4j.nn.api.ParamInitializer;
-import org.deeplearning4j.nn.api.layers.LayerConstraint;
-import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.inputs.InputType;
-import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
-import org.deeplearning4j.nn.layers.recurrent.LSTMHelpers;
-import org.deeplearning4j.nn.params.LSTMParamInitializer;
-import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.linalg.activations.IActivation;
-import org.nd4j.linalg.activations.impl.ActivationSigmoid;
-import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.linalg.api.ndarray.INDArray;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
+import org.deeplearning4j.nn.api.Layer;
+import org.deeplearning4j.nn.api.ParamInitializer;
+import org.deeplearning4j.nn.api.layers.LayerConstraint;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.RNNFormat;
+import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional.Mode;
+import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
+import org.deeplearning4j.nn.layers.recurrent.LSTMHelpers;
+import org.deeplearning4j.nn.params.LSTMParamInitializer;
+import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.activations.IActivation;
+import org.nd4j.linalg.activations.impl.ActivationELU;
+import org.nd4j.linalg.activations.impl.ActivationHardSigmoid;
+import org.nd4j.linalg.activations.impl.ActivationLReLU;
+import org.nd4j.linalg.activations.impl.ActivationReLU;
+import org.nd4j.linalg.activations.impl.ActivationSigmoid;
+import org.nd4j.linalg.activations.impl.ActivationSoftPlus;
+import org.nd4j.linalg.activations.impl.ActivationSoftSign;
+import org.nd4j.linalg.activations.impl.ActivationTanH;
+import org.nd4j.linalg.activations.impl.ActivationThresholdedReLU;
+import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMActivations;
+import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMDataFormat;
+import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMDirectionMode;
+import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMLayerConfig;
+import org.nd4j.linalg.api.ops.impl.layers.recurrent.weights.LSTMLayerWeights;
 
 /**
  * LSTM recurrent neural network layer without peephole connections. Supports CuDNN acceleration - see <a
- * href="https://deeplearning4j.konduit.ai/config/backends/config-cudnn">https://deeplearning4j.konduit.ai/config/backends/config-cudnn</a> for details
+ * href="https://deeplearning4j.konduit.ai/config/backends/config-cudnn">https://deeplearning4j.konduit.ai/config/backends/config-cudnn</a>
+ * for details
  *
  * @author Alex Black
  * @see GravesLSTM GravesLSTM class for an alternative LSTM (with peephole connections)
@@ -76,9 +98,10 @@ public class LSTM extends AbstractLSTM {
 
     @Override
     public Layer instantiate(NeuralNetConfiguration conf, Collection<TrainingListener> trainingListeners,
-                             int layerIndex, INDArray layerParamsView, boolean initializeParams, DataType networkDataType) {
+            int layerIndex, INDArray layerParamsView, boolean initializeParams, DataType networkDataType) {
         LayerValidation.assertNInNOutSet("LSTM", getLayerName(), layerIndex, getNIn(), getNOut());
-        org.deeplearning4j.nn.layers.recurrent.LSTM ret = new org.deeplearning4j.nn.layers.recurrent.LSTM(conf, networkDataType);
+        org.deeplearning4j.nn.layers.recurrent.LSTM ret = new org.deeplearning4j.nn.layers.recurrent.LSTM(conf,
+                networkDataType);
         ret.setListeners(trainingListeners);
         ret.setIndex(layerIndex);
         ret.setParamsViewArray(layerParamsView);
@@ -91,6 +114,115 @@ public class LSTM extends AbstractLSTM {
     @Override
     public ParamInitializer initializer() {
         return LSTMParamInitializer.getInstance();
+    }
+
+    private static LSTMActivations toLSTMActivation(IActivation activationFn){
+        if(activationFn instanceof ActivationTanH)
+            return LSTMActivations.TANH;
+        else if(activationFn instanceof ActivationReLU) {
+            ActivationReLU relu = (ActivationReLU) activationFn;
+            if(relu.getThreshold() != 0 || relu.getNegativeSlope() != 0)
+                throw new UnsupportedOperationException("LSTM toSameDiff doesn't support ReLU activation with threshold and negative slope.");
+
+            if(relu.getMax() != 0)
+                throw new UnsupportedOperationException("LSTM toSameDiff doesn't support ReLU activation with max.");
+
+            //TODO no way to pass parms to libnd4j
+//            if(relu.getNegativeSlope() != 0)
+//                return LSTMActivations.LEAKY_RELU;
+//
+//            if(relu.getThreshold() != 0)
+//                return LSTMActivations.THRESHHOLD_RELU;
+
+            return LSTMActivations.RELU;
+        } else if(activationFn instanceof ActivationSigmoid)
+            return LSTMActivations.SIGMOID;
+        else if(activationFn instanceof ActivationLReLU)
+//            return LSTMActivations.LEAKY_RELU;
+            //TODO no way to pass parms to libnd4j
+            throw new UnsupportedOperationException("LSTM toSameDiff doesn't support activation ActivationLReLU");
+        else if(activationFn instanceof ActivationThresholdedReLU)
+//            return LSTMActivations.THRESHHOLD_RELU;
+            //TODO no way to pass parms to libnd4j
+            throw new UnsupportedOperationException("LSTM toSameDiff doesn't support activation ActivationThresholdedReLU");
+        else if(activationFn instanceof ActivationHardSigmoid)
+            return LSTMActivations.HARD_SIGMOID;
+        else if(activationFn instanceof ActivationELU)
+            return LSTMActivations.ELU;
+        else if(activationFn instanceof ActivationSoftSign)
+            return LSTMActivations.SOFTSIGN;
+        else if(activationFn instanceof ActivationSoftPlus)
+            return LSTMActivations.SOFTPLUS;
+        else
+            //TODO add ActivationThresholdedReLU and ActivationLReLU to list once supported
+            throw new UnsupportedOperationException("Unsupported activation for LSTM toSameDiff: " + activationFn.getClass().getSimpleName() +
+                    ".  Should be one of ActivationTanH, ActivationReLU, ActivationSigmoid, "
+                    + "ActivationHardSigmoid, ActivationELU, ActivationSoftSign, or ActivationSoftPlus.");
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        SDVariable recurrentWeight = paramTable.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY);
+        SDVariable inputWeight = paramTable.get(LSTMParamInitializer.INPUT_WEIGHT_KEY);
+        SDVariable bias = sameDiff.squeeze(paramTable.get(LSTMParamInitializer.BIAS_KEY), 0);
+
+        LSTMActivations gateActivation = toLSTMActivation(gateActivationFn);
+        LSTMActivations recurrentActivation = toLSTMActivation(activationFn);
+
+
+        return sameDiff.rnn.lstmLayer(layerInput, LSTMLayerWeights.builder()
+                        .weights(inputWeight)
+                        .rWeights(recurrentWeight)
+                        .bias(bias)
+                        .build(),
+                LSTMLayerConfig.builder()
+                        .gateAct(gateActivation)
+                        .cellAct(recurrentActivation)
+                        .retFullSequence(true)
+                        .directionMode(LSTMDirectionMode.FWD)
+                        .lstmdataformat(rnnDataFormat == RNNFormat.NCW ? LSTMDataFormat.NST : LSTMDataFormat.NTS)
+                        .build())[0];
+    }
+
+    @Override
+    public SDVariable defineBidirectional(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable,
+            SDVariable mask, Mode mode) {
+        SDVariable recurrentWeight = paramTable.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY);
+        SDVariable inputWeight = paramTable.get(LSTMParamInitializer.INPUT_WEIGHT_KEY);
+        SDVariable bias = paramTable.get(LSTMParamInitializer.BIAS_KEY);
+
+        LSTMActivations gateActivation = toLSTMActivation(gateActivationFn);
+        LSTMActivations recurrentActivation = toLSTMActivation(activationFn);
+
+        LSTMDirectionMode directionMode;
+        if(mode == Mode.ADD || mode == Mode.AVERAGE)
+            directionMode = LSTMDirectionMode.BIDIR_SUM;
+        else if(mode == Mode.CONCAT)
+            directionMode = LSTMDirectionMode.BIDIR_CONCAT;
+        else
+            throw new UnsupportedOperationException("Bidirectional not supported for mode " + mode);
+
+        LSTMDataFormat format = rnnDataFormat == RNNFormat.NCW ? LSTMDataFormat.NST : LSTMDataFormat.NTS;
+
+        SDVariable output = sameDiff.rnn.lstmLayer(layerInput, LSTMLayerWeights.builder()
+                        .weights(inputWeight)
+                        .rWeights(recurrentWeight)
+                        .bias(bias)
+                        .build(),
+                LSTMLayerConfig.builder()
+                        .gateAct(gateActivation)
+                        .cellAct(recurrentActivation)
+                        .directionMode(directionMode)
+                        .lstmdataformat(format)
+                        .build())[0];
+
+        if(mode == Mode.AVERAGE)
+            return output.div(2);
+        else
+            return output;
+
     }
 
     @Override

@@ -33,7 +33,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
  * @author Alex Black
  */
 @Data
-public class GaussianNoise implements IDropout {
+public class GaussianNoise extends BaseDropout {
 
     private double stddev;
     private ISchedule stddevSchedule;

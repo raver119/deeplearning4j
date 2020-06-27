@@ -141,9 +141,9 @@ public class LossFunctionTest extends BaseNd4jTest {
                         SameDiff sameDiff = SameDiff.create();
                         SDVariable input = sameDiff.nn.softmax(sameDiff.constant(preOut));
                         SDVariable labels = sameDiff.constant(l);
-                        SDVariable loss = lf.defineLoss(sameDiff, input, labels);
+                        SDVariable loss = lf.defineLoss(sameDiff, input, labels, false).sum();
 
-                        assertTrue("SameDiff loss doesn't match INDArray loss", scoreArray.equalsWithEps(loss.eval(), 1e-5));
+                        assertTrue("SameDiff loss doesn't match INDArray loss", scoreArray.sum().equalsWithEps(loss.eval(), 1e-5));
 
                     } catch (UnsupportedOperationException e){
 

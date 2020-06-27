@@ -166,7 +166,7 @@ public class FeedForwardToCnnPreProcessor extends BaseInputPreProcessor {
     }
 
     @Override
-    public @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         //TODO Assuming shape of input is correct, it would be better to check & throw exception here, but needs offline shape inference
 
         if(numChannels == -1)

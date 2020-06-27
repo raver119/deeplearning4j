@@ -16,18 +16,23 @@
 
 package org.deeplearning4j.nn.conf.layers;
 
+import java.util.Map;
 import lombok.*;
 import org.deeplearning4j.nn.api.layers.LayerConstraint;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.distribution.Distribution;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional;
+import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional.Mode;
 import org.deeplearning4j.nn.weights.IWeightInit;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.weights.WeightInitDistribution;
 
 import java.util.Arrays;
 import java.util.List;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 
 @Data
 @NoArgsConstructor
@@ -42,6 +47,22 @@ public abstract class BaseRecurrentLayer extends FeedForwardLayer {
         super(builder);
         this.weightInitFnRecurrent = builder.weightInitFnRecurrent;
         this.rnnDataFormat = builder.rnnDataFormat;
+    }
+
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask, boolean backwards){
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        return defineLayer(sameDiff, layerInput, paramTable, mask, false);
+    }
+
+    public SDVariable defineBidirectional(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask, Mode mode) {
+        throw new UnsupportedOperationException("Bidirectional toSameDiff not supported for " + this.getClass().getSimpleName());
     }
 
     @Override

@@ -86,7 +86,7 @@ public class ZeroPaddingLayer extends NoParamLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
         int padTop = padding[0];
@@ -110,7 +110,7 @@ public class ZeroPaddingLayer extends NoParamLayer {
                     {0, 0}
             };
         } else {
-            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+            throw new UnsupportedOperationException("Unknown CNN data format " + dataFormat);
         }
 
         return sameDiff.nn.pad(layerInput, sameDiff.constant(Nd4j.createFromArray(fullPadding)), 0);

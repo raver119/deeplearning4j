@@ -16,12 +16,18 @@
 
 package org.deeplearning4j.nn.conf.layers.recurrent;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.layers.recurrent.LastTimeStepLayer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -58,6 +64,13 @@ public class LastTimeStep extends BaseWrapperLayer {
         conf2.setLayer(((LastTimeStep) conf2.getLayer()).getUnderlying());
         return new LastTimeStepLayer(underlying.instantiate(conf2, trainingListeners, layerIndex, layerParamsView,
                         initializeParams, networkDataType));
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable underlyingOutput = defineUnderlying(sameDiff, layerInput, paramTable, mask);
+        return underlyingOutput.get(SDIndex.all(), SDIndex.all(), SDIndex.point(-1));
     }
 
     @Override

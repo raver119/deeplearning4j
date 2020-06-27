@@ -82,7 +82,7 @@ public class Subsampling1DLayer extends SubsamplingLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
         layerInput = sameDiff.expandDims(layerInput, -1);

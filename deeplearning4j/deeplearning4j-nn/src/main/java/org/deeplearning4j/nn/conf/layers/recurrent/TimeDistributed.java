@@ -1,5 +1,6 @@
 package org.deeplearning4j.nn.conf.layers.recurrent;
 
+import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -11,6 +12,10 @@ import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.layers.recurrent.TimeDistributedLayer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
@@ -51,6 +56,34 @@ public class TimeDistributed extends BaseWrapperLayer {
         conf2.setLayer(((TimeDistributed) conf2.getLayer()).getUnderlying());
         return new TimeDistributedLayer(underlying.instantiate(conf2, trainingListeners, layerIndex, layerParamsView,
                 initializeParams, networkDataType), rnnDataFormat);
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable originalShape = layerInput.shape();
+        SDVariable batch = originalShape.get(SDIndex.point(0));
+        SDVariable sequenceLength;
+
+        if(rnnDataFormat == RNNFormat.NCW) {
+            sequenceLength = originalShape.get(SDIndex.point(2));
+            layerInput = layerInput.permute(0, 2, 1);
+        } else if(rnnDataFormat == RNNFormat.NWC)
+            sequenceLength = originalShape.get(SDIndex.point(1));
+        else
+            throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
+
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(-1).castTo(batch.dataType()));
+        SDVariable distributedInput = layerInput.reshape(distributedShape);
+
+        SDVariable distributedOutput = defineUnderlying(sameDiff, distributedInput, paramTable, mask);
+
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(-1).castTo(batch.dataType())));
+
+        if(rnnDataFormat == RNNFormat.NCW)
+            return temp.permute(0, 2, 1);
+        else
+            return temp;
     }
 
     @Override

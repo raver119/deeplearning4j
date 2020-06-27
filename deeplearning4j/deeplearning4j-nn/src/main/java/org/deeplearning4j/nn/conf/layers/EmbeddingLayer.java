@@ -30,6 +30,8 @@ import org.deeplearning4j.nn.weights.embeddings.ArrayEmbeddingInitializer;
 import org.deeplearning4j.nn.weights.embeddings.EmbeddingInitializer;
 import org.deeplearning4j.nn.weights.embeddings.WeightInitEmbedding;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.impl.ActivationIdentity;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -81,6 +83,25 @@ public class EmbeddingLayer extends FeedForwardLayer {
     @Override
     public ParamInitializer initializer() {
         return EmbeddingLayerParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+//        SDVariable weight = paramTable.get(EmbeddingLayerParamInitializer.WEIGHT_KEY);
+//        SDVariable bias = paramTable.get(EmbeddingLayerParamInitializer.BIAS_KEY);
+//
+//        TODO this cast causes a JVM crash
+//        SDVariable indices = sameDiff.squeeze(layerInput, 1).castTo(DataType.INT64);
+//
+//        System.out.println("Here!");
+//        SDVariable out = sameDiff.gather(weight, indices,  1);
+//
+//        if(hasBias)
+//            out = out.add(bias);
+//
+//        return doActivation(out);
+        throw new UnsupportedOperationException("Can't convert EmbeddingLayer to SameDiff");
     }
 
     @Override

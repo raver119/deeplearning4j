@@ -111,7 +111,7 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
      * @param mask Optional, maybe null. Mask to apply if supported
      * @return The final layer variable corresponding to the activations/output from the forward pass
      */
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull Map<String, SDVariable> paramTable, SDVariable mask){
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull Map<String, SDVariable> paramTable, SDVariable mask){
         throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 

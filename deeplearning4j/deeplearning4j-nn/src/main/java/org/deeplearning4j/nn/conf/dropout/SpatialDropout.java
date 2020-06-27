@@ -46,7 +46,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
 @Data
 @JsonIgnoreProperties({"mask"})
 @EqualsAndHashCode(exclude = {"mask"})
-public class SpatialDropout implements IDropout {
+public class SpatialDropout extends BaseDropout {
 
     private double p;
     private ISchedule pSchedule;

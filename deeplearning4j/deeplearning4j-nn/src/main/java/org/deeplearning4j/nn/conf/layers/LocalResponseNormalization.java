@@ -27,9 +27,12 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.LocalResponseNormalizationConfig;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
 import java.util.Collection;
@@ -90,6 +93,20 @@ public class LocalResponseNormalization extends Layer {
         return EmptyParamInitializer.getInstance();
     }
 
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        if(dataFormat != CNN2DFormat.NCHW)
+            throw new UnsupportedOperationException("Can't convert non-NCHW LocalResponseNormalization to SameDiff");
+        //TODO support more data types
+
+        return sameDiff.cnn.localResponseNormalization(layerInput, LocalResponseNormalizationConfig.builder()
+                .alpha(alpha)
+                .beta(beta) //TODO n and k map to bias and depth?  guessing based on the paper but data types don't line up
+                .bias(k)
+                .depth((int) n)
+                .build());
+    }
 
     @Override
     public InputType getOutputType(int layerIndex, InputType inputType) {

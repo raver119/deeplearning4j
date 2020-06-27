@@ -72,7 +72,7 @@ public class ActivationGELU extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         if(precise)
             return sameDiff.nn.preciseGelu(input);
         else

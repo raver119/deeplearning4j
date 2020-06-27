@@ -83,7 +83,7 @@ public class ActivationPReLU extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         SDVariable alpha = sameDiff.var("alpha", getAlpha().dup());
         return sameDiff.nn.prelu(input, alpha, sharedAxes == null ? new int[]{} : ArrayUtil.toInts(sharedAxes));
     }

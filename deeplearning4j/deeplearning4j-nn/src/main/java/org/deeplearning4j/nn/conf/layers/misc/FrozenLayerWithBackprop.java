@@ -16,7 +16,9 @@
 
 package org.deeplearning4j.nn.conf.layers.misc;
 
+import java.util.Map;
 import lombok.Data;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.api.layers.LayerConstraint;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -24,6 +26,9 @@ import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.params.FrozenLayerWithBackpropParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.learning.config.IUpdater;
@@ -81,6 +86,23 @@ public class FrozenLayerWithBackprop extends BaseWrapperLayer {
         }
 
         return new org.deeplearning4j.nn.layers.FrozenLayerWithBackprop(underlying);
+    }
+
+    /**
+     * Will freeze any params passed to it.
+     *
+     * @param sameDiff SameDiff instance
+     * @param layerInput Input to the layer
+     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
+     * @param mask Optional, maybe null. Mask to apply if supported
+     */
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        for(SDVariable variable : paramTable.values()){
+            variable.convertToConstant();
+        }
+        return defineUnderlying(sameDiff, layerInput, paramTable, mask);
     }
 
     @Override

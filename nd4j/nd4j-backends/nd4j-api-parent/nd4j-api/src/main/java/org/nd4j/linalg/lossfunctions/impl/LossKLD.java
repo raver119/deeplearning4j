@@ -28,6 +28,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
 
@@ -37,7 +38,7 @@ import org.nd4j.common.primitives.Pair;
  * @author Susan Eraly
  */
 @EqualsAndHashCode
-public class LossKLD extends BaseLossFunction {
+public class LossKLD extends NonFusedLossFunction {
 
     private INDArray scoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
         if(!labels.equalShapes(preOutput)){
@@ -116,12 +117,12 @@ public class LossKLD extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
         input = sameDiff.math.clipByValue(input, Nd4j.EPS_THRESHOLD, 1);
         labels = sameDiff.math.clipByValue(labels, Nd4j.EPS_THRESHOLD, 1);
 
-        return LossUtil.batchAverage(sameDiff.math.log(input.rdiv(labels)).mul(labels));
+        return sameDiff.math.log(input.rdiv(labels)).mul(labels);
     }
 
     /**

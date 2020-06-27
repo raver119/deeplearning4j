@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.conf.layers.recurrent;
 
+import java.util.HashMap;
 import lombok.*;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.conf.GradientNormalization;
@@ -25,6 +26,7 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.BaseRecurrentLayer;
 import org.deeplearning4j.nn.conf.layers.FeedForwardLayer;
+import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
@@ -82,6 +84,7 @@ public class Bidirectional extends Layer {
     private transient BidirectionalParamInitializer initializer;
 
     private Bidirectional(Bidirectional.Builder builder) {
+        //TODO builder params aren't used?
         super(builder);
     }
 
@@ -110,6 +113,67 @@ public class Bidirectional extends Layer {
         this.fwd = layer;
         this.bwd = layer.clone();
         this.mode = mode;
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        Map<String, SDVariable> fwdParams = new HashMap<>();
+        Map<String, SDVariable> bwdParams = new HashMap<>();
+
+        for(String key : paramTable.keySet()){
+            if(key.startsWith(BidirectionalParamInitializer.FORWARD_PREFIX)){
+                fwdParams.put(key.replaceFirst(BidirectionalParamInitializer.FORWARD_PREFIX, ""), paramTable.get(key));
+            } else if(key.startsWith(BidirectionalParamInitializer.BACKWARD_PREFIX)){
+                fwdParams.put(key.replaceFirst(BidirectionalParamInitializer.BACKWARD_PREFIX, ""), paramTable.get(key));
+            }
+        }
+
+        if(fwd instanceof BaseRecurrentLayer){
+
+            try{
+                return ((BaseRecurrentLayer) fwd).defineBidirectional(sameDiff, layerInput, paramTable, mask, mode);
+            } catch (UnsupportedOperationException e) {
+
+
+                SDVariable fwdOut = ((BaseRecurrentLayer) fwd)
+                        .defineLayer(sameDiff, layerInput, fwdParams, mask, false);
+                SDVariable bwdOut = ((BaseRecurrentLayer) fwd)
+                        .defineLayer(sameDiff, layerInput, bwdParams, mask, true);
+
+
+                bwdOut = sameDiff.reverse(bwdOut, ((BaseRecurrentLayer) fwd).getRnnDataFormat() == RNNFormat.NCW ? 2 : 1);
+
+                if(mode == Mode.CONCAT) {
+                    if(((BaseRecurrentLayer) fwd).getRnnDataFormat() == RNNFormat.NCW)
+                        return sameDiff.concat(1, fwdOut, bwdOut);
+                    else
+                        return sameDiff.concat(2, fwdOut, bwdOut);
+                } else if(mode == Mode.ADD)
+                    return fwdOut.add(bwdOut);
+                else if(mode == Mode.AVERAGE)
+                    return fwdOut.add(bwdOut).div(2);
+                else if(mode == Mode.MUL)
+                    return fwdOut.mul(bwdOut);
+                else
+                    throw new UnsupportedOperationException("Unknown bidirectional mode " + mode);
+            }
+        } else if(fwd instanceof LastTimeStep){
+            SDVariable fwdOut = fwd.defineLayer(sameDiff, layerInput, fwdParams, mask);
+            SDVariable bwdOut = bwd.defineLayer(sameDiff, layerInput, bwdParams, mask);
+            if(mode == Mode.CONCAT) {
+                return sameDiff.concat(1, fwdOut, bwdOut);
+            } else if(mode == Mode.ADD)
+                return fwdOut.add(bwdOut);
+            else if(mode == Mode.AVERAGE)
+                return fwdOut.add(bwdOut).div(2);
+            else if(mode == Mode.MUL)
+                return fwdOut.mul(bwdOut);
+            else
+                throw new UnsupportedOperationException("Unknown bidirectional mode " + mode);
+        } else
+            throw new UnsupportedOperationException("Bidirectional toSameDiff doesn't support layer " + fwd.getClass().getSimpleName());
     }
 
     public long getNOut() {

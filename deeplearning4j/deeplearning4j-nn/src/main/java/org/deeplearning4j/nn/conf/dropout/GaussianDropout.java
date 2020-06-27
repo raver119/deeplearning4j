@@ -49,7 +49,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
 @Data
 @JsonIgnoreProperties({"noise"})
 @EqualsAndHashCode(exclude = {"noise"})
-public class GaussianDropout implements IDropout {
+public class GaussianDropout extends BaseDropout {
 
     private final double rate;
     private final ISchedule rateSchedule;

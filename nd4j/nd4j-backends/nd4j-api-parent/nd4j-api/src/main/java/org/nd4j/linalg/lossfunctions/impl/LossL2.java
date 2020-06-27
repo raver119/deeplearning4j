@@ -29,6 +29,7 @@ import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.common.primitives.Pair;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.serde.jackson.shaded.NDArrayTextDeSerializer;
 import org.nd4j.serde.jackson.shaded.NDArrayTextSerializer;
 import org.nd4j.shade.jackson.annotation.JsonInclude;
@@ -46,7 +47,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossL2 extends BaseLossFunction {
+public class LossL2 extends NonFusedLossFunction {
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
     @JsonDeserialize(using = NDArrayTextDeSerializer.class)
@@ -162,9 +163,9 @@ public class LossL2 extends BaseLossFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).sum(true, 1));
+        return defineFullLossArray(sameDiff, input, labels).sum(true, 1);
     }
 
     /**

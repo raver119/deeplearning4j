@@ -17,11 +17,15 @@
 package org.deeplearning4j.rl4j.network.ac;
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
+import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.linalg.lossfunctions.impl.LossMCXENT;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.common.primitives.Pair;
@@ -40,7 +44,7 @@ import org.nd4j.shade.jackson.annotation.JsonInclude;
  */
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ActorCriticLoss extends BaseLossFunction {
+public class ActorCriticLoss extends NonFusedLossFunction {
 
     public static final double BETA = 0.01;
 
@@ -89,6 +93,14 @@ public class ActorCriticLoss extends BaseLossFunction {
                     INDArray mask, boolean average) {
         return new Pair<>(computeScore(labels, preOutput, activationFn, mask, average),
                         computeGradient(labels, preOutput, activationFn, mask));
+    }
+
+    @Override
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        SDVariable log = sameDiff.math.log(input);
+        return log.mul(labels)
+                .sub(input.mul(log).mul(sameDiff.constant(BETA)));
     }
 
     @Override

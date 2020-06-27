@@ -42,8 +42,7 @@ public abstract class BaseActivationFunction implements IActivation {
         }
     }
 
-    public
-    @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
         throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 }

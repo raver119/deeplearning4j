@@ -88,7 +88,7 @@ public class Upsampling1D extends BaseUpsamplingLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         return sameDiff.squeeze(sameDiff.cnn.upsampling2d(sameDiff.expandDims(layerInput, -1), size[0], 1, true), -1);
     }

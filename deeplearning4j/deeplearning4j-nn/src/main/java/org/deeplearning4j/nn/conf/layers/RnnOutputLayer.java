@@ -19,6 +19,7 @@ package org.deeplearning4j.nn.conf.layers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
@@ -28,6 +29,9 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -78,6 +82,43 @@ public class RnnOutputLayer extends BaseOutputLayer {
     @Override
     public ParamInitializer initializer() {
         return DefaultParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable b = paramTable.get(DefaultParamInitializer.BIAS_KEY);
+        SDVariable  W = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);
+
+        if(rnnDataFormat == RNNFormat.NWC)
+            layerInput = layerInput.permute(0, 2, 1);
+
+        SDVariable batch = sameDiff.sizeAt(layerInput, 0);
+        SDVariable sequenceLength;
+
+        if(rnnDataFormat == RNNFormat.NCW) {
+            sequenceLength = sameDiff.sizeAt(layerInput, 2);
+            layerInput = layerInput.permute(0, 2, 1);
+        } else if(rnnDataFormat == RNNFormat.NWC)
+            sequenceLength = sameDiff.sizeAt(layerInput, 1);
+        else
+            throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
+
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(-1).castTo(batch.dataType()));
+        SDVariable distributedInput = layerInput.reshape(distributedShape);
+
+        SDVariable distributedOutput = distributedInput.mmul(W);
+        if(hasBias)
+            distributedOutput = distributedOutput.add(b);
+
+        distributedOutput = doActivation(distributedOutput);
+
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(-1).castTo(batch.dataType())));
+
+        if(rnnDataFormat == RNNFormat.NCW)
+            return temp.permute(0, 2, 1);
+        else
+            return temp;
     }
 
     @Override

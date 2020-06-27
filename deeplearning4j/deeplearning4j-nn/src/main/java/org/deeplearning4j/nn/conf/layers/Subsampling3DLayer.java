@@ -139,7 +139,7 @@ public class Subsampling3DLayer extends NoParamLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         Pooling3DConfig poolingConfig = Pooling3DConfig.builder()
                 .kD(kernelSize[0]).kH(kernelSize[1]).kW(kernelSize[2])

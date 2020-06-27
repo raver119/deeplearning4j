@@ -106,15 +106,22 @@ public class Cropping2D extends NoParamLayer {
         return ret;
     }
 
+    private static Integer end(int idx){
+        if(idx == 0)
+            return null;
+        else
+            return -idx;
+    }
+
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         if(dataFormat == CNN2DFormat.NCHW) {
-            return layerInput.get(SDIndex.all(), SDIndex.all(), SDIndex.interval(cropping[0], -cropping[1]), SDIndex.interval(cropping[2], -cropping[3]));
+            return layerInput.get(SDIndex.all(), SDIndex.all(), SDIndex.interval(cropping[0], end(cropping[1])), SDIndex.interval(cropping[2], end(cropping[3])));
         } else if(dataFormat == CNN2DFormat.NHWC){
-            return layerInput.get(SDIndex.all(), SDIndex.interval(cropping[0], -cropping[1]), SDIndex.interval(cropping[2], -cropping[3]), SDIndex.all());
+            return layerInput.get(SDIndex.all(), SDIndex.interval(cropping[0], end(cropping[1])), SDIndex.interval(cropping[2], end(cropping[3])), SDIndex.all());
         } else {
-            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+            throw new UnsupportedOperationException("Unknown CNN data format " + dataFormat);
         }
     }
 

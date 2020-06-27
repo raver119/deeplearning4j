@@ -129,7 +129,7 @@ public class SpaceToDepthLayer extends NoParamLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         org.nd4j.enums.DataFormat format;
         if(dataFormat == CNN2DFormat.NCHW)
@@ -137,7 +137,7 @@ public class SpaceToDepthLayer extends NoParamLayer {
         else if(dataFormat == CNN2DFormat.NHWC)
             format = org.nd4j.enums.DataFormat.NHWC;
         else
-            throw new IllegalStateException("Unknown CNN data format " + dataFormat);
+            throw new UnsupportedOperationException("Unknown CNN data format " + dataFormat);
 
         return sameDiff.cnn.spaceToDepth(layerInput, blockSize, format);
     }

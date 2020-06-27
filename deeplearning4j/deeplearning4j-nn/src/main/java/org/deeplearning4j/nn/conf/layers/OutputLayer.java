@@ -70,7 +70,7 @@ public class OutputLayer extends BaseOutputLayer {
     }
 
     @Override
-    public @NonNull SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
         SDVariable weight = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);

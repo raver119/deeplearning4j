@@ -73,9 +73,9 @@ public class LossMAE extends LossL1 {
     }
 
     @Override
-    public @NonNull SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.batchAverage(defineFullLossArray(sameDiff, input, labels).div(labels.shape().get(SDIndex.point(1))));
+        return defineFullLossArray(sameDiff, input, labels).div(labels.shape().get(SDIndex.point(1)));
     }
 
     /**

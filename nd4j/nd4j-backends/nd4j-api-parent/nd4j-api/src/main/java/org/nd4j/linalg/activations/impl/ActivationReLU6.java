@@ -51,8 +51,9 @@ public class ActivationReLU6 extends BaseActivationFunction {
     }
 
     @Override
-    public @NonNull SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
-        return sameDiff.nn.gelu(input);
+    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
+        // 0 is the default cutoff in the op
+        return sameDiff.nn.relu6(input, 0);
     }
 
     @Override

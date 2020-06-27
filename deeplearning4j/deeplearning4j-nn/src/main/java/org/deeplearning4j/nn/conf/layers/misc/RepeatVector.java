@@ -26,6 +26,8 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -77,6 +79,24 @@ public class RepeatVector extends FeedForwardLayer {
         ret.setParamTable(paramTable);
         ret.setConf(conf);
         return ret;
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        layerInput = sameDiff.expandDims(layerInput, -1); // [batch, size, 1]
+        SDVariable out;
+        out = sameDiff.tile(layerInput, 1, 1, n); // [batch, size, n]
+
+        //noinspection StatementWithEmptyBody
+        if(dataFormat == RNNFormat.NCW){
+        } else if(dataFormat == RNNFormat.NWC) {
+            out = out.permute(0, 2, 1);
+        } else {
+            throw new UnsupportedOperationException("Unknown RNN data format " + dataFormat);
+        }
+
+        return doActivation(out);
     }
 
     @Override

@@ -31,6 +31,8 @@ import org.deeplearning4j.nn.weights.embeddings.ArrayEmbeddingInitializer;
 import org.deeplearning4j.nn.weights.embeddings.EmbeddingInitializer;
 import org.deeplearning4j.nn.weights.embeddings.WeightInitEmbedding;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.impl.ActivationIdentity;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;

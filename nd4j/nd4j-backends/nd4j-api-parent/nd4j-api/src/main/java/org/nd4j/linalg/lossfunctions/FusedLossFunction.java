@@ -19,13 +19,27 @@
 package org.nd4j.linalg.lossfunctions;
 
 import lombok.NonNull;
+import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.autodiff.samediff.ops.SDLoss;
 
-public abstract class BaseLossFunction implements ILossFunction {
+/**
+ * A loss function whose defineLoss method can use {@link SDLoss} ops.
+ */
+public abstract class FusedLossFunction extends BaseLossFunction {
+    /**
+     * Define the loss array calculation.
+     *
+     * Should probably use {@link SDLoss} methods.
+     *
+     * @return Loss array of shape [batch, ...]
+     */
+    protected abstract SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
 
     @Override
-    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels, boolean average) {
-        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    public final SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels, boolean average) {
+        return defineLoss(sameDiff, input, labels, average ? LossReduce.MEAN_BY_NONZERO_WEIGHT_COUNT : LossReduce.SUM);
     }
 }

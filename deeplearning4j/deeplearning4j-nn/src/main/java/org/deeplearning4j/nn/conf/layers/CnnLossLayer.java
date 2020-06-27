@@ -19,6 +19,7 @@ package org.deeplearning4j.nn.conf.layers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
@@ -30,6 +31,9 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -88,6 +92,39 @@ public class CnnLossLayer extends FeedForwardLayer {
     @Override
     public ParamInitializer initializer() {
         return EmptyParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        SDVariable batch = sameDiff.sizeAt(layerInput, 0);
+        SDVariable channels;
+        SDVariable height;
+        SDVariable width;
+
+        if(format == CNN2DFormat.NCHW){
+            channels = sameDiff.sizeAt(layerInput, 1);
+            height = sameDiff.sizeAt(layerInput, 2);
+            width = sameDiff.sizeAt(layerInput, 3);
+            layerInput = layerInput.permute(0, 2, 3, 1);
+        } else if(format == CNN2DFormat.NHWC){
+            height = sameDiff.sizeAt(layerInput, 1);
+            width = sameDiff.sizeAt(layerInput, 2);
+            channels = sameDiff.sizeAt(layerInput, 3);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN data format " + format);
+
+        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels));
+
+        SDVariable distributedOutput = doActivation(distributedInput);
+
+        SDVariable output = distributedOutput.reshape(sameDiff.concat(0, batch, height, width, channels));
+
+        if(format == CNN2DFormat.NCHW)
+            return output.permute(0, 3, 1, 2);
+        else
+            return output;
     }
 
     @Override

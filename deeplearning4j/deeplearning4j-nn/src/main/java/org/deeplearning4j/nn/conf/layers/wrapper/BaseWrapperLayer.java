@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.conf.layers.wrapper;
 
+import java.util.Map;
 import lombok.Data;
 import org.deeplearning4j.nn.api.ParamInitializer;
 import org.deeplearning4j.nn.conf.GradientNormalization;
@@ -24,6 +25,9 @@ import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.params.WrapperLayerParamInitializer;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
 import java.util.List;
@@ -52,6 +56,13 @@ public abstract class BaseWrapperLayer extends Layer {
     @Override
     public ParamInitializer initializer() {
         return WrapperLayerParamInitializer.getInstance();
+    }
+
+    protected SDVariable defineUnderlying(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask){
+        NameScope underlyingScope =  sameDiff.withNameScope("underlying");
+        SDVariable output = underlying.defineLayer(sameDiff, layerInput, paramTable, mask);
+        underlyingScope.close();
+        return output;
     }
 
     @Override

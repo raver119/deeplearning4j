@@ -19,7 +19,10 @@ package org.nd4j.linalg.lossfunctions.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -115,6 +118,11 @@ public class LossSparseMCXENT extends LossMCXENT {
         return oneHotLabels;
     }
 
+    @Override
+    public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
+            @NonNull SDVariable labels) {
+        throw new UnsupportedOperationException("toSameDiff for LossSparseMCXENT is not yet supported.");
+    }
 
     @Override
     public String toString() {

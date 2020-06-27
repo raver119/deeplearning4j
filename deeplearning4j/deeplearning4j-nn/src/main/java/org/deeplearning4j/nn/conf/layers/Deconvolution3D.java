@@ -19,6 +19,7 @@ package org.deeplearning4j.nn.conf.layers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
@@ -28,15 +29,20 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.Deconvolution2DLayer;
 import org.deeplearning4j.nn.layers.convolution.Deconvolution3DLayer;
+import org.deeplearning4j.nn.params.Convolution3DParamInitializer;
 import org.deeplearning4j.nn.params.Deconvolution3DParamInitializer;
 import org.deeplearning4j.nn.params.DeconvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ValidationUtils;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv3DConfig;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.DeConv3DConfig;
 
 /**
  * 3D deconvolution layer configuration<br>
@@ -108,6 +114,26 @@ public class Deconvolution3D extends ConvolutionLayer {
     @Override
     public ParamInitializer initializer() {
         return Deconvolution3DParamInitializer.getInstance();
+    }
+
+    @Override
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable weight = paramTable.get(Convolution3DParamInitializer.WEIGHT_KEY);
+        SDVariable bias = paramTable.get(Convolution3DParamInitializer.BIAS_KEY);
+
+        SDVariable value = sameDiff.cnn.deconv3d(layerInput, weight, bias,
+                DeConv3DConfig.builder()
+                        .dataFormat(this.dataFormat.name())
+                        .isSameMode(convolutionMode == ConvolutionMode.Same)
+                        .kD(kernelSize[0]).kH(kernelSize[1]).kW(kernelSize[2])
+                        .sD(stride[0]).sH(stride[1]).sW(stride[2])
+                        .pD(padding[0]).pH(padding[1]).pW(padding[2])
+                        .dD(dilation[0]).dH(dilation[1]).dW(dilation[2])
+                        .build()
+        );
+
+        return doActivation(value);
     }
 
     @Override
