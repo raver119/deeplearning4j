@@ -119,6 +119,7 @@ public class TestUtils {
         }
 
         INDArray output = network.output(input);
+        network.setLabels(labels);
         network.computeGradientAndScore();
         double score = network.score();
 

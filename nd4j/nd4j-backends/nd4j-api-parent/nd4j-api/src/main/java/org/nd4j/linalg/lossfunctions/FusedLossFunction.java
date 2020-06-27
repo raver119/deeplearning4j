@@ -33,9 +33,11 @@ public abstract class FusedLossFunction extends BaseLossFunction {
      *
      * Should probably use {@link SDLoss} methods.
      *
-     * @return Loss array of shape [batch, ...]
+     * @return The loss array with a shape depending on the reduction.
      */
     protected abstract SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
+
+    //TODO helper method to apply the reduction
 
     @Override
     public final SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
