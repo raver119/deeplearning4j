@@ -1721,7 +1721,7 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test5) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, random_shuffle_test6) {
-    auto input = NDArrayFactory::create<double>(  {4,1,1});
+    auto input = NDArrayFactory::create<int>(  {4,1,1});
     input.linspace(1);
 
     sd::ops::random_shuffle op;
@@ -1744,8 +1744,7 @@ TEST_F(DeclarableOpsTests5, random_shuffle_test6) {
 
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests5, random_shuffle_test7) {
-
-    auto input = NDArrayFactory::create<double>(  {1,4});
+    auto input = NDArrayFactory::vector<int>(16010);
     input.linspace(1);
 
     sd::ops::random_shuffle op;
