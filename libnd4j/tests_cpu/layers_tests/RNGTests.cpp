@@ -51,9 +51,9 @@ public:
         //_rngB = (sd::random::RandomBuffer *) initRandom(nullptr, _seed, 100000, (Nd4jPointer) _bufferB);
         _rngA.setStates(_seed * 0xDEADBEEF * 13, _seed * 0xDEADBEEF * 7);
         _rngB.setStates(_seed * 0xDEADBEEF * 13, _seed * 0xDEADBEEF * 7);
-        nexp0->assign(-1.0f);
-        nexp1->assign(-2.0f);
-        nexp2->assign(-3.0f);
+        nexp0.assign(-1.0f);
+        nexp1.assign(-2.0f);
+        nexp2.assign(-3.0f);
     }
 
     ~RNGTests() {
@@ -280,7 +280,7 @@ TEST_F(RNGTests, Test_Uniform_13) {
 }
 
 TEST_F(RNGTests, Test_Uniform_3) {
-    auto x0 = NDArrayFactory::create<double>(  {1000000});
+    auto x0 = NDArrayFactory::vector<double>(1000000);
 
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngA, &x0, 1.0f, 2.0f);
 
@@ -1085,7 +1085,7 @@ TEST_F(RNGTests, Test_UniformDistribution_04) {
     auto x = NDArrayFactory::create<Nd4jLong>(  {1}, {10});
     auto al = NDArrayFactory::create<int>(1);
     auto be = NDArrayFactory::create<int>(20);
-    auto exp0 = NDArrayFactory::vector<float>(10, 21.f);
+    auto exp0 = NDArrayFactory::vector<float>(10);
 
 
     sd::ops::randomuniform op;
@@ -1205,7 +1205,7 @@ TEST_F(RNGTests, Test_Reproducibility_2) {
 }
 
 TEST_F(RNGTests, Test_Uniform_4) {
-    auto x1 = NDArrayFactory::vector<double>(  {1000000});
+    auto x1 = NDArrayFactory::vector<double>(1000000);
 
     RandomLauncher::fillUniform(LaunchContext::defaultContext(), _rngB, &x1, 1.0, 2.0);
 
@@ -1226,7 +1226,7 @@ TEST_F(RNGTests, Test_Uniform_4) {
 TEST_F(RNGTests, test_choice_1) {
     const auto x = NDArrayFactory::linspace<double>(0, 10, 11);
     const auto prob = NDArrayFactory::valueOf<double>({11}, 1.0/11);
-    auto z = NDArrayFactory::create<double>(  {1000});
+    auto z = NDArrayFactory::create<double>(1000);
 
     RandomGenerator rng(119, 256);
     NativeOpExecutioner::execRandom(sd::LaunchContext ::defaultContext(), random::Choice, &rng, x.buffer(), x.shapeInfo(), x.specialBuffer(), x.specialShapeInfo(), prob.buffer(), prob.shapeInfo(), prob.specialBuffer(), prob.specialShapeInfo(), z.buffer(), z.shapeInfo(), z.specialBuffer(), z.specialShapeInfo(), nullptr);
