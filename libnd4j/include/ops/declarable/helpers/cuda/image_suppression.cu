@@ -422,17 +422,11 @@ static Nd4jLong nonMaxSuppressionGeneric_(sd::LaunchContext* context,
     if (!scores->isActualOnDeviceSide()) scores->syncToDevice();
   }
 
-  NDArray indices = NDArrayFactory::create<I>(
-      'c', {scores->lengthOf()},
-      context);  // - 1, scales->lengthOf()); //, scales->getContext());
-  NDArray startPositions =
-      NDArrayFactory::create<I>('c', {scores->lengthOf()}, context);
-  NDArray selectedScores(*scores);
+  auto indices = NDArrayFactory::create<I>('c', {scores->lengthOf()},context);
+  auto startPositions = NDArrayFactory::create<I>('c', {scores->lengthOf()}, context);
+  auto selectedScores = scores->dup();
   Nd4jPointer extras[2] = {nullptr, stream};
-  auto indexBuf =
-      indices.dataBuffer()
-          ->specialAsT<
-              I>();  /// reinterpret_cast<I*>(indices->specialBuffer());
+  auto indexBuf = indices.dataBuffer()->template specialAsT<I>();
 
   suppressScores<<<128, 128, 128, *stream>>>(
       selectedScores.dataBuffer()->specialAsT<T>(), indexBuf,
@@ -446,10 +440,9 @@ static Nd4jLong nonMaxSuppressionGeneric_(sd::LaunchContext* context,
   indices.tickWriteDevice();
   selectedScores.tickWriteDevice();
 
-  auto scoresData = selectedScores.dataBuffer()
-                        ->specialAsT<T>();  //, numBoxes, scoresData.begin());
+  auto scoresData = selectedScores.dataBuffer()->template specialAsT<T>();
 
-  auto startIndices = startPositions.dataBuffer()->specialAsT<I>();
+  auto startIndices = startPositions.dataBuffer()->template specialAsT<I>();
   I selectedSize = 0;
   Nd4jLong res = 0;
   if (output) {  // this part used when output shape already calculated to fill

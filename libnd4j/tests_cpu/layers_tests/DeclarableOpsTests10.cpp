@@ -2502,8 +2502,7 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_1) {
 
   auto result = results.at(0);
   //    result.printBuffer("NonMaxSuppressionOverlap1 Output");
-  ASSERT_TRUE(expected.isSameShapeStrict(result));
-  ASSERT_TRUE(expected.equalsTo(result));
+  ASSERT_EQ(expected, result);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2521,8 +2520,7 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_2) {
 
   auto result = results.at(0);
   //    result.printBuffer("NonMaxSuppressionOverlap Output");
-  ASSERT_TRUE(expected.isSameShapeStrict(result));
-  ASSERT_TRUE(expected.equalsTo(result));
+  ASSERT_EQ(expected, result);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2540,8 +2538,7 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_3) {
 
   auto result = results.at(0);
   //    result.printBuffer("NonMaxSuppressionOverlap Output");
-  ASSERT_TRUE(expected.isSameShapeStrict(result));
-  ASSERT_TRUE(expected.equalsTo(result));
+  ASSERT_EQ(expected, result);
 }
 
 ////////////////////////////////////////////////////////////////////
