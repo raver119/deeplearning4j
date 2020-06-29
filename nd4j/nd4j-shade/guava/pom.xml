@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
+            <version>${guava.jre.version}</version>
             <!-- Without optional=true, users will still be able to import this dependency and compile, yet will get a NoClassDefFoundError at runtime -->
             <optional>true</optional>
         </dependency>

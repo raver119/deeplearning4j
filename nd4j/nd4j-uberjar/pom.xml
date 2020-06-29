@@ -37,8 +37,6 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${maven-shade-plugin.version}</version>
                 <configuration>
-                    <!-- FIXME: There is no such property shadedClassifier  in the project -->
-                    <shadedClassifierName>${shadedClassifier}</shadedClassifierName>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
                         <filter>

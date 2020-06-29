@@ -37,24 +37,14 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <!--
-            FIXME: we do have google.protobuf.version property with 2.6.1 in root pom,
-                   which is used in deeplearning4j-modelexport-solr module...
-                   What would be appropriate name for version property of such protobuf deps?
-            -->
-            <version>3.8.0</version>
+            <version>${google.protobuf.version}</version>
             <!-- Without optional=true, users will still be able to import this dependency and compile, yet will get a NoClassDefFoundError at runtime -->
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java-util</artifactId>
-            <!--
-            FIXME: we do have google.protobuf.version property with 2.6.1 in root pom,
-                   which is used in deeplearning4j-modelexport-solr module...
-                   What would be appropriate name for version property of such protobuf deps?
-            -->
-            <version>3.8.0</version>
+            <version>${google.protobuf.version}</version>
             <optional>true</optional>
             <exclusions>
                 <exclusion>
@@ -66,8 +56,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <!-- FIXME: Property value (<guava.version>28.0-jre</guava.version>) in root pom is higher then provided here, might be worth to try to unify -->
-            <version>26.0-android</version>
+            <version>${guava.android.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

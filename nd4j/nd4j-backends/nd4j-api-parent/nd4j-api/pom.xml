@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.jakewharton.byteunits</groupId>
             <artifactId>byteunits</artifactId>
-            <version>0.9.1</version>
+            <version>${byteunits.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>net.ericaro</groupId>
             <artifactId>neoitertools</artifactId>
-            <version>1.0.0</version>
+            <version>${neoitertools.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>

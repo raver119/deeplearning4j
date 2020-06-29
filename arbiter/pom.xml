@@ -67,7 +67,7 @@
             <dependency>
                 <groupId>com.beust</groupId>
                 <artifactId>jcommander</artifactId>
-                <version>1.27</version>
+                <version>${jcommander.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>

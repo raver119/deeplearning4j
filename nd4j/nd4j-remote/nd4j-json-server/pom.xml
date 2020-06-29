@@ -56,16 +56,16 @@
             <artifactId>jersey-server</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-        <!-- FIXME: In root pom we do have property for jetty, but it has different version 9.4.10.v20180503, might be to sync them? -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
+            <!-- FIXME: jetty.version property can't be used here because of when using jetty 4.9.19 for all modules, Solr cluster can not start properly -->
             <version>9.4.19.v20190610</version>
         </dependency>
-        <!-- FIXME: In root pom we do have property for jetty, but it has different version 9.4.10.v20180503, might be to sync them? -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <!-- FIXME: jetty.version property can't be used here because of when using jetty 4.9.19 for all modules, Solr cluster can not start properly -->
             <version>9.4.19.v20190610</version>
         </dependency>
         <dependency>
@@ -93,27 +93,25 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- FIXME: We do have server properties with jaxb version in root pom, and none of them has been used here. -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb.version}</version>
         </dependency>
-        <!-- FIXME: Property in root pom has different version -->
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
-            <version>1.1.1</version>
+            <version>${javax.activation.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

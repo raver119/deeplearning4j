@@ -76,7 +76,7 @@
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
-            <version>${javax.version}</version>
+            <version>${javax.annotation-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
