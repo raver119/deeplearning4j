@@ -170,7 +170,10 @@ public class TestUtils {
             String scope = confClass + (layerNum == 0 ? "" : "_" + layerNum);
             List<SDVariable> scopeVars = sameDiff.getVariablesInScope(scope);
             layerNames.add(scope);
-            sdActivationVariables.add(scopeVars.get(scopeVars.size() - 1).name());
+            if(scopeVars.size() > 0)
+                sdActivationVariables.add(scopeVars.get(scopeVars.size() - 1).name());
+            else
+                sdActivationVariables.add(sdActivationVariables.get(sdActivationVariables.size() - 1));
         }
 
         Map<String, INDArray> sdActivations = sameDiff.batchOutput()

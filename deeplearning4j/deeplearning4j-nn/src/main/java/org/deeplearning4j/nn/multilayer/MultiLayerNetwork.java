@@ -1296,6 +1296,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 //Validation: Exception if invalid (bad layer implementation)
                 validateArrayWorkspaces(workspaceMgr, input, ArrayType.ACTIVATIONS, i, false, "Feed forward to layer (inference)");
 
+                // some activations overwrite their inputs
                 out.add(input);
             }
             if(clearInputs) {
@@ -1397,6 +1398,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 validateArrayWorkspaces(workspaceMgr, input, ArrayType.ACTIVATIONS, i, false, "Feed forward to layer (training)");
                 validateArrayWorkspaces(workspaceMgr, layers[i].input(), ArrayType.INPUT, i, false, "Feed forward to layer (training)");
 
+                // some activations overwrite their inputs
                 out.add(input);
 
                 if(traceLog){

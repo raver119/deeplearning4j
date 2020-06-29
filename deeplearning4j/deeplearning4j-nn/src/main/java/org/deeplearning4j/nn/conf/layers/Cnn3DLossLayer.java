@@ -120,14 +120,9 @@ public class Cnn3DLossLayer extends FeedForwardLayer {
         }  else
             throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
 
-//        Map<String, INDArray> placeholders = new HashMap<>();
-//        long[] inputShape = sameDiff.getVariable("input").placeholderShape();
-//        inputShape[0] = 1;
-//        placeholders.put("input", Nd4j.rand(inputShape));
-
         SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels));
 
-        SDVariable distributedOutput = distributedInput; // doActivation(distributedInput);
+        SDVariable distributedOutput = doActivation(distributedInput);
 
         SDVariable output = distributedOutput.reshape(sameDiff.concat(0, batch, depth, height, width, channels));
 
