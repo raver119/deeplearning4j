@@ -2489,16 +2489,11 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressing_7) {
 
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_1) {
-  NDArray boxes = NDArrayFactory::create<double>(
-      'c', {4, 4}, {0, 0, 1, 1, 0, 0.1, 1, 1.1, 0, -0.1, 1, 0.9, 0, 10, 1, 11});
-  NDArray scores =
-      NDArrayFactory::create<double>('c', {4}, {0.9, .75, .6, .95});  // 3
-  NDArray max_num = NDArrayFactory::create<int>(3);
-  NDArray expected = NDArrayFactory::create<int>('c',
-                                                 {
-                                                     1,
-                                                 },
-                                                 {3});
+  auto boxes = NDArrayFactory::create<double>('c', {4, 4},
+                                              {0, 0, 1, 1, 0, 0.1, 1, 1.1, 0, -0.1, 1, 0.9, 0, 10, 1, 11});
+  auto scores = NDArrayFactory::create<double>('c', {4}, {0.9, .75, .6, .95});  // 3
+  auto max_num = NDArrayFactory::create<int>(3);
+  auto expected = NDArrayFactory::create<int>('c',{1}, {3});
 
   sd::ops::non_max_suppression_overlaps op;
   auto results = op.evaluate({&boxes, &scores, &max_num}, {0.5, 0.}, {});
@@ -2513,16 +2508,11 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_1) {
 
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_2) {
-  NDArray boxes = NDArrayFactory::create<double>(
+  auto boxes = NDArrayFactory::create<double>(
       'c', {4, 4}, {0, 0, 1, 1, 0, 0.1, 1, 1.1, 0, -0.1, 1, 0.9, 0, 10, 1, 11});
-  NDArray scores =
-      NDArrayFactory::create<double>('c', {4}, {0.9, .95, .6, .75});  // 3
-  NDArray max_num = NDArrayFactory::create<int>(3);
-  NDArray expected = NDArrayFactory::create<int>('c',
-                                                 {
-                                                     3,
-                                                 },
-                                                 {1, 1, 1});
+  auto scores = NDArrayFactory::create<double>('c', {4}, {0.9, .95, .6, .75});  // 3
+  auto max_num = NDArrayFactory::create<int>(3);
+  auto expected = NDArrayFactory::create<int>('c', {3}, {1, 1, 1});
 
   sd::ops::non_max_suppression_overlaps op;
   auto results = op.evaluate({&boxes, &scores, &max_num}, {0.5, 0.}, {});
@@ -2537,16 +2527,11 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_2) {
 
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_3) {
-  NDArray boxes = NDArrayFactory::create<double>(
-      'c', {4, 4}, {0, 0, 1, 1, 0, 0.1, 1, 1.1, 0, -0.1, 1, 0.9, 0, 10, 1, 11});
-  NDArray scores =
-      NDArrayFactory::create<double>('c', {4}, {0.5, .95, -.6, .75});  // 3
-  NDArray max_num = NDArrayFactory::create<int>(5);
-  NDArray expected = NDArrayFactory::create<int>('c',
-                                                 {
-                                                     5,
-                                                 },
-                                                 {1, 1, 1, 1, 1});
+  auto boxes = NDArrayFactory::create<double>('c', {4, 4},
+                                              {0, 0, 1, 1, 0, 0.1, 1, 1.1, 0, -0.1, 1, 0.9, 0, 10, 1, 11});
+  auto scores = NDArrayFactory::create<double>('c', {4}, {0.5, .95, -.6, .75});  // 3
+  auto max_num = NDArrayFactory::create<int>(5);
+  auto expected = NDArrayFactory::create<int>('c', {5}, {1, 1, 1, 1, 1});
 
   sd::ops::non_max_suppression_overlaps op;
   auto results = op.evaluate({&boxes, &scores, &max_num}, {0.5, 0.}, {});
@@ -2562,11 +2547,10 @@ TEST_F(DeclarableOpsTests10, Image_NonMaxSuppressingOverlap_3) {
 ////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests10, Image_CropAndResize_1) {
   int axis = 0;
-  NDArray images =
-      NDArrayFactory::create<double>('c', {1, 2, 2, 1}, {1, 2, 3, 4});
-  NDArray boxes = NDArrayFactory::create<float>('c', {1, 4}, {0, 0, 1, 1});
-  NDArray boxI = NDArrayFactory::create<int>('c', {1}, {axis});
-  NDArray cropSize = NDArrayFactory::create<int>({1, 1});
+  auto images = NDArrayFactory::create<double>('c', {1, 2, 2, 1}, {1, 2, 3, 4});
+  auto boxes = NDArrayFactory::create<float>('c', {1, 4}, {0, 0, 1, 1});
+  auto boxI = NDArrayFactory::create<int>('c', {1}, {axis});
+  auto cropSize = NDArrayFactory::create<int>({1, 1});
 
   // NDArray<float> ('c', {6}, {0.9f, .75f, .6f, .95f, .5f, .3f});
   NDArray expected = NDArrayFactory::create<double>('c', {1, 1, 1, 1}, {2.5f});
@@ -2679,8 +2663,7 @@ TEST_F(DeclarableOpsTests10, Image_DrawBoundingBoxes_1) {
   NDArray images = NDArrayFactory::create<float>('c', {2, 4, 5, 3});
   NDArray boxes = NDArrayFactory::create<float>(
       'c', {2, 2, 4},
-      {0.f, 0.f, 1.f, 1.f, 0.1f, 0.2f, 0.9f, 0.8f, 0.3f, 0.3f, 0.7f, 0.7f, 0.4f,
-       0.4f, 0.6f, 0.6f});
+      {0.f, 0.f, 1.f, 1.f, 0.1f, 0.2f, 0.9f, 0.8f, 0.3f, 0.3f, 0.7f, 0.7f, 0.4f, 0.4f, 0.6f, 0.6f});
 
   NDArray colors = NDArrayFactory::create<float>(
       'c', {2, 3}, {201.f, 202.f, 203.f, 127.f, 128.f, 129.f});
@@ -2701,6 +2684,7 @@ TEST_F(DeclarableOpsTests10, Image_DrawBoundingBoxes_1) {
        91.f,  92.f,  93.f,  201.f, 202.f, 203.f, 201.f, 202.f, 203.f, 100.f,
        101.f, 102.f, 103.f, 104.f, 105.f, 106.f, 107.f, 108.f, 109.f, 110.f,
        111.f, 112.f, 113.f, 114.f, 115.f, 116.f, 117.f, 118.f, 119.f, 120.f});
+
   images.linspace(1.);
   sd::ops::draw_bounding_boxes op;
   auto results = op.evaluate({&images, &boxes, &colors}, {}, {});

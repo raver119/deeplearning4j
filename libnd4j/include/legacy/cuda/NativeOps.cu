@@ -40,6 +40,16 @@
 #include <graph/Status.h>
 #include <helpers/DebugHelper.h>
 
+// this section is for MMAP
+#ifndef _WIN32
+#include <sys/mman.h>
+#include <unistd.h>
+#include <fcntl.h>
+#else
+#include <helpers/mman.h>
+#include <io.h>
+#endif
+
 using namespace sd;
 
 #include <loops/special_kernels.h>
@@ -2824,11 +2834,46 @@ void sortCooIndices(Nd4jPointer *extraPointers, Nd4jLong *indices, void *values,
 
 Nd4jLong *mmapFile(Nd4jPointer *extraPointers, const char *fileName,
                    Nd4jLong length) {
-  return nullptr;
+  auto hZ = new Nd4jLong[3];
+  errno = 0;
+  try {
+#if defined(_WIN32) || defined(_WIN64)
+    _mmap(hZ, static_cast<size_t>(length), fileName);
+#else
+    int fd = open(fileName, O_RDWR, 0);  // checking for failed fopen
+    if (fd < 0) {
+      nd4j_printf("Errno: %i\n", errno);
+      throw std::runtime_error("Failed to open file for MMAP");
+    }
+    void *ptr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+    // check for failed allocation
+    if (ptr == MAP_FAILED) return nullptr;
+
+    hZ[0] = (Nd4jLong)ptr;
+    hZ[1] = fd;
+
+#endif
+    hZ[2] = length;
+
+    return hZ;
+  } catch (std::exception &e) {
+    sd::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
+    sd::LaunchContext::defaultContext()->errorReference()->setErrorMessage(
+        e.what());
+    return nullptr;
+  }
 }
 
 void munmapFile(Nd4jPointer *extraPointers, Nd4jLong *ptrMap, Nd4jLong length) {
+  munmap((Nd4jPointer)ptrMap[0], length);
+#if defined(_WIN32) || defined(_WIN64)
+  CloseHandle(reinterpret_cast<HANDLE>(ptrMap[1]));
+#else
+  close((int)ptrMap[1]);
+#endif
 
+  delete[] ptrMap;
 }
 
 sd::graph::ResultWrapper *executeFlatGraph(Nd4jPointer *extraPointers,
