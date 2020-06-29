@@ -2326,44 +2326,44 @@ TEST_F(DeclarableOpsTests15, gru_1) {
 //////////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests15, sqrtm_1) {
   NDArray x1('c', {1,1}, {4.}, sd::DataType::DOUBLE);
-    NDArray x2('c', {2,2}, {1.3,2,0.3,.5}, sd::DataType::DOUBLE);
+  NDArray x2('c', {2,2}, {1.3,2,0.3,.5}, sd::DataType::DOUBLE);
   NDArray x3('c', {3,3}, {0.5 ,-0.4 ,1.2 ,-2.8 ,-0.2 ,-2.1 ,-2.4 ,-2.0 ,1.1}, sd::DataType::DOUBLE);
   NDArray x4('c', {4,4}, {0.33 ,-7.25 ,1.71 ,6.20 ,1.34 ,5.38 ,-2.76 ,-8.51 ,7.59 ,3.44 ,2.24 ,-6.82 ,-1.15 ,4.80 ,-4.67 ,2.14}, sd::DataType::DOUBLE);
   NDArray x5('c', {5,5}, {2.4 ,0.3 ,0.0 ,1.1 ,1.8 ,0.1 ,1.7 ,2.7 ,1.5 ,2.6 ,0.6 ,2.1 ,2.2 ,1.0 ,0.2 ,1.2 ,2.8 ,1.9 ,0.8 ,2.0 ,0.5 ,1.6 ,0.9 ,1.4 ,2.5}, sd::DataType::DOUBLE);
 
-    NDArray exp1('c', {1,1}, {2.}, sd::DataType::DOUBLE);
-    NDArray exp2('c', {2,2}, {1.0163674, 1.3341597,0.200124, 0.4827035}, sd::DataType::DOUBLE);
-    NDArray exp3('c', {3,3}, {6.5692188, 2.6273616,-0.1387864,-16.8404762,-7.0296495, 0.9204148,-11.4664296,-5.834273 , 2.2087478}, sd::DataType::DOUBLE);
-    NDArray exp4('c', {4,4}, {1.161387 ,-1.9343154, 0.230372 , 0.8660897,0.80588  , 3.4045446,-1.0152824,-2.0369467,2.2589629, 1.9674252, 1.5109997,-1.4283141,0.0226356, 1.3032279,-1.00396  , 1.8278487}, sd::DataType::DOUBLE);
-    NDArray exp5('c', {5,5}, {1.4175046,-0.4425298, 0.1846149, 0.3166522, 0.9140631,-0.1929139, 0.2889113, 1.4045273, 0.2600026, 1.552021 , 0.1372758, 0.5703854, 1.3336126, 0.3869317,-0.082492 ,
+  NDArray exp1('c', {1,1}, {2.}, sd::DataType::DOUBLE);
+  NDArray exp2('c', {2,2}, {1.0163674, 1.3341597,0.200124, 0.4827035}, sd::DataType::DOUBLE);
+  NDArray exp3('c', {3,3}, {6.5692188, 2.6273616,-0.1387864,-16.8404762,-7.0296495, 0.9204148,-11.4664296,-5.834273 , 2.2087478}, sd::DataType::DOUBLE);
+  NDArray exp4('c', {4,4}, {1.161387 ,-1.9343154, 0.230372 , 0.8660897,0.80588  , 3.4045446,-1.0152824,-2.0369467,2.2589629, 1.9674252, 1.5109997,-1.4283141,0.0226356, 1.3032279,-1.00396  , 1.8278487}, sd::DataType::DOUBLE);
+  NDArray exp5('c', {5,5}, {1.4175046,-0.4425298, 0.1846149, 0.3166522, 0.9140631,-0.1929139, 0.2889113, 1.4045273, 0.2600026, 1.552021 , 0.1372758, 0.5703854, 1.3336126, 0.3869317,-0.082492 ,
                                 0.8607272, 3.1792474,-0.9499947, 0.8541668,-1.4243879, 0.0081136,-0.0622248, 0.4534325, 0.4641865, 1.8132138}, sd::DataType::DOUBLE);
 
-    sd::ops::sqrtm op;
+  sd::ops::sqrtm op;
 
-    auto results = op.evaluate({&x1}, {}, {});
-    ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    ASSERT_TRUE(exp1.isSameShape(results.at(0)));
-    ASSERT_TRUE(exp1.equalsTo(results.at(0)));
-
-  results = op.evaluate({&x2}, {}, {});
-    ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    ASSERT_TRUE(exp2.isSameShape(results.at(0)));
-  ASSERT_TRUE(exp2.equalsTo(results.at( 0)));
-
-  results = op.evaluate({&x3}, {}, {});
+  auto results = op.evaluate({&x1});
   ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    ASSERT_TRUE(exp3.isSameShape(results.at(0)));
-    ASSERT_TRUE(exp3.equalsTo(results.at(0)));
+  ASSERT_TRUE(exp1.isSameShape(results.at(0)));
+  ASSERT_EQ(exp1, results.at(0));
+
+  results = op.evaluate({&x2});
+  ASSERT_EQ(ND4J_STATUS_OK, results.status());
+  ASSERT_TRUE(exp2.isSameShape(results.at(0)));
+  ASSERT_EQ(exp2, results.at( 0));
+
+  results = op.evaluate({&x3});
+  ASSERT_EQ(ND4J_STATUS_OK, results.status());
+  ASSERT_TRUE(exp3.isSameShape(results.at(0)));
+  ASSERT_EQ(exp3, results.at(0));
 
   results = op.evaluate({&x4}, {}, {});
-    ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    ASSERT_TRUE(exp4.isSameShape(results.at(0)));
-    ASSERT_TRUE(exp4.equalsTo(results.at(0)));
+  ASSERT_EQ(ND4J_STATUS_OK, results.status());
+  ASSERT_TRUE(exp4.isSameShape(results.at(0)));
+  ASSERT_EQ(exp4, results.at(0));
 
   results = op.evaluate({&x5}, {}, {});
   ASSERT_EQ(ND4J_STATUS_OK, results.status());
-    ASSERT_TRUE(exp5.isSameShape(results.at( 0)));
-  ASSERT_TRUE(exp5.equalsTo(results.at(0)));
+  ASSERT_TRUE(exp5.isSameShape(results.at( 0)));
+  ASSERT_EQ(exp5, results.at(0));
 }
 
   //////////////////////////////////////////////////////////////////////

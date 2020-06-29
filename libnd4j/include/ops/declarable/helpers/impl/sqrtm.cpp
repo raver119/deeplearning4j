@@ -40,6 +40,7 @@ static void sqrtm_(const NDArray* x, NDArray* z) {
         auto listX = x->allTensorsAlongDimension({-2, -1});
         auto listZ = z->allTensorsAlongDimension({-2, -1});
 
+#ifndef __CUDABLAS__
         auto func = PRAGMA_THREADS_FOR {
 
             for (auto i = start; i < stop; i++)
@@ -47,16 +48,19 @@ static void sqrtm_(const NDArray* x, NDArray* z) {
         };
 
         samediff::Threads::parallel_tad(func, 0, listX.size());
+#else
+      for (auto i = 0; i < listX.size(); i++)
+        ops::helpers::Sqrtm<T>::calc(listX.at(i), listZ.at(i));
+#endif
     }
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void sqrtm(sd::LaunchContext* context, const NDArray* x, NDArray* z) {
-
-    x->syncToHost();
-    BUILD_SINGLE_SELECTOR(z->dataType(), sqrtm_, (x, z), FLOAT_TYPES);
-    z->syncToDevice();
+  x->syncToHost();
+  BUILD_SINGLE_SELECTOR(z->dataType(), sqrtm_, (x, z), FLOAT_TYPES);
+  z->syncToDevice();
 }
 
 
