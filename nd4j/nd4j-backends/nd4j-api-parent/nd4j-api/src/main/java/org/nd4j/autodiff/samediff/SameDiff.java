@@ -476,8 +476,9 @@ public class SameDiff extends SDBaseOps {
      */
     public List<SDVariable> getVariablesInScope(NameScope scope) {
         ArrayList<SDVariable> vars = new ArrayList<>();
+        String scopeName = scope.getName() + "/";
         for (SDVariable v : variables()) {
-            if (v.name().startsWith(scope.getName()))
+            if (v.name().startsWith(scopeName))
                 vars.add(v);
         }
         return vars;

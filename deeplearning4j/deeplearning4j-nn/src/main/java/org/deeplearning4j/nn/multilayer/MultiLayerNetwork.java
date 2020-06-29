@@ -838,6 +838,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 numLayers.put(confClass, 0);
             }
 
+            //TODO use layer name if set
             NameScope layerScope = sameDiff.withNameScope(confClass + (layerNum == 0 ? "" : "_" + layerNum));
 
             // preprocessor
