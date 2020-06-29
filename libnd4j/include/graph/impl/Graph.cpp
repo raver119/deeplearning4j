@@ -246,7 +246,18 @@ void Graph::printOutNode(const Node &node) const {
 }
 
 void Graph::printOut() {
-  // print variables first
+  // print placeholders
+  if (_placeholders.size() > 0) {
+    nd4j_printf("\nPrinting out Placeholders...\n", "");
+    for (auto &v:_placeholders) {
+      auto var = _variableSpace.getVariable(v);
+      auto shape = ShapeUtils::shapeAsString(var->shape());
+      auto dtype = DataTypeUtils::asString(var->dataType());
+      nd4j_printf("<%s> <%i> dtype: %s; shape: %s; \n", v.c_str(), var->id(), dtype.c_str(), shape.c_str());
+    }
+  }
+
+  // print variables
   if (_variableSpace.totalEntries() > 0) {
     nd4j_printf("\nPrinting out Variables...\n", "");
     auto vars = _variableSpace.variables();

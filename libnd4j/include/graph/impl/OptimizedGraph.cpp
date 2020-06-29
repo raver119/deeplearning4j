@@ -422,7 +422,7 @@ void OptimizedGraph::printOut() const {
     printf("}\n");
   }
 
-
+/*
   printf("And simple print:\n");
   for (int i = 0; i < _sortedGraph.size(); ++i) {
     printf("layer %i: ", i);
@@ -435,7 +435,7 @@ void OptimizedGraph::printOut() const {
     }
     printf("\n");
   }
-
+*/
 }
 
 

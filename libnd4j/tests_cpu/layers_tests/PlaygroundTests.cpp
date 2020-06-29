@@ -95,7 +95,7 @@ TEST_F(PlaygroundTests, test_biasAdd_1) {
 }
 
 TEST_F(PlaygroundTests, test_bert_full_1) {
-#ifdef _RELEASE
+//#ifdef _RELEASE
 
   // this test will run ONLY if this model exists
   if (!FileUtils::fileExists("/home/raver119/Downloads/BertFull/model.fb"))
@@ -113,32 +113,22 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
   auto z = NDArrayFactory::fromNpyFile(
       "/home/raver119/Downloads/BertFull/out_loss-Softmax.npy");
 
-  // graph->printOut();
+  graph.printOut();
 
-  graph->tagInplaceNodes();
+/*
+  // validating graph now
+  auto results = graph.execute({{"IteratorGetNext", t}, {"IteratorGetNext:1", u}, {"IteratorGetNext:4", v}}, {"loss/Softmax"});
+  ASSERT_EQ(z, results["loss/Softmax"]);
+*/
 
-  graph->variableSpace()->putVariable(658, 0, t);
-  graph->variableSpace()->putVariable(659, 0, u);
-  graph->variableSpace()->putVariable(660, 0, v);
 
-  /*
-      // validating graph now
-      auto status = GraphExecutioner::execute(graph);
-      ASSERT_EQ(Status::OK(), status);
-      ASSERT_TRUE(graph->variableSpace()->hasVariable(1620));
+//  sd::Environment::getInstance().setProfiling(true);
+  //auto profile = GraphProfilingHelper::profile(graph, 1);
 
-      auto array = graph->variableSpace()->getVariable(1620)->getNDArray();
-      ASSERT_EQ(z, *array);
+  //profile->printOut();
 
-  */
-
-  sd::Environment::getInstance().setProfiling(true);
-  auto profile = GraphProfilingHelper::profile(graph, 1);
-
-  profile->printOut();
-
-  sd::Environment::getInstance().setProfiling(false);
-  delete profile;
+  //sd::Environment::getInstance().setProfiling(false);
+  //delete profile;
 
   /*
       std::vector<Nd4jLong> values;
@@ -158,9 +148,8 @@ TEST_F(PlaygroundTests, test_bert_full_1) {
 
       nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
   */
-  delete graph;
 
-#endif
+//#endif
 }
 
 TEST_F(PlaygroundTests, test_bert_1) {
@@ -188,11 +177,10 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
   // graph->printOut();
 
-  graph->tagInplaceNodes();
 
-  graph->variableSpace()->putVariable(85, 0, t);
-  graph->variableSpace()->putVariable(86, 0, u);
-  graph->variableSpace()->putVariable(87, 0, v);
+  graph.variableSpace().putVariable(85, 0, t);
+  graph.variableSpace().putVariable(86, 0, u);
+  graph.variableSpace().putVariable(87, 0, v);
 
   /*
       // validating graph now
@@ -204,13 +192,6 @@ TEST_F(PlaygroundTests, test_bert_1) {
       ASSERT_EQ(z, *array);
 
   */
-  sd::Environment::getInstance().setProfiling(true);
-  auto profile = GraphProfilingHelper::profile(graph, 1);
-
-  profile->printOut();
-
-  sd::Environment::getInstance().setProfiling(false);
-  delete profile;
 
   /*
       std::vector<Nd4jLong> values;
@@ -230,7 +211,6 @@ TEST_F(PlaygroundTests, test_bert_1) {
 
       nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
   */
-  delete graph;
 
 #endif
 }
@@ -246,10 +226,6 @@ TEST_F(PlaygroundTests, test_bert_2) {
   auto graph = Graph::fromFlatBuffers(
       "/home/raver119/Downloads/Bert_minimal_model/bert_like_ops.fb");
 
-  // graph->printOut();
-
-  graph->tagInplaceNodes();
-
   /*
       // validating graph now
       auto status = GraphExecutioner::execute(graph);
@@ -259,14 +235,6 @@ TEST_F(PlaygroundTests, test_bert_2) {
       auto array = graph->variableSpace()->getVariable(198)->getNDArray();
       ASSERT_EQ(z, *array);
   */
-
-  sd::Environment::getInstance().setProfiling(true);
-  auto profile = GraphProfilingHelper::profile(graph, 1);
-
-  profile->printOut();
-
-  sd::Environment::getInstance().setProfiling(false);
-  delete profile;
 
   /*
       std::vector<Nd4jLong> values;
@@ -286,7 +254,6 @@ TEST_F(PlaygroundTests, test_bert_2) {
 
       nd4j_printf("Time: %lld us;\n", values[values.size() / 2]);
   */
-  delete graph;
 
 #endif
 }
