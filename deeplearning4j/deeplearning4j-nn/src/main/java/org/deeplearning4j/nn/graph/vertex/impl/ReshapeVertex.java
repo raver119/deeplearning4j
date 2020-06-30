@@ -16,6 +16,8 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
@@ -24,6 +26,8 @@ import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
@@ -52,6 +56,16 @@ public class ReshapeVertex extends BaseGraphVertex {
         this.order = order;
         this.newShape = newShape;
         this.maskShape = maskShape;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        if (inputs.length > 1)
+            throw new IllegalStateException("Reshape vertex requires a single input.");
+
+        return inputs[0].reshape(newShape);
     }
 
     @Override

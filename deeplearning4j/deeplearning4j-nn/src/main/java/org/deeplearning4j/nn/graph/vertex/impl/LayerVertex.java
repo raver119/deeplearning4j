@@ -16,14 +16,17 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.HashMap;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.api.TrainingConfig;
 import org.deeplearning4j.nn.api.layers.IOutputLayer;
 import org.deeplearning4j.nn.api.layers.RecurrentLayer;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
@@ -31,6 +34,9 @@ import org.deeplearning4j.nn.graph.vertex.VertexIndices;
 import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.layers.FrozenLayerWithBackprop;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
@@ -74,6 +80,28 @@ public class LayerVertex extends BaseGraphVertex {
         this.outputVertex = outputVertex;
 
         this.inputs = new INDArray[(inputVertices != null ? inputVertices.length : 0)];
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        org.deeplearning4j.nn.conf.layers.Layer layerConf = layer.conf().getLayer();
+
+        InputPreProcessor preProcessor = getLayerPreProcessor();
+
+        SDVariable input = inputs[0];
+
+        if(preProcessor != null){
+            NameScope preProcessorScope = sameDiff.withNameScope("inputPreprocessor");
+            input = preProcessor.definePreProcess(sameDiff, input);
+            preProcessorScope.close();
+        }
+
+        if(layerConf.getIDropout() != null){
+            input = layerConf.getIDropout().defineDropout(sameDiff, input);
+        }
+
+        return layerConf.defineLayer(sameDiff, input, paramTable, null);
     }
 
     @Override

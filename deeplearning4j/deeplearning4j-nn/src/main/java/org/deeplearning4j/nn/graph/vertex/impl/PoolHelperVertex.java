@@ -16,12 +16,17 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.bool.Or;
@@ -47,6 +52,16 @@ public class PoolHelperVertex extends BaseGraphVertex {
     public PoolHelperVertex(ComputationGraph graph, String name, int vertexIndex, VertexIndices[] inputVertices,
                     VertexIndices[] outputVertices, DataType dataType) {
         super(graph, name, vertexIndex, inputVertices, outputVertices, dataType);
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        if (inputs.length > 1)
+            throw new IllegalStateException("PoolHelper vertex requires a single input.");
+
+        return inputs[0].get(SDIndex.all(), SDIndex.all(), SDIndex.interval(1, -1), SDIndex.interval(1, -1));
     }
 
     @Override

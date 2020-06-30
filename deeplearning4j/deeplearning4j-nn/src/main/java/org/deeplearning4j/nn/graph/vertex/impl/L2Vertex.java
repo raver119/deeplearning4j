@@ -16,12 +16,16 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -52,6 +56,15 @@ public class L2Vertex extends BaseGraphVertex {
                     VertexIndices[] outputVertices, double eps, DataType dataType) {
         super(graph, name, vertexIndex, inputVertices, outputVertices, dataType);
         this.eps = eps;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        SDVariable temp = inputs[0].sub(inputs[1]);
+        temp = temp.mul(temp);
+        temp = temp.reshape(sameDiff.concat(0, sameDiff.sizeAt(temp, 0), sameDiff.constant(-1).castTo(DataType.INT64))).sum(1);
+        return temp;
     }
 
     @Override

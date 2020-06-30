@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.layers.samediff;
 
+import lombok.NonNull;
 import lombok.val;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
@@ -80,6 +81,23 @@ public class SameDiffGraphVertex extends BaseGraphVertex {
             config.initializeParameters(paramTable);
         }
         this.params = paramsView;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        Map<String, SDVariable> inputMap = new HashMap<>();
+
+        //TODO input validation?
+//        config.validateInput(inputs);
+
+        for(int i=0; i<inputs.length; i++ ){
+            String name = config.getVertexParams().getInputs().get(i);
+            inputMap.put(name, inputs[i]);
+        }
+
+        //TODO masks
+        return config.defineVertex(sameDiff, inputMap, paramTable, new HashMap<String, SDVariable>());
     }
 
     @Override

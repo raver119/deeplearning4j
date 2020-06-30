@@ -16,12 +16,16 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -74,6 +78,36 @@ public class ElementWiseVertex extends BaseGraphVertex {
     @Override
     public Layer getLayer() {
         return null;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        if(inputs.length == 1)
+            return inputs[0];
+
+        if (op == Op.Subtract && inputs.length != 2)
+            throw new IllegalArgumentException("ElementWise subtraction only supports 2 inputs");
+
+        SDVariable acc = inputs[0];
+        for(int i = 1 ; i < inputs.length ; i++){
+            SDVariable next = inputs[i];
+            if(op == Op.Add)
+                acc = acc.add(next);
+            else if(op == Op.Subtract)
+                acc = acc.sub(next);
+            else if(op == Op.Product)
+                acc = acc.mul(next);
+            else if(op == Op.Average)
+                acc = acc.add(next);
+            else if(op == Op.Max)
+                acc = sameDiff.math.max(acc, next);
+        }
+
+        if(op == Op.Average)
+            acc = acc.div(inputs.length);
+
+        return acc;
     }
 
     @Override

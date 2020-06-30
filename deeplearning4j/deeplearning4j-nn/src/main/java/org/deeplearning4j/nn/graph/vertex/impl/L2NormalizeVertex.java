@@ -16,12 +16,16 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -57,6 +61,17 @@ public class L2NormalizeVertex extends BaseGraphVertex {
         super(graph, name, vertexIndex, inputVertices, outputVertices, dataType);
         this.dimension = dimension;
         this.eps = eps;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+
+        if(dimension.length < 1 || dimension == null)
+            throw new IllegalStateException("Dimension must be set for toSameDiff conversion.");
+
+        SDVariable factor = sameDiff.max(inputs[0].norm2(dimension), sameDiff.constant(eps).castTo(inputs[0].dataType()));
+        return inputs[0].div(factor);
     }
 
     @Override

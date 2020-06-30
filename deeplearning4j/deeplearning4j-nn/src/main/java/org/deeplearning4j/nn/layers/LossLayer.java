@@ -337,7 +337,6 @@ public class LossLayer extends BaseLayer<org.deeplearning4j.nn.conf.layers.LossL
         return labels;
     }
 
-    @Override
     public ILossFunction getLossFn() {
         return layerConf().getLossFn();
     }

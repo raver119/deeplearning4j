@@ -16,12 +16,16 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl.rnn;
 
+import java.util.Map;
+import lombok.NonNull;
 import lombok.val;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.indexing.INDArrayIndex;
@@ -61,6 +65,12 @@ public class ReverseTimeSeriesVertex extends BaseGraphVertex {
                 throw new IllegalArgumentException("Invalid input name: \"" + inputName + "\" not found in list "
                         + "of network inputs (" + graph.getConfiguration().getNetworkInputs() + ")");
         }
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        return sameDiff.reverse(inputs[0], 3);
     }
 
     @Override

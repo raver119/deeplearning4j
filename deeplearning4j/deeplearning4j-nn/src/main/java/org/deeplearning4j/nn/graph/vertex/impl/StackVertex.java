@@ -16,6 +16,8 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
+import java.util.Map;
+import lombok.NonNull;
 import lombok.val;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
@@ -23,6 +25,8 @@ import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.memory.MemoryWorkspace;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -53,6 +57,12 @@ public class StackVertex extends BaseGraphVertex {
     public StackVertex(ComputationGraph graph, String name, int vertexIndex, VertexIndices[] inputVertices,
                     VertexIndices[] outputVertices, DataType dataType) {
         super(graph, name, vertexIndex, inputVertices, outputVertices, dataType);
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        return sameDiff.concat(0, inputs);
     }
 
     @Override
