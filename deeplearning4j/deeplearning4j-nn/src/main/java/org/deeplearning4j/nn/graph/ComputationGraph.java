@@ -24,7 +24,14 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bytedeco.javacpp.Pointer;
+import org.deeplearning4j.nn.conf.layers.BaseLayer;
+import org.deeplearning4j.nn.conf.layers.LayerWithLoss;
+import org.deeplearning4j.nn.layers.samediff.SameDiffOutputLayer;
 import org.nd4j.adapters.OutputAdapter;
+import org.nd4j.autodiff.samediff.NameScope;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.autodiff.samediff.TrainingConfig;
 import org.nd4j.linalg.dataset.AsyncMultiDataSetIterator;
 import org.deeplearning4j.exception.DL4JException;
 import org.deeplearning4j.nn.api.*;
@@ -91,6 +98,9 @@ import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.api.memory.abstracts.DummyWorkspace;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
+import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.regularization.Regularization;
+import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
 import org.nd4j.linalg.workspace.WorkspaceUtils;
@@ -745,6 +755,198 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
         synchronizeIterEpochCounts();
         initCalled = true;
+    }
+
+    /**
+     *
+     * Create the MultiLayerNetwork in a SameDiff instance.
+     *
+     * The input and lables placeholders are created with names "input" and "labels", respectively.
+     * Output and loss variables are set on the SameDiff instance and can be gotten from it.
+     *
+     * @param sameDiff The SameDiff instance to create the model in
+     * @param inputTypes The types of the inputs.
+     * @param useView whether to directly use the (view) weights in the SDVariables, or create new ones.
+     * Using them saves an initialization (of every weight), but may cause issues with multi-gpu setups.
+     * @return The {@link org.nd4j.autodiff.samediff.TrainingConfig} if training is setup (the last layer is an BaseOutputLayer), or null if not.
+     */
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull Map<String, InputType> inputTypes, boolean useView) {
+
+        if (!initCalled)
+            init();
+
+        Preconditions.checkArgument(inputTypes.keySet().equals(new HashSet<>(configuration.getNetworkInputs())));
+
+        InputType[] inputVertTypes = new InputType[inputTypes.size()];
+        int j = 0;
+        for(String inputName : configuration.getNetworkInputs()){
+            inputVertTypes[j] = inputTypes.get(inputName);
+            j++;
+        }
+
+        Map<String, InputType> outputTypes = configuration.getLayerActivationTypes(true, inputVertTypes);
+
+        Map<String, SDVariable> activations = new HashMap<>();
+        for(Map.Entry<String, InputType> input : inputTypes.entrySet()){
+            activations.put(input.getKey(), sameDiff.placeHolder(input.getKey(), configuration.getDataType(), input.getValue().getShape(true)));
+        }
+
+        Map<String, SDVariable> sdOutputLabels = new HashMap<>();
+
+        for (int i : topologicalOrder) {
+            GraphVertex vertex = vertices[i];
+            String name = vertex.getVertexName();
+
+            if(vertex instanceof InputVertex)
+                continue;
+
+            //TODO use layer name if set
+            NameScope layerScope = sameDiff.withNameScope(name);
+
+            Map<String, SDVariable> paramTable = new HashMap<>((int) vertex.numParams());
+            for (Map.Entry<String, INDArray> entry : vertex.paramTable(false).entrySet()) {
+                INDArray value = entry.getValue();
+                if (!useView) {
+                    value = value.dup();
+                }
+                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
+            }
+
+            SDVariable[] inputs = new SDVariable[vertex.getNumInputArrays()];
+            j = 0;
+            for(String inputVertex : configuration.getVertexInputs().get(name)){
+                inputs[j] = activations.get(inputVertex);
+                j++;
+            }
+
+            SDVariable output;
+            if(vertex.hasLayer() && vertex.getLayer() instanceof SameDiffOutputLayer){
+                String inputName = configuration.getVertexInputs().get(name).get(0);
+                SDVariable labels = null;
+                if(((SameDiffOutputLayer) vertex.getLayer()).needsLabels()){
+                    labels = sameDiff
+                            .placeHolder("labels", configuration.getDataType(), outputTypes.get(inputName).getShape(true));
+                }
+                SDVariable input = activations.get(inputName);
+                output = ((SameDiffOutputLayer) vertex.getLayer()).layerConf().defineLayer(sameDiff, input, labels, paramTable);
+                sdOutputLabels.put(name, labels);
+            } else {
+                output = vertex.defineVertex(sameDiff, inputs, paramTable, null);
+            }
+
+            activations.put(name, output);
+
+            layerScope.close();
+        }
+
+        sameDiff.setOutputs(configuration.getNetworkOutputs());
+
+        List<String> losses = new ArrayList<>();
+        List<String> allLabels = new ArrayList<>();
+
+        for(String output : configuration.getNetworkOutputs()){
+            GraphVertex vertex = verticesMap.get(output);
+            SDVariable loss;
+            SDVariable labels;
+            if(vertex.hasLayer() && vertex.getLayer() instanceof SameDiffOutputLayer) {
+                loss = activations.get(vertex.getVertexName());
+                labels = sdOutputLabels.get(vertex.getVertexName());
+
+            }else if(vertex.hasLayer() && vertex.getLayer() instanceof IOutputLayer && vertex.getLayer().conf().getLayer() instanceof LayerWithLoss){
+                LayerWithLoss lossLayer = (LayerWithLoss) vertex.getLayer().conf().getLayer();
+                SDVariable input = activations.get(configuration.getVertexInputs().get(output).get(0));
+                labels = null;
+
+                NameScope vertexScope = sameDiff.withNameScope(vertex.getVertexName());
+
+                if(((IOutputLayer) vertex.getLayer()).needsLabels()) {
+                    labels = sameDiff
+                            .placeHolder("labels", configuration.getDataType(), outputTypes.get(output).getShape(true));
+                }
+                NameScope lossScope = sameDiff.withNameScope("loss");
+
+                loss = lossLayer.defineLoss(sameDiff, input, labels, conf().isMiniBatch());
+                lossScope.close();
+                loss.rename("loss");
+
+                vertexScope.close();
+
+            } else {
+                continue;
+            }
+
+            losses.add(loss.name());
+            if(labels != null)
+                allLabels.add(labels.name());
+        }
+
+        if(losses.size() > 0){
+
+            IUpdater iUpdater = null;
+            List<Regularization> regularizations = null;
+
+            for(Layer l : layers){
+                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
+                if(conf instanceof BaseLayer){
+                    if(iUpdater == null) {
+                        iUpdater = ((BaseLayer) conf).getIUpdater();
+                    } else {
+                        if(((BaseLayer) conf).getIUpdater() != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                    }
+
+                    if(iUpdater == null) {
+                        iUpdater = ((BaseLayer) conf).getBiasUpdater();
+                    } else {
+                        if(((BaseLayer) conf).getBiasUpdater() != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                    }
+
+                    if(regularizations == null){
+                        regularizations = ((BaseLayer) conf).getRegularization();
+                    } else {
+                        if(((BaseLayer) conf).getRegularization() != regularizations)
+                            throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
+                                    + "Expected " + regularizations + ", but was different for " + conf);
+                    }
+
+                    if(regularizations == null){
+                        regularizations = ((BaseLayer) conf).getRegularizationBias();
+                    } else {
+                        if(((BaseLayer) conf).getRegularizationBias() != regularizations)
+                            throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
+                                    + "Expected " + regularizations + ", but was on bias different for " + conf);
+                    }
+                }
+            }
+
+            // labels shape must be the same as the last layer
+            String[] lossArr = losses.toArray(new String[0]);
+            sameDiff.setLossVariables(lossArr);
+
+            TrainingConfig.Builder tcBuilder = org.nd4j.autodiff.samediff.TrainingConfig.builder()
+                    .minimize(lossArr)
+                    .minimize(conf().isMinimize())
+                    .dataSetFeatureMapping(configuration.getNetworkInputs().toArray(new String[0]));
+
+            if(regularizations != null)
+                tcBuilder.regularization(regularizations);
+
+            if(iUpdater != null)
+                tcBuilder.updater(iUpdater);
+
+            if(allLabels.size() == 0)
+                tcBuilder.markLabelsUnused();
+            else
+                tcBuilder.dataSetLabelMapping(allLabels.toArray(new String[0]));
+
+            org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
+
+            sameDiff.setTrainingConfig(trainingConfig);
+            return trainingConfig;
+        }
+
+        return null;
     }
 
     /**

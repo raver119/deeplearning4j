@@ -60,7 +60,9 @@ import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.WorkspaceMode;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.layers.BaseLayer;
 import org.deeplearning4j.nn.conf.layers.FeedForwardLayer;
+import org.deeplearning4j.nn.conf.layers.LayerWithLoss;
 import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional;
 import org.deeplearning4j.nn.gradient.DefaultGradient;
 import org.deeplearning4j.nn.gradient.Gradient;
@@ -121,6 +123,9 @@ import org.nd4j.linalg.heartbeat.reports.Task;
 import org.nd4j.linalg.heartbeat.utils.EnvironmentUtils;
 import org.nd4j.linalg.heartbeat.utils.TaskUtils;
 import org.nd4j.linalg.indexing.NDArrayIndex;
+import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.regularization.Regularization;
+import org.nd4j.linalg.learning.regularization.WeightDecay;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.util.FeatureUtil;
@@ -875,11 +880,16 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             }
 
             // layer
-            //TODO regularizations?  No SameDiff support for per-layer/weight regularizes
 
             if(config instanceof org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer){
-                sdOutputLabels = sameDiff
-                        .placeHolder("labels", getLayerWiseConfigurations().getDataType(), config.getOutputType(i, currentInputType).getShape());
+                if(((org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer) config).labelsRequired()) {
+                    sdOutputLabels = sameDiff
+                            .placeHolder("labels", getLayerWiseConfigurations().getDataType(),
+                                    config.getOutputType(i, currentInputType).getShape());
+                } else {
+                    sdOutputLabels = null;
+                }
+
                 currentOutput = ((org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer) config).defineLayer(sameDiff, currentOutput, sdOutputLabels, paramTable);
             } else {
                 currentOutput = config.defineLayer(sameDiff, currentOutput, paramTable, null);
@@ -892,40 +902,81 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
         sameDiff.setOutputs(currentOutput);
 
-        Layer lastLayer = getOutputLayer();
-        if(lastLayer instanceof IOutputLayer){
-            ILossFunction lossFn = ((IOutputLayer) lastLayer).getLossFn();
+        org.deeplearning4j.nn.conf.layers.Layer lastLayer = getOutputLayer().conf().getLayer();
+        if(lastLayer instanceof LayerWithLoss && getOutputLayer() instanceof IOutputLayer){
             // just use output
-            SDVariable loss;
             SDVariable labels;
-            if(lossFn == null){
-                loss = currentOutput;
-                if(lastLayer instanceof SameDiffOutputLayer)
-                    labels = sdOutputLabels;
-                else
-                    labels = sameDiff
-                            .placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
-            } else {
+            if(((IOutputLayer) getOutputLayer()).needsLabels()) {
                 labels = sameDiff
-                        .placeHolder("labels", getLayerWiseConfigurations().getDataType(), currentInputType.getShape(true));
-                NameScope lossScope = sameDiff.withNameScope(lossFn.getClass().getSimpleName());
-
-                loss = lossFn.defineLoss(sameDiff, currentOutput, labels, conf().isMiniBatch());
-                lossScope.close();
-                loss.rename("loss");
+                        .placeHolder("labels", getLayerWiseConfigurations().getDataType(),
+                                currentInputType.getShape(true));
+            } else {
+                labels = null;
             }
 
-            // labels shape must be the same as the last layer
+            NameScope lossScope = sameDiff.withNameScope(lastLayer.getClass().getSimpleName() + "_loss");
+
+            SDVariable loss = ((LayerWithLoss) lastLayer).defineLoss(sameDiff, currentOutput, labels, conf().isMiniBatch());
+            lossScope.close();
+            loss.rename("loss");
 
             sameDiff.setLossVariables(loss);
 
-            org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = org.nd4j.autodiff.samediff.TrainingConfig.builder()
+            IUpdater iUpdater = null;
+            List<Regularization> regularizations = null;
+
+            for(Layer l : layers){
+                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
+                if(conf instanceof BaseLayer){
+                    if(iUpdater == null) {
+                        iUpdater = ((BaseLayer) conf).getIUpdater();
+                    } else {
+                        if(((BaseLayer) conf).getIUpdater() != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                    }
+
+                    if(iUpdater == null) {
+                        iUpdater = ((BaseLayer) conf).getBiasUpdater();
+                    } else {
+                        if(((BaseLayer) conf).getBiasUpdater() != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                    }
+
+                    if(regularizations == null){
+                        regularizations = ((BaseLayer) conf).getRegularization();
+                    } else {
+                        if(((BaseLayer) conf).getRegularization() != regularizations)
+                            throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
+                                    + "Expected " + regularizations + ", but was different for " + conf);
+                    }
+
+                    if(regularizations == null){
+                        regularizations = ((BaseLayer) conf).getRegularizationBias();
+                    } else {
+                        if(((BaseLayer) conf).getRegularizationBias() != regularizations)
+                            throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
+                                    + "Expected " + regularizations + ", but was on bias different for " + conf);
+                    }
+                }
+            }
+
+            org.nd4j.autodiff.samediff.TrainingConfig.Builder tcBuilder = org.nd4j.autodiff.samediff.TrainingConfig.builder()
                     .minimize(loss.name())
-                    .updater(this.conf().getIUpdater().clone())
                     .minimize(conf().isMinimize())
-                    .dataSetFeatureMapping(input.name())
-                    .dataSetLabelMapping(labels.name())
-                    .build();
+                    .dataSetFeatureMapping(input.name());
+
+            if(iUpdater != null)
+                tcBuilder.updater(iUpdater);
+
+            if(labels != null)
+                tcBuilder.dataSetLabelMapping(labels.name());
+            else
+                tcBuilder.markLabelsUnused();
+
+            if(regularizations != null)
+                tcBuilder.regularization(regularizations);
+
+            org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
 
             sameDiff.setTrainingConfig(trainingConfig);
             return trainingConfig;

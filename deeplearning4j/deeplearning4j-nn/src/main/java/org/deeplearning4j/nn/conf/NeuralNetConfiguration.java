@@ -101,7 +101,7 @@ public class NeuralNetConfiguration implements Serializable, Cloneable {
     //Counter for the number of epochs completed so far. Used for per-epoch schedules
     protected int epochCount = 0;
 
-    protected IUpdater iUpdater;
+//    protected IUpdater iUpdater;
 
 
     /**
@@ -1096,7 +1096,7 @@ public class NeuralNetConfiguration implements Serializable, Cloneable {
             conf.miniBatch = miniBatch;
             conf.cacheMode = this.cacheMode;
             conf.dataType = this.dataType;
-            conf.iUpdater = iUpdater;
+//            conf.iUpdater = iUpdater;
 
             configureLayer(layer);
             if (layer instanceof FrozenLayer) {

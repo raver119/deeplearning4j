@@ -16,10 +16,13 @@
 
 package org.deeplearning4j.nn.graph.vertex;
 
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.api.Trainable;
 import org.deeplearning4j.nn.gradient.Gradient;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -91,6 +94,8 @@ public interface GraphVertex extends Trainable, Serializable {
 
     /** Get the Layer (if any). Returns null if {@link #hasLayer()} == false */
     Layer getLayer();
+
+    SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs, @NonNull Map<String, SDVariable> paramTable, SDVariable mask);
 
     /** Set the input activations.
      *  @param inputNumber Must be in range 0 to {@link #getNumInputArrays()}-1
