@@ -141,6 +141,12 @@ public class OCNNOutputLayer extends BaseOutputLayer {
     }
 
     @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        return lossFn.defineLoss(sameDiff, input, input, average);
+    }
+
+    @Override
     public long getNOut() {
         //we don't change number of outputs here
         return 1L;

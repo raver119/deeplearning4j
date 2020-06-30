@@ -20,18 +20,17 @@ import lombok.*;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
-import org.nd4j.linalg.lossfunctions.impl.LossBinaryXENT;
 import org.nd4j.linalg.lossfunctions.impl.LossMCXENT;
-import org.nd4j.linalg.lossfunctions.impl.LossMSE;
-import org.nd4j.linalg.lossfunctions.impl.LossNegativeLogLikelihood;
 
 @Data
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public abstract class BaseOutputLayer extends FeedForwardLayer {
+public abstract class BaseOutputLayer extends FeedForwardLayer implements LayerWithLoss {
 
     protected ILossFunction lossFn;
     protected boolean hasBias = true;
@@ -79,6 +78,11 @@ public abstract class BaseOutputLayer extends FeedForwardLayer {
                         .build();
     }
 
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        throw new UnsupportedOperationException("SameDiff loss conversion has not been implemented for " + this.getClass().getSimpleName());
+    }
 
     @Getter
     @Setter

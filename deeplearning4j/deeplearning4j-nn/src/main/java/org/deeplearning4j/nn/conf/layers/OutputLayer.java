@@ -86,6 +86,12 @@ public class OutputLayer extends BaseOutputLayer {
     }
 
     @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        return lossFn.defineLoss(sameDiff, input, labels, average);
+    }
+
+    @Override
     public ParamInitializer initializer() {
         return DefaultParamInitializer.getInstance();
     }

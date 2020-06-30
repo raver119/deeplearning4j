@@ -75,7 +75,12 @@ public class ActivationLayer extends AbstractLayer<org.deeplearning4j.nn.conf.la
             //dup required: need to keep original input for backprop
             in = mgr.dup(ArrayType.ACTIVATIONS, input, input.ordering());
         } else {
-            in = mgr.leverageTo(ArrayType.ACTIVATIONS, input);
+            if(mgr.isScopedOut(ArrayType.ACTIVATIONS) && !input.isAttached()) {
+                //Edge case: input and output are both not in workspaces - dup to avoid inplace modification
+                in = mgr.dup(ArrayType.ACTIVATIONS, input);
+            } else {
+                in = mgr.leverageTo(ArrayType.ACTIVATIONS, input);
+            }
         }
 
         return layerConf().getActivationFn().getActivation(in, training);

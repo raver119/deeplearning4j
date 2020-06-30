@@ -65,12 +65,4 @@ public interface IOutputLayer extends Layer, Classifier {
      * @return A column INDArray of shape [numExamples,1], where entry i is the score of the ith example
      */
     INDArray computeScoreForExamples(double fullNetworkRegScore, LayerWorkspaceMgr workspaceMgr);
-
-
-    /**
-     * Get the loss function being used by the output layer.
-     * May be null if one isn't used, in which case the output should be usable as the loss value (e.g. for SameDiffOutputLayer).
-     * @return The loss function.
-     */
-    ILossFunction getLossFn();
 }

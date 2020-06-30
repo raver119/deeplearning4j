@@ -681,7 +681,6 @@ public class Yolo2OutputLayer extends AbstractLayer<org.deeplearning4j.nn.conf.l
         return conf;
     }
 
-    @Override
     public ILossFunction getLossFn() {
         return null;
     }

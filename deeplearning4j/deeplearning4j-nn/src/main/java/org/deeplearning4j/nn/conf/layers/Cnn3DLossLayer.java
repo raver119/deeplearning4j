@@ -16,11 +16,9 @@
 
 package org.deeplearning4j.nn.conf.layers;
 
-import java.util.HashMap;
 import lombok.*;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
-import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
@@ -29,13 +27,11 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 import java.util.Collection;
@@ -66,7 +62,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Cnn3DLossLayer extends FeedForwardLayer {
+public class Cnn3DLossLayer extends FeedForwardLayer implements LayerWithLoss {
 
     protected ILossFunction lossFn;
     protected Convolution3D.DataFormat dataFormat;
@@ -130,6 +126,25 @@ public class Cnn3DLossLayer extends FeedForwardLayer {
             return output.permute(0, 4, 1, 2, 3);
         else
             return output;
+    }
+
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        SDVariable batch = sameDiff.sizeAt(input, 0);
+        SDVariable channels;
+
+        if(dataFormat == DataFormat.NCDHW){
+            channels = sameDiff.sizeAt(input, 1);
+            input = input.permute(0, 2, 3, 4, 1);
+            labels = labels.permute(0, 2, 3, 4, 1);
+        } else if(dataFormat == DataFormat.NDHWC){
+            channels = sameDiff.sizeAt(input, 4);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
+
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 
     @Override

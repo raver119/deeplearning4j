@@ -249,7 +249,6 @@ public class CnnLossLayer extends BaseLayer<org.deeplearning4j.nn.conf.layers.Cn
         return workspaceMgr.leverageTo(ArrayType.ACTIVATIONS, summedScores);
     }
 
-    @Override
     public ILossFunction getLossFn() {
         return layerConf().getLossFn();
     }

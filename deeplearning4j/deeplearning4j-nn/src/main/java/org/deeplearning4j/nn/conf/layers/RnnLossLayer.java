@@ -23,7 +23,6 @@ import lombok.NonNull;
 import lombok.ToString;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
-import org.deeplearning4j.nn.conf.CNN2DFormat;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
@@ -32,7 +31,6 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -58,7 +56,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class RnnLossLayer extends FeedForwardLayer {
+public class RnnLossLayer extends FeedForwardLayer implements LayerWithLoss {
     private RNNFormat rnnDataFormat = RNNFormat.NCW;
     protected ILossFunction lossFn;
 
@@ -115,6 +113,25 @@ public class RnnLossLayer extends FeedForwardLayer {
             return output.permute(0, 2, 1);
         else
             return output;
+    }
+
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        SDVariable batch = sameDiff.sizeAt(input, 0);
+        SDVariable channels;
+
+        if(rnnDataFormat == RNNFormat.NCW){
+            channels = sameDiff.sizeAt(input, 1);
+            input = input.permute(0, 2, 1);
+            labels = labels.permute(0, 2, 1);
+        } else if(rnnDataFormat == RNNFormat.NWC){
+            channels = sameDiff.sizeAt(input, 2);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN data format " + rnnDataFormat);
+
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 
     @Override

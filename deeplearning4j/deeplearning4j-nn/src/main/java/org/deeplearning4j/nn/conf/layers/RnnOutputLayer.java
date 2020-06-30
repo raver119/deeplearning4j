@@ -29,7 +29,6 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
@@ -119,6 +118,25 @@ public class RnnOutputLayer extends BaseOutputLayer {
             return temp.permute(0, 2, 1);
         else
             return temp;
+    }
+
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        SDVariable batch = sameDiff.sizeAt(input, 0);
+        SDVariable channels;
+
+        if(rnnDataFormat == RNNFormat.NCW){
+            channels = sameDiff.sizeAt(input, 1);
+            input = input.permute(0, 2, 1);
+            labels = labels.permute(0, 2, 1);
+        } else if(rnnDataFormat == RNNFormat.NWC){
+            channels = sameDiff.sizeAt(input, 2);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN data format " + rnnDataFormat);
+
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 
     @Override

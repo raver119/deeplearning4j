@@ -355,7 +355,6 @@ public abstract class BaseOutputLayer<LayerConfT extends org.deeplearning4j.nn.c
         return layerConf().hasBias();
     }
 
-    @Override
     public ILossFunction getLossFn() {
         return layerConf().getLossFn();
     }

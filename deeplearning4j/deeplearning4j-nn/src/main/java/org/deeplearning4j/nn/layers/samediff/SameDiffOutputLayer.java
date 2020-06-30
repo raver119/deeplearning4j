@@ -395,9 +395,4 @@ public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.con
     public void fit(INDArray examples, int[] labels) {
         throw new UnsupportedOperationException("Not supported");
     }
-
-    @Override
-    public ILossFunction getLossFn() {
-        return null;
-    }
 }

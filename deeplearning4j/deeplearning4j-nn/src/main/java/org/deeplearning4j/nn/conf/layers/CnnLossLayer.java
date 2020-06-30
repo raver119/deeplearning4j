@@ -31,7 +31,6 @@ import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
 import org.deeplearning4j.nn.params.EmptyParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
@@ -64,7 +63,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class CnnLossLayer extends FeedForwardLayer {
+public class CnnLossLayer extends FeedForwardLayer implements LayerWithLoss {
 
     protected ILossFunction lossFn;
     protected CNN2DFormat format = CNN2DFormat.NCHW;
@@ -125,6 +124,25 @@ public class CnnLossLayer extends FeedForwardLayer {
             return output.permute(0, 3, 1, 2);
         else
             return output;
+    }
+
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        SDVariable batch = sameDiff.sizeAt(input, 0);
+        SDVariable channels;
+
+        if(format == CNN2DFormat.NCHW){
+            channels = sameDiff.sizeAt(input, 1);
+            input = input.permute(0, 2, 3, 1);
+            labels = labels.permute(0, 2, 3, 1);
+        } else if(format == CNN2DFormat.NHWC){
+            channels = sameDiff.sizeAt(input, 3);
+        }  else
+            throw new UnsupportedOperationException("Unknown CNN data format " + format);
+
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 
     @Override
