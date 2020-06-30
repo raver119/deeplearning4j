@@ -38,7 +38,6 @@ import org.deeplearning4j.nn.layers.normalization.LocalResponseNormalization;
 import org.deeplearning4j.nn.layers.recurrent.LSTM;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
-import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
@@ -114,38 +113,33 @@ public class TestUtils {
         return restored;
     }
 
-    private static void testSameDiffLoss(SameDiff sameDiff, MultiLayerNetwork network, INDArray input, INDArray labels){
-        INDArray output = network.output(input).dup();
-        network.setLabels(labels);
-        network.computeGradientAndScore();
-        double score = network.score();
-
-        Map<String, INDArray> sdOutputs = sameDiff.batchOutput()
-                .output(sameDiff.outputs().get(0), sameDiff.getLossVariables().get(0))
-                .input("input", input)
-                .input("labels", labels)
-                .output();
-
-        INDArray sdLoss = sdOutputs.get(sameDiff.getLossVariables().get(0));
-        INDArray sdOutput = sdOutputs.get(sameDiff.outputs().get(0));
-        double sdScore = sdLoss.sumNumber().doubleValue();
-
-        ILossFunction lossFn = null;
-        Layer lastLayer = network.getLayer(network.getnLayers() - 1);
-        if(lastLayer instanceof LossLayer){
-            lossFn = ((LossLayer) lastLayer).layerConf().getLossFn();
-        } else if(lastLayer instanceof BaseOutputLayer){
-            lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
-        }
-
-        assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
-        assertEquals("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
-                sdScore, score, 1e-3);
-    }
+    public static boolean SKIP_UNIMPLEMENTED = true;
+    public static boolean FAIL_FAST = true;
 
     private static Set<String> failures = new HashSet<>();
 
-    private static void testSameDiffActivations(SameDiff sameDiff, MultiLayerNetwork network, INDArray input, boolean failFast){
+    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, INDArray labels){
+
+        SameDiff sameDiff;
+        try{
+            sameDiff = network.toSameDiff(null, true);
+        } catch (UnsupportedOperationException e){
+            if(!SKIP_UNIMPLEMENTED)
+                throw e;
+            else
+                return;
+        }
+
+        if(input == null){
+            long[] inputShape = sameDiff.getVariable("input").placeholderShape();
+            for(int i = 0 ; i < inputShape.length ; i++){
+                if(inputShape[i] == -1)
+                    inputShape[i] = 1;
+            }
+
+            input = Nd4j.rand(inputShape);
+        }
+
         List<INDArray> activations = network.feedForward(input);
         activations.remove(0);
 
@@ -156,20 +150,20 @@ public class TestUtils {
         List<String> layerNames = new ArrayList<>();
         for(int i = 0 ; i < network.getnLayers() ; i++){
             org.deeplearning4j.nn.conf.layers.Layer config = network.getLayerWiseConfigurations().getConf(i).getLayer();
-            String confClass = config.getClass().getSimpleName();
+            String baseName = config.getLayerName() == null ? config.getClass().getSimpleName() : config.getLayerName();
 
             int layerNum = 0;
 
-            if (numLayers.containsKey(confClass)) {
-                layerNum = numLayers.get(confClass);
-                numLayers.put(confClass, ++layerNum);
+            if (numLayers.containsKey(baseName)) {
+                layerNum = numLayers.get(baseName);
+                numLayers.put(baseName, ++layerNum);
             } else {
-                numLayers.put(confClass, 0);
+                numLayers.put(baseName, 0);
             }
 
-            String scope = confClass + (layerNum == 0 ? "" : "_" + layerNum);
+            String scope = baseName + (layerNum == 0 ? "" : "_" + layerNum);
             List<SDVariable> scopeVars = sameDiff.getVariablesInScope(scope);
-            layerNames.add(scope);
+            layerNames.add(config.getClass().getSimpleName());
             if(scopeVars.size() > 0)
                 sdActivationVariables.add(scopeVars.get(scopeVars.size() - 1).name());
             else
@@ -182,6 +176,7 @@ public class TestUtils {
                 .output();
 
 
+        //TODO remove
         System.out.println("Failures to date: " + failures);
 
         assertEquals("Sizes of DL4J activations and found SameDiff activations differ", activations.size(), sdActivationVariables.size());
@@ -193,7 +188,7 @@ public class TestUtils {
 
             if(! sd.equalsWithEps(dl4j, 1e-3)) {
                 failures.add(layerNames.get(i));
-                if(failFast)
+                if(FAIL_FAST)
                     fail("DL4J activation and SameDiff activation not equal for Layer " + layerNames.get(i) +  " and SDVariable " + sdActivationVariables.get(i));
                 else
                     messages.add(new Pair<>(layerNames.get(i), sdActivationVariables.get(i)));
@@ -208,67 +203,35 @@ public class TestUtils {
 
         assertEquals(message.toString(), 0, messages.size());
 
-    }
+        if(labels != null){
+            INDArray output = network.output(input).dup();
+            network.setLabels(labels);
+            network.computeGradientAndScore();
+            double score = network.score();
 
-    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, INDArray labels, boolean passUnimplemented){
+            Map<String, INDArray> sdOutputs = sameDiff.batchOutput()
+                    .output(sameDiff.outputs().get(0), sameDiff.getLossVariables().get(0))
+                    .input("input", input)
+                    .input("labels", labels)
+                    .output();
 
-        SameDiff model;
-        try{
-            model = network.toSameDiff(null, true);
-        } catch (UnsupportedOperationException e){
-            if(!passUnimplemented)
-                throw e;
-            else
-                return;
-        }
+            INDArray sdLoss = sdOutputs.get(sameDiff.getLossVariables().get(0));
+            INDArray sdOutput = sdOutputs.get(sameDiff.outputs().get(0));
+            double sdScore = sdLoss.sumNumber().doubleValue();
 
-        testSameDiffActivations(model, network, input, true);
-        testSameDiffLoss(model, network, input, labels);
-    }
-
-    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, boolean passUnimplemented){
-
-        SameDiff model;
-        try{
-            model = network.toSameDiff(null, true);
-        } catch (UnsupportedOperationException e){
-            if(!passUnimplemented)
-                throw e;
-            else
-                return;
-        }
-
-        testSameDiffActivations(model, network, input, true);
-    }
-
-    public static void testToSameDiff(MultiLayerNetwork network, boolean passUnimplemented){
-        if(network.getInput() != null){
-            if(network.getLabels() != null)
-                testToSameDiff(network, network.getInput(), network.getLabels(), passUnimplemented);
-            else
-                testToSameDiff(network, network.getInput(), passUnimplemented);
-        } else {
-            SameDiff model;
-            try{
-                model = network.toSameDiff(null, true);
-            } catch (UnsupportedOperationException e){
-                if(!passUnimplemented)
-                    throw e;
-                else
-                    return;
+            ILossFunction lossFn = null;
+            Layer lastLayer = network.getLayer(network.getnLayers() - 1);
+            if(lastLayer instanceof LossLayer){
+                lossFn = ((LossLayer) lastLayer).layerConf().getLossFn();
+            } else if(lastLayer instanceof BaseOutputLayer){
+                lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
             }
 
-            long[] inputShape = model.getVariable("input").placeholderShape();
-            for(int i = 0 ; i < inputShape.length ; i++){
-                if(inputShape[i] == -1)
-                    inputShape[i] = 1;
-            }
-
-            INDArray fakeInput = Nd4j.rand(inputShape);
-
-
-            testSameDiffActivations(model, network, fakeInput, true);
+            assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));
+            assertEquals("Losses don't match for original network and SameDiff version" + (lossFn != null ? " for loss function " + lossFn.getClass().getSimpleName() : ""),
+                    sdScore, score, 1e-3);
         }
+
     }
 
     private static <T> T serializeDeserializeJava(T object){

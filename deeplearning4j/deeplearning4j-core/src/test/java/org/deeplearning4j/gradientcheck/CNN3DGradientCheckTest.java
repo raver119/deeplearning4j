@@ -158,7 +158,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                                             assertTrue(msg, gradOK);
 
-                                            TestUtils.testToSameDiff(net, input, labels, true);
+                                            TestUtils.testToSameDiff(net, input, labels);
                                             TestUtils.testModelSerialization(net);
                                         }
                                     }
@@ -262,7 +262,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -353,7 +353,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                             assertTrue(msg, gradOK);
 
-                            TestUtils.testToSameDiff(net, input, labels, true);
+                            TestUtils.testToSameDiff(net, input, labels);
                             TestUtils.testModelSerialization(net);
                         }
                     }
@@ -444,7 +444,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(msg, gradOK);
 
-                        TestUtils.testToSameDiff(net, input, labels, true);
+                        TestUtils.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -544,7 +544,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -636,7 +636,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }

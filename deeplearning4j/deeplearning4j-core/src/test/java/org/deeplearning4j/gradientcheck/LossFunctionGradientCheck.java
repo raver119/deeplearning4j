@@ -226,7 +226,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                 } else {
                     failed.add(testName);
                 }
-                TestUtils.testToSameDiff(net, input, labels, true);
+                TestUtils.testToSameDiff(net, input, labels);
                 TestUtils.testModelSerialization(net);
             }
         }
@@ -398,7 +398,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                 TestUtils.testModelSerialization(net);
                 //TODO toSameDiff doesn't support regularization
                 if(net.calcRegularizationScore(false) == 0)
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
             }
         }
 
@@ -708,7 +708,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         failed.add(testName);
                     }
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                 }
             }
         }

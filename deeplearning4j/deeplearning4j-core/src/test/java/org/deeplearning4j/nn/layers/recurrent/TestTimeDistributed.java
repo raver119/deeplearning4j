@@ -104,7 +104,7 @@ public class TestTimeDistributed extends BaseDL4JTest {
                     MultiLayerNetwork net3 = TestUtils.testModelSerialization(net2);
                     out2 = net2.output(in);
                     INDArray out3 = net3.output(in);
-                    TestUtils.testToSameDiff(net3, in, labels, true);
+                    TestUtils.testToSameDiff(net3, in, labels);
 
                     assertEquals(out2, out3);
                 }

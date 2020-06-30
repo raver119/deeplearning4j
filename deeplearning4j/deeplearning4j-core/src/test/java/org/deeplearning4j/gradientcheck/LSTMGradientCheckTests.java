@@ -137,7 +137,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
                             DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
             assertTrue(testName, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels, true);
+            TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -227,7 +227,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
                         .labels(labels).subset(true).maxPerParam(128));
 
                 assertTrue(testName, gradOK);
-                TestUtils.testToSameDiff(mln, input, labels, true);
+                TestUtils.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -278,7 +278,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
                 boolean gradOK = GradientCheckUtil.checkGradients(mln, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(mln, input, labels, true);
+                TestUtils.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -359,7 +359,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
                 String msg = "testGradientGravesLSTMFull() - activationFn=" + afn + ", lossFn=" + lf
                         + ", outputActivation=" + outputActivation + ", l2=" + l2 + ", l1=" + l1;
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(mln, input, labels, true);
+                TestUtils.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -409,7 +409,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
             String msg = "testGradientGravesLSTMEdgeCases() - timeSeriesLength=" + timeSeriesLength[i]
                             + ", miniBatchSize=" + miniBatchSize[i];
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels, true);
+            TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -465,7 +465,7 @@ public class LSTMGradientCheckTests extends BaseDL4JTest {
         boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(mln).input(input)
                 .labels(labels).subset(true).maxPerParam(32));
         assertTrue(gradOK);
-        TestUtils.testToSameDiff(mln, input, labels, true);
+        TestUtils.testToSameDiff(mln, input, labels);
         TestUtils.testModelSerialization(mln);
     }
 }

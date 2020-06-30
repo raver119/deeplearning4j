@@ -137,7 +137,7 @@ public class GradientCheckTests extends BaseDL4JTest {
         String msg = "testMinibatchApplication() - activationFn=" + afn + ", lossFn=" + lf
                 + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst;
         assertTrue(msg, gradOK);
-        TestUtils.testToSameDiff(mln, ds.getFeatures(), ds.getLabels(), true);
+        TestUtils.testToSameDiff(mln, ds.getFeatures(), ds.getLabels());
         TestUtils.testModelSerialization(mln);
     }
 
@@ -218,7 +218,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                     String msg = "testGradMLP2LayerIrisSimple() - activationFn=" + afn + ", lossFn=" + lf
                                     + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst;
                     assertTrue(msg, gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels, true);
+                    TestUtils.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -317,7 +317,7 @@ public class GradientCheckTests extends BaseDL4JTest {
 
                         //TODO toSameDiff doesn't support regularization
                         if(mln.calcRegularizationScore(false) == 0)
-                            TestUtils.testToSameDiff(mln, input, labels, true);
+                            TestUtils.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }
@@ -401,7 +401,7 @@ public class GradientCheckTests extends BaseDL4JTest {
 
         String msg = "testEmbeddingLayerSimple";
         assertTrue(msg, gradOK);
-        TestUtils.testToSameDiff(mln, input, labels, true);
+        TestUtils.testToSameDiff(mln, input, labels);
         TestUtils.testModelSerialization(mln);
     }
 
@@ -491,7 +491,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                         boolean gradOK = GradientCheckUtil.checkGradients(mln, DEFAULT_EPS, DEFAULT_MAX_REL_ERROR,
                                         DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                         assertTrue(msg, gradOK);
-                        TestUtils.testToSameDiff(mln, input, labels, true);
+                        TestUtils.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }
@@ -617,7 +617,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                             .labels(label).inputMask(fMask));
                     assertTrue(msg, gradOK);
-                    TestUtils.testToSameDiff(net, in, label, true);
+                    TestUtils.testToSameDiff(net, in, label);
                     TestUtils.testModelSerialization(net);
 
 
@@ -719,7 +719,7 @@ public class GradientCheckTests extends BaseDL4JTest {
 
                     //TODO toSameDiff doesn't support regularization
                     if(mln.calcRegularizationScore(false) == 0)
-                        TestUtils.testToSameDiff(mln, input, labels, true);
+                        TestUtils.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -804,7 +804,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                         String msg = "testGradMLP2LayerIrisSimple() - activationFn=" + afn + ", lossFn=" + lf
                                 + ", outputActivation=" + outputActivation + ", doLearningFirst=" + doLearningFirst + ", layerNorm=" + layerNorm;
                         assertTrue(msg, gradOK);
-                        TestUtils.testToSameDiff(mln, input, labels, true);
+                        TestUtils.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }

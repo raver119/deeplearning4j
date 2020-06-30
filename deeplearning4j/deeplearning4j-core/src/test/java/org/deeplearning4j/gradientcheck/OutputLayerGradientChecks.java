@@ -147,7 +147,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                         .labels(labels).labelMask(labelMask));
 
                 assertTrue(testName, gradOK);
-                TestUtils.testToSameDiff(mln, input, labels, true);
+                TestUtils.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -257,7 +257,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                             .labels(labels).labelMask(labelMask));
 
                     assertTrue(testName, gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels, true);
+                    TestUtils.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -408,7 +408,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                                 .labels(labels).labelMask(labelMask));
 
                         assertTrue(testName, gradOK);
-                        TestUtils.testToSameDiff(mln, input, labels, true);
+                        TestUtils.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }

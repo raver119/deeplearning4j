@@ -152,7 +152,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
                             DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                     assertTrue(gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels, true);
+                    TestUtils.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -250,7 +250,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             //TODO toSameDiff doesn't support regularization
             if(mln.calcRegularizationScore(false) == 0)
-                TestUtils.testToSameDiff(mln, input, labels, true);
+                TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -313,7 +313,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
                 assertTrue(msg, gradOK);
 
-                TestUtils.testToSameDiff(net, input, labels, true);
+                TestUtils.testToSameDiff(net, input, labels);
                 TestUtils.testModelSerialization(net);
             }
         }
@@ -383,7 +383,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
                             .labels(new INDArray[]{labels}));
                     assertTrue(msg + " - compgraph", gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
             }
@@ -444,7 +444,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -516,7 +516,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
             }
@@ -586,7 +586,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels, true);
+                    TestUtils.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
             }
@@ -648,7 +648,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
             assertTrue(msg, gradOK);
 
             //TODO existing define method requires offline shape inference
-            // TestUtils.testToSameDiff(net, input, labels, true);
+            // TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -716,7 +716,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(msg, gradOK);
 
-                        TestUtils.testToSameDiff(net, input, labels, true);
+                        TestUtils.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -782,7 +782,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -850,7 +850,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
                             assertTrue(msg, gradOK);
 
-                            TestUtils.testToSameDiff(net, input, labels, true);
+                            TestUtils.testToSameDiff(net, input, labels);
                             TestUtils.testModelSerialization(net);
                         }
                     }
@@ -934,7 +934,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -1010,7 +1010,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -1084,7 +1084,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -1169,7 +1169,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -1245,7 +1245,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -1317,7 +1317,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels, true);
+            TestUtils.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }

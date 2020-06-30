@@ -929,10 +929,10 @@ public class ConvDataFormatTests extends BaseDL4JTest {
 
         //TODO LocallyConnected NPEs because of the lack of SDVariable shapes
         if(!(tc.net1.getnLayers() > 1 && tc.net1.getLayer(1).getConfig() instanceof LocallyConnected2D)) {
-            TestUtils.testToSameDiff(tc.net1, inNCHW, true);
-            TestUtils.testToSameDiff(tc.net2, inNCHW, true);
-            TestUtils.testToSameDiff(tc.net3, inNHWC, true);
-            TestUtils.testToSameDiff(tc.net4, inNHWC, true);
+            TestUtils.testToSameDiff(tc.net1, inNCHW, null);
+            TestUtils.testToSameDiff(tc.net2, inNCHW, null);
+            TestUtils.testToSameDiff(tc.net3, inNHWC, null);
+            TestUtils.testToSameDiff(tc.net4, inNHWC, null);
         }
 
     }

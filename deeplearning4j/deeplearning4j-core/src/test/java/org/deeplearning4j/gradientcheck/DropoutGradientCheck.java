@@ -141,7 +141,7 @@ public class DropoutGradientCheck extends BaseDL4JTest {
                         false, -1, null, 12345);    //Last arg: ensures RNG is reset at each iter... otherwise will fail due to randomness!
 
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(mln, f, l, true);
+                TestUtils.testToSameDiff(mln, f, l);
                 TestUtils.testModelSerialization(mln);
             }
         }

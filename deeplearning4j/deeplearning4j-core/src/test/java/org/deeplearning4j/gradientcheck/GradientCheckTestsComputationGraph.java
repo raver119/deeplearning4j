@@ -1005,7 +1005,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, example, labels);
 
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(net, example, labels, true);
+                TestUtils.testToSameDiff(net, example, labels);
                 TestUtils.testModelSerialization(net);
             }
         }

@@ -77,7 +77,7 @@ public class TestWeightNoise extends BaseDL4JTest {
             assertEquals(wn, ((BaseLayer) net.getLayer(2).conf().getLayer()).getWeightNoise());
 
             TestUtils.testModelSerialization(net);
-            TestUtils.testToSameDiff(net, true);
+            TestUtils.testToSameDiff(net, null, null);
 
 
             ComputationGraphConfiguration conf2 = new NeuralNetConfiguration.Builder()

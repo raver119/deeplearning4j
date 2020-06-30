@@ -28,12 +28,13 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.resources.Resources;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.lossfunctions.SameDiffLoss;
+import org.nd4j.linalg.lossfunctions.BaseSameDiffLoss;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import org.nd4j.linalg.lossfunctions.SameDiffNonFusedLoss;
 
 
 /**
@@ -46,9 +47,9 @@ public class KerasCustomLossTest extends BaseDL4JTest {
     @Rule
     public TemporaryFolder testDir = new TemporaryFolder();
 
-    public class LogCosh extends SameDiffLoss {
+    public class LogCosh extends SameDiffNonFusedLoss {
         @Override
-        public SDVariable defineLoss(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {
+        public SDVariable defineLossArray(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {
             return sameDiff.math.log(sameDiff.math.cosh(labels.sub(layerInput)));
         }
     }

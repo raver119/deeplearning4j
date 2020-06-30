@@ -112,7 +112,7 @@ public class CapsnetGradientCheckTest extends BaseDL4JTest {
 
                                 assertTrue(msg, gradOK);
 
-                                TestUtils.testToSameDiff(net, input, labels, true);
+                                TestUtils.testToSameDiff(net, input, labels);
                                 TestUtils.testModelSerialization(net);
                             }
                         }

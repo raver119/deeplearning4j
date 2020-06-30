@@ -137,7 +137,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input,
                     labels);
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels, true);
+            TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -211,7 +211,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     RETURN_ON_FIRST_FAILURE, input, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels, true);
+            TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -301,7 +301,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     data, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, data, true);
+            TestUtils.testToSameDiff(mln, data, null);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -345,7 +345,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     features, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, features, true);
+            TestUtils.testToSameDiff(mln, features, null);
             TestUtils.testModelSerialization(mln);
         }
     }
