@@ -96,16 +96,21 @@ public class LocalResponseNormalization extends Layer {
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
-        if(dataFormat != CNN2DFormat.NCHW)
-            throw new UnsupportedOperationException("Can't convert non-NCHW LocalResponseNormalization to SameDiff");
+        if(dataFormat == CNN2DFormat.NHWC)
+            layerInput = layerInput.permute(0, 3, 1, 2);
         //TODO support more data types
 
-        return sameDiff.cnn.localResponseNormalization(layerInput, LocalResponseNormalizationConfig.builder()
+        SDVariable output = sameDiff.cnn.localResponseNormalization(layerInput, LocalResponseNormalizationConfig.builder()
                 .alpha(alpha)
                 .beta(beta) //TODO n and k map to bias and depth?  guessing based on the paper but data types don't line up
                 .bias(k)
                 .depth((int) n)
                 .build());
+
+        if(dataFormat == CNN2DFormat.NHWC)
+            output = output.permute(0, 2, 3, 1);
+
+        return output;
     }
 
     @Override
@@ -291,7 +296,7 @@ public class LocalResponseNormalization extends Layer {
          * Set the data format for the CNN activations - NCHW (channels first) or NHWC (channels last).
          * See {@link CNN2DFormat} for more details.<br>
          * Default: NCHW
-         * @param format Format for activations (in and out)
+         * @param dataFormat Format for activations (in and out)
          */
         public Builder dataFormat(CNN2DFormat dataFormat){
             this.dataFormat = dataFormat;
