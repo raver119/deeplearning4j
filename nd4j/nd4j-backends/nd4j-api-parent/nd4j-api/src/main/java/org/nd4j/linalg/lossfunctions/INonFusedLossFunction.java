@@ -18,31 +18,23 @@
 
 package org.nd4j.linalg.lossfunctions;
 
-import lombok.NonNull;
-import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.ops.SDLoss;
 
 /**
- * A loss function whose defineLoss method can use {@link SDLoss} ops.
+ * A loss function whose defineLoss method does not use {@link SDLoss} ops, and defines the loss as a [batch, ...] array.
+ *
+ * You most likely want to extend {@link NonFusedLossFunction} instead of implementing this directly.
  */
-public abstract class FusedLossFunction extends BaseLossFunction implements IFusedLossFunction {
+public interface INonFusedLossFunction  extends ILossFunction {
+
     /**
      * Define the loss array calculation.
      *
-     * Should probably use {@link SDLoss} methods.
+     * DO NOT USE {@link SDLoss} METHODS!
      *
-     * @return The loss array with a shape depending on the reduction.
+     * @return Loss array of shape [batch, ...]
      */
-    @Override
-    public abstract SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
-
-    //TODO helper method to apply the reduction
-
-    @Override
-    public final SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
-            @NonNull SDVariable labels, boolean average) {
-        return defineLoss(sameDiff, input, labels, average ? LossReduce.MEAN_BY_NONZERO_WEIGHT_COUNT : LossReduce.SUM);
-    }
+    SDVariable defineLossArray(SameDiff sameDiff, SDVariable input, SDVariable labels);
 }

@@ -52,7 +52,7 @@ import java.util.Map;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class LossLayer extends FeedForwardLayer {
+public class LossLayer extends FeedForwardLayer implements LayerWithLoss {
 
     protected ILossFunction lossFn;
 
@@ -97,6 +97,12 @@ public class LossLayer extends FeedForwardLayer {
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         return doActivation(layerInput);
+    }
+
+    @Override
+    public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
+            boolean average) {
+        return lossFn.defineLoss(sameDiff, input, labels, average);
     }
 
     public static class Builder extends BaseOutputLayer.Builder<Builder> {

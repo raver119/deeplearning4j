@@ -92,7 +92,7 @@ public interface ILossFunction extends Serializable {
      *
      * @param sameDiff The {@link SameDiff} instance
      * @param input The input to the loss function, typically the output of the previous layer.
-     * @param labels The lables to compare the output to.  Should be the same shape as input.
+     * @param labels The labels to compare the output to.  Should be the same shape as input.
      * @param average Whether to average the loss per example.
      * @return The score (loss function value).
      */

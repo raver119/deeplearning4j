@@ -888,18 +888,20 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
             for(Layer l : layers){
                 org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
                 if(conf instanceof BaseLayer){
+                    IUpdater u = ((BaseLayer) conf).getIUpdater();
                     if(iUpdater == null) {
-                        iUpdater = ((BaseLayer) conf).getIUpdater();
+                        iUpdater = u;
                     } else {
-                        if(((BaseLayer) conf).getIUpdater() != iUpdater)
-                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                        if(u != null && u != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was " + u + " different for " + conf);
                     }
 
+                    u = ((BaseLayer) conf).getBiasUpdater();
                     if(iUpdater == null) {
-                        iUpdater = ((BaseLayer) conf).getBiasUpdater();
+                        iUpdater = u;
                     } else {
-                        if(((BaseLayer) conf).getBiasUpdater() != iUpdater)
-                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was different for " + conf);
+                        if(u != null && u != iUpdater)
+                            throw new IllegalStateException("Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected " + iUpdater + ", but was " + u + " for " + conf);
                     }
 
                     if(regularizations == null){
@@ -907,7 +909,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                     } else {
                         if(((BaseLayer) conf).getRegularization() != regularizations)
                             throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                    + "Expected " + regularizations + ", but was different for " + conf);
+                                    + "Expected " + regularizations + ", but was " + ((BaseLayer) conf).getRegularization() + " for " + conf);
                     }
 
                     if(regularizations == null){
@@ -915,7 +917,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                     } else {
                         if(((BaseLayer) conf).getRegularizationBias() != regularizations)
                             throw new IllegalStateException("Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                    + "Expected " + regularizations + ", but was on bias different for " + conf);
+                                    + "Expected " + regularizations + ", but was " + ((BaseLayer) conf).getRegularizationBias() + " for bias in " + conf);
                     }
                 }
             }

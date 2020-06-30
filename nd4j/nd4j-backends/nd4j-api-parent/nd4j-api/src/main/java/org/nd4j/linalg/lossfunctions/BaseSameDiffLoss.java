@@ -30,40 +30,64 @@ import java.util.Map;
  * SameDiff loss function.
  *
  * This class can be extended to create Deeplearning4j loss functions by defining one single method only:
- * {@link #defineLoss(SameDiff, SDVariable, SDVariable)}. This method is used to define the loss function on a
+ * {@link #defineLoss(SameDiff, SDVariable, SDVariable, boolean)}. This method is used to define the loss function on a
  * <i>per example</i> basis - i.e., the output should be an array with shape [minibatch].<br>
  * <br>
  * For example, the mean squared error (MSE) loss function can be defined using:<br>
  * {@code return labels.squaredDifference(layerInput).mean(1);}
  *
  */
-public abstract class SameDiffLoss extends BaseLossFunction {
-    protected transient SameDiff sd;
-    protected transient SDVariable scorePerExampleVariable;
+public abstract class BaseSameDiffLoss extends BaseLossFunction {
+    protected transient SameDiff sumSD;
+    protected transient SameDiff averageSD;
+    protected static final String LOSS_VAR_NAME = "loss";
 
-    protected SameDiffLoss() {
+    protected BaseSameDiffLoss() {
 
     }
 
-    /**
-     * Define the loss function.<br>
-     * <b>NOTE</b>: The score on a *per example* basis - should return a SDVariable with shape [minibatch], where out[i]
-     * is the score for the ith minibatch
-     *
-     * @param sameDiff         SameDiff instance to define the loss on
-     * @param layerInput Input to the SameDiff loss function
-     * @param labels     Labels placeholder
-     * @return The score on a per example basis (SDVariable with shape [minibatch])
-     */
-    public abstract SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
+//    /**
+//     * Define the loss function.<br>
+//     * <b>NOTE</b>: The score on a *per example* basis - should return a SDVariable with shape [minibatch], where out[i]
+//     * is the score for the ith minibatch
+//     *
+//     * @param sameDiff         SameDiff instance to define the loss on
+//     * @param layerInput Input to the SameDiff loss function
+//     * @param labels     Labels placeholder
+//     * @return The score on a per example basis (SDVariable with shape [minibatch])
+//     */
+//    public abstract SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
 
-    protected void createSameDiffInstance(DataType dataType){
-        sd = SameDiff.create();
+    protected void createSameDiffInstance(DataType dataType, boolean average){
+        SameDiff sd;
+        if(average) {
+            averageSD = SameDiff.create();
+            sd = averageSD;
+        } else {
+            sumSD = SameDiff.create();
+            sd = sumSD;
+        }
+
         SDVariable layerInput = sd.placeHolder("layerInput", dataType, -1);
         SDVariable labels = sd.placeHolder("labels", dataType, -1);
-        scorePerExampleVariable = this.defineLoss(sd, layerInput, labels);
-        scorePerExampleVariable.markAsLoss();
+        SDVariable loss = this.defineLoss(sd, layerInput, labels, average);
+        loss.rename(LOSS_VAR_NAME);
+        loss.markAsLoss();
         sd.createGradFunction("layerInput");
+    }
+
+    protected void createSameDiffInstanceIfRequired(DataType dataType, boolean average){
+        if(average){
+            if(averageSD == null)
+                createSameDiffInstance(dataType, average);
+        } else {
+            if(sumSD == null)
+                createSameDiffInstance(dataType, average);
+        }
+    }
+
+    protected SameDiff getSameDiffInstance(boolean average){
+        return average ? averageSD : sumSD;
     }
 
     /**
@@ -77,17 +101,19 @@ public abstract class SameDiffLoss extends BaseLossFunction {
      */
     @Override
     public double computeScore(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask, boolean average) {
-        if(sd == null){
-            createSameDiffInstance(preOutput.dataType());
-        }
+        createSameDiffInstanceIfRequired(preOutput.dataType(), average);
 
-        INDArray scoreArr = computeScoreArray(labels, preOutput, activationFn, mask);
+        Preconditions.checkArgument((labels.size(1) == preOutput.size(1)), "Labels array numColumns (size(1) = %s) does not match output layer number of outputs (nOut = %s)", labels.size(1), preOutput.size(1));
 
-        double score = scoreArr.sumNumber().doubleValue();
-        if (average) {
-            score /= scoreArr.size(0);
-        }
-        return score;
+        INDArray output = activationFn.getActivation(preOutput.dup(), true);
+
+        Map<String, INDArray> inputs = new HashMap<>();
+        inputs.put("labels", labels);
+        inputs.put("layerInput", output);
+
+        INDArray score = getSameDiffInstance(average).outputSingle(inputs, LOSS_VAR_NAME);
+
+        return score.sumNumber().doubleValue();
     }
 
 
@@ -102,24 +128,7 @@ public abstract class SameDiffLoss extends BaseLossFunction {
      */
     @Override
     public INDArray computeScoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
-        if(sd == null){
-            createSameDiffInstance(preOutput.dataType());
-        }
-
-        Preconditions.checkArgument((labels.size(1) == preOutput.size(1)), "Labels array numColumns (size(1) = %s) does not match output layer number of outputs (nOut = %s)", labels.size(1), preOutput.size(1));
-
-        INDArray output = activationFn.getActivation(preOutput.dup(), true);
-
-        Map<String, INDArray> m = new HashMap<>();
-        m.put("labels", labels);
-        m.put("layerInput", output);
-
-        INDArray scoreArr = sd.outputSingle(m, scorePerExampleVariable.name());
-
-        if (mask != null) {
-            LossUtil.applyMask(scoreArr, mask);
-        }
-        return scoreArr;
+        throw new UnsupportedOperationException("Can't calculate per-example loss when using SameDiff loss functions");
     }
 
 
@@ -134,9 +143,7 @@ public abstract class SameDiffLoss extends BaseLossFunction {
      */
     @Override
     public INDArray computeGradient(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
-        if(sd == null){
-            createSameDiffInstance(preOutput.dataType());
-        }
+        createSameDiffInstanceIfRequired(preOutput.dataType(), false);
 
 
         Map<String, INDArray> m = new HashMap<>();
@@ -144,14 +151,15 @@ public abstract class SameDiffLoss extends BaseLossFunction {
         m.put("labels", labels);
         m.put("layerInput", output);
 
-        Map<String, INDArray> grads = sd.calculateGradients(m, "layerInput");
+        Map<String, INDArray> grads = getSameDiffInstance(false).calculateGradients(m, "layerInput");
 
         INDArray gradAtActivationOutput = grads.get("layerInput");
         INDArray gradAtInput = activationFn.backprop(preOutput.dup(), gradAtActivationOutput).getFirst();
 
-        if (mask != null) {
-            LossUtil.applyMask(gradAtInput, mask);
-        }
+        //TODO no mask application in forward pass yet
+//        if (mask != null) {
+//            LossUtil.applyMask(gradAtInput, mask);
+//        }
         return gradAtInput;
     }
 

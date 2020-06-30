@@ -19,45 +19,29 @@
 package org.nd4j.linalg.lossfunctions;
 
 import lombok.NonNull;
-import org.nd4j.autodiff.samediff.SDIndex;
+import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.ops.SDLoss;
-
 /**
- * A loss function whose defineLoss method does not use {@link SDLoss} ops.
+ * A loss function whose defineLoss method can use {@link SDLoss} ops.
  */
-public abstract class NonFusedLossFunction extends BaseLossFunction implements INonFusedLossFunction {
-
+public abstract class SameDiffFusedLoss extends BaseSameDiffLoss implements IFusedLossFunction {
     /**
      * Define the loss array calculation.
      *
-     * DO NOT USE {@link SDLoss} METHODS!
+     * Should probably use {@link SDLoss} methods.
      *
-     * @return Loss array of shape [batch, ...]
+     * @return The loss array with a shape depending on the reduction.
      */
     @Override
-    public abstract SDVariable defineLossArray(SameDiff sameDiff, SDVariable input, SDVariable labels);
+    public abstract SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
 
-    protected SDVariable batchAverage(SDVariable output, SDVariable labels, boolean average){
-        if(average)
-            return output.div(labels.shape().get(SDIndex.point(0)));
-        else
-            return output;
-    }
-
-    protected SDVariable reduce(SDVariable output, SDVariable labels, boolean average){
-        SameDiff sameDiff = output.getSameDiff();
-        SDVariable batchSize = sameDiff.sizeAt(labels, 0);
-        SDVariable newShape = sameDiff.concat(0, batchSize, sameDiff.constant(-1).castTo(batchSize.dataType()));
-        output = output.reshape(newShape).sum();
-        return batchAverage(output, labels, average);
-    }
+    //TODO helper method to apply the reduction
 
     @Override
     public final SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels, boolean average) {
-        SDVariable output = defineLossArray(sameDiff, input, labels);
-        return reduce(output, labels, average);
+        return defineLoss(sameDiff, input, labels, average ? LossReduce.MEAN_BY_NONZERO_WEIGHT_COUNT : LossReduce.SUM);
     }
 }

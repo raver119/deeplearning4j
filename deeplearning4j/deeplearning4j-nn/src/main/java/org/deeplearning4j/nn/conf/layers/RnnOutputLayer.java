@@ -136,6 +136,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
             throw new UnsupportedOperationException("Unknown CNN data format " + rnnDataFormat);
 
         SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        //TODO need to pass minibatch size, since labels is reshaped.
         return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 

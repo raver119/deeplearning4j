@@ -25,9 +25,11 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.ops.SDLoss;
 
 /**
- * A loss function whose defineLoss method can use {@link SDLoss} ops.
+ * A loss function that has a definition method that can (and should) use {@link SDLoss} ops.
+ *
+ * You most likely want to extend {@link FusedLossFunction} instead of implementing this directly.
  */
-public abstract class FusedLossFunction extends BaseLossFunction implements IFusedLossFunction {
+public interface IFusedLossFunction extends ILossFunction {
     /**
      * Define the loss array calculation.
      *
@@ -35,14 +37,5 @@ public abstract class FusedLossFunction extends BaseLossFunction implements IFus
      *
      * @return The loss array with a shape depending on the reduction.
      */
-    @Override
-    public abstract SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
-
-    //TODO helper method to apply the reduction
-
-    @Override
-    public final SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
-            @NonNull SDVariable labels, boolean average) {
-        return defineLoss(sameDiff, input, labels, average ? LossReduce.MEAN_BY_NONZERO_WEIGHT_COUNT : LossReduce.SUM);
-    }
+    SDVariable defineLoss(SameDiff sameDiff, SDVariable input, SDVariable labels, LossReduce reduction);
 }

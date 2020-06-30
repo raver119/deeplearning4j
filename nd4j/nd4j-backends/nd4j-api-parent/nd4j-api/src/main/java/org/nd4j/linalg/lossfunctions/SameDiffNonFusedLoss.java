@@ -23,12 +23,10 @@ import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.ops.SDLoss;
-
 /**
- * A loss function whose defineLoss method does not use {@link SDLoss} ops.
+ * A SameDiff loss function whose defineLoss method does not use {@link SDLoss} ops.
  */
-public abstract class NonFusedLossFunction extends BaseLossFunction implements INonFusedLossFunction {
-
+public abstract class SameDiffNonFusedLoss extends BaseSameDiffLoss implements INonFusedLossFunction {
     /**
      * Define the loss array calculation.
      *
