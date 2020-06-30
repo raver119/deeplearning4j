@@ -103,7 +103,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
         else
             throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
 
-        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(-1).castTo(batch.dataType()));
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)));
         SDVariable distributedInput = layerInput.reshape(distributedShape);
 
         SDVariable distributedOutput = distributedInput.mmul(W);
@@ -112,7 +112,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
 
         distributedOutput = doActivation(distributedOutput);
 
-        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(-1).castTo(batch.dataType())));
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1))));
 
         if(rnnDataFormat == RNNFormat.NCW)
             return temp.permute(0, 2, 1);
@@ -135,7 +135,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
         }  else
             throw new UnsupportedOperationException("Unknown CNN data format " + rnnDataFormat);
 
-        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)), channels);
         //TODO need to pass minibatch size, since labels is reshaped.
         return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }

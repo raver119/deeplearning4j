@@ -116,7 +116,7 @@ public class Cnn3DLossLayer extends FeedForwardLayer implements LayerWithLoss {
         }  else
             throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
 
-        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels));
+        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)), channels));
 
         SDVariable distributedOutput = doActivation(distributedInput);
 
@@ -143,7 +143,7 @@ public class Cnn3DLossLayer extends FeedForwardLayer implements LayerWithLoss {
         }  else
             throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
 
-        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(-1).castTo(batch.dataType()), channels);
+        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)), channels);
         return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
     }
 

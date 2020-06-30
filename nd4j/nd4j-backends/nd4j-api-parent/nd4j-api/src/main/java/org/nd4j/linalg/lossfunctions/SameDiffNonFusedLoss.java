@@ -47,7 +47,7 @@ public abstract class SameDiffNonFusedLoss extends BaseSameDiffLoss implements I
     protected SDVariable reduce(SDVariable output, SDVariable labels, boolean average){
         SameDiff sameDiff = output.getSameDiff();
         SDVariable batchSize = sameDiff.sizeAt(labels, 0);
-        SDVariable newShape = sameDiff.concat(0, batchSize, sameDiff.constant(-1).castTo(batchSize.dataType()));
+        SDVariable newShape = sameDiff.concat(0, batchSize, sameDiff.constant(Nd4j.scalar(batchSize.dataType(), -1)));
         output = output.reshape(newShape).sum();
         return batchAverage(output, labels, average);
     }
