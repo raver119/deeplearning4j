@@ -50,8 +50,4 @@ public abstract class BaseInputPreProcessor implements InputPreProcessor {
     public SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input){
         throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
-
-    public SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask){
-        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
-    }
 }

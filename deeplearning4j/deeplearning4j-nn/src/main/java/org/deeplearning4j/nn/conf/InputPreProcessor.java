@@ -84,13 +84,4 @@ public interface InputPreProcessor extends Serializable, Cloneable {
      * @return The transformed input.
      */
     @NonNull SDVariable definePreProcess(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
-
-    //TODO add params?
-    /**
-     * Define the InputPreProcessor's mask transformation in a {@link SameDiff} instance.
-     * @param sameDiff The {@link SameDiff} instance.
-     * @param mask The input to mask.
-     * @return The transformed mask.
-     */
-    @NonNull SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask);
 }

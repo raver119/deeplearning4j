@@ -100,11 +100,4 @@ public class ComposableInputPreProcessor extends BaseInputPreProcessor {
             input = preProcessor.definePreProcess(sameDiff, input);
         return input;
     }
-
-    @Override
-    public SDVariable definePreProcessMask(@NonNull SameDiff sameDiff, @NonNull SDVariable mask) {
-        for(InputPreProcessor preProcessor : inputPreProcessors)
-            mask = preProcessor.definePreProcessMask(sameDiff, mask);
-        return mask;
-    }
 }
