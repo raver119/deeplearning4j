@@ -795,11 +795,18 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
      * Output and loss variables are set on the SameDiff instance and can be gotten from it.
      *
      * @param sameDiff The SameDiff instance to create the model in
+     * @param inputType The type of the input.  May be null, in which case we try to use the preset or inferred input type.
      * @param useView whether to directly use the (view) weights in the SDVariables, or create new ones.
      * Using them saves an initialization (of every weight), but may cause issues with multi-gpu setups.
      * @return The {@link org.nd4j.autodiff.samediff.TrainingConfig} if training is setup (the last layer is an BaseOutputLayer), or null if not.
      */
-    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType, boolean useView) {
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, InputType inputType, boolean useView) {
+
+        if(inputType == null){
+            Preconditions.checkState(layerWiseConfigurations.getInputType() != null, "Must specify an input type or have it inferred for SameDiff conversion");
+            inputType = layerWiseConfigurations.getInputType();
+        }
+
         if (!isInitCalled())
             init();
 
@@ -827,19 +834,20 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             org.deeplearning4j.nn.conf.layers.Layer config = layerWiseConfigurations.getConf(i).getLayer();
 
-            String confClass = config.getClass().getSimpleName();
+
+            String baseName = config.getLayerName() == null ? config.getClass().getSimpleName() : config.getLayerName();
 
             int layerNum = 0;
 
-            if (numLayers.containsKey(confClass)) {
-                layerNum = numLayers.get(confClass);
-                numLayers.put(confClass, ++layerNum);
+            if (numLayers.containsKey(baseName)) {
+                layerNum = numLayers.get(baseName);
+                numLayers.put(baseName, ++layerNum);
             } else {
-                numLayers.put(confClass, 0);
+                numLayers.put(baseName, 0);
             }
 
             //TODO use layer name if set
-            NameScope layerScope = sameDiff.withNameScope(confClass + (layerNum == 0 ? "" : "_" + layerNum));
+            NameScope layerScope = sameDiff.withNameScope(baseName + (layerNum == 0 ? "" : "_" + layerNum));
 
             // preprocessor
             InputPreProcessor preProcessor = layerWiseConfigurations.getInputPreProcess(i);
@@ -927,65 +935,12 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
     }
 
     /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true.
-     */
-    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull InputType inputType){
-        return toSameDiff(sameDiff, inputType, true);
-    }
-
-    /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code inputType} is inferred.
-     */
-    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, boolean useView){
-        //TODO move to overload w/o InputType
-        Preconditions.checkState(layerWiseConfigurations.getInputType() != null, "Must specify an input type or have it inferred for SameDiff conversion");
-        return toSameDiff(sameDiff, layerWiseConfigurations.getInputType(), useView);
-    }
-
-    /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true and {@code inputType} is inferred.
-     */
-    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff){
-        return toSameDiff(sameDiff, true);
-    }
-
-    /**
      * See {@link #toSameDiff(SameDiff, InputType, boolean)}.
      * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
      */
-    public SameDiff toSameDiff(@NonNull InputType inputType, boolean useView){
+    public SameDiff toSameDiff(InputType inputType, boolean useView){
         SameDiff sameDiff = SameDiff.create();
         toSameDiff(sameDiff, inputType, useView);
-        return sameDiff;
-    }
-
-    /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true.
-     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
-     */
-    public SameDiff toSameDiff(@NonNull InputType inputType){
-        SameDiff sameDiff = SameDiff.create();
-        toSameDiff(sameDiff, inputType);
-        return sameDiff;
-    }
-
-    /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code inputType} is inferred.
-     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
-     */
-    public SameDiff toSameDiff(boolean useView){
-        SameDiff sameDiff = SameDiff.create();
-        toSameDiff(sameDiff, useView);
-        return sameDiff;
-    }
-
-    /**
-     * See {@link #toSameDiff(SameDiff, InputType, boolean)}.  {@code useView} is true and {@code inputType} is inferred.
-     * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
-     */
-    public SameDiff toSameDiff(){
-        SameDiff sameDiff = SameDiff.create();
-        toSameDiff(sameDiff);
         return sameDiff;
     }
 

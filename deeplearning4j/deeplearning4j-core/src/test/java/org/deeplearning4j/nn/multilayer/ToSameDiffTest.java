@@ -155,7 +155,7 @@ public class ToSameDiffTest extends BaseDL4JTest {
     }
 
     public static void testSameDiffInference(MultiLayerNetwork network, INDArray input){
-        SameDiff sameDiff = network.toSameDiff();
+        SameDiff sameDiff = network.toSameDiff(null, true);
         INDArray dl4j = network.output(input);
         INDArray sd = sameDiff.batchOutput()
                 .input("input", input)
@@ -205,7 +205,7 @@ public class ToSameDiffTest extends BaseDL4JTest {
 
         MultiLayerNetwork network = new MultiLayerNetwork(config);
 
-        SameDiff mnistSameDiff = network.toSameDiff();
+        SameDiff mnistSameDiff = network.toSameDiff(null, true);
 
         assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
         assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());

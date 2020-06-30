@@ -214,7 +214,7 @@ public class TestUtils {
 
         SameDiff model;
         try{
-            model = network.toSameDiff();
+            model = network.toSameDiff(null, true);
         } catch (UnsupportedOperationException e){
             if(!passUnimplemented)
                 throw e;
@@ -230,7 +230,7 @@ public class TestUtils {
 
         SameDiff model;
         try{
-            model = network.toSameDiff();
+            model = network.toSameDiff(null, true);
         } catch (UnsupportedOperationException e){
             if(!passUnimplemented)
                 throw e;
@@ -250,7 +250,7 @@ public class TestUtils {
         } else {
             SameDiff model;
             try{
-                model = network.toSameDiff();
+                model = network.toSameDiff(null, true);
             } catch (UnsupportedOperationException e){
                 if(!passUnimplemented)
                     throw e;
