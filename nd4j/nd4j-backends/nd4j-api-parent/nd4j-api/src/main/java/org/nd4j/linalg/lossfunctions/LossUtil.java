@@ -66,6 +66,6 @@ public class LossUtil {
     }
 
     public static SDVariable batchAverage(@NonNull SDVariable loss){
-        return loss.sum().div(loss.shape().get(SDIndex.point(0)));
+        return loss.sum().div(loss.getSameDiff().sizeAt(loss, 0));
     }
 }

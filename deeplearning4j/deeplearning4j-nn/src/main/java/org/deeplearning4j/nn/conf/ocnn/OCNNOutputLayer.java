@@ -133,7 +133,7 @@ public class OCNNOutputLayer extends BaseOutputLayer {
         SDVariable w = paramTable.get(OCNNParamInitializer.W_KEY);
         SDVariable v = paramTable.get(OCNNParamInitializer.V_KEY);
 
-        SDVariable wFlat = w.reshape(sameDiff.concat(0, w.shape().get(SDIndex.point(0)), sameDiff.constant(-1)));
+        SDVariable wFlat = w.reshape(sameDiff.concat(0, sameDiff.sizeAt(w, 0), sameDiff.constant(-1)));
 
         SDVariable first = layerInput.mul(v);
         SDVariable  act2d = doActivation(first);

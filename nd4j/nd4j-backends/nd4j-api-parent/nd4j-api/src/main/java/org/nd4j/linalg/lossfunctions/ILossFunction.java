@@ -84,7 +84,7 @@ public interface ILossFunction extends Serializable {
     /**
      * Define the loss function for a {@link SameDiff} instance.  Should return a scalar. <br>
      *
-     * If average is true, should be the batchwise average, otherwise the sum.
+     * If average is true, should be the batchwise average, otherwise the sum.<br>
      *
      * Note that using a {@link org.nd4j.autodiff.samediff.ops.SDLoss} function with {@link org.nd4j.autodiff.loss.LossReduce} MEAN_BY_NONZERO_WEIGHT_COUNT
      * will result in the loss values for DL4J and SameDiff being slightly different.
@@ -94,7 +94,7 @@ public interface ILossFunction extends Serializable {
      * @param input The input to the loss function, typically the output of the previous layer.
      * @param labels The labels to compare the output to.  Should be the same shape as input.
      * @param average Whether to average the loss per example.
-     * @return The score (loss function value).
+     * @return The scalar score (loss function value).
      */
     SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable labels, boolean average);
 

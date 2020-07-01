@@ -25,10 +25,8 @@ import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.common.primitives.Pair;
-import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 
 /**
  * Wasserstein loss function, which calculates the Wasserstein distance, also known as earthmover's distance.
@@ -43,7 +41,7 @@ import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
  * @author Ryan Nett
  */
 @EqualsAndHashCode(callSuper = false)
-public class LossWasserstein extends NonFusedLossFunction {
+public class LossWasserstein extends BaseLossFunction {
 
     private INDArray scoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask){
         if(!labels.equalShapes(preOutput)){

@@ -125,21 +125,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
     @Override
     public SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable labels,
             boolean average) {
-        SDVariable batch = sameDiff.sizeAt(input, 0);
-        SDVariable channels;
-
-        if(rnnDataFormat == RNNFormat.NCW){
-            channels = sameDiff.sizeAt(input, 1);
-            input = input.permute(0, 2, 1);
-            labels = labels.permute(0, 2, 1);
-        } else if(rnnDataFormat == RNNFormat.NWC){
-            channels = sameDiff.sizeAt(input, 2);
-        }  else
-            throw new UnsupportedOperationException("Unknown CNN data format " + rnnDataFormat);
-
-        SDVariable newShape = sameDiff.concat(0, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)), channels);
-        //TODO need to pass minibatch size, since labels is reshaped.
-        return lossFn.defineLoss(sameDiff, input.reshape(newShape), labels.reshape(newShape), average);
+        return lossFn.defineLoss(sameDiff, input, labels, average);
     }
 
     @Override

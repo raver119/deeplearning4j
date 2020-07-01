@@ -151,7 +151,7 @@ public class LearnedSelfAttentionLayer extends SameDiffLayer {
     @Override
     public SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask) {
         val baseQueries = paramTable.get(WEIGHT_QUERIES);
-        val batchSize = layerInput.shape().get(SDIndex.point(0));
+        val batchSize = sameDiff.sizeAt(layerInput, 0);
         val tileAxis = sameDiff.scatterUpdate(sameDiff.onesLike(layerInput.shape()), sameDiff.constant(0), batchSize);
 
         val queries = sameDiff.tile(baseQueries, tileAxis);

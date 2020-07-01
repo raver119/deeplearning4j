@@ -19,17 +19,14 @@ package org.nd4j.linalg.lossfunctions.impl;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossUtil;
 import org.nd4j.common.primitives.Pair;
-import org.nd4j.linalg.lossfunctions.NonFusedLossFunction;
 import org.nd4j.serde.jackson.shaded.NDArrayTextDeSerializer;
 import org.nd4j.serde.jackson.shaded.NDArrayTextSerializer;
 import org.nd4j.shade.jackson.annotation.JsonInclude;
@@ -47,7 +44,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonSerialize;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-public class LossL2 extends NonFusedLossFunction {
+public class LossL2 extends BaseLossFunction {
 
     @JsonSerialize(using = NDArrayTextSerializer.class)
     @JsonDeserialize(using = NDArrayTextDeSerializer.class)
@@ -158,8 +155,7 @@ public class LossL2 extends NonFusedLossFunction {
     }
 
     protected SDVariable defineFullLossArray(SameDiff sameDiff, SDVariable input, SDVariable labels){
-        SDVariable temp = labels.sub(input);
-        return LossUtil.multiplyWeight(temp.mul(temp), weights);
+        return LossUtil.multiplyWeight(labels.squaredDifference(input), weights);
     }
 
     @Override

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package org.nd4j.linalg.lossfunctions;
 
-import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
@@ -37,12 +36,13 @@ import java.util.Map;
  * {@code return labels.squaredDifference(layerInput).mean(1);}
  *
  */
-public abstract class BaseSameDiffLoss extends BaseLossFunction {
+public abstract class SameDiffLoss extends BaseLossFunction {
     protected transient SameDiff sumSD;
     protected transient SameDiff averageSD;
+    protected transient SameDiff arraySD;
     protected static final String LOSS_VAR_NAME = "loss";
 
-    protected BaseSameDiffLoss() {
+    protected SameDiffLoss() {
 
     }
 
@@ -57,6 +57,21 @@ public abstract class BaseSameDiffLoss extends BaseLossFunction {
 //     * @return The score on a per example basis (SDVariable with shape [minibatch])
 //     */
 //    public abstract SDVariable defineLoss(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull SDVariable labels);
+
+    protected void makeArraySDIfNeeded(DataType dataType){
+        if(arraySD != null)
+            return;
+
+        SameDiff sd = SameDiff.create();
+        SDVariable layerInput = sd.placeHolder("layerInput", dataType, -1);
+        SDVariable labels = sd.placeHolder("labels", dataType, -1);
+        SDVariable loss = this.defineLossArray(sd, layerInput, labels);
+        loss.rename(LOSS_VAR_NAME);
+        loss.markAsLoss();
+        sd.createGradFunction("layerInput");
+
+        arraySD = sd;
+    }
 
     protected void createSameDiffInstance(DataType dataType, boolean average){
         SameDiff sd;
@@ -128,7 +143,16 @@ public abstract class BaseSameDiffLoss extends BaseLossFunction {
      */
     @Override
     public INDArray computeScoreArray(INDArray labels, INDArray preOutput, IActivation activationFn, INDArray mask) {
-        throw new UnsupportedOperationException("Can't calculate per-example loss when using SameDiff loss functions");
+        makeArraySDIfNeeded(preOutput.dataType());
+        Preconditions.checkArgument((labels.size(1) == preOutput.size(1)), "Labels array numColumns (size(1) = %s) does not match output layer number of outputs (nOut = %s)", labels.size(1), preOutput.size(1));
+
+        INDArray output = activationFn.getActivation(preOutput.dup(), true);
+
+        Map<String, INDArray> inputs = new HashMap<>();
+        inputs.put("labels", labels);
+        inputs.put("layerInput", output);
+
+        return arraySD.outputSingle(inputs, LOSS_VAR_NAME);
     }
 
 

@@ -21,7 +21,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.lossfunctions.*;
 
 @EqualsAndHashCode(callSuper = false)
-public class SDLossMSE extends SameDiffNonFusedLoss {
+public class SDLossMSE extends SameDiffLoss {
 
     @Override
     public SDVariable defineLossArray(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {

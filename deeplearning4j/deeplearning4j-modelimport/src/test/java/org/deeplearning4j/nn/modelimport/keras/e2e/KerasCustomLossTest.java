@@ -28,13 +28,11 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.resources.Resources;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.lossfunctions.BaseSameDiffLoss;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import org.nd4j.linalg.lossfunctions.SameDiffNonFusedLoss;
 
 
 /**

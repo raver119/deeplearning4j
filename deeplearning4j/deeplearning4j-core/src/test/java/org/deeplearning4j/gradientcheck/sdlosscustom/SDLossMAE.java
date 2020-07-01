@@ -18,11 +18,10 @@ package org.deeplearning4j.gradientcheck.sdlosscustom;
 import lombok.EqualsAndHashCode;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.linalg.lossfunctions.BaseSameDiffLoss;
-import org.nd4j.linalg.lossfunctions.SameDiffNonFusedLoss;
+import org.nd4j.linalg.lossfunctions.SameDiffLoss;
 
 @EqualsAndHashCode(callSuper = false)
-public class SDLossMAE extends SameDiffNonFusedLoss {
+public class SDLossMAE extends SameDiffLoss {
 
     @Override
     public SDVariable defineLossArray(SameDiff sameDiff, SDVariable layerInput, SDVariable labels) {
