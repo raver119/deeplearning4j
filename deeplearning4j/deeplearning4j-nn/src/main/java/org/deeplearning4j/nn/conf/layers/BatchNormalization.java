@@ -34,6 +34,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.regularization.Regularization;
@@ -111,6 +112,11 @@ public class BatchNormalization extends FeedForwardLayer {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        return Nd4j.squeeze(param, 0);
+    }
+
+    @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
@@ -133,10 +139,10 @@ public class BatchNormalization extends FeedForwardLayer {
             throw new UnsupportedOperationException("Unknown CNN data format " + cnn2DFormat);
 
         SDVariable output = sameDiff.nn.batchNorm(layerInput,
-                sameDiff.squeeze(mean, 0),
-                sameDiff.squeeze(variance, 0),
-                sameDiff.squeeze(gamma, 0),
-                sameDiff.squeeze(beta, 0),
+                mean,
+                variance,
+                gamma,
+                beta,
                 eps,
                 axis);
         return doActivation(output);

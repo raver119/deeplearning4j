@@ -42,6 +42,7 @@ import java.util.Map;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv1DConfig;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * 1D (temporal) convolutional layer. This layer accepts RNN InputTypes instead of CNN InputTypes
@@ -87,15 +88,18 @@ public class Convolution1DLayer extends ConvolutionLayer {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        if(name.equals(ConvolutionParamInitializer.WEIGHT_KEY))
+            return Nd4j.squeeze(param, 3).permute(2, 1, 0);
+        else
+            return param;
+    }
+
+    @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         SDVariable weight = paramTable.get(ConvolutionParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(ConvolutionParamInitializer.BIAS_KEY);
-
-        // weights are in conv2d shape and different format
-        weight = sameDiff.squeeze(weight, 3);
-        // is now [outDepth, inDepth, kernel]
-        weight = weight.permute(2, 1, 0);
 
         PaddingMode paddingMode;
 

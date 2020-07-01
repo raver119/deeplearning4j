@@ -67,11 +67,9 @@ import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional;
 import org.deeplearning4j.nn.gradient.DefaultGradient;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.layers.FrozenLayerWithBackprop;
 import org.deeplearning4j.nn.layers.LayerHelper;
-import org.deeplearning4j.nn.layers.LossLayer;
 import org.deeplearning4j.nn.layers.recurrent.BidirectionalLayer;
 import org.deeplearning4j.nn.layers.samediff.SameDiffOutputLayer;
 import org.deeplearning4j.nn.layers.wrapper.BaseWrapperLayer;
@@ -93,7 +91,6 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
-import org.nd4j.common.util.ArrayUtil;
 import org.nd4j.common.util.OneTimeLogger;
 import org.nd4j.evaluation.IEvaluation;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -125,13 +122,10 @@ import org.nd4j.linalg.heartbeat.utils.TaskUtils;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.regularization.Regularization;
-import org.nd4j.linalg.learning.regularization.WeightDecay;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.util.FeatureUtil;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
 import org.nd4j.linalg.workspace.WorkspaceUtils;
-import org.nd4j.weightinit.impl.ZeroInitScheme;
 
 ;
 
@@ -872,6 +866,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 if (!useView) {
                     value = value.dup();
                 }
+                value = config.transformParamForSameDiff(entry.getKey(), value);
                 paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
             }
 

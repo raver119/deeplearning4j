@@ -120,12 +120,18 @@ public class Convolution3D extends ConvolutionLayer {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        if(name.equals(Convolution3DParamInitializer.WEIGHT_KEY))
+            return param.permute(2, 3, 4, 1, 0);
+        else
+            return param;
+    }
+
+    @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         SDVariable weight = paramTable.get(Convolution3DParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(Convolution3DParamInitializer.BIAS_KEY);
-
-        weight = weight.permute(2, 3, 4, 1, 0);
 
         SDVariable value = sameDiff.cnn.conv3d(layerInput, weight, bias,
                 Conv3DConfig.builder()

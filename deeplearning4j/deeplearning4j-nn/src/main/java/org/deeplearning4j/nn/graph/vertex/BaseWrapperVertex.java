@@ -16,11 +16,14 @@
 
 package org.deeplearning4j.nn.graph.vertex;
 
+import lombok.NonNull;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.api.TrainingConfig;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.common.primitives.Pair;
 
@@ -39,6 +42,17 @@ public abstract class BaseWrapperVertex implements GraphVertex {
 
     protected BaseWrapperVertex(GraphVertex underlying){
         this.underlying = underlying;
+    }
+
+    @Override
+    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
+            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+        throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
+    }
+
+    @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param){
+        return param;
     }
 
     @Override

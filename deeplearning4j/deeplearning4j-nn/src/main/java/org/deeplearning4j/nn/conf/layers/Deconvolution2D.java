@@ -116,12 +116,18 @@ public class Deconvolution2D extends ConvolutionLayer {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        if(name.equals(DeconvolutionParamInitializer.WEIGHT_KEY))
+            return param.permute(2, 3, 1, 0);
+        else
+            return param;
+    }
+
+    @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
         SDVariable weight = paramTable.get(DeconvolutionParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(DeconvolutionParamInitializer.BIAS_KEY);
-
-        weight = weight.permute(2, 3, 1, 0);
 
         SDVariable value = sameDiff.cnn.deconv2d(layerInput, weight, bias,
                 DeConv2DConfig.builder()

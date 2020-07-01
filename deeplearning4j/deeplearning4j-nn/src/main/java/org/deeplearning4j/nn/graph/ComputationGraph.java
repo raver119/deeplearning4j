@@ -100,7 +100,6 @@ import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.regularization.Regularization;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
 import org.nd4j.linalg.workspace.WorkspaceUtils;
@@ -800,7 +799,6 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
             if(vertex instanceof InputVertex)
                 continue;
 
-            //TODO use layer name if set
             NameScope layerScope = sameDiff.withNameScope(name);
 
             Map<String, SDVariable> paramTable = new HashMap<>((int) vertex.numParams());
@@ -809,6 +807,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                 if (!useView) {
                     value = value.dup();
                 }
+                value = vertex.transformParamForSameDiff(entry.getKey(), value);
                 paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
             }
 
@@ -827,6 +826,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                     labels = sameDiff
                             .placeHolder("labels", configuration.getDataType(), outputTypes.get(inputName).getShape(true));
                 }
+
                 SDVariable input = activations.get(inputName);
                 output = ((SameDiffOutputLayer) vertex.getLayer()).layerConf().defineLayer(sameDiff, input, labels, paramTable);
                 sdOutputLabels.put(name, labels);
@@ -852,7 +852,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                 loss = activations.get(vertex.getVertexName());
                 labels = sdOutputLabels.get(vertex.getVertexName());
 
-            }else if(vertex.hasLayer() && vertex.getLayer() instanceof IOutputLayer && vertex.getLayer().conf().getLayer() instanceof LayerWithLoss){
+            } else if(vertex.hasLayer() && vertex.getLayer() instanceof IOutputLayer && vertex.getLayer().conf().getLayer() instanceof LayerWithLoss){
                 LayerWithLoss lossLayer = (LayerWithLoss) vertex.getLayer().conf().getLayer();
                 SDVariable input = activations.get(configuration.getVertexInputs().get(output).get(0));
                 labels = null;

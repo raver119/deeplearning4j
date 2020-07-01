@@ -39,7 +39,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.regularization.Regularization;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
-import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
 import java.util.List;
@@ -105,6 +104,11 @@ public class FrozenLayer extends Layer {
     @Override
     public ParamInitializer initializer() {
         return FrozenLayerParamInitializer.getInstance();
+    }
+
+    @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        return layer.transformParamForSameDiff(name, param);
     }
 
     /**

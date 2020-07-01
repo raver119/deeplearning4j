@@ -97,6 +97,18 @@ public interface GraphVertex extends Trainable, Serializable {
 
     SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs, @NonNull Map<String, SDVariable> paramTable, SDVariable mask);
 
+    /**
+     * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.
+     * Useful for things like changing the dimension order or squeezing. <br>
+     *
+     * Called once for each parameter.
+     *
+     * @param name The name of the parameter.
+     * @param param The parameter.
+     * @return The transformed parameter.
+     */
+    INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param);
+
     /** Set the input activations.
      *  @param inputNumber Must be in range 0 to {@link #getNumInputArrays()}-1
      * @param input The input array

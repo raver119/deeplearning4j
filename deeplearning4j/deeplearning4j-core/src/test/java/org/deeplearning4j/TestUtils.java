@@ -16,10 +16,28 @@
 
 package org.deeplearning4j;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import org.apache.commons.compress.utils.IOUtils;
 import org.deeplearning4j.nn.api.Layer;
@@ -50,17 +68,7 @@ import org.nd4j.linalg.learning.regularization.L1Regularization;
 import org.nd4j.linalg.learning.regularization.L2Regularization;
 import org.nd4j.linalg.learning.regularization.Regularization;
 import org.nd4j.linalg.learning.regularization.WeightDecay;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Random;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class TestUtils {
 
@@ -210,6 +218,7 @@ public class TestUtils {
         assertEquals(message.toString(), 0, messages.size());
 
         if(labels != null){
+
             INDArray output = network.output(input).dup();
             network.setLabels(labels);
             network.computeGradientAndScore();
@@ -231,6 +240,8 @@ public class TestUtils {
                 lossFn = ((LossLayer) lastLayer).layerConf().getLossFn();
             } else if(lastLayer instanceof BaseOutputLayer){
                 lossFn = ((BaseOutputLayer<?>) lastLayer).layerConf().getLossFn();
+            } else if(lastLayer instanceof org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer){
+                lossFn = ((org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer) lastLayer).layerConf().getLossFn();
             }
 
             assertTrue("Outputs don't match for original network and SameDiff version", sdOutput.equalsWithEps(output, 1e-3));

@@ -56,6 +56,7 @@ import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMDataFormat;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMDirectionMode;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMLayerConfig;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.weights.LSTMLayerWeights;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * LSTM recurrent neural network layer without peephole connections. Supports CuDNN acceleration - see <a
@@ -161,12 +162,20 @@ public class LSTM extends AbstractLSTM {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        if(name.equals(LSTMParamInitializer.BIAS_KEY))
+            return Nd4j.squeeze(param, 0);
+        else
+            return param;
+    }
+
+    @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
         SDVariable recurrentWeight = paramTable.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY);
         SDVariable inputWeight = paramTable.get(LSTMParamInitializer.INPUT_WEIGHT_KEY);
-        SDVariable bias = sameDiff.squeeze(paramTable.get(LSTMParamInitializer.BIAS_KEY), 0);
+        SDVariable bias = paramTable.get(LSTMParamInitializer.BIAS_KEY);
 
         LSTMActivations gateActivation = toLSTMActivation(gateActivationFn);
         LSTMActivations recurrentActivation = toLSTMActivation(activationFn);

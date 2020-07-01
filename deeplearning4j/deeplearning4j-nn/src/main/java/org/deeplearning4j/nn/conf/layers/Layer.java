@@ -116,6 +116,20 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
     }
 
     /**
+     * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.
+     * Useful for things like changing the dimension order or squeezing. <br>
+     *
+     * Called once for each parameter.
+     *
+     * @param name The name of the parameter.
+     * @param param The parameter.
+     * @return The transformed parameter.
+     */
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param){
+        return param;
+    }
+
+    /**
      * Reset the learning related configs of the layer to default. When instantiated with a global
      * neural network configuration the parameters specified in the neural network configuration
      * will be used. For internal use with the transfer learning API. Users should not have to call

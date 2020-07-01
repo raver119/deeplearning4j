@@ -26,7 +26,6 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.BaseRecurrentLayer;
 import org.deeplearning4j.nn.conf.layers.FeedForwardLayer;
-import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
@@ -47,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.nd4j.linalg.indexing.NDArrayIndex.interval;
-import static org.nd4j.linalg.indexing.NDArrayIndex.point;
 
 /**
  * Bidirectional is a "wrapper" layer: it wraps any uni-directional RNN layer to make it bidirectional.<br> Note that
@@ -113,6 +111,17 @@ public class Bidirectional extends Layer {
         this.fwd = layer;
         this.bwd = layer.clone();
         this.mode = mode;
+    }
+
+    @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
+        if(name.startsWith(BidirectionalParamInitializer.FORWARD_PREFIX)){
+            return fwd.transformParamForSameDiff(name.replaceFirst(BidirectionalParamInitializer.FORWARD_PREFIX, ""), param);
+        } else if(name.startsWith(BidirectionalParamInitializer.BACKWARD_PREFIX)){
+            return bwd.transformParamForSameDiff(name.replaceFirst(BidirectionalParamInitializer.BACKWARD_PREFIX, ""), param);
+        } else {
+            return param;
+        }
     }
 
     @Override

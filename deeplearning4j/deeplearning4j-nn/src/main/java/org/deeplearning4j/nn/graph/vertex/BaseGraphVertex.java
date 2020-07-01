@@ -86,6 +86,13 @@ public abstract class BaseGraphVertex implements GraphVertex {
     }
 
     @Override
+    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param){
+        if(hasLayer())
+            return getLayer().conf().getLayer().transformParamForSameDiff(name, param);
+        return param;
+    }
+
+    @Override
     public String getVertexName() {
         return vertexName;
     }
