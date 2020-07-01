@@ -18,6 +18,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
 
 import java.util.Collection;
@@ -73,7 +74,8 @@ public class TimeDistributed extends BaseWrapperLayer {
         else
             throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
 
-        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)));
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(
+                Nd4j.scalar(batch.dataType(), -1)));
         SDVariable distributedInput = layerInput.reshape(distributedShape);
 
         SDVariable distributedOutput = defineUnderlying(sameDiff, distributedInput, paramTable, mask);

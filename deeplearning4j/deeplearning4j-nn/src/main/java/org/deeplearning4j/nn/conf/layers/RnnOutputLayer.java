@@ -34,6 +34,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
@@ -112,7 +113,8 @@ public class RnnOutputLayer extends BaseOutputLayer {
 
         distributedOutput = doActivation(distributedOutput);
 
-        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1))));
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(
+                Nd4j.scalar(batch.dataType(), -1))));
 
         if(rnnDataFormat == RNNFormat.NCW)
             return temp.permute(0, 2, 1);

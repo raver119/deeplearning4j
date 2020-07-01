@@ -23,6 +23,7 @@ import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.autodiff.samediff.ops.SDLoss;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * A loss function whose defineLoss method does not use {@link SDLoss} ops.

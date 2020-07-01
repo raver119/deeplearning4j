@@ -32,6 +32,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 import java.util.Collection;
@@ -116,7 +117,8 @@ public class Cnn3DLossLayer extends FeedForwardLayer implements LayerWithLoss {
         }  else
             throw new UnsupportedOperationException("Unknown CNN 3D data format " + dataFormat);
 
-        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)), channels));
+        SDVariable distributedInput = layerInput.reshape(sameDiff.concat(0, sameDiff.constant(
+                Nd4j.scalar(batch.dataType(), -1)), channels));
 
         SDVariable distributedOutput = doActivation(distributedInput);
 
