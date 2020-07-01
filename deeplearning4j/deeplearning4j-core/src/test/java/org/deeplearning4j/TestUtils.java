@@ -128,6 +128,12 @@ public class TestUtils {
                 throw e;
             else
                 return;
+        } catch (IllegalStateException e){
+            if((e.getMessage().contains(" convert to SameDiff with different regularizations") ||
+                    e.getMessage().contains(" convert to SameDiff with different IUpdaters")) && SKIP_UNIMPLEMENTED)
+                return;
+            else
+                throw e;
         }
 
         if(input == null){
