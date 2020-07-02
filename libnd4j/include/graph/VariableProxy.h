@@ -38,8 +38,10 @@ class SD_EXPORT VariableProxy : public VariableSpace {
   virtual VariableSpace& operator=(const VariableSpace& other) override;
 
   virtual int numberOfPlaceholders() const override;
-  virtual const std::vector<std::shared_ptr<Variable>>& placeholders()
-      const override;
+#ifndef __JAVACPP_HACK__
+  virtual const std::vector<std::shared_ptr<Variable>>& placeholders() const override;
+  virtual std::vector<std::shared_ptr<Variable>> variables() const override;
+#endif
 
   virtual const MAP_IMPL<std::pair<int, int>, std::shared_ptr<Variable>>& externalPaired() const;
 
@@ -59,8 +61,6 @@ class SD_EXPORT VariableProxy : public VariableSpace {
       const std::pair<int, int>& pair) const override;
   virtual std::shared_ptr<Variable> getVariable(
       const std::string& symbol) const override;
-
-  virtual std::vector<std::shared_ptr<Variable>> variables() const override;
 
   virtual std::shared_ptr<Variable> putVariable(const std::pair<int, int>& pair,
                                                 const NDArray& array) override;

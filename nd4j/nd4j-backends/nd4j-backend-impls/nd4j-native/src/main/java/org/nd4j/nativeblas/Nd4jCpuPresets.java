@@ -35,6 +35,9 @@ import java.util.Scanner;
 @Properties(inherit = openblas.class, target = "org.nd4j.nativeblas.Nd4jCpu", helper = "org.nd4j.nativeblas.Nd4jCpuHelper",
                 value = {@Platform(define = "LIBND4J_ALL_OPS", include = {
                                               "memory/MemoryType.h",
+                                              "memory/MemoryZone.h",
+                                              "memory/MemoryDescriptor.h",
+                                              "memory/GraphMemoryManager.h",
                                               "array/DataType.h",
                                               "array/DataBuffer.h",
                                               "array/PointerDeallocator.h",
@@ -67,7 +70,6 @@ import java.util.Scanner;
                                               "graph/FlowPath.h",
                                               "graph/Intervals.h",
                                               "graph/Stash.h",
-                                              "graph/GraphState.h",
                                               "graph/VariableSpace.h",
                                               "helpers/helper_generator.h",
                                               "graph/profiling/GraphProfile.h",
@@ -80,8 +82,6 @@ import java.util.Scanner;
                                               "array/ShapeList.h",
                                               "system/type_boilerplate.h",
                                               "system/op_boilerplate.h",
-                                              //"enum_boilerplate.h",
-                                              //"op_enums.h",
                                               "ops/InputType.h",
                                               "ops/declarable/OpDescriptor.h",
                                               "ops/declarable/PlatformHelper.h",
@@ -159,7 +159,7 @@ public class Nd4jCpuPresets implements InfoMapper, BuildEnabled {
 
     @Override
     public void map(InfoMap infoMap) {
-        infoMap.put(new Info("thread_local", "ND4J_EXPORT", "INLINEDEF", "CUBLASWINAPI", "FORCEINLINE",
+        infoMap.put(new Info("thread_local", "ND4J_EXPORT", "SD_EXPORT", "INLINEDEF", "CUBLASWINAPI", "FORCEINLINE",
                              "_CUDA_H", "_CUDA_D", "_CUDA_G", "_CUDA_HD", "LIBND4J_ALL_OPS", "NOT_EXCLUDED").cppTypes().annotations())
                         .put(new Info("NativeOps.h").objectify())
                         .put(new Info("OpaqueTadPack").pointerTypes("OpaqueTadPack"))
@@ -174,19 +174,13 @@ public class Nd4jCpuPresets implements InfoMapper, BuildEnabled {
                         .put(new Info("OpaqueContext").pointerTypes("OpaqueContext"))
                         .put(new Info("OpaqueRandomGenerator").pointerTypes("OpaqueRandomGenerator"))
                         .put(new Info("OpaqueLaunchContext").pointerTypes("OpaqueLaunchContext"))
-                        .put(new Info("const char").valueTypes("byte").pointerTypes("@Cast(\"char*\") String",
-                                        "@Cast(\"char*\") BytePointer"))
-                        .put(new Info("char").valueTypes("char").pointerTypes("@Cast(\"char*\") BytePointer",
-                                        "@Cast(\"char*\") String"))
+                        .put(new Info("const char").valueTypes("byte").pointerTypes("@Cast(\"char*\") String", "@Cast(\"char*\") BytePointer"))
+                        .put(new Info("char").valueTypes("char").pointerTypes("@Cast(\"char*\") BytePointer", "@Cast(\"char*\") String"))
                         .put(new Info("Nd4jPointer").cast().valueTypes("Pointer").pointerTypes("PointerPointer"))
-                        .put(new Info("Nd4jLong").cast().valueTypes("long").pointerTypes("LongPointer", "LongBuffer",
-                                        "long[]"))
-                        .put(new Info("Nd4jStatus").cast().valueTypes("int").pointerTypes("IntPointer", "IntBuffer",
-                                        "int[]"))
-                        .put(new Info("float16").cast().valueTypes("short").pointerTypes("ShortPointer", "ShortBuffer",
-                                        "short[]"))
-                        .put(new Info("bfloat16").cast().valueTypes("short").pointerTypes("ShortPointer", "ShortBuffer",
-                                        "short[]"));
+                        .put(new Info("Nd4jLong").cast().valueTypes("long").pointerTypes("LongPointer", "LongBuffer", "long[]"))
+                        .put(new Info("Nd4jStatus").cast().valueTypes("int").pointerTypes("IntPointer", "IntBuffer", "int[]"))
+                        .put(new Info("float16").cast().valueTypes("short").pointerTypes("ShortPointer", "ShortBuffer", "short[]"))
+                        .put(new Info("bfloat16").cast().valueTypes("short").pointerTypes("ShortPointer", "ShortBuffer",  "short[]"));
 
         infoMap.put(new Info("__CUDACC__", "MAX_UINT", "HAVE_MKLDNN", "__CUDABLAS__").define(false))
                .put(new Info("__JAVACPP_HACK__", "LIBND4J_ALL_OPS").define(true))

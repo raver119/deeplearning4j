@@ -78,7 +78,10 @@ class SD_EXPORT VariableSpace {
 
   virtual int numberOfPlaceholders() const;
 
-  virtual const std::vector<std::shared_ptr<Variable>> &placeholders() const;
+#ifndef __JAVACPP_HACK__
+  virtual const std::vector<std::shared_ptr<Variable>>& placeholders() const;
+  virtual std::vector<std::shared_ptr<Variable>> variables() const;
+#endif
 
   virtual bool hasExternalVariable(int it) const;
   virtual bool hasExternalVariable(const std::pair<int, int> &pair) const;
@@ -95,8 +98,6 @@ class SD_EXPORT VariableSpace {
       const std::pair<int, int> &pair) const;
   virtual std::shared_ptr<Variable> getVariable(
       const std::string &symbol) const;
-
-  virtual std::vector<std::shared_ptr<Variable>> variables() const;
 
   virtual std::shared_ptr<Variable> putVariable(const std::pair<int, int> &pair, const NDArray &array);
   virtual std::shared_ptr<Variable> putVariable(int id, const NDArray &array);

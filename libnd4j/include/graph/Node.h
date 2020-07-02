@@ -177,8 +177,10 @@ class SD_EXPORT Node {
 
   bool hasCustomOp() const;
 
+#ifndef __JAVACPP_HACK__
   // this method converts string deps to int deps
   void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;
+#endif
 
   int frameId() const;
   void setFrameId(int frameId);

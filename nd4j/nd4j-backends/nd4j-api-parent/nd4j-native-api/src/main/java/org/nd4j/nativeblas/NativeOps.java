@@ -1078,11 +1078,6 @@ public interface NativeOps {
 
     void deleteVariablesSet(OpaqueVariablesSet pointer);
 
-    // GraphState creation
-    Pointer getGraphState(long id);
-
-    void deleteGraphState(Pointer state);
-
     int estimateThreshold(PointerPointer extraPointers, Pointer x, LongPointer xShapeInfo, int N, float threshold);
 
     // this method executes op that requires scope to be present: if/while/cond/whatever

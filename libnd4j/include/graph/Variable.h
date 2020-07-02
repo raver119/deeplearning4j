@@ -132,8 +132,10 @@ class SD_EXPORT Variable {
 
   const std::vector<std::pair<int, int>>& dependencies() const;
 
+#ifndef __JAVACPP_HACK__
   // this method converts string deps to int deps
   void actualizeDependencies(const MAP_IMPL<std::string, int> &lookupTable) const;
+#endif
 
 #ifndef __JAVACPP_HACK__
   /**
