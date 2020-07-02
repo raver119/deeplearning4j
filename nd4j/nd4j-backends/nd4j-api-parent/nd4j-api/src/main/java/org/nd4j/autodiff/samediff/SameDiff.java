@@ -362,7 +362,7 @@ public class SameDiff extends SDBaseOps {
     }
 
     /**
-     * @return The current name scope, if any (null otherwise). See {@link #withNameScope(String)} for more details.
+     * @return The current name scope, if any (null otherwise). See {@link #withNameScope(String)} for more details.  Does not include a '/' postfix.
      */
     public String currentNameScope() {
         if (nameScopes.isEmpty())
@@ -3346,12 +3346,29 @@ public class SameDiff extends SDBaseOps {
     }
 
     /**
+     * Rename the specified variable to the new name, adding the current scope to the new name.
+     *
+     * See {@link #renameVariable(String, String, boolean)}.
+     *
+     * @param from The variable to rename - this variable must exist
+     * @param to   The new name for the variable - no variable with this name must already exist in this scope
+     */
+    public void renameVariable(String from, String to){
+        renameVariable(from, to, true);
+    }
+
+    /**
      * Rename the specified variable to the new name.
      *
      * @param from The variable to rename - this variable must exist
-     * @param to   The new name for the variable - no variable with this name must already exist
+     * @param to   The new name for the variable - no variable with this name must already exist (in this scope if includeScope is true)
+     * @param includeScope Whether to add the current NameScope to the new name.  True by default.
      */
-    public void renameVariable(String from, String to) {
+    public void renameVariable(String from, String to, boolean includeScope) {
+
+        if(includeScope)
+            to = currentNameScope() + "/" + to;
+
         Preconditions.checkState(variables.containsKey(from), "Cannot rename variable \"%s\": no variable with this name exists", from);
         Preconditions.checkState(!variables.containsKey(to), "Cannot rename variable \"%s\" to name \"%s\": a variable with name \"%s\" already exists", from, to, to);
 

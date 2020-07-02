@@ -872,8 +872,8 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
                 loss = lossLayer.defineLoss(sameDiff, input, labels, conf().isMiniBatch());
                 lossScope.close();
-                //TODO rename doesn't take into account nameScope, this is a fix
-                loss.rename(vertexScope.getName() + "/loss");
+
+                loss.rename("loss");
 
                 vertexScope.close();
 

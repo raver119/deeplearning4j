@@ -1586,11 +1586,24 @@ public class SDVariable implements Serializable {
     /**
      * Rename this variable to a new name. Equivalent to {@link SameDiff#renameVariable(String, String)}
      *
-     * @param newName The new name for the variable - no variable with this name must already exist
+     * See {@link #rename(String, boolean)}.
+     *
+     * @param newName The new name for the variable - no variable with this name must already exist in this scope
      * @return The current variable (same object)
      */
     public SDVariable rename(String newName) {
         sameDiff.renameVariable(getVarName(), newName);
+        return this;
+    }
+
+    /**
+     * Rename this variable to a new name. Equivalent to {@link SameDiff#renameVariable(String, String, boolean)}
+     *
+     * @param newName The new name for the variable - no variable with this name must already exist (in this scope if includeScope is true)
+     * @return The current variable (same object)
+     */
+    public SDVariable rename(String newName, boolean includeScope) {
+        sameDiff.renameVariable(getVarName(), newName, includeScope);
         return this;
     }
 
