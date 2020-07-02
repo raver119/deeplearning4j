@@ -95,7 +95,7 @@ public class LocalResponseNormalization extends Layer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         if(dataFormat == CNN2DFormat.NHWC)
             layerInput = layerInput.permute(0, 3, 1, 2);
         //TODO support more data types

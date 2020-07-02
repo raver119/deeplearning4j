@@ -69,8 +69,6 @@ import org.nd4j.linalg.lossfunctions.impl.LossMSE;
 @Slf4j
 public class ToSameDiffTest extends BaseDL4JTest {
 
-    private static OpExecutioner.ProfilingMode origMode;
-
     private static final String expectedSummary = "--- Summary ---\n"
             + "Variables:               30                   (8 with arrays)\n"
             + "Functions:               20                  \n"
@@ -133,21 +131,6 @@ public class ToSameDiffTest extends BaseDL4JTest {
             + "17   LossNegativeLogLikelihood/shape_of          Shape            [LossNegativeLogLikelihood/neg]                                                       [LossNegativeLogLikelihood/shape_of]          \n"
             + "18   LossNegativeLogLikelihood/stridedslice      StridedSlice     [LossNegativeLogLikelihood/shape_of]                                                  [LossNegativeLogLikelihood/stridedslice]      \n"
             + "19   LossNegativeLogLikelihood/divide            DivOp            [LossNegativeLogLikelihood/reduce_sum, LossNegativeLogLikelihood/stridedslice]        [loss]                                        \n";
-
-    @BeforeClass
-    public static void beforeClass(){
-        origMode = Nd4j.getExecutioner().getProfilingMode();
-    }
-
-    @Before
-    public void before() {
-        Nd4j.getExecutioner().setProfilingMode(OpExecutioner.ProfilingMode.SCOPE_PANIC);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        Nd4j.getExecutioner().setProfilingMode(origMode);
-    }
 
     @Override
     public DataType getDataType() {

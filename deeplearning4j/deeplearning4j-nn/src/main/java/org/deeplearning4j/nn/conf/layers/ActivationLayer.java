@@ -88,7 +88,7 @@ public class ActivationLayer extends NoParamLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         return activationFn.defineActivation(sameDiff, layerInput);
     }
 

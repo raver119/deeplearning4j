@@ -128,7 +128,7 @@ public class SpaceToBatchLayer extends NoParamLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         //TODO SameDiff spaceToBatch has issues, see https://github.com/eclipse/deeplearning4j/issues/9019
         throw new UnsupportedOperationException("Can't convert SpaceToBatchLayer to SameDiff");
 //        return sameDiff.cnn.spaceToBatch(layerInput, blocks, padding[0], padding[1]);

@@ -33,14 +33,12 @@ import org.deeplearning4j.util.ConvolutionUtils;
 import org.deeplearning4j.util.ValidationUtils;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.enums.WeightsFormat;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv1DConfig;
-import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -97,7 +95,7 @@ public class Convolution1DLayer extends ConvolutionLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable weight = paramTable.get(ConvolutionParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(ConvolutionParamInitializer.BIAS_KEY);
 

@@ -29,7 +29,7 @@ import org.nd4j.shade.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 /**
- * Interface for loss functions
+ * Interface for loss functions.  Custom loss functions should probably extend {@link BaseLossFunction} instead of this interface.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class",
         defaultImpl = LegacyILossFunctionDeserializerHelper.class)
@@ -82,7 +82,9 @@ public interface ILossFunction extends Serializable {
                     INDArray mask, boolean average);
 
     /**
-     * Define the loss function for a {@link SameDiff} instance.  Should return a scalar. <br>
+     * Define the loss function for a {@link SameDiff} instance.  Should return a scalar. <br> <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException}
+     * like the default implementation in {@link BaseLossFunction}. <br>
      *
      * If average is true, should be the batchwise average, otherwise the sum.<br>
      *

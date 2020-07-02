@@ -61,7 +61,7 @@ public class LossUtil {
         if(weight == null){
             return loss;
         } else {
-            return loss.mul(loss.getSameDiff().constant(weight));
+            return loss.mul(loss.getSameDiff().constant(weight.castTo(loss.dataType())));
         }
     }
 

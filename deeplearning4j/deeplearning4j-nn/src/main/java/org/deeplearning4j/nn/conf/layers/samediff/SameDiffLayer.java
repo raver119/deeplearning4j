@@ -74,12 +74,12 @@ public abstract class SameDiffLayer extends AbstractSameDiffLayer {
      *
      * @param sameDiff SameDiff instance
      * @param layerInput Input to the layer
-     * @param paramTable Parameter table - keys as defined by {@link #defineParameters(SDLayerParams)}
      * @param mask Optional, maybe null. Mask to apply if supported
+     * @param paramTable Parameter table - keys as defined by {@link #defineParameters(SDLayerParams)}
      * @return The final layer variable corresponding to the activations/output from the forward pass
      */
-    public abstract SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput,
-                                           Map<String, SDVariable> paramTable, SDVariable mask);
+    public abstract SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable);
 
     /**
      * @see Layer#feedForwardMaskArray(INDArray, MaskState, int)

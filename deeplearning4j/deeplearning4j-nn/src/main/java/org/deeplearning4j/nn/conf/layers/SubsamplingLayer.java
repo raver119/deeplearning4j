@@ -152,7 +152,7 @@ public class SubsamplingLayer extends NoParamLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
 
         Pooling2DConfig poolingConfig = Pooling2DConfig.builder()
                 .kH(kernelSize[0]).kW(kernelSize[1])

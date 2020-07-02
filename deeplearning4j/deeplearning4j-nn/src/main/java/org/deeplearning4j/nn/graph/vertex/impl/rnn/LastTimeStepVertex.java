@@ -72,7 +72,7 @@ public class LastTimeStepVertex extends BaseGraphVertex {
 
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         return inputs[0].get(SDIndex.all(), SDIndex.all(), SDIndex.point(-1));
     }
 

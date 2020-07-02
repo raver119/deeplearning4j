@@ -26,7 +26,7 @@ import org.nd4j.common.primitives.Pair;
  * Created by Alex on 19/12/2016.
  */
 @EqualsAndHashCode
-public class CustomActivation extends BaseActivationFunction implements IActivation {
+public class CustomActivation extends BaseActivationFunction {
     @Override
     public INDArray getActivation(INDArray in, boolean training) {
         return in;

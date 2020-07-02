@@ -28,7 +28,8 @@ import org.nd4j.shade.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 
 /**
- * Interface for implementing custom activation functions
+ * Interface for implementing custom activation functions.
+ * Custom activation functions should probably extend {@link BaseActivationFunction} instead of this interface.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class",
         defaultImpl = LegacyIActivationDeserializerHelper.class)
@@ -62,7 +63,15 @@ public interface IActivation extends Serializable {
 
     int numParams(int inputSize);
 
-    //TODO default impl in BaseActivation, activations
-    public SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
+    /**
+     * Define the activation function for conversion to {@link SameDiff}. <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException}
+     * like the default implementation in {@link BaseActivationFunction}.
+     *
+     * @param sameDiff The SameDiff instance to define in.
+     * @param input The input to the activation function.
+     * @return The output of the activation function.
+     */
+    SDVariable defineActivation(@NonNull SameDiff sameDiff, @NonNull SDVariable input);
 
 }

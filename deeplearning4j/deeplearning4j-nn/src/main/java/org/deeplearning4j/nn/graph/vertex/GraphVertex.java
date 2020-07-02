@@ -95,7 +95,19 @@ public interface GraphVertex extends Trainable, Serializable {
     /** Get the Layer (if any). Returns null if {@link #hasLayer()} == false */
     Layer getLayer();
 
-    SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs, @NonNull Map<String, SDVariable> paramTable, SDVariable mask);
+    /**
+     * Define the vertex for conversion to {@link SameDiff}. <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException}
+     * like the default implementation in {@link BaseGraphVertex}.
+     *
+     * @param sameDiff The {@link SameDiff} instance to define in.
+     * @param inputs The inputs to the vertex, in the same order as {@link #getInputVertices()}.
+     * @param mask The mask.  May be null.
+     * @param paramTable The parameters for the vertex.  Keys will be the same as {@link #paramTable(boolean)}.
+     * @return The output of the vertex.
+     */
+    SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs, SDVariable mask,
+            @NonNull Map<String, SDVariable> paramTable);
 
     /**
      * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.

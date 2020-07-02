@@ -21,6 +21,7 @@ import java.util.Map;
 import lombok.NonNull;
 import org.deeplearning4j.nn.api.MaskState;
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.preprocessor.BaseInputPreProcessor;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -78,7 +79,10 @@ public interface InputPreProcessor extends Serializable, Cloneable {
     Pair<INDArray, MaskState> feedForwardMaskArray(INDArray maskArray, MaskState currentMaskState, int minibatchSize);
 
     /**
-     * Define the InputPreProcessor's input transformation in a {@link SameDiff} instance.
+     * Define the InputPreProcessor's input transformation in a {@link SameDiff} instance. <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException}
+     * like the default implementation in {@link BaseInputPreProcessor}.
+     *
      * @param sameDiff The {@link SameDiff} instance.
      * @param input The input to transform.
      * @return The transformed input.

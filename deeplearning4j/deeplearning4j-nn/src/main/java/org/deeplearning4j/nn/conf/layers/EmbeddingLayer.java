@@ -23,7 +23,6 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
-import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.nn.params.EmbeddingLayerParamInitializer;
 import org.deeplearning4j.nn.weights.IWeightInit;
 import org.deeplearning4j.nn.weights.embeddings.ArrayEmbeddingInitializer;
@@ -87,7 +86,7 @@ public class EmbeddingLayer extends FeedForwardLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
 //        SDVariable weight = paramTable.get(EmbeddingLayerParamInitializer.WEIGHT_KEY);
 //        SDVariable bias = paramTable.get(EmbeddingLayerParamInitializer.BIAS_KEY);
 //

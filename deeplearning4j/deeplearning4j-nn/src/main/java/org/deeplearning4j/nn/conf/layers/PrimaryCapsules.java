@@ -101,7 +101,7 @@ public class PrimaryCapsules extends SameDiffLayer {
     }
 
     @Override
-    public SDVariable defineLayer(SameDiff SD, SDVariable input, Map<String, SDVariable> paramTable, SDVariable mask) {
+    public SDVariable defineLayer(SameDiff SD, SDVariable input, SDVariable mask, Map<String, SDVariable> paramTable) {
         Conv2DConfig conf = Conv2DConfig.builder()
                 .kH(kernelSize[0]).kW(kernelSize[1])
                 .sH(stride[0]).sW(stride[1])

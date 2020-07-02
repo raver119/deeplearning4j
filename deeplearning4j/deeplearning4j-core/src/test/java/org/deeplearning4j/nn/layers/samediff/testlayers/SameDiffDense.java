@@ -102,7 +102,8 @@ public class SameDiffDense extends SameDiffLayer {
     }
 
     @Override
-    public SDVariable defineLayer(SameDiff sd, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask) {
+    public SDVariable defineLayer(SameDiff sd, SDVariable layerInput, SDVariable mask,
+            Map<String, SDVariable> paramTable) {
         SDVariable weights = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(DefaultParamInitializer.BIAS_KEY);
 

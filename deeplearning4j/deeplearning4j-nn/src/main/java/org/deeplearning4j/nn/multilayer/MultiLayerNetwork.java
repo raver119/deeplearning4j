@@ -885,9 +885,9 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                     sdOutputLabels = null;
                 }
 
-                currentOutput = ((org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer) config).defineLayer(sameDiff, currentOutput, sdOutputLabels, paramTable);
+                currentOutput = ((org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer) config).defineLayerAndLoss(sameDiff, currentOutput, sdOutputLabels, paramTable);
             } else {
-                currentOutput = config.defineLayer(sameDiff, currentOutput, paramTable, null);
+                currentOutput = config.defineLayer(sameDiff, currentOutput, null, paramTable);
             }
 
             currentInputType = config.getOutputType(i, currentInputType);

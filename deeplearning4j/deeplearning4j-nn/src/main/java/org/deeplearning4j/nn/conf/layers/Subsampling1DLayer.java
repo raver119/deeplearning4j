@@ -21,8 +21,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.deeplearning4j.nn.conf.CNN2DFormat;
-import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
@@ -38,7 +36,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.Collection;
 import java.util.Map;
-import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
 
 /**
  * 1D (temporal) subsampling layer - also known as pooling layer.<br> Expects input of shape {@code [minibatch, nIn,
@@ -83,11 +80,11 @@ public class Subsampling1DLayer extends SubsamplingLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
 
         layerInput = sameDiff.expandDims(layerInput, -1);
 
-        SDVariable out = super.defineLayer(sameDiff, layerInput, paramTable, mask);
+        SDVariable out = super.defineLayer(sameDiff, layerInput, mask, paramTable);
         return sameDiff.squeeze(out, -1);
     }
 

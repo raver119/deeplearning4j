@@ -95,7 +95,7 @@ public class LossLayer extends FeedForwardLayer implements LayerWithLoss {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         return doActivation(layerInput);
     }
 

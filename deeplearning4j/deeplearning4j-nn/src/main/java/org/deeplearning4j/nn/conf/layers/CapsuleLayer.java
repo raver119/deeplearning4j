@@ -99,7 +99,7 @@ public class CapsuleLayer extends SameDiffLayer {
     }
 
     @Override
-    public SDVariable defineLayer(SameDiff sd, SDVariable input, Map<String, SDVariable> paramTable, SDVariable mask) {
+    public SDVariable defineLayer(SameDiff sd, SDVariable input, SDVariable mask, Map<String, SDVariable> paramTable) {
 
         // input: [mb, inputCapsules, inputCapsuleDimensions]
 

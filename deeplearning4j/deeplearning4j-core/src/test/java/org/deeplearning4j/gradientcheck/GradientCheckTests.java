@@ -315,9 +315,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                                         + doLearningFirst + ", l2=" + l2 + ", l1=" + l1;
                         assertTrue(msg, gradOK);
 
-                        //TODO toSameDiff doesn't support regularization
-                        if(mln.calcRegularizationScore(false) == 0)
-                            TestUtils.testToSameDiff(mln, input, labels);
+                        TestUtils.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }
@@ -718,9 +716,7 @@ public class GradientCheckTests extends BaseDL4JTest {
                             + ", outputActivation=" + outputActivation + ", l2=" + l2 + ", l1=" + l1;
                     assertTrue(msg, gradOK1);
 
-                    //TODO toSameDiff doesn't support regularization
-                    if(mln.calcRegularizationScore(false) == 0)
-                        TestUtils.testToSameDiff(mln, input, labels);
+                    TestUtils.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }

@@ -64,7 +64,9 @@ public interface IDropout extends Serializable, Cloneable {
     IDropout clone();
 
     /**
-     * Define the dropout for a {@link SameDiff} instance.
+     * Define the dropout for a {@link SameDiff} instance. <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException}
+     * like the default implementation in {@link BaseDropout}.
      *
      * @param sameDiff The {@link SameDiff} instance
      * @param input The input to the dropout, typically the output of the previous layer.

@@ -24,7 +24,6 @@ import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.DepthwiseConvolution2DLayer;
-import org.deeplearning4j.nn.params.ConvolutionParamInitializer;
 import org.deeplearning4j.nn.params.DepthwiseConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
@@ -97,7 +96,7 @@ public class DepthwiseConvolution2D extends ConvolutionLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable weight = paramTable.get(DepthwiseConvolutionParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(DepthwiseConvolutionParamInitializer.BIAS_KEY);
 

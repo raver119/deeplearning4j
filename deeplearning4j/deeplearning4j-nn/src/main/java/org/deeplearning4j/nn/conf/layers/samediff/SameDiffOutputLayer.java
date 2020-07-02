@@ -64,12 +64,12 @@ public abstract class SameDiffOutputLayer extends AbstractSameDiffLayer {
      * @param paramTable Parameter table - keys as defined by {@link #defineParameters(SDLayerParams)}
      * @return The final layer variable corresponding to the score/loss during forward pass. This must be a single scalar value.
      */
-    public abstract SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, SDVariable labels,
+    public abstract SDVariable defineLayerAndLoss(SameDiff sameDiff, SDVariable layerInput, SDVariable labels,
                     Map<String, SDVariable> paramTable);
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         throw new IllegalStateException("SameDiffOutputLayers should be defined using the define method using labels");
     }
 

@@ -29,7 +29,6 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.dropout.Dropout;
 import org.deeplearning4j.nn.conf.dropout.IDropout;
 import org.deeplearning4j.nn.conf.inputs.InputType;
-import org.deeplearning4j.nn.conf.layers.samediff.SDLayerParams;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -103,15 +102,17 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
 
 
     /**
-     * Define the layer for SameDiff conversion
+     * Define the layer for SameDiff conversion. <br>
+     * If this isn't supported, this method should throw a {@link UnsupportedOperationException} like it does if not overridden.
      *
      * @param sameDiff SameDiff instance
      * @param layerInput Input to the layer
-     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      * @param mask Optional, maybe null. Mask to apply if supported
+     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      * @return The final layer variable corresponding to the activations/output from the forward pass
      */
-    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, @NonNull Map<String, SDVariable> paramTable, SDVariable mask){
+    public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput, SDVariable mask,
+            @NonNull Map<String, SDVariable> paramTable){
         throw new UnsupportedOperationException("SameDiff conversion has not been implemented for " + this.getClass().getSimpleName());
     }
 

@@ -23,7 +23,6 @@ import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.distribution.Distribution;
 import org.deeplearning4j.nn.conf.inputs.InputType;
-import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional;
 import org.deeplearning4j.nn.conf.layers.recurrent.Bidirectional.Mode;
 import org.deeplearning4j.nn.weights.IWeightInit;
 import org.deeplearning4j.nn.weights.WeightInit;
@@ -56,10 +55,15 @@ public abstract class BaseRecurrentLayer extends FeedForwardLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         return defineLayer(sameDiff, layerInput, paramTable, mask, false);
     }
 
+    /**
+     * An optional method to implement that if implemented, defines the bidirectional operation as a single pass.
+     * If not defined, should throw a {@link UnsupportedOperationException}, in which case the forward and backward
+     * passes are done seperatly and combined.
+     */
     public SDVariable defineBidirectional(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask, Mode mode) {
         throw new UnsupportedOperationException("Bidirectional toSameDiff not supported for " + this.getClass().getSimpleName());

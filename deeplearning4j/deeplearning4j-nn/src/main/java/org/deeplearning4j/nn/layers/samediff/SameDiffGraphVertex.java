@@ -85,7 +85,7 @@ public class SameDiffGraphVertex extends BaseGraphVertex {
 
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         Map<String, SDVariable> inputMap = new HashMap<>();
 
         //TODO input validation?

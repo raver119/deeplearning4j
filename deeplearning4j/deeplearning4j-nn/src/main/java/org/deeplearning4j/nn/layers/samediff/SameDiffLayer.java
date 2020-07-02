@@ -313,7 +313,7 @@ public class SameDiffLayer extends AbstractLayer<AbstractSameDiffLayer> {
             long[] maskShape = ArrayUtil.nTimes((long)inputShape.length, -1);
             SDVariable mask = sameDiff.placeHolder(MASK_KEY, dataType, maskShape);
 
-            SDVariable layerOutput = bl.defineLayer(sameDiff, inputVar, params, mask);
+            SDVariable layerOutput = bl.defineLayer(sameDiff, inputVar, mask, params);
             Preconditions.checkNotNull(layerOutput, "Invalid output: layer output is null");
             outputVar = layerOutput;
 

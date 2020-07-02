@@ -60,10 +60,10 @@ public class L2Vertex extends BaseGraphVertex {
 
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable temp = inputs[0].sub(inputs[1]);
         temp = temp.mul(temp);
-        temp = temp.reshape(sameDiff.concat(0, sameDiff.sizeAt(temp, 0), sameDiff.constant(-1).castTo(DataType.INT64))).sum(1);
+        temp = temp.reshape(sameDiff.concat(0, sameDiff.sizeAt(temp, 0), sameDiff.constant(-1))).sum(1);
         return temp;
     }
 

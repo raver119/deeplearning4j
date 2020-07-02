@@ -83,7 +83,7 @@ public class RepeatVector extends FeedForwardLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         layerInput = sameDiff.expandDims(layerInput, -1); // [batch, size, 1]
         SDVariable out;
         out = sameDiff.tile(layerInput, 1, 1, n); // [batch, size, n]

@@ -95,7 +95,7 @@ public class Cnn3DLossLayer extends FeedForwardLayer implements LayerWithLoss {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
 
         SDVariable batch = sameDiff.sizeAt(layerInput, 0);
         SDVariable channels;

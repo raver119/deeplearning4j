@@ -113,20 +113,19 @@ public class FrozenLayer extends Layer {
 
     /**
      * Will freeze any params passed to it.
-     *
-     * @param sameDiff SameDiff instance
+     *  @param sameDiff SameDiff instance
      * @param layerInput Input to the layer
-     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      * @param mask Optional, maybe null. Mask to apply if supported
+     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      */
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         for(SDVariable variable : paramTable.values()){
             variable.convertToConstant();
         }
         NameScope underlyingScope = sameDiff.withNameScope("underlying");
-        SDVariable output = layer.defineLayer(sameDiff, layerInput, paramTable, mask);
+        SDVariable output = layer.defineLayer(sameDiff, layerInput, mask, paramTable);
         underlyingScope.close();
         return output;
     }

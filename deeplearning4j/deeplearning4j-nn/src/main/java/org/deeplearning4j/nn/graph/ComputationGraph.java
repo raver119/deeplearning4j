@@ -774,7 +774,8 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
         if (!initCalled)
             init();
 
-        Preconditions.checkArgument(inputTypes.keySet().equals(new HashSet<>(configuration.getNetworkInputs())));
+        Preconditions.checkArgument(inputTypes.keySet().equals(new HashSet<>(configuration.getNetworkInputs())), "Must specify input types for all inputs.  Expected %s, but got %s.",
+                inputTypes.keySet(), configuration.getNetworkInputs());
 
         InputType[] inputVertTypes = new InputType[inputTypes.size()];
         int j = 0;
@@ -828,10 +829,10 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                 }
 
                 SDVariable input = activations.get(inputName);
-                output = ((SameDiffOutputLayer) vertex.getLayer()).layerConf().defineLayer(sameDiff, input, labels, paramTable);
+                output = ((SameDiffOutputLayer) vertex.getLayer()).layerConf().defineLayerAndLoss(sameDiff, input, labels, paramTable);
                 sdOutputLabels.put(name, labels);
             } else {
-                output = vertex.defineVertex(sameDiff, inputs, paramTable, null);
+                output = vertex.defineVertex(sameDiff, inputs, null, paramTable);
             }
 
             activations.put(name, output);

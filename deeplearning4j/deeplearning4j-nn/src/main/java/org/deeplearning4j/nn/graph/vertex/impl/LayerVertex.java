@@ -16,7 +16,6 @@
 
 package org.deeplearning4j.nn.graph.vertex.impl;
 
-import java.util.HashMap;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import org.deeplearning4j.nn.api.TrainingConfig;
 import org.deeplearning4j.nn.api.layers.IOutputLayer;
 import org.deeplearning4j.nn.api.layers.RecurrentLayer;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
-import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
@@ -84,7 +82,7 @@ public class LayerVertex extends BaseGraphVertex {
 
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         org.deeplearning4j.nn.conf.layers.Layer layerConf = layer.conf().getLayer();
 
         InputPreProcessor preProcessor = getLayerPreProcessor();
@@ -101,7 +99,7 @@ public class LayerVertex extends BaseGraphVertex {
             input = layerConf.getIDropout().defineDropout(sameDiff, input);
         }
 
-        return layerConf.defineLayer(sameDiff, input, paramTable, null);
+        return layerConf.defineLayer(sameDiff, input, null, paramTable);
     }
 
     @Override

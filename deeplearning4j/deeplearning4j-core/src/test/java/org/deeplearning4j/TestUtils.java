@@ -193,9 +193,6 @@ public class TestUtils {
                 .output();
 
 
-        //TODO remove
-        System.out.println("Failures to date: " + failures);
-
         assertEquals("Sizes of DL4J activations and found SameDiff activations differ", activations.size(), sdActivationVariables.size());
 
         List<Pair<String, String>> messages = new ArrayList<>();
@@ -264,7 +261,7 @@ public class TestUtils {
     
     public static void testToSameDiff(@NonNull ComputationGraph graph, @NonNull INDArray[] inputs, INDArray[] labels){
         Preconditions.checkArgument(inputs.length == graph.getConfiguration().getNetworkInputs().size(),
-                "Didn't supply the right number of inputs: expected " + graph.getConfiguration().getNetworkInputs().size() + ", got " + inputs.length);
+                "Didn't supply the right number of inputs: expected %s, got %s", graph.getConfiguration().getNetworkInputs().size(), inputs.length);
 
         Map<String, InputType> inputTypes = new HashMap<>();
         Map<String, INDArray> inputsMap = new HashMap<>();
@@ -353,8 +350,7 @@ public class TestUtils {
             List<String> labelNames = sameDiff.getTrainingConfig().getDataSetLabelMapping();
             Map<String, INDArray> inputAndLabelMap = new HashMap<>(inputsMap);
             Preconditions.checkArgument(labels.length == labelNames.size(),
-                    "Didn't supply the right number of labels: expected " + labelNames.size() + ", got "
-                            + labels.length);
+                    "Didn't supply the right number of labels: expected %s, got %s", labelNames.size(), labels.length);
 
             for (int i = 0; i < labels.length; i++) {
                 inputAndLabelMap.put(labelNames.get(i), labels[i]);

@@ -17,20 +17,15 @@
 package org.deeplearning4j.nn.graph.vertex.impl;
 
 import java.util.Map;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.deeplearning4j.nn.api.TrainingConfig;
-import org.deeplearning4j.nn.conf.GradientNormalization;
 import org.deeplearning4j.nn.conf.misc.DummyConfig;
 import org.deeplearning4j.nn.graph.vertex.BaseWrapperVertex;
 import org.deeplearning4j.nn.graph.vertex.GraphVertex;
 import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.learning.config.IUpdater;
-import org.nd4j.linalg.learning.config.NoOp;
 
 /**
  * FrozenVertex is used for the purposes of transfer learning
@@ -56,12 +51,12 @@ public class FrozenVertex extends BaseWrapperVertex {
 
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         for(SDVariable variable : paramTable.values()){
             variable.convertToConstant();
         }
         NameScope underlyingScope = sameDiff.withNameScope("underlying");
-        SDVariable output = underlying.defineVertex(sameDiff, inputs, paramTable, mask);
+        SDVariable output = underlying.defineVertex(sameDiff, inputs, mask, paramTable);
         underlyingScope.close();
         return output;
     }

@@ -181,7 +181,8 @@ public class RecurrentAttentionLayer extends SameDiffLayer {
     }
 
     @Override
-    public SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask) {
+    public SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, SDVariable mask,
+            Map<String, SDVariable> paramTable) {
         final val W = paramTable.get(WEIGHT_KEY);
         final val R = paramTable.get(RECURRENT_WEIGHT_KEY);
         final val b = paramTable.get(BIAS_KEY);

@@ -87,7 +87,7 @@ public class ElementWiseMultiplicationLayer extends org.deeplearning4j.nn.conf.l
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable weight = paramTable.get(ElementWiseParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(ElementWiseParamInitializer.BIAS_KEY);
 

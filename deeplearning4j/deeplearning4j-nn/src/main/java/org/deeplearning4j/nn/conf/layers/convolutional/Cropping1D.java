@@ -98,7 +98,7 @@ public class Cropping1D extends NoParamLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         return layerInput.get(SDIndex.all(), SDIndex.all(), SDIndex.interval(cropping[0], end(cropping[1])));
     }
 

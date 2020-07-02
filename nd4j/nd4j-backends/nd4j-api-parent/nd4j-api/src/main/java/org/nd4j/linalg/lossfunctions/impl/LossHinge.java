@@ -23,6 +23,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.linalg.activations.IActivation;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.lossfunctions.BaseLossFunction;
@@ -121,7 +122,7 @@ public class LossHinge extends BaseLossFunction {
     @Override
     public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(0.0)).sum(true, 1);
+        return sameDiff.math.max(input.mul(labels).rsub(1), sameDiff.constant(Nd4j.scalar(input.dataType(), 0.0))).sum(true, 1);
     }
 
     /**

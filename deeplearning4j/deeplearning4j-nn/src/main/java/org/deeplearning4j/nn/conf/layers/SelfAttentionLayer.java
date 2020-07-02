@@ -136,7 +136,8 @@ public class SelfAttentionLayer extends SameDiffLayer {
 
 
     @Override
-    public SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask) {
+    public SDVariable defineLayer(SameDiff sameDiff, SDVariable layerInput, SDVariable mask,
+            Map<String, SDVariable> paramTable) {
         if(projectInput){
             val Wq = paramTable.get(WEIGHT_KEY_QUERY_PROJECTION);
             val Wk = paramTable.get(WEIGHT_KEY_KEY_PROJECTION);

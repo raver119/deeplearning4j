@@ -126,7 +126,7 @@ public class Bidirectional extends Layer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
 
         Map<String, SDVariable> fwdParams = new HashMap<>();
         Map<String, SDVariable> bwdParams = new HashMap<>();
@@ -169,8 +169,8 @@ public class Bidirectional extends Layer {
                     throw new UnsupportedOperationException("Unknown bidirectional mode " + mode);
             }
         } else if(fwd instanceof LastTimeStep){
-            SDVariable fwdOut = fwd.defineLayer(sameDiff, layerInput, fwdParams, mask);
-            SDVariable bwdOut = bwd.defineLayer(sameDiff, layerInput, bwdParams, mask);
+            SDVariable fwdOut = fwd.defineLayer(sameDiff, layerInput, mask, fwdParams);
+            SDVariable bwdOut = bwd.defineLayer(sameDiff, layerInput, mask, bwdParams);
             if(mode == Mode.CONCAT) {
                 return sameDiff.concat(1, fwdOut, bwdOut);
             } else if(mode == Mode.ADD)

@@ -200,7 +200,7 @@ public class ConvolutionLayer extends FeedForwardLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable weight = paramTable.get(ConvolutionParamInitializer.WEIGHT_KEY);
         SDVariable bias = paramTable.get(ConvolutionParamInitializer.BIAS_KEY);
 

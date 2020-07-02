@@ -43,7 +43,6 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.common.primitives.Pair;
 
 import java.util.*;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.conf.layers.samediff.SameDiffOutputLayer>
     implements IOutputLayer {
@@ -322,7 +321,7 @@ public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.con
                 SDVariable v = sameDiff.var(s, dataType, ps);
                 params.put(s, v);
             }
-            SDVariable layerOutput = bl.defineLayer(sameDiff, inputVar, labelVar, params);
+            SDVariable layerOutput = bl.defineLayerAndLoss(sameDiff, inputVar, labelVar, params);
             Preconditions.checkNotNull(layerOutput, "Invalid output: layer output is null");
             outputVar = layerOutput;
 

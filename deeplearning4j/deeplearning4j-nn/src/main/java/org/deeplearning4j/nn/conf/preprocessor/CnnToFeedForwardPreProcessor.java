@@ -161,12 +161,6 @@ public class CnnToFeedForwardPreProcessor extends BaseInputPreProcessor {
     }
 
     @Override
-    public CnnToFeedForwardPreProcessor clone() {
-        CnnToFeedForwardPreProcessor clone = (CnnToFeedForwardPreProcessor) super.clone();
-        return clone;
-    }
-
-    @Override
     public InputType getOutputType(InputType inputType) {
         if (inputType == null || inputType.getType() != InputType.Type.CNN) {
             throw new IllegalStateException("Invalid input type: Expected input of type CNN, got " + inputType);

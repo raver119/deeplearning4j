@@ -248,9 +248,7 @@ public class CNNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(gradOK);
 
-            //TODO toSameDiff doesn't support regularization
-            if(mln.calcRegularizationScore(false) == 0)
-                TestUtils.testToSameDiff(mln, input, labels);
+            TestUtils.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }

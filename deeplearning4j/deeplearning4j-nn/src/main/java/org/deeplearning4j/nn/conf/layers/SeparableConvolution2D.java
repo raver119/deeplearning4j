@@ -25,7 +25,6 @@ import org.deeplearning4j.nn.conf.ConvolutionMode;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.layers.convolution.SeparableConvolution2DLayer;
-import org.deeplearning4j.nn.params.Convolution3DParamInitializer;
 import org.deeplearning4j.nn.params.SeparableConvolutionParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.util.ConvolutionUtils;
@@ -38,7 +37,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 import java.util.*;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv2DConfig;
-import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Conv3DConfig;
 
 /**
  * 2D Separable convolution layer configuration.
@@ -158,7 +156,7 @@ public class SeparableConvolution2D extends ConvolutionLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable depthWeight = paramTable.get(SeparableConvolutionParamInitializer.DEPTH_WISE_WEIGHT_KEY);
         SDVariable pointWeight = paramTable.get(SeparableConvolutionParamInitializer.POINT_WISE_WEIGHT_KEY);
         SDVariable bias = paramTable.get(SeparableConvolutionParamInitializer.BIAS_KEY);

@@ -66,11 +66,7 @@ public abstract class BaseLossFunction implements ILossFunction {
      * @param weight The weight.
      */
     protected static SDVariable multiplyWeight(@NonNull SDVariable loss, INDArray weight){
-        if(weight == null){
-            return loss;
-        } else {
-            return loss.mul(loss.getSameDiff().constant(weight));
-        }
+        return LossUtil.multiplyWeight(loss, weight);
     }
 
     /**

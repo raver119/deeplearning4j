@@ -116,7 +116,7 @@ public class ActivationReLU extends BaseActivationFunction {
                 temp = sameDiff.nn.leakyRelu(input, negativeSlope);
             else {
                 //TODO optimize this
-                SDVariable t = sameDiff.constant(thresh).castTo(input.dataType());
+                SDVariable t = sameDiff.constant(Nd4j.scalar(input.dataType(), thresh));
                 SDVariable oneGte = input.gte(t).castTo(input.dataType());
                 SDVariable oneLt = input.lt(t).castTo(input.dataType());
                 SDVariable lower = oneLt.mul(ns).mul(input.sub(threshold));
@@ -126,7 +126,7 @@ public class ActivationReLU extends BaseActivationFunction {
         }
 
         if(max != null)
-            temp = sameDiff.math.max(sameDiff.constant(max).castTo(temp.dataType()), temp);
+            temp = sameDiff.math.max(sameDiff.constant(Nd4j.scalar(temp.dataType(), max)), temp);
 
         return temp;
     }

@@ -26,7 +26,6 @@ import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.conf.layers.wrapper.BaseWrapperLayer;
 import org.deeplearning4j.nn.params.FrozenLayerWithBackpropParamInitializer;
 import org.deeplearning4j.optimize.api.TrainingListener;
-import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -90,15 +89,14 @@ public class FrozenLayerWithBackprop extends BaseWrapperLayer {
 
     /**
      * Will freeze any params passed to it.
-     *
-     * @param sameDiff SameDiff instance
+     *  @param sameDiff SameDiff instance
      * @param layerInput Input to the layer
-     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      * @param mask Optional, maybe null. Mask to apply if supported
+     * @param paramTable Parameter table - keys and shapes as defined in the layer implementation class.
      */
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         for(SDVariable variable : paramTable.values()){
             variable.convertToConstant();
         }

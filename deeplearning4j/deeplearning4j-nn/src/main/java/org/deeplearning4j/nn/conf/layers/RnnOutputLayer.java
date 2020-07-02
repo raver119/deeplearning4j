@@ -86,7 +86,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
 
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
-            @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
+            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable b = paramTable.get(DefaultParamInitializer.BIAS_KEY);
         SDVariable  W = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);
 
