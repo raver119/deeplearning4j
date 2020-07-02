@@ -839,7 +839,12 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
             layerScope.close();
         }
 
-        sameDiff.setOutputs(configuration.getNetworkOutputs());
+        List<String> sdOutputs = new ArrayList<>();
+        for(String vertex : configuration.getNetworkOutputs()){
+            sdOutputs.add(activations.get(vertex).name());
+        }
+
+        sameDiff.setOutputs(sdOutputs);
 
         List<String> losses = new ArrayList<>();
         List<String> allLabels = new ArrayList<>();
@@ -867,7 +872,8 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
                 loss = lossLayer.defineLoss(sameDiff, input, labels, conf().isMiniBatch());
                 lossScope.close();
-                loss.rename("loss");
+                //TODO rename doesn't take into account nameScope, this is a fix
+                loss.rename(vertexScope.getName() + "/loss");
 
                 vertexScope.close();
 
@@ -949,6 +955,15 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
         }
 
         return null;
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, Map, boolean)}.
+     */
+    public SameDiff toSameDiff(@NonNull Map<String, InputType> inputTypes, boolean useView){
+        SameDiff sameDiff = SameDiff.create();
+        toSameDiff(sameDiff, inputTypes, useView);
+        return sameDiff;
     }
 
     /**

@@ -519,6 +519,8 @@ public class OutputLayerTest extends BaseDL4JTest {
                 assertEquals(s.getDouble(0), s.getDouble(1), 1e-6);
 
                 TestUtils.testModelSerialization(graph);
+                TestUtils.testToSameDiff(graph, in, labels);
+                TestUtils.testToSameDiff(graph2, in2, labels2);
             }
         }
     }

@@ -130,6 +130,7 @@ public class TestSameDiffLambda extends BaseDL4JTest {
             INDArray outMbsd = lambda.output(newIn)[0];
             INDArray outMb = std.output(newIn)[0];
             assertEquals(outMb, outMbsd);
+            TestUtils.testToSameDiff(lambda, in, labels);
         }
     }
 
@@ -216,6 +217,7 @@ public class TestSameDiffLambda extends BaseDL4JTest {
             INDArray outMbsd = lambda.output(newIn1, newIn2)[0];
             INDArray outMb = std.output(newIn1, newIn2)[0];
             assertEquals(outMb, outMbsd);
+            TestUtils.testToSameDiff(lambda, new INDArray[]{in1, in2}, new INDArray[]{labels});
         }
     }
 }

@@ -143,5 +143,6 @@ public class TestTransferLearningModelSerializer extends BaseDL4JTest {
         //Sanity check on train mode:
         out = withFrozen.outputSingle(true, in);
         out2 = restored.outputSingle(true, in);
+        TestUtils.testToSameDiff(withFrozen, in, null);
     }
 }

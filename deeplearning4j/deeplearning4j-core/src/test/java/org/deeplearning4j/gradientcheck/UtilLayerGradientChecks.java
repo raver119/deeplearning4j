@@ -240,6 +240,7 @@ public class UtilLayerGradientChecks extends BaseDL4JTest {
             assertTrue(gradOKCG);
 
             TestUtils.testModelSerialization(g);
+            TestUtils.testToSameDiff(g, in, labels);
         }
 
     }

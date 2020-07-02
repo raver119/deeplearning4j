@@ -492,6 +492,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(gradOK);
             TestUtils.testModelSerialization(net);
+            TestUtils.testToSameDiff(net, input, labels);
         }
     }
 
@@ -590,6 +591,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(gradOK);
                         TestUtils.testModelSerialization(net);
+                        TestUtils.testToSameDiff(net, input, labels);
                     }
                 }
             }

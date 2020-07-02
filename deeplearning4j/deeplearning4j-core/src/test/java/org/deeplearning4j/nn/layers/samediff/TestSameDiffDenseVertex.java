@@ -172,6 +172,7 @@ public class TestSameDiffDenseVertex extends BaseDL4JTest {
                     INDArray outMbsd = netSD.output(newIn)[0];
                     INDArray outMb = netStandard.output(newIn)[0];
                     assertEquals(outMb, outMbsd);
+                    TestUtils.testToSameDiff(netSD, in, l);
                 }
             }
         }

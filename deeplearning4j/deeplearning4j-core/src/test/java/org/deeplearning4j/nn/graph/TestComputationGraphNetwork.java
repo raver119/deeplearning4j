@@ -1471,6 +1471,7 @@ public class TestComputationGraphNetwork extends BaseDL4JTest {
         ComputationGraph net2 = TestUtils.testModelSerialization(net);
         INDArray out2 = net2.outputSingle(ds.getFeatures());
         assertEquals(out, out2);
+        TestUtils.testToSameDiff(net, ds.getFeatures(), ds.getLabels());
     }
 
     @Test

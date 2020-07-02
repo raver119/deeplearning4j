@@ -39,14 +39,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import lombok.NonNull;
 import org.apache.commons.compress.utils.IOUtils;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.RNNFormat;
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.BaseLayer;
 import org.deeplearning4j.nn.conf.layers.samediff.AbstractSameDiffLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.graph.vertex.GraphVertex;
 import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.LossLayer;
 import org.deeplearning4j.nn.layers.convolution.ConvolutionLayer;
@@ -126,7 +129,7 @@ public class TestUtils {
 
     private static Set<String> failures = new HashSet<>();
 
-    public static void testToSameDiff(MultiLayerNetwork network, INDArray input, INDArray labels){
+    public static void testToSameDiff(@NonNull MultiLayerNetwork network, INDArray input, INDArray labels){
 
         SameDiff sameDiff;
         try{
@@ -249,6 +252,127 @@ public class TestUtils {
                     sdScore, score, 1e-3);
         }
 
+    }
+
+    public static void testToSameDiff(@NonNull ComputationGraph graph, @NonNull INDArray inputs, INDArray labels){
+        INDArray[] labelsArray = null;
+        if(labels != null)
+            labelsArray = new INDArray[]{labels};
+        
+        testToSameDiff(graph, new INDArray[]{inputs}, labelsArray);
+    }
+    
+    public static void testToSameDiff(@NonNull ComputationGraph graph, @NonNull INDArray[] inputs, INDArray[] labels){
+        Preconditions.checkArgument(inputs.length == graph.getConfiguration().getNetworkInputs().size(),
+                "Didn't supply the right number of inputs: expected " + graph.getConfiguration().getNetworkInputs().size() + ", got " + inputs.length);
+
+        Map<String, InputType> inputTypes = new HashMap<>();
+        Map<String, INDArray> inputsMap = new HashMap<>();
+
+        for(int i = 0 ; i < inputs.length ; i++){
+            String name = graph.getConfiguration().getNetworkInputs().get(i);
+            inputsMap.put(name, inputs[i]);
+            inputTypes.put(name, InputType.inferInputType(inputs[i]));
+        }
+
+        SameDiff sameDiff;
+        try{
+            sameDiff = graph.toSameDiff(inputTypes, true);
+        } catch (UnsupportedOperationException e){
+            if(!SKIP_UNIMPLEMENTED)
+                throw e;
+            else
+                return;
+        } catch (IllegalStateException e){
+            if((e.getMessage().contains(" convert to SameDiff with different regularizations") ||
+                    e.getMessage().contains(" convert to SameDiff with different IUpdaters")) && SKIP_UNIMPLEMENTED)
+                return;
+            else
+                throw e;
+        }
+
+        Map<String, INDArray> activations = graph.feedForward(inputs, false);
+
+        for(String inputName : inputsMap.keySet())
+            activations.remove(inputName);
+
+        Map<String, SDVariable> sdActivationVariables = new HashMap<>();
+
+        for(String vertexName : new ArrayList<>(activations.keySet())){
+            List<SDVariable> scopeVars = sameDiff.getVariablesInScope(vertexName);
+            if(!scopeVars.isEmpty()){
+                sdActivationVariables.put(vertexName, scopeVars.get(scopeVars.size() - 1));
+            }
+        }
+
+        Map<String, INDArray> sdActivations = sameDiff.batchOutput()
+                .inputs(inputsMap)
+                .output(sdActivationVariables.values().toArray(new SDVariable[0]))
+                .output();
+
+        System.out.println("Failures to date: " + failures);
+
+        assertEquals("Sizes of DL4J activations and found SameDiff activations differ", activations.size(), sdActivationVariables.size());
+
+
+        List<Pair<String, String>> messages = new ArrayList<>();
+        for(String vertexName : activations.keySet()){
+            INDArray dl4j = activations.get(vertexName);
+            INDArray sd = sdActivations.get(sdActivationVariables.get(vertexName).name());
+
+            if(! sd.equalsWithEps(dl4j, 1e-3)) {
+                GraphVertex vertex = graph.getVertex(vertexName);
+                String vertexStr = vertexName + "[" + vertex.getClass().getSimpleName();
+
+                if(vertex.hasLayer())
+                    vertexStr += "(" + vertex.getLayer().conf().getLayer().getClass().getSimpleName() + ")";
+
+                vertexStr += "]";
+
+
+                failures.add(vertexStr);
+                if(FAIL_FAST)
+                    fail("DL4J activation and SameDiff activation not equal for Vertex " + vertexStr +  " and SDVariable " + sdActivationVariables.get(vertexName).name());
+                else
+                    messages.add(new Pair<>(vertexStr, sdActivationVariables.get(vertexName).name()));
+            }
+
+        }
+
+        StringBuilder message = new StringBuilder("DL4J activation and SameDiff activation not equal for ");
+
+        for(Pair<String, String> pair : messages)
+            message.append("Layer ").append(pair.getFirst()).append(" and SDVariable ").append(pair.getSecond())
+                    .append(", ");
+
+        assertEquals(message.toString(), 0, messages.size());
+
+        if(sameDiff.getTrainingConfig() != null && labels != null) {
+            List<String> labelNames = sameDiff.getTrainingConfig().getDataSetLabelMapping();
+            Map<String, INDArray> inputAndLabelMap = new HashMap<>(inputsMap);
+            Preconditions.checkArgument(labels.length == labelNames.size(),
+                    "Didn't supply the right number of labels: expected " + labelNames.size() + ", got "
+                            + labels.length);
+
+            for (int i = 0; i < labels.length; i++) {
+                inputAndLabelMap.put(labelNames.get(i), labels[i]);
+            }
+
+            graph.computeGradientAndScore();
+            double score = graph.score();
+
+            Map<String, INDArray> sdLosses = sameDiff.batchOutput()
+                    .inputs(inputAndLabelMap)
+                    .output(sameDiff.getLossVariables().toArray(new String[0]))
+                    .output();
+
+            double sdScore = 0;
+            for(INDArray scoreArr : sdLosses.values())
+                sdScore += scoreArr.sumNumber().doubleValue();
+
+            assertEquals("Losses don't match for original network and SameDiff version",
+                    sdScore, score, 1e-3);
+        }
     }
 
     private static <T> T serializeDeserializeJava(T object){

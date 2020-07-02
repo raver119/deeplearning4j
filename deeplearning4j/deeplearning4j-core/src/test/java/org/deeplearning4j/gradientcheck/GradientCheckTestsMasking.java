@@ -387,6 +387,7 @@ public class GradientCheckTestsMasking extends BaseDL4JTest {
 
                 assertTrue(msg + " (compgraph)", gradOK);
                 TestUtils.testModelSerialization(graph);
+                TestUtils.testToSameDiff(graph, features, labels);
             }
         }
     }

@@ -1359,7 +1359,7 @@ public class SameDiff extends SDBaseOps {
     public void setOutputs(List<String> outputs){
         if(outputs != null){
             for(String s : outputs){
-                Preconditions.checkArgument(variables.containsKey(s), "Cannot set variable \"%s\" as an output: SameDiff instance does not contain a variable with this name");
+                Preconditions.checkArgument(variables.containsKey(s), "Cannot set variable \"%s\" as an output: SameDiff instance does not contain a variable with this name", s);
             }
         }
         this.outputs = outputs;
@@ -2742,9 +2742,8 @@ public class SameDiff extends SDBaseOps {
      * @return SDVariable placeholder
      */
     public SDVariable placeHolder(@NonNull String name, org.nd4j.linalg.api.buffer.DataType dataType, long... shape) {
-        Preconditions.checkState(!variables.containsKey(name), "Variable already exists with name %s", name);
         SDVariable ret = new SDVariable(name, VariableType.PLACEHOLDER, this, shape, dataType);
-        variables.put(name, Variable.builder().name(name).variable(ret).build());
+        addVariable(ret);
         return ret;
     }
 
@@ -3801,7 +3800,6 @@ public class SameDiff extends SDBaseOps {
             throw new IllegalArgumentException("Variable with name \"" + variable.name() + "\" already exists");
         }
 
-        Preconditions.checkState(variable.getSameDiff() == this, "Same diff instance for variable must be the same!");
         variables.put(variable.name(), Variable.builder().name(variable.name()).variable(variable).build());
         return variable;
     }

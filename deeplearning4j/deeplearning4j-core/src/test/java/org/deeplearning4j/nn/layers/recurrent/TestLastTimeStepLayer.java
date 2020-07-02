@@ -119,6 +119,7 @@ public class TestLastTimeStepLayer extends BaseDL4JTest {
         assertEquals(expOut, outFwd);
 
         TestUtils.testModelSerialization(graph);
+        TestUtils.testToSameDiff(graph, in, null);
     }
 
     @Test

@@ -563,6 +563,7 @@ public class GradientCheckTests extends BaseDL4JTest {
             assertTrue(msg, gradOK);
 
             TestUtils.testModelSerialization(netGraph);
+            TestUtils.testToSameDiff(netGraph, features, labels);
         }
     }
 
