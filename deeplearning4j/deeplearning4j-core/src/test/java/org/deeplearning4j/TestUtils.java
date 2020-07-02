@@ -285,7 +285,9 @@ public class TestUtils {
                 return;
         } catch (IllegalStateException e){
             if((e.getMessage().contains(" convert to SameDiff with different regularizations") ||
-                    e.getMessage().contains(" convert to SameDiff with different IUpdaters")) && SKIP_UNIMPLEMENTED)
+                    e.getMessage().contains(" convert to SameDiff with different IUpdaters") ||
+                    e.getMessage().equals("Dimension must be set for toSameDiff conversion.")) &&
+                    SKIP_UNIMPLEMENTED)
                 return;
             else
                 throw e;

@@ -67,7 +67,7 @@ public class L2NormalizeVertex extends BaseGraphVertex {
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
             @NonNull Map<String, SDVariable> paramTable, SDVariable mask) {
 
-        if(dimension.length < 1 || dimension == null)
+        if(dimension == null || dimension.length < 1)
             throw new IllegalStateException("Dimension must be set for toSameDiff conversion.");
 
         SDVariable factor = sameDiff.max(inputs[0].norm2(dimension), sameDiff.constant(eps).castTo(inputs[0].dataType()));
