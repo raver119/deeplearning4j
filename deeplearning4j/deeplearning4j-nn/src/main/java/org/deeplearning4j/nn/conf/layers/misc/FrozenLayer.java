@@ -107,8 +107,8 @@ public class FrozenLayer extends Layer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        return layer.transformParamForSameDiff(name, param);
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        layer.transformParamsForSameDiff(params);
     }
 
     /**

@@ -115,11 +115,9 @@ public interface GraphVertex extends Trainable, Serializable {
      *
      * Called once for each parameter.
      *
-     * @param name The name of the parameter.
-     * @param param The parameter.
-     * @return The transformed parameter.
+     * @param params The parameter.
      */
-    INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param);
+    void transformParamsForSameDiff(@NonNull Map<String, INDArray> params);
 
     /** Set the input activations.
      *  @param inputNumber Must be in range 0 to {@link #getNumInputArrays()}-1

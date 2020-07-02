@@ -114,13 +114,27 @@ public class Bidirectional extends Layer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        if(name.startsWith(BidirectionalParamInitializer.FORWARD_PREFIX)){
-            return fwd.transformParamForSameDiff(name.replaceFirst(BidirectionalParamInitializer.FORWARD_PREFIX, ""), param);
-        } else if(name.startsWith(BidirectionalParamInitializer.BACKWARD_PREFIX)){
-            return bwd.transformParamForSameDiff(name.replaceFirst(BidirectionalParamInitializer.BACKWARD_PREFIX, ""), param);
-        } else {
-            return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        Map<String, INDArray> fwdParams = new HashMap<>();
+        Map<String, INDArray> bwdParams = new HashMap<>();
+
+        for(String key : params.keySet()){
+            if(key.startsWith(BidirectionalParamInitializer.FORWARD_PREFIX)){
+                fwdParams.put(key.replaceFirst(BidirectionalParamInitializer.FORWARD_PREFIX, ""), params.get(key));
+            } else if(key.startsWith(BidirectionalParamInitializer.BACKWARD_PREFIX)){
+                fwdParams.put(key.replaceFirst(BidirectionalParamInitializer.BACKWARD_PREFIX, ""), params.get(key));
+            }
+        }
+
+        fwd.transformParamsForSameDiff(fwdParams);
+        bwd.transformParamsForSameDiff(bwdParams);
+
+        params.clear();
+        for(Map.Entry<String, INDArray> entry : fwdParams.entrySet()){
+            params.put(BidirectionalParamInitializer.FORWARD_PREFIX + entry.getKey(), entry.getValue());
+        }
+        for(Map.Entry<String, INDArray> entry : bwdParams.entrySet()){
+            params.put(BidirectionalParamInitializer.BACKWARD_PREFIX + entry.getKey(), entry.getValue());
         }
     }
 

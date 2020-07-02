@@ -118,16 +118,13 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
 
     /**
      * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.
-     * Useful for things like changing the dimension order or squeezing. <br>
+     * Useful for things like changing the dimension order or squeezing.
      *
-     * Called once for each parameter.
+     * Adding or removing parameters is supported.
      *
-     * @param name The name of the parameter.
-     * @param param The parameter.
-     * @return The transformed parameter.
+     * @param params The parameters of the layer.
      */
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param){
-        return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params){
     }
 
     /**

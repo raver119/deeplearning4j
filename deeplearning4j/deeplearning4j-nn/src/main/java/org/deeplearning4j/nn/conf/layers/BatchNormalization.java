@@ -112,8 +112,16 @@ public class BatchNormalization extends FeedForwardLayer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        return Nd4j.squeeze(param, 0);
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        INDArray beta = params.get(BatchNormalizationParamInitializer.BETA);
+        INDArray gamma = params.get(BatchNormalizationParamInitializer.GAMMA);
+        INDArray mean = params.get(BatchNormalizationParamInitializer.GLOBAL_MEAN);
+        INDArray variance = params.get(BatchNormalizationParamInitializer.GLOBAL_VAR);
+
+        params.put(BatchNormalizationParamInitializer.BETA, Nd4j.squeeze(beta, 0));
+        params.put(BatchNormalizationParamInitializer.GAMMA, Nd4j.squeeze(gamma, 0));
+        params.put(BatchNormalizationParamInitializer.GLOBAL_MEAN, Nd4j.squeeze(mean, 0));
+        params.put(BatchNormalizationParamInitializer.GLOBAL_VAR, Nd4j.squeeze(variance, 0));
     }
 
     @Override

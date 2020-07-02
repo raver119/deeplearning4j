@@ -16,6 +16,7 @@
 
 package org.deeplearning4j.nn.conf.layers;
 
+import java.util.HashMap;
 import lombok.*;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.ParamInitializer;
@@ -117,11 +118,9 @@ public class Convolution3D extends ConvolutionLayer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        if(name.equals(Convolution3DParamInitializer.WEIGHT_KEY))
-            return param.permute(2, 3, 4, 1, 0);
-        else
-            return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        INDArray weight = params.get(Convolution3DParamInitializer.WEIGHT_KEY);
+        params.put(Convolution3DParamInitializer.WEIGHT_KEY, weight.permute(2, 3, 4, 1, 0));
     }
 
     @Override

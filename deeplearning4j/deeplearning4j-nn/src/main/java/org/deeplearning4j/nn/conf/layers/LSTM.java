@@ -161,11 +161,9 @@ public class LSTM extends AbstractLSTM {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        if(name.equals(LSTMParamInitializer.BIAS_KEY))
-            return Nd4j.squeeze(param, 0);
-        else
-            return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        INDArray bias = params.get(LSTMParamInitializer.BIAS_KEY);
+        params.put(LSTMParamInitializer.BIAS_KEY, Nd4j.squeeze(bias, 0));
     }
 
     @Override

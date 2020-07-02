@@ -61,8 +61,8 @@ public abstract class BaseWrapperLayer extends Layer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        return underlying.transformParamForSameDiff(name, param);
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        underlying.transformParamsForSameDiff(params);
     }
 
     protected SDVariable defineUnderlying(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask){

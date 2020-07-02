@@ -113,11 +113,9 @@ public class Deconvolution2D extends ConvolutionLayer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        if(name.equals(DeconvolutionParamInitializer.WEIGHT_KEY))
-            return param.permute(2, 3, 1, 0);
-        else
-            return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        INDArray weight = params.get(DeconvolutionParamInitializer.WEIGHT_KEY);
+        params.put(DeconvolutionParamInitializer.WEIGHT_KEY, weight.permute(2, 3, 1, 0));
     }
 
     @Override

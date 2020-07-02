@@ -86,11 +86,9 @@ public class Convolution1DLayer extends ConvolutionLayer {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param) {
-        if(name.equals(ConvolutionParamInitializer.WEIGHT_KEY))
-            return Nd4j.squeeze(param, 3).permute(2, 1, 0);
-        else
-            return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        INDArray weight = params.get(ConvolutionParamInitializer.WEIGHT_KEY);
+        params.put(ConvolutionParamInitializer.WEIGHT_KEY, Nd4j.squeeze(weight, 3).permute(2, 1, 0));
     }
 
     @Override

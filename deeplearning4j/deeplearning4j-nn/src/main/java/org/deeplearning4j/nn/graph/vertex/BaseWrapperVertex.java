@@ -51,8 +51,8 @@ public abstract class BaseWrapperVertex implements GraphVertex {
     }
 
     @Override
-    public INDArray transformParamForSameDiff(@NonNull String name, @NonNull INDArray param){
-        return param;
+    public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params){
+        underlying.transformParamsForSameDiff(params);
     }
 
     @Override
