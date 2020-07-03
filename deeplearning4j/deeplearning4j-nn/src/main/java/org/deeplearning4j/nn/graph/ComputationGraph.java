@@ -27,6 +27,7 @@ import org.bytedeco.javacpp.Pointer;
 import org.deeplearning4j.nn.conf.layers.BaseLayer;
 import org.deeplearning4j.nn.conf.layers.LayerWithLoss;
 import org.deeplearning4j.nn.layers.samediff.SameDiffOutputLayer;
+import org.deeplearning4j.util.ToSameDiffUtils;
 import org.nd4j.adapters.OutputAdapter;
 import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -804,17 +805,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
             NameScope layerScope = sameDiff.withNameScope(name);
 
-            Map<String, INDArray> params = new HashMap<>(vertex.paramTable(false));
-            vertex.transformParamsForSameDiff(params);
-
-            Map<String, SDVariable> paramTable = new HashMap<>((int) vertex.numParams());
-            for (Map.Entry<String, INDArray> entry : params.entrySet()) {
-                INDArray value = entry.getValue();
-                if (!useView) {
-                    value = value.dup();
-                }
-                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
-            }
+            Map<String, SDVariable> paramTable = ToSameDiffUtils.defineParams(sameDiff, vertex, useView);
 
             SDVariable[] inputs = new SDVariable[vertex.getNumInputArrays()];
             j = 0;
@@ -893,90 +884,9 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
         if(losses.size() > 0){
 
-            IUpdater iUpdater = null;
-            for(Layer l : layers) {
-                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
-                if (conf instanceof BaseLayer) {
-                    IUpdater u = ((BaseLayer) conf).getIUpdater();
-                    if (iUpdater == null) {
-                        iUpdater = u;
-                    } else {
-                        if (u != null && u != iUpdater) {
-                            if (skipErrors) {
-                                iUpdater = null;
-                                log.warn("Ignoring updater config: Can not convert to SameDiff with different IUpdaters. Expected {}, but was {} for {}", iUpdater, u, conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected "
-                                                + iUpdater + ", but was " + u + " different for " + conf);
-                            }
-                        }
-                    }
+            IUpdater iUpdater = ToSameDiffUtils.getUpdater(layers, skipErrors);
+            List<Regularization> regularizations = ToSameDiffUtils.getRegularizations(layers, skipErrors);
 
-                    u = ((BaseLayer) conf).getBiasUpdater();
-                    if (iUpdater == null) {
-                        iUpdater = u;
-                    } else {
-                        if (u != null && u != iUpdater) {
-                            if (skipErrors) {
-                                iUpdater = null;
-                                log.warn("Ignoring updater config: Can not convert to SameDiff when layers have different IUpdaters. Expected {}, but was {} for {}", iUpdater, u, conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected "
-                                                + iUpdater + ", but was " + u + " for " + conf);
-                            }
-                        }
-                    }
-                }
-            }
-
-            List<Regularization> regularizations = null;
-
-            for(Layer l : layers){
-                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
-                if(conf instanceof BaseLayer){
-                    if(regularizations == null){
-                        regularizations = ((BaseLayer) conf).getRegularization();
-                    } else {
-                        if(((BaseLayer) conf).getRegularization() != regularizations) {
-                            if(skipErrors){
-                                regularizations = null;
-                                log.warn("Ignoring regularization config: Can not convert to SameDiff when layers have different regularizations. Expected {}, but was {} for {}",
-                                        regularizations, ((BaseLayer) conf).getRegularization(), conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                                + "Expected " + regularizations + ", but was " + ((BaseLayer) conf)
-                                                .getRegularization() + " for " + conf);
-                            }
-                        }
-                    }
-
-                    if(regularizations == null){
-                        regularizations = ((BaseLayer) conf).getRegularizationBias();
-                    } else {
-                        if(((BaseLayer) conf).getRegularizationBias() != regularizations) {
-                            if(skipErrors){
-                                regularizations = null;
-                                log.warn("Ignoring regularization config: Can not convert to SameDiff when layers have different regularizations. Expected {}, but was {} for {}",
-                                        regularizations, ((BaseLayer) conf).getRegularization(), conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                                + "Expected " + regularizations + ", but was " + ((BaseLayer) conf)
-                                                .getRegularizationBias() + " for bias in " + conf);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // labels shape must be the same as the last layer
             String[] lossArr = losses.toArray(new String[0]);
             sameDiff.setLossVariables(lossArr);
 
@@ -1007,6 +917,14 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
         return null;
     }
 
+
+    /**
+     * See {@link #toSameDiff(SameDiff, Map, boolean, boolean)}.  {@code useView} and {@code skipErrors} are true.
+     */
+    public TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, @NonNull Map<String, InputType> inputTypes){
+        return toSameDiff(sameDiff, inputTypes, true, true);
+    }
+
     /**
      * See {@link #toSameDiff(SameDiff, Map, boolean, boolean)}.
      */
@@ -1014,6 +932,13 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
         SameDiff sameDiff = SameDiff.create();
         toSameDiff(sameDiff, inputTypes, useView, skipErrors);
         return sameDiff;
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, Map, boolean, boolean)}.  {@code useView} and {@code skipErrors} are true.
+     */
+    public SameDiff toSameDiff(@NonNull Map<String, InputType> inputTypes){
+        return toSameDiff(inputTypes, true, true);
     }
 
     /**

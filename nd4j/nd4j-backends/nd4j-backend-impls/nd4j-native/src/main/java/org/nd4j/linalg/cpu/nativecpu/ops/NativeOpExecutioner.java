@@ -294,7 +294,7 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
 
 
         if (x.isVector() && x.length() == ArrayUtil.prod(retShape) && ArrayUtil.prodLong(retShape) > 1 && y == null)
-            return op.noOp();
+            return op.noOp(x, z);
 
         /**
          * This is the result array.

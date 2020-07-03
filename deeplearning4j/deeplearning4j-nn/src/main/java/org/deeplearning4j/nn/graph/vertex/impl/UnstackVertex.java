@@ -24,10 +24,12 @@ import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.graph.vertex.BaseGraphVertex;
 import org.deeplearning4j.nn.graph.vertex.VertexIndices;
+import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.common.primitives.Pair;
@@ -66,8 +68,8 @@ public class UnstackVertex extends BaseGraphVertex {
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
             SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
-        // no SDIndex.ellipses() and no way to get rank
-        return sameDiff.unstack(inputs[0], 0, stackSize)[(int) from];
+        //TODO no way to calculate step as an int or get with a SDVariable
+        return super.defineVertex(sameDiff, inputs, mask, paramTable);
     }
 
     @Override

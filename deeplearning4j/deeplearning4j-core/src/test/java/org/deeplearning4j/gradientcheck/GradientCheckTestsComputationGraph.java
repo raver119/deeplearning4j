@@ -385,7 +385,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-        ToSameDiffTests.testToSameDiff(graph, input, labels);
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{input}, new INDArray[]{labels}, new InputType[]{InputType.convolutional(6, 6, 2, format)});
         }
     }
 

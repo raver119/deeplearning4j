@@ -3366,7 +3366,7 @@ public class SameDiff extends SDBaseOps {
      */
     public void renameVariable(String from, String to, boolean includeScope) {
 
-        if(includeScope)
+        if(includeScope && currentNameScope() != null)
             to = currentNameScope() + "/" + to;
 
         Preconditions.checkState(variables.containsKey(from), "Cannot rename variable \"%s\": no variable with this name exists", from);

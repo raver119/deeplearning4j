@@ -152,18 +152,23 @@ public abstract class BaseReduceOp extends BaseOp implements ReduceOp {
 
     @Override
     public INDArray noOp() {
+        return noOp(x, z);
+    }
+
+    @Override
+    public INDArray noOp(INDArray x, INDArray z) {
         if (z != null && x != z)
-            return z().assign(x);
+            return z.assign(x);
         else {
             //Need to take into account shapes: for example, [1,3].sum(0) -> [3]
             //Or [1,1,1,1].sum(0,2,3) -> [1]
             if(keepDims){
-                return x().dup(x().ordering());
+                return x.dup(x.ordering());
             } else {
                 long[] shape = x.shape();
                 if(dimensions == null || Shape.isWholeArray(shape, dimensions)){
                     //Return scalar
-                    return x.reshape().dup();
+                    return x.reshape(-1).dup();
                 } else {
                     //Strip out size 1 dimensions
                     long[] outShape = ArrayUtil.removeIndex(shape, dimensions);

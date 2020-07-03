@@ -84,6 +84,7 @@ import org.deeplearning4j.util.CrashReportingUtil;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.util.NetworkUtils;
 import org.deeplearning4j.util.OutputLayerUtil;
+import org.deeplearning4j.util.ToSameDiffUtils;
 import org.nd4j.adapters.OutputAdapter;
 import org.nd4j.autodiff.samediff.NameScope;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -795,7 +796,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
      * Output and loss variables are set on the SameDiff instance and can be gotten from it.
      *
      * @param sameDiff The SameDiff instance to create the model in
-     * @param inputType The type of the input.  May be null, in which case we try to use the preset or inferred input type.
+     * @param inputType The type of the input.  May be null, in which case we try to use the previously set input type, or infer it if it hasn't been set.
      * @param useView whether to directly use the (view) weights in the SDVariables, or create new ones.
      * Using them saves an initialization (of every weight), but may cause issues with multi-gpu setups.
      * @return The {@link org.nd4j.autodiff.samediff.TrainingConfig} if training is setup (the last layer is an BaseOutputLayer), or null if not.
@@ -862,17 +863,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             // create weights
 
-            Map<String, INDArray> params = new HashMap<>(layer.paramTable(false));
-            config.transformParamsForSameDiff(params);
-
-            Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
-            for (Map.Entry<String, INDArray> entry : params.entrySet()) {
-                INDArray value = entry.getValue();
-                if (!useView) {
-                    value = value.dup();
-                }
-                paramTable.put(entry.getKey(), sameDiff.var(entry.getKey(), value));
-            }
+            Map<String, SDVariable> paramTable = ToSameDiffUtils.defineParams(sameDiff, layer, useView);
 
             if(config.getIDropout() != null){
                 currentOutput = config.getIDropout().defineDropout(sameDiff, currentOutput);
@@ -921,88 +912,9 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             sameDiff.setLossVariables(loss);
 
-            IUpdater iUpdater = null;
-            for(Layer l : layers) {
-                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
-                if (conf instanceof BaseLayer) {
-                    IUpdater u = ((BaseLayer) conf).getIUpdater();
-                    if (iUpdater == null) {
-                        iUpdater = u;
-                    } else {
-                        if (u != null && u != iUpdater) {
-                            if (skipErrors) {
-                                iUpdater = null;
-                                log.warn("Ignoring updater config: Can not convert to SameDiff with different IUpdaters. Expected {}, but was {} for {}", iUpdater, u, conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected "
-                                                + iUpdater + ", but was " + u + " different for " + conf);
-                            }
-                        }
-                    }
 
-                    u = ((BaseLayer) conf).getBiasUpdater();
-                    if (iUpdater == null) {
-                        iUpdater = u;
-                    } else {
-                        if (u != null && u != iUpdater) {
-                            if (skipErrors) {
-                                iUpdater = null;
-                                log.warn("Ignoring updater config: Can not convert to SameDiff when layers have different IUpdaters. Expected {}, but was {} for {}", iUpdater, u, conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different IUpdaters.  Ensure all layers have the same updater.  Expected "
-                                                + iUpdater + ", but was " + u + " for " + conf);
-                            }
-                        }
-                    }
-                }
-            }
-
-            List<Regularization> regularizations = null;
-
-            for(Layer l : layers){
-                org.deeplearning4j.nn.conf.layers.Layer conf = l.conf().getLayer();
-                if(conf instanceof BaseLayer){
-                    if(regularizations == null){
-                        regularizations = ((BaseLayer) conf).getRegularization();
-                    } else {
-                        if(((BaseLayer) conf).getRegularization() != regularizations) {
-                            if(skipErrors){
-                                regularizations = null;
-                                log.warn("Ignoring regularization config: Can not convert to SameDiff when layers have different regularizations. Expected {}, but was {} for {}",
-                                        regularizations, ((BaseLayer) conf).getRegularization(), conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                                + "Expected " + regularizations + ", but was " + ((BaseLayer) conf)
-                                                .getRegularization() + " for " + conf);
-                            }
-                        }
-                    }
-
-                    if(regularizations == null){
-                        regularizations = ((BaseLayer) conf).getRegularizationBias();
-                    } else {
-                        if(((BaseLayer) conf).getRegularizationBias() != regularizations) {
-                            if(skipErrors){
-                                regularizations = null;
-                                log.warn("Ignoring regularization config: Can not convert to SameDiff when layers have different regularizations. Expected {}, but was {} for {}",
-                                        regularizations, ((BaseLayer) conf).getRegularization(), conf);
-                                break;
-                            } else {
-                                throw new IllegalStateException(
-                                        "Can not convert to SameDiff with different regularizations.  Ensure all layers have the same regularizations, and that bias and weight regularizations are the same.  "
-                                                + "Expected " + regularizations + ", but was " + ((BaseLayer) conf)
-                                                .getRegularizationBias() + " for bias in " + conf);
-                            }
-                        }
-                    }
-                }
-            }
+            IUpdater iUpdater = ToSameDiffUtils.getUpdater(layers, skipErrors);
+            List<Regularization> regularizations = ToSameDiffUtils.getRegularizations(layers, skipErrors);
 
             org.nd4j.autodiff.samediff.TrainingConfig.Builder tcBuilder = org.nd4j.autodiff.samediff.TrainingConfig.builder()
                     .minimize(loss.name())
@@ -1032,6 +944,13 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
     }
 
     /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean, boolean)}.  {@code useView} and {@code skipErrors} are true.
+     */
+    public org.nd4j.autodiff.samediff.TrainingConfig toSameDiff(@NonNull SameDiff sameDiff, InputType inputType){
+        return toSameDiff(sameDiff, inputType, true, true);
+    }
+
+    /**
      * See {@link #toSameDiff(SameDiff, InputType, boolean, boolean)}.
      * @return A new SameDiff instance with this model defined in it.  The output variable is set, as is the loss variable and {@link org.nd4j.autodiff.samediff.TrainingConfig} if the last layer is an {@link org.deeplearning4j.nn.conf.layers.BaseOutputLayer}.
      */
@@ -1039,6 +958,13 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
         SameDiff sameDiff = SameDiff.create();
         toSameDiff(sameDiff, inputType, useView, skipErrors);
         return sameDiff;
+    }
+
+    /**
+     * See {@link #toSameDiff(SameDiff, InputType, boolean, boolean)}.  {@code useView} and {@code skipErrors} are true.
+     */
+    public SameDiff toSameDiff(InputType inputType){
+        return toSameDiff(inputType, true, true);
     }
 
     /**

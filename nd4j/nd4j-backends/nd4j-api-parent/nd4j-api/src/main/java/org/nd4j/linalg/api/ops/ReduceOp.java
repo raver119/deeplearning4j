@@ -62,6 +62,8 @@ public interface ReduceOp extends Op {
      */
     INDArray noOp();
 
+    INDArray noOp(INDArray x, INDArray z);
+
     /**
      * This method returns dimensions for this op
      * @return
