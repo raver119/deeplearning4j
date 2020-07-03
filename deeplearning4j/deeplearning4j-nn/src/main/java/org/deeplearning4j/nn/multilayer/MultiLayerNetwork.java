@@ -73,6 +73,7 @@ import org.deeplearning4j.nn.layers.LayerHelper;
 import org.deeplearning4j.nn.layers.recurrent.BidirectionalLayer;
 import org.deeplearning4j.nn.layers.samediff.SameDiffOutputLayer;
 import org.deeplearning4j.nn.layers.wrapper.BaseWrapperLayer;
+import org.deeplearning4j.nn.updater.BaseMultiLayerUpdater;
 import org.deeplearning4j.nn.updater.UpdaterCreator;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
@@ -937,6 +938,19 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
 
             sameDiff.setTrainingConfig(trainingConfig);
+
+            if(iUpdater != null) {
+                Updater updater = getUpdater();
+                if(updater instanceof BaseMultiLayerUpdater){
+                    ToSameDiffUtils.copyUpdaterState(sameDiff, (BaseMultiLayerUpdater<?>) updater, layers);
+                } else {
+                    if(skipErrors)
+                        log.warn("Unsupported updater type {}, not copying updater state to SameDiff", updater.getClass().getSimpleName());
+                    else
+                        throw new IllegalStateException("Unsupported updater type " + updater.getClass().getSimpleName() + ", could not updater state to SameDiff");
+                }
+            }
+
             return trainingConfig;
         }
 
