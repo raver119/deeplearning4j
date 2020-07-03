@@ -99,6 +99,7 @@ import org.nd4j.linalg.api.memory.abstracts.DummyWorkspace;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.common.primitives.Triple;
 import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.regularization.Regularization;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.workspace.ND4JWorkspaceException;
@@ -803,7 +804,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
             NameScope layerScope = sameDiff.withNameScope(name);
 
-            Map<String, INDArray> params = vertex.paramTable(false);
+            Map<String, INDArray> params = new HashMap<>(vertex.paramTable(false));
             vertex.transformParamsForSameDiff(params);
 
             Map<String, SDVariable> paramTable = new HashMap<>((int) vertex.numParams());
@@ -863,7 +864,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
             } else if(vertex.hasLayer() && vertex.getLayer() instanceof IOutputLayer && vertex.getLayer().conf().getLayer() instanceof LayerWithLoss){
                 LayerWithLoss lossLayer = (LayerWithLoss) vertex.getLayer().conf().getLayer();
-                SDVariable input = activations.get(configuration.getVertexInputs().get(output).get(0));
+                SDVariable input = activations.get(output);
                 labels = null;
 
                 NameScope vertexScope = sameDiff.withNameScope(vertex.getVertexName());
@@ -989,6 +990,8 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
             if(iUpdater != null)
                 tcBuilder.updater(iUpdater);
+            else
+                tcBuilder.updater(new NoOp());
 
             if(allLabels.size() == 0)
                 tcBuilder.markLabelsUnused();

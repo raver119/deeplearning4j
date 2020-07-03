@@ -24,6 +24,7 @@ import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -121,7 +122,7 @@ public class NoBiasGradientCheckTests extends BaseDL4JTest {
                             DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(mln, input, labels);
+                    ToSameDiffTests.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -179,7 +180,7 @@ public class NoBiasGradientCheckTests extends BaseDL4JTest {
                         DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                 assertTrue(msg, gradOK);
 
-                TestUtils.testToSameDiff(mln, input, labels);
+                ToSameDiffTests.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -242,7 +243,7 @@ public class NoBiasGradientCheckTests extends BaseDL4JTest {
                         DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
                 assertTrue(msg, gradOK);
 
-                TestUtils.testToSameDiff(mln, input, labels);
+                ToSameDiffTests.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -309,7 +310,7 @@ public class NoBiasGradientCheckTests extends BaseDL4JTest {
 
                 assertTrue(msg, gradOK);
 
-                TestUtils.testToSameDiff(net, input, labels);
+                ToSameDiffTests.testToSameDiff(net, input, labels);
                 TestUtils.testModelSerialization(net);
             }
         }

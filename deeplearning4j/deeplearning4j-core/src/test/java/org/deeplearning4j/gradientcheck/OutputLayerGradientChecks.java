@@ -25,6 +25,7 @@ import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -147,7 +148,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                         .labels(labels).labelMask(labelMask));
 
                 assertTrue(testName, gradOK);
-                TestUtils.testToSameDiff(mln, input, labels);
+                ToSameDiffTests.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -257,7 +258,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                             .labels(labels).labelMask(labelMask));
 
                     assertTrue(testName, gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels);
+                    ToSameDiffTests.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -408,7 +409,7 @@ public class OutputLayerGradientChecks extends BaseDL4JTest {
                                 .labels(labels).labelMask(labelMask));
 
                         assertTrue(testName, gradOK);
-                        TestUtils.testToSameDiff(mln, input, labels);
+                        ToSameDiffTests.testToSameDiff(mln, input, labels);
                         TestUtils.testModelSerialization(mln);
                     }
                 }

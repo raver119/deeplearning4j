@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.nn.conf.GradientNormalization;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -161,7 +162,7 @@ public class TestYolo2OutputLayer extends BaseDL4JTest {
         assertArrayEquals(new long[]{mb,1}, scoreArr2.shape());
         assertNotEquals(scoreArr1, scoreArr2);
 
-        TestUtils.testToSameDiff(net, input, labels);
+        ToSameDiffTests.testToSameDiff(net, input, labels);
     }
 
 

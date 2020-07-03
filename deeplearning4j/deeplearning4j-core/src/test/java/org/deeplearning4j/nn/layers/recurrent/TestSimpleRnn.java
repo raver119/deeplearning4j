@@ -24,6 +24,7 @@ import org.deeplearning4j.nn.conf.RNNFormat;
 import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -117,7 +118,7 @@ public class TestSimpleRnn extends BaseDL4JTest {
         }
 
 
-        TestUtils.testToSameDiff(net, null, null);
+        ToSameDiffTests.testToSameDiff(net, null, null);
         TestUtils.testModelSerialization(net);
     }
 

@@ -26,6 +26,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.variational.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.activations.impl.ActivationTanH;
@@ -137,7 +138,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input,
                     labels);
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -211,7 +212,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     RETURN_ON_FIRST_FAILURE, input, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -301,7 +302,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     data, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, data, null);
+            ToSameDiffTests.testToSameDiff(mln, data, null);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -345,7 +346,7 @@ public class VaeGradientCheckTests extends BaseDL4JTest {
                     features, 12345);
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(mln, features, null);
+            ToSameDiffTests.testToSameDiff(mln, features, null);
             TestUtils.testModelSerialization(mln);
         }
     }

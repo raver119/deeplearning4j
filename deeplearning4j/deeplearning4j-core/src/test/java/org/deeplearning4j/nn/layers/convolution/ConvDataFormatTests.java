@@ -34,6 +34,7 @@ import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.workspace.ArrayType;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.deeplearning4j.util.ConvolutionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -929,10 +930,10 @@ public class ConvDataFormatTests extends BaseDL4JTest {
 
         //TODO LocallyConnected NPEs because of the lack of SDVariable shapes
         if(!(tc.net1.getnLayers() > 1 && tc.net1.getLayer(1).getConfig() instanceof LocallyConnected2D)) {
-            TestUtils.testToSameDiff(tc.net1, inNCHW, null);
-            TestUtils.testToSameDiff(tc.net2, inNCHW, null);
-            TestUtils.testToSameDiff(tc.net3, inNHWC, null);
-            TestUtils.testToSameDiff(tc.net4, inNHWC, null);
+            ToSameDiffTests.testToSameDiff(tc.net1, inNCHW, null);
+            ToSameDiffTests.testToSameDiff(tc.net2, inNCHW, null);
+            ToSameDiffTests.testToSameDiff(tc.net3, inNHWC, null);
+            ToSameDiffTests.testToSameDiff(tc.net4, inNHWC, null);
         }
 
     }

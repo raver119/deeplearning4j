@@ -32,6 +32,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -77,7 +78,7 @@ public class TestWeightNoise extends BaseDL4JTest {
             assertEquals(wn, ((BaseLayer) net.getLayer(2).conf().getLayer()).getWeightNoise());
 
             TestUtils.testModelSerialization(net);
-            TestUtils.testToSameDiff(net, null, null);
+            ToSameDiffTests.testToSameDiff(net, null, null);
 
 
             ComputationGraphConfiguration conf2 = new NeuralNetConfiguration.Builder()
@@ -98,7 +99,7 @@ public class TestWeightNoise extends BaseDL4JTest {
             assertEquals(wn, ((BaseLayer) graph.getLayer(2).conf().getLayer()).getWeightNoise());
 
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, Nd4j.create(1,10), Nd4j.create(1,10));
+            ToSameDiffTests.testToSameDiff(graph, Nd4j.create(1,10), Nd4j.create(1,10));
 
             graph.fit(new DataSet(Nd4j.create(1,10), Nd4j.create(1,10)));
         }

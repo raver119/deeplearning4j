@@ -28,6 +28,7 @@ import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.samediff.testlayers.SameDiffDenseVertex;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -172,7 +173,7 @@ public class TestSameDiffDenseVertex extends BaseDL4JTest {
                     INDArray outMbsd = netSD.output(newIn)[0];
                     INDArray outMb = netStandard.output(newIn)[0];
                     assertEquals(outMb, outMbsd);
-                    TestUtils.testToSameDiff(netSD, in, l);
+                    ToSameDiffTests.testToSameDiff(netSD, in, l);
                 }
             }
         }

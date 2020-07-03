@@ -31,6 +31,7 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -141,7 +142,7 @@ public class DropoutGradientCheck extends BaseDL4JTest {
                         false, -1, null, 12345);    //Last arg: ensures RNG is reset at each iter... otherwise will fail due to randomness!
 
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(mln, f, l);
+                ToSameDiffTests.testToSameDiff(mln, f, l);
                 TestUtils.testModelSerialization(mln);
             }
         }

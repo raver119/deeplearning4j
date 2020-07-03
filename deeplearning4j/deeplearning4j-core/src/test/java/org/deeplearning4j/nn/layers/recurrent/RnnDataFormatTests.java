@@ -35,6 +35,7 @@ import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.conf.layers.util.MaskZeroLayer;
 import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -375,10 +376,10 @@ public class RnnDataFormatTests extends BaseDL4JTest {
                 assertEquals(tc.msg, out1, net4a.output(inNWC));
             }
 
-            TestUtils.testToSameDiff(tc.net1, inNCW, null);
-            TestUtils.testToSameDiff(tc.net2, inNCW, null);
-            TestUtils.testToSameDiff(tc.net3, inNWC, null);
-            TestUtils.testToSameDiff(tc.net4, inNWC, null);
+            ToSameDiffTests.testToSameDiff(tc.net1, inNCW, null);
+            ToSameDiffTests.testToSameDiff(tc.net2, inNCW, null);
+            ToSameDiffTests.testToSameDiff(tc.net3, inNWC, null);
+            ToSameDiffTests.testToSameDiff(tc.net4, inNWC, null);
         }
 
     }

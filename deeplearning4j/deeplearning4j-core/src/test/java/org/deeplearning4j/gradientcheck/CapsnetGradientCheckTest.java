@@ -31,6 +31,7 @@ import org.deeplearning4j.nn.conf.layers.LossLayer;
 import org.deeplearning4j.nn.conf.layers.PrimaryCapsules;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInitDistribution;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -112,7 +113,7 @@ public class CapsnetGradientCheckTest extends BaseDL4JTest {
 
                                 assertTrue(msg, gradOK);
 
-                                TestUtils.testToSameDiff(net, input, labels);
+                                ToSameDiffTests.testToSameDiff(net, input, labels);
                                 TestUtils.testModelSerialization(net);
                             }
                         }

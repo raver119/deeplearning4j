@@ -30,6 +30,7 @@ import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -101,7 +102,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                     .labels(labels).excludeParams(excludeParams));
 
             assertTrue(gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -147,7 +148,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                     .labels(labels).excludeParams(excludeParams));
 
             assertTrue(gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -250,7 +251,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                                     .labels(labels).excludeParams(excludeParams).subset(true).maxPerParam(25)); //Most params are in output layer, only these should be skipped with this threshold
 
                             assertTrue(gradOK);
-                            TestUtils.testToSameDiff(mln, input, labels);
+                            ToSameDiffTests.testToSameDiff(mln, input, labels);
                             TestUtils.testModelSerialization(mln);
                         }
                     }
@@ -355,7 +356,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                                     .labels(labels).excludeParams(excludeParams));
 
                             assertTrue(gradOK);
-                            TestUtils.testToSameDiff(mln, input, labels);
+                            ToSameDiffTests.testToSameDiff(mln, input, labels);
                             TestUtils.testModelSerialization(mln);
                         }
                     }
@@ -400,7 +401,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                     .labels(labels).excludeParams(excludeParams));
 
             assertTrue(gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -446,7 +447,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
                     .labels(labels).excludeParams(excludeParams));
 
             assertTrue(gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -492,7 +493,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(gradOK);
             TestUtils.testModelSerialization(net);
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
         }
     }
 
@@ -591,7 +592,7 @@ public class BNGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(gradOK);
                         TestUtils.testModelSerialization(net);
-                        TestUtils.testToSameDiff(net, input, labels);
+                        ToSameDiffTests.testToSameDiff(net, input, labels);
                     }
                 }
             }

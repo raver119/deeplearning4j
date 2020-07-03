@@ -30,6 +30,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.impl.reduce.longer.MatchCondition;
@@ -191,7 +192,7 @@ public class TestDropout extends BaseDL4JTest {
             MultiLayerNetwork net = new MultiLayerNetwork(conf);
             net.init();
 
-            TestUtils.testToSameDiff(net, null, null);
+            ToSameDiffTests.testToSameDiff(net, null, null);
             TestUtils.testModelSerialization(net);
 
             ComputationGraphConfiguration conf2 = new NeuralNetConfiguration.Builder()

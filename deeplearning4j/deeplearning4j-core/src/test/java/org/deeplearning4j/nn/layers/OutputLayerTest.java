@@ -33,6 +33,7 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.optimize.api.TrainingListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -333,7 +334,7 @@ public class OutputLayerTest extends BaseDL4JTest {
         assertEquals(mln.gradient().gradient(), mln2.gradient().gradient());
         assertEquals(mln.score(), mln2.score(), 1e-6);
 
-        TestUtils.testToSameDiff(mln, in, labels);
+        ToSameDiffTests.testToSameDiff(mln, in, labels);
         TestUtils.testModelSerialization(mln);
     }
 
@@ -424,7 +425,7 @@ public class OutputLayerTest extends BaseDL4JTest {
                 assertArrayEquals(new long[]{2, 1}, s.shape());
                 assertEquals(s.getDouble(0), s.getDouble(1), 1e-6);
 
-                TestUtils.testToSameDiff(mln, in2, labels2);
+                ToSameDiffTests.testToSameDiff(mln, in2, labels2);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -519,8 +520,8 @@ public class OutputLayerTest extends BaseDL4JTest {
                 assertEquals(s.getDouble(0), s.getDouble(1), 1e-6);
 
                 TestUtils.testModelSerialization(graph);
-                TestUtils.testToSameDiff(graph, in, labels);
-                TestUtils.testToSameDiff(graph2, in2, labels2);
+                ToSameDiffTests.testToSameDiff(graph, in, labels);
+                ToSameDiffTests.testToSameDiff(graph2, in2, labels2);
             }
         }
     }

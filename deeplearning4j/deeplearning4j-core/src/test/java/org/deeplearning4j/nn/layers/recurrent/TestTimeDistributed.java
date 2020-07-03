@@ -16,6 +16,7 @@ import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.conf.layers.recurrent.TimeDistributed;
 import org.deeplearning4j.nn.conf.layers.variational.VariationalAutoencoder;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -104,7 +105,7 @@ public class TestTimeDistributed extends BaseDL4JTest {
                     MultiLayerNetwork net3 = TestUtils.testModelSerialization(net2);
                     out2 = net2.output(in);
                     INDArray out3 = net3.output(in);
-                    TestUtils.testToSameDiff(net3, in, labels);
+                    ToSameDiffTests.testToSameDiff(net3, in, labels);
 
                     assertEquals(out2, out3);
                 }

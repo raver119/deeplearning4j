@@ -113,6 +113,11 @@ public class BatchNormalization extends FeedForwardLayer {
 
     @Override
     public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
+        if(lockGammaBeta)
+            throw new UnsupportedOperationException("Locked Gamma & Beta not supported for SameDiff conversion");
+        if(useLogStd)
+            throw new UnsupportedOperationException("LogStd not supported for SameDiff conversion");
+
         INDArray beta = params.get(BatchNormalizationParamInitializer.BETA);
         INDArray gamma = params.get(BatchNormalizationParamInitializer.GAMMA);
         INDArray mean = params.get(BatchNormalizationParamInitializer.GLOBAL_MEAN);

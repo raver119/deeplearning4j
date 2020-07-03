@@ -29,6 +29,7 @@ import org.deeplearning4j.nn.conf.layers.convolutional.Cropping3D;
 import org.deeplearning4j.nn.conf.preprocessor.Cnn3DToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -158,7 +159,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                                             assertTrue(msg, gradOK);
 
-                                            TestUtils.testToSameDiff(net, input, labels);
+                                            ToSameDiffTests.testToSameDiff(net, input, labels);
                                             TestUtils.testModelSerialization(net);
                                         }
                                     }
@@ -262,7 +263,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels);
+                    ToSameDiffTests.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -353,7 +354,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                             assertTrue(msg, gradOK);
 
-                            TestUtils.testToSameDiff(net, input, labels);
+                            ToSameDiffTests.testToSameDiff(net, input, labels);
                             TestUtils.testModelSerialization(net);
                         }
                     }
@@ -444,7 +445,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(msg, gradOK);
 
-                        TestUtils.testToSameDiff(net, input, labels);
+                        ToSameDiffTests.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -544,7 +545,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels);
+                    ToSameDiffTests.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -636,7 +637,7 @@ public class CNN3DGradientCheckTest extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }

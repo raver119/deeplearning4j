@@ -39,6 +39,7 @@ import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.updater.MultiLayerUpdater;
 import org.deeplearning4j.nn.updater.UpdaterBlock;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Before;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
@@ -451,7 +452,7 @@ public class BatchNormalizationTest extends BaseDL4JTest {
 
         assertEquals(out, out2);
 
-        TestUtils.testToSameDiff(net, in, null);
+        ToSameDiffTests.testToSameDiff(net, in, null);
         MultiLayerNetwork net2 = TestUtils.testModelSerialization(net);
 
         INDArray outDeser = net2.output(in, false);

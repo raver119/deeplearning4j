@@ -31,6 +31,7 @@ import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.conf.layers.recurrent.TimeDistributed;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
@@ -133,7 +134,7 @@ public class RnnGradientChecks extends BaseDL4JTest {
                             assertTrue(gradOK);
 
 
-                            TestUtils.testToSameDiff(net, in, labels);
+                            ToSameDiffTests.testToSameDiff(net, in, labels);
                             TestUtils.testModelSerialization(net);
                         }
                     }
@@ -212,7 +213,7 @@ public class RnnGradientChecks extends BaseDL4JTest {
                                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                                             .labels(labels).inputMask(inMask));
                                     assertTrue(gradOK);
-                                    TestUtils.testToSameDiff(net, in, labels);
+                                    ToSameDiffTests.testToSameDiff(net, in, labels);
                                     TestUtils.testModelSerialization(net);
                                 }
                             }
@@ -288,7 +289,7 @@ public class RnnGradientChecks extends BaseDL4JTest {
                         boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                                 .labels(labels).inputMask(inMask).subset(true).maxPerParam(16));
                         assertTrue(name, gradOK);
-                        TestUtils.testToSameDiff(net, in, labels);
+                        ToSameDiffTests.testToSameDiff(net, in, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -353,7 +354,7 @@ public class RnnGradientChecks extends BaseDL4JTest {
                 boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                         .labels(labels).inputMask(inMask).subset(true).maxPerParam(16));
                 assertTrue(name, gradOK);
-                TestUtils.testToSameDiff(net, in, labels);
+                ToSameDiffTests.testToSameDiff(net, in, labels);
                 TestUtils.testModelSerialization(net);
             }
         }

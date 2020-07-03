@@ -30,6 +30,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.samediff.testlayers.SameDiffSimpleLambdaLayer;
 import org.deeplearning4j.nn.layers.samediff.testlayers.SameDiffSimpleLambdaVertex;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -130,7 +131,7 @@ public class TestSameDiffLambda extends BaseDL4JTest {
             INDArray outMbsd = lambda.output(newIn)[0];
             INDArray outMb = std.output(newIn)[0];
             assertEquals(outMb, outMbsd);
-            TestUtils.testToSameDiff(lambda, in, labels);
+            ToSameDiffTests.testToSameDiff(lambda, in, labels);
         }
     }
 
@@ -217,7 +218,7 @@ public class TestSameDiffLambda extends BaseDL4JTest {
             INDArray outMbsd = lambda.output(newIn1, newIn2)[0];
             INDArray outMb = std.output(newIn1, newIn2)[0];
             assertEquals(outMb, outMbsd);
-            TestUtils.testToSameDiff(lambda, new INDArray[]{in1, in2}, new INDArray[]{labels});
+            ToSameDiffTests.testToSameDiff(lambda, new INDArray[]{in1, in2}, new INDArray[]{labels});
         }
     }
 }

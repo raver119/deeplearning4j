@@ -120,7 +120,10 @@ public abstract class Layer implements TrainingConfig, Serializable, Cloneable {
      * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.
      * Useful for things like changing the dimension order or squeezing.
      *
-     * Adding or removing parameters is supported.
+     * Adding or removing parameters is supported. <br>
+     *
+     * Should throw a {@link UnsupportedOperationException} if conversion of this layer configuration isn't
+     * supported and it will cause an error when transforming weights.
      *
      * @param params The parameters of the layer.
      */

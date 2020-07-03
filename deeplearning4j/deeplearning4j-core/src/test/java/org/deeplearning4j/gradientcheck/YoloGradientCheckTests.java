@@ -31,6 +31,7 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 import org.deeplearning4j.nn.conf.layers.objdetect.Yolo2OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -153,7 +154,7 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
                     .labels(labels).subset(true).maxPerParam(100));
 
             assertTrue(msg, gradOK);
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -262,7 +263,7 @@ public class YoloGradientCheckTests extends BaseDL4JTest {
                 .labels(l).inputMask(null).subset(true).maxPerParam(64));
 
         assertTrue(ok);
-        TestUtils.testToSameDiff(net, f, l);
+        ToSameDiffTests.testToSameDiff(net, f, l);
         TestUtils.testModelSerialization(net);
     }
 }

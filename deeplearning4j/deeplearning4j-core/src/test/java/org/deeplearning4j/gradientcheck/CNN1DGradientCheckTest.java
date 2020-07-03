@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.conf.layers.convolutional.Cropping1D;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.deeplearning4j.util.Convolution1DUtils;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
@@ -121,7 +122,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
 
                     assertTrue(msg, gradOK);
 
-                    TestUtils.testToSameDiff(net, input, labels);
+                    ToSameDiffTests.testToSameDiff(net, input, labels);
                     TestUtils.testModelSerialization(net);
                 }
 
@@ -202,7 +203,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
 
                         assertTrue(msg, gradOK);
 
-                        TestUtils.testToSameDiff(net, input, labels);
+                        ToSameDiffTests.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -286,7 +287,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                         assertTrue(msg, gradOK);
-                        TestUtils.testToSameDiff(net, input, labels);
+                        ToSameDiffTests.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -364,7 +365,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                         assertTrue(msg, gradOK);
-                        TestUtils.testToSameDiff(net, input, labels);
+                        ToSameDiffTests.testToSameDiff(net, input, labels);
                         TestUtils.testModelSerialization(net);
                     }
                 }
@@ -426,7 +427,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
                             .labels(label).inputMask(fm));
 
                     assertTrue(s, gradOK);
-                    TestUtils.testToSameDiff(net, f, label);
+                    ToSameDiffTests.testToSameDiff(net, f, label);
                     TestUtils.testModelSerialization(net);
 
                     //TODO also check that masked step values don't impact forward pass, score or gradients
@@ -522,7 +523,7 @@ public class CNN1DGradientCheckTest extends BaseDL4JTest {
                     .labels(label).inputMask(fm));
 
             assertTrue(s, gradOK);
-            TestUtils.testToSameDiff(net, f, label);
+            ToSameDiffTests.testToSameDiff(net, f, label);
             TestUtils.testModelSerialization(net);
         }
     }

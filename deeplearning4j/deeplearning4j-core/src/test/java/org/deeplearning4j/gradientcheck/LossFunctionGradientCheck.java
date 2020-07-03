@@ -30,6 +30,7 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.LossLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.activations.impl.ActivationIdentity;
@@ -226,7 +227,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                 } else {
                     failed.add(testName);
                 }
-                TestUtils.testToSameDiff(net, input, labels);
+                ToSameDiffTests.testToSameDiff(net, input, labels);
                 TestUtils.testModelSerialization(net);
             }
         }
@@ -396,7 +397,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                 }
 
                 TestUtils.testModelSerialization(net);
-                TestUtils.testToSameDiff(net, input, labels);
+                ToSameDiffTests.testToSameDiff(net, input, labels);
             }
         }
 
@@ -706,7 +707,7 @@ public class LossFunctionGradientCheck extends BaseDL4JTest {
                         failed.add(testName);
                     }
 
-                    TestUtils.testToSameDiff(net, input, labels);
+                    ToSameDiffTests.testToSameDiff(net, input, labels);
                 }
             }
         }

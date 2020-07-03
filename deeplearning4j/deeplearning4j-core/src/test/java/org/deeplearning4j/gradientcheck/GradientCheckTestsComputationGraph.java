@@ -35,6 +35,7 @@ import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -112,7 +113,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testBasicIris()";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
     }
 
     @Test
@@ -164,7 +165,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testBasicIrisWithMerging()";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
     }
 
     @Test
@@ -222,7 +223,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
             String msg = "testBasicIrisWithElementWiseVertex(op=" + op + ")";
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, input, labels);
+            ToSameDiffTests.testToSameDiff(graph, input, labels);
         }
     }
 
@@ -283,7 +284,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
             String msg = "testBasicIrisWithElementWiseVertex(op=" + op + ")";
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, input, labels);
+            ToSameDiffTests.testToSameDiff(graph, input, labels);
         }
     }
 
@@ -331,7 +332,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
                             .labels(new INDArray[]{labels}));
                     assertTrue(msg, gradOK);
                     TestUtils.testModelSerialization(graph);
-                    TestUtils.testToSameDiff(graph, in, labels);
+                    ToSameDiffTests.testToSameDiff(graph, in, labels);
                 }
             }
         }
@@ -384,7 +385,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
         }
     }
 
@@ -445,7 +446,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
 
         }
     }
@@ -483,7 +484,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testLSTMWithSubset()";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
     }
 
     @Test
@@ -532,7 +533,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
     }
 
     @Test
@@ -582,7 +583,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testLSTMWithDuplicateToTimeSeries()";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, new INDArray[]{input1, input2}, new INDArray[]{labels});
+        ToSameDiffTests.testToSameDiff(graph, new INDArray[]{input1, input2}, new INDArray[]{labels});
     }
 
     @Test
@@ -642,7 +643,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, input, labels);
+        ToSameDiffTests.testToSameDiff(graph, input, labels);
     }
 
     @Test
@@ -686,7 +687,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, inputs, new INDArray[]{out});
+            ToSameDiffTests.testToSameDiff(graph, inputs, new INDArray[]{out});
         }
     }
 
@@ -727,7 +728,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, input, out);
+            ToSameDiffTests.testToSameDiff(graph, input, out);
         }
     }
 
@@ -774,7 +775,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, input, new INDArray[]{out});
+            ToSameDiffTests.testToSameDiff(graph, input, new INDArray[]{out});
         }
     }
 
@@ -826,7 +827,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(msg, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, input, out);
+            ToSameDiffTests.testToSameDiff(graph, input, out);
         }
     }
 
@@ -896,7 +897,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testBasicIrisTripletStackingL2Loss()";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, new INDArray[]{pos, anc, neg}, new INDArray[]{labels});
+        ToSameDiffTests.testToSameDiff(graph, new INDArray[]{pos, anc, neg}, new INDArray[]{labels});
     }
 
 
@@ -957,7 +958,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
                 assertTrue(msg, gradOK);
                 TestUtils.testModelSerialization(graph);
-                TestUtils.testToSameDiff(graph, example, labels);
+                ToSameDiffTests.testToSameDiff(graph, example, labels);
             }
         }
     }
@@ -1022,7 +1023,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, example, labels);
 
                 assertTrue(msg, gradOK);
-                TestUtils.testToSameDiff(net, example, labels);
+                ToSameDiffTests.testToSameDiff(net, example, labels);
                 TestUtils.testModelSerialization(net);
             }
         }
@@ -1073,7 +1074,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels});
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels});
         }
     }
 
@@ -1132,7 +1133,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
         }
     }
 
@@ -1191,7 +1192,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
         }
     }
 
@@ -1257,7 +1258,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
         }
     }
 
@@ -1314,7 +1315,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
                     .labels(new INDArray[]{labels1, labels2}));
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
+            ToSameDiffTests.testToSameDiff(graph, new INDArray[]{in1, in2}, new INDArray[]{labels1, labels2});
         }
     }
 
@@ -1358,7 +1359,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, in1, labels1);
+            ToSameDiffTests.testToSameDiff(graph, in1, labels1);
         }
     }
 
@@ -1408,7 +1409,7 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
 
             assertTrue(testName, gradOK);
             TestUtils.testModelSerialization(graph);
-            TestUtils.testToSameDiff(graph, in1, labels1);
+            ToSameDiffTests.testToSameDiff(graph, in1, labels1);
         }
     }
 
@@ -1448,6 +1449,6 @@ public class GradientCheckTestsComputationGraph extends BaseDL4JTest {
         String msg = "testGraphEmbeddingLayerSimple";
         assertTrue(msg, gradOK);
         TestUtils.testModelSerialization(cg);
-        TestUtils.testToSameDiff(cg, input, labels);
+        ToSameDiffTests.testToSameDiff(cg, input, labels);
     }
 }

@@ -28,6 +28,7 @@ import org.deeplearning4j.nn.conf.layers.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.layers.FrozenLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -88,7 +89,7 @@ public class TestTransferLearningModelSerializer extends BaseDL4JTest {
 
         assertEquals(out, out2);
 
-        TestUtils.testToSameDiff(withFrozen, in, null);
+        ToSameDiffTests.testToSameDiff(withFrozen, in, null);
 
         //Sanity check on train mode:
         out = withFrozen.output(in, true);
@@ -143,6 +144,6 @@ public class TestTransferLearningModelSerializer extends BaseDL4JTest {
         //Sanity check on train mode:
         out = withFrozen.outputSingle(true, in);
         out2 = restored.outputSingle(true, in);
-        TestUtils.testToSameDiff(withFrozen, in, null);
+        ToSameDiffTests.testToSameDiff(withFrozen, in, null);
     }
 }

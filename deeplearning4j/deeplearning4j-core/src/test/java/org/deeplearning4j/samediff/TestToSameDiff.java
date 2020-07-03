@@ -16,7 +16,7 @@
  *  *****************************************************************************
  */
 
-package org.deeplearning4j.nn.multilayer;
+package org.deeplearning4j.samediff;
 
 import static org.junit.Assert.*;
 
@@ -39,6 +39,7 @@ import org.deeplearning4j.nn.conf.layers.LossLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.PoolingType;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.junit.AfterClass;
@@ -67,7 +68,7 @@ import org.nd4j.linalg.lossfunctions.impl.LossL1;
 import org.nd4j.linalg.lossfunctions.impl.LossMSE;
 
 @Slf4j
-public class ToSameDiffTest extends BaseDL4JTest {
+public class TestToSameDiff extends BaseDL4JTest {
 
     private static final String expectedSummary = "--- Summary ---\n"
             + "Variables:               30                   (8 with arrays)\n"
@@ -138,7 +139,7 @@ public class ToSameDiffTest extends BaseDL4JTest {
     }
 
     public static void testSameDiffInference(MultiLayerNetwork network, INDArray input){
-        SameDiff sameDiff = network.toSameDiff(null, true);
+        SameDiff sameDiff = network.toSameDiff(null, true, true);
         INDArray dl4j = network.output(input);
         INDArray sd = sameDiff.batchOutput()
                 .input("input", input)
@@ -188,7 +189,7 @@ public class ToSameDiffTest extends BaseDL4JTest {
 
         MultiLayerNetwork network = new MultiLayerNetwork(config);
 
-        SameDiff mnistSameDiff = network.toSameDiff(null, true);
+        SameDiff mnistSameDiff = network.toSameDiff(null, true, true);
 
         assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
         assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
@@ -245,11 +246,11 @@ public class ToSameDiffTest extends BaseDL4JTest {
         INDArray preOutput = net.feedForwardToLayer(1, input).get(2).dup();
 
         net.output(input);
-        net.labels = labels;
+        net.setLabels(labels);
         double manualLoss = new LossMSE().computeScore(labels, preOutput, new ActivationSigmoid(), null, true);
 
         net.computeGradientAndScore();
-        double loss = net.score;
+        double loss = net.score();
 
         System.out.println("Manual Score: " + manualLoss);
         System.out.println("Score: " + loss);

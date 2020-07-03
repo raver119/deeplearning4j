@@ -29,6 +29,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.recurrent.LastTimeStep;
 import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -119,7 +120,7 @@ public class TestLastTimeStepLayer extends BaseDL4JTest {
         assertEquals(expOut, outFwd);
 
         TestUtils.testModelSerialization(graph);
-        TestUtils.testToSameDiff(graph, in, null);
+        ToSameDiffTests.testToSameDiff(graph, in, null);
     }
 
     @Test

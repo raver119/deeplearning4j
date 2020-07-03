@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.optimize.api.TrainingListener;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -117,7 +118,7 @@ public class MaskZeroLayerTest extends BaseDL4JTest {
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
 
-        TestUtils.testToSameDiff(net, null, null);
+        ToSameDiffTests.testToSameDiff(net, null, null);
         TestUtils.testModelSerialization(net);
     }
 }

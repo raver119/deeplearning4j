@@ -121,6 +121,7 @@ import org.nd4j.linalg.heartbeat.utils.EnvironmentUtils;
 import org.nd4j.linalg.heartbeat.utils.TaskUtils;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.regularization.Regularization;
 import org.nd4j.linalg.schedule.ISchedule;
 import org.nd4j.linalg.util.FeatureUtil;
@@ -861,7 +862,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             // create weights
 
-            Map<String, INDArray> params = layer.paramTable();
+            Map<String, INDArray> params = new HashMap<>(layer.paramTable(false));
             config.transformParamsForSameDiff(params);
 
             Map<String, SDVariable> paramTable = new HashMap<>((int) layer.numParams());
@@ -1010,6 +1011,8 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             if(iUpdater != null)
                 tcBuilder.updater(iUpdater);
+            else
+                tcBuilder.updater(new NoOp());
 
             if(labels != null)
                 tcBuilder.dataSetLabelMapping(labels.name());

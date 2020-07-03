@@ -63,8 +63,9 @@ public class L2Vertex extends BaseGraphVertex {
             SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
         SDVariable temp = inputs[0].sub(inputs[1]);
         temp = temp.mul(temp);
-        temp = temp.reshape(sameDiff.concat(0, sameDiff.sizeAt(temp, 0), sameDiff.constant(-1))).sum(1);
-        return temp;
+        temp = temp.reshape(sameDiff.concat(0, sameDiff.sizeAt(temp, 0), sameDiff.constant(Nd4j.scalar(DataType.INT64, -1))))
+                .sum(true, 1);
+        return sameDiff.math.sqrt(temp);
     }
 
     @Override

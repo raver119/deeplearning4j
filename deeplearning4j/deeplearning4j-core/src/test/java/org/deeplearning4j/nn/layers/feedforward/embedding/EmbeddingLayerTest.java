@@ -33,6 +33,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.params.DefaultParamInitializer;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.weights.embeddings.EmbeddingInitializer;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.activations.impl.ActivationIdentity;
@@ -556,7 +557,7 @@ public class EmbeddingLayerTest extends BaseDL4JTest {
             INDArray w = net.getParam("0_W");
             assertEquals(vectors, w);
 
-            TestUtils.testToSameDiff(net, null, null);
+            ToSameDiffTests.testToSameDiff(net, null, null);
             TestUtils.testModelSerialization(net);
 
             //Test same thing for embedding sequence layer:
@@ -583,7 +584,7 @@ public class EmbeddingLayerTest extends BaseDL4JTest {
             w = net.getParam("0_W");
             assertEquals(vectors, w);
 
-            TestUtils.testToSameDiff(net, null, null);
+            ToSameDiffTests.testToSameDiff(net, null, null);
             TestUtils.testModelSerialization(net);
         }
     }

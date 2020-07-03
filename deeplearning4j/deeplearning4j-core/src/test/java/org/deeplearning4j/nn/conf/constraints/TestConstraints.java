@@ -37,6 +37,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -100,7 +101,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, RW0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -154,7 +155,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -207,7 +208,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, w0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -268,7 +269,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -330,7 +331,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, b0.norm2(1).maxNumber().doubleValue(), 1e-6);
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }
@@ -389,7 +390,7 @@ public class TestConstraints extends BaseDL4JTest {
                 assertEquals(1.0, w1.norm2(1).maxNumber().doubleValue(), 1e-6 );
             }
 
-            TestUtils.testToSameDiff(net, input, labels);
+            ToSameDiffTests.testToSameDiff(net, input, labels);
             TestUtils.testModelSerialization(net);
         }
     }

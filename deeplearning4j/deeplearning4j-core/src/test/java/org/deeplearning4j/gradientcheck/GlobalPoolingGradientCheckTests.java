@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -106,7 +107,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                                 DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                 assertTrue(gradOK);
-                TestUtils.testToSameDiff(mln, input, labels);
+                ToSameDiffTests.testToSameDiff(mln, input, labels);
                 TestUtils.testModelSerialization(mln);
             }
         }
@@ -166,7 +167,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                             DEFAULT_MIN_ABS_ERROR, PRINT_RESULTS, RETURN_ON_FIRST_FAILURE, input, labels);
 
                     assertTrue(gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels);
+                    ToSameDiffTests.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }
@@ -227,7 +228,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                     .labels(labels).inputMask(featuresMask));
 
             assertTrue(gradOK);
-            TestUtils.testToSameDiff(mln, input, labels);
+            ToSameDiffTests.testToSameDiff(mln, input, labels);
             TestUtils.testModelSerialization(mln);
         }
     }
@@ -311,7 +312,7 @@ public class GlobalPoolingGradientCheckTests extends BaseDL4JTest {
                             .labels(labels).inputMask(inputMask));
 
                     assertTrue(gradOK);
-                    TestUtils.testToSameDiff(mln, input, labels);
+                    ToSameDiffTests.testToSameDiff(mln, input, labels);
                     TestUtils.testModelSerialization(mln);
                 }
             }

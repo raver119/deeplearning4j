@@ -111,9 +111,12 @@ public interface GraphVertex extends Trainable, Serializable {
 
     /**
      * Do any necessary transforms to parameters (weights, biases, etc) before making SDVariables out of them.
-     * Useful for things like changing the dimension order or squeezing. <br>
+     * Useful for things like changing the dimension order or squeezing.
      *
-     * Called once for each parameter.
+     * Adding or removing parameters is supported.  <br>
+     *
+     * Should throw a {@link UnsupportedOperationException} if conversion of this layer configuration isn't
+     * supported and it will cause an error when transforming weights.
      *
      * @param params The parameter.
      */

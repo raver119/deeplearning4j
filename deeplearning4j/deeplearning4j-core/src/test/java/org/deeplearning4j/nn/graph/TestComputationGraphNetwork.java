@@ -56,6 +56,7 @@ import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.deeplearning4j.util.ModelSerializer;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -1471,7 +1472,7 @@ public class TestComputationGraphNetwork extends BaseDL4JTest {
         ComputationGraph net2 = TestUtils.testModelSerialization(net);
         INDArray out2 = net2.outputSingle(ds.getFeatures());
         assertEquals(out, out2);
-        TestUtils.testToSameDiff(net, ds.getFeatures(), ds.getLabels());
+        ToSameDiffTests.testToSameDiff(net, ds.getFeatures(), ds.getLabels());
     }
 
     @Test
