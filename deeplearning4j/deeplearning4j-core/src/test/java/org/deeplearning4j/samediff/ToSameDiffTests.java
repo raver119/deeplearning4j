@@ -59,6 +59,7 @@ import org.deeplearning4j.nn.graph.vertex.impl.LayerVertex;
 import org.deeplearning4j.nn.layers.BaseOutputLayer;
 import org.deeplearning4j.nn.layers.LossLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.util.ToSameDiffUtils;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.nd4j.autodiff.samediff.SDVariable;
@@ -336,25 +337,16 @@ public class ToSameDiffTests extends RunListener {
 
         List<String> sdActivationVariables = new ArrayList<>();
 
-        Map<String, Integer> numLayers = new HashMap<>();
 
-        List<String> layerNames = new ArrayList<>();
+        Map<org.deeplearning4j.nn.api.Layer, String> namesByLayer = ToSameDiffUtils.getScopeNames(network.getLayers());
+
+        List<String> layerClassNames = new ArrayList<>();
         for(int i = 0 ; i < network.getnLayers() ; i++){
             org.deeplearning4j.nn.conf.layers.Layer config = network.getLayerWiseConfigurations().getConf(i).getLayer();
-            String baseName = config.getLayerName() == null ? config.getClass().getSimpleName() : config.getLayerName();
 
-            int layerNum = 0;
-
-            if (numLayers.containsKey(baseName)) {
-                layerNum = numLayers.get(baseName);
-                numLayers.put(baseName, ++layerNum);
-            } else {
-                numLayers.put(baseName, 0);
-            }
-
-            String scope = baseName + (layerNum == 0 ? "" : "_" + layerNum);
+            String scope = namesByLayer.get(network.getLayer(i));
             List<SDVariable> scopeVars = sameDiff.getVariablesInScope(scope);
-            layerNames.add(config.getClass().getSimpleName());
+            layerClassNames.add(config.getClass().getSimpleName());
             if(scopeVars.size() > 0) {
 
                 SDVariable lastVar = null;
@@ -397,9 +389,9 @@ public class ToSameDiffTests extends RunListener {
 
                 failed = true;
                 if(FAIL_FAST)
-                    fail("DL4J activation and SameDiff activation not equal for Layer " + layerNames.get(i) +  " and SDVariable " + sdActivationVariables.get(i));
+                    fail("DL4J activation and SameDiff activation not equal for Layer " + layerClassNames.get(i) +  " and SDVariable " + sdActivationVariables.get(i));
                 else
-                    messages.add(new Pair<>(layerNames.get(i), sdActivationVariables.get(i)));
+                    messages.add(new Pair<>(layerClassNames.get(i), sdActivationVariables.get(i)));
             }
         }
 

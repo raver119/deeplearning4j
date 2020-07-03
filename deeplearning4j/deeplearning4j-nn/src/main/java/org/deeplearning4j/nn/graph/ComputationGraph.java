@@ -27,6 +27,7 @@ import org.bytedeco.javacpp.Pointer;
 import org.deeplearning4j.nn.conf.layers.BaseLayer;
 import org.deeplearning4j.nn.conf.layers.LayerWithLoss;
 import org.deeplearning4j.nn.layers.samediff.SameDiffOutputLayer;
+import org.deeplearning4j.nn.updater.BaseMultiLayerUpdater;
 import org.deeplearning4j.util.ToSameDiffUtils;
 import org.nd4j.adapters.OutputAdapter;
 import org.nd4j.autodiff.samediff.NameScope;
@@ -911,6 +912,22 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
             org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
 
             sameDiff.setTrainingConfig(trainingConfig);
+
+            if(iUpdater != null) {
+                Updater updater = getUpdater();
+
+                if(updater instanceof BaseMultiLayerUpdater){
+                    ToSameDiffUtils.copyUpdaterState(sameDiff, (BaseMultiLayerUpdater<?>) updater, null);
+                } else {
+                    if(skipErrors)
+                        log.warn("Unsupported updater type {}, not copying updater state to SameDiff", updater.getClass().getSimpleName());
+                    else
+                        throw new IllegalStateException("Unsupported updater type " + updater.getClass().getSimpleName() + ", could not updater state to SameDiff");
+                }
+
+
+            }
+
             return trainingConfig;
         }
 

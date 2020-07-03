@@ -40,8 +40,10 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.PoolingType;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.nn.updater.BaseMultiLayerUpdater;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.deeplearning4j.util.ToSameDiffUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -219,51 +221,5 @@ public class TestToSameDiff extends BaseDL4JTest {
 //        // post training test
 //
 //        testSameDiffInference(network, example);
-    }
-
-    @Test
-    public void testGradientAndScore(){
-        Nd4j.getRandom().setSeed(12345);
-        MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .dataType(DataType.DOUBLE)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).seed(12345)
-                .updater(new NoOp())
-                .dist(new UniformDistribution(-1, 1)).list()
-                .layer(0, new DenseLayer.Builder().nIn(4).nOut(4).activation(Activation.TANH).build())
-                .layer(1, new DenseLayer.Builder().nIn(4).nOut(3).build())
-                .layer(2, new LossLayer.Builder().lossFunction(new LossMSE())
-                        .activation(new ActivationSigmoid()).build())
-                .validateOutputLayerConfig(false)
-                .build();
-
-        MultiLayerNetwork net = new MultiLayerNetwork(conf);
-        net.init();
-
-
-        INDArray input = Nd4j.rand(1, 4).mul(10);
-        INDArray labels = Nd4j.rand(1, 3).mul(10);
-
-        INDArray preOutput = net.feedForwardToLayer(1, input).get(2).dup();
-
-        net.output(input);
-        net.setLabels(labels);
-        double manualLoss = new LossMSE().computeScore(labels, preOutput, new ActivationSigmoid(), null, true);
-
-        net.computeGradientAndScore();
-        double loss = net.score();
-
-        System.out.println("Manual Score: " + manualLoss);
-        System.out.println("Score: " + loss);
-
-    }
-
-    @Test
-    public void testGet(){
-        SameDiff sd = SameDiff.create();
-        SDVariable input = sd.constant(Nd4j.rand(2, 3, 5));
-
-        SDVariable output = input.get(SDIndex.point(-1), SDIndex.all(), SDIndex.interval(1, -1, 4));
-
-        System.out.println(Arrays.toString(output.eval().shape()));
     }
 }
