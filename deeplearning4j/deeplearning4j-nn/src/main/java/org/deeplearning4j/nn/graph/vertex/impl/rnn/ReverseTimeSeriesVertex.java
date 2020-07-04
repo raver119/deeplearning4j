@@ -70,7 +70,7 @@ public class ReverseTimeSeriesVertex extends BaseGraphVertex {
     @Override
     public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
             SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
-        return sameDiff.reverse(inputs[0], 3);
+        return sameDiff.reverse(inputs[0], 2);
     }
 
     @Override

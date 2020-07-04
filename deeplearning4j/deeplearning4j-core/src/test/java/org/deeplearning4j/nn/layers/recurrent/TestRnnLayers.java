@@ -245,9 +245,6 @@ public class TestRnnLayers extends BaseDL4JTest {
                     t.printStackTrace();
                 System.out.println(i);
 
-                //TODO throws a different exception as it calculates loss before gradient
-                t.printStackTrace();
-
                 assertTrue(msg, msg != null && msg.contains("sequence length") && msg.contains("input") && msg.contains("label"));
             }
 
