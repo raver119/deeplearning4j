@@ -65,7 +65,8 @@ public abstract class BaseWrapperLayer extends Layer {
         underlying.transformParamsForSameDiff(params);
     }
 
-    protected SDVariable defineUnderlying(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable, SDVariable mask){
+    protected SDVariable defineUnderlying(SameDiff sameDiff, SDVariable layerInput, SDVariable mask,
+            Map<String, SDVariable> paramTable){
         NameScope underlyingScope =  sameDiff.withNameScope("underlying");
         SDVariable output = underlying.defineLayer(sameDiff, layerInput, mask, paramTable);
         underlyingScope.close();

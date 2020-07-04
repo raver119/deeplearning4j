@@ -100,7 +100,7 @@ public class FrozenLayerWithBackprop extends BaseWrapperLayer {
         for(SDVariable variable : paramTable.values()){
             variable.convertToConstant();
         }
-        return defineUnderlying(sameDiff, layerInput, paramTable, mask);
+        return defineUnderlying(sameDiff, layerInput, mask, paramTable);
     }
 
     @Override

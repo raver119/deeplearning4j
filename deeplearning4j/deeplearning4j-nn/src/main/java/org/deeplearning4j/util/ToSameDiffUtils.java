@@ -42,6 +42,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.learning.GradientUpdater;
 import org.nd4j.linalg.learning.config.IUpdater;
+import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.regularization.Regularization;
 
 /**
@@ -284,11 +285,15 @@ public class ToSameDiffUtils {
             long stateSize = sameDiff.getTrainingConfig().getUpdater().stateSize(arr.length());
 
             INDArray view;
-            if(stateViewsPerParam.containsKey(v.getVariable().name())){
-                List<INDArray> arrays = stateViewsPerParam.get(v.getVariable().name());
-                view = Nd4j.concat(1, arrays.toArray(new INDArray[0]));
+            if(stateSize > 0) {
+                if (stateViewsPerParam.containsKey(v.getVariable().name())) {
+                    List<INDArray> arrays = stateViewsPerParam.get(v.getVariable().name());
+                    view = Nd4j.concat(1, arrays.toArray(new INDArray[0]));
+                } else {
+                    throw new IllegalStateException("No updater state found for variable " + v.getVariable().name());
+                }
             } else {
-                throw new IllegalStateException("No updater state found for variable " + v.getVariable().name());
+                view = null;
             }
 
             GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(view, false);

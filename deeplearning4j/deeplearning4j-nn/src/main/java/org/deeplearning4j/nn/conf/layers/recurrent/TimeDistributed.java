@@ -65,6 +65,8 @@ public class TimeDistributed extends BaseWrapperLayer {
         SDVariable batch = originalShape.get(SDIndex.point(0));
         SDVariable sequenceLength;
 
+        SDVariable neg1 = sameDiff.constant(Nd4j.scalar(batch.dataType(), -1));
+
         if(rnnDataFormat == RNNFormat.NCW) {
             sequenceLength = originalShape.get(SDIndex.point(2));
             layerInput = layerInput.permute(0, 2, 1);
@@ -73,13 +75,12 @@ public class TimeDistributed extends BaseWrapperLayer {
         else
             throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
 
-        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(
-                Nd4j.scalar(batch.dataType(), -1)));
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), neg1);
         SDVariable distributedInput = layerInput.reshape(distributedShape);
 
-        SDVariable distributedOutput = defineUnderlying(sameDiff, distributedInput, paramTable, mask);
+        SDVariable distributedOutput = defineUnderlying(sameDiff, distributedInput, mask, paramTable);
 
-        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(Nd4j.scalar(batch.dataType(), -1))));
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, neg1));
 
         if(rnnDataFormat == RNNFormat.NCW)
             return temp.permute(0, 2, 1);

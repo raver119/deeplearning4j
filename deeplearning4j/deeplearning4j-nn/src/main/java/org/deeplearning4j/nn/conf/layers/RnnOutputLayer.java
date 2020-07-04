@@ -90,11 +90,10 @@ public class RnnOutputLayer extends BaseOutputLayer {
         SDVariable b = paramTable.get(DefaultParamInitializer.BIAS_KEY);
         SDVariable  W = paramTable.get(DefaultParamInitializer.WEIGHT_KEY);
 
-        if(rnnDataFormat == RNNFormat.NWC)
-            layerInput = layerInput.permute(0, 2, 1);
-
         SDVariable batch = sameDiff.sizeAt(layerInput, 0);
         SDVariable sequenceLength;
+
+        SDVariable neg1 = sameDiff.constant(Nd4j.scalar(batch.dataType(), -1));
 
         if(rnnDataFormat == RNNFormat.NCW) {
             sequenceLength = sameDiff.sizeAt(layerInput, 2);
@@ -104,7 +103,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
         else
             throw new UnsupportedOperationException("Unknown RNN data format " + rnnDataFormat);
 
-        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), sameDiff.constant(Nd4j.scalar(batch.dataType(), -1)));
+        SDVariable distributedShape = sameDiff.concat(0, batch.mul(sequenceLength), neg1);
         SDVariable distributedInput = layerInput.reshape(distributedShape);
 
         SDVariable distributedOutput = distributedInput.mmul(W);
@@ -113,8 +112,7 @@ public class RnnOutputLayer extends BaseOutputLayer {
 
         distributedOutput = doActivation(distributedOutput);
 
-        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, sameDiff.constant(
-                Nd4j.scalar(batch.dataType(), -1))));
+        SDVariable temp = distributedOutput.reshape(sameDiff.concat(0, batch, sequenceLength, neg1));
 
         if(rnnDataFormat == RNNFormat.NCW)
             return temp.permute(0, 2, 1);

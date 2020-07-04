@@ -68,7 +68,7 @@ public class LastTimeStep extends BaseWrapperLayer {
     @Override
     public SDVariable defineLayer(@NonNull SameDiff sameDiff, @NonNull SDVariable layerInput,
             SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
-        SDVariable underlyingOutput = defineUnderlying(sameDiff, layerInput, paramTable, mask);
+        SDVariable underlyingOutput = defineUnderlying(sameDiff, layerInput, mask, paramTable);
         return underlyingOutput.get(SDIndex.all(), SDIndex.all(), SDIndex.point(-1));
     }
 
