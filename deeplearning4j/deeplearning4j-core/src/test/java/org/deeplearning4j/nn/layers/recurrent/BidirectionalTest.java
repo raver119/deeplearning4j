@@ -178,7 +178,7 @@ public class BidirectionalTest extends BaseDL4JTest {
             INDArray p1 = net1.params();
             INDArray p2 = net2.params();
             assertEquals(p1, p2);
-            ToSameDiffTests.testToSameDiff(net1, in, labels);
+            ToSameDiffTests.testToSameDiff(net1, InputType.inferInputType(in), in, labels);
         }
     }
 

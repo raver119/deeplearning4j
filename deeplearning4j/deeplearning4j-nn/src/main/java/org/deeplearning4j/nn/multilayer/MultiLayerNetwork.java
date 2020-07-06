@@ -820,7 +820,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
         SDVariable sdOutputLabels = null;
 
-        Map<Layer, String> layerNames = ToSameDiffUtils.getScopeNames(layers);
+        List<String> layerNames = ToSameDiffUtils.getScopeNames(layers);
 
         for (int i = 0; i < layers.length; i++) {
             Layer layer = layers[i];
@@ -837,7 +837,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
             org.deeplearning4j.nn.conf.layers.Layer config = layerWiseConfigurations.getConf(i).getLayer();
 
             //TODO use layer name if set
-            NameScope layerScope = sameDiff.withNameScope(layerNames.get(layer));
+            NameScope layerScope = sameDiff.withNameScope(layerNames.get(i));
 
             // preprocessor
             InputPreProcessor preProcessor = layerWiseConfigurations.getInputPreProcess(i);
@@ -893,7 +893,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 labels = null;
             }
 
-            NameScope layerScope = sameDiff.withNameScope(layerNames.get(getOutputLayer()));
+            NameScope layerScope = sameDiff.withNameScope(layerNames.get(layerNames.size() - 1));
             NameScope lossScope = sameDiff.withNameScope("loss");
 
             SDVariable loss = ((LayerWithLoss) lastLayer).defineLoss(sameDiff, currentOutput, labels, conf().isMiniBatch());

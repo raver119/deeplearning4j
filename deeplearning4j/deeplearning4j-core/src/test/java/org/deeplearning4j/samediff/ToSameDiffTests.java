@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.deeplearning4j.nn.api.layers.IOutputLayer;
 import org.deeplearning4j.nn.conf.InputPreProcessor;
 import org.deeplearning4j.nn.conf.dropout.IDropout;
 import org.deeplearning4j.nn.conf.inputs.InputType;
@@ -82,7 +83,7 @@ public class ToSameDiffTests extends RunListener {
     public static boolean FAIL_FAST = true;
     public static boolean FAIL_IF_MISSING = false;
     // makes it show up in IDEA test runs
-    public static boolean PRINT_AFTER_EVERY = false;
+    public static boolean PRINT_AFTER_EVERY = true;
 
     private static final Set<String> failurePointLayers = new HashSet<>();
     private static final Set<String> failurePointVertices = new HashSet<>();
@@ -332,6 +333,26 @@ public class ToSameDiffTests extends RunListener {
     }
 
     public static void testToSameDiff(@NonNull MultiLayerNetwork network, INDArray input, INDArray labels){
+        testToSameDiff(network, null, input, labels);
+    }
+
+    private static ILossFunction getLossFn(org.deeplearning4j.nn.api.Layer layer){
+        ILossFunction lossFn = null;
+        if(layer instanceof BaseOutputLayer){
+            lossFn = ((BaseOutputLayer<?>) layer).getLossFn();
+        } else if(layer instanceof LossLayer){
+            lossFn = ((LossLayer) layer).getLossFn();
+        } else if(layer instanceof org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer){
+            lossFn = ((org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer) layer).getLossFn();
+        } else if(layer instanceof org.deeplearning4j.nn.layers.convolution.CnnLossLayer){
+            lossFn = ((org.deeplearning4j.nn.layers.convolution.CnnLossLayer) layer).getLossFn();
+        } else if(layer instanceof org.deeplearning4j.nn.layers.recurrent.RnnLossLayer){
+            lossFn = ((org.deeplearning4j.nn.layers.recurrent.RnnLossLayer) layer).getLossFn();
+        }
+        return lossFn;
+    }
+
+    public static void testToSameDiff(@NonNull MultiLayerNetwork network, InputType inputType, INDArray input, INDArray labels){
 
         for(int i = 0 ; i < network.getnLayers() ; i++){
             Layer layer = network.getLayer(i).conf().getLayer();
@@ -341,7 +362,7 @@ public class ToSameDiffTests extends RunListener {
 
         SameDiff sameDiff;
         try{
-            sameDiff = network.toSameDiff(null, true, true);
+            sameDiff = network.toSameDiff(inputType, true, true);
         } catch (UnsupportedOperationException e){
             if(!SKIP_UNIMPLEMENTED)
                 throw e;
@@ -377,13 +398,13 @@ public class ToSameDiffTests extends RunListener {
         List<String> sdActivationVariables = new ArrayList<>();
 
 
-        Map<org.deeplearning4j.nn.api.Layer, String> namesByLayer = ToSameDiffUtils.getScopeNames(network.getLayers());
+        List<String> namesByLayer = ToSameDiffUtils.getScopeNames(network.getLayers());
 
         List<String> layerClassNames = new ArrayList<>();
         for(int i = 0 ; i < network.getnLayers() ; i++){
             org.deeplearning4j.nn.conf.layers.Layer config = network.getLayerWiseConfigurations().getConf(i).getLayer();
 
-            String scope = namesByLayer.get(network.getLayer(i));
+            String scope = namesByLayer.get(i);
             List<SDVariable> scopeVars = sameDiff.getVariablesInScope(scope);
             layerClassNames.add(config.getClass().getSimpleName());
             if(scopeVars.size() > 0) {
@@ -469,28 +490,16 @@ public class ToSameDiffTests extends RunListener {
 
             double sdScore = sdLoss.sumNumber().doubleValue();
 
-            ILossFunction lossFn = null;
-            org.deeplearning4j.nn.api.Layer lastLayer = network.getLayer(network.getnLayers() - 1);
-            if(lastLayer instanceof BaseOutputLayer){
-                lossFn = ((BaseOutputLayer<?>) lastLayer).getLossFn();
-            } else if(lastLayer instanceof LossLayer){
-                lossFn = ((LossLayer) lastLayer).getLossFn();
-            } else if(lastLayer instanceof org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer){
-                lossFn = ((org.deeplearning4j.nn.layers.convolution.Cnn3DLossLayer) lastLayer).getLossFn();
-            } else if(lastLayer instanceof org.deeplearning4j.nn.layers.convolution.CnnLossLayer){
-                lossFn = ((org.deeplearning4j.nn.layers.convolution.CnnLossLayer) lastLayer).getLossFn();
-            } else if(lastLayer instanceof org.deeplearning4j.nn.layers.recurrent.RnnLossLayer){
-                lossFn = ((org.deeplearning4j.nn.layers.recurrent.RnnLossLayer) lastLayer).getLossFn();
-            }
-
+            ILossFunction lossFn = getLossFn(network.getOutputLayer());
             try {
                 assertEquals("Losses don't match for original network and SameDiff version" + (lossFn != null ?
                                 " for loss function " + lossFn.getClass().getSimpleName() : ""),
                         sdScore, score, 1e-3);
             } catch (AssertionError ae){
-                if(ae.getMessage().contains("Losses don't match")){
+                if(ae.getMessage().contains("Losses don't match") && lossFn != null){
                     failureLosses.add(lossFn.getClass().getSimpleName());
                 }
+                throw ae;
             }
         }
 
@@ -671,8 +680,25 @@ public class ToSameDiffTests extends RunListener {
             for(INDArray scoreArr : sdLosses.values())
                 sdScore += scoreArr.sumNumber().doubleValue();
 
-            assertEquals("Losses don't match for original network and SameDiff version",
-                    sdScore, score, 1e-3);
+            Set<String> lossFunctions = new HashSet<>();
+            for(String name : graph.getConfiguration().getNetworkOutputs()){
+                GraphVertex vertex = graph.getVertex(name);
+                if(vertex.hasLayer()){
+                    ILossFunction lossFn = getLossFn(vertex.getLayer());
+                    if(lossFn != null)
+                        lossFunctions.add(lossFn.getClass().getSimpleName());
+                }
+            }
+
+            try {
+                assertEquals("Losses don't match for original network and SameDiff version, with loss functions " + lossFunctions,
+                        sdScore, score, 1e-3);
+            } catch (AssertionError ae){
+                if(ae.getMessage().contains("Losses don't match") && !lossFunctions.isEmpty()){
+                    failureLosses.addAll(lossFunctions);
+                }
+                throw ae;
+            }
         }
 
         if(PRINT_AFTER_EVERY) {

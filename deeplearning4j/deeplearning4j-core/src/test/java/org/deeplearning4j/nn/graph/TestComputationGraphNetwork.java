@@ -1472,7 +1472,8 @@ public class TestComputationGraphNetwork extends BaseDL4JTest {
         ComputationGraph net2 = TestUtils.testModelSerialization(net);
         INDArray out2 = net2.outputSingle(ds.getFeatures());
         assertEquals(out, out2);
-        ToSameDiffTests.testToSameDiff(net, ds.getFeatures(), ds.getLabels());
+        // labels are wrong size, would need to be [batch, 1] fr LossLayer.  Convolutional input is handled via preprocessor here, not CnnLossLayer.
+        ToSameDiffTests.testToSameDiff(net, ds.getFeatures(), null);
     }
 
     @Test

@@ -19,6 +19,7 @@
 package org.deeplearning4j.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class ToSameDiffUtils {
                 if(regularizations == null){
                     regularizations = ((BaseLayer) conf).getRegularizationBias();
                 } else {
-                    if(!((BaseLayer) conf).getRegularizationBias().isEmpty() && !((BaseLayer) conf).getRegularizationBias().equals(regularizations)) {
+                    if(!((BaseLayer) conf).getRegularizationBias().equals(regularizations)) {
                         if(skipErrors){
                             log.warn("Ignoring regularization config: Can not convert to SameDiff when layers have different regularizations. Expected {}, but was {} for {}",
                                     regularizations, ((BaseLayer) conf).getRegularization(), conf);
@@ -191,8 +192,8 @@ public class ToSameDiffUtils {
         return newParams;
     }
 
-    public static Map<Layer, String> getScopeNames(Layer[] layers){
-        Map<Layer, String> names = new HashMap<>();
+    public static List<String> getScopeNames(Layer[] layers){
+        List<String> names = new ArrayList<>();
         Map<String, Integer> numLayers = new HashMap<>();
 
         for (Layer layer : layers) {
@@ -207,19 +208,28 @@ public class ToSameDiffUtils {
             } else {
                 numLayers.put(baseName, 0);
             }
-            names.put(layer, baseName + (layerNum == 0 ? "" : "_" + layerNum));
+            names.add(baseName + (layerNum == 0 ? "" : "_" + layerNum));
         }
 
         return names;
     }
 
+    /**
+     * Copy the state from a MultiLayerNetwork or ComputationGraph updater to a SameDiff instance.
+     * @param sameDiff The SameDiff to copy to.
+     * @param updater The updater to copy from.
+     * @param layers The layers of the network or graph.
+     */
     public static void copyUpdaterState(@NonNull SameDiff sameDiff, BaseMultiLayerUpdater<?> updater, Layer[] layers){
         if(updater == null)
             return;
 
-        Map<Layer, String> layerNames = null;
-        if(layers != null)
+        List<Layer> layerList = null;
+        List<String> layerNames = null;
+        if(layers != null) {
             layerNames = getScopeNames(layers);
+            layerList = Arrays.asList(layers);
+        }
 
         Map<String, List<INDArray>> stateViewsPerParam = new HashMap<>();
         for(UpdaterBlock ub : updater.getUpdaterBlocks()){
@@ -249,7 +259,7 @@ public class ToSameDiffUtils {
                         namespace = ((GraphVertex) ps.getLayer()).getVertexName();
                     } else {
                         Layer layer = (Layer) ps.getLayer();
-                        namespace = layerNames.get(layer);
+                        namespace = layerNames.get(layerList.indexOf(layer));
                     }
 
                     String paramName = namespace + "/" + ps.getParamName();
@@ -303,17 +313,6 @@ public class ToSameDiffUtils {
 
         sameDiff.initializeTraining(updaterMap);
 
-    }
-
-
-    private static int getId(Trainable trainable){
-        if(trainable instanceof GraphVertex){
-            GraphVertex gv = (GraphVertex)trainable;
-            return gv.getVertexIndex();
-        } else {
-            org.deeplearning4j.nn.api.Layer l = (org.deeplearning4j.nn.api.Layer)trainable;
-            return l.getIndex();
-        }
     }
 
 }
