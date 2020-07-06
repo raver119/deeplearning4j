@@ -60,12 +60,6 @@ public class StackVertex extends BaseGraphVertex {
     }
 
     @Override
-    public SDVariable defineVertex(@NonNull SameDiff sameDiff, @NonNull SDVariable[] inputs,
-            SDVariable mask, @NonNull Map<String, SDVariable> paramTable) {
-        return sameDiff.concat(0, inputs);
-    }
-
-    @Override
     public boolean hasLayer() {
         return false;
     }

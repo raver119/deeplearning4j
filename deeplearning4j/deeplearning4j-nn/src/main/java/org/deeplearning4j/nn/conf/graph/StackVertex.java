@@ -18,6 +18,7 @@ package org.deeplearning4j.nn.conf.graph;
 
 
 import org.deeplearning4j.nn.conf.inputs.InputType;
+import org.deeplearning4j.nn.conf.inputs.InputType.InputTypeRecurrent;
 import org.deeplearning4j.nn.conf.inputs.InvalidInputTypeException;
 import org.deeplearning4j.nn.conf.memory.LayerMemoryReport;
 import org.deeplearning4j.nn.conf.memory.MemoryReport;
@@ -79,6 +80,15 @@ public class StackVertex extends GraphVertex {
         return "StackVertex()";
     }
 
+    private boolean compatibleInputTypes(InputType original, InputType other){
+        if(original instanceof InputTypeRecurrent && other instanceof InputTypeRecurrent){
+            return ((InputTypeRecurrent) original).getFormat().equals(((InputTypeRecurrent) other).getFormat()) &&
+                    ((InputTypeRecurrent) original).getSize() == ((InputTypeRecurrent) other).getSize();
+        } else {
+            return original.equals(other);
+        }
+    }
+
     @Override
     public InputType getOutputType(int layerIndex, InputType... vertexInputs) throws InvalidInputTypeException {
         if (vertexInputs.length == 1)
@@ -87,11 +97,12 @@ public class StackVertex extends GraphVertex {
 
         //Check that types are all the same...
         for( int i=1; i<vertexInputs.length; i++ ){
-            Preconditions.checkState(vertexInputs[i].getType() == first.getType(), "Different input types found:" +
+            Preconditions.checkState(vertexInputs[i].getType().equals(first.getType()), "Different input types found:" +
                     " input types must be the same. First type: %s, type %s: %s", first, i, vertexInputs[i]);
 
             //Check that types are equal:
-            Preconditions.checkState(first.equals(vertexInputs[i]), "Input types must be equal: %s and %s", first,
+            Preconditions.checkState(compatibleInputTypes(first, vertexInputs[i]), "Input types must be compatible "
+                            + "(equal if not tecurrent, equal except for time steps if recurrent): %s and %s", first,
                     vertexInputs[i]);
         }
 

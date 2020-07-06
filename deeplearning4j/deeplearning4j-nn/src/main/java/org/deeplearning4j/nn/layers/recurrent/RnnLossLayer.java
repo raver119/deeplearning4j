@@ -213,6 +213,22 @@ public class RnnLossLayer extends BaseLayer<org.deeplearning4j.nn.conf.layers.Rn
 
     @Override
     public double computeScore(double fullNetRegTerm, boolean training, LayerWorkspaceMgr workspaceMgr) {
+        assertInputSet(false);
+        if (input.rank() != 3)
+            throw new UnsupportedOperationException(
+                    "Input is not rank 3. Expected rank 3 input of shape [minibatch, size, sequenceLength]. Got input with rank " +
+                            input.rank() + " with shape " + Arrays.toString(input.shape()) + " for layer " + layerId());
+        if (labels == null)
+            throw new IllegalStateException("Labels are not set (null)");
+
+        if (layerConf().getRnnDataFormat() == RNNFormat.NWC){
+            input = input.permute(0, 2, 1);
+            labels = labels.permute(0, 2, 1);
+        }
+        Preconditions.checkState(labels.rank() == 3, "Expected rank 3 labels array, got label array with shape %ndShape", labels);
+        Preconditions.checkState(input.size(2) == labels.size(2), "Sequence lengths do not match for RnnOutputLayer input and labels:" +
+                "Arrays should be rank 3 with shape [minibatch, size, sequenceLength] - mismatch on dimension 2 (sequence length) - input=%ndShape vs. label=%ndShape", input, labels);
+
         INDArray input = this.input;
         INDArray labels = this.labels;
         if (layerConf().getRnnDataFormat() == RNNFormat.NWC){

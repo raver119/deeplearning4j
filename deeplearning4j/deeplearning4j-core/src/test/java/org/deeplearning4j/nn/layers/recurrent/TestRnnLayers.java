@@ -245,6 +245,7 @@ public class TestRnnLayers extends BaseDL4JTest {
                     t.printStackTrace();
                 System.out.println(i);
 
+                //TODO Add checks & error message in RNNOutput layer, etc in loss calculation before reshape.
                 assertTrue(msg, msg != null && msg.contains("sequence length") && msg.contains("input") && msg.contains("label"));
             }
 

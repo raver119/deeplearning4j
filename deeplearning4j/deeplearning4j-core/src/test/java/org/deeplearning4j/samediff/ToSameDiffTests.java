@@ -27,8 +27,10 @@ import com.google.common.reflect.ClassPath.ClassInfo;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +47,7 @@ import org.deeplearning4j.nn.conf.layers.Convolution2D;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.FeedForwardLayer;
 import org.deeplearning4j.nn.conf.layers.Layer;
+import org.deeplearning4j.nn.conf.layers.LayerWithLoss;
 import org.deeplearning4j.nn.conf.layers.Pooling1D;
 import org.deeplearning4j.nn.conf.layers.Pooling2D;
 import org.deeplearning4j.nn.conf.layers.RnnLossLayer;
@@ -74,6 +77,12 @@ import org.nd4j.linalg.lossfunctions.ILossFunction;
 
 @Slf4j
 public class ToSameDiffTests extends RunListener {
+
+    public static boolean SKIP_UNIMPLEMENTED = true;
+    public static boolean FAIL_FAST = true;
+    public static boolean FAIL_IF_MISSING = false;
+    // makes it show up in IDEA test runs
+    public static boolean PRINT_AFTER_EVERY = false;
 
     private static final Set<String> failurePointLayers = new HashSet<>();
     private static final Set<String> failurePointVertices = new HashSet<>();
@@ -113,8 +122,15 @@ public class ToSameDiffTests extends RunListener {
 
     }
 
-    private static <T> Set<Class<? extends T>> findClasses(Class<T> superClass, String topPackage) throws IOException {
-        Set<ClassInfo> infos = ClassPath.from(superClass.getClassLoader()).getTopLevelClassesRecursive(topPackage);
+    private static <T> Set<Class<? extends T>> findClasses(Class<T> superClass, String topPackage) {
+
+        Set<ClassInfo> infos;
+        try {
+            infos = ClassPath.from(superClass.getClassLoader()).getTopLevelClassesRecursive(topPackage);
+        } catch (IOException e) {
+            infos = new HashSet<>();
+        }
+
         Set<Class<? extends T>> classes = new HashSet<>();
         for(ClassInfo ci : infos){
             Class<?> c = ci.load();
@@ -127,37 +143,37 @@ public class ToSameDiffTests extends RunListener {
         return classes;
     }
     
-    private static Set<Class<? extends Layer>> findLayers() throws IOException {
+    private static Set<Class<? extends Layer>> findLayers() {
         Set<Class<? extends Layer>> ret = findClasses(Layer.class, "org.deeplearning4j.nn.conf.layers");
         cleanupLayers(ret);
         return ret;
     }
 
-    private static Set<Class<? extends ILossFunction>> findLosses() throws IOException{
+    private static Set<Class<? extends ILossFunction>> findLosses() {
         Set<Class<? extends ILossFunction>> ret = findClasses(ILossFunction.class, "org.nd4j.linalg.lossfunctions");
         cleanupLosses(ret);
         return ret;
     }
 
-    private static Set<Class<? extends IDropout>> findDropouts() throws IOException{
+    private static Set<Class<? extends IDropout>> findDropouts() {
         Set<Class<? extends IDropout>> ret = findClasses(IDropout.class, "org.deeplearning4j.nn.conf.dropout");
         cleanupDropouts(ret);
         return ret;
     }
 
-    private static Set<Class<? extends IActivation>> findActivations() throws IOException{
+    private static Set<Class<? extends IActivation>> findActivations() {
         Set<Class<? extends IActivation>> ret = findClasses(IActivation.class, "org.nd4j.linalg.activations");
         cleanupActivations(ret);
         return ret;
     }
 
-    private static Set<Class<? extends InputPreProcessor>> findPreprocessors() throws IOException{
+    private static Set<Class<? extends InputPreProcessor>> findPreprocessors() {
         Set<Class<? extends InputPreProcessor>> ret = findClasses(InputPreProcessor.class, "org.deeplearning4j.nn.conf.preprocessor");
         cleanupPreprocessors(ret);
         return ret;
     }
 
-    private static Set<Class<? extends GraphVertex>> findVertices() throws IOException{
+    private static Set<Class<? extends GraphVertex>> findVertices() {
         Set<Class<? extends GraphVertex>> ret = findClasses(GraphVertex.class, "org.deeplearning4j.nn.graph.vertex.impl");
         cleanupVertices(ret);
         return ret;
@@ -190,7 +206,7 @@ public class ToSameDiffTests extends RunListener {
             }
             return ret;
         }
-        
+
         public int check(Set<Class<? extends Layer>> foundLayers,
                 Set<Class<? extends ILossFunction>> foundLosses,
                 Set<Class<? extends IDropout>> foundDropouts,
@@ -198,22 +214,45 @@ public class ToSameDiffTests extends RunListener {
                 Set<Class<? extends InputPreProcessor>> foundPreprocessors,
                 Set<Class<? extends GraphVertex>> foundVertices
                 ){
+
+            if(this == Stage.Loss){
+                // only care about losses & output/loss layers here
+                foundDropouts.clear();
+                foundActivations.clear();
+                foundPreprocessors.clear();
+                foundVertices.clear();
+
+                Set<Class<? extends Layer>> old = foundLayers;
+                foundLayers = new HashSet<>();
+                for(Class<? extends Layer> layer : old){
+                    if(LayerWithLoss.class.isAssignableFrom(layer))
+                        foundLayers.add(layer);
+                }
+            }
+
             Set<String> missingLayers = minusStr(foundLayers, testedLayers);
             Set<String> missingLosses = minusStr(foundLosses, testedLosses);
             Set<String> missingDropouts = minusStr(foundDropouts, testedDropouts);
             Set<String> missingActivations = minusStr(foundActivations, testedActivations);
             Set<String> missingPreprocessors = minusStr(foundPreprocessors, testedPreprocessors);
             Set<String> missingVertices = minusStr(foundVertices, testedVertices);
-            
+
             log.info(" --- ToSameDiff {} Tests --- ", name());
             log.info("Missing Layers: {}", missingLayers);
-            log.info("Missing Activations: {}", missingActivations);
+
+            if(this != Stage.Loss) {
+                log.info("Missing Activations: {}", missingActivations);
+            }
+
             log.info("Missing Losses: {}", missingLosses);
-            log.info("Missing Preprocessors: {}", missingPreprocessors);
-            log.info("Missing Dropouts: {}", missingDropouts);
-            log.info("Missing Vertices: {}", missingVertices);
-            
-            return missingLayers.size() + missingLosses.size() + missingDropouts.size() + 
+
+            if(this != Stage.Loss) {
+                log.info("Missing Preprocessors: {}", missingPreprocessors);
+                log.info("Missing Dropouts: {}", missingDropouts);
+                log.info("Missing Vertices: {}", missingVertices);
+            }
+
+            return missingLayers.size() + missingLosses.size() + missingDropouts.size() +
                     missingActivations.size() + missingPreprocessors.size() + missingVertices.size();
         }
         
@@ -287,10 +326,6 @@ public class ToSameDiffTests extends RunListener {
 
         }
     }
-
-    public static boolean SKIP_UNIMPLEMENTED = true;
-    public static boolean FAIL_FAST = true;
-    public static boolean FAIL_IF_MISSING = false;
 
     public static void testToSameDiff(@NonNull MultiLayerNetwork network, INDArray input, INDArray labels){
 
@@ -453,6 +488,10 @@ public class ToSameDiffTests extends RunListener {
                     failureLosses.add(lossFn.getClass().getSimpleName());
                 }
             }
+        }
+
+        if(PRINT_AFTER_EVERY) {
+            printResults();
         }
 
     }
@@ -631,19 +670,20 @@ public class ToSameDiffTests extends RunListener {
             assertEquals("Losses don't match for original network and SameDiff version",
                     sdScore, score, 1e-3);
         }
+
+        if(PRINT_AFTER_EVERY) {
+            printResults();
+        }
     }
 
+    private static final Set<Class<? extends Layer>> foundLayers = findLayers();
+    private static final Set<Class<? extends ILossFunction>> foundLosses = findLosses();
+    private static final Set<Class<? extends IDropout>> foundDropouts = findDropouts();
+    private static final Set<Class<? extends IActivation>> foundActivations = findActivations();
+    private static final Set<Class<? extends InputPreProcessor>> foundPreprocessors = findPreprocessors();
+    private static final Set<Class<? extends GraphVertex>> foundVertices = findVertices();
 
-    @Override
-    public void testRunFinished(Result result) throws Exception {
-
-        Set<Class<? extends Layer>> foundLayers = findLayers();
-        Set<Class<? extends ILossFunction>> foundLosses = findLosses();
-        Set<Class<? extends IDropout>> foundDropouts = findDropouts();
-        Set<Class<? extends IActivation>> foundActivations = findActivations();
-        Set<Class<? extends InputPreProcessor>> foundPreprocessors = findPreprocessors();
-        Set<Class<? extends GraphVertex>> foundVertices = findVertices();
-
+    public static int printResults() {
         int conversion = Stage.Conversion.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
         int output = Stage.Output.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
         int loss = Stage.Loss.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
@@ -660,10 +700,17 @@ public class ToSameDiffTests extends RunListener {
             log.info("Failed losses: {}", failureLosses);
         }
 
+        return conversion + output + loss;
+    }
+
+    @Override
+    public void testRunFinished(Result result) throws Exception {
+        int failCount = printResults();
+
         if(FAIL_IF_MISSING){
-            assertEquals("There were missing ToSameDiff tests", 0, conversion + output + loss);
-        } else if(conversion + output + loss > 0){
-            log.warn("There were {} missing ToSameDiff tests", conversion + output + loss);
+            assertEquals("There were missing ToSameDiff tests", 0, failCount);
+        } else if(failCount > 0){
+            log.warn("There were {} missing ToSameDiff tests", failCount);
         }
     }
 }

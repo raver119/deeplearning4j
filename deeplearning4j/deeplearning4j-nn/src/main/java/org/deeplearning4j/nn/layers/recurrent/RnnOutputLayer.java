@@ -109,6 +109,12 @@ public class RnnOutputLayer extends BaseOutputLayer<org.deeplearning4j.nn.conf.l
     protected INDArray preOutput2d(boolean training, LayerWorkspaceMgr workspaceMgr) {
         assertInputSet(false);
         if (input.rank() == 3) {
+
+            RNNFormat format = layerConf().getRnnDataFormat();
+            int td = (format == RNNFormat.NCW) ? 2 : 1;
+            Preconditions.checkState(labels.rank() == 3, "Expected rank 3 labels array, got label array with shape %ndShape", labels);
+            Preconditions.checkState(input.size(td) == labels.size(td), "Sequence lengths do not match for RnnOutputLayer input and labels:" +
+                    "Arrays should be rank 3 with shape [minibatch, size, sequenceLength] - mismatch on dimension 2 (sequence length) - input=%ndShape vs. label=%ndShape", input, labels);
             //Case when called from RnnOutputLayer
             INDArray inputTemp = input;
             input = (layerConf().getRnnDataFormat()==RNNFormat.NWC)? input.permute(0, 2, 1):input;

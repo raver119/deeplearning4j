@@ -198,6 +198,16 @@ public class CnnLossLayer extends BaseLayer<org.deeplearning4j.nn.conf.layers.Cn
 
     @Override
     public double computeScore(double fullNetRegTerm, boolean training, LayerWorkspaceMgr workspaceMgr) {
+        assertInputSet(false);
+        if (input.rank() != 4)
+            throw new UnsupportedOperationException(
+                    "Input is not rank 4. Got input with rank " + input.rank() + " " + layerId() + " with shape "
+                            + Arrays.toString(input.shape()) + " - expected shape " + layerConf().getFormat().dimensionNames());
+        if (labels == null)
+            throw new IllegalStateException("Labels are not set (null)");
+
+        Preconditions.checkState(input.equalShapes(labels), "Input and label arrays do not have same shape: %ndShape vs. %ndShape",input, labels);
+
         INDArray input2d = ConvolutionUtils.reshape4dTo2d(input, workspaceMgr, ArrayType.FF_WORKING_MEM);
         INDArray labels2d = ConvolutionUtils.reshape4dTo2d(labels, workspaceMgr, ArrayType.FF_WORKING_MEM);
         INDArray maskReshaped = ConvolutionUtils.reshapeMaskIfRequired(maskArray, input, layerConf().getFormat(), workspaceMgr, ArrayType.FF_WORKING_MEM);

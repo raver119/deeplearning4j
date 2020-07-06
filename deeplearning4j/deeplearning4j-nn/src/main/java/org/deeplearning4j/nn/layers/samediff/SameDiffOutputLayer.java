@@ -331,6 +331,7 @@ public class SameDiffOutputLayer extends AbstractLayer<org.deeplearning4j.nn.con
             }
 
             this.outputKey = layerOutput.name();
+            sameDiff.setLossVariables(outputKey);
         }
     }
 
