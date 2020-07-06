@@ -28,6 +28,8 @@ import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.TestToSameDiff;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -106,6 +108,7 @@ public class AttentionLayerTest extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                             .labels(labels).inputMask(inMask).subset(true).maxPerParam(100));
                     assertTrue(name, gradOK);
+                    ToSameDiffTests.testToSameDiff(net, in, labels);
                 }
             }
         }
@@ -167,6 +170,7 @@ public class AttentionLayerTest extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                             .labels(labels).inputMask(inMask).subset(true).maxPerParam(100));
                     assertTrue(name, gradOK);
+                    ToSameDiffTests.testToSameDiff(net, in, labels);
                 }
             }
         }
@@ -322,6 +326,8 @@ public class AttentionLayerTest extends BaseDL4JTest {
                 boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.MLNConfig().net(net).input(in)
                         .labels(labels).inputMask(inMask).subset(true).maxPerParam(100));
                 assertTrue(name, gradOK);
+
+                ToSameDiffTests.testToSameDiff(net, in, labels);
             }
         }
     }
@@ -385,6 +391,7 @@ public class AttentionLayerTest extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.GraphConfig().net(net).inputs(new INDArray[]{in})
                             .labels(new INDArray[]{labels}).inputMask(inMask != null ? new INDArray[]{inMask} : null).subset(true).maxPerParam(100));
                     assertTrue(name, gradOK);
+                    ToSameDiffTests.testToSameDiff(net, in, labels);
                 }
             }
         }
@@ -447,6 +454,7 @@ public class AttentionLayerTest extends BaseDL4JTest {
                     boolean gradOK = GradientCheckUtil.checkGradients(new GradientCheckUtil.GraphConfig().net(net).inputs(new INDArray[]{in})
                             .labels(new INDArray[]{labels}).inputMask(inMask != null ? new INDArray[]{inMask} : null));
                     assertTrue(name, gradOK);
+                    ToSameDiffTests.testToSameDiff(net, in, labels);
                 }
             }
         }

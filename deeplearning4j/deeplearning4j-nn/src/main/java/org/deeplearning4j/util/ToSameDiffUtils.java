@@ -301,7 +301,7 @@ public class ToSameDiffUtils {
             updaterMap.put(v.getName(), gu);
         }
 
-        //TODO set SameDiff updater map & set training initialized = true
+        sameDiff.initializeTraining(updaterMap);
 
     }
 

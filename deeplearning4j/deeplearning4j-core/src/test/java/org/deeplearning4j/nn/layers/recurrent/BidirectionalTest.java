@@ -39,6 +39,8 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.updater.MultiLayerUpdater;
 import org.deeplearning4j.nn.updater.graph.ComputationGraphUpdater;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.TestToSameDiff;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.deeplearning4j.util.ModelSerializer;
 import org.deeplearning4j.util.TimeSeriesUtils;
 import org.junit.Test;
@@ -176,6 +178,7 @@ public class BidirectionalTest extends BaseDL4JTest {
             INDArray p1 = net1.params();
             INDArray p2 = net2.params();
             assertEquals(p1, p2);
+            ToSameDiffTests.testToSameDiff(net1, in, labels);
         }
     }
 

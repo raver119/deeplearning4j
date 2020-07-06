@@ -34,6 +34,7 @@ import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -693,6 +694,7 @@ public class ConvolutionLayerTest extends BaseDL4JTest {
         INDArray in = Nd4j.create(2, 10, 6);
         INDArray out = net.output(in);
         assertArrayEquals(new long[]{2,7,6}, out.shape());
+        ToSameDiffTests.testToSameDiff(net, in, null);
     }
 
     @Test

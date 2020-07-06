@@ -1378,7 +1378,7 @@ public class SameDiff extends SDBaseOps {
     /**
      * Get the names of variables (if any) that have been marked as loss variables to be minimized.<br>
      * Variables can be marked as loss variables in a few different ways:<br>
-     * (a) Losses are automatically added when creating loss functions via {@link #sd()}<br>
+     * (a) Losses are automatically added when creating loss functions via {@link #loss()}<br>
      * (b) Via {@link #setLossVariables(String...)}, @link #addLossVariable(String)} or {@link SDVariable#markAsLoss()}<br>
      * (c) Via {@link TrainingConfig#setLossVariables(List)}<br>
      */
@@ -1918,7 +1918,8 @@ public class SameDiff extends SDBaseOps {
             if (trainingConfig == null) {
                 throw new ND4JIllegalStateException("Please specify a training config with setTrainingConfig");
             }
-            updaterMap = new HashMap<>();
+
+            Map<String, GradientUpdater<?>> updaterMap = new HashMap<>();
             for (Variable v : variables.values()) {
                 if (v.getVariable().getVariableType() != VariableType.VARIABLE || !v.getVariable().dataType().isFPType()) {
                     //Skip non-trainable parameters
@@ -1928,13 +1929,39 @@ public class SameDiff extends SDBaseOps {
                 INDArray arr = v.getVariable().getArr();
                 long stateSize = trainingConfig.getUpdater().stateSize(arr.length());
                 INDArray view = stateSize == 0 ? null : Nd4j.createUninitialized(arr.dataType(), 1, stateSize);
-                GradientUpdater gu = trainingConfig.getUpdater().instantiate(view, false);
+                GradientUpdater<?> gu = trainingConfig.getUpdater().instantiate(view, false);
                 gu.setStateViewArray(view, arr.shape(), arr.ordering(), true);
                 updaterMap.put(v.getName(), gu);
             }
 
-            initializedTraining = true;
+            initializeTraining(updaterMap);
         }
+    }
+
+    /**
+     * Initalize training with the specified gradient updaters.  Overwrites the existing gradient updaters if there are any.
+     * @param gradientUpdaters The gradient updaters to use.  Must specify one for each trainable variable.
+     */
+    public void initializeTraining(Map<String, GradientUpdater<?>> gradientUpdaters) {
+        if (trainingConfig == null) {
+            throw new ND4JIllegalStateException("Please specify a training config with setTrainingConfig");
+        }
+        updaterMap = new HashMap<>();
+        for (Variable v : variables.values()) {
+            if (v.getVariable().getVariableType() != VariableType.VARIABLE || !v.getVariable().dataType().isFPType()) {
+                //Skip non-trainable parameters
+                continue;
+            }
+
+            GradientUpdater<?> gu = gradientUpdaters.get(v.getVariable().name());
+
+            if(gu == null)
+                throw new IllegalArgumentException("Must specify a gradient updater for each trainable parameter: missing " + v.getVariable().name());
+
+            updaterMap.put(v.getName(), gu);
+        }
+
+        initializedTraining = true;
     }
 
     /**

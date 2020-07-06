@@ -48,12 +48,9 @@ public abstract class BaseLossFunction implements ILossFunction {
      * @return The scalar average or sum, depending on the parameter.
      */
     protected static SDVariable reduceLossArray(SDVariable output, SDVariable labels, boolean average){
-//        SameDiff sameDiff = output.getSameDiff();
-//        SDVariable batchSize = sameDiff.sizeAt(labels, 0);
-//        SDVariable newShape = sameDiff.concat(0, batchSize, sameDiff.constant(Nd4j.scalar(batchSize.dataType(), -1)));
         output = output.sum();
-        if(average)
-            return output.div(output.getSameDiff().sizeAt(labels, 0));
+        if(average) //TODO without cast, only fails on backprop
+            return output.div(output.getSameDiff().sizeAt(labels, 0).castTo(output.dataType()));
         else
             return output;
     }

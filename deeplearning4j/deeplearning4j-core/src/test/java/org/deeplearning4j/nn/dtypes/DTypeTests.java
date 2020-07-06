@@ -20,6 +20,7 @@ import org.deeplearning4j.nn.conf.layers.recurrent.TimeDistributed;
 import org.deeplearning4j.nn.conf.preprocessor.*;
 import org.deeplearning4j.nn.modelimport.keras.layers.TFOpLayer;
 import org.deeplearning4j.nn.modelimport.keras.preprocessors.TensorFlowCnnToFeedForwardPreProcessor;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.nd4j.shade.guava.collect.ImmutableSet;
 import org.nd4j.shade.guava.reflect.ClassPath;
 import lombok.extern.slf4j.Slf4j;
@@ -1023,6 +1024,8 @@ public class DTypeTests extends BaseDL4JTest {
                         net.fit(new DataSet(input, label));
 
                         logUsedClasses(net);
+
+                        ToSameDiffTests.testToSameDiff(net, input, label);
 
                         //Now, test mismatched dtypes for input/labels:
                         for (DataType inputLabelDtype : new DataType[]{DataType.DOUBLE, DataType.FLOAT, DataType.HALF}) {

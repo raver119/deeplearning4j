@@ -32,6 +32,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.preprocessor.CnnToFeedForwardPreProcessor;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.buffer.DataType;
@@ -297,5 +298,7 @@ public class DropoutLayerTest extends BaseDL4JTest {
         List<INDArray> actTestSeparate = netSeparate.feedForward(false);
         assertEquals(actTestIntegrated.get(1), actTestSeparate.get(1));
         assertEquals(actTestIntegrated.get(2), actTestSeparate.get(3));
+        ToSameDiffTests.testToSameDiff(netIntegrated, next.getFeatures().dup(), next.getLabels().dup());
+        ToSameDiffTests.testToSameDiff(netSeparate, next.getFeatures().dup(), next.getLabels().dup());
     }
 }

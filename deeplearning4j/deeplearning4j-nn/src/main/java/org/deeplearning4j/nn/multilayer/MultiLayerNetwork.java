@@ -816,11 +816,11 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 .placeHolder("input", getLayerWiseConfigurations().getDataType(), inputType.getShape(true));
         SDVariable currentOutput = input;
 
-        Map<String, Integer> numLayers = new HashMap<>();
-
         InputType currentInputType = inputType;
 
         SDVariable sdOutputLabels = null;
+
+        Map<Layer, String> layerNames = ToSameDiffUtils.getScopeNames(layers);
 
         for (int i = 0; i < layers.length; i++) {
             Layer layer = layers[i];
@@ -836,20 +836,8 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             org.deeplearning4j.nn.conf.layers.Layer config = layerWiseConfigurations.getConf(i).getLayer();
 
-
-            String baseName = config.getLayerName() == null ? config.getClass().getSimpleName() : config.getLayerName();
-
-            int layerNum = 0;
-
-            if (numLayers.containsKey(baseName)) {
-                layerNum = numLayers.get(baseName);
-                numLayers.put(baseName, ++layerNum);
-            } else {
-                numLayers.put(baseName, 0);
-            }
-
             //TODO use layer name if set
-            NameScope layerScope = sameDiff.withNameScope(baseName + (layerNum == 0 ? "" : "_" + layerNum));
+            NameScope layerScope = sameDiff.withNameScope(layerNames.get(layer));
 
             // preprocessor
             InputPreProcessor preProcessor = layerWiseConfigurations.getInputPreProcess(i);
@@ -905,10 +893,12 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                 labels = null;
             }
 
-            NameScope lossScope = sameDiff.withNameScope(lastLayer.getClass().getSimpleName() + "_loss");
+            NameScope layerScope = sameDiff.withNameScope(layerNames.get(getOutputLayer()));
+            NameScope lossScope = sameDiff.withNameScope("loss");
 
             SDVariable loss = ((LayerWithLoss) lastLayer).defineLoss(sameDiff, currentOutput, labels, conf().isMiniBatch());
             lossScope.close();
+            layerScope.close();
             loss.rename("loss");
 
             sameDiff.setLossVariables(loss);

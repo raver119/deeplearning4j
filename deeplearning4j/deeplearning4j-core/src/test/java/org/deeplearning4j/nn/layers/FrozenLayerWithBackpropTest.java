@@ -30,6 +30,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.samediff.ToSameDiffTests;
 import org.junit.Test;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -98,6 +99,8 @@ public class FrozenLayerWithBackpropTest extends BaseDL4JTest {
         INDArray out3 = net3.output(input);
 
         assertEquals(out2, out3);
+
+        ToSameDiffTests.testToSameDiff(net1, input, null);
     }
 
     @Test

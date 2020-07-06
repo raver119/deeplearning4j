@@ -237,7 +237,11 @@ public class ToSameDiffTests extends RunListener {
             Set<String> missingPreprocessors = minusStr(foundPreprocessors, testedPreprocessors);
             Set<String> missingVertices = minusStr(foundVertices, testedVertices);
 
-            log.info(" --- ToSameDiff {} Tests --- ", name());
+            if(this != Stage.Loss)
+                log.info(" --- ToSameDiff {} Tests --- ", name());
+            else
+                log.info(" --- ToSameDiff Loss Tests (only layers that define losses and loss functions are shown) --- ");
+
             log.info("Missing Layers: {}", missingLayers);
 
             if(this != Stage.Loss) {
@@ -687,6 +691,10 @@ public class ToSameDiffTests extends RunListener {
         int conversion = Stage.Conversion.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
         int output = Stage.Output.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
         int loss = Stage.Loss.check(foundLayers, foundLosses, foundDropouts, foundActivations, foundPreprocessors, foundVertices);
+
+        if(!(failurePointVertices.isEmpty() && failureLosses.isEmpty() && failurePointLayers.isEmpty())){
+            log.info(" --- ToSameDiff Failure Points --- ");
+        }
 
         if(!failurePointLayers.isEmpty()){
             log.info("Failure point layers: {}", failurePointLayers);

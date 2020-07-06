@@ -24,6 +24,8 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.ml.neuralnet.MapUtils;
 import org.deeplearning4j.BaseDL4JTest;
@@ -39,6 +41,7 @@ import org.deeplearning4j.nn.conf.layers.LossLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.conf.layers.PoolingType;
 import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.updater.BaseMultiLayerUpdater;
 import org.deeplearning4j.nn.weights.WeightInit;
@@ -79,80 +82,89 @@ public class TestToSameDiff extends BaseDL4JTest {
             + "Loss function variables: [loss]\n"
             + "\n"
             + "--- Variables ---\n"
-            + "- Name -                                    - Array Shape -     - Variable Type -   - Data Type-        - Output Of Function -                                - Inputs To Functions -\n"
-            + "input                                       [-1, 1, 28, 28]     PLACEHOLDER         FLOAT               <none>                                                [ConvolutionLayer/inputPreprocessor/reshape]\n"
-            + "ConvolutionLayer/inputPreprocessor/reshape  -                   ARRAY               FLOAT               ConvolutionLayer/inputPreprocessor/reshape(reshape)   [ConvolutionLayer/conv2d]\n"
-            + "ConvolutionLayer/b                          [1, 20]             VARIABLE            FLOAT               <none>                                                [ConvolutionLayer/conv2d]\n"
-            + "ConvolutionLayer/W                          [20, 1, 5, 5]       VARIABLE            FLOAT               <none>                                                [ConvolutionLayer/conv2d]\n"
-            + "ConvolutionLayer/conv2d                     -                   ARRAY               FLOAT               ConvolutionLayer/conv2d(conv2d)                       [SubsamplingLayer/maxpool2d]\n"
-            + "SubsamplingLayer/maxpool2d                  -                   ARRAY               FLOAT               SubsamplingLayer/maxpool2d(maxpool2d)                 [ConvolutionLayer_1/conv2d]\n"
-            + "ConvolutionLayer_1/b                        [1, 50]             VARIABLE            FLOAT               <none>                                                [ConvolutionLayer_1/conv2d]\n"
-            + "ConvolutionLayer_1/W                        [50, 20, 5, 5]      VARIABLE            FLOAT               <none>                                                [ConvolutionLayer_1/conv2d]\n"
-            + "ConvolutionLayer_1/conv2d                   -                   ARRAY               FLOAT               ConvolutionLayer_1/conv2d(conv2d)                     [SubsamplingLayer_1/maxpool2d]\n"
-            + "SubsamplingLayer_1/maxpool2d                -                   ARRAY               FLOAT               SubsamplingLayer_1/maxpool2d(maxpool2d)               [DenseLayer/inputPreprocessor/reshape]\n"
-            + "DenseLayer/inputPreprocessor/reshape        -                   ARRAY               FLOAT               DenseLayer/inputPreprocessor/reshape(reshape)         [DenseLayer/mmul]   \n"
-            + "DenseLayer/W                                [800, 500]          VARIABLE            FLOAT               <none>                                                [DenseLayer/mmul]   \n"
-            + "DenseLayer/b                                [1, 500]            VARIABLE            FLOAT               <none>                                                [DenseLayer/add]    \n"
-            + "DenseLayer/mmul                             -                   ARRAY               FLOAT               DenseLayer/mmul(mmul)                                 [DenseLayer/add]    \n"
-            + "DenseLayer/add                              -                   ARRAY               FLOAT               DenseLayer/add(add)                                   [DenseLayer/relu]   \n"
-            + "DenseLayer/relu                             -                   ARRAY               FLOAT               DenseLayer/relu(relu)                                 [OutputLayer/mmul]  \n"
-            + "OutputLayer/W                               [500, 10]           VARIABLE            FLOAT               <none>                                                [OutputLayer/mmul]  \n"
-            + "OutputLayer/b                               [1, 10]             VARIABLE            FLOAT               <none>                                                [OutputLayer/add]   \n"
-            + "OutputLayer/mmul                            -                   ARRAY               FLOAT               OutputLayer/mmul(mmul)                                [OutputLayer/add]   \n"
-            + "OutputLayer/add                             -                   ARRAY               FLOAT               OutputLayer/add(add)                                  [OutputLayer/softmax]\n"
-            + "OutputLayer/softmax                         -                   ARRAY               FLOAT               OutputLayer/softmax(softmax)                          [LossNegativeLogLikelihood/ClipByValue]\n"
-            + "labels                                      [-1, 10]            PLACEHOLDER         FLOAT               <none>                                                [LossNegativeLogLikelihood/multiply]\n"
-            + "LossNegativeLogLikelihood/ClipByValue       -                   ARRAY               FLOAT               LossNegativeLogLikelihood/ClipByValue(ClipByValue)    [LossNegativeLogLikelihood/log]\n"
-            + "LossNegativeLogLikelihood/log               -                   ARRAY               FLOAT               LossNegativeLogLikelihood/log(log)                    [LossNegativeLogLikelihood/multiply]\n"
-            + "LossNegativeLogLikelihood/multiply          -                   ARRAY               FLOAT               LossNegativeLogLikelihood/multiply(multiply)          [LossNegativeLogLikelihood/neg]\n"
-            + "LossNegativeLogLikelihood/neg               -                   ARRAY               FLOAT               LossNegativeLogLikelihood/neg(neg)                    [LossNegativeLogLikelihood/reduce_sum, LossNegativeLogLikelihood/shape_of]\n"
-            + "LossNegativeLogLikelihood/reduce_sum        -                   ARRAY               FLOAT               LossNegativeLogLikelihood/reduce_sum(reduce_sum)      [LossNegativeLogLikelihood/divide]\n"
-            + "LossNegativeLogLikelihood/shape_of          -                   ARRAY               LONG                LossNegativeLogLikelihood/shape_of(shape_of)          [LossNegativeLogLikelihood/stridedslice]\n"
-            + "LossNegativeLogLikelihood/stridedslice      -                   ARRAY               LONG                LossNegativeLogLikelihood/stridedslice(stridedslice)  [LossNegativeLogLikelihood/divide]\n"
-            + "loss                                        -                   ARRAY               FLOAT               LossNegativeLogLikelihood/divide(divide)                                  \n"
+            + "- Name -                          - Array Shape -     - Variable Type -   - Data Type-        - Output Of Function -                     - Inputs To Functions -\n"
+            + "input                             [-1, 1, 28, 28]     PLACEHOLDER         FLOAT               <none>                                     [layer0/inputPreprocessor/reshape]\n"
+            + "layer0/inputPreprocessor/reshape  -                   ARRAY               FLOAT               layer0/inputPreprocessor/reshape(reshape)  [layer0/conv2d]     \n"
+            + "layer0/b                          [1, 20]             VARIABLE            FLOAT               <none>                                     [layer0/conv2d]     \n"
+            + "layer0/W                          [20, 1, 5, 5]       VARIABLE            FLOAT               <none>                                     [layer0/conv2d]     \n"
+            + "layer0/conv2d                     -                   ARRAY               FLOAT               layer0/conv2d(conv2d)                      [layer1/maxpool2d]  \n"
+            + "layer1/maxpool2d                  -                   ARRAY               FLOAT               layer1/maxpool2d(maxpool2d)                [layer2/conv2d]     \n"
+            + "layer2/b                          [1, 50]             VARIABLE            FLOAT               <none>                                     [layer2/conv2d]     \n"
+            + "layer2/W                          [50, 20, 5, 5]      VARIABLE            FLOAT               <none>                                     [layer2/conv2d]     \n"
+            + "layer2/conv2d                     -                   ARRAY               FLOAT               layer2/conv2d(conv2d)                      [layer3/maxpool2d]  \n"
+            + "layer3/maxpool2d                  -                   ARRAY               FLOAT               layer3/maxpool2d(maxpool2d)                [layer4/inputPreprocessor/reshape]\n"
+            + "layer4/inputPreprocessor/reshape  -                   ARRAY               FLOAT               layer4/inputPreprocessor/reshape(reshape)  [layer4/mmul]       \n"
+            + "layer4/b                          [1, 500]            VARIABLE            FLOAT               <none>                                     [layer4/add]        \n"
+            + "layer4/W                          [800, 500]          VARIABLE            FLOAT               <none>                                     [layer4/mmul]       \n"
+            + "layer4/mmul                       -                   ARRAY               FLOAT               layer4/mmul(mmul)                          [layer4/add]        \n"
+            + "layer4/add                        -                   ARRAY               FLOAT               layer4/add(add)                            [layer4/relu]       \n"
+            + "layer4/relu                       -                   ARRAY               FLOAT               layer4/relu(relu)                          [layer5/mmul]       \n"
+            + "layer5/b                          [1, 10]             VARIABLE            FLOAT               <none>                                     [layer5/add]        \n"
+            + "layer5/W                          [500, 10]           VARIABLE            FLOAT               <none>                                     [layer5/mmul]       \n"
+            + "layer5/mmul                       -                   ARRAY               FLOAT               layer5/mmul(mmul)                          [layer5/add]        \n"
+            + "layer5/add                        -                   ARRAY               FLOAT               layer5/add(add)                            [layer5/softmax]    \n"
+            + "layer5/softmax                    -                   ARRAY               FLOAT               layer5/softmax(softmax)                    [layer5/loss/ClipByValue]\n"
+            + "labels                            [-1, 10]            PLACEHOLDER         FLOAT               <none>                                     [layer5/loss/multiply, layer5/loss/size_at]\n"
+            + "layer5/loss/ClipByValue           -                   ARRAY               FLOAT               layer5/loss/ClipByValue(ClipByValue)       [layer5/loss/log]   \n"
+            + "layer5/loss/log                   -                   ARRAY               FLOAT               layer5/loss/log(log)                       [layer5/loss/multiply]\n"
+            + "layer5/loss/multiply              -                   ARRAY               FLOAT               layer5/loss/multiply(multiply)             [layer5/loss/neg]   \n"
+            + "layer5/loss/neg                   -                   ARRAY               FLOAT               layer5/loss/neg(neg)                       [layer5/loss/reduce_sum]\n"
+            + "layer5/loss/reduce_sum            -                   ARRAY               FLOAT               layer5/loss/reduce_sum(reduce_sum)         [layer5/loss/divide]\n"
+            + "layer5/loss/size_at               -                   ARRAY               LONG                layer5/loss/size_at(size_at)               [layer5/loss/cast]  \n"
+            + "layer5/loss/cast                  -                   ARRAY               FLOAT               layer5/loss/cast(cast)                     [layer5/loss/divide]\n"
+            + "loss                              -                   ARRAY               FLOAT               layer5/loss/divide(divide)                                     \n"
             + "\n"
             + "\n"
             + "--- Functions ---\n"
-            + "     - Function Name -                           - Op -           - Inputs -                                                                            - Outputs -                                   \n"
-            + "0    ConvolutionLayer/inputPreprocessor/reshape  Reshape          [input]                                                                               [ConvolutionLayer/inputPreprocessor/reshape]  \n"
-            + "1    ConvolutionLayer/conv2d                     Conv2D           [ConvolutionLayer/inputPreprocessor/reshape, ConvolutionLayer/W, ConvolutionLayer/b]  [ConvolutionLayer/conv2d]                     \n"
-            + "2    SubsamplingLayer/maxpool2d                  MaxPooling2D     [ConvolutionLayer/conv2d]                                                             [SubsamplingLayer/maxpool2d]                  \n"
-            + "3    ConvolutionLayer_1/conv2d                   Conv2D           [SubsamplingLayer/maxpool2d, ConvolutionLayer_1/W, ConvolutionLayer_1/b]              [ConvolutionLayer_1/conv2d]                   \n"
-            + "4    SubsamplingLayer_1/maxpool2d                MaxPooling2D     [ConvolutionLayer_1/conv2d]                                                           [SubsamplingLayer_1/maxpool2d]                \n"
-            + "5    DenseLayer/inputPreprocessor/reshape        Reshape          [SubsamplingLayer_1/maxpool2d]                                                        [DenseLayer/inputPreprocessor/reshape]        \n"
-            + "6    DenseLayer/mmul                             Mmul             [DenseLayer/inputPreprocessor/reshape, DenseLayer/W]                                  [DenseLayer/mmul]                             \n"
-            + "7    DenseLayer/add                              AddOp            [DenseLayer/mmul, DenseLayer/b]                                                       [DenseLayer/add]                              \n"
-            + "8    DenseLayer/relu                             RectifiedLinear  [DenseLayer/add]                                                                      [DenseLayer/relu]                             \n"
-            + "9    OutputLayer/mmul                            Mmul             [DenseLayer/relu, OutputLayer/W]                                                      [OutputLayer/mmul]                            \n"
-            + "10   OutputLayer/add                             AddOp            [OutputLayer/mmul, OutputLayer/b]                                                     [OutputLayer/add]                             \n"
-            + "11   OutputLayer/softmax                         SoftMax          [OutputLayer/add]                                                                     [OutputLayer/softmax]                         \n"
-            + "12   LossNegativeLogLikelihood/ClipByValue       ClipByValue      [OutputLayer/softmax]                                                                 [LossNegativeLogLikelihood/ClipByValue]       \n"
-            + "13   LossNegativeLogLikelihood/log               Log              [LossNegativeLogLikelihood/ClipByValue]                                               [LossNegativeLogLikelihood/log]               \n"
-            + "14   LossNegativeLogLikelihood/multiply          MulOp            [LossNegativeLogLikelihood/log, labels]                                               [LossNegativeLogLikelihood/multiply]          \n"
-            + "15   LossNegativeLogLikelihood/neg               Negative         [LossNegativeLogLikelihood/multiply]                                                  [LossNegativeLogLikelihood/neg]               \n"
-            + "16   LossNegativeLogLikelihood/reduce_sum        Sum              [LossNegativeLogLikelihood/neg]                                                       [LossNegativeLogLikelihood/reduce_sum]        \n"
-            + "17   LossNegativeLogLikelihood/shape_of          Shape            [LossNegativeLogLikelihood/neg]                                                       [LossNegativeLogLikelihood/shape_of]          \n"
-            + "18   LossNegativeLogLikelihood/stridedslice      StridedSlice     [LossNegativeLogLikelihood/shape_of]                                                  [LossNegativeLogLikelihood/stridedslice]      \n"
-            + "19   LossNegativeLogLikelihood/divide            DivOp            [LossNegativeLogLikelihood/reduce_sum, LossNegativeLogLikelihood/stridedslice]        [loss]                                        \n";
+            + "     - Function Name -                 - Op -           - Inputs -                                              - Outputs -                         \n"
+            + "0    layer0/inputPreprocessor/reshape  Reshape          [input]                                                 [layer0/inputPreprocessor/reshape]  \n"
+            + "1    layer0/conv2d                     Conv2D           [layer0/inputPreprocessor/reshape, layer0/W, layer0/b]  [layer0/conv2d]                     \n"
+            + "2    layer1/maxpool2d                  MaxPooling2D     [layer0/conv2d]                                         [layer1/maxpool2d]                  \n"
+            + "3    layer2/conv2d                     Conv2D           [layer1/maxpool2d, layer2/W, layer2/b]                  [layer2/conv2d]                     \n"
+            + "4    layer3/maxpool2d                  MaxPooling2D     [layer2/conv2d]                                         [layer3/maxpool2d]                  \n"
+            + "5    layer4/inputPreprocessor/reshape  Reshape          [layer3/maxpool2d]                                      [layer4/inputPreprocessor/reshape]  \n"
+            + "6    layer4/mmul                       Mmul             [layer4/inputPreprocessor/reshape, layer4/W]            [layer4/mmul]                       \n"
+            + "7    layer4/add                        AddOp            [layer4/mmul, layer4/b]                                 [layer4/add]                        \n"
+            + "8    layer4/relu                       RectifiedLinear  [layer4/add]                                            [layer4/relu]                       \n"
+            + "9    layer5/mmul                       Mmul             [layer4/relu, layer5/W]                                 [layer5/mmul]                       \n"
+            + "10   layer5/add                        AddOp            [layer5/mmul, layer5/b]                                 [layer5/add]                        \n"
+            + "11   layer5/softmax                    SoftMax          [layer5/add]                                            [layer5/softmax]                    \n"
+            + "12   layer5/loss/ClipByValue           ClipByValue      [layer5/softmax]                                        [layer5/loss/ClipByValue]           \n"
+            + "13   layer5/loss/log                   Log              [layer5/loss/ClipByValue]                               [layer5/loss/log]                   \n"
+            + "14   layer5/loss/multiply              MulOp            [layer5/loss/log, labels]                               [layer5/loss/multiply]              \n"
+            + "15   layer5/loss/neg                   Negative         [layer5/loss/multiply]                                  [layer5/loss/neg]                   \n"
+            + "16   layer5/loss/reduce_sum            Sum              [layer5/loss/neg]                                       [layer5/loss/reduce_sum]            \n"
+            + "17   layer5/loss/size_at               SizeAt           [labels]                                                [layer5/loss/size_at]               \n"
+            + "18   layer5/loss/cast                  Cast             [layer5/loss/size_at]                                   [layer5/loss/cast]                  \n"
+            + "19   layer5/loss/divide                DivOp            [layer5/loss/reduce_sum, layer5/loss/cast]              [loss]                              \n";
 
     @Override
     public DataType getDataType() {
         return DataType.FLOAT;
     }
 
-    public static void testSameDiffInference(MultiLayerNetwork network, INDArray input){
-        SameDiff sameDiff = network.toSameDiff(null, true, true);
+    public static void testSameDiffInference(MultiLayerNetwork network, SameDiff sameDiff, INDArray input, String name){
         INDArray dl4j = network.output(input);
         INDArray sd = sameDiff.batchOutput()
                 .input("input", input)
                 .output(sameDiff.outputs().get(0))
                 .outputSingle();
 
-        assertTrue(dl4j.equalsWithEps(sd, 1e-3));
+        assertTrue("Output of DL4J and SameDiff differ for " + name, dl4j.equalsWithEps(sd, 1e-3));
+    }
+
+    public static void testSameDiffInference(ComputationGraph network, SameDiff sameDiff, INDArray input, String name){
+        INDArray dl4j = network.output(input)[0];
+        INDArray sd = sameDiff.batchOutput()
+                .input("in", input)
+                .output(sameDiff.outputs().get(0))
+                .outputSingle();
+
+        assertTrue("Output of DL4J and SameDiff differ for " + name, dl4j.equalsWithEps(sd, 1e-3));
     }
 
     @Test
-    public void testConversion() throws IOException {
+    public void testConversionAndTraining() throws IOException {
         int seed = 123;
         int outputNum = 10;
 
@@ -190,6 +202,7 @@ public class TestToSameDiff extends BaseDL4JTest {
                 .build();
 
         MultiLayerNetwork network = new MultiLayerNetwork(config);
+        network.init();
 
         SameDiff mnistSameDiff = network.toSameDiff(null, true, true);
 
@@ -197,29 +210,119 @@ public class TestToSameDiff extends BaseDL4JTest {
         assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
         assertNotNull(mnistSameDiff.getTrainingConfig());
 
-//        assertEquals("Summaries aren't equal", expectedSummary, mnistSameDiff.summary());
+        assertEquals("Summaries aren't equal", expectedSummary, mnistSameDiff.summary());
 
         MnistDataSetIterator trainData = new MnistDataSetIterator(10, 100);
 
         INDArray example = trainData.next().getFeatures();
 
-        testSameDiffInference(network, example);
+        testSameDiffInference(network, mnistSameDiff, example, "Inference");
 
-        //TODO test output dims of mseLoss
 
-        // training
-        //TODO needs a crossentropy op
-//        trainData.reset();
-//
-//        mnistSameDiff.fit(trainData, 2);
-//
+        // --- training tests ---
+
+        // train DL4J first
 //        network.fit(trainData, 2);
-//
 //        trainData.reset();
-//        example = trainData.next().getFeatures();
-//
-//        // post training test
-//
-//        testSameDiffInference(network, example);
+
+        // copy (w/ params and updater state)
+
+        mnistSameDiff = network.toSameDiff(null, true, true);
+        testSameDiffInference(network, mnistSameDiff, trainData.next().getFeatures(), "Post DL4J Training");
+
+
+        // train 2 more epochs
+        trainData.reset();
+
+        mnistSameDiff.fit(trainData, 2);
+
+        trainData.reset();
+        network.fit(trainData, 2);
+
+        trainData.reset();
+        testSameDiffInference(network, mnistSameDiff, trainData.next().getFeatures(), "Post 2nd Training");
+    }
+
+    @Test
+    public void testConversionAndTrainingGraph() throws IOException {
+        int seed = 123;
+        int outputNum = 10;
+
+        MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
+                .seed(seed)
+                .l2(0.0005)
+                .weightInit(WeightInit.XAVIER)
+                .updater(new Adam(1e-3))
+                .list()
+                .layer(new ConvolutionLayer.Builder(5, 5)
+                        .stride(1,1)
+                        .nOut(20)
+                        .activation(Activation.IDENTITY)
+                        .build())
+                .layer(new SubsamplingLayer.Builder(PoolingType.MAX)
+                        .kernelSize(2,2)
+                        .stride(2,2)
+                        .build())
+                .layer(new ConvolutionLayer.Builder(5, 5)
+                        .stride(1,1)
+                        .nOut(50)
+                        .activation(Activation.IDENTITY)
+                        .build())
+                .layer(new SubsamplingLayer.Builder(PoolingType.MAX)
+                        .kernelSize(2,2)
+                        .stride(2,2)
+                        .build())
+                .layer(new DenseLayer.Builder().activation(Activation.RELU)
+                        .nOut(500).build())
+                .layer(new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                        .nOut(outputNum)
+                        .activation(Activation.SOFTMAX)
+                        .build())
+                .setInputType(InputType.convolutionalFlat(28,28,1))
+                .build();
+
+        MultiLayerNetwork net = new MultiLayerNetwork(config);
+        net.init();
+
+        ComputationGraph graph = net.toComputationGraph();
+        graph.init();
+
+        Map<String, InputType> inputTypes = new HashMap<>();
+        inputTypes.put("in", InputType.convolutionalFlat(28,28,1));
+        SameDiff mnistSameDiff = graph.toSameDiff(inputTypes, true, true);
+
+        assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
+        assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
+        assertNotNull(mnistSameDiff.getTrainingConfig());
+
+        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 100);
+
+        INDArray example = trainData.next().getFeatures();
+
+        testSameDiffInference(graph, mnistSameDiff, example, "Inference");
+
+
+        // --- training tests ---
+
+        // train DL4J first
+        graph.fit(trainData, 2);
+        trainData.reset();
+
+        // copy (w/ params and updater state)
+
+        mnistSameDiff = graph.toSameDiff(inputTypes, true, true);
+        testSameDiffInference(graph, mnistSameDiff, trainData.next().getFeatures(), "Post DL4J Training");
+
+
+        // train 2 more epochs
+        trainData.reset();
+
+        mnistSameDiff.fit(trainData, 2);
+
+        trainData.reset();
+        graph.fit(trainData, 2);
+
+        trainData.reset();
+        testSameDiffInference(graph, mnistSameDiff, trainData.next().getFeatures(), "Post 2nd Training");
     }
 }
