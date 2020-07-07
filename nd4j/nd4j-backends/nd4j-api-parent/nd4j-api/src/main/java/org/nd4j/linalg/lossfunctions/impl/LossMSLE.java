@@ -160,7 +160,7 @@ public class LossMSLE extends BaseLossFunction {
     public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
         SDVariable score = sameDiff.math.log(input.add(1.0).div(labels.add(1.0)));
-        return LossUtil.multiplyWeight(score.mul(score).div(sameDiff.sizeAt(labels, 1)), weights);
+        return LossUtil.multiplyWeight(score.mul(score).mean(true, 1), weights);
     }
 
     /**

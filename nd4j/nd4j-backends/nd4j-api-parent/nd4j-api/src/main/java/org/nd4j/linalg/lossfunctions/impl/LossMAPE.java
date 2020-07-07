@@ -161,7 +161,7 @@ public class LossMAPE extends BaseLossFunction {
     @Override
     public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return LossUtil.multiplyWeight(sameDiff.math.abs(input.rsub(labels).div(labels)).mul(100).div(sameDiff.sizeAt(labels, 1)), weights);
+        return LossUtil.multiplyWeight(sameDiff.math.abs(input.rsub(labels).div(labels)).mul(100).mean(true, 1), weights);
     }
 
     /**
