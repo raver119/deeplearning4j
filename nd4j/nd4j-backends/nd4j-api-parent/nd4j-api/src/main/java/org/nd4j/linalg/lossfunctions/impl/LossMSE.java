@@ -72,7 +72,7 @@ public class LossMSE extends LossL2 {
     @Override
     public SDVariable defineLossArray(@NonNull SameDiff sameDiff, @NonNull SDVariable input,
             @NonNull SDVariable labels) {
-        return super.defineLossArray(sameDiff, input, labels).mean(true, 1);
+        return defineFullLossArray(sameDiff, input, labels).mean(true, 1);
     }
 
     /**
