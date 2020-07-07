@@ -63,11 +63,17 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.cpu.nativecpu.NDArray;
+import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.dataset.adapter.SingletonDataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.dataset.api.iterator.TestDataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.NoOp;
+import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.nd4j.linalg.lossfunctions.impl.LossBinaryXENT;
 import org.nd4j.linalg.lossfunctions.impl.LossCosineProximity;
 import org.nd4j.linalg.lossfunctions.impl.LossL1;
@@ -165,6 +171,59 @@ public class TestToSameDiff extends BaseDL4JTest {
     }
 
     @Test
+    public void testSimple() throws IOException {
+        int seed = 123;
+
+        Nd4j.getRandom().setSeed(seed);
+
+        MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
+                .seed(seed)
+                .updater(new Adam(1e-3))
+                .list()
+                .layer(new OutputLayer.Builder(LossFunction.MSE).nIn(4).nOut(3).build())
+                .setInputType(InputType.feedForward(4))
+                .build();
+
+        MultiLayerNetwork network = new MultiLayerNetwork(config);
+        network.init();
+
+        Nd4j.getRandom().setSeed(seed);
+        SameDiff mnistSameDiff = network.toSameDiff(null, true, false);
+
+        assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
+        assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
+        assertNotNull(mnistSameDiff.getTrainingConfig());
+
+        INDArray example = Nd4j.rand(5, 4);
+        DataSet ds = new DataSet(Nd4j.rand(5, 4), Nd4j.rand(5, 3));
+        DataSetIterator iter = new SingletonDataSetIterator(ds);
+
+        testSameDiffInference(network, mnistSameDiff, example, "Inference");
+
+
+        // --- training tests ---
+
+        // train DL4J first
+        network.fit(iter, 1);
+        iter.reset();
+
+        // copy (w/ params and updater state)
+
+        mnistSameDiff = network.toSameDiff(null, true, false);
+        testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
+
+
+        // train 2 more epochs
+        iter.reset();
+        mnistSameDiff.fit(iter, 1);
+
+        iter.reset();
+        network.fit(iter, 1);
+
+        testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
+    }
+
+    @Test
     public void testConversionAndTraining() throws IOException {
         int seed = 123;
         int outputNum = 10;
@@ -217,7 +276,7 @@ public class TestToSameDiff extends BaseDL4JTest {
 
         assertEquals("Summaries aren't equal", expectedSummary, mnistSameDiff.summary());
 
-        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 100);
+        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 1);
 
         INDArray example = trainData.next().getFeatures().dup();
 
