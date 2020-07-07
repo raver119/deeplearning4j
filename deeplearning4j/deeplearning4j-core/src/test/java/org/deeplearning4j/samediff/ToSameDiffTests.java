@@ -474,7 +474,7 @@ public class ToSameDiffTests extends RunListener {
             INDArray output = network.output(input).dup();
             network.setLabels(labels);
             network.computeGradientAndScore();
-            double score = network.score();
+            double score = network.score() - network.calcRegularizationScore(true);
 
             Map<String, INDArray> sdOutputs = sameDiff.batchOutput()
                     .output(sameDiff.outputs().get(0), sameDiff.getLossVariables().get(0))
@@ -582,9 +582,14 @@ public class ToSameDiffTests extends RunListener {
         for(String inputName : inputsMap.keySet())
             activations.remove(inputName);
 
-        Map<String, SDVariable> sdActivationVariables = new HashMap<>();
+        List<String> activationKeys = new ArrayList<>();
+        for(String n : graph.getConfiguration().getTopologicalOrderStr()){
+            if(activations.containsKey(n))
+                activationKeys.add(n);
+        }
 
-        for(String vertexName : new ArrayList<>(activations.keySet())){
+        Map<String, SDVariable> sdActivationVariables = new HashMap<>();
+        for(String vertexName : activationKeys){
             List<SDVariable> scopeVars = sameDiff.getVariablesInScope(vertexName);
             if(!scopeVars.isEmpty()){
                 SDVariable lastVar = null;
@@ -600,6 +605,12 @@ public class ToSameDiffTests extends RunListener {
 
                 if(lastVar != null)
                     sdActivationVariables.put(vertexName, lastVar);
+                else {
+                    List<String> vertexInputs = graph.getConfiguration().getVertexInputs().get(vertexName);
+                    if(vertexInputs.size() == 1){
+                        sdActivationVariables.put(vertexName, sdActivationVariables.get(vertexInputs.get(0)));
+                    }
+                }
             }
         }
 
@@ -669,7 +680,7 @@ public class ToSameDiffTests extends RunListener {
 
             graph.setLabels(labels);
             graph.computeGradientAndScore();
-            double score = graph.score();
+            double score = graph.score() - graph.calcRegularizationScore(true);
 
             Map<String, INDArray> sdLosses = sameDiff.batchOutput()
                     .inputs(inputAndLabelMap)
