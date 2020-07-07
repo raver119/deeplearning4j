@@ -323,8 +323,10 @@ public class ToSameDiffTests extends RunListener {
                 return;
 
             testedVertices.add(vertex.getClass());
-            if(vertex.hasLayer())
+            if(vertex.hasLayer()){
                 record(vertex.getLayer().conf().getLayer());
+
+            }
 
             if(vertex instanceof LayerVertex)
                 record(((LayerVertex) vertex).getLayerPreProcessor());

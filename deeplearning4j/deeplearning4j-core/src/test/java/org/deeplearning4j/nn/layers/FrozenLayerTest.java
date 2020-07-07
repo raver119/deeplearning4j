@@ -374,6 +374,6 @@ public class FrozenLayerTest extends BaseDL4JTest {
 
         assertEquals(out2, out3);
 
-        ToSameDiffTests.testToSameDiff(net1, input, null);
+        ToSameDiffTests.testToSameDiff(net2, input, null);
     }
 }

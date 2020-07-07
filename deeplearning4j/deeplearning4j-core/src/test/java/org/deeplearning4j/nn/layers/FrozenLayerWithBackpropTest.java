@@ -156,6 +156,7 @@ public class FrozenLayerWithBackpropTest extends BaseDL4JTest {
         INDArray out3 = net3.outputSingle(input);
 
         assertEquals(out2, out3);
+        ToSameDiffTests.testToSameDiff(net2, input, null);
     }
 
     @Test
