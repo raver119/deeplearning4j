@@ -56,6 +56,7 @@ import org.nd4j.autodiff.loss.LossReduce;
 import org.nd4j.autodiff.samediff.SDIndex;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.autodiff.samediff.internal.memory.NoOpMemoryMgr;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.activations.impl.ActivationSigmoid;
 import org.nd4j.linalg.activations.impl.ActivationSoftmax;
@@ -268,7 +269,7 @@ public class TestToSameDiff extends BaseDL4JTest {
         network.init();
 
         Nd4j.getRandom().setSeed(seed);
-        SameDiff mnistSameDiff = network.toSameDiff(null, true, false);
+        SameDiff mnistSameDiff = network.toSameDiff(null, false, false);
 
         assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
         assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
@@ -276,7 +277,7 @@ public class TestToSameDiff extends BaseDL4JTest {
 
         assertEquals("Summaries aren't equal", expectedSummary, mnistSameDiff.summary());
 
-        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 1);
+        MnistDataSetIterator trainData = new MnistDataSetIterator(5, 5);
 
         INDArray example = trainData.next().getFeatures().dup();
 
@@ -286,21 +287,21 @@ public class TestToSameDiff extends BaseDL4JTest {
         // --- training tests ---
 
         // train DL4J first
-        network.fit(trainData, 2);
+        network.fit(trainData, 1);
         trainData.reset();
 
         // copy (w/ params and updater state)
 
-        mnistSameDiff = network.toSameDiff(null, true, false);
+        mnistSameDiff = network.toSameDiff(null, false, false);
         testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
 
 
         // train 2 more epochs
         trainData.reset();
-        mnistSameDiff.fit(trainData, 2);
+        mnistSameDiff.fit(trainData, 1);
 
         trainData.reset();
-        network.fit(trainData, 2);
+        network.fit(trainData, 1);
 
         testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
     }
@@ -312,9 +313,9 @@ public class TestToSameDiff extends BaseDL4JTest {
 
         MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .l2(0.0005)
-                .l2Bias(0.0005)
-                .weightInit(WeightInit.XAVIER)
+//                .l2(0.0005)
+//                .l2Bias(0.0005)
+//                .weightInit(WeightInit.XAVIER)
                 .updater(new Adam(1e-3))
                 .list()
                 .layer(new ConvolutionLayer.Builder(5, 5)
@@ -358,7 +359,7 @@ public class TestToSameDiff extends BaseDL4JTest {
         assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
         assertNotNull(mnistSameDiff.getTrainingConfig());
 
-        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 100);
+        MnistDataSetIterator trainData = new MnistDataSetIterator(10, 10);
 
         INDArray example = trainData.next().getFeatures().dup();
 
@@ -373,13 +374,12 @@ public class TestToSameDiff extends BaseDL4JTest {
 
         // copy (w/ params and updater state)
 
-        mnistSameDiff = graph.toSameDiff(inputTypes, true, true);
+        mnistSameDiff = graph.toSameDiff(inputTypes, true, false);
         testSameDiffInference(graph, mnistSameDiff, example, "Post DL4J Training");
 
 
         // train 2 more epochs
         trainData.reset();
-
         mnistSameDiff.fit(trainData, 2);
 
         trainData.reset();

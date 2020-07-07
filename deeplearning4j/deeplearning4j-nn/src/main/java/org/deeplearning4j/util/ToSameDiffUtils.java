@@ -265,8 +265,6 @@ public class ToSameDiffUtils {
                     }
 
                     String paramName = namespace + "/" + ps.getParamName();
-//                    int idx = getId(ps.getLayer());
-//                    String paramName = idx + "_" + ps.getParamName();
 
                     INDArray pv = ps.getParamView();
                     long nParamsThisParam = pv.length();
@@ -277,11 +275,7 @@ public class ToSameDiffUtils {
                         paramState.put(k, state.get(k).get(NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(offsetWithinSub, offsetWithinSub + nParamsThisParam)));
                     }
 
-//                    INDArray currSplit = subsetUpdaterView.get(NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(offsetWithinSub, offsetWithinSub + nParamsThisParam));
-//                    if(!stateViewsPerParam.containsKey(paramName))
-//                        stateViewsPerParam.put(paramName, new ArrayList<INDArray>());
-//                    stateViewsPerParam.get(paramName).add(currSplit);
-//                    offsetWithinSub += nParamsThisParam;
+                    offsetWithinSub += nParamsThisParam;
                     stateViewsPerParam.put(paramName, paramState);
                 }
 
@@ -320,7 +314,6 @@ public class ToSameDiffUtils {
 
             GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(params, false);
             gu.setState(params, false);
-//            gu.setStateViewArray(params, arr.shape(), arr.ordering(), false);
             updaterMap.put(v.getName(), gu);
         }
 
