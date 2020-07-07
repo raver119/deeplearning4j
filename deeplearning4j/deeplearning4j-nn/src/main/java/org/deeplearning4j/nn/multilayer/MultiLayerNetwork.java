@@ -927,6 +927,9 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
 
             org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
 
+            trainingConfig.setIterationCount(getIterationCount());
+            trainingConfig.setEpochCount(getEpochCount());
+
             sameDiff.setTrainingConfig(trainingConfig);
 
             if(iUpdater != null) {

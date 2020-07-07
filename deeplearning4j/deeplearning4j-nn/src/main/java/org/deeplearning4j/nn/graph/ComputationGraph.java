@@ -911,6 +911,9 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
 
             org.nd4j.autodiff.samediff.TrainingConfig trainingConfig = tcBuilder.build();
 
+            trainingConfig.setIterationCount(getIterationCount());
+            trainingConfig.setEpochCount(getEpochCount());
+
             sameDiff.setTrainingConfig(trainingConfig);
 
             if(iUpdater != null) {
