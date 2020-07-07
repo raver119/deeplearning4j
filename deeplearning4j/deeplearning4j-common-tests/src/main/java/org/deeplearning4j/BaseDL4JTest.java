@@ -23,7 +23,9 @@ import org.bytedeco.javacpp.Pointer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.rules.DisableOnDebug;
 import org.junit.rules.TestName;
+import org.junit.rules.TestRule;
 import org.junit.rules.Timeout;
 import org.nd4j.common.base.Preconditions;
 import org.nd4j.common.config.ND4JSystemProperties;
@@ -48,7 +50,7 @@ public abstract class BaseDL4JTest {
     @Rule
     public TestName name = new TestName();
     @Rule
-    public Timeout timeout = Timeout.millis(getTimeoutMilliseconds());
+    public TestRule timeout = new DisableOnDebug(Timeout.millis(getTimeoutMilliseconds()));
 
     protected long startTime;
     protected int threadCountBefore;
