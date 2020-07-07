@@ -187,80 +187,91 @@ public class TestToSameDiff extends BaseDL4JTest {
         int seed = 123;
 
         boolean[] useDenses = {false}; // {true, false};
-        Updater[] updaters = Updater.values();
+        Updater[] updaters = {Updater.NONE}; // Updater.values();
         Regularization[] regularizations = {null}; //{ new L2Regularization(0.0005), new L1Regularization(0.005), new WeightDecay(0.03, true)};
+        LossFunction[] lossFunctions = {LossFunction.MSE, LossFunction.L1, LossFunction.MCXENT, LossFunction.COSINE_PROXIMITY, LossFunction.HINGE,
+                LossFunction.SQUARED_HINGE, LossFunction.KL_DIVERGENCE, LossFunction.MEAN_ABSOLUTE_ERROR, LossFunction.L2, LossFunction.MEAN_ABSOLUTE_PERCENTAGE_ERROR, LossFunction.MEAN_SQUARED_LOGARITHMIC_ERROR, LossFunction.POISSON, LossFunction.WASSERSTEIN};
+
 
         List<String> failures = new ArrayList<>();
 
         for(Updater updater : updaters) {
-            for (boolean useDense : useDenses) {
-                for(Regularization regularization : regularizations) {
+            for(LossFunction lossFunction : lossFunctions) {
+                for (boolean useDense : useDenses) {
+                    for (Regularization regularization : regularizations) {
 
-                    if(updater == Updater.CUSTOM)
-                        continue;
+                        if (updater == Updater.CUSTOM)
+                            continue;
 
-                    IUpdater iUpdater = updater.getIUpdaterWithDefaultConfig();
+                        IUpdater iUpdater = updater.getIUpdaterWithDefaultConfig();
 
-                    log.info("Test with {}, {}, and {}", useDense ? "dense layer" : "no dense layer", regularization, iUpdater);
+                        log.info("Test with {}, {}, {}, and {}", useDense ? "dense layer" : "no dense layer",
+                                regularization, lossFunction, iUpdater);
 
-                    try {
-                        Nd4j.getRandom().setSeed(seed);
+                        try {
+                            Nd4j.getRandom().setSeed(seed);
 
-                        ListBuilder partial = new NeuralNetConfiguration.Builder()
-                                .seed(seed)
-                                .updater(iUpdater)
-                                .regularization(regularization != null ? Collections.singletonList(regularization) : Collections.<Regularization>emptyList())
-                                .regularizationBias(regularization != null ? Collections.singletonList(regularization) : Collections.<Regularization>emptyList())
-                                .list();
+                            ListBuilder partial = new NeuralNetConfiguration.Builder()
+                                    .seed(seed)
+                                    .updater(iUpdater)
+                                    .regularization(regularization != null ? Collections.singletonList(regularization)
+                                            : Collections.<Regularization>emptyList())
+                                    .regularizationBias(
+                                            regularization != null ? Collections.singletonList(regularization)
+                                                    : Collections.<Regularization>emptyList())
+                                    .list();
 
-                        if (useDense)
-                            partial.layer(new DenseLayer.Builder()
-                                    .activation(Activation.RELU)
-                                    .nOut(4).build());
+                            if (useDense)
+                                partial.layer(new DenseLayer.Builder()
+                                        .activation(Activation.RELU)
+                                        .nOut(4).build());
 
-                        MultiLayerConfiguration config = partial
-                                .layer(new OutputLayer.Builder(LossFunction.MSE).nIn(4).nOut(3).build())
-                                .setInputType(InputType.feedForward(4))
-                                .build();
+                            MultiLayerConfiguration config = partial
+                                    .layer(new OutputLayer.Builder(lossFunction).nIn(4).nOut(3).build())
+                                    .setInputType(InputType.feedForward(4))
+                                    .build();
 
-                        MultiLayerNetwork network = new MultiLayerNetwork(config);
-                        network.init();
+                            MultiLayerNetwork network = new MultiLayerNetwork(config);
+                            network.init();
 
-                        Nd4j.getRandom().setSeed(seed);
-                        SameDiff mnistSameDiff = network.toSameDiff(null, false, false);
+                            Nd4j.getRandom().setSeed(seed);
+                            SameDiff mnistSameDiff = network.toSameDiff(null, false, false);
 
-                        assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
-                        assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
-                        assertNotNull(mnistSameDiff.getTrainingConfig());
+                            assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
+                            assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
+                            assertNotNull(mnistSameDiff.getTrainingConfig());
 
-                        INDArray example = Nd4j.rand(5, 4);
-                        DataSet ds = new DataSet(Nd4j.rand(5, 4), Nd4j.rand(5, 3));
-                        DataSetIterator iter = new SingletonDataSetIterator(ds);
+                            INDArray example = Nd4j.rand(5, 4);
+                            DataSet ds = new DataSet(Nd4j.rand(5, 4), Nd4j.rand(5, 3));
+                            DataSetIterator iter = new SingletonDataSetIterator(ds);
 
-                        testSameDiffInference(network, mnistSameDiff, example, "Inference");
+                            testSameDiffInference(network, mnistSameDiff, example, "Inference");
 
-                        // --- training tests ---
+                            // --- training tests ---
 
-                        // train DL4J first
-                        network.fit(iter, 1);
-                        iter.reset();
+                            // train DL4J first
+                            network.fit(iter, 1);
+                            iter.reset();
 
-                        // copy (w/ params and updater state)
+                            // copy (w/ params and updater state)
 
-                        mnistSameDiff = network.toSameDiff(null, true, false);
-                        testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
+                            mnistSameDiff = network.toSameDiff(null, true, false);
+                            testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
 
-                        // train 2 more epochs
-                        iter.reset();
-                        mnistSameDiff.fit(iter, 1);
+                            // train 2 more epochs
+                            iter.reset();
+                            mnistSameDiff.fit(iter, 1);
 
-                        iter.reset();
-                        network.fit(iter, 1);
+                            iter.reset();
+                            network.fit(iter, 1);
 
-                        testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
-                    } catch (AssertionError ae){
-                        ae.printStackTrace();
-                        failures.add((useDense ? "Dense Layer " : "No Dense Layer ") + " with " + regularization + " and " + iUpdater);
+                            testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
+                        } catch (AssertionError ae) {
+                            ae.printStackTrace();
+                            failures.add((useDense ? "Dense Layer " : "No Dense Layer ") + " with " + regularization
+                                    + ", " + lossFunction
+                                    + ", and " + iUpdater);
+                        }
                     }
                 }
             }
