@@ -56,6 +56,7 @@ import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMDirectionMode;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.config.LSTMLayerConfig;
 import org.nd4j.linalg.api.ops.impl.layers.recurrent.weights.LSTMLayerWeights;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.NDArrayIndex;
 
 /**
  * LSTM recurrent neural network layer without peephole connections. Supports CuDNN acceleration - see <a
@@ -160,10 +161,28 @@ public class LSTM extends AbstractLSTM {
                     + "ActivationHardSigmoid, ActivationELU, ActivationSoftSign, or ActivationSoftPlus.");
     }
 
+    /**
+     * Change weight from [input, forget, output, gate] (DL4J) to [input, forget, gate, output] (SameDiff)
+     */
+    private static INDArray changeWeight(INDArray weight){
+        int size = (int) (weight.size(1) / 4);
+        INDArray input = weight.get(NDArrayIndex.all(), NDArrayIndex.interval(0, size));
+        INDArray forget = weight.get(NDArrayIndex.all(), NDArrayIndex.interval(size, 2*size));
+        INDArray output = weight.get(NDArrayIndex.all(), NDArrayIndex.interval(2*size, 3*size));
+        INDArray gate = weight.get(NDArrayIndex.all(), NDArrayIndex.interval(3*size, 4*size));
+        return Nd4j.concat(1, input, forget, gate, output);
+    }
+
     @Override
     public void transformParamsForSameDiff(@NonNull Map<String, INDArray> params) {
         INDArray bias = params.get(LSTMParamInitializer.BIAS_KEY);
         params.put(LSTMParamInitializer.BIAS_KEY, Nd4j.squeeze(bias, 0));
+
+        params.put(LSTMParamInitializer.INPUT_WEIGHT_KEY,
+                changeWeight(params.get(LSTMParamInitializer.INPUT_WEIGHT_KEY)));
+
+        params.put(LSTMParamInitializer.RECURRENT_WEIGHT_KEY,
+                changeWeight(params.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY)));
     }
 
     @Override
@@ -186,6 +205,7 @@ public class LSTM extends AbstractLSTM {
                 LSTMLayerConfig.builder()
                         .gateAct(gateActivation)
                         .cellAct(recurrentActivation)
+                        .outAct(recurrentActivation)
                         .retFullSequence(true)
                         .directionMode(LSTMDirectionMode.FWD)
                         .lstmdataformat(rnnDataFormat == RNNFormat.NCW ? LSTMDataFormat.NST : LSTMDataFormat.NTS)
@@ -195,40 +215,41 @@ public class LSTM extends AbstractLSTM {
     @Override
     public SDVariable defineBidirectional(SameDiff sameDiff, SDVariable layerInput, Map<String, SDVariable> paramTable,
             SDVariable mask, Mode mode) {
-        SDVariable recurrentWeight = paramTable.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY);
-        SDVariable inputWeight = paramTable.get(LSTMParamInitializer.INPUT_WEIGHT_KEY);
-        SDVariable bias = paramTable.get(LSTMParamInitializer.BIAS_KEY);
-
-        LSTMActivations gateActivation = toLSTMActivation(gateActivationFn);
-        LSTMActivations recurrentActivation = toLSTMActivation(activationFn);
-
-        LSTMDirectionMode directionMode;
-        if(mode == Mode.ADD || mode == Mode.AVERAGE)
-            directionMode = LSTMDirectionMode.BIDIR_SUM;
-        else if(mode == Mode.CONCAT)
-            directionMode = LSTMDirectionMode.BIDIR_CONCAT;
-        else
-            throw new UnsupportedOperationException("Bidirectional not supported for mode " + mode);
-
-        LSTMDataFormat format = rnnDataFormat == RNNFormat.NCW ? LSTMDataFormat.NST : LSTMDataFormat.NTS;
-
-        SDVariable output = sameDiff.rnn.lstmLayer(layerInput, LSTMLayerWeights.builder()
-                        .weights(inputWeight)
-                        .rWeights(recurrentWeight)
-                        .bias(bias)
-                        .build(),
-                LSTMLayerConfig.builder()
-                        .gateAct(gateActivation)
-                        .cellAct(recurrentActivation)
-                        .directionMode(directionMode)
-                        .lstmdataformat(format)
-                        .build())[0];
-
-        if(mode == Mode.AVERAGE)
-            return output.div(2);
-        else
-            return output;
-
+        //TODO need different param transforms for bidirectional
+//        SDVariable recurrentWeight = paramTable.get(LSTMParamInitializer.RECURRENT_WEIGHT_KEY);
+//        SDVariable inputWeight = paramTable.get(LSTMParamInitializer.INPUT_WEIGHT_KEY);
+//        SDVariable bias = paramTable.get(LSTMParamInitializer.BIAS_KEY);
+//
+//        LSTMActivations gateActivation = toLSTMActivation(gateActivationFn);
+//        LSTMActivations recurrentActivation = toLSTMActivation(activationFn);
+//
+//        LSTMDirectionMode directionMode;
+//        if(mode == Mode.ADD || mode == Mode.AVERAGE)
+//            directionMode = LSTMDirectionMode.BIDIR_SUM;
+//        else if(mode == Mode.CONCAT)
+//            directionMode = LSTMDirectionMode.BIDIR_CONCAT;
+//        else
+//            throw new UnsupportedOperationException("Bidirectional not supported for mode " + mode);
+//
+//        LSTMDataFormat format = rnnDataFormat == RNNFormat.NCW ? LSTMDataFormat.NST : LSTMDataFormat.NTS;
+//
+//        SDVariable output = sameDiff.rnn.lstmLayer(layerInput, LSTMLayerWeights.builder()
+//                        .weights(inputWeight)
+//                        .rWeights(recurrentWeight)
+//                        .bias(bias)
+//                        .build(),
+//                LSTMLayerConfig.builder()
+//                        .gateAct(gateActivation)
+//                        .cellAct(recurrentActivation)
+//                        .directionMode(directionMode)
+//                        .lstmdataformat(format)
+//                        .build())[0];
+//
+//        if(mode == Mode.AVERAGE)
+//            return output.div(2);
+//        else
+//            return output;
+        return super.defineBidirectional(sameDiff, layerInput, paramTable, mask, mode);
     }
 
     @Override
