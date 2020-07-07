@@ -231,7 +231,7 @@ public class ToSameDiffUtils {
             layerList = Arrays.asList(layers);
         }
 
-        Map<String, List<INDArray>> stateViewsPerParam = new HashMap<>();
+        Map<String, Map<String, INDArray>> stateViewsPerParam = new HashMap<>();
         for(UpdaterBlock ub : updater.getUpdaterBlocks()){
             List<UpdaterBlock.ParamState> params = ub.getLayersAndVariablesInBlock();
             int blockPStart = ub.getParamOffsetStart();
@@ -251,6 +251,8 @@ public class ToSameDiffUtils {
                 INDArray subsetUpdaterView = updaterView.get(
                         NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(soFar, soFar + nParamsInBlock));
 
+                Map<String, INDArray> state = ub.getGradientUpdater().getState();
+
                 long offsetWithinSub = 0;
                 for (UpdaterBlock.ParamState ps : params) {
 
@@ -269,11 +271,14 @@ public class ToSameDiffUtils {
                     INDArray pv = ps.getParamView();
                     long nParamsThisParam = pv.length();
 
-                    INDArray currSplit = subsetUpdaterView.get(NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(offsetWithinSub, offsetWithinSub + nParamsThisParam));
-                    if(!stateViewsPerParam.containsKey(paramName))
-                        stateViewsPerParam.put(paramName, new ArrayList<INDArray>());
-                    stateViewsPerParam.get(paramName).add(currSplit);
-                    offsetWithinSub += nParamsThisParam;
+
+
+//                    INDArray currSplit = subsetUpdaterView.get(NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(offsetWithinSub, offsetWithinSub + nParamsThisParam));
+//                    if(!stateViewsPerParam.containsKey(paramName))
+//                        stateViewsPerParam.put(paramName, new ArrayList<INDArray>());
+//                    stateViewsPerParam.get(paramName).add(currSplit);
+//                    offsetWithinSub += nParamsThisParam;
+                        stateViewsPerParam.put(paramName, state);
                 }
 
                 soFar += nParamsInBlock;
@@ -294,20 +299,20 @@ public class ToSameDiffUtils {
             INDArray arr = v.getVariable().getArr();
             long stateSize = sameDiff.getTrainingConfig().getUpdater().stateSize(arr.length());
 
-            INDArray view;
+            Map<String, INDArray> params;
             if(stateSize > 0) {
                 if (stateViewsPerParam.containsKey(v.getVariable().name())) {
-                    List<INDArray> arrays = stateViewsPerParam.get(v.getVariable().name());
-                    view = Nd4j.concat(1, arrays.toArray(new INDArray[0]));
+                    params = stateViewsPerParam.get(v.getVariable().name());
                 } else {
                     throw new IllegalStateException("No updater state found for variable " + v.getVariable().name());
                 }
             } else {
-                view = null;
+                params = new HashMap<>();
             }
 
-            GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(view, false);
-            gu.setStateViewArray(view, arr.shape(), arr.ordering(), false);
+            GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(params, false);
+            gu.setState(params, false);
+//            gu.setStateViewArray(params, arr.shape(), arr.ordering(), false);
             updaterMap.put(v.getName(), gu);
         }
 
