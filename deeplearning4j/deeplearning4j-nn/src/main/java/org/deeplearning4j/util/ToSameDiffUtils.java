@@ -315,7 +315,7 @@ public class ToSameDiffUtils {
             }
 
             for(String k : params.keySet()){
-                params.put(k, params.get(k).reshape(arr.shape()));
+                params.put(k, params.get(k).reshape(arr.ordering(), arr.shape()));
             }
 
             GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(params, false);
