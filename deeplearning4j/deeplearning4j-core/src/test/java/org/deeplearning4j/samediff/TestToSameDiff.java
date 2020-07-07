@@ -20,11 +20,15 @@ package org.deeplearning4j.samediff;
 
 import static org.junit.Assert.*;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.ml.neuralnet.MapUtils;
@@ -33,6 +37,8 @@ import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
+import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
@@ -71,8 +77,13 @@ import org.nd4j.linalg.dataset.api.iterator.TestDataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.learning.config.IUpdater;
 import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.config.Sgd;
+import org.nd4j.linalg.learning.regularization.L1Regularization;
+import org.nd4j.linalg.learning.regularization.L2Regularization;
+import org.nd4j.linalg.learning.regularization.Regularization;
+import org.nd4j.linalg.learning.regularization.WeightDecay;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.nd4j.linalg.lossfunctions.impl.LossBinaryXENT;
@@ -175,53 +186,93 @@ public class TestToSameDiff extends BaseDL4JTest {
     public void testSimple() throws IOException {
         int seed = 123;
 
-        Nd4j.getRandom().setSeed(seed);
+        boolean[] useDenses = {false}; // {true, false};
+        Updater[] updaters = Updater.values();
+        Regularization[] regularizations = {null}; //{ new L2Regularization(0.0005), new L1Regularization(0.005), new WeightDecay(0.03, true)};
 
-        MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
-                .seed(seed)
-                .updater(new Adam(1e-3))
-                .list()
-                .layer(new OutputLayer.Builder(LossFunction.MSE).nIn(4).nOut(3).build())
-                .setInputType(InputType.feedForward(4))
-                .build();
+        List<String> failures = new ArrayList<>();
 
-        MultiLayerNetwork network = new MultiLayerNetwork(config);
-        network.init();
+        for(Updater updater : updaters) {
+            for (boolean useDense : useDenses) {
+                for(Regularization regularization : regularizations) {
 
-        Nd4j.getRandom().setSeed(seed);
-        SameDiff mnistSameDiff = network.toSameDiff(null, true, false);
+                    if(updater == Updater.CUSTOM)
+                        continue;
 
-        assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
-        assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
-        assertNotNull(mnistSameDiff.getTrainingConfig());
+                    IUpdater iUpdater = updater.getIUpdaterWithDefaultConfig();
 
-        INDArray example = Nd4j.rand(5, 4);
-        DataSet ds = new DataSet(Nd4j.rand(5, 4), Nd4j.rand(5, 3));
-        DataSetIterator iter = new SingletonDataSetIterator(ds);
+                    log.info("Test with {}, {}, and {}", useDense ? "dense layer" : "no dense layer", regularization, iUpdater);
 
-        testSameDiffInference(network, mnistSameDiff, example, "Inference");
+                    try {
+                        Nd4j.getRandom().setSeed(seed);
 
+                        ListBuilder partial = new NeuralNetConfiguration.Builder()
+                                .seed(seed)
+                                .updater(iUpdater)
+                                .regularization(regularization != null ? Collections.singletonList(regularization) : Collections.<Regularization>emptyList())
+                                .regularizationBias(regularization != null ? Collections.singletonList(regularization) : Collections.<Regularization>emptyList())
+                                .list();
 
-        // --- training tests ---
+                        if (useDense)
+                            partial.layer(new DenseLayer.Builder()
+                                    .activation(Activation.RELU)
+                                    .nOut(4).build());
 
-        // train DL4J first
-        network.fit(iter, 1);
-        iter.reset();
+                        MultiLayerConfiguration config = partial
+                                .layer(new OutputLayer.Builder(LossFunction.MSE).nIn(4).nOut(3).build())
+                                .setInputType(InputType.feedForward(4))
+                                .build();
 
-        // copy (w/ params and updater state)
+                        MultiLayerNetwork network = new MultiLayerNetwork(config);
+                        network.init();
 
-        mnistSameDiff = network.toSameDiff(null, true, false);
-        testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
+                        Nd4j.getRandom().setSeed(seed);
+                        SameDiff mnistSameDiff = network.toSameDiff(null, false, false);
 
+                        assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
+                        assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
+                        assertNotNull(mnistSameDiff.getTrainingConfig());
 
-        // train 2 more epochs
-        iter.reset();
-        mnistSameDiff.fit(iter, 1);
+                        INDArray example = Nd4j.rand(5, 4);
+                        DataSet ds = new DataSet(Nd4j.rand(5, 4), Nd4j.rand(5, 3));
+                        DataSetIterator iter = new SingletonDataSetIterator(ds);
 
-        iter.reset();
-        network.fit(iter, 1);
+                        testSameDiffInference(network, mnistSameDiff, example, "Inference");
 
-        testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
+                        // --- training tests ---
+
+                        // train DL4J first
+                        network.fit(iter, 1);
+                        iter.reset();
+
+                        // copy (w/ params and updater state)
+
+                        mnistSameDiff = network.toSameDiff(null, true, false);
+                        testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
+
+                        // train 2 more epochs
+                        iter.reset();
+                        mnistSameDiff.fit(iter, 1);
+
+                        iter.reset();
+                        network.fit(iter, 1);
+
+                        testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
+                    } catch (AssertionError ae){
+                        ae.printStackTrace();
+                        failures.add((useDense ? "Dense Layer " : "No Dense Layer ") + " with " + regularization + " and " + iUpdater);
+                    }
+                }
+            }
+        }
+
+        log.info(" --- Failures --- ");
+        for(String f : failures){
+            log.info(f);
+        }
+
+        assertTrue("There were failed tests", failures.isEmpty());
+
     }
 
     @Test
