@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.deeplearning4j.nn.api.Layer;
@@ -231,7 +232,8 @@ public class ToSameDiffUtils {
             layerList = Arrays.asList(layers);
         }
 
-        Map<String, Map<String, INDArray>> stateViewsPerParam = new HashMap<>();
+        // layer -> param -> updater param -> array
+        Map<Trainable, Map<String, Map<String, INDArray>>> layerParamStates = new HashMap<>();
         for(UpdaterBlock ub : updater.getUpdaterBlocks()){
             List<UpdaterBlock.ParamState> params = ub.getLayersAndVariablesInBlock();
             int blockPStart = ub.getParamOffsetStart();
@@ -275,12 +277,83 @@ public class ToSameDiffUtils {
                         paramState.put(k, state.get(k).get(NDArrayIndex.interval(0, 0, true), NDArrayIndex.interval(offsetWithinSub, offsetWithinSub + nParamsThisParam)));
                     }
 
+                    Map<String, Map<String, INDArray>> layerState = layerParamStates.get(ps.getLayer());
+
+                    if(layerState == null){
+                        layerState = new HashMap<>();
+                        layerParamStates.put(ps.getLayer(), layerState);
+                    }
+
                     offsetWithinSub += nParamsThisParam;
-                    stateViewsPerParam.put(paramName, paramState);
+                    layerState.put(ps.getParamName(), paramState);
                 }
 
                 soFar += nParamsInBlock;
             }
+        }
+
+        // transform gradient params like weights are transformed
+
+        Map<String, Map<String, INDArray>> paramUpdaterStates = new HashMap<>();
+        for(Map.Entry<Trainable, Map<String, Map<String, INDArray>>> entry : layerParamStates.entrySet()){
+            Trainable trainable = entry.getKey();
+            Map<String, Map<String, INDArray>> byParam = entry.getValue();
+
+            String namespace;
+            if(trainable instanceof GraphVertex){
+                namespace = ((GraphVertex) trainable).getVertexName();
+            } else {
+                Layer layer = (Layer) trainable;
+                namespace = layerNames.get(layerList.indexOf(layer));
+            }
+
+            namespace +=  "/";
+
+            if(entry.getValue().isEmpty())
+                continue;
+
+            // updaterParam -> param -> arr
+            // need param -> arr to feed to transform methods
+            Map<String, Map<String, INDArray>> byUpdaterParam = new HashMap<>();
+            for(String param : byParam.keySet()){
+                for(Map.Entry<String, INDArray> uEntry : byParam.get(param).entrySet()){
+                    String updaterParam = uEntry.getKey();
+
+                    Map<String, INDArray> updaterParamMap = byUpdaterParam.get(updaterParam);
+                    if(updaterParamMap == null){
+                        updaterParamMap = new HashMap<>();
+                        byUpdaterParam.put(updaterParam, updaterParamMap);
+                    }
+
+                    String sdName = namespace + param;
+                    SDVariable v = sameDiff.getVariable(sdName);
+                    INDArray sdArr = v.getArr();
+
+                    updaterParamMap.put(param, uEntry.getValue().dup().reshape(sdArr.ordering(), sdArr.shape()));
+                }
+            }
+
+            for(String updaterParam : byUpdaterParam.keySet()){
+                Map<String, INDArray> byParamMap = byUpdaterParam.get(updaterParam);
+                if(trainable instanceof GraphVertex){
+                    ((GraphVertex) trainable).transformParamsForSameDiff(byParamMap);
+                } else {
+                    Layer layer = (Layer) trainable;
+                    layer.conf().getLayer().transformParamsForSameDiff(byParamMap);
+                }
+
+                for(String param : byParam.keySet()){
+                    String sdName = namespace + param;
+                    Map<String, INDArray> finalByUpdaterParam = paramUpdaterStates.get(sdName);
+                    if(finalByUpdaterParam == null){
+                        finalByUpdaterParam = new HashMap<>();
+                        paramUpdaterStates.put(sdName, finalByUpdaterParam);
+                    }
+
+                    finalByUpdaterParam.put(updaterParam, byParamMap.get(param));
+                }
+            }
+
         }
 
         if (sameDiff.getTrainingConfig() == null) {
@@ -299,8 +372,8 @@ public class ToSameDiffUtils {
 
             Map<String, INDArray> params;
             if(stateSize > 0) {
-                if (stateViewsPerParam.containsKey(v.getVariable().name())) {
-                    params = stateViewsPerParam.get(v.getVariable().name());
+                if (paramUpdaterStates.containsKey(v.getVariable().name())) {
+                    params = paramUpdaterStates.get(v.getVariable().name());
                 } else {
                     throw new IllegalStateException("No updater state found for variable " + v.getVariable().name());
                 }
@@ -309,11 +382,11 @@ public class ToSameDiffUtils {
             }
 
             for(String k : params.keySet()){
-                params.put(k, params.get(k).reshape(arr.ordering(), arr.shape()).dup());
+                params.put(k, params.get(k));
             }
 
             GradientUpdater gu = sameDiff.getTrainingConfig().getUpdater().instantiate(params, false);
-            gu.setState(params, false);
+//            gu.setState(params, false);
             updaterMap.put(v.getName(), gu);
         }
 
