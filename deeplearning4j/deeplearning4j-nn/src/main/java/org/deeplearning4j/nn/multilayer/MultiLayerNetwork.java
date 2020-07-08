@@ -913,7 +913,7 @@ public class MultiLayerNetwork implements Serializable, Classifier, Layer, Neura
                     .dataSetFeatureMapping(input.name());
 
             if(iUpdater != null)
-                tcBuilder.updater(iUpdater);
+                tcBuilder.updater(iUpdater.clone());
             else
                 tcBuilder.updater(new NoOp());
 

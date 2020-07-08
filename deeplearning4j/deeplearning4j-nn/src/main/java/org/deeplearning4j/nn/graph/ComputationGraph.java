@@ -900,7 +900,7 @@ public class ComputationGraph implements Serializable, Model, NeuralNetwork {
                 tcBuilder.regularization(regularizations);
 
             if(iUpdater != null)
-                tcBuilder.updater(iUpdater);
+                tcBuilder.updater(iUpdater.clone());
             else
                 tcBuilder.updater(new NoOp());
 
