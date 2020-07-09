@@ -46,10 +46,8 @@ import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
-import org.junit.BeforeClass;
+import org.deeplearning4j.util.ToSameDiffUtils;
 import org.junit.Test;
-import org.junit.rules.DisableOnDebug;
-import org.junit.rules.Timeout;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.activations.Activation;
@@ -63,10 +61,7 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.IUpdater;
-import org.nd4j.linalg.learning.regularization.L1Regularization;
-import org.nd4j.linalg.learning.regularization.L2Regularization;
 import org.nd4j.linalg.learning.regularization.Regularization;
-import org.nd4j.linalg.learning.regularization.WeightDecay;
 import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
@@ -79,7 +74,7 @@ public class TestToSameDiff extends BaseDL4JTest {
     public long getTimeoutMilliseconds() {
         return super.getTimeoutMilliseconds() * 10;
     }
-    
+
     private static final double eps = 1e-2;
 
     private static final String expectedSummary = "--- Summary ---\n"
@@ -158,12 +153,27 @@ public class TestToSameDiff extends BaseDL4JTest {
                 .output(sameDiff.outputs().get(0))
                 .outputSingle();
 
-        if(sd.isNaN().any() && dl4j.isNaN().any())
+        if (sd.isNaN().any() && dl4j.isNaN().any()) {
             return;
+        }
 
-        assertEquals("Sums of DL4J and SameDiff outputs differ for " + name, dl4j.sumNumber().doubleValue(), sd.sumNumber().doubleValue(), eps);
+//        assertEquals("Sums of DL4J and SameDiff outputs differ for " + name, dl4j.sumNumber().doubleValue(), sd.sumNumber().doubleValue(), eps);
 
         assertTrue("Output of DL4J and SameDiff differ for " + name, dl4j.equalsWithEps(sd, eps));
+    }
+
+    public static void testWeights(MultiLayerNetwork network, SameDiff sameDiff, String name) {
+        List<String> names = ToSameDiffUtils.getScopeNames(network.getLayers());
+        for (int i = 0; i < network.getnLayers(); i++) {
+            String nameScope = names.get(i);
+            for (Map.Entry<String, INDArray> entry : network.getLayer(i).paramTable().entrySet()) {
+                String paramName = entry.getKey();
+                INDArray dl4j = entry.getValue();
+                INDArray sd = sameDiff.getArrForVarName(nameScope + "/" + paramName);
+
+                assertTrue("Weight " + nameScope + "/" + paramName + " differs for" + name, dl4j.equalsWithEps(sd, eps));
+            }
+        }
     }
 
     public static void testBackprop(MultiLayerNetwork network, SameDiff sameDiff, INDArray input, INDArray labels) {
@@ -183,9 +193,9 @@ public class TestToSameDiff extends BaseDL4JTest {
         assertEquals("Losses differed", dl4jScore, sdScore, eps);
 
         Map<String, INDArray> dl4jGradient = network.gradient().gradientForVariable();
-        
+
         boolean has2ndLayer = dl4jGradient.containsKey("1_W");
-        
+
         INDArray dl4jWeightGrad = dl4jGradient.get("0_W");
         INDArray dl4jBiasGrad = dl4jGradient.get("0_b");
 
@@ -214,8 +224,7 @@ public class TestToSameDiff extends BaseDL4JTest {
         assertTrue("Weight 0 gradient differs", dl4jWeightGrad.equalsWithEps(sdWeightGrad, eps));
         assertTrue("Bias 0 gradient differs", dl4jBiasGrad.equalsWithEps(sdBiasGrad, eps));
 
-        if(has2ndLayer){
-
+        if (has2ndLayer) {
 
             INDArray dl4jWeightGrad2 = dl4jGradient.get("1_W");
             INDArray dl4jBiasGrad2 = dl4jGradient.get("1_b");
@@ -277,8 +286,9 @@ public class TestToSameDiff extends BaseDL4JTest {
 
         Nd4j.setDefaultDataTypes(DataType.DOUBLE, DataType.DOUBLE);
 
-        boolean[] useDenses = {true, false};
-        Updater[] updaters = {Updater.SGD, Updater.ADAM, Updater.ADAMAX, Updater.ADADELTA, Updater.NESTEROVS, Updater.NADAM/*, Updater.ADAGRAD, Updater.RMSPROP*/, Updater.NONE};
+        boolean[] useDenses = {false};
+        Updater[] updaters = {Updater.SGD, Updater.ADAM, Updater.ADAMAX, Updater.ADADELTA, Updater.NESTEROVS,
+                Updater.NADAM/*, Updater.ADAGRAD, Updater.RMSPROP*/, Updater.NONE};
         Regularization[] regularizations = {null}; // {new L2Regularization(0.0005), new L1Regularization(0.005),
 //                new WeightDecay(0.03, true)};
         LossFunction[] lossFunctions = {LossFunction.MSE, LossFunction.L1/*, LossFunction.MCXENT*/,
@@ -287,7 +297,7 @@ public class TestToSameDiff extends BaseDL4JTest {
                 LossFunction.L2/*, LossFunction.MEAN_ABSOLUTE_PERCENTAGE_ERROR*//*,
                 LossFunction.MEAN_SQUARED_LOGARITHMIC_ERROR*//*, LossFunction.POISSON*/, LossFunction.WASSERSTEIN};
 
-        Activation[] activations =  {/*Activation.CUBE, */Activation.ELU, Activation.HARDSIGMOID, Activation.HARDTANH,
+        Activation[] activations = {/*Activation.CUBE, */Activation.ELU, Activation.HARDSIGMOID, Activation.HARDTANH,
                 Activation.IDENTITY, Activation.LEAKYRELU, Activation.RATIONALTANH, Activation.RELU, Activation.RELU6,
                 Activation.RRELU, Activation.SIGMOID/*, Activation.SOFTMAX*/, Activation.SOFTPLUS, Activation.SOFTSIGN,
                 Activation.TANH, Activation.RECTIFIEDTANH, Activation.SELU, Activation.SWISH,
@@ -342,22 +352,10 @@ public class TestToSameDiff extends BaseDL4JTest {
                                 network.init();
 
                                 Nd4j.getRandom().setSeed(seed);
-                                SameDiff mnistSameDiff;
-                                try {
-                                    mnistSameDiff = network.toSameDiff(null, false, false);
-                                } catch (UnsupportedOperationException e) {
-                                    continue;
-                                }
-
-                                assertEquals("More than one output", 1, mnistSameDiff.outputs().size());
-                                assertEquals("More than one loss", 1, mnistSameDiff.getLossVariables().size());
-                                assertNotNull(mnistSameDiff.getTrainingConfig());
 
                                 INDArray example = Nd4j.rand(5, 4).mul(2);
                                 DataSet ds = new DataSet(Nd4j.rand(5, 4).mul(2), Nd4j.rand(5, 3).mul(2));
                                 DataSetIterator iter = new SingletonDataSetIterator(ds);
-
-                                testSameDiffInference(network, mnistSameDiff, example, "Inference");
 
                                 // --- training tests ---
 
@@ -369,8 +367,13 @@ public class TestToSameDiff extends BaseDL4JTest {
 
                                 // copy (w/ params and updater state)
 
-                                mnistSameDiff = network.toSameDiff(null, true, false);
-//                                testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
+                                SameDiff mnistSameDiff;
+                                try {
+                                    mnistSameDiff = network.toSameDiff(null, false, false);
+                                } catch (UnsupportedOperationException e) {
+                                    continue;
+                                }
+                                testSameDiffInference(network, mnistSameDiff, example, "Post DL4J Training");
 
 //                                testBackprop(network, mnistSameDiff, ds.getFeatures().dup(), ds.getLabels().dup());
 
@@ -387,6 +390,7 @@ public class TestToSameDiff extends BaseDL4JTest {
 //
 //                                testSameDiffInference(network, mnistSameDiff, example, "Post 1st Training");
 
+                                testWeights(network, mnistSameDiff, "Copy");
 
                                 iter.reset();
                                 mnistSameDiff.fit(iter, 1);
@@ -398,6 +402,7 @@ public class TestToSameDiff extends BaseDL4JTest {
                                 assertEquals(2, network.getIterationCount());
                                 assertEquals(2, network.getEpochCount());
 
+                                testWeights(network, mnistSameDiff, "Post Train");
                                 testSameDiffInference(network, mnistSameDiff, example, "Post 2nd Training");
                             } catch (AssertionError ae) {
                                 ae.printStackTrace();
