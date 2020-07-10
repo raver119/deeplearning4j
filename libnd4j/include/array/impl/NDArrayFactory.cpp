@@ -46,17 +46,27 @@ namespace sd {
         ShapeDescriptor descriptor(sd::DataType::BOOL, (char)order, shape);
 
         if (data.size() > 0 && descriptor.arrLength() != data.size()) {
-            nd4j_printf("NDArrayFactory::create: data size [%i] doesn't match shape length [%lld]\n", data.size(), descriptor.arrLength());
-            throw std::runtime_error("NDArrayFactory::create: data size doesn't match shape");
+            nd4j_printf("NDArrayFactory::create<bool>: data size [%i] doesn't match shape length [%lld]\n", data.size(), descriptor.arrLength());
+            throw std::runtime_error("NDArrayFactory::create<bool>: data size doesn't match shape");
         }
 
         bool* hostBuffer = nullptr;
-        ALLOCATE(hostBuffer, context->getWorkspace(), data.size() > 0? data.size():descriptor.arrLength(), bool);
-        if (data.size() > 0)
-        std::copy(data.begin(), data.end(), hostBuffer);
+        if (data.size() > 0 || descriptor.arrLength() > 0) {
+            auto len = data.size() > 0? data.size():descriptor.arrLength();
+            ALLOCATE(hostBuffer, context->getWorkspace(), len, bool);
+        }
 
+        if (data.size()) {
+            std::copy(data.begin(), data.end(), hostBuffer);
+        }
+        else {
+            std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(
+                    descriptor.arrLength() * sizeof(bool), sd::DataType::BOOL, context->getWorkspace());
+
+            NDArray result(buffer, descriptor, context);
+            return result;
+        }
         std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(hostBuffer, descriptor.arrLength() * sizeof(bool), sd::DataType::BOOL, true, context->getWorkspace());
-
         NDArray result(buffer, descriptor, context);
 
         return result;
