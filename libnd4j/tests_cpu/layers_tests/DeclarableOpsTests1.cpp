@@ -1893,6 +1893,7 @@ TEST_F(DeclarableOpsTests1, Permute1) {
 
     delete block;
     delete variableSpace;
+    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -1921,6 +1922,7 @@ TEST_F(DeclarableOpsTests1, TestArgumentsValidation1) {
 
     delete block;
     delete variableSpace;
+    delete exp;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -2312,8 +2314,6 @@ TEST_F(DeclarableOpsTests1, sru_bp) {
     ASSERT_TRUE(expGradW.equalsTo(gradW));
     ASSERT_TRUE(expGradB.equalsTo(gradB));
     ASSERT_TRUE(expGradInit.equalsTo(gradInit));
-
-
 }
 
 //////////////////////////////////////////////////////////////////

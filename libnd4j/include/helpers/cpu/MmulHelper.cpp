@@ -269,12 +269,16 @@ NDArray* MmulHelper::mmulMxM(const NDArray* A, const NDArray* B, NDArray* C, con
 
         if(pC != C) {
             C->assign(pC);
-            delete pC;
+//            delete pC;
         }
-        if(pA != A)
-            delete pA;
-        if(pB != B)
-            delete pB;
+//        if(pA != A)
+//            delete pA;
+//        if(pB != B)
+//            delete pB;
+
+        for (auto& arr: toDelete) {
+            delete arr;
+        }
     }
 
     return C;

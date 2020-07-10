@@ -184,6 +184,8 @@ CUSTOM_OP_IMPL(sru_bp, 8, 4, true, 0, 0) {
     auto gradUZ = gradU   ({0,0,  0,K,     0,0}, true ); // [bS x K x N]
     auto gradUF = gradU   ({0,0,  K,2*K,   0,0}, true ); // [bS x K x N]
     auto gradUR = gradU   ({0,0,  2*K,3*K, 0,0}, true ); // [bS x K x N]
+    if (wi != nullptr)
+        delete wi;
 
     NDArray*  ct_1 = nullptr;
 
