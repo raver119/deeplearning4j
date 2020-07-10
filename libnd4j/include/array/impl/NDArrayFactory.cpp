@@ -51,7 +51,7 @@ namespace sd {
         }
 
         bool* hostBuffer = nullptr;
-        if (data.size() > 0 || descriptor.arrLength() > 0) {
+        if (data.size() > 0) {
             auto len = data.size() > 0? data.size():descriptor.arrLength();
             ALLOCATE(hostBuffer, context->getWorkspace(), len, bool);
         }
@@ -66,6 +66,7 @@ namespace sd {
             NDArray result(buffer, descriptor, context);
             return result;
         }
+
         std::shared_ptr<DataBuffer> buffer = std::make_shared<DataBuffer>(hostBuffer, descriptor.arrLength() * sizeof(bool), sd::DataType::BOOL, true, context->getWorkspace());
         NDArray result(buffer, descriptor, context);
 
