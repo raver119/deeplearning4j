@@ -16,15 +16,17 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.activations;
+package org.nd4j.imports.keras.activations;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.layers.KerasLayer;
-import org.nd4j.linalg.activations.IActivation;
 
+@EqualsAndHashCode
+@ToString
+@Getter
 @NoArgsConstructor
-@ToString(callSuper = true)
-public abstract class KerasActivation extends KerasLayer implements IKerasActivation {
+public class Linear implements IKerasActivation{
 
 }

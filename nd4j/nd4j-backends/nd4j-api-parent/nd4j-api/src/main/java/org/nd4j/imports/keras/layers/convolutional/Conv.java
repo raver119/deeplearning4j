@@ -20,19 +20,17 @@ package org.nd4j.imports.keras.layers.convolutional;
 
 import java.util.Collections;
 import java.util.Map;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.Value;
 import org.nd4j.common.util.ArrayUtil;
-import org.nd4j.enums.DataFormat;
-import org.nd4j.imports.keras.deserialize.KerasDataFormatDeserializer;
-import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
+import org.nd4j.imports.keras.KerasDataFormat;
+import org.nd4j.imports.keras.constraints.KerasConstraint;
+import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
 import org.nd4j.imports.keras.layers.KerasLayer;
-import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
 import org.nd4j.shade.jackson.annotation.JsonProperty;
 
@@ -49,22 +47,22 @@ public abstract class Conv extends KerasLayer {
     protected @NonNull int[] kernelSize;
     protected @NonNull int[] strides = ArrayUtil.toArray(Collections.nCopies(rank(), 1));
     protected @NonNull PaddingMode padding = PaddingMode.VALID;
-    protected @NonNull DataFormat dataFormat = DataFormat.NHWC;
+    protected @NonNull KerasDataFormat dataFormat = KerasDataFormat.ChannelsLast;
 
     @JsonProperty("dilation_rate")
     protected int[] dilation = ArrayUtil.toArray(Collections.nCopies(rank(), 1));
 
     protected int groups = 1;
 
-    protected String activation;
+    protected IKerasActivation activation;
 
     protected boolean useBias = true;
 
-    protected Map<String, Object> kernelInitializer;
-    protected Map<String, Object> biasInitializer;
-    protected Map<String, Object> kernelRegularizer;
-    protected Map<String, Object> biasRegularizer;
-    protected Map<String, Object> activityRegularizer;
-    protected Map<String, Object> kernelConstraint;
-    protected Map<String, Object> biasConstraint;
+    protected KerasWeightInitializer kernelInitializer;
+    protected KerasWeightInitializer biasInitializer;
+    protected KerasRegularizer kernelRegularizer;
+    protected KerasRegularizer biasRegularizer;
+    protected KerasRegularizer activityRegularizer;
+    protected KerasConstraint kernelConstraint;
+    protected KerasConstraint biasConstraint;
 }

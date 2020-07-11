@@ -16,12 +16,17 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.deserialize;
+package org.nd4j.imports.keras.activations;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface KerasName {
-    String name();
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Getter
+@NoArgsConstructor
+public class Softmax extends KerasLayerActivation {
+    protected int axis = -1;
 }

@@ -16,18 +16,17 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.activations;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@EqualsAndHashCode
+@ToString
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+public class Selu implements IKerasActivation{
+
 }

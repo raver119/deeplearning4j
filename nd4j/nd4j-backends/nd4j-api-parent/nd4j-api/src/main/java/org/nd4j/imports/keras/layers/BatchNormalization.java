@@ -24,6 +24,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Value;
+import org.nd4j.imports.keras.constraints.KerasConstraint;
+import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
+import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -36,14 +39,14 @@ public class BatchNormalization extends KerasLayer {
     protected boolean center = false;
     protected boolean scale = false;
 
-    protected Map<String, Object> betaInitializer = null;
-    protected Map<String, Object> gammaInitializer = null;
-    protected Map<String, Object> movingMeanInitializer = null;
-    protected Map<String, Object> movingVarianceInitializer = null;
-    protected Map<String, Object> betaRegularizer = null;
-    protected Map<String, Object> gammaRegularizer = null;
-    protected Map<String, Object> betaConstraint = null;
-    protected Map<String, Object> gammaConstraint = null;
+    protected KerasWeightInitializer betaInitializer = null;
+    protected KerasWeightInitializer gammaInitializer = null;
+    protected KerasWeightInitializer movingMeanInitializer = null;
+    protected KerasWeightInitializer movingVarianceInitializer = null;
+    protected KerasRegularizer betaRegularizer = null;
+    protected KerasRegularizer gammaRegularizer = null;
+    protected KerasConstraint betaConstraint = null;
+    protected KerasConstraint gammaConstraint = null;
 
     protected boolean renorm = false;
     protected Map<String, Double> renormClipping = null;

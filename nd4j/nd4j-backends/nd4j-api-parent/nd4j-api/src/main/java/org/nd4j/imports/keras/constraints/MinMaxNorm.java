@@ -16,18 +16,20 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.constraints;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class MinMaxNorm extends KerasConstraint {
+    protected double minValue;
+    protected double maxValue;
+    protected double rate;
+    protected int[] axis;
 }

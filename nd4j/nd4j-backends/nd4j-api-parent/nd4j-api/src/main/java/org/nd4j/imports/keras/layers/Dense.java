@@ -16,19 +16,32 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.activations;
+package org.nd4j.imports.keras.layers;
 
-import lombok.Data;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
+import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.constraints.KerasConstraint;
+import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
+import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class LeakyReLU extends KerasActivation {
-    protected double alpha = 0.3;
+public class Dense extends KerasLayer{
+    protected int units;
+    protected IKerasActivation activation;
+    protected boolean useBias;
+
+    protected KerasWeightInitializer kernelInitializer;
+    protected KerasWeightInitializer biasInitializer;
+    protected KerasRegularizer kernelRegularizer;
+    protected KerasRegularizer biasRegularizer;
+    protected KerasRegularizer activityRegularizer;
+    protected KerasConstraint kernelConstraint;
+    protected KerasConstraint biasConstraint;
 }

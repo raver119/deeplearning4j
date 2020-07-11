@@ -39,6 +39,7 @@ import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 @Getter
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public abstract class KerasLayer {
     @NonNull protected String name;
     protected boolean trainable = true;

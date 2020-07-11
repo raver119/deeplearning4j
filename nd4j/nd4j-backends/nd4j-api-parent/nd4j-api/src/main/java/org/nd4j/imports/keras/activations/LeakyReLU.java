@@ -16,8 +16,17 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.activations;
+package org.nd4j.imports.keras.activations;
 
-public interface IKerasActivation {
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+@Getter
+@NoArgsConstructor
+public class LeakyReLU extends KerasLayerActivation {
+    protected double alpha = 0.3;
 }

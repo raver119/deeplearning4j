@@ -16,18 +16,33 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.initalizers;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes.Type;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@KerasWrappedJson
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+@ToString
+@EqualsAndHashCode
+@JsonSubTypes({
+        @Type(Constant.class),
+        @Type(GlorotNormal.class),
+        @Type(GlorotUniform.class),
+        @Type(Identity.class),
+        @Type(Ones.class),
+        @Type(Orthogonal.class),
+        @Type(RandomNormal.class),
+        @Type(TruncatedNormal.class),
+        @Type(VarianceScaling.class),
+        @Type(Zeros.class)
+})
+public abstract class KerasWeightInitializer {
+
 }

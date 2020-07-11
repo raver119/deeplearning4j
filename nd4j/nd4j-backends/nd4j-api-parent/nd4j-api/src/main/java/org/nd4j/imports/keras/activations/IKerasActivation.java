@@ -16,18 +16,15 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.activations;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.deserialize.KerasActivationDeserializer;
+import org.nd4j.shade.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
+import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
+import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@Getter
-@NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+@JsonNaming(SnakeCaseStrategy.class)
+@JsonDeserialize(using = KerasActivationDeserializer.class)
+public interface IKerasActivation {
+
 }

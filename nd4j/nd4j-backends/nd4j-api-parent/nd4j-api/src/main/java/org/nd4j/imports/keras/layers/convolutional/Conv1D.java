@@ -18,12 +18,10 @@
 
 package org.nd4j.imports.keras.layers.convolutional;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

@@ -32,7 +32,6 @@ import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 @JacksonAnnotationsInside
 @JsonTypeInfo(use = Id.NAME, include = As.EXTERNAL_PROPERTY, property = "class_name")
 @JsonNaming(SnakeCaseStrategy.class)
-//@JsonDeserialize(using = KerasWrapperDeserializer.class)
 public @interface KerasWrappedJson {
 
 }

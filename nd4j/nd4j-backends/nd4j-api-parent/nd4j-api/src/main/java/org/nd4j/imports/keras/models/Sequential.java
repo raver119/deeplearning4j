@@ -19,12 +19,23 @@
 package org.nd4j.imports.keras.models;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.nd4j.imports.keras.deserialize.KerasShapeDeserializer;
 import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
 import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 
-@Data
+@Getter
+@NoArgsConstructor
+@ToString
 @KerasWrappedJson
 public class Sequential {
     protected String name;
     protected KerasLayer[] layers;
+    @JsonDeserialize(using = KerasShapeDeserializer.class)
+    protected int[] buildInputShape;
+    protected String kerasVersion;
+    protected String backend;
 }

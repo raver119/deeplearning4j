@@ -16,18 +16,32 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.layers.convolutional;
 
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.constraints.KerasConstraint;
+import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
+import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+public class DepthwiseConv2D extends Conv {
+    @Override
+    int rank() {
+        return 2;
+    }
+
+    protected int depthMultiplier = 1;
+
+    protected KerasWeightInitializer depthwiseInitializer;
+
+    protected KerasRegularizer depthwiseRegularizer;
+
+    protected KerasConstraint depthwiseConstraint;
 }

@@ -20,25 +20,26 @@ package org.nd4j.imports.keras.deserialize;
 
 import java.io.IOException;
 import org.nd4j.enums.DataFormat;
+import org.nd4j.imports.keras.KerasDataFormat;
 import org.nd4j.shade.jackson.core.JsonParser;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
 import org.nd4j.shade.jackson.databind.DeserializationContext;
 import org.nd4j.shade.jackson.databind.deser.std.StdDeserializer;
 
-public class KerasDataFormatDeserializer extends StdDeserializer<DataFormat> {
+public class KerasDataFormatDeserializer extends StdDeserializer<KerasDataFormat> {
 
     public KerasDataFormatDeserializer(){
         super(DataFormat.class);
     }
 
     @Override
-    public DataFormat deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+    public KerasDataFormat deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException, JsonProcessingException {
         String format = jsonParser.getValueAsString().toLowerCase();
         if(format.equals("channels_last"))
-            return DataFormat.NHWC;
+            return KerasDataFormat.ChannelsLast;
         else if(format.equals("channels_first"))
-            return DataFormat.NCHW;
+            return KerasDataFormat.ChannelsFirst;
         else
             throw new IllegalStateException("Unknown data type " + format + ", should be either \"channels_first\" or \"channels_last\".");
     }

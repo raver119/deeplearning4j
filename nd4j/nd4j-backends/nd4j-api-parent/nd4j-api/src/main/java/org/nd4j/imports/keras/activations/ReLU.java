@@ -16,19 +16,19 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.convolutional;
+package org.nd4j.imports.keras.activations;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
-import org.nd4j.enums.DataFormat;
-import org.nd4j.imports.keras.layers.KerasLayer;
 
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-@ToString(callSuper = true)
-public abstract class ZeroPadding extends KerasLayer {
-    protected int[][] padding;
-    protected DataFormat dataFormat;
+public class ReLU extends KerasLayerActivation {
+    protected Double maxValue = null;
+    protected double negativeSlope = 0.0;
+    protected double threshold = 0.0;
 }

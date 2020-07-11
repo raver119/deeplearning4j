@@ -16,18 +16,26 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.regularizers;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes.Type;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@KerasWrappedJson
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+@ToString
+@EqualsAndHashCode
+@JsonSubTypes({
+        @Type(L1.class),
+        @Type(L2.class),
+        @Type(L1L2.class)
+})
+public abstract class KerasRegularizer {
+
 }

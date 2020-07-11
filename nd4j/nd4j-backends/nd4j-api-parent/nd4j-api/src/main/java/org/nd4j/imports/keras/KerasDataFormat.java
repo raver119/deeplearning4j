@@ -16,18 +16,36 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.deserialize.KerasDataFormatDeserializer;
+import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@Getter
-@NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+@JsonDeserialize(using = KerasDataFormatDeserializer.class)
+public enum KerasDataFormat {
+    ChannelsFirst, ChannelsLast;
+
+    public boolean isChannelsFirst(){
+        return this == ChannelsFirst;
+    }
+
+    public boolean isChannelsLast(){
+        return this == ChannelsLast;
+    }
+
+    public String to4DCNN(){
+        return isChannelsFirst() ? "NCHW" : "NHWC";
+    }
+
+    public String to5DCNN(){
+        return isChannelsFirst() ? "NCDHW" : "NDHWC";
+    }
+
+    public String to3DCNN(){
+        return isChannelsFirst() ? "NCW" : "NWC";
+    }
+
+    public String toRNN(){
+        return isChannelsFirst() ? "NST" : "NTS";
+    }
 }

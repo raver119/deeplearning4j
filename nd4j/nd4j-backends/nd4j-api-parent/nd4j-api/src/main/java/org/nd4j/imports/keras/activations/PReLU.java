@@ -16,18 +16,24 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.activations;
 
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.constraints.KerasConstraint;
+import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
+import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
+public class PReLU extends KerasLayerActivation {
+    protected KerasWeightInitializer alphaInitalizer;
+    protected KerasRegularizer alphaRegularizer;
+    protected KerasConstraint alphaConstraint;
+    protected int[] sharedAxes = null;
 }

@@ -16,18 +16,8 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers;
+package org.nd4j.imports.keras.activations;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+public class Softplus implements IKerasActivation {
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@Getter
-@NoArgsConstructor
-public class Activation extends KerasLayer {
-    protected IKerasActivation activation;
 }
