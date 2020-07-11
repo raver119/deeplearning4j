@@ -18,22 +18,16 @@
 
 package org.nd4j.imports.keras.layers;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.imports.keras.deserialize.KerasShapeDeserializer;
 import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
 import org.nd4j.linalg.api.buffer.DataType;
-import org.nd4j.shade.jackson.annotation.JsonSubTypes;
-import org.nd4j.shade.jackson.annotation.JsonTypeInfo;
-import org.nd4j.shade.jackson.annotation.JsonTypeInfo.As;
-import org.nd4j.shade.jackson.annotation.JsonTypeInfo.Id;
-import org.nd4j.shade.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
-import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 
 @KerasWrappedJson
 @Getter
@@ -41,9 +35,10 @@ import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 @ToString
 @EqualsAndHashCode
 public abstract class KerasLayer {
-    @NonNull protected String name;
+    protected String name;
     protected boolean trainable = true;
     @JsonDeserialize(using = KerasShapeDeserializer.class)
     protected int[] batchInputShape = null;
     protected DataType dtype = null;
+
 }

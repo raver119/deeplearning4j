@@ -22,16 +22,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
-import org.nd4j.enums.DataFormat;
 import org.nd4j.imports.keras.KerasDataFormat;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class ZeroPadding3D extends KerasLayer {
+public class ZeroPadding3D extends KerasSingleLayer {
     protected int[][] padding;
     protected KerasDataFormat dataFormat;
 }

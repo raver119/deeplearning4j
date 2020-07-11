@@ -18,43 +18,55 @@
 
 package org.nd4j.imports.keras.deserialize;
 
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import org.nd4j.common.util.ArrayUtil;
+import org.nd4j.imports.keras.KerasNodeIndex;
 import org.nd4j.shade.jackson.core.JsonParseException;
 import org.nd4j.shade.jackson.core.JsonParser;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
 import org.nd4j.shade.jackson.core.JsonToken;
+import org.nd4j.shade.jackson.core.type.TypeReference;
 import org.nd4j.shade.jackson.databind.DeserializationContext;
 import org.nd4j.shade.jackson.databind.deser.std.StdDeserializer;
 
-public class KerasShapeDeserializer extends StdDeserializer<int[]> {
+public class KerasNodeIndexDeserializer extends StdDeserializer<KerasNodeIndex> {
 
-    protected KerasShapeDeserializer() {
-        super(int[].class);
+    public KerasNodeIndexDeserializer(){
+        super(KerasNodeIndex.class);
     }
 
     @Override
-    public int[] deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
+    public KerasNodeIndex deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException, JsonProcessingException {
         if (jsonParser.currentToken() != JsonToken.START_ARRAY) {
             throw new JsonParseException("Start array expected", jsonParser.getCurrentLocation());
         }
 
-        List<Integer> items = new ArrayList<>();
+        KerasNodeIndex node = new KerasNodeIndex();
+
+        node.setLayerName(jsonParser.nextTextValue());
+
+        jsonParser.nextToken();
+        node.setNodeIndex(jsonParser.getIntValue());
+
+        jsonParser.nextToken();
+        node.setTensorIndex(jsonParser.getIntValue());
+
         JsonToken token = jsonParser.nextToken();
-        while (token != JsonToken.END_ARRAY){
 
-            if(token == JsonToken.VALUE_NULL)
-                items.add(-1);
-            else
-                items.add(jsonParser.getIntValue());
-
-            token = jsonParser.nextToken();
+        if(token == JsonToken.END_ARRAY)
+            return node;
+        else{
+            Map<String, Object> kwargs = deserializationContext.readValue(jsonParser,
+                    deserializationContext.getTypeFactory().constructMapLikeType(Map.class, String.class, Object.class));
+            node.setKwargs(kwargs);
         }
 
-        return ArrayUtil.toArray(items);
+        token = jsonParser.nextToken();
+        if(token != JsonToken.END_ARRAY)
+            throw new JsonParseException("Expected 3 or 4 elements in the Keras Token array, got more", jsonParser.getCurrentLocation());
+
+        return node;
     }
 }

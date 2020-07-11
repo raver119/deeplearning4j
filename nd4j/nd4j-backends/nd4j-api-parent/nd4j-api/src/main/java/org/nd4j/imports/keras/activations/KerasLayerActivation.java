@@ -20,10 +20,10 @@ package org.nd4j.imports.keras.activations;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 
 @NoArgsConstructor
 @ToString(callSuper = true)
-public abstract class KerasLayerActivation extends KerasLayer implements IKerasActivation {
+public abstract class KerasLayerActivation extends KerasSingleLayer implements IKerasActivation {
 
 }

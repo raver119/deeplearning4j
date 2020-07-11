@@ -23,15 +23,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.nd4j.enums.DataFormat;
 import org.nd4j.imports.keras.KerasDataFormat;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class UpSampling3D extends KerasLayer {
+public class UpSampling3D extends KerasSingleLayer {
     protected int[] size;
     protected @NonNull KerasDataFormat dataFormat = KerasDataFormat.ChannelsLast;
 }

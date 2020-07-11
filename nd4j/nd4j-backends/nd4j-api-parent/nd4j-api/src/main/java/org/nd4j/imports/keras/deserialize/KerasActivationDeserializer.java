@@ -44,14 +44,14 @@ public class KerasActivationDeserializer extends StdDeserializer<IKerasActivatio
     @Override
     public IKerasActivation deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException, JsonProcessingException {
-        String activation = jsonParser.getValueAsString().toLowerCase();
+        String activation = deserializationContext.readValue(jsonParser, String.class);
         switch (activation){
             case "relu":
-                return new ReLU();
+//                return new ReLU();
             case "sigmoid":
                 return new Sigmoid();
             case "softmax":
-                return new Softmax();
+//                return new Softmax();
             case "softplus":
                 return new Softplus();
             case "softsign":
@@ -61,7 +61,7 @@ public class KerasActivationDeserializer extends StdDeserializer<IKerasActivatio
             case "selu":
                 return new Selu();
             case "elu":
-                return new ELU();
+//                return new ELU();
             case "exponential":
                 return new Exponential();
             case "linear":

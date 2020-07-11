@@ -27,6 +27,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Permute extends KerasLayer {
+public class Permute extends KerasSingleLayer {
     protected int[] dims;
 }

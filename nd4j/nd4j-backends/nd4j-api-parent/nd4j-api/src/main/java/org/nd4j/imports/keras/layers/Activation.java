@@ -28,6 +28,6 @@ import org.nd4j.imports.keras.activations.IKerasActivation;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Activation extends KerasLayer {
+public class Activation extends KerasSingleLayer {
     protected IKerasActivation activation;
 }

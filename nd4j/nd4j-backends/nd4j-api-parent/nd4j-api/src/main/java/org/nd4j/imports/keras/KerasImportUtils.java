@@ -21,6 +21,7 @@ package org.nd4j.imports.keras;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.nd4j.imports.keras.activations.IKerasActivation;
 import org.nd4j.imports.keras.deserialize.KerasActivationDeserializer;
 import org.nd4j.imports.keras.deserialize.KerasDatatypeDeserializer;
 import org.nd4j.imports.keras.deserialize.KerasNames;
@@ -28,7 +29,7 @@ import org.nd4j.imports.keras.deserialize.KerasPaddingDeserializer;
 import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
 import org.nd4j.imports.keras.deserialize.KerasWrapperDeserializer;
 import org.nd4j.imports.keras.layers.KerasLayer;
-import org.nd4j.imports.keras.activations.IKerasActivation;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
 import org.nd4j.shade.guava.reflect.ClassPath;
@@ -87,6 +88,8 @@ public class KerasImportUtils {
 
         module.addDeserializer(DataType.class, new KerasDatatypeDeserializer());
         module.addDeserializer(PaddingMode.class, new KerasPaddingDeserializer());
+        // have to add this here instead of the annotation for some reason, otherwise Jackson doesn't use the KerasLayer serializer on the layer activations
+        module.addDeserializer(IKerasActivation.class, new KerasActivationDeserializer());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(module);

@@ -27,6 +27,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class RepeatVector extends KerasLayer {
+public class RepeatVector extends KerasSingleLayer {
     protected int n;
 }

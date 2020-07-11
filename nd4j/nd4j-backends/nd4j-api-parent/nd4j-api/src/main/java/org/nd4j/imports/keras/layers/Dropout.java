@@ -22,13 +22,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Dropout extends KerasLayer {
+public class Dropout extends KerasSingleLayer {
     protected double rate = 0.0;
     protected Integer seed = null;
     protected int[] noiseShape = null;

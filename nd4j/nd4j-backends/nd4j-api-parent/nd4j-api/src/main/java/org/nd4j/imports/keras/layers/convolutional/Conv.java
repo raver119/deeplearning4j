@@ -19,7 +19,6 @@
 package org.nd4j.imports.keras.layers.convolutional;
 
 import java.util.Collections;
-import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,7 +27,7 @@ import org.nd4j.common.util.ArrayUtil;
 import org.nd4j.imports.keras.KerasDataFormat;
 import org.nd4j.imports.keras.constraints.KerasConstraint;
 import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 import org.nd4j.imports.keras.activations.IKerasActivation;
 import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.PaddingMode;
@@ -37,7 +36,7 @@ import org.nd4j.shade.jackson.annotation.JsonProperty;
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor
-public abstract class Conv extends KerasLayer {
+public abstract class Conv extends KerasSingleLayer {
 
 
 

@@ -22,14 +22,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 
 //TODO multi-input layers
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public abstract class BaseDenseAttention extends KerasLayer {
+public abstract class BaseDenseAttention extends KerasSingleLayer {
     protected boolean causal;
     protected double dropout;
 }

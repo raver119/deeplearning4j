@@ -27,6 +27,6 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Reshape extends KerasLayer {
+public class Reshape extends KerasSingleLayer {
     protected int[] targetShape;
 }

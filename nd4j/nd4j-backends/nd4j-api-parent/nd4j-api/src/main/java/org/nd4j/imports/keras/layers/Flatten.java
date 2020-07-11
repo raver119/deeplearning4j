@@ -18,17 +18,15 @@
 
 package org.nd4j.imports.keras.layers;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Flatten extends KerasLayer {
+public class Flatten extends KerasSingleLayer {
 
 }

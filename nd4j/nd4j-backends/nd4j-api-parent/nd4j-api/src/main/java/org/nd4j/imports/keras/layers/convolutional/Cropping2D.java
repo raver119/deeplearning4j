@@ -23,13 +23,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.nd4j.imports.keras.KerasDataFormat;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.imports.keras.layers.KerasSingleLayer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Cropping2D extends KerasLayer {
+public class Cropping2D extends KerasSingleLayer {
     protected int[][] cropping;
     protected KerasDataFormat dataFormat;
 }

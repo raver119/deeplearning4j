@@ -16,22 +16,23 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.convolutional;
+package org.nd4j.imports.keras;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
-import org.nd4j.imports.keras.KerasDataFormat;
-import org.nd4j.imports.keras.layers.KerasSingleLayer;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.nd4j.imports.keras.deserialize.KerasNodeDeserializer;
+import org.nd4j.imports.keras.layers.KerasLayer;
+import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-@Getter
-@NoArgsConstructor
-public class UpSampling2D extends KerasSingleLayer {
-    protected int[] size;
-    protected @NonNull KerasDataFormat dataFormat = KerasDataFormat.ChannelsLast;
-    protected String interpolation = "nearest";
+@Data
+@AllArgsConstructor
+@JsonDeserialize(using = KerasNodeDeserializer.class)
+public class KerasNode {
+    protected String name;
+    protected KerasLayer layer;
+    /**
+     * Each time the layer is invoked, the input tensors will be added here.
+     * A invocation will be referenced by other nodes by {@link KerasNodeIndex}{@code .nodeIndex}.
+     */
+    protected KerasNodeIndex[][] invocations;
 }

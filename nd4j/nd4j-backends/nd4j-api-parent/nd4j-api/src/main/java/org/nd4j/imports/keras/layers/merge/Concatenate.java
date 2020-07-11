@@ -16,22 +16,18 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.convolutional;
+package org.nd4j.imports.keras.layers.merge;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
-import org.nd4j.imports.keras.KerasDataFormat;
-import org.nd4j.imports.keras.layers.KerasSingleLayer;
+import org.nd4j.imports.keras.layers.KerasLayer;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class UpSampling2D extends KerasSingleLayer {
-    protected int[] size;
-    protected @NonNull KerasDataFormat dataFormat = KerasDataFormat.ChannelsLast;
-    protected String interpolation = "nearest";
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Concatenate extends KerasLayer {
+    protected int axis;
 }

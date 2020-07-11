@@ -24,7 +24,6 @@ import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 import org.nd4j.shade.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(SnakeCaseStrategy.class)
-@JsonDeserialize(using = KerasActivationDeserializer.class)
 public interface IKerasActivation {
 
 }

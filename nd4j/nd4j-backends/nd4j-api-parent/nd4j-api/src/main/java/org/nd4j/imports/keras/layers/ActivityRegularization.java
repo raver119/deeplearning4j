@@ -22,13 +22,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.nd4j.imports.keras.layers.KerasLayer;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class ActivityRegularization extends KerasLayer {
+public class ActivityRegularization extends KerasSingleLayer {
     protected double l1;
     protected double l2;
 }

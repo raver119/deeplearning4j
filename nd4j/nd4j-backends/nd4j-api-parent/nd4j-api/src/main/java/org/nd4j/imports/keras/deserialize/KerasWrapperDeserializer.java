@@ -19,17 +19,16 @@
 package org.nd4j.imports.keras.deserialize;
 
 import java.io.IOException;
-import org.nd4j.imports.keras.layers.KerasLayer;
+import java.util.Iterator;
 import org.nd4j.shade.jackson.core.JsonParser;
 import org.nd4j.shade.jackson.core.JsonProcessingException;
-import org.nd4j.shade.jackson.core.TreeNode;
+import org.nd4j.shade.jackson.core.JsonToken;
 import org.nd4j.shade.jackson.databind.BeanProperty;
 import org.nd4j.shade.jackson.databind.DeserializationContext;
 import org.nd4j.shade.jackson.databind.JavaType;
 import org.nd4j.shade.jackson.databind.JsonDeserializer;
 import org.nd4j.shade.jackson.databind.JsonMappingException;
 import org.nd4j.shade.jackson.databind.JsonNode;
-import org.nd4j.shade.jackson.databind.ObjectMapper;
 import org.nd4j.shade.jackson.databind.deser.ContextualDeserializer;
 import org.nd4j.shade.jackson.databind.deser.ResolvableDeserializer;
 import org.nd4j.shade.jackson.databind.deser.std.StdDeserializer;
@@ -50,6 +49,7 @@ public class KerasWrapperDeserializer extends StdDeserializer<Object> implements
         ResolvableDeserializer {
 
     public static final String CONFIG_PROP_NAME = "config";
+    public static final String CLASS_PROP_NAME = "class_name";
 
     private JavaType innerType;
     private JsonDeserializer<?> defaultDeserializer;
@@ -79,17 +79,31 @@ public class KerasWrapperDeserializer extends StdDeserializer<Object> implements
     @Override
     public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext)
             throws IOException, JsonProcessingException {
-        JsonNode innerNode = (JsonNode) jsonParser.readValueAsTree().get(CONFIG_PROP_NAME);
+        JsonNode tree = jsonParser.readValueAsTree();
+
+        JsonNode innerNode = tree.get(CONFIG_PROP_NAME);
+
+        /*
+        Layers can have
+         */
 
         // some versions of Keras set config to the layers array
-        if(innerNode.isArray()){
+        if(!innerNode.isObject()){
             innerNode = deserializationContext.getNodeFactory()
                     .objectNode().set("layers", innerNode);
         }
 
+        for (Iterator<String> it = tree.fieldNames(); it.hasNext(); ) {
+            String field = it.next();
+            if(!field.equals(CONFIG_PROP_NAME) && !field.equals(CLASS_PROP_NAME)){
+                ((ObjectNode) innerNode).set(field, tree.get(field));
+            }
+        }
+
         JsonParser inner = innerNode.traverse(jsonParser.getCodec());
 
-        inner.nextToken();
+        if(inner.currentToken() == null)
+            inner.nextToken();
         return defaultDeserializer.deserialize(inner, deserializationContext);
     }
 }

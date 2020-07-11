@@ -23,7 +23,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.Value;
 import org.nd4j.imports.keras.constraints.KerasConstraint;
 import org.nd4j.imports.keras.initalizers.KerasWeightInitializer;
 import org.nd4j.imports.keras.regularizers.KerasRegularizer;
@@ -32,7 +31,7 @@ import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class BatchNormalization extends KerasLayer {
+public class BatchNormalization extends KerasSingleLayer {
     protected int axis = -1;
     protected double momentum = 0.0;
     protected double epsilon = 0.0;

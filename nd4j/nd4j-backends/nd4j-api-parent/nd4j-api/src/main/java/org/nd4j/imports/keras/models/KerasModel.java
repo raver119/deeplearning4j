@@ -16,22 +16,33 @@
  *  *****************************************************************************
  */
 
-package org.nd4j.imports.keras.layers.convolutional;
+package org.nd4j.imports.keras.models;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
-import org.nd4j.imports.keras.KerasDataFormat;
+import org.nd4j.imports.keras.deserialize.KerasShapeDeserializer;
+import org.nd4j.imports.keras.deserialize.KerasWrappedJson;
 import org.nd4j.imports.keras.layers.KerasSingleLayer;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes;
+import org.nd4j.shade.jackson.annotation.JsonSubTypes.Type;
+import org.nd4j.shade.jackson.databind.annotation.JsonDeserialize;
 
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class UpSampling2D extends KerasSingleLayer {
-    protected int[] size;
-    protected @NonNull KerasDataFormat dataFormat = KerasDataFormat.ChannelsLast;
-    protected String interpolation = "nearest";
+@ToString
+@EqualsAndHashCode
+@KerasWrappedJson
+@JsonSubTypes({
+        @Type(Sequential.class),
+        @Type(Functional.class)
+})
+public abstract class KerasModel {
+
+    protected String kerasVersion;
+    protected String backend;
+    protected String name;
+    @JsonDeserialize(using = KerasShapeDeserializer.class)
+    protected int[] buildInputShape;
 }

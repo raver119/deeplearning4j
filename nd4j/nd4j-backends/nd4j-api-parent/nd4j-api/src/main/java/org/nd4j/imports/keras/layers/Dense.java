@@ -18,7 +18,6 @@
 
 package org.nd4j.imports.keras.layers;
 
-import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,7 @@ import org.nd4j.imports.keras.regularizers.KerasRegularizer;
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor
-public class Dense extends KerasLayer{
+public class Dense extends KerasSingleLayer {
     protected int units;
     protected IKerasActivation activation;
     protected boolean useBias;
